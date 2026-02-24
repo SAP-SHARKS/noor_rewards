@@ -277,24 +277,6 @@ class _HomeTab extends StatelessWidget {
         const SizedBox(height: 14),
         _SwipeValidateButton(onValidate: onValidate),
 
-        // ── Partner ───────────────────────────────────────────────────────
-        const SizedBox(height: 14),
-        Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text('In partnership with', style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey.shade200),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)]),
-            child: Row(children: [
-              const Text('🕌', style: TextStyle(fontSize: 13)),
-              const SizedBox(width: 5),
-              Text(project?['sponsor'] ?? 'Islamic Relief',
-                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: _C.text)),
-            ]),
-          ),
-        ])),
 
         // ── Activity grid ─────────────────────────────────────────────────
         const SizedBox(height: 24),
