@@ -4,14 +4,49 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// ── XP Rewards (matches the spec) ─────────────────────────────────────────────
+// ── XP Rewards ─────────────────────────────────────────────────────────────────
 class XpReward {
-  static const int ayahRead      = 5;   // per ayah
-  static const int juzComplete   = 100; // per juz
-  static const int dhikrSet      = 10;  // 33× dhikr complete
-  static const int tafsirTenMin  = 15;  // 10 min tafsir
+  static const int ayahRead      = 5;   // per ayah read
+  static const int juzComplete   = 100; // per juz completed
   static const int dailyLogin    = 5;   // once per day
   static const int validateCoins = 20;  // validate & support
+
+  // ── Per-dhikr XP weights ──────────────────────────────────────────────────
+  // Weighted by spiritual significance and count required.
+  // Higher count or deeper meaning → higher XP.
+  static const Map<String, int> _dhikrXpMap = {
+    // General — short (×33)
+    'subhanallah':              8,
+    'alhamdulillah':            8,
+    'allahu_akbar':             8,
+    // General — higher count (×100), deeper significance
+    'la_ilaha_illallah':        15,
+    'astaghfirullah':           15,
+    'salawat':                  15,
+    // Morning adhkar — one-off supplications
+    'morning_adhkar_1':         5,
+    'morning_adhkar_2':         5,
+    'morning_ayat_kursi':       6,
+    'morning_tasbih':           12, // ×100
+    // Evening adhkar — one-off supplications
+    'evening_adhkar_1':         5,
+    'evening_adhkar_2':         5,
+    'evening_tasbih':           12, // ×100
+    // Post-prayer adhkar
+    'post_prayer_subhanallah':  8,
+    'post_prayer_alhamdulillah':8,
+    'post_prayer_allahu_akbar': 8,
+    'post_prayer_ayat_kursi':   6,
+    // Sleeping adhkar
+    'sleeping_ayat_kursi':      6,
+    'sleeping_tasbih':          8,
+    'sleeping_alhamdulillah':   8,
+    'sleeping_allahu_akbar':    8,
+    'sleeping_bismillah':       5,
+  };
+
+  /// Returns the XP for a given dhikr ID. Falls back to 8 XP if not found.
+  static int dhikrXp(String dhikrId) => _dhikrXpMap[dhikrId] ?? 8;
 }
 
 // ── Level info ─────────────────────────────────────────────────────────────────
@@ -29,10 +64,8 @@ class LevelInfo {
     required this.unlocks,
   });
 
-  // e.g. "Seeker • Level 3"
   String get displayTitle => '$title • Level $level';
 
-  // 0.0 – 1.0 progress to next level
   double progress(int currentXp) {
     if (nextXp <= xpRequired) return 1.0;
     return ((currentXp - xpRequired) / (nextXp - xpRequired)).clamp(0.0, 1.0);
@@ -56,6 +89,27 @@ class BadgeInfo {
   });
 }
 
+// ── Strict level thresholds (in-app fallback — mirrors DB xp_levels table) ────
+// These kick in when the DB is unreachable.
+const _kFallbackLevels = <(int level, int xpRequired, String title)>[
+  (1,       0,  'Seeker'),
+  (2,     150,  'Seeker'),
+  (3,     400,  'Seeker'),
+  (4,     800,  'Believer'),
+  (5,    1400,  'Believer'),
+  (6,    2200,  'Believer'),
+  (7,    3200,  'Devoted'),
+  (8,    4500,  'Devoted'),
+  (9,    6000,  'Devoted'),
+  (10,   8000,  'Devoted'),
+  (11,  10500,  'Champion'),
+  (15,  20000,  'Champion'),
+  (20,  40000,  'Champion'),
+  (21,  55000,  'Legend'),
+  (30, 100000,  'Legend'),
+  (51, 250000,  'Legend'),
+];
+
 // ── XP Service ─────────────────────────────────────────────────────────────────
 class XpService {
   XpService._();
@@ -64,20 +118,81 @@ class XpService {
   final _sb = Supabase.instance.client;
 
   // ── Earn XP ──────────────────────────────────────────────────────────────────
-  /// Awards [amount] XP to the current user.
-  /// Returns new total_xp. Null if not logged in.
+  /// Awards [amount] XP (multiplied by any active challenge multiplier) to the
+  /// current user. Returns new total_xp. Null if not logged in.
   Future<int?> earnXp(int amount) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return null;
     try {
+      // Apply active challenge multiplier if any
+      final multiplier = await _getActiveMultiplier(uid);
+      final effective = (amount * multiplier).round();
+
       final result = await _sb.rpc('earn_xp', params: {
         'p_user_id': uid,
-        'p_amount': amount,
+        'p_amount':  effective,
       });
-      return result as int?;
+      final newXp = result as int?;
+
+      // Check and auto-award milestone badges
+      if (newXp != null) {
+        _checkMilestoneBadges(uid, newXp);
+      }
+      return newXp;
     } catch (e) {
       return null;
     }
+  }
+
+  // ── Per-dhikr XP ─────────────────────────────────────────────────────────────
+  /// Awards XP for a completed dhikr set, using per-dhikr weights.
+  Future<int?> earnDhikrXp(String dhikrId) =>
+      earnXp(XpReward.dhikrXp(dhikrId));
+
+  // ── Active challenge multiplier ───────────────────────────────────────────────
+  /// Returns the highest active XP multiplier for the user, or 1.0 if none.
+  Future<double> _getActiveMultiplier(String uid) async {
+    try {
+      final progress = await _sb
+          .from('user_challenge_progress')
+          .select('challenge_id, completed')
+          .eq('user_id', uid)
+          .eq('completed', false);
+
+      if ((progress as List).isEmpty) return 1.0;
+
+      final challengeIds =
+          progress.map((p) => p['challenge_id'] as String).toList();
+
+      final challenges = await _sb
+          .from('challenges')
+          .select('xp_multiplier')
+          .inFilter('id', challengeIds)
+          .eq('is_active', true);
+
+      if ((challenges as List).isEmpty) return 1.0;
+
+      double best = 1.0;
+      for (final c in challenges) {
+        final m = (c['xp_multiplier'] as num?)?.toDouble() ?? 1.0;
+        if (m > best) best = m;
+      }
+      return best;
+    } catch (_) {
+      return 1.0;
+    }
+  }
+
+  // ── Milestone badge auto-award ────────────────────────────────────────────────
+  /// Automatically awards badges when the user crosses XP / level milestones.
+  /// Fire-and-forget — errors are silently swallowed.
+  void _checkMilestoneBadges(String uid, int totalXp) {
+    // XP milestones
+    if (totalXp >= 100)    awardBadge('first_100xp');
+    if (totalXp >= 500)    awardBadge('xp_500');
+    if (totalXp >= 1000)   awardBadge('xp_1000');
+    if (totalXp >= 5000)   awardBadge('xp_5000');
+    if (totalXp >= 10000)  awardBadge('xp_10000');
   }
 
   // ── Award badge ───────────────────────────────────────────────────────────────
@@ -98,13 +213,10 @@ class XpService {
   }
 
   // ── Daily login XP ────────────────────────────────────────────────────────────
-  /// Call once when the app launches / user visits the home screen.
-  /// Checks if XP was already awarded today before calling earn_xp.
   Future<bool> claimDailyLoginXp() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
     try {
-      // Check last activity of type 'login' today
       final today = DateTime.now().toIso8601String().substring(0, 10);
       final rows = await _sb
           .from('user_activities')
@@ -114,16 +226,14 @@ class XpService {
           .gte('created_at', today)
           .limit(1);
 
-      if ((rows as List).isNotEmpty) return false; // already claimed today
+      if ((rows as List).isNotEmpty) return false;
 
-      // Insert activity record
       await _sb.from('user_activities').insert({
-        'user_id': uid,
+        'user_id':       uid,
         'activity_type': 'login',
         'points_earned': XpReward.dailyLogin,
       });
 
-      // Award XP
       await earnXp(XpReward.dailyLogin);
       return true;
     } catch (_) {
@@ -131,10 +241,7 @@ class XpService {
     }
   }
 
-  // ── Validate & Support XP ─────────────────────────────────────────────────
-  /// Awards XP when the user completes the swipe-to-validate gesture.
-  /// Limited to once per day — safe to call on every swipe completion.
-  /// Returns true if XP was newly awarded, false if already claimed today.
+  // ── Validate & Support XP ─────────────────────────────────────────────────────
   Future<bool> claimValidateXp() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
@@ -148,10 +255,10 @@ class XpService {
           .gte('created_at', today)
           .limit(1);
 
-      if ((existing as List).isNotEmpty) return false; // already validated today
+      if ((existing as List).isNotEmpty) return false;
 
       await _sb.from('user_activities').insert({
-        'user_id': uid,
+        'user_id':       uid,
         'activity_type': 'validate',
         'points_earned': XpReward.validateCoins,
       });
@@ -163,7 +270,7 @@ class XpService {
     }
   }
 
-  // ── Load current user profile XP + level ─────────────────────────────────────
+  // ── Load current user profile ─────────────────────────────────────────────────
   Future<({int xp, int level, int streak})> loadProfile() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return (xp: 0, level: 1, streak: 0);
@@ -174,8 +281,8 @@ class XpService {
           .eq('id', uid)
           .single();
       return (
-        xp:     (row['total_xp']  as num?)?.toInt() ?? 0,
-        level:  (row['level']     as num?)?.toInt() ?? 1,
+        xp:     (row['total_xp']   as num?)?.toInt() ?? 0,
+        level:  (row['level']      as num?)?.toInt() ?? 1,
         streak: (row['day_streak'] as num?)?.toInt() ?? 0,
       );
     } catch (_) {
@@ -193,15 +300,15 @@ class XpService {
     }
   }
 
-  // ── Resolve LevelInfo for a given xp + level ─────────────────────────────────
+  // ── Resolve LevelInfo (DB-first, strict fallback curve) ──────────────────────
   LevelInfo resolveLevelInfo(
     int currentXp,
     int currentLevel,
     List<Map<String, dynamic>> levels,
   ) {
     if (levels.isEmpty) {
-      return const LevelInfo(
-          level: 1, title: 'Seeker', xpRequired: 0, nextXp: 100, unlocks: '');
+      // Use strict in-app fallback curve
+      return _levelInfoFromFallback(currentLevel);
     }
 
     final sorted = [...levels]
@@ -209,14 +316,48 @@ class XpService {
 
     final idx = sorted.indexWhere((l) => (l['level'] as int) == currentLevel);
     final row = idx >= 0 ? sorted[idx] : sorted.first;
-    final nextRow = idx >= 0 && idx + 1 < sorted.length ? sorted[idx + 1] : null;
+    final nextRow =
+        idx >= 0 && idx + 1 < sorted.length ? sorted[idx + 1] : null;
+
+    // If DB next level exists, use it; otherwise use strict fallback gap
+    final nextXp = (nextRow?['xp_required'] as int?) ??
+        _nextXpFromFallback((row['level'] as int? ?? 1));
 
     return LevelInfo(
-      level:       (row['level']       as int?) ?? 1,
-      title:       (row['title']       as String?) ?? 'Seeker',
-      xpRequired:  (row['xp_required'] as int?) ?? 0,
-      nextXp:      (nextRow?['xp_required'] as int?) ?? ((row['xp_required'] as int? ?? 0) + 500),
-      unlocks:     (row['unlocks']     as String?) ?? '',
+      level:      (row['level']       as int?)    ?? 1,
+      title:      (row['title']       as String?) ?? 'Seeker',
+      xpRequired: (row['xp_required'] as int?)    ?? 0,
+      nextXp:     nextXp,
+      unlocks:    (row['unlocks']     as String?) ?? '',
+    );
+  }
+
+  /// Returns the next-level xp_required from the fallback table.
+  int _nextXpFromFallback(int currentLevel) {
+    for (int i = 0; i < _kFallbackLevels.length - 1; i++) {
+      if (_kFallbackLevels[i].$1 == currentLevel) {
+        return _kFallbackLevels[i + 1].$2;
+      }
+    }
+    // Beyond the last defined level — use a steep curve
+    final last = _kFallbackLevels.last;
+    final gap  = currentLevel - last.$1;
+    return last.$2 + gap * 15000;
+  }
+
+  /// Builds a full LevelInfo from the strict fallback table.
+  LevelInfo _levelInfoFromFallback(int level) {
+    // Find the closest entry at or below requested level
+    var entry = _kFallbackLevels.first;
+    for (final e in _kFallbackLevels) {
+      if (e.$1 <= level) entry = e;
+    }
+    return LevelInfo(
+      level:      entry.$1,
+      title:      entry.$3,
+      xpRequired: entry.$2,
+      nextXp:     _nextXpFromFallback(entry.$1),
+      unlocks:    '',
     );
   }
 

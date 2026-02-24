@@ -249,8 +249,8 @@ class _ProgressTab extends StatelessWidget {
         const SizedBox(height: 14),
         _XpRow('📖', 'Read 1 Ayah',          '+${XpReward.ayahRead} XP'),
         _XpRow('📚', 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
-        _XpRow('📿', 'Complete 33× Dhikr',    '+${XpReward.dhikrSet} XP'),
-        _XpRow('🎧', 'Listen 10min Tafsir',   '+${XpReward.tafsirTenMin} XP'),
+        _XpRow('📿', 'SubhanAllah ×33',       '+8 XP'),
+        _XpRow('📿', 'La ilaha illallah ×100','+15 XP'),
         _XpRow('☀️',  'Daily Login',            '+${XpReward.dailyLogin} XP'),
         _XpRow('✨', 'Validate & Support',    '+${XpReward.validateCoins} XP'),
 

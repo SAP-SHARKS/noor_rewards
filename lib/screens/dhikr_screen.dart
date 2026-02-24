@@ -136,15 +136,14 @@ class _DhikrScreenState extends State<DhikrScreen>
       // Legacy Noor points RPC (keep existing points system intact)
       await _supabase.rpc('earn_dhikr_points',
           params: {'p_type': _current.transliteration, 'p_count': _count});
-      // Award XP via the new XP system
-      await XpService.instance.earnXp(XpReward.dhikrSet);
-      // Award badges
+      // Award weighted XP based on which dhikr was completed
+      await XpService.instance.earnDhikrXp(_current.id);
+      // Award first_dhikr badge on the very first set ever
       if (_setsCompleted == 0) {
-        // Very first dhikr set ever — award first_dhikr badge
         await XpService.instance.awardBadge('first_dhikr');
       }
+      // 7 sets in one session → night_warrior badge
       if (_setsCompleted + 1 >= 7) {
-        // 7 sets in one session → night warrior badge
         await XpService.instance.awardBadge('night_warrior');
       }
       setState(() {
@@ -158,6 +157,7 @@ class _DhikrScreenState extends State<DhikrScreen>
   }
 
   void _showCompleteDialog() {
+    final xpEarned = XpReward.dhikrXp(_current.id);
     showDialog(
       context: context,
       builder: (_) => Dialog(
@@ -170,7 +170,7 @@ class _DhikrScreenState extends State<DhikrScreen>
             Text('Masha\'Allah!',
                 style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 8),
-            Text('${_current.recommendedCount} counts complete • +20 Noor Points • +${XpReward.dhikrSet} XP',
+            Text('${_current.recommendedCount} counts complete • +20 Noor Points • +$xpEarned XP',
                 style: GoogleFonts.outfit(fontSize: 14, color: _kSub),
                 textAlign: TextAlign.center),
             const SizedBox(height: 24),
@@ -182,7 +182,7 @@ class _DhikrScreenState extends State<DhikrScreen>
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
               ),
-              child: Text('Claim +20 Points & +${XpReward.dhikrSet} XP',
+              child: Text('Claim +20 Points & +$xpEarned XP',
                   style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: _kWhite)),
             )),
             const SizedBox(height: 10),

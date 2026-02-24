@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../services/xp_service.dart';
+
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 const _kBg    = Color(0xFFF7F3EE);
@@ -118,12 +118,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
   bool   _showArabic  = true;
 
   // ── Points ───────────────────────────────────────────────────────────────────
-  int    _pointsToday   = 0;
-  bool   _showPointsBanner = false;
-  Timer? _listenTimer;
-  int    _listenSeconds = 0; // seconds listened in current session
-  static const _pointsPerInterval = 50;
-  static const _intervalSeconds   = 600; // 10 min = 50 pts
+  // (Tafsir is read-only; no XP is awarded for reading or listening)
 
   // ── Audio ────────────────────────────────────────────────────────────────────
   final _player = AudioPlayer();
@@ -167,18 +162,16 @@ class _TafsirScreenState extends State<TafsirScreen> {
       final playing = s.processingState != ProcessingState.completed &&
           s.playing;
       if (mounted) setState(() => _isPlaying = playing);
-      if (s.processingState == ProcessingState.completed) {
-        _stopListenTimer();
-      }
     });
+
   }
 
   @override
   void dispose() {
     _player.dispose();
-    _stopListenTimer();
     super.dispose();
   }
+
 
   // ── Data loading ─────────────────────────────────────────────────────────────
   Future<void> _loadAyah() async {
@@ -302,51 +295,11 @@ class _TafsirScreenState extends State<TafsirScreen> {
     if (_audioUrl == null) return;
     if (_isPlaying) {
       await _player.pause();
-      _stopListenTimer();
     } else {
       await _player.play();
-      _startListenTimer();
     }
   }
 
-  void _startListenTimer() {
-    _listenTimer?.cancel();
-    _listenTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _listenSeconds++;
-      if (_listenSeconds % _intervalSeconds == 0) {
-        _awardListenPoints();
-      }
-    });
-  }
-
-  void _stopListenTimer() {
-    _listenTimer?.cancel();
-    _listenTimer = null;
-  }
-
-  Future<void> _awardListenPoints() async {
-    final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return;
-    try {
-      // Legacy Noor points
-      await _sb.rpc('add_noor_points', params: {
-        'p_user_id': uid,
-        'p_points':  _pointsPerInterval,
-        'p_reason':  'listen_tafsir',
-      });
-      // XP reward for every 10 min listened
-      await XpService.instance.earnXp(XpReward.tafsirTenMin);
-      if (mounted) {
-        setState(() {
-          _pointsToday     += _pointsPerInterval;
-          _showPointsBanner = true;
-        });
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) setState(() => _showPointsBanner = false);
-        });
-      }
-    } catch (_) {}
-  }
 
   // ── Navigation ────────────────────────────────────────────────────────────────
 
@@ -456,12 +409,13 @@ class _TafsirScreenState extends State<TafsirScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_rounded, color: txt, size: 20),
-          onPressed: () => Navigator.pop(context, _pointsToday),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Read & Listen Tafsir',
+        title: Text('Read Tafsir',
             style: GoogleFonts.outfit(
                 fontSize: 18, fontWeight: FontWeight.w800, color: txt)),
         centerTitle: true,
+
         actions: [
           IconButton(
             icon: Icon(Icons.tune_rounded, color: sub, size: 24),
@@ -497,27 +451,8 @@ class _TafsirScreenState extends State<TafsirScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(children: [
 
-            // Points banner
-            if (_showPointsBanner && _pointsToday > 0) ...[
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                    color: _kGreen.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14)),
-                child: Row(children: [
-                  const Text('🎧', style: TextStyle(fontSize: 16)),
-                  const SizedBox(width: 8),
-                  Text('+$_pointsToday Noor Points earned for listening!',
-                      style: GoogleFonts.outfit(
-                          fontSize: 13, fontWeight: FontWeight.w700,
-                          color: _kGreen)),
-                ]),
-              ),
-              const SizedBox(height: 14),
-            ],
-
             // ── Arabic ayah card ─────────────────────────────────────────
+
             if (_showArabic) ...[
               Container(
                 width: double.infinity,
@@ -655,28 +590,12 @@ class _TafsirScreenState extends State<TafsirScreen> {
             // ── Nav buttons ───────────────────────────────────────────────
             _buildNavRow(),
             const SizedBox(height: 20),
-
-            // ── Points info ───────────────────────────────────────────────
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                  color: _kGreen.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(14)),
-              child: Row(children: [
-                const Text('🎧', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 10),
-                Expanded(child: Text(
-                    'Listen for 10 minutes to earn +50 Noor Points',
-                    style: GoogleFonts.outfit(
-                        fontSize: 12, color: _kGreen,
-                        fontWeight: FontWeight.w600))),
-              ]),
-            ),
           ]),
         )),
       ]),
     );
   }
+
 
   Widget _buildAudioPlayer(Color cardBg, Color txt, Color sub) {
     final sliderVal = _dur.inMilliseconds > 0

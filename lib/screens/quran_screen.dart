@@ -277,7 +277,7 @@ class _QuranScreenState extends State<QuranScreen> {
         }
         if ((row['last_read_date'] ?? '') == today) {
           _ayahsToday  = row['ayahs_read_today'] ?? 0;
-          _pointsToday = _ayahsToday * 10;
+          _pointsToday = _ayahsToday * XpReward.ayahRead;
         }
       });
     } catch (_) {}
