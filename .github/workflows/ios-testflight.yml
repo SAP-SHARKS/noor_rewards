@@ -1,0 +1,137 @@
+name: iOS — Build & Deploy to TestFlight
+
+# ─── Triggers ───────────────────────────────────────────────────────────────
+on:
+  push:
+    branches:
+      - main          # auto-deploy every push to main
+  workflow_dispatch:  # manual trigger from GitHub UI
+
+# ─── Global env ─────────────────────────────────────────────────────────────
+env:
+  FLUTTER_VERSION: "3.27.4"       # pin to the Flutter version you develop with
+  XCODE_VERSION:   "16.2"         # latest stable Xcode on GitHub runners
+  BUNDLE_ID:       "com.yourcompany.noorRewards"   # ← change to your real bundle ID
+  APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+  APP_STORE_CONNECT_KEY_ID:    ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+
+# ─── Jobs ───────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── 1. Build & sign ─────────────────────────────────────────────────────
+  build-and-deploy:
+    name: Build IPA & Upload to TestFlight
+    runs-on: macos-15          # Apple-silicon runner, Xcode 16 pre-installed
+
+    steps:
+
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Set Xcode version ─────────────────────────────────────────────────
+      - name: Select Xcode ${{ env.XCODE_VERSION }}
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      # ── Flutter ───────────────────────────────────────────────────────────
+      - name: Set up Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # ── Import P12 certificate ────────────────────────────────────────────
+      - name: Import code-signing certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64:  ${{ secrets.IOS_P12_BASE64 }}
+          p12-password:     ${{ secrets.IOS_P12_PASSWORD }}
+          keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
+
+      # ── Download provisioning profile ─────────────────────────────────────
+      - name: Download provisioning profile
+        uses: apple-actions/download-provisioning-profiles@v3
+        with:
+          bundle-id:    ${{ env.BUNDLE_ID }}
+          issuer-id:    ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          api-key-id:   ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+
+      # ── Build Flutter iOS (no codesign yet, Xcode will sign) ─────────────
+      - name: Build Flutter iOS release
+        run: |
+          flutter build ios --release --no-codesign
+
+      # ── Archive & export IPA via xcodebuild ───────────────────────────────
+      - name: Archive with Xcode
+        run: |
+          xcodebuild archive \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/NoorRewards.xcarchive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="iPhone Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="${{ secrets.PROVISIONING_PROFILE_NAME }}" \
+            | xcpretty
+
+      - name: Export IPA
+        run: |
+          # Write the Export Options plist dynamically
+          cat > $RUNNER_TEMP/ExportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>${{ env.BUNDLE_ID }}</key>
+              <string>${{ secrets.PROVISIONING_PROFILE_NAME }}</string>
+            </dict>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/NoorRewards.xcarchive \
+            -exportPath   $RUNNER_TEMP/IPA \
+            -exportOptionsPlist $RUNNER_TEMP/ExportOptions.plist \
+            | xcpretty
+
+      # ── Upload to TestFlight ───────────────────────────────────────────────
+      - name: Upload IPA to TestFlight
+        run: |
+          xcrun altool \
+            --upload-app \
+            --type ios \
+            --file "$RUNNER_TEMP/IPA/NoorRewards.ipa" \
+            --apiKey    "${{ secrets.APP_STORE_CONNECT_KEY_ID }}" \
+            --apiIssuer "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" \
+            --verbose
+
+      # ── (Optional) Save IPA as artifact for debugging ─────────────────────
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoorRewards-IPA
+          path: ${{ runner.temp }}/IPA/*.ipa
+          retention-days: 7

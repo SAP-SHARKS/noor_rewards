@@ -1,0 +1,200 @@
+[
+  {
+    "id": "subhanallah",
+    "arabic": "سُبْحَانَ اللّٰهِ",
+    "transliteration": "SubhanAllah",
+    "translation": "Glory be to Allah",
+    "recommended_count": 33,
+    "category": "general",
+    "reward": "Whoever says 'SubhanAllah' 100 times a day, his sins are wiped away even if they were as much as the foam of the sea."
+  },
+  {
+    "id": "alhamdulillah",
+    "arabic": "ٱلْحَمْدُ لِلّٰهِ",
+    "transliteration": "Alhamdulillah",
+    "translation": "All praise is for Allah",
+    "recommended_count": 33,
+    "category": "general",
+    "reward": "Alhamdulillah fills the scales of good deeds (Mizan). [Sahih Muslim 223]"
+  },
+  {
+    "id": "allahu_akbar",
+    "arabic": "اللّٰهُ أَكْبَرُ",
+    "transliteration": "Allahu Akbar",
+    "translation": "Allah is the Greatest",
+    "recommended_count": 34,
+    "category": "general",
+    "reward": "Saying SubhanAllah, Alhamdulillah and Allahu Akbar 33 times each after every prayer is more beloved to me than all that there is under the sun. [Sahih Muslim 597]"
+  },
+  {
+    "id": "la_ilaha_illallah",
+    "arabic": "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ",
+    "transliteration": "La ilaha illallah",
+    "translation": "There is no god but Allah",
+    "recommended_count": 100,
+    "category": "general",
+    "reward": "Whoever says it 100 times will have a reward equivalent to freeing 10 slaves, 100 good deeds written and 100 sins wiped, and protection from Shaytan for the rest of the day. [Bukhari 3293]"
+  },
+  {
+    "id": "astaghfirullah",
+    "arabic": "أَسْتَغْفِرُ اللَّهَ",
+    "transliteration": "Astaghfirullah",
+    "translation": "I seek forgiveness from Allah",
+    "recommended_count": 100,
+    "category": "general",
+    "reward": "The Prophet ﷺ used to seek forgiveness more than 70 times a day. Whoever does Istighfar regularly, Allah will relieve him of every distress and provide for him from where he cannot imagine. [Abu Dawud 1518]"
+  },
+  {
+    "id": "salawat",
+    "arabic": "صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمَ",
+    "transliteration": "Sallallahu alayhi wa sallam",
+    "translation": "May Allah's peace and blessings be upon him",
+    "recommended_count": 100,
+    "category": "general",
+    "reward": "Whoever sends blessings upon me once, Allah will send blessings upon him ten times. [Sahih Muslim 408]"
+  },
+  {
+    "id": "morning_adhkar_1",
+    "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ",
+    "transliteration": "Asbahna wa asbahal mulku lillah",
+    "translation": "We have entered the morning and at this very time all dominion belongs to Allah",
+    "recommended_count": 1,
+    "category": "morning",
+    "reward": "Said every morning, it is from the Sunnah of the Prophet ﷺ. Brings protection and barakah for the day. [Abu Dawud 5071]"
+  },
+  {
+    "id": "morning_adhkar_2",
+    "arabic": "اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+    "transliteration": "Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilaikan-nushur",
+    "translation": "O Allah, by You we enter the morning, by You we enter the evening, by You we live and by You we die, and unto You is the Resurrection",
+    "recommended_count": 1,
+    "category": "morning",
+    "reward": "A comprehensive morning supplication from the Sunnah of the Prophet ﷺ. [Tirmidhi 3391]"
+  },
+  {
+    "id": "morning_ayat_kursi",
+    "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ",
+    "transliteration": "Allahu la ilaha illa huwal-hayyul-qayyum",
+    "translation": "Allah — there is no deity except Him, the Ever-Living, the Sustainer of all existence",
+    "recommended_count": 1,
+    "category": "morning",
+    "reward": "Whoever recites Ayat al-Kursi in the morning will be protected from Shaytan until the evening. [Nasai, Hakim]"
+  },
+  {
+    "id": "morning_tasbih",
+    "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+    "transliteration": "SubhanAllahi wa bihamdihi",
+    "translation": "Glory be to Allah and praise be to Him",
+    "recommended_count": 100,
+    "category": "morning",
+    "reward": "Whoever says it 100 times in the morning and evening, no one will come on the Day of Judgment with something better — except one who said it more. [Bukhari 6405, Muslim 2691]"
+  },
+  {
+    "id": "evening_adhkar_1",
+    "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ",
+    "transliteration": "Amsayna wa amsal mulku lillah",
+    "translation": "We have entered the evening, and at this very time all dominion belongs to Allah",
+    "recommended_count": 1,
+    "category": "evening",
+    "reward": "Evening counterpart of the morning Sunnah dhikr. Brings protection and barakah through the night. [Abu Dawud 5071]"
+  },
+  {
+    "id": "evening_adhkar_2",
+    "arabic": "اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ",
+    "transliteration": "Allahumma bika amsayna wa bika asbahna wa bika nahya wa bika namutu wa ilaykal-masir",
+    "translation": "O Allah, by You we enter the evening, by You we enter the morning, by You we live and by You we die, and to You is the final return",
+    "recommended_count": 1,
+    "category": "evening",
+    "reward": "Complete evening supplication from the Sunnah. [Tirmidhi 3391]"
+  },
+  {
+    "id": "evening_tasbih",
+    "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+    "transliteration": "SubhanAllahi wa bihamdihi",
+    "translation": "Glory be to Allah and praise be to Him",
+    "recommended_count": 100,
+    "category": "evening",
+    "reward": "Whoever says it 100 times in the morning and evening, no one will come on the Day of Judgment with something better. [Bukhari 6405]"
+  },
+  {
+    "id": "post_prayer_subhanallah",
+    "arabic": "سُبْحَانَ اللّٰهِ",
+    "transliteration": "SubhanAllah",
+    "translation": "Glory be to Allah",
+    "recommended_count": 33,
+    "category": "post_prayer",
+    "reward": "After every obligatory prayer: 33 SubhanAllah, 33 Alhamdulillah, 33 Allahu Akbar, then La ilaha illallah once — sins are forgiven even if they are as much as the foam of the sea. [Muslim 597]"
+  },
+  {
+    "id": "post_prayer_alhamdulillah",
+    "arabic": "ٱلْحَمْدُ لِلّٰهِ",
+    "transliteration": "Alhamdulillah",
+    "translation": "All praise is for Allah",
+    "recommended_count": 33,
+    "category": "post_prayer",
+    "reward": "Said 33 times after every obligatory prayer. Fills the scales on the Day of Judgment. [Sahih Muslim 223]"
+  },
+  {
+    "id": "post_prayer_allahu_akbar",
+    "arabic": "اللّٰهُ أَكْبَرُ",
+    "transliteration": "Allahu Akbar",
+    "translation": "Allah is the Greatest",
+    "recommended_count": 33,
+    "category": "post_prayer",
+    "reward": "Said 34 times after every obligatory prayer. Together with SubhanAllah and Alhamdulillah, these 100 tasbihat complete the post-prayer dhikr. [Bukhari, Muslim]"
+  },
+  {
+    "id": "post_prayer_ayat_kursi",
+    "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ",
+    "transliteration": "Allahu la ilaha illa huwal-hayyul-qayyum",
+    "translation": "Allah — there is no deity except Him, the Ever-Living, the Sustainer of all existence",
+    "recommended_count": 1,
+    "category": "post_prayer",
+    "reward": "Whoever recites Ayat al-Kursi after every obligatory prayer is guaranteed Paradise when they die. [Nasai, authenticated by Ibn Hibban]"
+  },
+  {
+    "id": "sleeping_ayat_kursi",
+    "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ",
+    "transliteration": "Allahu la ilaha illa huwal-hayyul-qayyum",
+    "translation": "Allah — there is no deity except Him, the Ever-Living, the Sustainer of all existence",
+    "recommended_count": 1,
+    "category": "sleeping",
+    "reward": "Recite Ayat al-Kursi before sleeping and a guardian from Allah will protect you, and Shaytan will not come near you until morning. [Bukhari 2311]"
+  },
+  {
+    "id": "sleeping_tasbih",
+    "arabic": "سُبْحَانَ اللّٰهِ",
+    "transliteration": "SubhanAllah",
+    "translation": "Glory be to Allah",
+    "recommended_count": 33,
+    "category": "sleeping",
+    "reward": "Before sleeping: 33 SubhanAllah, 33 Alhamdulillah, 34 Allahu Akbar — this is better for you than a servant. [Bukhari 3113]"
+  },
+  {
+    "id": "sleeping_alhamdulillah",
+    "arabic": "ٱلْحَمْدُ لِلّٰهِ",
+    "transliteration": "Alhamdulillah",
+    "translation": "All praise is for Allah",
+    "recommended_count": 33,
+    "category": "sleeping",
+    "reward": "Part of the bedtime tasbih prescribed by the Prophet ﷺ to Fatimah and Ali (ra). [Bukhari 3113]"
+  },
+  {
+    "id": "sleeping_allahu_akbar",
+    "arabic": "اللّٰهُ أَكْبَرُ",
+    "transliteration": "Allahu Akbar",
+    "translation": "Allah is the Greatest",
+    "recommended_count": 34,
+    "category": "sleeping",
+    "reward": "Part of the bedtime tasbih. The Prophet ﷺ said this is better for you than having a servant. [Bukhari 3113]"
+  },
+  {
+    "id": "sleeping_bismillah",
+    "arabic": "بِسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+    "transliteration": "Bismika Allahumma amutu wa ahya",
+    "translation": "In Your name, O Allah, I die and I live",
+    "recommended_count": 1,
+    "category": "sleeping",
+    "reward": "Recited before sleeping. The Prophet ﷺ used to say this every night before sleeping. [Bukhari 6312]"
+  }
+]
