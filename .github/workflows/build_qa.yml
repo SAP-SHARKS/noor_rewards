@@ -22,7 +22,6 @@ jobs:
       # 3. Install Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0' # Uses the latest stable version
           channel: 'stable'
 
       # 4. Get your plugins
