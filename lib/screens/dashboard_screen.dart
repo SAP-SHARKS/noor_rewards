@@ -284,6 +284,10 @@ class _HomeTabState extends State<_HomeTab> {
               style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: _C.sub)),
         ])),
 
+        // ── Swipe-to-Validate button (close to Today's points) ────────────────
+        const SizedBox(height: 18),
+        _SwipeValidateButton(onValidate: widget.onValidate),
+
         // ── Progress card (Daily / Weekly / Monthly) ──────────────────────
         const SizedBox(height: 20),
         _ProgressCard(
@@ -297,7 +301,7 @@ class _HomeTabState extends State<_HomeTab> {
         const SizedBox(height: 20),
         if (widget.project != null) _CommunityCard(project: widget.project!),
 
-        // ── My Donations ──────────────────────────────────────────────────
+        // ── My Donations ─────────────────────────────────────────────────
         if (_myDonations.isNotEmpty) ...[
           const SizedBox(height: 20),
           _MyDonationsSection(
@@ -305,15 +309,10 @@ class _HomeTabState extends State<_HomeTab> {
             availablePoints: widget.noorPoints,
             onDonateMore: (project) {
               final parentState = context.findAncestorStateOfType<_DashboardScreenState>();
-              // Navigate to the Impact tab
               parentState?.setState(() => parentState._tab = 1);
             },
           ),
         ],
-
-        // ── Swipe-to-Validate button ──────────────────────────────────────
-        const SizedBox(height: 14),
-        _SwipeValidateButton(onValidate: widget.onValidate),
 
         // ── Activity grid ─────────────────────────────────────────────────
         const SizedBox(height: 24),
@@ -628,18 +627,29 @@ class _MyDonationsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [
-        Text('Your Donations 💚',
-            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
-        const Spacer(),
-        Text('${donations.length} cause${donations.length == 1 ? '' : 's'}',
-            style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-      ]),
-      const SizedBox(height: 6),
-      Text('Keep it up! Every point you donate makes a real impact.',
-          style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-      const SizedBox(height: 14),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 14, offset: const Offset(0, 4))],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text('Your Donations 💚',
+              style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
+          const Spacer(),
+          Text('${donations.length} cause${donations.length == 1 ? '' : 's'}',
+              style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+        ]),
+        const SizedBox(height: 6),
+        Text('Keep it up! Every point you donate makes a real impact.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
+        const SizedBox(height: 14),
       SizedBox(
         height: 190,
         child: ListView.separated(
@@ -725,7 +735,8 @@ class _MyDonationsSection extends StatelessWidget {
           },
         ),
       ),
-    ]);
+      ],),
+    );
   }
 }
 
