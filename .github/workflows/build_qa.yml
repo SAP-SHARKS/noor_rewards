@@ -1,0 +1,44 @@
+name: QA Build 🛠️
+
+# Trigger: Only run this robot when we push code to the 'qa' branch
+on:
+  push:
+    branches: [ "qa" ]
+
+jobs:
+  build-qa-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Download your code from the repository
+      - uses: actions/checkout@v4
+
+      # 2. Install Java 17 (Same version that fixed your local issue!)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Install Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 4. Get your plugins
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 5. Remove local-only Gradle Java home (Windows path not valid on CI)
+      - name: Fix Gradle Java Home
+        run: sed -i '/org.gradle.java.home/d' android/gradle.properties
+
+      # 6. Build the APK (Debug version for testing)
+      - name: Build APK
+        run: flutter build apk --debug
+
+      # 6. Upload the APK so you can download it
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-rewards-qa
+          path: build/app/outputs/flutter-apk/app-debug.apk
