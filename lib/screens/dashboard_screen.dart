@@ -9,6 +9,7 @@ import 'impact_report_screen.dart';
 import 'admin/admin_dashboard.dart';
 import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
+import '../services/donation_service.dart';
 
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com'};
@@ -34,6 +35,8 @@ class _C {
   static const navImpact   = Color(0xFF2BAE9B);
   static const navRanking  = Color(0xFFD4A017);
   static const navProfile  = Color(0xFF6B4EBB);
+  static const teal        = Color(0xFF2BAE99);
+  static const border      = Color(0xFFE8E8EC);
 }
 
 class DashboardScreen extends StatefulWidget {
@@ -172,7 +175,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 // ─────────────────────────────────────────────────────────────────────────────
 // HOME TAB
 // ─────────────────────────────────────────────────────────────────────────────
-class _HomeTab extends StatelessWidget {
+// ─────────────────────────────────────────────────────────────────────────────
+// HOME TAB
+// ─────────────────────────────────────────────────────────────────────────────
+class _HomeTab extends StatefulWidget {
   final String name, levelTitle;
   final int noorPoints, todayPoints, weekPoints, monthPoints, streak, totalXp, level;
   final Map<String, dynamic>? project;
@@ -187,8 +193,26 @@ class _HomeTab extends StatelessWidget {
   });
 
   @override
+  State<_HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<_HomeTab> {
+  List<Map<String, dynamic>> _myDonations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDonations();
+  }
+
+  Future<void> _loadDonations() async {
+    final data = await DonationService.instance.getUserProjectDonations();
+    if (mounted) setState(() => _myDonations = data);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final firstName = name.split(' ').first;
+    final firstName = widget.name.split(' ').first;
     return SafeArea(child: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -197,7 +221,7 @@ class _HomeTab extends StatelessWidget {
         // ── Top bar ───────────────────────────────────────────────────────
         Row(children: [
           GestureDetector(
-            onTap: onGoAchievements,
+            onTap: widget.onGoAchievements,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
@@ -216,7 +240,7 @@ class _HomeTab extends StatelessWidget {
                     child: Center(child: Text('N',
                         style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)))),
                   const SizedBox(width: 7),
-                  Text(_fmt(noorPoints),
+                  Text(_fmt(widget.noorPoints),
                       style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
                 ]),
               ),
@@ -231,7 +255,7 @@ class _HomeTab extends StatelessWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: onGoAchievements,
+            onTap: widget.onGoAchievements,
             child: Stack(clipBehavior: Clip.none, children: [
               Container(width: 48, height: 48,
                 decoration: BoxDecoration(shape: BoxShape.circle,
@@ -243,7 +267,7 @@ class _HomeTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(color: const Color(0xFF5856D6),
                     borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white, width: 1.5)),
-                child: Text('LV $level', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.white)),
+                child: Text('LV ${widget.level}', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.white)),
               )),
             ]),
           ),
@@ -252,7 +276,7 @@ class _HomeTab extends StatelessWidget {
         // ── Big points number ─────────────────────────────────────────────
         const SizedBox(height: 28),
         Center(child: Column(children: [
-          Text(_fmt(todayPoints > 0 ? todayPoints : noorPoints),
+          Text(_fmt(widget.todayPoints > 0 ? widget.todayPoints : widget.noorPoints),
               style: GoogleFonts.outfit(fontSize: 80, fontWeight: FontWeight.w700,
                   color: _C.text, height: 1.0, letterSpacing: -3)),
           const SizedBox(height: 6),
@@ -263,20 +287,33 @@ class _HomeTab extends StatelessWidget {
         // ── Progress card (Daily / Weekly / Monthly) ──────────────────────
         const SizedBox(height: 20),
         _ProgressCard(
-          todayPts: todayPoints,
-          weekPts:  weekPoints,
-          monthPts: monthPoints,
-          streak:   streak,
+          todayPts: widget.todayPoints,
+          weekPts:  widget.weekPoints,
+          monthPts: widget.monthPoints,
+          streak:   widget.streak,
         ),
 
         // ── Community progress ────────────────────────────────────────────
         const SizedBox(height: 20),
-        if (project != null) _CommunityCard(project: project!),
+        if (widget.project != null) _CommunityCard(project: widget.project!),
+
+        // ── My Donations ──────────────────────────────────────────────────
+        if (_myDonations.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          _MyDonationsSection(
+            donations: _myDonations,
+            availablePoints: widget.noorPoints,
+            onDonateMore: (project) {
+              final parentState = context.findAncestorStateOfType<_DashboardScreenState>();
+              // Navigate to the Impact tab
+              parentState?.setState(() => parentState._tab = 1);
+            },
+          ),
+        ],
 
         // ── Swipe-to-Validate button ──────────────────────────────────────
         const SizedBox(height: 14),
-        _SwipeValidateButton(onValidate: onValidate),
-
+        _SwipeValidateButton(onValidate: widget.onValidate),
 
         // ── Activity grid ─────────────────────────────────────────────────
         const SizedBox(height: 24),
@@ -288,10 +325,10 @@ class _HomeTab extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
           children: [
-            _ActivityCard('Read Quran',    '📖', _C.quranCard,  _C.quranIcon,  '+5 XP / ayah',  onGoQuran),
-            _ActivityCard('Count Dhikr',   '📿', _C.dhikrCard,  _C.dhikrIcon,  '+10 XP / set',  onGoDhikr),
+            _ActivityCard('Read Quran',    '📖', _C.quranCard,  _C.quranIcon,  '+5 XP / ayah',  widget.onGoQuran),
+            _ActivityCard('Count Dhikr',   '📿', _C.dhikrCard,  _C.dhikrIcon,  '+10 XP / set',  widget.onGoDhikr),
             _ComingSoonCard('Daily Hikmah', '✨', const Color(0xFFEEF6FF), const Color(0xFF3A86FF), 'New feature coming soon'),
-            _ActivityCard('Achievements',  '🏆', const Color(0xFFEDE0FF), _C.navProfile, '$totalXp XP • Lv $level', onGoAchievements),
+            _ActivityCard('Achievements',  '🏆', const Color(0xFFEDE0FF), _C.navProfile, '${_fmt(widget.totalXp)} XP • Lv ${widget.level}', widget.onGoAchievements),
           ],
         ),
       ]),
@@ -306,6 +343,7 @@ class _HomeTab extends StatelessWidget {
     return '$n';
   }
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Daily / Weekly / Monthly Progress Card
@@ -575,6 +613,123 @@ class _ComingSoonCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MY DONATIONS SECTION – shared by Home and Impact tabs
+// ─────────────────────────────────────────────────────────────────────────────
+class _MyDonationsSection extends StatelessWidget {
+  final List<Map<String, dynamic>> donations;
+  final int availablePoints;
+  final void Function(Map<String, dynamic> project) onDonateMore;
+
+  const _MyDonationsSection({
+    required this.donations,
+    required this.availablePoints,
+    required this.onDonateMore,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Text('Your Donations 💚',
+            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
+        const Spacer(),
+        Text('${donations.length} cause${donations.length == 1 ? '' : 's'}',
+            style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+      ]),
+      const SizedBox(height: 6),
+      Text('Keep it up! Every point you donate makes a real impact.',
+          style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
+      const SizedBox(height: 14),
+      SizedBox(
+        height: 190,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: donations.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (ctx, i) {
+            final d = donations[i];
+            final target  = (d['target_points']  as num).toInt();
+            final current = (d['current_points'] as num).toInt();
+            final myPts   = (d['my_donated'] as num).toInt();
+            final remaining = (target - current).clamp(0, target);
+            final pct = (current / target).clamp(0.0, 1.0);
+            final isCompleted = d['is_completed'] == true;
+
+            return Container(
+              width: 220,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.07),
+                    blurRadius: 14, offset: const Offset(0, 4))],
+              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                // Header
+                Row(children: [
+                  Text(d['emoji'] ?? '🌿', style: const TextStyle(fontSize: 22)),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(d['title'] ?? '',
+                      style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text),
+                      maxLines: 2, overflow: TextOverflow.ellipsis)),
+                ]),
+                const SizedBox(height: 10),
+                // My donation badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8F8F0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text('You donated $myPts pts',
+                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF2BAE7C))),
+                ),
+                const SizedBox(height: 10),
+                // Progress bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    minHeight: 7,
+                    backgroundColor: const Color(0xFFFFE8A0),
+                    valueColor: AlwaysStoppedAnimation(isCompleted ? Colors.grey : _C.amber),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                if (isCompleted)
+                  Text('✅ Project completed!',
+                      style: GoogleFonts.outfit(fontSize: 11, color: _C.sub))
+                else
+                  Text('$remaining pts still needed',
+                      style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
+                const Spacer(),
+                // Donate More button
+                if (!isCompleted && availablePoints > 0)
+                  GestureDetector(
+                    onTap: () => onDonateMore(d),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _C.navImpact,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text('Donate More →',
+                            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
+                      ),
+                    ),
+                  ),
+              ]),
+            );
+          },
+        ),
+      ),
+    ]);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // IMPACT TAB  — reads from community_projects
 // ─────────────────────────────────────────────────────────────────────────────
 class _ImpactTab extends StatefulWidget {
@@ -582,6 +737,7 @@ class _ImpactTab extends StatefulWidget {
 }
 class _ImpactTabState extends State<_ImpactTab> {
   List<Map<String, dynamic>> _projects = [];
+  List<Map<String, dynamic>> _myDonations = [];
   bool _loading = true;
 
   @override
@@ -593,6 +749,8 @@ class _ImpactTabState extends State<_ImpactTab> {
           .select().order('sort_order');
       _projects = List<Map<String, dynamic>>.from(res);
     } catch (_) {}
+    // Load user's donations in parallel
+    _myDonations = await DonationService.instance.getUserProjectDonations();
     if (mounted) setState(() => _loading = false);
   }
 
@@ -603,6 +761,10 @@ class _ImpactTabState extends State<_ImpactTab> {
     if (_loading) return const Center(child: CircularProgressIndicator(color: _C.navImpact));
     final active    = _projects.where((p) => p['is_active'] == true).toList();
     final completed = _projects.where((p) => p['is_completed'] == true).toList();
+    
+    // Get the user's available points from the main screen's state context
+    final parentState = context.findAncestorStateOfType<_DashboardScreenState>();
+    final availablePoints = parentState?._noorPoints ?? 0;
 
     return SafeArea(child: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 110),
@@ -639,6 +801,17 @@ class _ImpactTabState extends State<_ImpactTab> {
             ]),
           ),
         ),
+        // ── My personal donation history ─────────────────────────────────
+        if (_myDonations.isNotEmpty) ...[
+          _MyDonationsSection(
+            donations: _myDonations,
+            availablePoints: availablePoints,
+            onDonateMore: (project) {
+              _showDonateSheet(context, project, availablePoints, parentState);
+            },
+          ),
+          const SizedBox(height: 24),
+        ],
         Text('Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
         const SizedBox(height: 20),
 
@@ -682,9 +855,32 @@ class _ImpactTabState extends State<_ImpactTab> {
                 Text('${((p['current_points'] as num) / (p['target_points'] as num) * 100).toStringAsFixed(0)}%',
                     style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: _C.amber)),
               ]),
-              const SizedBox(height: 8),
-              Text('Sponsored by ${p['sponsor']}',
-                  style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+              const SizedBox(height: 14),
+              Row(children: [
+                Text('Sponsored by ${p['sponsor']}',
+                    style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+                const Spacer(),
+                // ── Donate Button ──
+                InkWell(
+                  onTap: availablePoints > 0 ? () {
+                    _showDonateSheet(context, p, availablePoints, parentState);
+                  } : null,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: availablePoints > 0 ? _C.navImpact : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: availablePoints > 0 ? [BoxShadow(color: _C.navImpact.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))] : null,
+                    ),
+                    child: Row(children: [
+                      const Text('🪙', style: TextStyle(fontSize: 12)),
+                      const SizedBox(width: 4),
+                      Text('Donate', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: availablePoints > 0 ? Colors.white : Colors.grey.shade600)),
+                    ]),
+                  ),
+                ),
+              ]),
             ]),
           ),
           const SizedBox(height: 16),
@@ -717,7 +913,298 @@ class _ImpactTabState extends State<_ImpactTab> {
       ]),
     ));
   }
+
+  // ── Donate Dialog ──────────────────────────────────────────────────────────
+  void _showDonateSheet(BuildContext context, Map<String, dynamic> project, int availablePoints, _DashboardScreenState? parentState) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: _DonateSheetContent(
+          project: project,
+          availablePoints: availablePoints,
+          onSuccess: (amount) {
+            // Refresh the Impact tab
+            _load();
+            // Update the parent dashboard (header) balance smoothly
+            if (parentState != null) {
+              parentState.setState(() {
+                parentState._noorPoints = (parentState._noorPoints - amount).clamp(0, 99999999);
+              });
+            }
+          },
+        ),
+      ),
+    );
+  }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DONATE BOTTOM SHEET CONTENT
+// ─────────────────────────────────────────────────────────────────────────────
+class _DonateSheetContent extends StatefulWidget {
+  final Map<String, dynamic> project;
+  final int availablePoints;
+  final Function(int) onSuccess;
+
+  const _DonateSheetContent({
+    required this.project,
+    required this.availablePoints,
+    required this.onSuccess,
+  });
+
+  @override
+  State<_DonateSheetContent> createState() => _DonateSheetContentState();
+}
+
+class _DonateSheetContentState extends State<_DonateSheetContent> {
+  int _selectedAmount = 50;
+  bool _donating = false;
+  bool _success = false;
+  String? _errorMsg;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.availablePoints < 50) _selectedAmount = widget.availablePoints;
+  }
+
+  void _setAmount(int amt) {
+    setState(() {
+      _selectedAmount = amt.clamp(1, widget.availablePoints);
+      _errorMsg = null;
+    });
+  }
+
+  Future<void> _processDonation() async {
+    if (_selectedAmount <= 0 || _selectedAmount > widget.availablePoints) return;
+    
+    setState(() {
+      _donating = true;
+      _errorMsg = null;
+    });
+
+    final error = await DonationService.instance.donate(
+      widget.project['id'] as String, 
+      _selectedAmount,
+    );
+
+    if (!mounted) return;
+
+    if (error == null) {
+      // Success
+      setState(() {
+        _donating = false;
+        _success = true;
+      });
+      widget.onSuccess(_selectedAmount);
+      
+      // Auto-close after 2 seconds
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      });
+    } else {
+      // Error
+      setState(() {
+        _donating = false;
+        _success = false;
+        _errorMsg = error;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    
+    return Container(
+      margin: EdgeInsets.only(bottom: bottomInset),
+      padding: const EdgeInsets.fromLTRB(24, 32, 24, 34),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: SafeArea(
+        top: false,
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_success) ...[
+                // SUCCESS STATE
+                const SizedBox(height: 8),
+                const Icon(Icons.check_circle_rounded, color: _C.teal, size: 72),
+                const SizedBox(height: 20),
+                Text('Alhamdulillah!', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
+                const SizedBox(height: 12),
+                Text('You donated $_selectedAmount points to\n${widget.project['title']}.', 
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(fontSize: 16, color: _C.sub, height: 1.4)),
+                const SizedBox(height: 32),
+              ] else ...[
+              // INPUT STATE
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: _C.communityBg, shape: BoxShape.circle),
+                    child: Text(widget.project['emoji'], style: const TextStyle(fontSize: 28)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text('Support this Cause', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: _C.text)),
+              Text(widget.project['title'], style: GoogleFonts.outfit(fontSize: 14, color: _C.sub, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 24),
+
+              // Available Balance
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: _C.bg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _C.border),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('🪙', style: TextStyle(fontSize: 18)),
+                    const SizedBox(width: 8),
+                    Text('Available Balance:', style: GoogleFonts.outfit(fontSize: 14, color: _C.sub)),
+                    const SizedBox(width: 8),
+                    Text('${widget.availablePoints} pts', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: _C.text)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Quick amount selectors
+              Row(
+                children: [
+                  _AmountPill(50, _selectedAmount, widget.availablePoints, () => _setAmount(50)),
+                  const SizedBox(width: 10),
+                  _AmountPill(100, _selectedAmount, widget.availablePoints, () => _setAmount(100)),
+                  const SizedBox(width: 10),
+                  _AmountPill(500, _selectedAmount, widget.availablePoints, () => _setAmount(500)),
+                  const SizedBox(width: 10),
+                  _AmountPill(widget.availablePoints, _selectedAmount, widget.availablePoints, () => _setAmount(widget.availablePoints), isMax: true),
+                ],
+              ),
+              const SizedBox(height: 24),
+              
+              Text('Donation Amount', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: _C.sub)),
+              const SizedBox(height: 8),
+              
+              // Big Number Display
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('$_selectedAmount', style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.w800, color: _C.navImpact, height: 1.0)),
+                  const SizedBox(width: 6),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text('points', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: _C.sub)),
+                  ),
+                ],
+              ),
+              
+              // Slider
+              Slider(
+                value: _selectedAmount.toDouble(),
+                min: 1,
+                max: widget.availablePoints.toDouble().clamp(1.0, double.infinity),
+                activeColor: _C.navImpact,
+                inactiveColor: _C.navImpact.withValues(alpha: 0.2),
+                onChanged: widget.availablePoints > 0 ? (val) => _setAmount(val.round()) : null,
+              ),
+
+              if (_errorMsg != null) ...[
+                const SizedBox(height: 8),
+                Text(_errorMsg!, style: GoogleFonts.outfit(fontSize: 13, color: Colors.red.shade700, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 8),
+              ] else ...[
+                const SizedBox(height: 16),
+              ],
+
+              // Donate Button
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: _donating || widget.availablePoints <= 0 ? null : _processDonation,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _C.navImpact,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey.shade300,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: _donating
+                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
+                    : Text('Confirm Donation', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700)),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    ),
+  );
+  }
+}
+
+class _AmountPill extends StatelessWidget {
+  final int amount;
+  final int selected;
+  final int max;
+  final VoidCallback onTap;
+  final bool isMax;
+
+  const _AmountPill(this.amount, this.selected, this.max, this.onTap, {this.isMax = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = amount == selected;
+    final isDisabled = amount > max && !isMax;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: isDisabled ? null : onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? _C.navImpact : (isDisabled ? Colors.grey.shade100 : Colors.white),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? _C.navImpact : (isDisabled ? Colors.grey.shade200 : _C.border),
+              width: 1.5,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              isMax ? 'MAX' : '$amount',
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected ? Colors.white : (isDisabled ? Colors.grey.shade400 : _C.text),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RANKING TAB  — reads from profiles, shows leaderboard

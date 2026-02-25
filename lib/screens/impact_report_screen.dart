@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/donation_service.dart';
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 class _C {
@@ -31,6 +32,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   final _sb = Supabase.instance.client;
   Map<String, dynamic>? _analytics;
   Map<String, dynamic>? _profile;
+  int _totalDonated = 0;
   bool _loading = true;
   late AnimationController _anim;
 
@@ -50,7 +52,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     if (uid == null) { setState(() => _loading = false); return; }
 
     try {
-      final results = await Future.wait([
+      final results = await Future.wait<dynamic>([
         _sb.from('user_analytics')
             .select('country_code, device_model, session_duration_sec, noor_coins_earned, last_active_at')
             .eq('user_id', uid)
@@ -59,9 +61,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             .select('display_name, total_xp, level, noor_points')
             .eq('id', uid)
             .maybeSingle(),
+        DonationService.instance.getUserTotalDonations(),
       ]);
       _analytics = results[0] as Map<String, dynamic>?;
       _profile   = results[1] as Map<String, dynamic>?;
+      _totalDonated = results[2] as int;
     } catch (_) {}
 
     if (mounted) setState(() => _loading = false);
@@ -147,13 +151,23 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     final coins  = (_analytics?['noor_coins_earned'] as num?)?.toInt() ?? 0;
     final level  = (_profile?['level'] as num?)?.toInt() ?? 1;
 
-    return Row(children: [
-      Expanded(child: _HeroTile('⭐', 'Total XP', _fmt(xp), _C.purple)),
-      const SizedBox(width: 12),
-      Expanded(child: _HeroTile('🪙', 'Coins Earned', _fmt(coins), _C.gold)),
-      const SizedBox(width: 12),
-      Expanded(child: _HeroTile('📈', 'Level', '$level', _C.rose)),
-    ]);
+    return Column(
+      children: [
+        Row(children: [
+          Expanded(child: _HeroTile('⭐', 'Total XP', _fmt(xp), _C.purple)),
+          const SizedBox(width: 12),
+          Expanded(child: _HeroTile('🪙', 'Coins Earned', _fmt(coins), _C.gold)),
+          const SizedBox(width: 12),
+          Expanded(child: _HeroTile('📈', 'Level', '$level', _C.rose)),
+        ]),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(
+            child: _HeroTile('💧', 'Points Donated to Community', _fmt(_totalDonated), _C.teal),
+          ),
+        ]),
+      ],
+    );
   }
 
   // ── Session time card ──────────────────────────────────────────────────────
