@@ -28,7 +28,11 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      # 5. Build the APK (Debug version for testing)
+      # 5. Remove local-only Gradle Java home (Windows path not valid on CI)
+      - name: Fix Gradle Java Home
+        run: sed -i '/org.gradle.java.home/d' android/gradle.properties
+
+      # 6. Build the APK (Debug version for testing)
       - name: Build APK
         run: flutter build apk --debug
 
