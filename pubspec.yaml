@@ -4,7 +4,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.7.0 <4.0.0'
+
 
 dependencies:
   flutter:
@@ -30,9 +31,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-# This forces all packages to share the exact same version of vector_math
-dependency_overrides:
-  vector_math: 2.1.4
 
 flutter:
   uses-material-design: true
