@@ -402,7 +402,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
     return CustomScrollView(slivers: [
       // ── Sticky header ─────────────────────────────────────────────────────
       SliverAppBar(
-        expandedHeight: 200,
+        expandedHeight: 145,
         pinned: true,
         backgroundColor: _kTeal,
         surfaceTintColor: Colors.transparent,
@@ -420,17 +420,13 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               ),
             ),
             child: SafeArea(child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 52, 20, 20),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 // Arabic header
                 Text('القرآن الكريم',
-                    style: GoogleFonts.amiri(fontSize: 32, fontWeight: FontWeight.w700,
+                    style: GoogleFonts.amiri(fontSize: 28, fontWeight: FontWeight.w700,
                         color: Colors.white.withValues(alpha: 0.9)),
                     textDirection: TextDirection.rtl),
-                const SizedBox(height: 4),
-                Text('The Noble Quran',
-                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w700,
-                        color: Colors.white)),
                 const SizedBox(height: 4),
                 Text('Earn +10 Noor Points per verse read',
                     style: GoogleFonts.outfit(fontSize: 13,
@@ -438,11 +434,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               ]),
             )),
           ),
-          title: Text('Al-Quran',
-              style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700,
-                  color: Colors.white)),
-          centerTitle: false,
-          titlePadding: const EdgeInsets.only(left: 52, bottom: 16),
+
         ),
       ),
 
