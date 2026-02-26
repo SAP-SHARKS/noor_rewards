@@ -105,7 +105,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
   // ── App bar ────────────────────────────────────────────────────────────────
   Widget _buildAppBar() => SliverAppBar(
-    expandedHeight: 180,
+    expandedHeight: 120,
     pinned: true,
     backgroundColor: _C.teal,
     automaticallyImplyLeading: false,
@@ -132,12 +132,15 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             child: _Circle(40, Colors.white.withValues(alpha: 0.08))),
           // Content
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center, children: [
               Text('Your Impact', style: GoogleFonts.outfit(
-                  fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white)),
+                  fontSize: 26, fontWeight: FontWeight.w900, color: Colors.white)),
+              const SizedBox(height: 4),
               Text('A private view of your worship journey',
-                  style: GoogleFonts.outfit(fontSize: 14, color: Colors.white70)),
+                  style: GoogleFonts.outfit(fontSize: 13, color: Colors.white70),
+                  textAlign: TextAlign.center),
             ]),
           ),
         ]),
