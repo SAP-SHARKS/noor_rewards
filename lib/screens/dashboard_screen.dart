@@ -12,7 +12,7 @@ import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
 
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
-const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io', 'zaheerabbas12121994@gmail.com'};
+const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 class _C {
