@@ -12,7 +12,7 @@ import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
 
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
-const _kAdminEmails = {'pak.zakn@gmail.com'};
+const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io', 'zaheerabbas12121994@gmail.com'};
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 class _C {
@@ -491,7 +491,8 @@ class _CommunityCard extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('Community Progress: ${project['title']} ${project['emoji']}',
-            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF7A5C00))),
+            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF7A5C00)),
+            maxLines: 2, overflow: TextOverflow.ellipsis),
         const SizedBox(height: 14),
         TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: pct),
@@ -868,9 +869,10 @@ class _ImpactTabState extends State<_ImpactTab> {
               ]),
               const SizedBox(height: 14),
               Row(children: [
-                Text('Sponsored by ${p['sponsor']}',
-                    style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-                const Spacer(),
+                Expanded(child: Text('Sponsored by ${p['sponsor']}',
+                    style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
+                    maxLines: 1, overflow: TextOverflow.ellipsis)),
+                const SizedBox(width: 8),
                 // ── Donate Button ──
                 InkWell(
                   onTap: availablePoints > 0 ? () {
@@ -1088,7 +1090,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   children: [
                     const Text('🪙', style: TextStyle(fontSize: 18)),
                     const SizedBox(width: 8),
-                    Text('Available Balance:', style: GoogleFonts.outfit(fontSize: 14, color: _C.sub)),
+                    Flexible(child: Text('Available Balance:', style: GoogleFonts.outfit(fontSize: 14, color: _C.sub), overflow: TextOverflow.ellipsis)),
                     const SizedBox(width: 8),
                     Text('${widget.availablePoints} pts', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: _C.text)),
                   ],
@@ -1265,12 +1267,12 @@ class _RankingTabState extends State<_RankingTab> {
           child: Row(children: [
             const Text('🏅', style: TextStyle(fontSize: 40)),
             const SizedBox(width: 16),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Your Rank: #$_myRank',
                   style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _C.text)),
               Text('Out of ${_leaders.length} users',
                   style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-            ]),
+            ])),
           ]),
         ),
         const SizedBox(height: 20),
@@ -1357,12 +1359,12 @@ class _RankingTabState extends State<_RankingTab> {
             Container(width: 52, height: 52, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                 child: const Center(child: Text('🔥', style: TextStyle(fontSize: 26)))),
             const SizedBox(width: 14),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('7 Day Streak!',
                   style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFFFF6B9D))),
               Text('Keep it going to unlock rewards',
                   style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-            ]),
+            ])),
           ]),
         ),
       ]),
@@ -1445,11 +1447,11 @@ class _ProfileTab extends StatelessWidget {
               Container(width: 52, height: 52, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                   child: const Center(child: Text('🔥', style: TextStyle(fontSize: 26)))),
               const SizedBox(width: 14),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('7 Day Streak',
                     style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: const Color(0xFFFF6B9D))),
                 Text('Current streak', style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-              ]),
+              ])),
             ]),
           ),
           const SizedBox(height: 16),

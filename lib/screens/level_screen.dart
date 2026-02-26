@@ -414,13 +414,13 @@ class _BadgesTab extends StatelessWidget {
           child: Row(children: [
             const Text('🏅', style: TextStyle(fontSize: 40)),
             const SizedBox(width: 16),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('${earned.length} / ${badges.length} Earned',
                   style: GoogleFonts.outfit(
                       fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
               Text('Keep going — more badges to unlock!',
                   style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-            ]),
+            ])),
           ]),
         ),
 
