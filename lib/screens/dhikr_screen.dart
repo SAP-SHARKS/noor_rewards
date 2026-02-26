@@ -421,13 +421,16 @@ class _DhikrScreenState extends State<DhikrScreen>
                         color: _kPink.withValues(alpha: 0.40),
                         blurRadius: 32, spreadRadius: 4)],
                   ),
-                  child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  child: Center(child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Text('TAP',
                         style: GoogleFonts.outfit(
                             fontSize: 24, fontWeight: FontWeight.w800, color: _kWhite)),
                     Text(azkar.transliteration,
-                        style: GoogleFonts.outfit(fontSize: 11, color: Colors.white70)),
-                  ])),
+                        style: GoogleFonts.outfit(fontSize: 11, color: Colors.white70),
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ]))),
                 ),
               ),
             ),
