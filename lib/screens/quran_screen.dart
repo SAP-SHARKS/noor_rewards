@@ -330,32 +330,59 @@ class _QuranScreenState extends State<QuranScreen> {
       }
     }
 
-    // ── API call ─────────────────────────────────────────────────────────────
+    // ── Supabase call (Fetch Entire Surah) ───────────────────────────────────
     try {
       final recEdition = _reciters[_reciterIdx].$1;
-      final url = Uri.parse(
-          'https://api.alquran.cloud/v1/ayah/$surah:$ayah/editions/quran-uthmani,$_translationEdition,$recEdition');
-      final res = await http.get(url, headers: {'Accept': 'application/json'})
-          .timeout(const Duration(seconds: 12));
+      
+      // Calculate global verse ID range for the entire surah
+      int startVerseId = 1;
+      for (int i = 1; i < surah; i++) {
+        startVerseId += _surahLengths[i];
+      }
+      int endVerseId = startVerseId + _surahLengths[surah] - 1;
 
-      if (res.statusCode == 200) {
-        final list = (jsonDecode(res.body)['data'] as List);
-        final arabic   = list[0]['text'] as String? ?? '';
-        final trans    = list[1]['text'] as String? ?? '';
-        final audio    = list[2]['audio'] as String?;
-        final sName    = list[0]['surah']['englishName'] as String? ?? '';
+      // Fetch all Arabic verses for this surah
+      final arabicList = await _sb.from('quran_verses')
+          .select('ayah, text_uthmani')
+          .eq('surah', surah);
 
-        // Write to Hive cache
-        await _cache.put(cacheKey, {
-          'arabic': arabic, 'trans': trans, 'audio': audio,
-          'surahName': sName, 'ts': DateTime.now().toIso8601String(),
+      // Fetch all Translations for this surah
+      final transList = await _sb.from('quran_translations')
+          .select('verse_id, text')
+          .gte('verse_id', startVerseId)
+          .lte('verse_id', endVerseId)
+          .eq('edition', _translationEdition);
+
+      // Create maps for quick lookup
+      final arabicMap = {for (var item in arabicList) item['ayah'] as int: item['text_uthmani'] as String};
+      final transMap = {for (var item in transList) item['verse_id'] as int: item['text'] as String};
+
+      final sName = _surahNames[surah];
+      final nowStr = DateTime.now().toIso8601String();
+
+      // Pre-cache all verses in the surah
+      for (int a = 1; a <= _surahLengths[surah]; a++) {
+        int vId = startVerseId + a - 1;
+        String aText = arabicMap[a] ?? '';
+        String tText = transMap[vId] ?? '';
+        String audio = 'https://cdn.islamic.network/quran/audio/128/$recEdition/$vId.mp3';
+
+        String cKey = '$surah:$a:$_translationEdition:$recEdition';
+        await _cache.put(cKey, {
+          'arabic': aText, 'trans': tText, 'audio': audio,
+          'surahName': sName, 'ts': nowStr,
         });
+      }
 
+      // Read current ayah from the newly populated cache
+      final newCached = _cache.get(cacheKey);
+      if (newCached != null && newCached['arabic'].toString().isNotEmpty) {
         if (mounted) setState(() {
-          _arabic = arabic; _translation = trans;
-          // Only update audioUrl when the API actually returns one — avoids hiding the player
-          if (audio != null && audio.isNotEmpty) _audioUrl = audio;
-          _surahName = sName; _loading = false;
+          _arabic = newCached['arabic'];
+          _translation = newCached['trans'];
+          _audioUrl = newCached['audio'];
+          _surahName = newCached['surahName'];
+          _loading = false;
         });
       } else {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
@@ -367,43 +394,45 @@ class _QuranScreenState extends State<QuranScreen> {
 
   // ── Navigate to next ayah ────────────────────────────────────────────────────
   Future<void> _nextAyah() async {
-    if (_saving) return;
-    setState(() => _saving = true);
     await _player.stop();
 
     final maxAyah   = _surahLengths[_surah];
     final nextAyah  = _ayah < maxAyah ? _ayah + 1 : 1;
     final nextSurah = _ayah < maxAyah ? _surah : (_surah < 114 ? _surah + 1 : 1);
 
-    final uid = _sb.auth.currentUser?.id;
-    if (uid != null) {
-      try {
-        await _sb.rpc('earn_quran_points', params: {'p_surah': nextSurah, 'p_ayah': nextAyah});
-        // Award XP for reading one ayah
-        await XpService.instance.earnXp(XpReward.ayahRead);
-        // Award first-read badge on the very first ayah
-        if (_ayahsToday == 0) {
-          await XpService.instance.awardBadge('first_quran');
-        }
-        final today = _todayStr();
-        await _sb.from('quran_progress').update({
-          'current_surah': nextSurah, 'current_ayah': nextAyah,
-          'ayahs_read_today': _ayahsToday + 1,
-          'last_read_date': today, 'updated_at': DateTime.now().toIso8601String(),
-        }).eq('user_id', uid);
-      } catch (_) {}
-    }
+    // Run XP and progress saving in background (don't block UI)
+    _saveReadingProgress(nextSurah, nextAyah);
 
     setState(() {
       _surah = nextSurah; _ayah = nextAyah;
-      _ayahsToday++; _pointsToday += XpReward.ayahRead; _saving = false;
+      _ayahsToday++; _pointsToday += XpReward.ayahRead;
     });
-    await _fetchAyah(nextSurah, nextAyah);
+    // Fetch ayah (will pull instantly from cache if same surah)
+    _fetchAyah(nextSurah, nextAyah);
+  }
+
+  Future<void> _saveReadingProgress(int s, int a) async {
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a});
+      // Award XP for reading one ayah
+      await XpService.instance.earnXp(XpReward.ayahRead);
+      // Award first-read badge on the very first ayah
+      if (_ayahsToday == 0) {
+        await XpService.instance.awardBadge('first_quran');
+      }
+      final today = _todayStr();
+      await _sb.from('quran_progress').update({
+        'current_surah': s, 'current_ayah': a,
+        'ayahs_read_today': _ayahsToday + 1, // Note: We incremented _ayahsToday in UI before this completes, so we use _ayahsToday
+        'last_read_date': today, 'updated_at': DateTime.now().toIso8601String(),
+      }).eq('user_id', uid);
+    } catch (_) {}
   }
 
   // ── Navigate to previous ayah ─────────────────────────────────────────────────
   Future<void> _prevAyah() async {
-    if (_saving) return;
     await _player.stop();
     int prevAyah = _ayah - 1, prevSurah = _surah;
     if (prevAyah < 1) {
@@ -411,7 +440,7 @@ class _QuranScreenState extends State<QuranScreen> {
       prevAyah  = _surahLengths[prevSurah]; // last ayah of prev surah
     }
     setState(() { _surah = prevSurah; _ayah = prevAyah; });
-    await _fetchAyah(prevSurah, prevAyah);
+    _fetchAyah(prevSurah, prevAyah);
   }
 
   // ── Jump to specific surah ────────────────────────────────────────────────────
