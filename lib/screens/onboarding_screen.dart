@@ -162,10 +162,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.12),
+                        color: Colors.white.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Text(
@@ -272,7 +272,7 @@ class _PageSlide extends StatelessWidget {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withOpacity(0.06),
+                        Colors.white.withValues(alpha: 0.06),
                         Colors.transparent,
                       ],
                     ),
@@ -429,7 +429,7 @@ class _NextButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.45),
+              color: color.withValues(alpha: 0.45),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),
@@ -472,7 +472,7 @@ class _IslamicPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.03)
+      ..color = Colors.white.withValues(alpha: 0.03)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
 
@@ -530,7 +530,7 @@ class _MoonIllustration extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                  color: const Color(0xFF00D4AA).withOpacity(0.15), width: 1),
+                  color: const Color(0xFF00D4AA).withValues(alpha: 0.15), width: 1),
             ),
           ),
           Container(
@@ -539,7 +539,7 @@ class _MoonIllustration extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                  color: const Color(0xFF00D4AA).withOpacity(0.1), width: 1),
+                  color: const Color(0xFF00D4AA).withValues(alpha: 0.1), width: 1),
             ),
           ),
           // Moon
@@ -581,10 +581,10 @@ class _StarDot extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
             blurRadius: size * 2,
             spreadRadius: size * 0.5,
           ),
@@ -602,7 +602,7 @@ class _CrescentPainter extends CustomPainter {
     final r = size.width * 0.46;
 
     final shadowPaint = Paint()
-      ..color = const Color(0xFF00D4AA).withOpacity(0.25)
+      ..color = const Color(0xFF00D4AA).withValues(alpha: 0.25)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
 
     // Glow shadow (outside saveLayer so it's visible)
@@ -682,7 +682,7 @@ class _TasbihPainter extends CustomPainter {
     const beadCount = 33;
 
     final linePaint = Paint()
-      ..color = const Color(0xFFFFAA00).withOpacity(0.25)
+      ..color = const Color(0xFFFFAA00).withValues(alpha: 0.25)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -699,7 +699,7 @@ class _TasbihPainter extends CustomPainter {
       final beadPaint = Paint()
         ..color = isSpecial
             ? const Color(0xFFFFAA00)
-            : const Color(0xFFFFAA00).withOpacity(0.45)
+            : const Color(0xFFFFAA00).withValues(alpha: 0.45)
         ..style = PaintingStyle.fill;
 
       if (isSpecial) {
@@ -708,7 +708,7 @@ class _TasbihPainter extends CustomPainter {
           Offset(bx, by),
           9,
           Paint()
-            ..color = const Color(0xFFFFAA00).withOpacity(0.3)
+            ..color = const Color(0xFFFFAA00).withValues(alpha: 0.3)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
         );
       }
@@ -740,7 +740,7 @@ class _QuranIllustration extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF00C875).withOpacity(0.3),
+                  const Color(0xFF00C875).withValues(alpha: 0.3),
                   Colors.transparent,
                 ],
               ),
@@ -797,7 +797,7 @@ class _GeoLine extends StatelessWidget {
     return Container(
       width: 32,
       height: 1,
-      color: const Color(0xFF00C875).withOpacity(0.5),
+      color: const Color(0xFF00C875).withValues(alpha: 0.5),
     );
   }
 }
@@ -815,7 +815,7 @@ class _OpenBookPainter extends CustomPainter {
       ..color = const Color(0xFF005540)
       ..style = PaintingStyle.fill;
     final linePaint = Paint()
-      ..color = const Color(0xFF00C875).withOpacity(0.35)
+      ..color = const Color(0xFF00C875).withValues(alpha: 0.35)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 
@@ -900,7 +900,7 @@ class _SadaqahIllustration extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                  color: const Color(0xFFDD88FF).withOpacity(0.3), width: 1.5),
+                  color: const Color(0xFFDD88FF).withValues(alpha: 0.3), width: 1.5),
             ),
           ),
           // Inner glow
@@ -911,7 +911,7 @@ class _SadaqahIllustration extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFFDD88FF).withOpacity(0.3),
+                  const Color(0xFFDD88FF).withValues(alpha: 0.3),
                   Colors.transparent,
                 ],
               ),
@@ -964,9 +964,9 @@ class _RewardChip extends StatelessWidget {
       height: 36,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         border:
-            Border.all(color: const Color(0xFFDD88FF).withOpacity(0.3)),
+            Border.all(color: const Color(0xFFDD88FF).withValues(alpha: 0.3)),
       ),
       child: Center(child: Text(emoji, style: const TextStyle(fontSize: 16))),
     );
@@ -979,7 +979,7 @@ class _LightRaysPainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final paint = Paint()
-      ..color = const Color(0xFFDD88FF).withOpacity(0.08)
+      ..color = const Color(0xFFDD88FF).withValues(alpha: 0.08)
       ..style = PaintingStyle.fill;
 
     const rayCount = 12;

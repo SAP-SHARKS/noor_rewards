@@ -110,7 +110,8 @@ class _QuranScreenState extends State<QuranScreen> {
   final Set<String> _favourites = {};
 
   // ── UI state ──────────────────────────────────────────────────────────────────
-  bool _loading = true, _saving = false;
+  bool _loading = true;
+  final bool _saving = false;
 
   // ── Inline tafsir (bottom-sheet) ──────────────────────────────────────────────
   static const _qTafsirEditions = [
@@ -377,13 +378,15 @@ class _QuranScreenState extends State<QuranScreen> {
       // Read current ayah from the newly populated cache
       final newCached = _cache.get(cacheKey);
       if (newCached != null && newCached['arabic'].toString().isNotEmpty) {
-        if (mounted) setState(() {
+        if (mounted) {
+          setState(() {
           _arabic = newCached['arabic'];
           _translation = newCached['trans'];
           _audioUrl = newCached['audio'];
           _surahName = newCached['surahName'];
           _loading = false;
         });
+        }
       } else {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
       }
@@ -731,7 +734,11 @@ class _QuranScreenState extends State<QuranScreen> {
     final key = '$_surah:$_ayah';
     final adding = !_isFavourited;
     setState(() {
-      if (adding) _favourites.add(key); else _favourites.remove(key);
+      if (adding) {
+        _favourites.add(key);
+      } else {
+        _favourites.remove(key);
+      }
     });
     try {
       if (adding) {
@@ -747,7 +754,11 @@ class _QuranScreenState extends State<QuranScreen> {
       }
     } catch (_) {
       setState(() {
-        if (adding) _favourites.remove(key); else _favourites.add(key);
+        if (adding) {
+          _favourites.remove(key);
+        } else {
+          _favourites.add(key);
+        }
       });
     }
     _showSnack(adding ? '♥️ Added to Favourites' : 'Removed from Favourites');
@@ -1338,7 +1349,17 @@ class _QuranScreenState extends State<QuranScreen> {
       body: Stack(children: [
         Column(children: [
 
-          Expanded(child: SingleChildScrollView(
+          Expanded(child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity == null) return;
+              if (details.primaryVelocity! < -300) {
+                _nextAyah();
+              } else if (details.primaryVelocity! > 300) {
+                _prevAyah();
+              }
+            },
+            child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(20, 16, 20,
                 _fullScreenMode ? 80 : 0),
             child: Column(children: [
@@ -1642,7 +1663,7 @@ class _QuranScreenState extends State<QuranScreen> {
               ],
               const SizedBox(height: 16),
             ]),
-          )),
+          ))),
           // Audio player — shown only when user taps Listen
           if (!_fullScreenMode)
             AnimatedSize(
