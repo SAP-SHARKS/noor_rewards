@@ -8,12 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../services/settings_service.dart';
-import '../../models/app_config.dart';
 import 'sponsor_analytics_section.dart';
 
 // ── palette ─────────────────────────────────────────────────────────────────
 const _kSideBg  = Color(0xFF0F172A);
-const _kSideAct = Color(0xFF1E293B);
 const _kAccent  = Color(0xFF2BAE99);
 const _kBg      = Color(0xFFF8FAFC);
 const _kWhite   = Colors.white;
@@ -245,10 +243,10 @@ class _OverviewSectionState extends State<_OverviewSection> {
       final profiles  = await _sb.from('profiles').select('total_xp').count(CountOption.exact);
       final projects  = await _sb.from('community_projects').select('id').count(CountOption.exact);
       final badges    = await _sb.from('user_badges').select('id').count(CountOption.exact);
-      _totalUsers    = profiles.count ?? 0;
+      _totalUsers    = profiles.count;
       _totalXp       = (profiles.data as List).fold(0, (s, r) => s + ((r['total_xp'] as num?)?.toInt() ?? 0));
-      _totalProjects = projects.count ?? 0;
-      _totalBadges   = badges.count ?? 0;
+      _totalProjects = projects.count;
+      _totalBadges   = badges.count;
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
@@ -369,7 +367,9 @@ class _EconomySectionState extends State<_EconomySection> {
   }
 
   @override
-  void dispose() { for (final c in _ctrl.values) c.dispose(); super.dispose(); }
+  void dispose() { for (final c in _ctrl.values) {
+    c.dispose();
+  } super.dispose(); }
 
   Future<void> _save() async {
     setState(() => _saving = true);
@@ -793,7 +793,8 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                     } else {
                       await _sb.from('community_projects').update(payload).eq('id', existing['id']);
                     }
-                    if (context.mounted) Navigator.pop(context);
+                    if (!mounted) return;
+                    Navigator.pop(context);
                     _load();
                   },
                   child: const Text('Save', style: TextStyle(color: _kWhite)),
@@ -946,8 +947,8 @@ class _UsersSectionState extends State<_UsersSection> {
           decoration: const InputDecoration(labelText: 'Amount of XP')),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-        ElevatedButton(onPressed: () => Navigator.pop(context, true),
-            child: const Text('Grant'), style: ElevatedButton.styleFrom(backgroundColor: _kAccent)),
+        ElevatedButton(onPressed: () => Navigator.pop(context, true), style: ElevatedButton.styleFrom(backgroundColor: _kAccent),
+            child: const Text('Grant')),
       ],
     ));
     if (confirm == true && ctrl.text.isNotEmpty) {
@@ -1406,17 +1407,3 @@ class _SaveButton extends StatelessWidget {
     ),
   );
 }
-
-TableRow _tableHeader(List<String> cols) => TableRow(
-  decoration: const BoxDecoration(color: _kBg),
-  children: cols.map((h) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-    child: Text(h, style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: _kSub)),
-  )).toList(),
-);
-
-Widget _tcell(String v, {bool bold = true, bool sub = false, Color? color}) =>
-    Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        child: Text(v, style: GoogleFonts.outfit(
-            fontSize: 13, fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
-            color: color ?? (sub ? _kSub : _kText))));

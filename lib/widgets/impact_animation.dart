@@ -109,7 +109,7 @@ class _ImpactAnimationState extends State<ImpactAnimation>
             GestureDetector(
               onTap: _dismiss,
               child: Container(
-                color: Colors.black.withOpacity(0.55),
+                color: Colors.black.withValues(alpha: 0.55),
               ),
             ),
 
@@ -122,14 +122,14 @@ class _ImpactAnimationState extends State<ImpactAnimation>
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF00A86B).withOpacity(0.25),
+                    color: const Color(0xFF00A86B).withValues(alpha: 0.25),
                     blurRadius: 40,
                     spreadRadius: 5,
                     offset: const Offset(0, 16),
                   ),
                 ],
                 border: Border.all(
-                  color: const Color(0xFFD4AF37).withOpacity(0.3), // Gold border
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.3), // Gold border
                   width: 1.5,
                 ),
               ),
@@ -150,7 +150,7 @@ class _ImpactAnimationState extends State<ImpactAnimation>
                         height: 150,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFF00A86B).withOpacity(0.12),
+                          color: const Color(0xFF00A86B).withValues(alpha: 0.12),
                         ),
                         child: const Icon(
                           Icons.check_circle_rounded,
@@ -237,7 +237,7 @@ class _DismissCountdownBarState extends State<_DismissCountdownBar>
           child: LinearProgressIndicator(
             value: 1.0 - _controller.value, // Counts DOWN
             minHeight: 4,
-            backgroundColor: const Color(0xFFD4AF37).withOpacity(0.15),
+            backgroundColor: const Color(0xFFD4AF37).withValues(alpha: 0.15),
             valueColor:
                 const AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)), // Gold
           ),

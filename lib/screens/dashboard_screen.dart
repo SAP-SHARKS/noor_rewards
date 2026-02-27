@@ -25,12 +25,8 @@ class _C {
   static const amber       = Color(0xFFF5A623);
   static const quranCard   = Color(0xFFC8ECE8);
   static const dhikrCard   = Color(0xFFF9D5D8);
-  static const tafsirCard  = Color(0xFFCCE5CC);
-  static const duaCard     = Color(0xFFFFD5B3);
   static const quranIcon   = Color(0xFF2BAE99);
   static const dhikrIcon   = Color(0xFFE05C6A);
-  static const tafsirIcon  = Color(0xFF4A9B5F);
-  static const duaIcon     = Color(0xFFD4783A);
   static const navHome     = Color(0xFFE8643A);
   static const navImpact   = Color(0xFF2BAE9B);
   static const navRanking  = Color(0xFFD4A017);

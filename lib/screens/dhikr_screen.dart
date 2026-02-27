@@ -291,9 +291,19 @@ class _DhikrScreenState extends State<DhikrScreen>
         // ── Scrollable body ─────────────────────────────────────────────────
         Expanded(child: Builder(builder: (ctx) {
           final bottom = MediaQuery.of(ctx).padding.bottom;
-          return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 24 + bottom),
-          child: Column(children: [
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity == null) return;
+              if (details.primaryVelocity! < -300) {
+                _switchDhikr(1);
+              } else if (details.primaryVelocity! > 300) {
+                _switchDhikr(-1);
+              }
+            },
+            child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 24 + bottom),
+            child: Column(children: [
 
             // Dhikr navigation row
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -455,7 +465,7 @@ class _DhikrScreenState extends State<DhikrScreen>
             ]),
 
           ]),
-        );  // end SingleChildScrollView
+        ));  // end SingleChildScrollView and GestureDetector
         })),  // end Builder
       ])),
     );
