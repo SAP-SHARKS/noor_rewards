@@ -175,7 +175,7 @@ class _QuranScreenState extends State<QuranScreen> {
       if (mounted) setState(() => _isPlaying = s.playing);
       // Auto-advance: when playback completes, move to next ayah
       if (s.processingState == ProcessingState.completed && _autoAdvance && mounted) {
-        _nextAyah();
+        _nextAyah(fromAutoPlay: true);
       }
     });
     _player.positionStream.listen((p) {
@@ -396,39 +396,46 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   // ── Navigate to next ayah ────────────────────────────────────────────────────
-  Future<void> _nextAyah() async {
+  Future<void> _nextAyah({bool fromAutoPlay = false}) async {
     await _player.stop();
 
     final maxAyah   = _surahLengths[_surah];
     final nextAyah  = _ayah < maxAyah ? _ayah + 1 : 1;
     final nextSurah = _ayah < maxAyah ? _surah : (_surah < 114 ? _surah + 1 : 1);
 
-    // Run XP and progress saving in background (don't block UI)
-    _saveReadingProgress(nextSurah, nextAyah);
+    bool earnRewards = !fromAutoPlay && !_autoAdvance && !_repeatAyah;
 
     setState(() {
       _surah = nextSurah; _ayah = nextAyah;
-      _ayahsToday++; _pointsToday += XpReward.ayahRead;
+      if (earnRewards) {
+        _ayahsToday++; _pointsToday += XpReward.ayahRead;
+      }
     });
+
+    // Run XP and progress saving in background (don't block UI)
+    _saveReadingProgress(nextSurah, nextAyah, earnRewards: earnRewards);
+
     // Fetch ayah (will pull instantly from cache if same surah)
     _fetchAyah(nextSurah, nextAyah);
   }
 
-  Future<void> _saveReadingProgress(int s, int a) async {
+  Future<void> _saveReadingProgress(int s, int a, {bool earnRewards = true}) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
     try {
-      await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a});
-      // Award XP for reading one ayah
-      await XpService.instance.earnXp(XpReward.ayahRead);
-      // Award first-read badge on the very first ayah
-      if (_ayahsToday == 0) {
-        await XpService.instance.awardBadge('first_quran');
+      if (earnRewards) {
+        await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a});
+        // Award XP for reading one ayah
+        await XpService.instance.earnXp(XpReward.ayahRead);
+        // Award first-read badge on the very first ayah
+        if (_ayahsToday == 1) { // 1 because already incremented in setState
+          await XpService.instance.awardBadge('first_quran');
+        }
       }
       final today = _todayStr();
       await _sb.from('quran_progress').update({
         'current_surah': s, 'current_ayah': a,
-        'ayahs_read_today': _ayahsToday + 1, // Note: We incremented _ayahsToday in UI before this completes, so we use _ayahsToday
+        'ayahs_read_today': _ayahsToday,
         'last_read_date': today, 'updated_at': DateTime.now().toIso8601String(),
       }).eq('user_id', uid);
     } catch (_) {}
@@ -509,12 +516,13 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   // ── Inline Tafsir ────────────────────────────────────────────────────────────
-  Future<void> _fetchTafsirText({required int editionIdx}) async {
+  Future<void> _fetchTafsirText({required int editionIdx, void Function()? onDone}) async {
     final def = _qTafsirEditions[editionIdx];
     final cacheKey = 'qtafsir_${_surah}_${_ayah}_${def.id}';
     final cached = _cache.get(cacheKey) as String?;
     if (cached != null) {
       if (mounted) setState(() { _tafsirText = cached; _tafsirLoading = false; });
+      if (onDone != null) onDone();
       return;
     }
     try {
@@ -524,9 +532,18 @@ class _QuranScreenState extends State<QuranScreen> {
       if (res.statusCode == 200) {
         final js = jsonDecode(res.body);
         final ayahs = js['ayahs'] as List?;
+        
+        // Cache the ENTIRE SURAH tafsirs to make adjacent ayahs instant
+        if (ayahs != null) {
+          for (var a in ayahs) {
+            String cKey = 'qtafsir_${_surah}_${a["ayah"]}_${def.id}';
+            await _cache.put(cKey, a["text"] ?? '');
+          }
+        }
+        
         final match = ayahs?.firstWhere((a) => a['ayah'] == _ayah, orElse: () => null);
         final text = (match?['text'] as String?) ?? '';
-        await _cache.put(cacheKey, text);
+        
         if (mounted) setState(() { _tafsirText = text; _tafsirLoading = false; });
       } else {
         if (mounted) setState(() { _tafsirText = ''; _tafsirLoading = false; });
@@ -534,12 +551,17 @@ class _QuranScreenState extends State<QuranScreen> {
     } catch (_) {
       if (mounted) setState(() { _tafsirText = ''; _tafsirLoading = false; });
     }
+    if (onDone != null) onDone();
   }
 
   void _openTafsirSheet() {
     // Reset and start loading for current ayah
     setState(() { _tafsirLoading = true; _tafsirText = ''; });
-    _fetchTafsirText(editionIdx: _tafsirEditionIdx);
+    
+    void Function(void Function())? sheetSetState;
+    _fetchTafsirText(editionIdx: _tafsirEditionIdx, onDone: () {
+      if (sheetSetState != null) sheetSetState!((){});
+    });
 
     final isDark  = _darkMode;
     final sheetBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
@@ -551,12 +573,14 @@ class _QuranScreenState extends State<QuranScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSt) => DraggableScrollableSheet(
-          initialChildSize: 0.65,
-          minChildSize: 0.4,
-          maxChildSize: 0.92,
-          builder: (_, sc) {
-            final bottomPad = MediaQuery.of(ctx).padding.bottom;
+        builder: (ctx, setSt) {
+          sheetSetState = setSt;
+          return DraggableScrollableSheet(
+            initialChildSize: 0.65,
+            minChildSize: 0.4,
+            maxChildSize: 0.92,
+            builder: (_, sc) {
+              final bottomPad = MediaQuery.of(ctx).padding.bottom;
             return Container(
               decoration: BoxDecoration(
                 color: sheetBg,
@@ -612,9 +636,11 @@ class _QuranScreenState extends State<QuranScreen> {
                         }),
                         onChanged: (i) {
                           if (i == null) return;
-                          setSt(() {});
+                          setSt(() { _tafsirEditionIdx = i; _tafsirLoading = true; _tafsirText = ''; });
                           setState(() { _tafsirEditionIdx = i; _tafsirLoading = true; _tafsirText = ''; });
-                          _fetchTafsirText(editionIdx: i);
+                          _fetchTafsirText(editionIdx: i, onDone: () {
+                            setSt((){});
+                          });
                         },
                       ),
                     ),
@@ -665,7 +691,8 @@ class _QuranScreenState extends State<QuranScreen> {
               ]),
             );
           },
-        ),
+        );
+        },
       ),
     );
   }
