@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/services.dart';
 import 'quran_hub_screen.dart';
 import 'dhikr_screen.dart';
 import 'tafsir_hub_screen.dart';
@@ -150,6 +151,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           onGoTafsir:      () => _goToScreen(const TafsirHubScreen()),
           onGoAchievements:() => Navigator.push(context,
               MaterialPageRoute(builder: (_) => const LevelScreen())),
+          onGoInvite: () {
+            final uid = Supabase.instance.client.auth.currentUser?.id;
+            if (uid == null) return;
+            Supabase.instance.client.from('profiles').select('referral_code').eq('id', uid).single().then((res) {
+              final code = res['referral_code'] as String?;
+              if (!mounted) return;
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (ctx) => _InviteSheet(referralCode: code ?? ''),
+              );
+            });
+          },
           onValidate: () async {
             final awarded = await XpService.instance.claimValidateXp();
             await _loadHomeData();
@@ -178,7 +193,7 @@ class _HomeTab extends StatefulWidget {
   final String name, levelTitle;
   final int noorPoints, todayPoints, weekPoints, monthPoints, streak, totalXp, level;
   final Map<String, dynamic>? project;
-  final VoidCallback onGoQuran, onGoDhikr, onGoTafsir, onGoAchievements;
+  final VoidCallback onGoQuran, onGoDhikr, onGoTafsir, onGoAchievements, onGoInvite;
   final Future<bool> Function() onValidate;
   const _HomeTab({
     required this.name, required this.noorPoints, required this.todayPoints,
@@ -186,6 +201,7 @@ class _HomeTab extends StatefulWidget {
     required this.totalXp, required this.level, required this.levelTitle,
     required this.project, required this.onGoQuran, required this.onGoDhikr,
     required this.onGoTafsir, required this.onValidate, required this.onGoAchievements,
+    required this.onGoInvite,
   });
 
   @override
@@ -322,9 +338,30 @@ class _HomeTabState extends State<_HomeTab> {
           children: [
             _ActivityCard('Read Quran',    '📖', _C.quranCard,  _C.quranIcon,  '+5 XP / ayah',  widget.onGoQuran),
             _ActivityCard('Count Dhikr',   '📿', _C.dhikrCard,  _C.dhikrIcon,  '+10 XP / set',  widget.onGoDhikr),
-            _ComingSoonCard('Daily Hikmah', '✨', const Color(0xFFEEF6FF), const Color(0xFF3A86FF), 'New feature coming soon'),
+            _ActivityCard('Invite Friends','🤝', const Color(0xFFFFF0F5), const Color(0xFFE91E63), '+500 Coins', widget.onGoInvite),
             _ActivityCard('Achievements',  '🏆', const Color(0xFFEDE0FF), _C.navProfile, '${_fmt(widget.totalXp)} XP • Lv ${widget.level}', widget.onGoAchievements),
           ],
+        ),
+
+        // ── Ad Placement Placeholder ──────────────────────────────────────
+        const SizedBox(height: 32),
+        Container(
+          width: double.infinity,
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey[300]!, width: 2, style: BorderStyle.solid),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.ad_units_rounded, color: Colors.grey[400], size: 24),
+              const SizedBox(height: 4),
+              Text('Ad Placement Banner', 
+                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey[500])),
+            ],
+          ),
         ),
       ]),
     ));
@@ -339,6 +376,148 @@ class _HomeTabState extends State<_HomeTab> {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Invite Friends Sheet
+// ─────────────────────────────────────────────────────────────────────────────
+class _InviteSheet extends StatefulWidget {
+  final String referralCode;
+  const _InviteSheet({required this.referralCode});
+
+  @override
+  State<_InviteSheet> createState() => _InviteSheetState();
+}
+
+class _InviteSheetState extends State<_InviteSheet> {
+  final _codeController = TextEditingController();
+  bool _loading = false;
+  String? _error;
+  String? _success;
+
+  Future<void> _applyCode() async {
+    final code = _codeController.text.trim().toUpperCase();
+    if (code.isEmpty) return;
+    setState(() { _loading = true; _error = null; _success = null; });
+    try {
+      await Supabase.instance.client.rpc('apply_referral', params: {'inviter_code': code});
+      setState(() { _success = '500 Coins rewarded successfully!'; });
+    } catch (e) {
+      final str = e.toString();
+      if(str.contains('Already referred')) {
+        setState(() => _error = 'You have already used a referral code.');
+      } else if(str.contains('Invalid referral code')) {
+        setState(() => _error = 'Invalid referral code.');
+      } else if(str.contains('Cannot refer yourself')) {
+        setState(() => _error = 'You cannot use your own code.');
+      } else {
+        setState(() => _error = 'An error occurred.');
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+      
+      // Attempt to refresh dashboard stats by finding ancestor state
+      if (mounted) {
+        final parentState = context.findAncestorStateOfType<_DashboardScreenState>();
+        parentState?._loadHomeData();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+          ),
+          const SizedBox(height: 20),
+          Text('Invite Friends 🤝', style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w800, color: _C.text)),
+          const SizedBox(height: 8),
+          Text('Share your code and you both earn 500 Noor Points!', style: GoogleFonts.outfit(fontSize: 15, color: _C.sub)),
+          const SizedBox(height: 24),
+          // My Code Section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: const Color(0xFFF7F3EE), borderRadius: BorderRadius.circular(16)),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Your Referral Code', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 4),
+                      Text(widget.referralCode.isNotEmpty ? widget.referralCode : '...', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: 2, color: _C.text)),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.copy_rounded, color: Color(0xFF2BAE99)),
+                  onPressed: () {
+                    if (widget.referralCode.isNotEmpty) {
+                      Clipboard.setData(ClipboardData(text: widget.referralCode));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied to clipboard!')));
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          Text('Have an invite code?', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w700, color: _C.text)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _codeController,
+                  textCapitalization: TextCapitalization.characters,
+                  decoration: InputDecoration(
+                    hintText: 'Enter code here...',
+                    hintStyle: GoogleFonts.outfit(fontSize: 15, color: Colors.grey[400]),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: _loading ? null : _applyCode,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: _loading ? Colors.grey : _C.text,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: _loading 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+                    : Text('Apply', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: 12),
+            Text(_error!, style: GoogleFonts.outfit(color: Colors.red, fontSize: 13, fontWeight: FontWeight.w500)),
+          ],
+          if (_success != null) ...[
+            const SizedBox(height: 12),
+            Text(_success!, style: GoogleFonts.outfit(color: Colors.green, fontSize: 13, fontWeight: FontWeight.w600)),
+          ],
+        ],
+      ),
+    );
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Daily / Weekly / Monthly Progress Card
@@ -558,55 +737,6 @@ class _ActivityCardState extends State<_ActivityCard> {
   }
 }
 
-// – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
-class _ComingSoonCard extends StatelessWidget {
-  final String title, emoji, label;
-  final Color bg, accentColor;
-  const _ComingSoonCard(this.title, this.emoji, this.bg, this.accentColor, this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(clipBehavior: Clip.none, children: [
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [BoxShadow(color: accentColor.withValues(alpha: 0.10), blurRadius: 14, offset: const Offset(0, 4))],
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          // Icon area (slightly dimmed)
-          Opacity(opacity: 0.55, child: Container(
-            width: 48, height: 48,
-            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.65), borderRadius: BorderRadius.circular(14)),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 24))),
-          )),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title, style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text.withValues(alpha: 0.55))),
-            const SizedBox(height: 2),
-            Text(label, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: accentColor.withValues(alpha: 0.7))),
-          ]),
-        ]),
-      ),
-      // Lock badge top-right
-      Positioned(top: 10, right: 10,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: accentColor,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.lock_rounded, color: Colors.white, size: 10),
-            const SizedBox(width: 3),
-            Text('Soon', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.white)),
-          ]),
-        ),
-      ),
-    ]);
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MY DONATIONS SECTION – shared by Home and Impact tabs
@@ -634,44 +764,46 @@ class _MyDonationsSection extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 14, offset: const Offset(0, 4))],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text('Your Donations 💚',
-              style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
-          const Spacer(),
-          Text('${donations.length} cause${donations.length == 1 ? '' : 's'}',
-              style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-        ]),
-        const SizedBox(height: 6),
-        Text('Keep it up! Every point you donate makes a real impact.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-        const SizedBox(height: 14),
-      SizedBox(
-        height: 190,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: donations.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (ctx, i) {
-            final d = donations[i];
-            final target  = (d['target_points']  as num).toInt();
-            final current = (d['current_points'] as num).toInt();
-            final myPts   = (d['my_donated'] as num).toInt();
-            final remaining = (target - current).clamp(0, target);
-            final pct = (current / target).clamp(0.0, 1.0);
-            final isCompleted = d['is_completed'] == true;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text('Your Donations 💚',
+                  style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
+              const Spacer(),
+              Text('${donations.length} cause${donations.length == 1 ? '' : 's'}',
+                  style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+            ]),
+            const SizedBox(height: 6),
+            Text('Keep it up! Every point you donate makes a real impact.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 190,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: donations.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (ctx, i) {
+                  final d = donations[i];
+                  final target  = (d['target_points']  as num).toInt();
+                  final current = (d['current_points'] as num).toInt();
+                  final myPts   = (d['my_donated'] as num).toInt();
+                  final remaining = (target - current).clamp(0, target);
+                  final pct = (current / target).clamp(0.0, 1.0);
+                  final isCompleted = d['is_completed'] == true;
 
-            return Container(
-              width: 220,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.07),
-                    blurRadius: 14, offset: const Offset(0, 4))],
-              ),
+                  return Container(
+                    width: donations.length == 1 ? constraints.maxWidth : 220,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.07),
+                          blurRadius: 14, offset: const Offset(0, 4))],
+                    ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 // Header
                 Row(children: [
@@ -732,7 +864,9 @@ class _MyDonationsSection extends StatelessWidget {
           },
         ),
       ),
-      ],),
+          ]);
+        },
+      ),
     );
   }
 }

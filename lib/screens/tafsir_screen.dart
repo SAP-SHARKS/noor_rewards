@@ -192,9 +192,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
       audioUrl    = m['audio']       ?? '';
     } else {
       try {
-        final ref = '$_surah:$_ayah';
-
-        // ── Fetch Arabic + English translation for the entire Surah ──────────────
+      // ── Fetch Arabic + English translation for the entire Surah ──────────────
         int startVerseId = 1;
         for (int i = 1; i < _surah; i++) {
           startVerseId += _tSurahLengths[i];
@@ -215,54 +213,57 @@ class _TafsirScreenState extends State<TafsirScreen> {
         final transMap = {for (var item in transList) item['verse_id'] as int: item['text'] as String};
 
         // ── Fetch tafsir text for the entire Surah (if CDN) ──────────────────────
-        Map<int, String> tafsirMap = {};
-        if (def.src == 'cdn') {
-          // spa5k/tafsir_api: one JSON per surah, indexed by ayah
-          final cdnUrl = 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${def.slug}/$_surah.json';
-          final tRes = await http.get(Uri.parse(cdnUrl)).timeout(const Duration(seconds: 15));
-          if (tRes.statusCode == 200) {
-            final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
-            if (ayahs != null) {
-              for (var a in ayahs) {
-                tafsirMap[a['ayah'] as int] = a['text'] as String;
-              }
-            }
-          }
-        } else {
-          // alquran.cloud tafsir edition (API returns single ayah)
-          final tUrl = 'https://api.alquran.cloud/v1/ayah/$ref/${def.id}';
-          final tRes = await http.get(Uri.parse(tUrl)).timeout(const Duration(seconds: 12));
-          if (tRes.statusCode == 200) {
-            tafsirMap[_ayah] = jsonDecode(tRes.body)['data']['text'] ?? '';
-          }
-        }
-
-        final reciter = _tReciters[_reciterIdx].$1;
-
-        // ── Pre-cache all verses in the Surah ────────────────────────────────────
-        for (int a = 1; a <= _tSurahLengths[_surah]; a++) {
-          int vId = startVerseId + a - 1;
-          String aText = arabicMap[a] ?? '';
-          String tText = transMap[vId] ?? '';
-          String audio = 'https://cdn.islamic.network/quran/audio/128/$reciter/$vId.mp3';
-          
-          if (def.src == 'cdn' || a == _ayah) {
-            String tfsr = tafsirMap[a] ?? '';
-            String cKey = 'tafsir2_${_surah}_${a}_${def.id}';
-            await _cache?.put(cKey, {
-              'arabic': aText, 'translation': tText,
-              'tafsir': tfsr, 'audio': audio,
-            });
-            
-            if (a == _ayah) {
-              arabic = aText;
-              translation = tText;
-              tafsir = tfsr;
-              audioUrl = audio;
+      Map<int, String> tafsirMap = {};
+      if (def.src == 'cdn') {
+        // spa5k/tafsir_api: one JSON per surah, indexed by ayah
+        final cdnUrl = 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${def.slug}/$_surah.json';
+        final tRes = await http.get(Uri.parse(cdnUrl)).timeout(const Duration(seconds: 15));
+        if (tRes.statusCode == 200) {
+          final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
+          if (ayahs != null) {
+            for (var a in ayahs) {
+              tafsirMap[a['ayah'] as int] = a['text'] as String;
             }
           }
         }
-      } catch (_) {}
+      } else {
+        // alquran.cloud tafsir edition (API returns entire surah)
+        final tUrl = 'https://api.alquran.cloud/v1/surah/$_surah/${def.id}';
+        final tRes = await http.get(Uri.parse(tUrl)).timeout(const Duration(seconds: 15));
+        if (tRes.statusCode == 200) {
+          final ayahs = jsonDecode(tRes.body)['data']['ayahs'] as List?;
+          if (ayahs != null) {
+            for (var a in ayahs) {
+              tafsirMap[a['numberInSurah'] as int] = a['text'] as String;
+            }
+          }
+        }
+      }
+
+      final reciter = _tReciters[_reciterIdx].$1;
+
+      // ── Pre-cache all verses in the Surah ────────────────────────────────────
+      for (int a = 1; a <= _tSurahLengths[_surah]; a++) {
+        int vId = startVerseId + a - 1;
+        String aText = arabicMap[a] ?? '';
+        String tText = transMap[vId] ?? '';
+        String audio = 'https://cdn.islamic.network/quran/audio/128/$reciter/$vId.mp3';
+        
+        String tfsr = tafsirMap[a] ?? '';
+        String cKey = 'tafsir2_${_surah}_${a}_${def.id}';
+        await _cache?.put(cKey, {
+          'arabic': aText, 'translation': tText,
+          'tafsir': tfsr, 'audio': audio,
+        });
+        
+        if (a == _ayah) {
+          arabic = aText;
+          translation = tText;
+          tafsir = tfsr;
+          audioUrl = audio;
+        }
+      }
+    } catch (_) {}
     }
 
     // Stop old player
