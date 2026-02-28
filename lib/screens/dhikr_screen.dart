@@ -3,17 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../services/xp_service.dart';
 
-// ── Palette ──────────────────────────────────────────────────────────────────
-const _kBg    = Color(0xFFF7F3EE);
-const _kText  = Color(0xFF1C1C1E);
-const _kSub   = Color(0xFF8E8E93);
-const _kPink  = Color(0xFFFF6B9D);
-const _kPinkL = Color(0xFFF9D5D8);
-const _kWhite = Colors.white;
-
-// ── Azkar model ──────────────────────────────────────────────────────────────
+// ── Models ────────────────────────────────────────────────────────────────────
 class _Azkar {
   final String id;
   final String arabic;
@@ -22,37 +17,56 @@ class _Azkar {
   final int    recommendedCount;
   final String category;
   final String reward;
+  final String reference;
 
   const _Azkar({
-    required this.id,
-    required this.arabic,
-    required this.transliteration,
-    required this.translation,
-    required this.recommendedCount,
-    required this.category,
-    required this.reward,
+    required this.id, required this.arabic, required this.transliteration,
+    required this.translation, required this.recommendedCount,
+    required this.category, required this.reward, required this.reference,
   });
 
   factory _Azkar.fromJson(Map<String, dynamic> j) => _Azkar(
-    id:               j['id'] as String,
-    arabic:           j['arabic'] as String,
-    transliteration:  j['transliteration'] as String,
-    translation:      j['translation'] as String,
-    recommendedCount: j['recommended_count'] as int,
-    category:         j['category'] as String,
-    reward:           j['reward'] as String,
+    id:               j['id'] as String? ?? '',
+    arabic:           j['arabic'] as String? ?? '',
+    transliteration:  j['transliteration'] as String? ?? '',
+    translation:      j['translation'] as String? ?? '',
+    recommendedCount: j['recommended_count'] as int? ?? 1,
+    category:         j['category_id'] as String? ?? j['category']?.toString() ?? 'general',
+    reward:           j['reward'] as String? ?? '',
+    reference:        j['reference'] as String? ?? '',
   );
 }
 
-// ── Category config ───────────────────────────────────────────────────────────
-const _categories = [
-  (id: 'all',         label: 'All',         icon: Icons.apps_rounded),
-  (id: 'general',     label: 'General',     icon: Icons.auto_awesome_rounded),
-  (id: 'morning',     label: 'Morning',     icon: Icons.wb_sunny_rounded),
-  (id: 'evening',     label: 'Evening',     icon: Icons.nights_stay_rounded),
-  (id: 'post_prayer', label: 'Post-Prayer', icon: Icons.mosque_rounded),
-  (id: 'sleeping',    label: 'Sleep',       icon: Icons.bedtime_rounded),
-];
+class _Category {
+  final String id;
+  final String label;
+  final IconData icon;
+  const _Category(this.id, this.label, this.icon);
+}
+
+class _DhikrSettings {
+  double arabicFontSize;
+  double translationFontSize;
+  bool darkMode;
+  
+  _DhikrSettings({
+    this.arabicFontSize = 32.0,
+    this.translationFontSize = 14.0,
+    this.darkMode = false,
+  });
+}
+
+IconData _parseIcon(String name) {
+  switch (name) {
+    case 'auto_awesome_rounded': return Icons.auto_awesome_rounded;
+    case 'wb_sunny_rounded':     return Icons.wb_sunny_rounded;
+    case 'nights_stay_rounded':  return Icons.nights_stay_rounded;
+    case 'mosque_rounded':       return Icons.mosque_rounded;
+    case 'bedtime_rounded':      return Icons.bedtime_rounded;
+    case 'shield_rounded':       return Icons.shield_rounded;
+    default:                     return Icons.bookmark_rounded;
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 class DhikrScreen extends StatefulWidget {
@@ -60,107 +74,222 @@ class DhikrScreen extends StatefulWidget {
   @override State<DhikrScreen> createState() => _DhikrScreenState();
 }
 
-class _DhikrScreenState extends State<DhikrScreen>
-    with SingleTickerProviderStateMixin {
+class _DhikrScreenState extends State<DhikrScreen> {
   // ── State ─────────────────────────────────────────────────────────────────
   List<_Azkar> _allAzkar = [];
   List<_Azkar> _filtered = [];
-  String       _selectedCat = 'all';
-  int          _dhikrIdx   = 0;
-  int          _count       = 0;
-  int          _pointsToday = 0;
-  int          _setsCompleted = 0; // total sets done this session
-  bool         _saving      = false;
-  bool         _rewardExpanded = false;
-  bool         _loading     = true;
-
-  late AnimationController _tapCtrl;
-  late Animation<double>   _tapScale;
+  List<_Category> _categories = [];
+  String _selectedCat = 'general';
+  
+  final Map<String, int> _counts = {};
+  List<String> _favorites = [];
+  int _pointsToday = 0;
+  int _setsCompleted = 0;
+  bool _loading = true;
 
   final _supabase = Supabase.instance.client;
+  
+  // Settings
+  final _DhikrSettings _settings = _DhikrSettings();
+  bool _isFirstTime = false;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  // Audio Playback
+  final FlutterTts _flutterTts = FlutterTts();
+  String? _playingAzkarId;
+
   @override
   void initState() {
     super.initState();
-    _tapCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 120));
-    _tapScale = Tween<double>(begin: 1.0, end: 0.88)
-        .animate(CurvedAnimation(parent: _tapCtrl, curve: Curves.easeOut));
-    _loadAzkar();
+    _initData();
+    _setupTts();
+  }
+
+  void _setupTts() async {
+    await _flutterTts.setLanguage("ar");
+    await _flutterTts.setSpeechRate(0.4);
+    _flutterTts.setCompletionHandler(() {
+      if (mounted) {
+        setState(() => _playingAzkarId = null);
+      }
+    });
   }
 
   @override
   void dispose() {
-    _tapCtrl.dispose();
+    _flutterTts.stop();
     super.dispose();
   }
 
-  // ── Load JSON ─────────────────────────────────────────────────────────────
-  Future<void> _loadAzkar() async {
+  Future<void> _initData() async {
+    await _loadPrefs();
+    await _loadDBData();
+    if (_isFirstTime && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showSettingsSheet();
+      });
+    }
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _settings.arabicFontSize = prefs.getDouble('dhikr_ar_size') ?? 32.0;
+      _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 14.0;
+      _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
+      _isFirstTime = prefs.getBool('dhikr_first_time') ?? true;
+      _favorites = prefs.getStringList('dhikr_favorites') ?? [];
+    });
+    
+    if (_isFirstTime) {
+      await prefs.setBool('dhikr_first_time', false);
+    }
+  }
+
+  Future<void> _savePrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('dhikr_ar_size', _settings.arabicFontSize);
+    await prefs.setDouble('dhikr_tr_size', _settings.translationFontSize);
+    await prefs.setBool('dhikr_dark_mode', _settings.darkMode);
+  }
+
+  // ── Load Supabase Data ─────────────────────────────────────────────────────
+  Future<void> _loadDBData() async {
+    try {
+      final catRes = await _supabase.from('azkar_categories').select().order('sort_order');
+      final fetchedCats = (catRes as List).map((c) => _Category(
+        c['id'] as String, c['label'] as String, _parseIcon(c['icon_name'] as String)
+      )).toList();
+      
+      final itemsRes = await _supabase.from('azkar_items').select().order('sort_order');
+      final fetchedItems = (itemsRes as List).map((i) => _Azkar.fromJson(i)).toList();
+
+      if (fetchedCats.isNotEmpty && fetchedItems.isNotEmpty) {
+        _categories = fetchedCats;
+        _categories.insert(0, const _Category('all', 'All', Icons.apps_rounded));
+        _categories.insert(1, const _Category('favorites', 'Favorites', Icons.favorite_rounded));
+        _allAzkar = fetchedItems;
+      } else {
+        await _loadLocalFallback();
+      }
+    } catch (e) {
+      debugPrint('Supabase Azkar fetch error: $e');
+      await _loadLocalFallback();
+    }
+
+    if (mounted) {
+      setState(() {
+        if (_categories.isEmpty) {
+          _categories = const [
+            _Category('all', 'All', Icons.apps_rounded),
+            _Category('favorites', 'Favorites', Icons.favorite_rounded),
+            _Category('general', 'General', Icons.auto_awesome_rounded),
+            _Category('morning', 'Morning', Icons.wb_sunny_rounded),
+            _Category('evening', 'Evening', Icons.nights_stay_rounded),
+          ];
+        }
+        _applyFilter();
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _loadLocalFallback() async {
     final raw  = await rootBundle.loadString('assets/data/azkar.json');
     final list = (jsonDecode(raw) as List)
         .map((e) => _Azkar.fromJson(e as Map<String, dynamic>))
         .toList();
-    setState(() {
-      _allAzkar = list;
-      _applyFilter();
-      _loading  = false;
-    });
+    _allAzkar = list;
   }
 
   void _applyFilter() {
-    _filtered = _selectedCat == 'all'
-        ? List.from(_allAzkar)
-        : _allAzkar.where((a) => a.category == _selectedCat).toList();
-    _dhikrIdx = 0;
-    _count    = 0;
-    _rewardExpanded = false;
+    setState(() {
+      if (_selectedCat == 'all') {
+        _filtered = List.from(_allAzkar);
+      } else if (_selectedCat == 'favorites') {
+        _filtered = _allAzkar.where((a) => _favorites.contains(a.id)).toList();
+      } else {
+        _filtered = _allAzkar.where((a) => a.category == _selectedCat).toList();
+      }
+    });
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
-  _Azkar get _current => _filtered[_dhikrIdx];
+  Future<void> _toggleFavorite(String id) async {
+    setState(() {
+      if (_favorites.contains(id)) {
+        _favorites.remove(id);
+      } else {
+        _favorites.add(id);
+      }
+      if (_selectedCat == 'favorites') {
+        _applyFilter();
+      }
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('dhikr_favorites', _favorites);
+  }
 
-  void _tap() {
+  void _shareAzkar(_Azkar azkar) {
     HapticFeedback.lightImpact();
-    _tapCtrl.forward().then((_) => _tapCtrl.reverse());
-    setState(() => _count++);
-    if (_count == _current.recommendedCount) {
-      Future.delayed(const Duration(milliseconds: 200), _showCompleteDialog);
+    final text = '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n— Shared via Noor App';
+    Share.share(text);
+  }
+
+  Future<void> _playAudio(_Azkar azkar) async {
+    HapticFeedback.lightImpact();
+    
+    if (_playingAzkarId == azkar.id) {
+      await _flutterTts.stop();
+      setState(() => _playingAzkarId = null);
+    } else {
+      await _flutterTts.stop();
+      setState(() => _playingAzkarId = azkar.id);
+      await _flutterTts.speak(azkar.arabic);
     }
   }
 
-  Future<void> _completeDhikr() async {
-    if (_saving) return;
-    setState(() => _saving = true);
+  void _tap(String id, int target) {
+    HapticFeedback.lightImpact();
+    setState(() {
+      final current = _counts[id] ?? 0;
+      if (current < target) {
+        _counts[id] = current + 1;
+        if (_counts[id] == target) {
+          Future.delayed(const Duration(milliseconds: 200), () => _showCompleteDialog(id, target));
+        }
+      }
+    });
+  }
+
+  void _reset(String id) {
+    setState(() { _counts[id] = 0; });
+  }
+
+  Future<void> _completeDhikr(String dhikrId, int target) async {
     try {
-      // Legacy Noor points RPC (keep existing points system intact)
-      await _supabase.rpc('earn_dhikr_points',
-          params: {'p_type': _current.transliteration, 'p_count': _count});
-      // Award weighted XP based on which dhikr was completed
-      await XpService.instance.earnDhikrXp(_current.id);
-      // Award first_dhikr badge on the very first set ever
-      if (_setsCompleted == 0) {
-        await XpService.instance.awardBadge('first_dhikr');
-      }
-      // 7 sets in one session → night_warrior badge
-      if (_setsCompleted + 1 >= 7) {
-        await XpService.instance.awardBadge('night_warrior');
-      }
+      await XpService.instance.earnDhikrXp(dhikrId);
+      if (_setsCompleted == 0) await XpService.instance.awardBadge('first_dhikr');
+      if (_setsCompleted + 1 >= 7) await XpService.instance.awardBadge('night_warrior');
+
       setState(() {
-        _pointsToday   += 20;
+        _pointsToday += 20;
         _setsCompleted += 1;
-        _count          = 0;
+        _counts[dhikrId] = 0;
       });
-    } catch (_) {} finally {
-      setState(() => _saving = false);
-    }
+    } catch (_) {}
   }
 
-  void _showCompleteDialog() {
-    final xpEarned = XpReward.dhikrXp(_current.id);
+  void _showCompleteDialog(String dhikrId, int target) {
+    final xpEarned = XpReward.dhikrXp(dhikrId);
+    final isDark = _settings.darkMode;
+    final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
+    final kBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+
     showDialog(
       context: context,
       builder: (_) => Dialog(
+        backgroundColor: kBg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -168,27 +297,33 @@ class _DhikrScreenState extends State<DhikrScreen>
             const Text('🎉', style: TextStyle(fontSize: 56)),
             const SizedBox(height: 16),
             Text('Masha\'Allah!',
-                style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _kText)),
+                style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: kText)),
             const SizedBox(height: 8),
-            Text('${_current.recommendedCount} counts complete • +20 Noor Points • +$xpEarned XP',
-                style: GoogleFonts.outfit(fontSize: 14, color: _kSub),
+            Text('$target counts complete • +20 Noor Points • +$xpEarned XP',
+                style: GoogleFonts.outfit(fontSize: 14, color: kSub),
                 textAlign: TextAlign.center),
             const SizedBox(height: 24),
             SizedBox(width: double.infinity, child: ElevatedButton(
-              onPressed: () { Navigator.pop(context); _completeDhikr(); },
+              onPressed: () { 
+                Navigator.pop(context); 
+                _completeDhikr(dhikrId, target); 
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: _kPink,
+                backgroundColor: const Color(0xFFFF6B9D),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
               ),
-              child: Text('Claim +20 Points & +$xpEarned XP',
-                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: _kWhite)),
+              child: Text('Claim Rewards',
+                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
             )),
             const SizedBox(height: 10),
             TextButton(
-              onPressed: () { Navigator.pop(context); setState(() => _count = 0); },
-              child: Text('Continue', style: GoogleFonts.outfit(color: _kSub)),
+              onPressed: () { 
+                Navigator.pop(context); 
+                setState(() => _counts[dhikrId] = 0); 
+              },
+              child: Text('Reset', style: GoogleFonts.outfit(color: kSub)),
             ),
           ]),
         ),
@@ -196,55 +331,145 @@ class _DhikrScreenState extends State<DhikrScreen>
     );
   }
 
-  void _switchDhikr(int delta) {
-    setState(() {
-      _dhikrIdx = (_dhikrIdx + delta + _filtered.length) % _filtered.length;
-      _count = 0;
-      _rewardExpanded = false;
-    });
+  void _showSettingsSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final isDark = _settings.darkMode;
+          final sheetBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+          final txtColor = isDark ? Colors.white : const Color(0xFF1C1C1E);
+
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: sheetBg,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Dua & Azkar Settings', 
+                          style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: txtColor)),
+                      IconButton(
+                        icon: Icon(Icons.close_rounded, color: txtColor),
+                        onPressed: () => Navigator.pop(context),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Appearance
+                  Text('Appearance', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFFFF6B9D))),
+                  const SizedBox(height: 10),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text('Dark Mode', style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
+                    activeColor: const Color(0xFFFF6B9D),
+                    value: _settings.darkMode,
+                    onChanged: (val) {
+                      setModalState(() => _settings.darkMode = val);
+                      setState(() => _settings.darkMode = val);
+                      _savePrefs();
+                    },
+                  ),
+                  const Divider(),
+
+                  // Text Sizes
+                  const SizedBox(height: 10),
+                  Text('Arabic Text Size', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFFFF6B9D))),
+                  Slider(
+                    value: _settings.arabicFontSize,
+                    min: 20.0,
+                    max: 56.0,
+                    activeColor: const Color(0xFFFF6B9D),
+                    onChanged: (val) {
+                      setModalState(() => _settings.arabicFontSize = val);
+                      setState(() => _settings.arabicFontSize = val);
+                      _savePrefs();
+                    },
+                  ),
+
+                  Text('Translation Text Size', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFFFF6B9D))),
+                  Slider(
+                    value: _settings.translationFontSize,
+                    min: 12.0,
+                    max: 24.0,
+                    activeColor: const Color(0xFFFF6B9D),
+                    onChanged: (val) {
+                      setModalState(() => _settings.translationFontSize = val);
+                      setState(() => _settings.translationFontSize = val);
+                      _savePrefs();
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          );
+        }
+      )
+    );
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return Scaffold(
-        backgroundColor: _kBg,
-        body: const Center(child: CircularProgressIndicator(color: _kPink)),
+      return const Scaffold(
+        backgroundColor: Color(0xFFF7F3EE),
+        body: Center(child: CircularProgressIndicator(color: Color(0xFFFF6B9D))),
       );
     }
 
-    final azkar = _current;
-    final target = azkar.recommendedCount;
-    final pct    = (_count / target).clamp(0.0, 1.0);
+    final isDark = _settings.darkMode;
+    final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F3EE);
+    final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
+    final kPink  = const Color(0xFFFF6B9D);
+    final kPinkL = isDark ? const Color(0xFF3B2A30) : const Color(0xFFF9D5D8);
 
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: kBg,
       appBar: AppBar(
-        backgroundColor: _kWhite,
-        surfaceTintColor: _kWhite,
+        backgroundColor: kWhite,
+        surfaceTintColor: kWhite,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: _kText, size: 20),
+          icon: Icon(Icons.arrow_back_ios_rounded, color: kText, size: 20),
           onPressed: () => Navigator.pop(context, _pointsToday),
         ),
-        title: Text('Count Dhikr',
-            style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _kText)),
+        title: Text('Dua & Azkar',
+            style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText)),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings_rounded, color: kText),
+            onPressed: _showSettingsSheet,
+          )
+        ],
       ),
       body: SafeArea(child: Column(children: [
 
-        // ── Points banner ───────────────────────────────────────────────────
+        // ── Points banner (Optional) ────────────────────────────────────────
         if (_pointsToday > 0)
           Container(
             margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(color: _kPinkL, borderRadius: BorderRadius.circular(14)),
+            decoration: BoxDecoration(color: kPinkL, borderRadius: BorderRadius.circular(14)),
             child: Row(children: [
               const Text('🌟', style: TextStyle(fontSize: 16)),
               const SizedBox(width: 8),
               Text('+$_pointsToday points earned today!',
-                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _kPink)),
+                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: kPink)),
             ]),
           ),
 
@@ -269,18 +494,17 @@ class _DhikrScreenState extends State<DhikrScreen>
                   duration: const Duration(milliseconds: 220),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                   decoration: BoxDecoration(
-                    color: sel ? _kPink : _kWhite,
+                    color: sel ? kPink : (isDark ? const Color(0xFF2C2C2E) : Colors.white),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: sel ? _kPink : Colors.grey.shade200),
+                    border: Border.all(color: sel ? kPink : (isDark ? const Color(0xFF3A3A3C) : Colors.grey.shade200)),
                   ),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(cat.icon, size: 13,
-                        color: sel ? _kWhite : _kSub),
+                    Icon(cat.icon, size: 13, color: sel ? Colors.white : kSub),
                     const SizedBox(width: 5),
                     Text(cat.label,
                         style: GoogleFonts.outfit(
                             fontSize: 12, fontWeight: FontWeight.w700,
-                            color: sel ? _kWhite : _kSub)),
+                            color: sel ? Colors.white : kSub)),
                   ]),
                 ),
               );
@@ -288,239 +512,322 @@ class _DhikrScreenState extends State<DhikrScreen>
           ),
         ),
 
-        // ── Scrollable body ─────────────────────────────────────────────────
-        Expanded(child: Builder(builder: (ctx) {
-          final bottom = MediaQuery.of(ctx).padding.bottom;
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity == null) return;
-              if (details.primaryVelocity! < -300) {
-                _switchDhikr(1);
-              } else if (details.primaryVelocity! > 300) {
-                _switchDhikr(-1);
-              }
+        // ── Beautiful Master List ───────────────────────────────────────────
+        const SizedBox(height: 14),
+        Expanded(
+          child: _filtered.isEmpty 
+          ? Center(child: Text('No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
+          : ListView.separated(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+            itemCount: _filtered.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 20),
+            itemBuilder: (context, index) {
+              final azkar = _filtered[index];
+              final count = _counts[azkar.id] ?? 0;
+              final tapTarget = azkar.recommendedCount;
+              final isComplete = count >= tapTarget;
+
+              return _AzkarCard(
+                azkar: azkar,
+                currentCount: count,
+                isComplete: isComplete,
+                isFavorite: _favorites.contains(azkar.id),
+                isPlayingAudio: _playingAzkarId == azkar.id,
+                settings: _settings,
+                onTap: () => _tap(azkar.id, tapTarget),
+                onReset: () => _reset(azkar.id),
+                onFavorite: () => _toggleFavorite(azkar.id),
+                onShare: () => _shareAzkar(azkar),
+                onAudio: () => _playAudio(azkar),
+              );
             },
-            child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 24 + bottom),
-            child: Column(children: [
-
-            // Dhikr navigation row
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              _NavBtn(icon: Icons.chevron_left_rounded, onTap: () => _switchDhikr(-1)),
-              Text('${_dhikrIdx + 1} / ${_filtered.length}',
-                  style: GoogleFonts.outfit(fontSize: 13, color: _kSub, fontWeight: FontWeight.w600)),
-              _NavBtn(icon: Icons.chevron_right_rounded, onTap: () => _switchDhikr(1)),
-            ]),
-
-            const SizedBox(height: 20),
-
-            // Main dhikr card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: _kWhite,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 4))],
-              ),
-              child: Column(children: [
-                // Arabic
-                Text(azkar.arabic,
-                    textAlign: TextAlign.center,
-                    textDirection: TextDirection.rtl,
-                    style: GoogleFonts.amiri(
-                        fontSize: 36, fontWeight: FontWeight.w700, color: _kText, height: 1.7)),
-                const SizedBox(height: 10),
-
-                // Transliteration
-                Text(azkar.transliteration,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.outfit(
-                        fontSize: 15, fontWeight: FontWeight.w600,
-                        color: _kPink, fontStyle: FontStyle.italic)),
-                const SizedBox(height: 6),
-
-                // Translation
-                Text(azkar.translation,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.outfit(fontSize: 13, color: _kSub)),
-
-                const SizedBox(height: 16),
-                Divider(color: Colors.grey.shade100),
-                const SizedBox(height: 12),
-
-                // Reward expandable
-                GestureDetector(
-                  onTap: () => setState(() => _rewardExpanded = !_rewardExpanded),
-                  child: Row(children: [
-                    const Text('📖', style: TextStyle(fontSize: 14)),
-                    const SizedBox(width: 6),
-                    Expanded(child: Text('Hadith / Reward',
-                        style: GoogleFonts.outfit(
-                            fontSize: 12, fontWeight: FontWeight.w700, color: _kText))),
-                    Icon(
-                      _rewardExpanded
-                          ? Icons.keyboard_arrow_up_rounded
-                          : Icons.keyboard_arrow_down_rounded,
-                      color: _kSub, size: 20),
-                  ]),
-                ),
-                AnimatedCrossFade(
-                  duration: const Duration(milliseconds: 250),
-                  crossFadeState: _rewardExpanded
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                  firstChild: const SizedBox.shrink(),
-                  secondChild: Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: _kPinkL,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Text(azkar.reward,
-                          style: GoogleFonts.outfit(
-                              fontSize: 12.5, color: _kText, height: 1.65)),
-                    ),
-                  ),
-                ),
-              ]),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Count + progress
-            Text('$_count',
-                style: GoogleFonts.outfit(
-                    fontSize: 100, fontWeight: FontWeight.w700,
-                    color: _kPink, height: 1.0)),
-            Text('/ $target target',
-                style: GoogleFonts.outfit(
-                    fontSize: 15, color: _kSub, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: pct, minHeight: 8,
-                backgroundColor: _kPinkL,
-                valueColor: const AlwaysStoppedAnimation(_kPink),
-              ),
-            ),
-
-            const SizedBox(height: 36),
-
-            // TAP button (original + preserved)
-            GestureDetector(
-              onTap: _tap,
-              child: AnimatedBuilder(
-                animation: _tapScale,
-                builder: (_, child) => Transform.scale(scale: _tapScale.value, child: child),
-                child: Container(
-                  width: 180, height: 180,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6B9D), Color(0xFFFF9671)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [BoxShadow(
-                        color: _kPink.withValues(alpha: 0.40),
-                        blurRadius: 32, spreadRadius: 4)],
-                  ),
-                  child: Center(child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Text('TAP',
-                        style: GoogleFonts.outfit(
-                            fontSize: 24, fontWeight: FontWeight.w800, color: _kWhite)),
-                    Text(azkar.transliteration,
-                        style: GoogleFonts.outfit(fontSize: 11, color: Colors.white70),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ]))),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Controls row
-            Row(children: [
-              _ControlBtn(
-                label: 'Reset',
-                icon: Icons.refresh_rounded,
-                onTap: () => setState(() { _count = 0; _rewardExpanded = false; }),
-                color: _kSub,
-              ),
-              const SizedBox(width: 12),
-              _ControlBtn(
-                label: _saving ? '...' : 'Complete ✓',
-                icon: Icons.check_circle_rounded,
-                onTap: _count >= target ? _completeDhikr : null,
-                color: _count >= target ? const Color(0xFF2BAE99) : _kSub,
-              ),
-            ]),
-
-          ]),
-        ));  // end SingleChildScrollView and GestureDetector
-        })),  // end Builder
+          ),
+        ),
       ])),
     );
   }
 }
 
-// ── Nav arrow button ──────────────────────────────────────────────────────────
-class _NavBtn extends StatelessWidget {
-  final IconData icon;
+// ─────────────────────────────────────────────────────────────────────────────
+// Beautiful Display Card for Azkaar
+// ─────────────────────────────────────────────────────────────────────────────
+class _AzkarCard extends StatelessWidget {
+  final _Azkar azkar;
+  final int currentCount;
+  final bool isComplete;
+  final bool isFavorite;
+  final bool isPlayingAudio;
+  final _DhikrSettings settings;
   final VoidCallback onTap;
-  const _NavBtn({required this.icon, required this.onTap});
+  final VoidCallback onReset;
+  final VoidCallback onFavorite;
+  final VoidCallback onShare;
+  final VoidCallback onAudio;
+
+  const _AzkarCard({
+    required this.azkar,
+    required this.currentCount,
+    required this.isComplete,
+    required this.isFavorite,
+    required this.isPlayingAudio,
+    required this.settings,
+    required this.onTap,
+    required this.onReset,
+    required this.onFavorite,
+    required this.onShare,
+    required this.onAudio,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 36, height: 36,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
+    final pct = (currentCount / azkar.recommendedCount).clamp(0.0, 1.0);
+
+    final isDark = settings.darkMode;
+    final kCardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
+    final kPink  = const Color(0xFFFF6B9D);
+    final kPinkL = isDark ? const Color(0xFF3B2A30) : const Color(0xFFF9D5D8);
+    final kGold  = const Color(0xFFD4AF37);
+    final kBeneBg = isDark ? const Color(0xFF2A2416) : const Color(0xFFFBF8F1);
+    final kBeneTxt = isDark ? const Color(0xFFEADBBE) : const Color(0xFF5A4D2E);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: kCardBg,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 20, 
+            offset: const Offset(0, 8),
+          )
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            
+            // ── Top Bar (Count Goal & Header) ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isComplete ? (isDark ? const Color(0xFF1E4031) : const Color(0xFFE8F8F0)) : kPinkL.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      isComplete ? 'Completed ✓' : 'Target: ${azkar.recommendedCount}',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12, 
+                        fontWeight: FontWeight.w700, 
+                        color: isComplete ? const Color(0xFF2BAE7C) : kPink,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // Favorite
+                  IconButton(
+                    onPressed: onFavorite,
+                    icon: Icon(isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded, 
+                               size: 20, color: isFavorite ? const Color(0xFFFF6B9D) : Colors.grey.shade400),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    splashRadius: 20,
+                  ),
+                  
+                  // Audio
+                  IconButton(
+                    onPressed: onAudio,
+                    icon: Icon(isPlayingAudio ? Icons.stop_circle_rounded : Icons.volume_up_rounded, 
+                               size: 20, color: isPlayingAudio ? const Color(0xFFFF6B9D) : Colors.grey.shade400),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    splashRadius: 20,
+                  ),
+                  
+                  // Share
+                  IconButton(
+                    onPressed: onShare,
+                    icon: Icon(Icons.ios_share_rounded, size: 20, color: Colors.grey.shade400),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    splashRadius: 20,
+                  ),
+                  
+                  // Refresh/Reset
+                  IconButton(
+                    onPressed: onReset,
+                    icon: Icon(Icons.refresh_rounded, size: 20, color: Colors.grey.shade400),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    splashRadius: 20,
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Main Text Content ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  Text(
+                    azkar.arabic,
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    style: GoogleFonts.amiri(
+                      fontSize: settings.arabicFontSize, 
+                      fontWeight: FontWeight.w700, 
+                      color: kText, 
+                      height: 1.8
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    azkar.transliteration,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      fontSize: settings.translationFontSize, 
+                      fontWeight: FontWeight.w600, 
+                      color: kPink, 
+                      fontStyle: FontStyle.italic
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    azkar.translation,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      fontSize: settings.translationFontSize, 
+                      color: kSub
+                    ),
+                  ),
+                  if (azkar.reward.isEmpty && azkar.reference.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    Text(
+                      azkar.reference,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: kPink),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ── Highly Visible Benefit Box ──
+            if (azkar.reward.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: kBeneBg, 
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: kGold.withValues(alpha: 0.2)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('✨', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Virtue & Benefit', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kGold)),
+                          const SizedBox(height: 4),
+                          Text(azkar.reward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, height: 1.5)),
+                          if (azkar.reference.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                azkar.reference,
+                                style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: kPink),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+            const SizedBox(height: 16),
+
+            // ── Interactive Count & Tap Area ──
+            GestureDetector(
+              onTap: isComplete ? null : onTap,
+              child: Container(
+                height: 70,
+                decoration: BoxDecoration(
+                  color: isComplete ? kCardBg : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFFAFAFA)),
+                  border: Border(top: BorderSide(color: isDark ? const Color(0xFF3A3A3C) : Colors.grey.shade100)),
+                ),
+                child: Stack(
+                  children: [
+                    // Moving background progress fill
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: MediaQuery.of(context).size.width * pct,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isComplete ? [const Color(0xFF2BAE7C), const Color(0xFF1E8C61)] : [kPinkL, kPink],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                      ),
+                    ),
+                    
+                    // Tap Instructions / State Text
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (!isComplete) ...[
+                            Flexible(
+                              child: Text(
+                                'Tap anywhere to count',
+                                style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: kText.withValues(alpha: 0.5)),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isComplete ? Colors.white.withValues(alpha: 0.2) : kCardBg,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: isComplete ? null : [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 4)],
+                            ),
+                            child: Text(
+                              '$currentCount / ${azkar.recommendedCount}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16, 
+                                fontWeight: FontWeight.w800, 
+                                color: isComplete ? Colors.white : kPink,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            
+          ],
         ),
-        child: Icon(icon, size: 22, color: _kSub),
       ),
     );
-  }
-}
-
-// ── Control button ────────────────────────────────────────────────────────────
-class _ControlBtn extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback? onTap;
-  final Color color;
-  const _ControlBtn({required this.label, required this.icon, required this.onTap, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(child: GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 13),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(icon, size: 15, color: color),
-          const SizedBox(width: 6),
-          Text(label, style: GoogleFonts.outfit(
-              fontSize: 13, fontWeight: FontWeight.w700, color: color)),
-        ]),
-      ),
-    ));
   }
 }
