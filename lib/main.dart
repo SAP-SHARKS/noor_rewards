@@ -10,6 +10,7 @@ import 'screens/profile_setup_screen.dart';
 import 'screens/welcome_gate_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/settings_service.dart';
+import 'utils/asset_helper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,9 @@ Future<void> main() async {
 
   // Pre-load remote config (waits for first fetch, then subscribes to Realtime)
   await SettingsService.instance.initialize();
+  
+  // Pre-load all available asset registry to automatically populate custom image cards
+  await AssetHelper.loadAssets();
 
   runApp(
     ChangeNotifierProvider<SettingsService>.value(

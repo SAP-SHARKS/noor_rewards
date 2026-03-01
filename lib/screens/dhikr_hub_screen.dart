@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dhikr_screen.dart';
+import '../utils/asset_helper.dart';
 
 const _kBg = Color(0xFFF7F3EE);
 const _kText = Color(0xFF1C1C1E);
@@ -113,12 +114,28 @@ class DhikrHubScreen extends StatelessWidget {
   }
 
   Widget _buildGradientCard(BuildContext context, String title, String id, String emoji, Color baseColor) {
+    String? customImagePath = AssetHelper.getCustomImagePath(title);
+    bool isCustomCard = customImagePath != null;
+    Color? customTextColor;
+    
+    if (isCustomCard) {
+      if (id == 'evening') {
+        customTextColor = const Color(0xFF1E3A8A); // Deep blue
+      } else if (id == 'sleeping') {
+        customTextColor = const Color(0xFF0F172A); // Midnight blue
+      } else {
+        customTextColor = baseColor.computeLuminance() > 0.5 ? Colors.black87 : baseColor; 
+        // Default color fallback for random images matching category theme!
+      }
+    }
+
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
+          color: isCustomCard ? Colors.white : null,
+          gradient: isCustomCard ? null : LinearGradient(
             colors: [baseColor, baseColor.withValues(alpha: 0.6)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -131,17 +148,29 @@ class DhikrHubScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
-              // Vibrant emoji watermark mimicking a 3D character glow
-              Positioned(
-                right: -20,
-                bottom: -15,
-                child: Text(emoji,
-                    style: const TextStyle(
-                        fontSize: 90,
-                        shadows: [Shadow(color: Colors.black26, offset: Offset(2, 5), blurRadius: 10)])),
-              ),
-              // Glassmorphic protection mask
-              Container(
+              // Vibrant emoji watermark mimicking a 3D character glow OR custom image
+              if (isCustomCard)
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10), // slight padding so it doesn't overlap text
+                      child: Image.asset(customImagePath!, fit: BoxFit.contain),
+                    ),
+                  ),
+                )
+              else
+                Positioned(
+                  right: -20,
+                  bottom: -15,
+                  child: Text(emoji,
+                      style: const TextStyle(
+                          fontSize: 90,
+                          shadows: [Shadow(color: Colors.black26, offset: Offset(2, 5), blurRadius: 10)])),
+                ),
+              // Glassmorphic protection mask (only keep it for non-image cards, or make it subtle)
+              if (!isCustomCard)
+                Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -163,7 +192,7 @@ class DhikrHubScreen extends StatelessWidget {
                         style: GoogleFonts.outfit(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: isCustomCard ? customTextColor : Colors.white,
                             height: 1.1,
                             letterSpacing: -0.5)),
                   ],
