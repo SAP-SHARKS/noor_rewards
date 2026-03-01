@@ -32,7 +32,9 @@ class AssetHelper {
     final queries = [
       searchOrig, 
       searchOrig.replaceAll(' ', '_'), // e.g. "before_sleep"
-      searchOrig.replaceAll(' ', '-')  // e.g. "before-sleep"
+      searchOrig.replaceAll(' ', '-'),  // e.g. "before-sleep"
+      searchOrig.replaceAll(RegExp(r'[^a-z0-9]+'), '_'), // Handles "food & drink" -> "food_drink"
+      searchOrig.replaceAll(RegExp(r'[^a-z0-9]'), '')    // Handles "food&drink" -> "fooddrink"
     ];
     
     // Check extensions
