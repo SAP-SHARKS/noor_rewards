@@ -22,7 +22,7 @@ class DhikrHubScreen extends StatelessWidget {
       {'title': 'Sunnah Duas', 'id': 'sunnah', 'color': const Color(0xFF10B981), 'icon': '📖'},
       {'title': 'Quranic Duas', 'id': 'quranic', 'color': const Color(0xFF059669), 'icon': '📗'},
       {'title': 'Istighfar', 'id': 'istighfar', 'color': const Color(0xFF64748B), 'icon': '📿'},
-      {'title': 'Dhikr All Times', 'id': 'general', 'color': const Color(0xFF8B5CF6), 'icon': '🤲'},
+      {'title': 'Dhikar All Times', 'id': 'general', 'color': const Color(0xFF8B5CF6), 'icon': '🤲'},
       {'title': 'Names of Allah', 'id': 'asmaul_husna', 'color': const Color(0xFFD946EF), 'icon': '✨'},
     ];
 
