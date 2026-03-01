@@ -491,73 +491,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
           ? Center(child: Text('No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
           : ListView.builder(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-            itemCount: _filtered.length + 1, // +1 for the top illustration header
-            itemBuilder: (context, idx) {
-              
-              // ── Header Element ──
-              if (idx == 0) {
-                // Safely grab the actual title text for this category:
-                final label = _categories.firstWhere((c) => c.id == _selectedCat, orElse: () => _categories.first).label;
-                String? autoImagePath = AssetHelper.getCustomImagePath(label);
-                
-                if (autoImagePath != null) {
-                  Color headerColor;
-                  String subtitle;
-
-                  // Define aesthetic tweaks depending on the vibe!
-                  if (_selectedCat == 'evening') {
-                    headerColor = isDark ? const Color(0xFFFDE68A) : const Color(0xFF1E3A8A); // Deep rich blue for evening mood
-                    subtitle = 'Recite between Asr and Maghrib';
-                  } else if (_selectedCat == 'sleeping') {
-                    headerColor = isDark ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A); // Midnight blue
-                    subtitle = 'Recite before falling asleep';
-                  } else {
-                    // Universal automatic matching theme for custom items like 'Morning' or 'Tahajjud'!
-                    headerColor = isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155);
-                    subtitle = '${label} Adhkar & Duas';
-                  }
-                  
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 24),
-                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E1E1E) : Colors.white, // Pure white blends with the image!
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                         BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))
-                      ]
-                    ),
-                    child: Column(
-                      children: [
-                        // The user's image goes here implicitly.
-                        Image.asset(
-                          autoImagePath,
-                          height: 160,
-                          fit: BoxFit.contain, // Prevent frame/bounds clipping
-                          errorBuilder: (_, __, ___) => Container(
-                            height: 120,
-                            alignment: Alignment.center,
-                            child: Text('Add $autoImagePath', 
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: kSub, fontSize: 13)),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(label, 
-                            style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w900, color: headerColor)),
-                        const SizedBox(height: 6),
-                        Text(subtitle, 
-                            style: GoogleFonts.outfit(fontSize: 14, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600)),
-                      ],
-                    ),
-                  );
-                }
-                // Don't render anything for categories right now until images are added
-                return const SizedBox.shrink();
-              }
-
-              final index = idx - 1; // shift back by 1 because of the header
+            itemCount: _filtered.length,
+            itemBuilder: (context, index) {
               final azkar = _filtered[index];
               final count = _counts[azkar.id] ?? 0;
               final tapTarget = azkar.recommendedCount;
