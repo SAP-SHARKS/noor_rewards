@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
 import 'quran_hub_screen.dart';
 import 'dhikr_screen.dart';
+import 'dhikr_hub_screen.dart';
 import 'tafsir_hub_screen.dart';
 import 'level_screen.dart';
 import 'impact_report_screen.dart';
@@ -147,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           streak: _streak,
           project: _project,
           onGoQuran:       () => _goToScreen(const QuranHubScreen()),
-          onGoDhikr:       () => _goToScreen(const DhikrScreen()),
+          onGoDhikr:       () => _goToScreen(const DhikrHubScreen()),
           onGoTafsir:      () => _goToScreen(const TafsirHubScreen()),
           onGoAchievements:() => Navigator.push(context,
               MaterialPageRoute(builder: (_) => const LevelScreen())),
@@ -337,7 +338,7 @@ class _HomeTabState extends State<_HomeTab> {
           mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
           children: [
             _ActivityCard('Read Quran',    '📖', _C.quranCard,  _C.quranIcon,  '+5 XP / ayah',  widget.onGoQuran),
-            _ActivityCard('Count Dhikr',   '📿', _C.dhikrCard,  _C.dhikrIcon,  '+10 XP / set',  widget.onGoDhikr),
+            _ActivityCard('Dhikar & Dua',  '📿', _C.dhikrCard,  _C.dhikrIcon,  '+10 XP / set',  widget.onGoDhikr),
             _ActivityCard('Invite Friends','🤝', const Color(0xFFFFF0F5), const Color(0xFFE91E63), '+500 Coins', widget.onGoInvite),
             _ActivityCard('Achievements',  '🏆', const Color(0xFFEDE0FF), _C.navProfile, '${_fmt(widget.totalXp)} XP • Lv ${widget.level}', widget.onGoAchievements),
           ],

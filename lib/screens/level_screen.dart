@@ -45,7 +45,7 @@ String _tierEmoji(String title) {
     case 'login':    return (label: 'Daily Login',       emoji: '☀️',  color: const Color(0xFF00897B));
     case 'validate': return (label: 'Validate & Support',emoji: '✅',  color: const Color(0xFF6B4EBB));
     case 'quran':    return (label: 'Read Quran',         emoji: '📖',  color: const Color(0xFF1565C0));
-    case 'dhikr':    return (label: 'Count Dhikr',        emoji: '📿',  color: const Color(0xFF558B2F));
+    case 'dhikr':    return (label: 'Dhikar & Dua',       emoji: '📿',  color: const Color(0xFF558B2F));
     case 'tafsir':   return (label: 'Listen Tafsir',      emoji: '🎧',  color: const Color(0xFFAD1457));
     case 'challenge':return (label: 'Challenge',          emoji: '🏅',  color: const Color(0xFFF5A623));
     default:         return (label: type,                 emoji: '⭐',  color: _kSub);
@@ -850,7 +850,7 @@ class _EmptyHistory extends StatelessWidget {
             style: GoogleFonts.outfit(
                 fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
         const SizedBox(height: 8),
-        Text('Start earning XP — read Quran, count Dhikr, or log in daily.',
+        Text('Start earning XP — read Quran, do Dhikar & Dua, or log in daily.',
             style: GoogleFonts.outfit(fontSize: 13, color: _kSub),
             textAlign: TextAlign.center),
       ]),
