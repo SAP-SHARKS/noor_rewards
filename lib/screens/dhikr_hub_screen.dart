@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dhikr_screen.dart';
 
-// ── Palette ───────────────────────────────────────────────────────────────────
 const _kBg = Color(0xFFF7F3EE);
 const _kText = Color(0xFF1C1C1E);
 
@@ -11,6 +10,42 @@ class DhikrHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> essentials = [
+      {'title': 'Duas of Ummah', 'id': 'ummah', 'color': const Color(0xFF6B4EE6), 'icon': '🌍'},
+      {'title': 'Morning', 'id': 'morning', 'color': const Color(0xFFF59E0B), 'icon': '🌅'},
+      {'title': 'Evening', 'id': 'evening', 'color': const Color(0xFFD97706), 'icon': '🌇'},
+      {'title': 'Before Sleep', 'id': 'sleeping', 'color': const Color(0xFF312E81), 'icon': '🌌'},
+      {'title': 'Tahajjud', 'id': 'tahajjud', 'color': const Color(0xFF1E1B4B), 'icon': '🌑'},
+      {'title': 'Salah', 'id': 'post_prayer', 'color': const Color(0xFF0EA5E9), 'icon': '🕌'},
+      {'title': 'Salawat', 'id': 'salawat', 'color': const Color(0xFFEC4899), 'icon': '❤️'},
+      {'title': 'Sunnah Duas', 'id': 'sunnah', 'color': const Color(0xFF10B981), 'icon': '📖'},
+      {'title': 'Quranic Duas', 'id': 'quranic', 'color': const Color(0xFF059669), 'icon': '📗'},
+      {'title': 'Istighfar', 'id': 'istighfar', 'color': const Color(0xFF64748B), 'icon': '📿'},
+      {'title': 'Dhikr All Times', 'id': 'general', 'color': const Color(0xFF8B5CF6), 'icon': '🤲'},
+      {'title': 'Names of Allah', 'id': 'asmaul_husna', 'color': const Color(0xFFD946EF), 'icon': '✨'},
+    ];
+
+    final List<Map<String, dynamic>> others = [
+      {'title': 'Nightmares', 'id': 'nightmares', 'color': const Color(0xFF334155), 'icon': '🌩️'},
+      {'title': 'Waking up', 'id': 'waking_up', 'color': const Color(0xFFFCD34D), 'icon': '☀️'},
+      {'title': 'Clothes', 'id': 'clothes', 'color': const Color(0xFF38BDF8), 'icon': '👕'},
+      {'title': 'Wudu', 'id': 'wudu', 'color': const Color(0xFF2DD4BF), 'icon': '💧'},
+      {'title': 'Food & Drink', 'id': 'food_drink', 'color': const Color(0xFFF43F5E), 'icon': '🍽️'},
+      {'title': 'Home', 'id': 'home', 'color': const Color(0xFF84CC16), 'icon': '🏠'},
+      {'title': 'Istikharah', 'id': 'istikharah', 'color': const Color(0xFF0284C7), 'icon': '🧭'},
+      {'title': 'Adaan & Masjid', 'id': 'masjid', 'color': const Color(0xFF65A30D), 'icon': '🕌'},
+      {'title': 'Diff & Happy', 'id': 'difficulty', 'color': const Color(0xFFEAB308), 'icon': '⚖️'},
+      {'title': 'Iman Protect', 'id': 'iman_protection', 'color': const Color(0xFF0F766E), 'icon': '🛡️'},
+      {'title': 'Travel', 'id': 'travel', 'color': const Color(0xFF0284C7), 'icon': '✈️'},
+      {'title': 'Shopping', 'id': 'shopping', 'color': const Color(0xFF14B8A6), 'icon': '🛍️'},
+      {'title': 'Marriage', 'id': 'family', 'color': const Color(0xFFF43F5E), 'icon': '👨‍👩‍👧'},
+      {'title': 'Social', 'id': 'social', 'color': const Color(0xFFA855F7), 'icon': '🤝'},
+      {'title': 'Nature', 'id': 'nature', 'color': const Color(0xFF22C55E), 'icon': '🌿'},
+      {'title': 'Death', 'id': 'death', 'color': const Color(0xFF475569), 'icon': '🥀'},
+      {'title': 'Gatherings', 'id': 'gatherings', 'color': const Color(0xFFF59E0B), 'icon': '👥'},
+      {'title': 'Hajj & Umrah', 'id': 'hajj', 'color': const Color(0xFF000000), 'icon': '🕋'},
+    ];
+
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
@@ -21,192 +56,181 @@ class DhikrHubScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Dhikar & Dua',
-            style: GoogleFonts.outfit(
-                fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
+            style: GoogleFonts.playfairDisplay(
+                fontSize: 24, fontWeight: FontWeight.w700, color: _kText)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Daily Essentials',
                 style: GoogleFonts.outfit(
-                    fontSize: 20, fontWeight: FontWeight.w900, color: _kText)),
+                    fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 16),
-            
-            // Full Width items
-            _buildWideCard(context, 'Morning Adhkar', 'morning', '🌅',
-                const Color(0xFFE2F0D9), const Color(0xFF4CAF50)),
-            
-            _buildWideCard(context, 'Evening Adhkar', 'evening', '🌇',
-                const Color(0xFFFFE8D6), const Color(0xFFFF9800)),
-            
-            const SizedBox(height: 24),
-            Text('Routine Insights',
-                style: GoogleFonts.outfit(
-                    fontSize: 20, fontWeight: FontWeight.w900, color: _kText)),
-            const SizedBox(height: 16),
-
-            // Grid items
-            Row(
-              children: [
-                Expanded(child: _buildSquareCard(context, 'After Salah', 'post_prayer', '🕌',
-                    const Color(0xFFE1F5FE), const Color(0xFF03A9F4))),
-                const SizedBox(width: 14),
-                Expanded(child: _buildSquareCard(context, 'Before Sleep', 'sleeping', '🌌',
-                    const Color(0xFFE8EAF6), const Color(0xFF3F51B5))),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(child: _buildSquareCard(context, 'Protection', 'protection', '🛡️',
-                    const Color(0xFFFFEBEE), const Color(0xFFF44336))),
-                const SizedBox(width: 14),
-                Expanded(child: _buildSquareCard(context, 'General', 'general', '🤲',
-                    const Color(0xFFF3E5F5), const Color(0xFF9C27B0))),
-              ],
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                childAspectRatio: 0.9,
+              ),
+              itemCount: essentials.length,
+              itemBuilder: (context, index) {
+                final item = essentials[index];
+                return _buildGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
+              },
             ),
 
             const SizedBox(height: 32),
-            Text('Explore More',
+            Text('Other Categories',
                 style: GoogleFonts.outfit(
-                    fontSize: 20, fontWeight: FontWeight.w900, color: _kText)),
+                    fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 16),
-            
-            _buildWideCard(context, 'Du\'as for the Ummah', 'ummah', '🌍',
-                const Color(0xFFFFF8E1), const Color(0xFFFFC107)),
-            _buildWideCard(context, 'Tahajjud Prayers', 'tahajjud', '🌑',
-                const Color(0xFF263238), const Color(0xFFECEFF1), isDark: true),
-            _buildWideCard(context, 'Travel & Journey', 'travel', '✈️',
-                const Color(0xFFE0F2F1), const Color(0xFF009688)),
-            
-            const SizedBox(height: 20),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.85,
+              ),
+              itemCount: others.length,
+              itemBuilder: (context, index) {
+                final item = others[index];
+                return _buildMiniGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
+              },
+            ),
+            const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWideCard(BuildContext context, String title, String id, String emoji,
-      Color bgColor, Color iconColor, {bool isDark = false}) {
+  Widget _buildGradientCard(BuildContext context, String title, String id, String emoji, Color baseColor) {
     return GestureDetector(
-      onTap: () => Navigator.push(context,
-          MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        height: 120,
         decoration: BoxDecoration(
-          color: bgColor,
           borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            colors: [baseColor, baseColor.withValues(alpha: 0.6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))
+            BoxShadow(color: baseColor.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8))
           ],
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Background watermarked emoji at the right
-            Positioned(
-              right: -10, bottom: -20,
-              child: Text(emoji,
-                  style: TextStyle(
-                      fontSize: 100,
-                      color: Colors.white.withValues(alpha: isDark ? 0.08 : 0.6))),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Align(
-                alignment: Alignment.centerLeft,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // Vibrant emoji watermark mimicking a 3D character glow
+              Positioned(
+                right: -20,
+                bottom: -15,
+                child: Text(emoji,
+                    style: const TextStyle(
+                        fontSize: 90,
+                        shadows: [Shadow(color: Colors.black26, offset: Offset(2, 5), blurRadius: 10)])),
+              ),
+              // Glassmorphic protection mask
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withValues(alpha: 0.7),
+                      Colors.transparent,
+                    ],
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.7),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(emoji, style: const TextStyle(fontSize: 20)),
-                    ),
-                    const Spacer(),
                     Text(title,
                         style: GoogleFonts.outfit(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : _kText,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            height: 1.1,
                             letterSpacing: -0.5)),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSquareCard(BuildContext context, String title, String id, String emoji,
-      Color bgColor, Color iconColor) {
+  Widget _buildMiniGradientCard(BuildContext context, String title, String id, String emoji, Color baseColor) {
     return GestureDetector(
-      onTap: () => Navigator.push(context,
-          MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
       child: Container(
-        height: 160,
         decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [baseColor, baseColor.withValues(alpha: 0.6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))
+            BoxShadow(color: baseColor.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 6))
           ],
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Watermarked background emoji
-            Positioned(
-              right: -15, bottom: -15,
-              child: Text(emoji,
-                  style: TextStyle(fontSize: 90, color: Colors.white.withValues(alpha: 0.6))),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(emoji, style: const TextStyle(fontSize: 22)),
-                  ),
-                  const Spacer(),
-                  Text(title,
-                      style: GoogleFonts.outfit(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                          color: _kText,
-                          letterSpacing: -0.5)),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text('Read Now',
-                          style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: iconColor)),
-                      const SizedBox(width: 4),
-                      Icon(Icons.arrow_forward_rounded, size: 12, color: iconColor),
-                    ],
-                  )
-                ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -10,
+                bottom: -10,
+                child: Text(emoji,
+                    style: const TextStyle(
+                        fontSize: 60,
+                        shadows: [Shadow(color: Colors.black26, offset: Offset(2, 5), blurRadius: 10)])),
               ),
-            ),
-          ],
+              // Glassmorphic protection mask
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withValues(alpha: 0.8),
+                      Colors.transparent,
+                    ],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(title,
+                      style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          height: 1.1,
+                          letterSpacing: -0.3)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
