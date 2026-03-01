@@ -2,10 +2,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/xp_service.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
+import '../utils/asset_helper.dart';
 
 // ── Models ────────────────────────────────────────────────────────────────────
 class _Azkar {
@@ -484,32 +489,251 @@ class _DhikrScreenState extends State<DhikrScreen> {
         Expanded(
           child: _filtered.isEmpty 
           ? Center(child: Text('No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
-          : ListView.separated(
+          : ListView.builder(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-            itemCount: _filtered.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 20),
-            itemBuilder: (context, index) {
+            itemCount: _filtered.length + 1, // +1 for the top illustration header
+            itemBuilder: (context, idx) {
+              
+              // ── Header Element ──
+              if (idx == 0) {
+                // Safely grab the actual title text for this category:
+                final label = _categories.firstWhere((c) => c.id == _selectedCat, orElse: () => _categories.first).label;
+                String? autoImagePath = AssetHelper.getCustomImagePath(label);
+                
+                if (autoImagePath != null) {
+                  Color headerColor;
+                  String subtitle;
+
+                  // Define aesthetic tweaks depending on the vibe!
+                  if (_selectedCat == 'evening') {
+                    headerColor = isDark ? const Color(0xFFFDE68A) : const Color(0xFF1E3A8A); // Deep rich blue for evening mood
+                    subtitle = 'Recite between Asr and Maghrib';
+                  } else if (_selectedCat == 'sleeping') {
+                    headerColor = isDark ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A); // Midnight blue
+                    subtitle = 'Recite before falling asleep';
+                  } else {
+                    // Universal automatic matching theme for custom items like 'Morning' or 'Tahajjud'!
+                    headerColor = isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155);
+                    subtitle = '${label} Adhkar & Duas';
+                  }
+                  
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : Colors.white, // Pure white blends with the image!
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                         BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))
+                      ]
+                    ),
+                    child: Column(
+                      children: [
+                        // The user's image goes here implicitly.
+                        Image.asset(
+                          autoImagePath,
+                          height: 160,
+                          fit: BoxFit.contain, // Prevent frame/bounds clipping
+                          errorBuilder: (_, __, ___) => Container(
+                            height: 120,
+                            alignment: Alignment.center,
+                            child: Text('Add $autoImagePath', 
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: kSub, fontSize: 13)),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(label, 
+                            style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w900, color: headerColor)),
+                        const SizedBox(height: 6),
+                        Text(subtitle, 
+                            style: GoogleFonts.outfit(fontSize: 14, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600)),
+                      ],
+                    ),
+                  );
+                }
+                // Don't render anything for categories right now until images are added
+                return const SizedBox.shrink();
+              }
+
+              final index = idx - 1; // shift back by 1 because of the header
               final azkar = _filtered[index];
               final count = _counts[azkar.id] ?? 0;
               final tapTarget = azkar.recommendedCount;
               final isComplete = count >= tapTarget;
 
-              return _AzkarCard(
-                azkar: azkar,
-                currentCount: count,
-                isComplete: isComplete,
-                isFavorite: _favorites.contains(azkar.id),
-                settings: _settings,
-                onTap: () => _tap(azkar.id, tapTarget),
-                onReset: () => _reset(azkar.id),
-                onFavorite: () => _toggleFavorite(azkar.id),
-                onShare: () => _shareAzkar(azkar),
+              String titleText = (azkar.transliteration.isNotEmpty && azkar.transliteration.trim() != '') 
+                  ? azkar.transliteration 
+                  : azkar.translation;
+              titleText = titleText.replaceAll('\n', ' ').trim();
+
+              return GestureDetector(
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrDetailScreen(
+                    azkars: _filtered,
+                    initialIndex: index,
+                    counts: _counts,
+                    favorites: _favorites,
+                    settings: _settings,
+                    parentState: this,
+                  )));
+                  setState((){}); // Refresh counts on the index list when they return
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 14), // Margin replaces separator padding
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+                    boxShadow: [
+                       BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFFF59E0B),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: isComplete 
+                            ? const Icon(Icons.check_rounded, color: Colors.white, size: 24)
+                            : Text('${index + 1}', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(titleText, 
+                              maxLines: 1, 
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 16, color: kText)
+                            ),
+                            const SizedBox(height: 4),
+                            Text(azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim(), 
+                              maxLines: 1, 
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(fontSize: 13, color: kSub)
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isComplete ? const Color(0xFFE8F8F0) : const Color(0xFFFFF7E6),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text('${azkar.recommendedCount}x', 
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.w800, 
+                            color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFFD97706)
+                          )
+                        ),
+                      ),
+                    ]
+                  )
+                ),
               );
             },
           ),
         ),
       ])),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Swipable Full Screen Detail Page
+// ─────────────────────────────────────────────────────────────────────────────
+class DhikrDetailScreen extends StatefulWidget {
+  final List<_Azkar> azkars;
+  final int initialIndex;
+  final Map<String, int> counts;
+  final List<String> favorites;
+  final _DhikrSettings settings;
+  final _DhikrScreenState parentState;
+
+  const DhikrDetailScreen({
+     super.key, required this.azkars, required this.initialIndex,
+     required this.counts, required this.favorites,
+     required this.settings, required this.parentState,
+  });
+
+  @override
+  State<DhikrDetailScreen> createState() => _DhikrDetailScreenState();
+}
+
+class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+      final isDark = widget.settings.darkMode;
+      final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F3EE);
+      final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
+      final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+
+      return Scaffold(
+        backgroundColor: kBg,
+        appBar: AppBar(
+          backgroundColor: kWhite,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded, color: kText, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text('Recite', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText)),
+          centerTitle: true,
+        ),
+        body: PageView.builder(
+          controller: _pageController,
+          itemCount: widget.azkars.length,
+          itemBuilder: (context, index) {
+            final azkar = widget.azkars[index];
+            final count = widget.counts[azkar.id] ?? 0;
+            final tapTarget = azkar.recommendedCount;
+            final isComplete = count >= tapTarget;
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+              child: _AzkarCard(
+                azkar: azkar,
+                currentCount: count,
+                isComplete: isComplete,
+                isFavorite: widget.favorites.contains(azkar.id),
+                settings: widget.settings,
+                onTap: () {
+                    widget.parentState._tap(azkar.id, tapTarget);
+                    setState((){});
+                },
+                onReset: () {
+                    widget.parentState._reset(azkar.id);
+                    setState((){});
+                },
+                onFavorite: () {
+                    widget.parentState._toggleFavorite(azkar.id);
+                    setState((){});
+                },
+                onShare: () => widget.parentState._shareAzkar(azkar),
+              ),
+            );
+          },
+        ),
+      );
   }
 }
 
