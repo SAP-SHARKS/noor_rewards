@@ -69,7 +69,8 @@ IconData _parseIcon(String name) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 class DhikrScreen extends StatefulWidget {
-  const DhikrScreen({super.key});
+  final String initialCategory;
+  const DhikrScreen({super.key, this.initialCategory = 'general'});
   @override State<DhikrScreen> createState() => _DhikrScreenState();
 }
 
@@ -78,7 +79,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   List<_Azkar> _allAzkar = [];
   List<_Azkar> _filtered = [];
   List<_Category> _categories = [];
-  String _selectedCat = 'general';
+  late String _selectedCat;
   
   final Map<String, int> _counts = {};
   List<String> _favorites = [];
@@ -95,6 +96,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedCat = widget.initialCategory;
     _initData();
   }
 
