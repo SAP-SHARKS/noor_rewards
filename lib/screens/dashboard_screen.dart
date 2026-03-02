@@ -252,10 +252,7 @@ class _HomeTabState extends State<_HomeTab> {
         }
         
         for (var d in data) {
-          final pts = actualPoints[d['id']] ?? 0;
-          final tgt = (d['target_points'] as num?)?.toInt() ?? 1;
-          d['current_points'] = pts;
-          d['is_completed'] = pts >= tgt;
+          d['current_points'] = actualPoints[d['id']] ?? 0;
         }
       } catch (_) {}
     }
