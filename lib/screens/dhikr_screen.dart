@@ -303,9 +303,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
     );
   }
 
-  void _showSettingsSheet() {
+  void _showSettingsSheet([BuildContext? sheetContext, VoidCallback? onUpdate]) {
     showModalBottomSheet(
-      context: context,
+      context: sheetContext ?? context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (ctx) => StatefulBuilder(
@@ -349,6 +349,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     onChanged: (val) {
                       setModalState(() => _settings.darkMode = val);
                       setState(() => _settings.darkMode = val);
+                      onUpdate?.call();
                       _savePrefs();
                     },
                   ),
@@ -365,6 +366,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     onChanged: (val) {
                       setModalState(() => _settings.arabicFontSize = val);
                       setState(() => _settings.arabicFontSize = val);
+                      onUpdate?.call();
                       _savePrefs();
                     },
                   ),
@@ -378,6 +380,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     onChanged: (val) {
                       setModalState(() => _settings.translationFontSize = val);
                       setState(() => _settings.translationFontSize = val);
+                      onUpdate?.call();
                       _savePrefs();
                     },
                   ),
@@ -422,12 +425,6 @@ class _DhikrScreenState extends State<DhikrScreen> {
         title: Text('Dua & Azkar',
             style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText)),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings_rounded, color: kText),
-            onPressed: _showSettingsSheet,
-          )
-        ],
       ),
       body: SafeArea(child: Column(children: [
 
@@ -633,6 +630,16 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
           ),
           title: Text('Recite', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText)),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.settings_rounded, color: kText),
+              onPressed: () {
+                widget.parentState._showSettingsSheet(context, () {
+                  if (mounted) setState(() {});
+                });
+              },
+            )
+          ],
         ),
         body: PageView.builder(
           controller: _pageController,
