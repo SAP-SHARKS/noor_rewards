@@ -150,13 +150,14 @@ class DhikrHubScreen extends StatelessWidget {
             children: [
               // Vibrant emoji watermark mimicking a 3D character glow OR custom image
               if (isCustomCard)
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10), // slight padding so it doesn't overlap text
-                      child: Image.asset(customImagePath!, fit: BoxFit.contain),
-                    ),
+                Positioned(
+                  top: 0,
+                  right: -10,
+                  bottom: 30, // Leave enough white area at the bottom for the text
+                  width: 120, // Constrain width so it doesn't overlap text horizontally
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(customImagePath!, fit: BoxFit.contain, alignment: Alignment.centerRight),
                   ),
                 )
               else
@@ -181,7 +182,28 @@ class DhikrHubScreen extends StatelessWidget {
                     end: Alignment.topRight,
                   ),
                 ),
-              ),
+              )
+              else
+                // Ensure the text has a solid readable white background area that fades into the image
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white,
+                            Colors.white.withValues(alpha: 0.8),
+                            Colors.white.withValues(alpha: 0.0),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(

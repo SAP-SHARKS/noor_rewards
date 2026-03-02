@@ -643,28 +643,67 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
             final tapTarget = azkar.recommendedCount;
             final isComplete = count >= tapTarget;
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-              child: _AzkarCard(
-                azkar: azkar,
-                currentCount: count,
-                isComplete: isComplete,
-                isFavorite: widget.favorites.contains(azkar.id),
-                settings: widget.settings,
-                onTap: () {
-                    widget.parentState._tap(azkar.id, tapTarget);
-                    setState((){});
-                },
-                onReset: () {
-                    widget.parentState._reset(azkar.id);
-                    setState((){});
-                },
-                onFavorite: () {
-                    widget.parentState._toggleFavorite(azkar.id);
-                    setState((){});
-                },
-                onShare: () => widget.parentState._shareAzkar(azkar),
-              ),
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 20, bottom: 120),
+                    child: _AzkarCard(
+                      azkar: azkar,
+                      currentCount: count,
+                      isComplete: isComplete,
+                      isFavorite: widget.favorites.contains(azkar.id),
+                      settings: widget.settings,
+                      onReset: () {
+                          widget.parentState._reset(azkar.id);
+                          setState((){});
+                      },
+                      onFavorite: () {
+                          widget.parentState._toggleFavorite(azkar.id);
+                          setState((){});
+                      },
+                      onShare: () => widget.parentState._shareAzkar(azkar),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 20,
+                  right: 20,
+                  bottom: 24,
+                  child: GestureDetector(
+                    onTap: isComplete ? null : () {
+                        widget.parentState._tap(azkar.id, tapTarget);
+                        setState((){});
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 18),
+                      decoration: BoxDecoration(
+                        color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFF0D9488),
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: isComplete ? [] : [
+                          BoxShadow(
+                            color: const Color(0xFF0D9488).withValues(alpha: 0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          )
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          isComplete ? 'Completed ✓' : '$count / $tapTarget',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             );
           },
         ),
@@ -681,7 +720,6 @@ class _AzkarCard extends StatelessWidget {
   final bool isComplete;
   final bool isFavorite;
   final _DhikrSettings settings;
-  final VoidCallback onTap;
   final VoidCallback onReset;
   final VoidCallback onFavorite;
   final VoidCallback onShare;
@@ -692,7 +730,6 @@ class _AzkarCard extends StatelessWidget {
     required this.isComplete,
     required this.isFavorite,
     required this.settings,
-    required this.onTap,
     required this.onReset,
     required this.onFavorite,
     required this.onShare,
@@ -869,42 +906,7 @@ class _AzkarCard extends StatelessWidget {
                 ),
               ),
             
-            const SizedBox(height: 16),
-
-            // ── Interactive Count Button ──
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-              child: GestureDetector(
-                onTap: isComplete ? null : onTap,
-                child: Center(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                    decoration: BoxDecoration(
-                      color: isComplete ? const Color(0xFF2BAE7C) : kPrimary,
-                      borderRadius: BorderRadius.circular(32),
-                      boxShadow: isComplete ? [] : [
-                        BoxShadow(
-                          color: kPrimary.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        )
-                      ],
-                    ),
-                    child: Text(
-                      isComplete ? 'Completed ✓' : '$currentCount / ${azkar.recommendedCount}',
-                      style: GoogleFonts.outfit(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
-            
+            const SizedBox(height: 24),
           ],
         ),
       ),
