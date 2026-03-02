@@ -628,7 +628,16 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
             icon: Icon(Icons.arrow_back_ios_rounded, color: kText, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text('Recite', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText)),
+          title: AnimatedBuilder(
+            animation: _pageController,
+            builder: (context, _) {
+              int currentIndex = _pageController.positions.isNotEmpty ? _pageController.page?.round() ?? widget.initialIndex : widget.initialIndex;
+              final catId = widget.azkars[currentIndex].category;
+              final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
+              final String catLabel = catObj?.label ?? 'Dhikr & Dua';
+              return Text(catLabel, style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText));
+            }
+          ),
           centerTitle: true,
           actions: [
             IconButton(
@@ -756,6 +765,43 @@ class _AzkarCard extends StatelessWidget {
     final kBeneBg = isDark ? const Color(0xFF2A2416) : const Color(0xFFFBF8F1);
     final kBeneTxt = isDark ? const Color(0xFFEADBBE) : const Color(0xFF5A4D2E);
 
+    String rawRef = azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim();
+    String bottomRef = '';
+    
+    // Parse references at the end, either in brackets/parenthesis OR matching a known Hadith/Quran keyword
+    void extractReference(String source, Function(String newSource, String extractedRef) onExtract) {
+      if (source.isEmpty) return;
+      
+      // 1. Check for brackets or parentheses at the end
+      final bracketMatch = RegExp(r'(\(|\[)([^\[\(\)\]]+)(\)|\])\s*$').firstMatch(source);
+      if (bracketMatch != null) {
+        final ref = bracketMatch.group(2)?.trim() ?? '';
+        final cleanSource = source.substring(0, bracketMatch.start).replaceAll(RegExp(r'[-—\.,\s]+$'), '').trim();
+        onExtract(cleanSource, ref);
+        return;
+      }
+      
+      // 2. Check for known Hadith keywords
+      final keywordMatch = RegExp(r'(?:[-—\.,\s]+|^)((?:Sahih\s)?(?:Muslim|Bukhari|Abu Dawud|Tirmidhi|Ibn Majah|Nasai|Ahmad|Quran|Surah).*)$', caseSensitive: false).firstMatch(source);
+      if (keywordMatch != null) {
+        final ref = keywordMatch.group(1)?.trim() ?? '';
+        final cleanSource = source.substring(0, keywordMatch.start).replaceAll(RegExp(r'[-—\.,\s]+$'), '').trim();
+        onExtract(cleanSource, ref);
+        return;
+      }
+    }
+
+    extractReference(rawRef, (clean, ref) {
+      rawRef = clean;
+      bottomRef = ref;
+    });
+
+    String cleanReward = azkar.reward.trim();
+    extractReference(cleanReward, (clean, ref) {
+      cleanReward = clean;
+      if (bottomRef.isEmpty) bottomRef = ref;
+    });
+
     return Container(
       decoration: BoxDecoration(
         color: kCardBg,
@@ -826,6 +872,30 @@ class _AzkarCard extends StatelessWidget {
               ),
             ),
 
+            // ── Context / Chapter Subtitle ──
+            if (rawRef.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      rawRef,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: kSub,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
             // ── Main Text Content ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -862,14 +932,6 @@ class _AzkarCard extends StatelessWidget {
                       color: kSub
                     ),
                   ),
-                  if (azkar.reward.isEmpty && azkar.reference.isNotEmpty) ...[
-                    const SizedBox(height: 14),
-                    Text(
-                      azkar.reference,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -877,7 +939,7 @@ class _AzkarCard extends StatelessWidget {
             const SizedBox(height: 20),
 
             // ── Highly Visible Benefit Box ──
-            if (azkar.reward.isNotEmpty)
+            if (cleanReward.isNotEmpty)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(16),
@@ -895,24 +957,27 @@ class _AzkarCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Virtue & Benefit', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kGold)),
+                          Text('Hadith & Virtue', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kGold)),
                           const SizedBox(height: 4),
-                          Text(azkar.reward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, height: 1.5)),
-                          if (azkar.reference.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                azkar.reference,
-                                style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
-                              ),
-                            ),
+                          Text(cleanReward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, height: 1.5)),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-            
+
+            // ── Display Reference at the Bottom ──
+            if (bottomRef.isNotEmpty || (azkar.reference.isNotEmpty && rawRef.isEmpty))
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: Text(
+                  bottomRef.isNotEmpty ? bottomRef : azkar.reference,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: kPrimary),
+                ),
+              ),
+
             const SizedBox(height: 24),
           ],
         ),

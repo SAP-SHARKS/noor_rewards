@@ -219,7 +219,47 @@ class _HomeTabState extends State<_HomeTab> {
   }
 
   Future<void> _loadDonations() async {
-    final data = await DonationService.instance.getUserProjectDonations();
+    final data = List<Map<String, dynamic>>.from(await DonationService.instance.getUserProjectDonations());
+    if (data.isEmpty) {
+      try {
+        final fallback = await Supabase.instance.client
+            .from('community_projects')
+            .select()
+            .eq('is_active', true)
+            .eq('is_completed', false)
+            .order('sort_order')
+            .limit(1);
+        if (fallback.isNotEmpty) {
+          final p = Map<String, dynamic>.from(fallback.first);
+          p['my_donated'] = 0;
+          data.add(p);
+        }
+      } catch (_) {}
+    }
+
+    if (data.isNotEmpty) {
+      try {
+        final List<String> pids = data.map((d) => d['id'] as String).toList();
+        final sumRes = await Supabase.instance.client
+            .from('user_donations')
+            .select('project_id, points_donated')
+            .filter('project_id', 'in', pids);
+        
+        final Map<String, int> actualPoints = {};
+        for (final r in (sumRes as List)) {
+          final pid = r['project_id'] as String;
+          actualPoints[pid] = (actualPoints[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
+        }
+        
+        for (var d in data) {
+          final pts = actualPoints[d['id']] ?? 0;
+          final tgt = (d['target_points'] as num?)?.toInt() ?? 1;
+          d['current_points'] = pts;
+          d['is_completed'] = pts >= tgt;
+        }
+      } catch (_) {}
+    }
+
     if (mounted) setState(() => _myDonations = data);
   }
 
@@ -739,6 +779,18 @@ class _ActivityCardState extends State<_ActivityCard> {
 }
 
 
+Widget _buildProjIcon(dynamic emojiVal, double size) {
+  final e = emojiVal?.toString() ?? '🕌';
+  if (e.startsWith('http')) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size / 3),
+      child: Image.network(e, width: size * 1.5, height: size * 1.5, fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Text('🖼️', style: TextStyle(fontSize: size))),
+    );
+  }
+  return Text(e, style: TextStyle(fontSize: size));
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MY DONATIONS SECTION – shared by Home and Impact tabs
 // ─────────────────────────────────────────────────────────────────────────────
@@ -755,119 +807,141 @@ class _MyDonationsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 14, offset: const Offset(0, 4))],
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text('Your Donations 💚',
-                  style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
-              const Spacer(),
-              Text('${donations.length} cause${donations.length == 1 ? '' : 's'}',
-                  style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-            ]),
-            const SizedBox(height: 6),
-            Text('Keep it up! Every point you donate makes a real impact.',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-            const SizedBox(height: 14),
-            SizedBox(
-              height: 190,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: 220,
+          child: ListView.separated(
+            clipBehavior: Clip.none,
+            scrollDirection: Axis.horizontal,
                 itemCount: donations.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (ctx, i) {
                   final d = donations[i];
                   final target  = (d['target_points']  as num).toInt();
                   final current = (d['current_points'] as num).toInt();
                   final myPts   = (d['my_donated'] as num).toInt();
                   final remaining = (target - current).clamp(0, target);
+                  
                   final pct = (current / target).clamp(0.0, 1.0);
+                  final myPct = (myPts / target).clamp(0.0, 1.0);
                   final isCompleted = d['is_completed'] == true;
 
+                  String fmt(int n) => n >= 1000000 ? '${(n/1000000).toStringAsFixed(1)}M' : (n >= 1000 ? '${(n/1000).toStringAsFixed(1)}k' : '$n');
+
                   return Container(
-                    width: donations.length == 1 ? constraints.maxWidth : 220,
-                    padding: const EdgeInsets.all(16),
+                    width: donations.length == 1 ? constraints.maxWidth : 280,
+                    padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(22),
                       boxShadow: [BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.07),
-                          blurRadius: 14, offset: const Offset(0, 4))],
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 12, offset: const Offset(0, 4))],
+                      border: Border.all(color: Colors.grey.shade100, width: 1.5),
                     ),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                // Header
-                Row(children: [
-                  Text(d['emoji'] ?? '🌿', style: const TextStyle(fontSize: 22)),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(d['title'] ?? '',
-                      style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text),
-                      maxLines: 2, overflow: TextOverflow.ellipsis)),
-                ]),
-                const SizedBox(height: 10),
-                // My donation badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE8F8F0),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text('You donated $myPts pts',
-                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF2BAE7C))),
-                ),
-                const SizedBox(height: 10),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: LinearProgressIndicator(
-                    value: pct,
-                    minHeight: 7,
-                    backgroundColor: const Color(0xFFFFE8A0),
-                    valueColor: AlwaysStoppedAnimation(isCompleted ? Colors.grey : _C.amber),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                if (isCompleted)
-                  Text('✅ Project completed!',
-                      style: GoogleFonts.outfit(fontSize: 11, color: _C.sub))
-                else
-                  Text('$remaining pts still needed',
-                      style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
-                const Spacer(),
-                // Donate More button
-                if (!isCompleted && availablePoints > 0)
-                  GestureDetector(
-                    onTap: () => onDonateMore(d),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: _C.navImpact,
-                        borderRadius: BorderRadius.circular(12),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      // Header
+                      Row(children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(color: const Color(0xFFF7F4EF), borderRadius: BorderRadius.circular(12)),
+                          child: _buildProjIcon(d['emoji'], 18),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(d['title'] ?? '',
+                            style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text),
+                            maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      ]),
+                      const Spacer(),
+                      
+                      // Chart & Stats Row
+                      Row(
+                        children: [
+                          // Circular Chart
+                          SizedBox(
+                            height: 74, width: 74,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                CircularProgressIndicator(value: 1.0, strokeWidth: 7, color: Colors.grey.shade100, strokeCap: StrokeCap.round),
+                                CircularProgressIndicator(value: pct, strokeWidth: 7, color: const Color(0xFFF59E0B), strokeCap: StrokeCap.round),
+                                CircularProgressIndicator(value: myPct, strokeWidth: 7, color: const Color(0xFF2BAE7C), strokeCap: StrokeCap.round),
+                                Center(
+                                  child: isCompleted 
+                                    ? const Icon(Icons.check_rounded, color: Color(0xFF2BAE7C), size: 28)
+                                    : Text('${(pct * 100).toInt()}%', 
+                                      style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 18),
+                          
+                          // Legends
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFF2BAE7C), shape: BoxShape.circle)),
+                                    const SizedBox(width: 8),
+                                    Text('You', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                                    const Spacer(),
+                                    Text(fmt(myPts), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
+                                  ]
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
+                                    const SizedBox(width: 8),
+                                    Text('Community', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                                    const Spacer(),
+                                    Text(fmt((current - myPts).clamp(0, current)), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
+                                  ]
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Container(width: 8, height: 8, decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle)),
+                                    const SizedBox(width: 8),
+                                    Text('Needed', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                                    const Spacer(),
+                                    Text(fmt(remaining), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
+                                  ]
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      child: Center(
-                        child: Text('Donate More →',
-                            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
-                      ),
-                    ),
-                  ),
-              ]),
-            );
-          },
-        ),
-      ),
-          ]);
-        },
-      ),
+                      const Spacer(),
+                      
+                      // Donate More button
+                      if (!isCompleted && availablePoints > 0)
+                        GestureDetector(
+                          onTap: () => onDonateMore(d),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2BAE99), // matching _C.navImpact
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Center(
+                              child: Text(myPts == 0 ? 'Donate Now →' : 'Donate More →',
+                                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
+                            ),
+                          ),
+                        ),
+                    ]),
+                  );
+                },
+              ),
+        );
+      },
     );
   }
 }
@@ -891,13 +965,46 @@ class _ImpactTabState extends State<_ImpactTab> {
       final res = await Supabase.instance.client.from('community_projects')
           .select().order('sort_order');
       _projects = List<Map<String, dynamic>>.from(res);
+      
+      // Calculate real total from user_donations
+      final donationsSumRes = await Supabase.instance.client
+          .from('user_donations')
+          .select('project_id, points_donated');
+          
+      final Map<String, int> actualPoints = {};
+      for (final d in (donationsSumRes as List)) {
+        final pid = d['project_id'] as String;
+        final pts = (d['points_donated'] as num?)?.toInt() ?? 0;
+        actualPoints[pid] = (actualPoints[pid] ?? 0) + pts;
+      }
+      
+      // Apply real totals and update completion status dynamically
+      for (var p in _projects) {
+        final realPts = actualPoints[p['id']] ?? 0;
+        p['current_points'] = realPts;
+        if (realPts >= ((p['target_points'] as num?)?.toInt() ?? 1)) {
+          p['is_completed'] = true;
+        } else {
+          p['is_completed'] = false;
+        }
+      }
     } catch (_) {}
+    
     // Load user's donations in parallel
     _myDonations = await DonationService.instance.getUserProjectDonations();
+    
+    // Sync the correct current_points into myDonations as well
+    for (var m in _myDonations) {
+      final realPts = _projects.cast<Map<String,dynamic>?>().firstWhere(
+        (p) => p?['id'] == m['id'], orElse: () => null
+      )?['current_points'];
+      if (realPts != null) m['current_points'] = realPts;
+    }
+
     if (mounted) setState(() => _loading = false);
   }
 
-  String _fmtM(num n) => n >= 1000000 ? '${(n / 1000000).toStringAsFixed(1)}M' : '$n';
+  String _fmtM(num n) => n >= 1000000 ? '${(n / 1000000).toStringAsFixed(1)}M' : (n >= 1000 ? '${(n / 1000).toStringAsFixed(1)}k' : '$n');
 
   @override
   Widget build(BuildContext context) {
@@ -944,17 +1051,8 @@ class _ImpactTabState extends State<_ImpactTab> {
             ]),
           ),
         ),
-        // ── My personal donation history ─────────────────────────────────
-        if (_myDonations.isNotEmpty) ...[
-          _MyDonationsSection(
-            donations: _myDonations,
-            availablePoints: availablePoints,
-            onDonateMore: (project) {
-              _showDonateSheet(context, project, availablePoints, parentState);
-            },
-          ),
-          const SizedBox(height: 24),
-        ],
+        // ── My personal donation history block removed (prevent repetition from Dashboard) ──
+
         Text('Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
         const SizedBox(height: 20),
 
@@ -965,7 +1063,9 @@ class _ImpactTabState extends State<_ImpactTab> {
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16)]),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Expanded(child: Text('${p['emoji']} ${p['title']}',
+                _buildProjIcon(p['emoji'], 18),
+                const SizedBox(width: 8),
+                Expanded(child: Text('${p['title']}',
                     style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text))),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -1044,7 +1144,7 @@ class _ImpactTabState extends State<_ImpactTab> {
               child: Row(children: [
                 Container(width: 50, height: 50, decoration: BoxDecoration(color: Colors.white,
                     borderRadius: BorderRadius.circular(50)),
-                    child: Center(child: Text(p['emoji'], style: const TextStyle(fontSize: 24)))),
+                    child: Center(child: _buildProjIcon(p['emoji'], 24))),
                 const SizedBox(width: 14),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(p['title'], style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: _C.text)),
@@ -1199,7 +1299,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(color: _C.communityBg, shape: BoxShape.circle),
-                    child: Text(widget.project['emoji'], style: const TextStyle(fontSize: 28)),
+                    child: _buildProjIcon(widget.project['emoji'], 28),
                   ),
                 ],
               ),

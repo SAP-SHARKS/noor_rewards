@@ -1,9 +1,11 @@
 // lib/screens/admin/admin_dashboard.dart
 // Full admin panel — sidebar nav + 6 sections
 
+import 'dart:convert';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -743,65 +745,132 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
     final usdCtrl    = TextEditingController(text: '${existing?['estimated_usd'] ?? 0}');
     final sponsorCtrl= TextEditingController(text: existing?['sponsor'] ?? 'Islamic Relief');
 
+    String? pickedBase64;
+    // hide base64 from the textfield
+    if (emojiCtrl.text.startsWith('data:image')) {
+      pickedBase64 = emojiCtrl.text;
+      emojiCtrl.text = '🖼️ [Custom Image Attached]';
+    }
+
     await showDialog<void>(
       context: context,
-      builder: (_) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(existing == null ? 'Add Project' : 'Edit Project',
-                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 16),
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  _Field('Title',         titleCtrl),
-                  const SizedBox(height: 12),
-                  _Field('Emoji',         emojiCtrl),
-                  const SizedBox(height: 12),
-                  _Field('Sponsor',       sponsorCtrl),
-                  const SizedBox(height: 12),
-                  _Field('Target Points', targetCtrl, numeric: true),
-                  const SizedBox(height: 12),
-                  _Field('Est. USD',      usdCtrl,     numeric: true),
-                ]),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+      builder: (_) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(existing == null ? 'Add Project' : 'Edit Project',
+                  style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 16),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    _Field('Title',         titleCtrl),
+                    const SizedBox(height: 12),
+                    _Field('Sponsor',       sponsorCtrl),
+                    const SizedBox(height: 12),
+                    _Field('Target Points', targetCtrl, numeric: true),
+                    const SizedBox(height: 12),
+                    _Field('Est. USD',      usdCtrl,     numeric: true),
+                    const SizedBox(height: 20),
+                    
+                    // Image/Emoji Picker Section (At bottom)
+                    Text('Project Icon / Image', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: _kText)),
+                    const SizedBox(height: 8),
+                    if (pickedBase64 == null)
+                       _Field('Emoji (e.g. 🕌)', emojiCtrl),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Container(
+                          width: 44, height: 44,
+                          decoration: BoxDecoration(color: _kBg, borderRadius: BorderRadius.circular(8), border: Border.all(color: _kBorder)),
+                          child: Center(
+                            child: Builder(builder: (_) {
+                              final text = pickedBase64 ?? emojiCtrl.text.trim();
+                              if (text.startsWith('data:image')) {
+                                return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.memory(base64Decode(text.split(',').last), fit: BoxFit.cover));
+                              } else if (text.startsWith('http')) {
+                                return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(text, fit: BoxFit.cover, errorBuilder: (_,__,___)=>const Text('🖼️')));
+                              }
+                              return Text(text.isNotEmpty ? text : '🕌', style: const TextStyle(fontSize: 20));
+                            }),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.upload_file_rounded, size: 18),
+                            label: Text(pickedBase64 != null ? 'Change Image' : 'Upload Image'),
+                            style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+                            onPressed: () async {
+                              final picker = ImagePicker();
+                              final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 300, maxHeight: 300, imageQuality: 60);
+                              if (file != null) {
+                                final bytes = await file.readAsBytes();
+                                final b64 = base64Encode(bytes);
+                                setDialogState(() {
+                                  pickedBase64 = 'data:image/jpeg;base64,$b64';
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        if (pickedBase64 != null) ...[
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, color: _kDanger),
+                            tooltip: 'Clear image',
+                            onPressed: () {
+                              setDialogState(() {
+                                pickedBase64 = null;
+                                emojiCtrl.text = '🕌';
+                              });
+                            },
+                          ),
+                        ],
+                      ],
+                    ),
+                  ]),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: _kAccent),
-                  onPressed: () async {
-                    final payload = {
-                      'title': titleCtrl.text, 'emoji': emojiCtrl.text,
-                      'sponsor': sponsorCtrl.text,
-                      'target_points': int.tryParse(targetCtrl.text) ?? 10000000,
-                      'estimated_usd': double.tryParse(usdCtrl.text) ?? 0,
-                    };
-                    if (existing == null) {
-                      await _sb.from('community_projects').insert(payload);
-                    } else {
-                      await _sb.from('community_projects').update(payload).eq('id', existing['id']);
-                    }
-                    if (!mounted) return;
-                    Navigator.pop(context);
-                    _load();
-                  },
-                  child: const Text('Save', style: TextStyle(color: _kWhite)),
+              const SizedBox(height: 20),
+              Row(children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: _kAccent),
+                    onPressed: () async {
+                      final payload = {
+                        'title': titleCtrl.text, 
+                        'emoji': pickedBase64 ?? emojiCtrl.text.trim(),
+                        'sponsor': sponsorCtrl.text,
+                        'target_points': int.tryParse(targetCtrl.text) ?? 10000000,
+                        'estimated_usd': double.tryParse(usdCtrl.text) ?? 0,
+                      };
+                      if (existing == null) {
+                        await _sb.from('community_projects').insert(payload);
+                      } else {
+                        await _sb.from('community_projects').update(payload).eq('id', existing['id']);
+                      }
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      _load();
+                    },
+                    child: const Text('Save', style: TextStyle(color: _kWhite)),
+                  ),
+                ),
+              ]),
             ]),
-          ]),
+          ),
         ),
       ),
     );
@@ -845,7 +914,26 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       // Title row
                       Row(children: [
-                        Text(p['emoji'] ?? '🕌', style: const TextStyle(fontSize: 22)),
+                        Builder(
+                          builder: (ctx) {
+                            final e = p['emoji']?.toString() ?? '🕌';
+                            if (e.startsWith('data:image')) {
+                              final bytes = base64Decode(e.split(',').last);
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.memory(bytes, width: 26, height: 26, fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Text('🖼️', style: TextStyle(fontSize: 22))),
+                              );
+                            } else if (e.startsWith('http')) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.network(e, width: 26, height: 26, fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Text('🖼️', style: TextStyle(fontSize: 22))),
+                              );
+                            }
+                            return Text(e, style: const TextStyle(fontSize: 22));
+                          }
+                        ),
                         const SizedBox(width: 10),
                         Expanded(child: Text(p['title'] ?? '',
                             style: GoogleFonts.outfit(
