@@ -1,16 +1,12 @@
 import 'dart:convert';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/xp_service.dart';
-import '../services/settings_service.dart';
-import '../models/app_config.dart';
-import '../utils/asset_helper.dart';
 
 // ── Models ────────────────────────────────────────────────────────────────────
 class _Azkar {
@@ -49,15 +45,9 @@ class _Category {
 }
 
 class _DhikrSettings {
-  double arabicFontSize;
-  double translationFontSize;
-  bool darkMode;
-  
-  _DhikrSettings({
-    this.arabicFontSize = 32.0,
-    this.translationFontSize = 14.0,
-    this.darkMode = false,
-  });
+  double arabicFontSize = 32.0;
+  double translationFontSize = 14.0;
+  bool darkMode = false;
 }
 
 IconData _parseIcon(String name) {
@@ -97,12 +87,20 @@ class _DhikrScreenState extends State<DhikrScreen> {
   // Settings
   final _DhikrSettings _settings = _DhikrSettings();
   bool _isFirstTime = false;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 4));
     _selectedCat = widget.initialCategory;
     _initData();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   Future<void> _initData() async {
@@ -217,6 +215,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   void _shareAzkar(_Azkar azkar) {
     HapticFeedback.lightImpact();
     final text = '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n— Shared via Noor App';
+    // ignore: deprecated_member_use
     Share.share(text);
   }
 
@@ -243,8 +242,15 @@ class _DhikrScreenState extends State<DhikrScreen> {
       if (_setsCompleted == 0) await XpService.instance.awardBadge('first_dhikr');
       if (_setsCompleted + 1 >= 7) await XpService.instance.awardBadge('night_warrior');
 
+      final isDailyGoal = await XpService.instance.claimDailyDhikrGoal();
+      if (isDailyGoal && mounted) {
+        _confettiController.play();
+        _showDailyGoalModal();
+      }
+
       setState(() {
         _pointsToday += 20;
+        if (isDailyGoal) _pointsToday += 50;
         _setsCompleted += 1;
         _counts[dhikrId] = 0;
       });
@@ -344,7 +350,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text('Dark Mode', style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                    activeColor: const Color(0xFF0D9488),
+                    activeTrackColor: const Color(0xFF0D9488),
                     value: _settings.darkMode,
                     onChanged: (val) {
                       setModalState(() => _settings.darkMode = val);
@@ -394,6 +400,56 @@ class _DhikrScreenState extends State<DhikrScreen> {
     );
   }
 
+  void _showDailyGoalModal() {
+    final isDark = _settings.darkMode;
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(28),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: [BoxShadow(color: const Color(0xFF0D9488).withValues(alpha: 0.3), blurRadius: 40, spreadRadius: 10)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72, height: 72,
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFE0F2FE)),
+                child: const Center(child: Text('🏆', style: TextStyle(fontSize: 40))),
+              ),
+              const SizedBox(height: 20),
+              Text('Daily Azkar Complete!', 
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF1C1C1E))),
+              const SizedBox(height: 12),
+              Text('Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.', 
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(fontSize: 15, color: isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93))),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D9488),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    elevation: 0,
+                  ),
+                  child: Text('Awesome', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -426,7 +482,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
             style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText)),
         centerTitle: true,
       ),
-      body: SafeArea(child: Column(children: [
+      body: Stack(children: [
+        SafeArea(child: Column(children: [
 
         // ── Points banner (Optional) ────────────────────────────────────────
         if (_pointsToday > 0)
@@ -502,7 +559,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
               return GestureDetector(
                 onTap: () async {
-                  await Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrDetailScreen(
+                  await Navigator.push(context, MaterialPageRoute(builder: (_) => _DhikrDetailScreen(
                     azkars: _filtered,
                     initialIndex: index,
                     counts: _counts,
@@ -578,14 +635,23 @@ class _DhikrScreenState extends State<DhikrScreen> {
           ),
         ),
       ])),
-    );
+      Align(
+        alignment: Alignment.topCenter,
+        child: ConfettiWidget(
+          confettiController: _confettiController,
+          blastDirectionality: BlastDirectionality.explosive,
+          shouldLoop: false,
+          colors: const [Color(0xFF0D9488), Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF38BDF8)],
+        ),
+      ),
+    ]));
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Swipable Full Screen Detail Page
 // ─────────────────────────────────────────────────────────────────────────────
-class DhikrDetailScreen extends StatefulWidget {
+class _DhikrDetailScreen extends StatefulWidget {
   final List<_Azkar> azkars;
   final int initialIndex;
   final Map<String, int> counts;
@@ -593,17 +659,17 @@ class DhikrDetailScreen extends StatefulWidget {
   final _DhikrSettings settings;
   final _DhikrScreenState parentState;
 
-  const DhikrDetailScreen({
-     super.key, required this.azkars, required this.initialIndex,
+  const _DhikrDetailScreen({
+     required this.azkars, required this.initialIndex,
      required this.counts, required this.favorites,
      required this.settings, required this.parentState,
   });
 
   @override
-  State<DhikrDetailScreen> createState() => _DhikrDetailScreenState();
+  State<_DhikrDetailScreen> createState() => _DhikrDetailScreenState();
 }
 
-class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
+class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   late PageController _pageController;
 
   @override
@@ -753,8 +819,6 @@ class _AzkarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pct = (currentCount / azkar.recommendedCount).clamp(0.0, 1.0);
-
     final isDark = settings.darkMode;
     final kCardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);

@@ -1,0 +1,4 @@
+﻿Analyzing noor_rewards-main...                                  
+
+  error - The argument type 'String' can't be assigned to the parameter type 'ShareParams'.  - lib\screens\dhikr_screen.dart:218:30 - argument_type_not_assignable
+

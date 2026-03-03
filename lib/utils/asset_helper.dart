@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 class AssetHelper {
-  static Map<String, String> _availableMap = {};
+  static final Map<String, String> _availableMap = {};
   static bool _assetsLoaded = false;
 
   static Future<void> loadAssets() async {
@@ -16,9 +16,9 @@ class AssetHelper {
         }
       }
       _assetsLoaded = true;
-      print('Loaded assets map: $_availableMap');
+      debugPrint('Loaded assets map: $_availableMap');
     } catch (e) {
-      print('Asset loading error: $e');
+      debugPrint('Asset loading error: $e');
     }
   }
 
