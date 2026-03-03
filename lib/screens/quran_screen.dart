@@ -96,6 +96,14 @@ class _QuranScreenState extends State<QuranScreen> {
   bool   _wordByWord        = false;   // word-by-word mode
   List<Map<String, dynamic>> _wbwWords = [];  // [{arabic, translation}]
   bool   _wbwLoading        = false;
+  // Full-page Mushaf mode
+  bool   _fullPageMode      = false;   // full mushaf page mode
+  int    _currentPage       = 1;       // Quran page (1–604)
+  List<Map<String, dynamic>> _pageAyahs = []; // [{surah, ayah, arabic}]
+  bool   _pageLoading       = false;
+  Timer? _pageTimer;                   // counts seconds on current page
+  int    _pageSeconds       = 0;       // seconds spent reading this page
+  int    _pageXpEarned      = 0;       // XP earned this session (full-page)
   bool   _autoAdvance       = false;   // advance ayah when audio ends
   bool   _repeatAyah        = false;   // repeat current ayah audio
   // Notifications + alerts
@@ -254,6 +262,7 @@ class _QuranScreenState extends State<QuranScreen> {
   void dispose() {
     _hintTimer?.cancel();
     _hintOverlay?.remove();
+    _pageTimer?.cancel();
     _player.dispose();
     super.dispose();
   }
@@ -499,6 +508,80 @@ class _QuranScreenState extends State<QuranScreen> {
     } catch (_) {
       if (mounted) setState(() => _wbwLoading = false);
     }
+  }
+
+  // ── Full-page Mushaf: fetch all ayahs for a page ─────────────────────────────
+  Future<void> _fetchFullPage(int page) async {
+    if (mounted) setState(() { _pageLoading = true; _pageAyahs = []; });
+
+    final cacheKey = 'fullpage_$page';
+    final cached = _cache.get(cacheKey);
+    if (cached != null) {
+      final cachedAt = DateTime.tryParse((cached as Map)['ts'] ?? '');
+      if (cachedAt != null && DateTime.now().difference(cachedAt).inDays < 30) {
+        final ayahs = (cached['ayahs'] as List)
+            .map((a) => Map<String, dynamic>.from(a as Map))
+            .toList();
+        if (mounted) setState(() { _pageAyahs = ayahs; _pageLoading = false; });
+        return;
+      }
+    }
+
+    try {
+      final url = 'https://api.quran.com/api/v4/verses/by_page/$page'
+          '?words=false&fields=text_uthmani,verse_key,page_number&per_page=50';
+      final res = await http.get(Uri.parse(url),
+          headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 12));
+      if (res.statusCode == 200) {
+        final js = jsonDecode(res.body);
+        final verses = js['verses'] as List? ?? [];
+        final ayahs = verses.map<Map<String, dynamic>>((v) {
+          final key = (v['verse_key'] as String).split(':');
+          return {
+            'surah': int.tryParse(key[0]) ?? 1,
+            'ayah': int.tryParse(key[1]) ?? 1,
+            'arabic': v['text_uthmani'] ?? '',
+          };
+        }).toList();
+        await _cache.put(cacheKey, {
+          'ayahs': ayahs,
+          'ts': DateTime.now().toIso8601String(),
+        });
+        if (mounted) setState(() { _pageAyahs = ayahs; _pageLoading = false; });
+      } else {
+        if (mounted) setState(() => _pageLoading = false);
+      }
+    } catch (_) {
+      if (mounted) setState(() => _pageLoading = false);
+    }
+  }
+
+  // ── Full-page timer: 1 XP per 30 seconds ─────────────────────────────────────
+  void _startPageTimer() {
+    _pageTimer?.cancel();
+    _pageSeconds = 0;
+    _pageXpEarned = 0;
+    _pageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() => _pageSeconds++);
+      // Award 1 XP every 30 seconds of reading
+      if (_pageSeconds % 30 == 0) {
+        _pageXpEarned++;
+        _pointsToday += 1;
+        XpService.instance.earnXp(1);
+      }
+    });
+  }
+
+  void _stopPageTimer() {
+    _pageTimer?.cancel();
+    _pageTimer = null;
+  }
+
+  String get _pageTimerLabel {
+    final m = (_pageSeconds ~/ 60).toString().padLeft(2, '0');
+    final s = (_pageSeconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
   }
 
   // ── Jump to specific surah ────────────────────────────────────────────────────
@@ -1587,6 +1670,30 @@ class _QuranScreenState extends State<QuranScreen> {
                         if (_showAudioPlayer && !_isPlaying) _togglePlay();
                       },
                     ),
+                    // 🗒️ Full Page
+                    _PillButton(
+                      icon: Icons.menu_book_outlined,
+                      label: _fullPageMode ? 'Page $_currentPage' : 'Full Page',
+                      active: _fullPageMode,
+                      activeColor: const Color(0xFF4CAF50),
+                      darkMode: _darkMode,
+                      onTap: () {
+                        setState(() {
+                          _fullPageMode = !_fullPageMode;
+                          // Disable incompatible modes
+                          if (_fullPageMode) {
+                            _wordByWord = false;
+                            _wbwWords = [];
+                          }
+                        });
+                        if (_fullPageMode) {
+                          _fetchFullPage(_currentPage);
+                          _startPageTimer();
+                        } else {
+                          _stopPageTimer();
+                        }
+                      },
+                    ),
                     // 🔤 Word by Word
                     _PillButton(
                       icon: Icons.translate_rounded,
@@ -1595,7 +1702,13 @@ class _QuranScreenState extends State<QuranScreen> {
                       activeColor: _accent,
                       darkMode: _darkMode,
                       onTap: () {
-                        setState(() => _wordByWord = !_wordByWord);
+                        setState(() {
+                          _wordByWord = !_wordByWord;
+                          if (_wordByWord) {
+                            _fullPageMode = false;
+                            _stopPageTimer();
+                          }
+                        });
                         if (_wordByWord && _wbwWords.isEmpty) {
                           _fetchWordByWord(_surah, _ayah);
                         }
@@ -1611,7 +1724,10 @@ class _QuranScreenState extends State<QuranScreen> {
                       child: CircularProgressIndicator(
                           color: _kTeal, strokeWidth: 2),
                     ))
-                  else if (_wordByWord) ...[ 
+                  else if (_fullPageMode) ...[
+                    // ── Full Page Mushaf Mode ──────────────────────────────────
+                    _buildFullPageMushaf(txt, sub, cardBg),
+                  ] else if (_wordByWord) ...[ 
                     // ── Word-by-Word Mode ────────────────────────────────────
                     if (_wbwLoading)
                       Center(child: Padding(
@@ -1682,6 +1798,89 @@ class _QuranScreenState extends State<QuranScreen> {
                   ],
                 ]),
               ),
+              // ── Full Page Timer Bar ──────────────────────────────────────────────
+              if (_fullPageMode) ...[
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 12)],
+                    border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
+                  ),
+                  child: Row(children: [
+                    Container(
+                      width: 38, height: 38,
+                      decoration: const BoxDecoration(
+                        color: Color(0x1F4CAF50),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.timer_rounded, color: Color(0xFF4CAF50), size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Page Reading · Page $_currentPage',
+                          style: GoogleFonts.outfit(fontSize: 11, color: sub, fontWeight: FontWeight.w500)),
+                      Text(_pageTimerLabel,
+                          style: GoogleFonts.outfit(
+                              fontSize: 22, fontWeight: FontWeight.w800,
+                              color: const Color(0xFF4CAF50), letterSpacing: 1.5)),
+                    ]),
+                    const Spacer(),
+                    if (_pageXpEarned > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text('+$_pageXpEarned XP',
+                            style: GoogleFonts.outfit(
+                                fontSize: 12, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF4CAF50))),
+                      ),
+                    GestureDetector(
+                      onTap: () {
+                        if (_pageTimer != null) {
+                          _stopPageTimer();
+                          setState(() {});
+                        } else {
+                          _startPageTimer();
+                        }
+                      },
+                      child: Container(
+                        width: 38, height: 38,
+                        decoration: const BoxDecoration(
+                          color: Color(0x1F4CAF50),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _pageTimer != null ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          color: const Color(0xFF4CAF50), size: 22),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: _currentPage > 1 ? () {
+                        setState(() { _currentPage--; _pageSeconds = 0; });
+                        _fetchFullPage(_currentPage);
+                      } : null,
+                      child: Icon(Icons.chevron_left_rounded,
+                          color: _currentPage > 1 ? txt : Colors.grey.shade400, size: 28),
+                    ),
+                    GestureDetector(
+                      onTap: _currentPage < 604 ? () {
+                        setState(() { _currentPage++; _pageSeconds = 0; });
+                        _fetchFullPage(_currentPage);
+                      } : null,
+                      child: Icon(Icons.chevron_right_rounded,
+                          color: _currentPage < 604 ? txt : Colors.grey.shade400, size: 28),
+                    ),
+                  ]),
+                ),
+              ],
               // Progress card
               if (_showProgressCard) ...[
                 const SizedBox(height: 14),
@@ -1825,6 +2024,166 @@ class _QuranScreenState extends State<QuranScreen> {
           child: Icon(icon, color: Colors.white, size: 22),
         ),
       );
+
+  // ── Full-Page Mushaf View ─────────────────────────────────────────────────────
+  Widget _buildFullPageMushaf(Color txtColor, Color subColor, Color cardBg) {
+    if (_pageLoading) {
+      return Center(child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Column(children: [
+          CircularProgressIndicator(color: const Color(0xFF4CAF50), strokeWidth: 2),
+          const SizedBox(height: 14),
+          Text('Loading page $_currentPage...',
+              style: GoogleFonts.outfit(fontSize: 13, color: subColor)),
+        ]),
+      ));
+    }
+
+    if (_pageAyahs.isEmpty) {
+      return Center(child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Column(children: [
+          Icon(Icons.wifi_off_rounded, color: subColor, size: 40),
+          const SizedBox(height: 10),
+          Text('Page unavailable.\nCheck your connection.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontSize: 13, color: subColor)),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => _fetchFullPage(_currentPage),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.4)),
+              ),
+              child: Text('Retry', style: GoogleFonts.outfit(
+                  fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFF4CAF50))),
+            ),
+          ),
+        ]),
+      ));
+    }
+
+    // Detect surah changes within the page for bismillah breaks
+    String? lastSurah;
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // ── Page header ──
+      Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          margin: const EdgeInsets.only(bottom: 14),
+          decoration: BoxDecoration(
+            border: Border.all(color: _accent.withValues(alpha: 0.35)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            '— صفحة $_currentPage —',
+            textDirection: TextDirection.rtl,
+            style: GoogleFonts.amiri(fontSize: 14, color: _accent, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+
+      // ── Continuous RTL text with ayah markers ──
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: Wrap(
+          alignment: WrapAlignment.start,
+          runSpacing: 0,
+          children: _pageAyahs.expand<Widget>((ayah) {
+            final surahNum = ayah['surah'] as int;
+            final ayahNum  = ayah['ayah'] as int;
+            final arabic   = ayah['arabic'] as String;
+            final surahKey = '$surahNum';
+            final widgets  = <Widget>[];
+
+            // Surah name header when surah changes within the page
+            if (lastSurah != surahKey) {
+              lastSurah = surahKey;
+              if (ayahNum == 1 && surahNum > 1) {
+                widgets.add(SizedBox(width: double.infinity,
+                  child: Column(children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _accent.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _surahNames[surahNum - 1],
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.amiri(fontSize: 16, fontWeight: FontWeight.w700, color: _accent),
+                      ),
+                    ),
+                    // Bismillah (except Surah 9)
+                    if (surahNum != 9)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                          style: GoogleFonts.amiri(fontSize: 18, color: txtColor, fontWeight: FontWeight.w700, height: 2.0),
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                  ]),
+                ));
+              }
+            }
+
+            // Ayah text + end marker inline
+            widgets.add(
+              RichText(
+                textDirection: TextDirection.rtl,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: arabic,
+                      style: GoogleFonts.amiri(
+                        fontSize: _arabicFontSize * 0.78,
+                        height: 2.0,
+                        color: txtColor,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    // Ayah number circle (Unicode circle with number)
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        width: 28, height: 28,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _accent.withValues(alpha: 0.5)),
+                          color: _accent.withValues(alpha: 0.06),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$ayahNum',
+                            style: GoogleFonts.outfit(
+                              fontSize: 9, fontWeight: FontWeight.w700,
+                              color: _accent, height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+            return widgets;
+          }).toList(),
+        ),
+      ),
+    ]);
+  }
 
   // ── Word-by-Word View ─────────────────────────────────────────────────────────
   Widget _buildWordByWordView(Color txtColor, Color subColor) {
