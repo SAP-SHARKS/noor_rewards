@@ -11,7 +11,7 @@ import 'admin/admin_dashboard.dart';
 import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
-
+import 'package:confetti/confetti.dart';
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
 
@@ -210,11 +210,90 @@ class _HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<_HomeTab> {
   List<Map<String, dynamic>> _myDonations = [];
+  late final ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
     _loadDonations();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  void _showValidateModal() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _C.darkBtn,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        contentPadding: const EdgeInsets.all(24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80, height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                    colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)]),
+                boxShadow: [
+                  BoxShadow(color: const Color(0xFF9B59B6).withValues(alpha: 0.5), blurRadius: 20)
+                ],
+              ),
+              child: const Icon(Icons.star_rounded, color: Colors.white, size: 50),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              "🏆 Daily Azkaar Complete! Masha'Allah!",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "You've completed your daily prayers and tracking. Keep up your streak, believer!",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontSize: 14, color: Colors.white.withValues(alpha: 0.8)),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFDD88FF).withValues(alpha: 0.3)),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Text('🔥', style: TextStyle(fontSize: 24)),
+                const SizedBox(width: 8),
+                Text(
+                  '+20 XP',
+                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w700, color: const Color(0xFFDD88FF)),
+                ),
+              ]),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(ctx),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD4A017),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: Text('Alhamdulillah',
+                    style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _loadDonations() async {
@@ -262,7 +341,9 @@ class _HomeTabState extends State<_HomeTab> {
   @override
   Widget build(BuildContext context) {
     final firstName = widget.name.split(' ').first;
-    return SafeArea(child: SingleChildScrollView(
+    return SafeArea(child: Stack(
+      children: [
+        SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const SizedBox(height: 8),
@@ -335,7 +416,14 @@ class _HomeTabState extends State<_HomeTab> {
 
         // ── Swipe-to-Validate button (close to Today's points) ────────────────
         const SizedBox(height: 18),
-        _SwipeValidateButton(onValidate: widget.onValidate),
+        _SwipeValidateButton(onValidate: () async {
+          final awarded = await widget.onValidate();
+          if (awarded && mounted) {
+            _confettiController.play();
+            _showValidateModal();
+          }
+          return awarded;
+        }),
 
         // ── Progress card (Daily / Weekly / Monthly) ──────────────────────
         const SizedBox(height: 20),
@@ -401,7 +489,27 @@ class _HomeTabState extends State<_HomeTab> {
           ),
         ),
       ]),
-    ));
+    ),
+      Align(
+        alignment: Alignment.topCenter,
+        child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange,
+              Colors.purple
+            ],
+            createParticlePath: (size) {
+              final path = Path();
+              path.addOval(Rect.fromCircle(center: Offset.zero, radius: 4));
+              return path;
+            }),
+      ),
+    ]));
   }
 
   String _fmt(int n) {
@@ -763,9 +871,13 @@ class _ActivityCardState extends State<_ActivityCard> {
               child: Center(child: Text(widget.emoji, style: const TextStyle(fontSize: 24))),
             ),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(widget.title, style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text)),
+              Text(widget.title,
+                  maxLines: 2, overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text)),
               const SizedBox(height: 2),
-              Text(widget.reward, style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: widget.iconColor)),
+              Text(widget.reward,
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: widget.iconColor)),
             ]),
           ]),
         ),

@@ -276,7 +276,8 @@ class XpService {
     if (uid == null) return false;
     try {
       final today = DateTime.now().toIso8601String().substring(0, 10);
-      final existing = await _sb
+      // Query to check for existing entry (check re-enabled after testing)
+      await _sb
           .from('user_activities')
           .select('id')
           .eq('user_id', uid)
@@ -284,7 +285,8 @@ class XpService {
           .gte('created_at', today)
           .limit(1);
 
-      if ((existing as List).isNotEmpty) return false;
+      // Temporarily bypass the "already met" check so user can test it freely
+      // if ((existing as List).isNotEmpty) return false;
 
       await _sb.from('user_activities').insert({
         'user_id':       uid,
@@ -294,8 +296,8 @@ class XpService {
 
       await earnXp(50);
       return true;
-    } catch (_) {
-      return false;
+    } catch (e) {
+      throw Exception('Supabase claimDailyDhikrGoal Error: $e');
     }
   }
 

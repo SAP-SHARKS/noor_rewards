@@ -93,7 +93,9 @@ class _QuranScreenState extends State<QuranScreen> {
   bool   _showSurahBanner   = false;   // show/hide surah header banner
   bool   _fullScreenMode    = false;   // hide appbar+nav for focus
   // Reading aids
-  bool   _wordByWord        = false;   // (future) word-by-word mode placeholder
+  bool   _wordByWord        = false;   // word-by-word mode
+  List<Map<String, dynamic>> _wbwWords = [];  // [{arabic, translation}]
+  bool   _wbwLoading        = false;
   bool   _autoAdvance       = false;   // advance ayah when audio ends
   bool   _repeatAyah        = false;   // repeat current ayah audio
   // Notifications + alerts
@@ -327,6 +329,8 @@ class _QuranScreenState extends State<QuranScreen> {
           _surahName   = cached['surahName'] ?? '';
           _loading     = false;
         });
+        // Also refresh WBW if mode is on
+        if (_wordByWord) _fetchWordByWord(surah, ayah);
         return;
       }
     }
@@ -387,6 +391,7 @@ class _QuranScreenState extends State<QuranScreen> {
           _loading = false;
         });
         }
+        if (_wordByWord) _fetchWordByWord(surah, ayah);
       } else {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
       }
@@ -406,7 +411,7 @@ class _QuranScreenState extends State<QuranScreen> {
     bool earnRewards = !fromAutoPlay && !_autoAdvance && !_repeatAyah;
 
     setState(() {
-      _surah = nextSurah; _ayah = nextAyah;
+      _surah = nextSurah; _ayah = nextAyah; _wbwWords = [];
       if (earnRewards) {
         _ayahsToday++; _pointsToday += XpReward.ayahRead;
       }
@@ -449,8 +454,51 @@ class _QuranScreenState extends State<QuranScreen> {
       prevSurah = _surah > 1 ? _surah - 1 : 114;
       prevAyah  = _surahLengths[prevSurah]; // last ayah of prev surah
     }
-    setState(() { _surah = prevSurah; _ayah = prevAyah; });
+    setState(() { _surah = prevSurah; _ayah = prevAyah; _wbwWords = []; });
     _fetchAyah(prevSurah, prevAyah);
+  }
+
+  // ── Fetch word-by-word data ───────────────────────────────────────────────────
+  Future<void> _fetchWordByWord(int surah, int ayah) async {
+    setState(() { _wbwLoading = true; _wbwWords = []; });
+    final wbwCacheKey = 'wbw_${surah}_$ayah';
+    final cachedWbw = _cache.get(wbwCacheKey);
+    if (cachedWbw != null) {
+      final cachedAt = DateTime.tryParse((cachedWbw as Map)['ts'] ?? '');
+      if (cachedAt != null && DateTime.now().difference(cachedAt).inDays < 30) {
+        final words = (cachedWbw['words'] as List)
+            .map((w) => Map<String, dynamic>.from(w as Map))
+            .toList();
+        if (mounted) setState(() { _wbwWords = words; _wbwLoading = false; });
+        return;
+      }
+    }
+    try {
+      final url = 'https://api.quran.com/api/v4/verses/by_key/$surah:$ayah'
+          '?words=true&word_fields=text_uthmani,text_indopak&word_translation_language=en';
+      final res = await http.get(Uri.parse(url),
+          headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 10));
+      if (res.statusCode == 200) {
+        final js = jsonDecode(res.body);
+        final verse = js['verse'];
+        final rawWords = verse?['words'] as List? ?? [];
+        final words = rawWords
+            .where((w) => w['char_type_name'] != 'end')
+            .map<Map<String, dynamic>>((w) => {
+              'arabic': w['text_uthmani'] ?? w['text'] ?? '',
+              'translation': w['translation']?['text'] ?? '',
+            }).toList();
+        await _cache.put(wbwCacheKey, {
+          'words': words,
+          'ts': DateTime.now().toIso8601String(),
+        });
+        if (mounted) setState(() { _wbwWords = words; _wbwLoading = false; });
+      } else {
+        if (mounted) setState(() => _wbwLoading = false);
+      }
+    } catch (_) {
+      if (mounted) setState(() => _wbwLoading = false);
+    }
   }
 
   // ── Jump to specific surah ────────────────────────────────────────────────────
@@ -630,7 +678,12 @@ class _QuranScreenState extends State<QuranScreen> {
                             child: Row(children: [
                               Text(e.emoji, style: const TextStyle(fontSize: 16)),
                               const SizedBox(width: 8),
-                              Text(e.name, style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: lblC)),
+                              Expanded( // Added Expanded for overflow protection
+                                child: Text(e.name,
+                                    maxLines: 1, // Added maxLines
+                                    overflow: TextOverflow.ellipsis, // Added overflow
+                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: lblC)),
+                              ),
                             ]),
                           );
                         }),
@@ -1210,10 +1263,16 @@ class _QuranScreenState extends State<QuranScreen> {
                     // ═ ADVANCED
                     sHead('ADVANCED', Icons.settings_rounded),
                     sTile('Word-by-Word Mode',
-                        'Highlights each word while recited (coming soon)',
-                        Icons.spellcheck_rounded,
-                        _wordByWord,
-                        (v) => _wordByWord = v),
+                        'Show each Arabic word with its English meaning',
+                        Icons.translate_rounded,
+                        _wordByWord, (v) {
+                          _wordByWord = v;
+                          if (v && _wbwWords.isEmpty) {
+                            _fetchWordByWord(_surah, _ayah);
+                          } else if (!v) {
+                            setState(() => _wbwWords = []);
+                          }
+                        }),
 
                     // Translation language picker
                     Padding(padding: const EdgeInsets.only(bottom: 10),
@@ -1275,6 +1334,8 @@ class _QuranScreenState extends State<QuranScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(_translations[i].name,
+                                          maxLines: 1, // Added maxLines
+                                          overflow: TextOverflow.ellipsis, // Added overflow
                                           style: GoogleFonts.outfit(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
@@ -1282,6 +1343,8 @@ class _QuranScreenState extends State<QuranScreen> {
                                                   ? _accent
                                                   : const Color(0xFF1C1C1E))),
                                       Text(_translations[i].author,
+                                          maxLines: 1, // Added maxLines
+                                          overflow: TextOverflow.ellipsis, // Added overflow
                                           style: GoogleFonts.outfit(
                                               fontSize: 10,
                                               color: const Color(0xFF8E8E93))),
@@ -1503,7 +1566,33 @@ class _QuranScreenState extends State<QuranScreen> {
                       child: CircularProgressIndicator(
                           color: _kTeal, strokeWidth: 2),
                     ))
-                  else ...[
+                  else if (_wordByWord) ...[ 
+                    // ── Word-by-Word Mode ────────────────────────────────────
+                    if (_wbwLoading)
+                      Center(child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: Column(children: [
+                          CircularProgressIndicator(color: _accent, strokeWidth: 2),
+                          const SizedBox(height: 12),
+                          Text('Loading word translations...',
+                              style: GoogleFonts.outfit(fontSize: 12, color: sub)),
+                        ]),
+                      ))
+                    else if (_wbwWords.isEmpty)
+                      Center(child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: Column(children: [
+                          Icon(Icons.wifi_off_rounded, color: sub, size: 36),
+                          const SizedBox(height: 8),
+                          Text('Word data unavailable.\nCheck your connection.',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(fontSize: 13, color: sub)),
+                        ]),
+                      ))
+                    else
+                      _buildWordByWordView(txt, sub),
+                  ] else ...[ 
+                    // ── Full Verse Mode ──────────────────────────────────────
                     Directionality(
                       textDirection: TextDirection.rtl,
                       child: Text(
@@ -1550,8 +1639,11 @@ class _QuranScreenState extends State<QuranScreen> {
                   const SizedBox(height: 20),
                   Divider(height: 1, color: _darkMode ? Colors.white12 : Colors.grey.shade100),
                   const SizedBox(height: 14),
-                  // ── Action pills row ──────────────────────────────────────
-                  Row(children: [
+                  // ── Action pills row (Wrap prevents overflow on small screens) ──
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
                     // 📖 Read Tafsir
                     GestureDetector(
                       onTap: _openTafsirSheet,
@@ -1572,7 +1664,6 @@ class _QuranScreenState extends State<QuranScreen> {
                         ]),
                       ),
                     ),
-                    const SizedBox(width: 10),
                     // 🎧 Listen — toggles audio player
                     GestureDetector(
                       onTap: () {
@@ -1617,7 +1708,49 @@ class _QuranScreenState extends State<QuranScreen> {
                         ]),
                       ),
                     ),
-                  ]),
+                    // 🔤 Word-by-Word toggle pill
+                    GestureDetector(
+                      onTap: () {
+                        setState(() => _wordByWord = !_wordByWord);
+                        if (_wordByWord && _wbwWords.isEmpty) {
+                          _fetchWordByWord(_surah, _ayah);
+                        }
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: _wordByWord
+                              ? _accent.withValues(alpha: 0.15)
+                              : (_darkMode ? Colors.white10 : Colors.grey.shade100),
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                              color: _wordByWord
+                                  ? _accent.withValues(alpha: 0.5)
+                                  : (_darkMode ? Colors.white24 : Colors.grey.shade300)),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(
+                            Icons.translate_rounded,
+                            color: _wordByWord
+                                ? _accent
+                                : (_darkMode ? Colors.white54 : Colors.grey.shade500),
+                            size: 15,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Word by Word',
+                            style: GoogleFonts.outfit(
+                                fontSize: 13, fontWeight: FontWeight.w700,
+                                color: _wordByWord
+                                    ? _accent
+                                    : (_darkMode ? Colors.white54 : Colors.grey.shade500)),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    ],
+                  ),
 
                 ]),
               ),
@@ -1765,8 +1898,31 @@ class _QuranScreenState extends State<QuranScreen> {
         ),
       );
 
-
-
+  // ── Word-by-Word View ─────────────────────────────────────────────────────────
+  Widget _buildWordByWordView(Color txtColor, Color subColor) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.end,
+        spacing: 2,      // horizontal gap between chips
+        runSpacing: 8,   // vertical gap between rows
+        children: _wbwWords.map((wordData) {
+          final arabic = wordData['arabic'] as String? ?? '';
+          final translation = wordData['translation'] as String? ?? '';
+          return _WbwWordChip(
+            arabic: arabic,
+            translation: translation,
+            arabicFontSize: _arabicFontSize,
+            accentColor: _accent,
+            txtColor: txtColor,
+            subColor: subColor,
+            darkMode: _darkMode,
+          );
+        }).toList(),
+      ),
+    );
+  }
 
 
 
@@ -1964,3 +2120,131 @@ const _surahNames = [
   'Quraysh','Al-Ma\'un','Al-Kawthar','Al-Kafirun','An-Nasr',
   'Al-Masad','Al-Ikhlas','Al-Falaq','An-Nas',
 ];
+
+// ── Word-by-Word Chip Widget ──────────────────────────────────────────────────
+class _WbwWordChip extends StatefulWidget {
+  final String arabic;
+  final String translation;
+  final double arabicFontSize;
+  final Color accentColor;
+  final Color txtColor;
+  final Color subColor;
+  final bool darkMode;
+
+  const _WbwWordChip({
+    required this.arabic,
+    required this.translation,
+    required this.arabicFontSize,
+    required this.accentColor,
+    required this.txtColor,
+    required this.subColor,
+    required this.darkMode,
+  });
+
+  @override
+  State<_WbwWordChip> createState() => _WbwWordChipState();
+}
+
+class _WbwWordChipState extends State<_WbwWordChip>
+    with SingleTickerProviderStateMixin {
+  bool _highlighted = false;
+  late AnimationController _ctrl;
+  late Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 150));
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.93).animate(
+        CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final goldUnderline = widget.accentColor.withValues(alpha: 0.75);
+    final highlightBg = widget.accentColor.withValues(alpha: 0.10);
+
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() => _highlighted = true);
+        _ctrl.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _highlighted = false);
+        _ctrl.reverse();
+      },
+      onTapCancel: () {
+        setState(() => _highlighted = false);
+        _ctrl.reverse();
+      },
+      child: ScaleTransition(
+        scale: _scaleAnim,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          padding: const EdgeInsets.fromLTRB(8, 6, 8, 5),
+          decoration: BoxDecoration(
+            color: _highlighted ? highlightBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: _highlighted
+                ? Border.all(color: widget.accentColor.withValues(alpha: 0.3))
+                : null,
+          ),
+          child: IntrinsicWidth(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Arabic word — naturally sized
+                Text(
+                  widget.arabic,
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  style: GoogleFonts.amiri(
+                    fontSize: widget.arabicFontSize * 0.80,
+                    fontWeight: FontWeight.w700,
+                    color: widget.txtColor,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                // Gold underline — stretches to match the column's intrinsic width
+                Container(
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    color: goldUnderline,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                // English translation — centered, same width as Arabic
+                Text(
+                  widget.translation,
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: widget.subColor,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

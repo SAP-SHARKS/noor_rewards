@@ -246,6 +246,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
       if (isDailyGoal && mounted) {
         _confettiController.play();
         _showDailyGoalModal();
+      } else if (mounted) {
+        // Temporary debug so the user knows why Confetti isn't firing
+        ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('Gamification: You already claimed the Daily Goal today, or a database error occurred! Test again tomorrow or contact admin.')),
+        );
       }
 
       setState(() {
@@ -254,7 +259,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
         _setsCompleted += 1;
         _counts[dhikrId] = 0;
       });
-    } catch (_) {}
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
   }
 
   void _showCompleteDialog(String dhikrId, int target) {
