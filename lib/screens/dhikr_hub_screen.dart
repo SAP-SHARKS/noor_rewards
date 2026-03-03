@@ -157,7 +157,7 @@ class DhikrHubScreen extends StatelessWidget {
                   width: 120, // Constrain width so it doesn't overlap text horizontally
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(customImagePath!, fit: BoxFit.contain, alignment: Alignment.centerRight),
+                    child: Image.asset(customImagePath, fit: BoxFit.contain, alignment: Alignment.centerRight),
                   ),
                 )
               else

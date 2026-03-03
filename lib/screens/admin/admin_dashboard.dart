@@ -861,7 +861,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                       } else {
                         await _sb.from('community_projects').update(payload).eq('id', existing['id']);
                       }
-                      if (!mounted) return;
+                      if (!context.mounted) return;
                       Navigator.pop(context);
                       _load();
                     },

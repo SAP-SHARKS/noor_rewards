@@ -1,0 +1,11 @@
+﻿Analyzing noor_rewards-main...                                  
+
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\screens\dhikr_screen.dart:218:5 - deprecated_member_use
+   info - 'share' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\screens\dhikr_screen.dart:218:11 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\dhikr_screen.dart:352:21 - deprecated_member_use
+   info - Invalid use of a private type in a public API - lib\screens\dhikr_screen.dart:654:14 - library_private_types_in_public_api
+   info - Invalid use of a private type in a public API - lib\screens\dhikr_screen.dart:658:9 - library_private_types_in_public_api
+   info - Invalid use of a private type in a public API - lib\screens\dhikr_screen.dart:659:9 - library_private_types_in_public_api
+   info - Invalid use of a private type in a public API - lib\screens\dhikr_screen.dart:664:20 - library_private_types_in_public_api
+   info - Invalid use of a private type in a public API - lib\screens\dhikr_screen.dart:664:44 - library_private_types_in_public_api
+

@@ -270,6 +270,35 @@ class XpService {
     }
   }
 
+  // ── Daily Dhikr Goal XP ──────────────────────────────────────────────────────
+  Future<bool> claimDailyDhikrGoal() async {
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return false;
+    try {
+      final today = DateTime.now().toIso8601String().substring(0, 10);
+      final existing = await _sb
+          .from('user_activities')
+          .select('id')
+          .eq('user_id', uid)
+          .eq('activity_type', 'daily_dhikr_goal')
+          .gte('created_at', today)
+          .limit(1);
+
+      if ((existing as List).isNotEmpty) return false;
+
+      await _sb.from('user_activities').insert({
+        'user_id':       uid,
+        'activity_type': 'daily_dhikr_goal',
+        'points_earned': 50,
+      });
+
+      await earnXp(50);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   // ── Load current user profile ─────────────────────────────────────────────────
   Future<({int xp, int level, int streak})> loadProfile() async {
     final uid = _sb.auth.currentUser?.id;

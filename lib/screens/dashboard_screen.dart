@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
 import 'quran_hub_screen.dart';
-import 'dhikr_screen.dart';
 import 'dhikr_hub_screen.dart';
 import 'tafsir_hub_screen.dart';
 import 'level_screen.dart';
