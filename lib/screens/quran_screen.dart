@@ -1559,7 +1559,52 @@ class _QuranScreenState extends State<QuranScreen> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  const SizedBox(height: 24),
+                  // ── Action pills row ─────────────────────────────────────────
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                    // 📖 Read Tafsir
+                    _PillButton(
+                      icon: Icons.menu_book_rounded,
+                      label: 'Tafsir',
+                      active: false,          // opens sheet — never stays active
+                      activeColor: _accent,
+                      darkMode: _darkMode,
+                      onTap: _openTafsirSheet,
+                    ),
+                    // 🎧 Listen
+                    _PillButton(
+                      icon: _showAudioPlayer && _isPlaying
+                          ? Icons.pause_circle_rounded
+                          : Icons.headphones_rounded,
+                      label: _showAudioPlayer ? 'Playing' : 'Listen',
+                      active: _showAudioPlayer,
+                      activeColor: const Color(0xFFE67E22),
+                      darkMode: _darkMode,
+                      onTap: () {
+                        setState(() => _showAudioPlayer = !_showAudioPlayer);
+                        if (_showAudioPlayer && !_isPlaying) _togglePlay();
+                      },
+                    ),
+                    // 🔤 Word by Word
+                    _PillButton(
+                      icon: Icons.translate_rounded,
+                      label: 'Word by Word',
+                      active: _wordByWord,
+                      activeColor: _accent,
+                      darkMode: _darkMode,
+                      onTap: () {
+                        setState(() => _wordByWord = !_wordByWord);
+                        if (_wordByWord && _wbwWords.isEmpty) {
+                          _fetchWordByWord(_surah, _ayah);
+                        }
+                      },
+                    ),
+                  ]),
+                  const SizedBox(height: 16),
+                  Divider(height: 1, color: _darkMode ? Colors.white12 : Colors.grey.shade100),
+                  const SizedBox(height: 20),
                   if (_loading)
                     const Center(child: Padding(
                       padding: EdgeInsets.all(32),
@@ -1635,123 +1680,6 @@ class _QuranScreenState extends State<QuranScreen> {
                       })(),
                     ],
                   ],
-                  // ── Tafsir pill button ──────────────────────────────────────
-                  const SizedBox(height: 20),
-                  Divider(height: 1, color: _darkMode ? Colors.white12 : Colors.grey.shade100),
-                  const SizedBox(height: 14),
-                  // ── Action pills row (Wrap prevents overflow on small screens) ──
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                    // 📖 Read Tafsir
-                    GestureDetector(
-                      onTap: _openTafsirSheet,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                        decoration: BoxDecoration(
-                          color: _accent.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(color: _accent.withValues(alpha: 0.28)),
-                        ),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(Icons.menu_book_rounded, color: _accent, size: 15),
-                          const SizedBox(width: 6),
-                          Text('Tafsir',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 13, fontWeight: FontWeight.w700,
-                                  color: _accent)),
-                        ]),
-                      ),
-                    ),
-                    // 🎧 Listen — toggles audio player
-                    GestureDetector(
-                      onTap: () {
-                        setState(() => _showAudioPlayer = !_showAudioPlayer);
-                        // Auto-start play when opening for the first time
-                        if (_showAudioPlayer && !_isPlaying) {
-                          _togglePlay();
-                        }
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                        decoration: BoxDecoration(
-                          color: _showAudioPlayer
-                              ? const Color(0xFFE67E22).withValues(alpha: 0.15)
-                              : (_darkMode ? Colors.white10 : Colors.grey.shade100),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                              color: _showAudioPlayer
-                                  ? const Color(0xFFE67E22).withValues(alpha: 0.5)
-                                  : (_darkMode ? Colors.white24 : Colors.grey.shade300)),
-                        ),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(
-                            _showAudioPlayer && _isPlaying
-                                ? Icons.pause_circle_rounded
-                                : Icons.headphones_rounded,
-                            color: _showAudioPlayer
-                                ? const Color(0xFFE67E22)
-                                : (_darkMode ? Colors.white54 : Colors.grey.shade500),
-                            size: 15,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            _showAudioPlayer ? 'Playing' : 'Listen',
-                            style: GoogleFonts.outfit(
-                                fontSize: 13, fontWeight: FontWeight.w700,
-                                color: _showAudioPlayer
-                                    ? const Color(0xFFE67E22)
-                                    : (_darkMode ? Colors.white54 : Colors.grey.shade500)),
-                          ),
-                        ]),
-                      ),
-                    ),
-                    // 🔤 Word-by-Word toggle pill
-                    GestureDetector(
-                      onTap: () {
-                        setState(() => _wordByWord = !_wordByWord);
-                        if (_wordByWord && _wbwWords.isEmpty) {
-                          _fetchWordByWord(_surah, _ayah);
-                        }
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                        decoration: BoxDecoration(
-                          color: _wordByWord
-                              ? _accent.withValues(alpha: 0.15)
-                              : (_darkMode ? Colors.white10 : Colors.grey.shade100),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                              color: _wordByWord
-                                  ? _accent.withValues(alpha: 0.5)
-                                  : (_darkMode ? Colors.white24 : Colors.grey.shade300)),
-                        ),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(
-                            Icons.translate_rounded,
-                            color: _wordByWord
-                                ? _accent
-                                : (_darkMode ? Colors.white54 : Colors.grey.shade500),
-                            size: 15,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Word by Word',
-                            style: GoogleFonts.outfit(
-                                fontSize: 13, fontWeight: FontWeight.w700,
-                                color: _wordByWord
-                                    ? _accent
-                                    : (_darkMode ? Colors.white54 : Colors.grey.shade500)),
-                          ),
-                        ]),
-                      ),
-                    ),
-                    ],
-                  ),
-
                 ]),
               ),
               // Progress card
@@ -2120,6 +2048,94 @@ const _surahNames = [
   'Quraysh','Al-Ma\'un','Al-Kawthar','Al-Kafirun','An-Nasr',
   'Al-Masad','Al-Ikhlas','Al-Falaq','An-Nas',
 ];
+
+// ── Pill Button Widget ────────────────────────────────────────────────────────
+class _PillButton extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+  final Color activeColor;
+  final bool darkMode;
+  final VoidCallback onTap;
+
+  const _PillButton({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.activeColor,
+    required this.darkMode,
+    required this.onTap,
+  });
+
+  @override
+  State<_PillButton> createState() => _PillButtonState();
+}
+
+class _PillButtonState extends State<_PillButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 100));
+    _scale = Tween<double>(begin: 1.0, end: 0.94)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final inactBg = widget.darkMode ? Colors.white10 : Colors.grey.shade100;
+    final inactBorder = widget.darkMode ? Colors.white24 : Colors.grey.shade300;
+    final inactFg = widget.darkMode ? Colors.white54 : Colors.grey.shade600;
+
+    final bgColor = widget.active
+        ? widget.activeColor.withValues(alpha: 0.14)
+        : inactBg;
+    final borderColor = widget.active
+        ? widget.activeColor.withValues(alpha: 0.50)
+        : inactBorder;
+    final fgColor = widget.active ? widget.activeColor : inactFg;
+
+    return GestureDetector(
+      onTapDown: (_) => _ctrl.forward(),
+      onTapUp: (_) {
+        _ctrl.reverse();
+        widget.onTap();
+      },
+      onTapCancel: () => _ctrl.reverse(),
+      child: ScaleTransition(
+        scale: _scale,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(widget.icon, color: fgColor, size: 15),
+            const SizedBox(width: 6),
+            Text(widget.label,
+                style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: fgColor)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
 
 // ── Word-by-Word Chip Widget ──────────────────────────────────────────────────
 class _WbwWordChip extends StatefulWidget {
