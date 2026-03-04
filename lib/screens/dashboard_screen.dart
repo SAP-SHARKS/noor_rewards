@@ -297,45 +297,66 @@ class _HomeTabState extends State<_HomeTab> {
   }
 
   Future<void> _loadDonations() async {
-    final data = List<Map<String, dynamic>>.from(await DonationService.instance.getUserProjectDonations());
-    if (data.isEmpty) {
-      try {
-        final fallback = await Supabase.instance.client
-            .from('community_projects')
-            .select()
-            .eq('is_active', true)
-            .eq('is_completed', false)
-            .order('sort_order')
-            .limit(1);
-        if (fallback.isNotEmpty) {
-          final p = Map<String, dynamic>.from(fallback.first);
-          p['my_donated'] = 0;
-          data.add(p);
-        }
-      } catch (_) {}
-    }
+    try {
+      // Load ALL active, non-completed projects so every card shows
+      final projects = await Supabase.instance.client
+          .from('community_projects')
+          .select()
+          .eq('is_active', true)
+          .eq('is_completed', false)
+          .order('sort_order');
 
-    if (data.isNotEmpty) {
-      try {
-        final List<String> pids = data.map((d) => d['id'] as String).toList();
-        final sumRes = await Supabase.instance.client
+      final data = List<Map<String, dynamic>>.from(
+        (projects as List).map((p) => Map<String, dynamic>.from(p as Map))
+      );
+
+      if (data.isEmpty) {
+        if (mounted) setState(() => _myDonations = []);
+        return;
+      }
+
+      // Fetch the current user's donations to overlay my_donated per project
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid != null) {
+        final pids = data.map((d) => d['id'] as String).toList();
+        final myDonations = await Supabase.instance.client
             .from('user_donations')
             .select('project_id, points_donated')
+            .eq('user_id', uid)
             .filter('project_id', 'in', pids);
-        
-        final Map<String, int> actualPoints = {};
-        for (final r in (sumRes as List)) {
-          final pid = r['project_id'] as String;
-          actualPoints[pid] = (actualPoints[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
-        }
-        
-        for (var d in data) {
-          d['current_points'] = actualPoints[d['id']] ?? 0;
-        }
-      } catch (_) {}
-    }
 
-    if (mounted) setState(() => _myDonations = data);
+        final Map<String, int> myPts = {};
+        for (final r in (myDonations as List)) {
+          final pid = r['project_id'] as String;
+          myPts[pid] = (myPts[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
+        }
+        for (final d in data) {
+          d['my_donated'] = myPts[d['id']] ?? 0;
+        }
+      } else {
+        for (final d in data) { d['my_donated'] = 0; }
+      }
+
+      // Also refresh current_points from actual donation totals
+      final pids = data.map((d) => d['id'] as String).toList();
+      final sumRes = await Supabase.instance.client
+          .from('user_donations')
+          .select('project_id, points_donated')
+          .filter('project_id', 'in', pids);
+
+      final Map<String, int> totalPts = {};
+      for (final r in (sumRes as List)) {
+        final pid = r['project_id'] as String;
+        totalPts[pid] = (totalPts[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
+      }
+      for (final d in data) {
+        d['current_points'] = totalPts[d['id']] ?? 0;
+      }
+
+      if (mounted) setState(() => _myDonations = data);
+    } catch (_) {
+      if (mounted) setState(() => _myDonations = []);
+    }
   }
 
   @override
@@ -440,7 +461,17 @@ class _HomeTabState extends State<_HomeTab> {
 
         // ── My Donations ─────────────────────────────────────────────────
         if (_myDonations.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
+          Row(children: [
+            Text('Community Donations',
+                style: GoogleFonts.outfit(
+                    fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
+            const Spacer(),
+            Text('${_myDonations.length} active',
+                style: GoogleFonts.outfit(
+                    fontSize: 13, fontWeight: FontWeight.w600, color: _C.sub)),
+          ]),
+          const SizedBox(height: 12),
           _MyDonationsSection(
             donations: _myDonations,
             availablePoints: widget.noorPoints,
@@ -920,7 +951,7 @@ class _MyDonationsSection extends StatelessWidget {
         return SizedBox(
           height: 220,
           child: ListView.separated(
-            clipBehavior: Clip.none,
+            clipBehavior: Clip.hardEdge,   // ← cards are clipped; no peeking until swipe
             scrollDirection: Axis.horizontal,
                 itemCount: donations.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 14),
