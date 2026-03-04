@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
@@ -246,12 +247,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       if (isDailyGoal && mounted) {
         _confettiController.play();
         _showDailyGoalModal();
-      } else if (mounted) {
-        // Temporary debug so the user knows why Confetti isn't firing
-        ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Gamification: You already claimed the Daily Goal today, or a database error occurred! Test again tomorrow or contact admin.')),
-        );
       }
+      // If already claimed today, just proceed silently — no error shown
 
       setState(() {
         _pointsToday += 20;
@@ -259,10 +256,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
         _setsCompleted += 1;
         _counts[dhikrId] = 0;
       });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+    } catch (_) {
+      // Silent — never show raw DB errors to user
     }
   }
 
@@ -892,7 +887,16 @@ class _AzkarCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            
+
+            // ── Noor Tree Animation ──
+            _NoorTree(
+              progress: azkar.recommendedCount == 0
+                  ? 0.0
+                  : (currentCount / azkar.recommendedCount).clamp(0.0, 1.0),
+              isComplete: isComplete,
+              tapCount: currentCount,
+            ),
+
             // ── Top Bar (Count Goal & Header) ──
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
@@ -1057,4 +1061,343 @@ class _AzkarCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// =============================================================================
+// 🌳 Noor Tree (شجرة النور) — Islamic growth animation
+// =============================================================================
+class _NoorTree extends StatefulWidget {
+  final double progress;   // 0.0 → 1.0
+  final bool isComplete;
+  final int tapCount;      // triggers particle burst on change
+
+  const _NoorTree({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+  });
+
+  @override
+  State<_NoorTree> createState() => _NoorTreeState();
+}
+
+class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
+  late AnimationController _swayCtrl;
+  late Animation<double> _sway;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+
+  final List<_Particle> _particles = List.generate(12, (i) => _Particle(seed: i));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _swayCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3400))
+      ..repeat(reverse: true);
+    _sway = Tween<double>(begin: -1.0, end: 1.0)
+        .animate(CurvedAnimation(parent: _swayCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 950));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1300))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.87, end: 1.13)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void didUpdateWidget(_NoorTree old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _swayCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _pulseCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_swayCtrl, _growCtrl, _starCtrl, _pCtrl, _pulseCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 190,
+        child: CustomPaint(
+          painter: _NoorTreePainter(
+            progress: _grow.value,
+            sway: _sway.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pulse: _pulse.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Particle {
+  late double x;
+  late double startY;
+  late double size;
+  late double speed;
+  late Color color;
+  static final _rng = math.Random();
+
+  _Particle({required int seed}) { reset(seed: seed); }
+
+  void reset({int? seed}) {
+    final r = seed != null ? math.Random(seed * 1337) : _rng;
+    x = (r.nextDouble() - 0.5) * 1.6;
+    startY = 0.55 + r.nextDouble() * 0.25;
+    size = 2.5 + r.nextDouble() * 3.5;
+    speed = 0.4 + r.nextDouble() * 0.6;
+    final hue = 80.0 + r.nextDouble() * 60;
+    color = HSVColor.fromAHSV(0.9, hue, 0.7, 0.95).toColor();
+  }
+}
+
+class _NoorTreePainter extends CustomPainter {
+  final double progress;
+  final double sway;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final double pulse;
+
+  const _NoorTreePainter({
+    required this.progress,
+    required this.sway,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    required this.pulse,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+
+    // 1. Night-sky gradient background
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF051F1C), Color(0xFF093630), Color(0xFF0E4A3C)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.08, 0.06), (0.18, 0.14), (0.32, 0.04), (0.55, 0.09),
+      (0.71, 0.05), (0.84, 0.15), (0.92, 0.07), (0.45, 0.18),
+      (0.63, 0.22), (0.25, 0.20), (0.77, 0.18), (0.12, 0.27),
+      (0.90, 0.25), (0.38, 0.29), (0.59, 0.33),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      sp.color = Colors.white.withValues(alpha: 0.25 + 0.65 * tw);
+      canvas.drawCircle(
+        Offset(starPos[i].$1 * w, starPos[i].$2 * h), 1.1 + tw * 1.2, sp);
+    }
+
+    // 3. Crescent moon (fades in with progress)
+    final moonA = progress.clamp(0.05, 1.0);
+    const moonX = 0.83;
+    const moonY = 0.13;
+    const moonR = 13.0;
+    canvas.drawCircle(
+      Offset(moonX * w, moonY * h), moonR,
+      Paint()..color = const Color(0xFFD4AF37).withValues(alpha: moonA * 0.85));
+    canvas.drawCircle(
+      Offset(moonX * w + moonR * 0.55, moonY * h - moonR * 0.1), moonR * 0.9,
+      Paint()..color = const Color(0xFF051F1C).withValues(alpha: moonA * 0.92));
+    canvas.drawCircle(
+      Offset(moonX * w, moonY * h), moonR + 6,
+      Paint()
+        ..color = const Color(0xFFD4AF37).withValues(alpha: moonA * 0.10)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+
+    // 4. Ground shadow glow
+    final groundY = h * 0.82;
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, groundY + 14), width: w * 0.7, height: 20),
+      Paint()
+        ..color = const Color(0xFF1BDE9A).withValues(alpha: 0.07)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
+    canvas.drawLine(
+      Offset(cx - w * 0.28, groundY), Offset(cx + w * 0.28, groundY),
+      Paint()..color = const Color(0xFF1BDE9A).withValues(alpha: 0.18)..strokeWidth = 0.7);
+
+    // 5. Trunk
+    if (progress > 0.02) {
+      final trunkH = (groundY - h * 0.28) * progress.clamp(0.0, 1.0);
+      final trunkTop = Offset(cx + sway * 2, groundY - trunkH);
+      final trunkBot = Offset(cx, groundY);
+      final tp = Paint()
+        ..color = const Color(0xFF7A4F2A)
+        ..strokeWidth = 7.5 * (0.5 + progress * 0.5)
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(trunkBot, trunkTop, tp);
+      if (progress > 0.2) _drawBranches(canvas, trunkBot, trunkTop, sway, progress, tp);
+    }
+
+    // 6. Leaf orbs
+    if (progress > 0.05) {
+      final trunkH = (groundY - h * 0.28) * progress;
+      final treeTop = Offset(cx + sway * 2, groundY - trunkH);
+      const leafDefs = [
+        (0.0,   0.0,  28.0, 0.10, Color(0xFF2EC4A9)),
+        (-0.5,  0.18, 22.0, 0.20, Color(0xFF1BDE9A)),
+        (0.5,   0.22, 22.0, 0.25, Color(0xFF26C97A)),
+        (-0.7,  0.38, 18.0, 0.36, Color(0xFF3ACF58)),
+        (0.75,  0.40, 18.0, 0.42, Color(0xFFD4AF37)),
+        (0.0,   0.48, 16.0, 0.50, Color(0xFF2EC4A9)),
+        (-0.35, 0.10, 16.0, 0.60, Color(0xFF26C97A)),
+        (0.40,  0.12, 15.0, 0.66, Color(0xFFD4AF37)),
+        (-0.8,  0.28, 14.0, 0.72, Color(0xFF1BDE9A)),
+        (0.85,  0.32, 13.0, 0.78, Color(0xFF3ACF58)),
+        (0.0,  -0.08, 20.0, 0.85, Color(0xFFFFD97D)),
+        (-0.2,  0.55, 12.0, 0.92, Color(0xFF2EC4A9)),
+        (0.25,  0.56, 12.0, 0.96, Color(0xFF26C97A)),
+      ];
+      final halfW = w * 0.27;
+      for (final (rx, ry, r, minP, col) in leafDefs) {
+        if (progress < minP) continue;
+        final leafA = ((progress - minP) / 0.08).clamp(0.0, 1.0);
+        final leafPos = Offset(
+          treeTop.dx + rx * halfW,
+          treeTop.dy + ry * trunkH * 0.55,
+        );
+        final leafR = r * (0.7 + progress * 0.3) * (isComplete ? pulse : 1.0);
+        // Glow
+        canvas.drawCircle(leafPos, leafR + 8,
+          Paint()
+            ..color = col.withValues(alpha: leafA * 0.14)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9));
+        // Orb fill
+        canvas.drawCircle(leafPos, leafR,
+          Paint()
+            ..shader = RadialGradient(colors: [
+              Colors.white.withValues(alpha: leafA * 0.45),
+              col.withValues(alpha: leafA * 0.88),
+              col.withValues(alpha: leafA * 0.38),
+            ], stops: const [0.0, 0.42, 1.0])
+            .createShader(Rect.fromCircle(center: leafPos, radius: leafR)));
+        // Highlight
+        canvas.drawCircle(
+          Offset(leafPos.dx - leafR * 0.28, leafPos.dy - leafR * 0.28),
+          leafR * 0.20,
+          Paint()..color = Colors.white.withValues(alpha: leafA * 0.55));
+      }
+    }
+
+    // 7. Floating noor particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final py = p.startY * h - t * h * 0.52;
+        final px = cx + p.x * w * 0.34 + math.sin(t * math.pi * 3) * 11;
+        final a = (1.0 - t) * 0.9;
+        canvas.drawCircle(Offset(px, py), p.size * (1.0 - t * 0.5),
+          Paint()..color = p.color.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py + p.size * 1.4), p.size * 0.38,
+          Paint()..color = p.color.withValues(alpha: a * 0.4));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'ماشاء الله ✨' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82),
+          fontSize: isComplete ? 13 : 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+  }
+
+  void _drawBranches(Canvas canvas, Offset bot, Offset top,
+      double sway, double progress, Paint basePaint) {
+    final vec = top - bot;
+    final len = vec.distance;
+    final nx = -vec.dy / len;
+    final ny = vec.dx / len;
+    final anchor = bot + vec * 0.60;
+    final bLen = len * 0.34 * progress;
+    final bp = Paint()
+      ..color = const Color(0xFF7A4F2A)
+      ..strokeWidth = basePaint.strokeWidth * 0.52
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawLine(anchor,
+      anchor + Offset(-nx * bLen + vec.dx / len * bLen * 0.42 + sway * 2.5,
+                      -ny * bLen + vec.dy / len * bLen * 0.42), bp);
+    canvas.drawLine(anchor,
+      anchor + Offset(nx * bLen + vec.dx / len * bLen * 0.42 + sway * 2.5,
+                      ny * bLen + vec.dy / len * bLen * 0.42), bp);
+
+    if (progress > 0.60) {
+      final ta = bot + vec * 0.82;
+      final sl = bLen * 0.52;
+      final sp2 = Paint()
+        ..color = const Color(0xFF7A4F2A)
+        ..strokeWidth = bp.strokeWidth * 0.58
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(ta, ta + Offset(-sl * 0.7 + sway * 2, -sl * 0.7), sp2);
+      canvas.drawLine(ta, ta + Offset( sl * 0.7 + sway * 2, -sl * 0.7), sp2);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_NoorTreePainter o) =>
+    o.progress != progress || o.sway != sway || o.starPhase != starPhase ||
+    o.particlePhase != particlePhase || o.isComplete != isComplete || o.pulse != pulse;
 }

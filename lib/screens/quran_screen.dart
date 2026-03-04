@@ -70,7 +70,7 @@ class QuranScreen extends StatefulWidget {
   @override State<QuranScreen> createState() => _QuranScreenState();
 }
 
-class _QuranScreenState extends State<QuranScreen> {
+class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── Position ─────────────────────────────────────────────────────────────────
   int _surah = 2, _ayah = 1;
 
@@ -104,6 +104,10 @@ class _QuranScreenState extends State<QuranScreen> {
   Timer? _pageTimer;                   // counts seconds on current page
   int    _pageSeconds       = 0;       // seconds spent reading this page
   int    _pageXpEarned      = 0;       // XP earned this session (full-page)
+  // _timerShouldRun = USER INTENT for timer. Set by explicit actions only.
+  // Lifecycle events (lock/unlock) read it but NEVER write it.
+  // This guarantees auto-resume works through any lock/unlock sequence.
+  bool   _timerShouldRun    = false;
   bool   _autoAdvance       = false;   // advance ayah when audio ends
   bool   _repeatAyah        = false;   // repeat current ayah audio
   // Notifications + alerts
@@ -174,6 +178,7 @@ class _QuranScreenState extends State<QuranScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _surah = widget.initialSurah;
     _ayah  = widget.initialAyah;
     _init();
@@ -259,7 +264,37 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_fullPageMode) return;
+
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      // Stop the physical timer but DO NOT touch _timerShouldRun.
+      // _timerShouldRun is user intent — only explicit play/pause changes it.
+      // If we wrote it here, any intermediate paused event (e.g. lock screen
+      // transition on some Android versions) would destroy the intent.
+      if (_pageTimer != null) {
+        _stopPageTimer();
+        if (mounted) setState(() {});
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      // Screen is back. Restart physical timer if user wanted it running.
+      // _timerShouldRun was never cleared by paused, so it reliably holds
+      // whatever the user last chose — even through multiple lock/unlock cycles.
+      if (_timerShouldRun && _pageTimer == null) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted && _fullPageMode && _timerShouldRun && _pageTimer == null) {
+            _resumePageTimer();
+          }
+        });
+      }
+    }
+    // `inactive` intentionally ignored.
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _hintTimer?.cancel();
     _hintOverlay?.remove();
     _pageTimer?.cancel();
@@ -600,11 +635,27 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   // ── Full-page timer: 1 XP per 30 seconds ─────────────────────────────────────
+  // Fresh start — resets seconds (use when entering full-page or navigating pages)
+  // Sets _timerShouldRun = true (user intent: timer should run).
   void _startPageTimer() {
+    _timerShouldRun = true;
     _pageTimer?.cancel();
     _pageSeconds = 0;
     _pageXpEarned = 0;
-    _pageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _pageTimer = _makePageTimer();
+  }
+
+  // Resume — continues from current _pageSeconds (use after pause/screen-unlock)
+  // Sets _timerShouldRun = true.
+  void _resumePageTimer() {
+    _timerShouldRun = true;
+    _pageTimer?.cancel();
+    _pageTimer = _makePageTimer();
+    if (mounted) setState(() {});
+  }
+
+  Timer _makePageTimer() {
+    return Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       setState(() => _pageSeconds++);
       // Award 1 XP every 30 seconds of reading
@@ -1738,6 +1789,7 @@ class _QuranScreenState extends State<QuranScreen> {
                           _fetchFullPage(page);
                           _startPageTimer();
                         } else {
+                          _timerShouldRun = false; // clear intent on exit
                           _stopPageTimer();
                           setState(() => _fullPageMode = false);
                         }
@@ -1894,10 +1946,12 @@ class _QuranScreenState extends State<QuranScreen> {
                     GestureDetector(
                       onTap: () {
                         if (_pageTimer != null) {
+                          // User explicitly pausing — clear intent
+                          _timerShouldRun = false;
                           _stopPageTimer();
                           setState(() {});
                         } else {
-                          _startPageTimer();
+                          _resumePageTimer(); // sets _timerShouldRun = true
                         }
                       },
                       child: Container(

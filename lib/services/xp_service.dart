@@ -276,28 +276,29 @@ class XpService {
     if (uid == null) return false;
     try {
       final today = DateTime.now().toIso8601String().substring(0, 10);
-      // Query to check for existing entry (check re-enabled after testing)
-      await _sb
+
+      // Guard: only once per day
+      final existing = await _sb
           .from('user_activities')
           .select('id')
           .eq('user_id', uid)
-          .eq('activity_type', 'daily_dhikr_goal')
+          .eq('activity_type', 'dhikr')
           .gte('created_at', today)
           .limit(1);
 
-      // Temporarily bypass the "already met" check so user can test it freely
-      // if ((existing as List).isNotEmpty) return false;
+      if ((existing as List).isNotEmpty) return false;
 
       await _sb.from('user_activities').insert({
         'user_id':       uid,
-        'activity_type': 'daily_dhikr_goal',
+        'activity_type': 'dhikr',   // 'dhikr' is within the DB check constraint
         'points_earned': 50,
       });
 
       await earnXp(50);
       return true;
-    } catch (e) {
-      throw Exception('Supabase claimDailyDhikrGoal Error: $e');
+    } catch (_) {
+      // Silently fail — never crash the UI over a reward insert
+      return false;
     }
   }
 
