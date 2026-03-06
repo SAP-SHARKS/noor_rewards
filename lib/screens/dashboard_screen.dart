@@ -378,6 +378,12 @@ class _HomeTabState extends State<_HomeTab> {
     final firstName = widget.name.split(' ').first;
     return SafeArea(child: Stack(
       children: [
+        // ── Subtle home background pattern ───────────────────────────────
+        Positioned.fill(
+          child: CustomPaint(
+            painter: _HomeBgPainter(),
+          ),
+        ),
         SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -534,10 +540,30 @@ class _HomeTabState extends State<_HomeTab> {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
           children: [
-            _ActivityCard('Read Quran',    '📖', _C.quranCard,  _C.quranIcon,  '+5 XP / ayah',  widget.onGoQuran),
-            _ActivityCard('Dhikar & Dua',  '📿', _C.dhikrCard,  _C.dhikrIcon,  '+10 XP / set',  widget.onGoDhikr),
-            _ActivityCard('Invite Friends','🤝', const Color(0xFFFFF0F5), const Color(0xFFE91E63), '+500 Coins', widget.onGoInvite),
-            _ActivityCard('Achievements',  '🏆', const Color(0xFFEDE0FF), _C.navProfile, '${_fmt(widget.totalXp)} XP • Lv ${widget.level}', widget.onGoAchievements),
+            _ActivityCard('Read Quran',    '📖',
+              solid: const Color(0xFF3B72F6),
+              solidDeep: const Color(0xFF1A4DC4),
+              reward: '+5 XP / ayah',
+              patternType: _CardPattern.arcRings,
+              onTap: widget.onGoQuran),
+            _ActivityCard('Dhikar & Dua',  '📿',
+              solid: const Color(0xFF18B97A),
+              solidDeep: const Color(0xFF0A7A50),
+              reward: '+10 XP / set',
+              patternType: _CardPattern.floatingDots,
+              onTap: widget.onGoDhikr),
+            _ActivityCard('Invite Friends','🤝',
+              solid: const Color(0xFFE8446A),
+              solidDeep: const Color(0xFFA81A43),
+              reward: '+500 Coins',
+              patternType: _CardPattern.speedLines,
+              onTap: widget.onGoInvite),
+            _ActivityCard('Achievements',  '🏆',
+              solid: const Color(0xFF8B5CF6),
+              solidDeep: const Color(0xFF5B21B6),
+              reward: '${_fmt(widget.totalXp)} XP • Lv ${widget.level}',
+              patternType: _CardPattern.diamondSparks,
+              onTap: widget.onGoAchievements),
           ],
         ),
 
@@ -1135,9 +1161,14 @@ class _StreakBannerState extends State<_StreakBanner>
   @override
   void dispose() { _pulse.dispose(); super.dispose(); }
 
-  // Colors per streak type
-  static const _cols = [Color(0xFFFF6B35), Color(0xFF00C875), Color(0xFF5856D6)];
-  static const _bgCols = [Color(0xFFFFF0E6), Color(0xFFE6FFF5), Color(0xFFEEEDFF)];
+  // Solid card colors — (light center, deep outer) for radial gradient
+  static const _cardColors = [
+    [Color(0xFFF9CB5C), Color(0xFFE08A0E)], // Login   — warm amber
+    [Color(0xFF3DDBA0), Color(0xFF0B9E63)], // Dhikr   — emerald
+    [Color(0xFF9B87F5), Color(0xFF4B35D4)], // Quran   — indigo violet
+  ];
+  // Muted inactive version
+  static const _deadColor = Color(0xFFEAEAEA);
 
   @override
   Widget build(BuildContext context) {
@@ -1154,16 +1185,12 @@ class _StreakBannerState extends State<_StreakBanner>
         builder: (_, __) => Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1C1C2E), Color(0xFF2C1A3A)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFF6B35).withValues(alpha: _glow.value * 0.15),
-                blurRadius: 20, spreadRadius: 2,
+                color: Colors.black.withValues(alpha: 0.07),
+                blurRadius: 16, offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -1175,7 +1202,7 @@ class _StreakBannerState extends State<_StreakBanner>
               Text('STREAKS',
                   style: GoogleFonts.rajdhani(
                       fontSize: 15, fontWeight: FontWeight.w700,
-                      color: Colors.white, letterSpacing: 1.2)),
+                      color: const Color(0xFF3D2C1E), letterSpacing: 1.2)),
               const Spacer(),
               if (next != null)
                 Container(
@@ -1193,57 +1220,126 @@ class _StreakBannerState extends State<_StreakBanner>
                 ),
               const SizedBox(width: 6),
               const Icon(Icons.chevron_right_rounded,
-                  color: Colors.white30, size: 18),
+                  color: Color(0xFFBB8B6E), size: 18),
             ]),
             const SizedBox(height: 14),
 
-            // 3 streak chips
+            // 3 streak chips — solid bold cards with sunburst rays
             Row(children: List.generate(3, (i) {
-              final s = streaks[i];
-              final c = _cols[i];
-              final bg = _bgCols[i];
-              final alive = s > 0;
+              final s      = streaks[i];
+              final alive  = s > 0;
+              final colors = _cardColors[i];
+              final type   = types[i];
+
               return Expanded(child: Padding(
-                padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: alive
-                        ? bg.withValues(alpha: 0.08)
-                        : Colors.white.withValues(alpha: 0.04),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: alive
-                          ? c.withValues(alpha: _glow.value * 0.55)
-                          : Colors.white.withValues(alpha: 0.06),
-                    ),
-                    boxShadow: alive ? [BoxShadow(
-                      color: c.withValues(alpha: _glow.value * 0.18),
-                      blurRadius: 12,
-                    )] : [],
-                  ),
-                  child: Column(children: [
-                    Text(types[i].emoji,
-                        style: const TextStyle(fontSize: 20)),
-                    const SizedBox(height: 4),
-                    Text('$s',
-                        style: GoogleFonts.rajdhani(
-                            fontSize: 26, fontWeight: FontWeight.w900,
-                            color: alive ? c : Colors.white24,
-                            height: 1.0)),
-                    Text('day${s == 1 ? '' : 's'}',
-                        style: GoogleFonts.outfit(
-                            fontSize: 9,
-                            color: alive
-                                ? c.withValues(alpha: 0.7)
-                                : Colors.white24,
-                            fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 4),
-                    Text(types[i].label,
-                        style: GoogleFonts.outfit(
-                            fontSize: 9, color: Colors.white30),
-                        overflow: TextOverflow.ellipsis),
-                  ]),
+                padding: EdgeInsets.only(left: i == 0 ? 0 : 10),
+                child: AnimatedBuilder(
+                  animation: _glow,
+                  builder: (_, __) {
+                    final decoration = BoxDecoration(
+                      gradient: alive
+                          ? RadialGradient(
+                              colors: [colors[0], colors[1]],
+                              center: const Alignment(-0.2, -0.5),
+                              radius: 1.4,
+                            )
+                          : const RadialGradient(
+                              colors: [Color(0xFFF4F4F4), Color(0xFFD8D8D8)],
+                              center: Alignment(-0.2, -0.5),
+                              radius: 1.3,
+                            ),
+                      borderRadius: BorderRadius.circular(18),
+                    );
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: alive ? [
+                          BoxShadow(
+                            color: colors[1].withValues(alpha: _glow.value * 0.50),
+                            blurRadius: 16, offset: const Offset(0, 6),
+                          ),
+                          BoxShadow(
+                            color: colors[0].withValues(alpha: 0.25),
+                            blurRadius: 4, offset: const Offset(0, 1),
+                          ),
+                        ] : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 6, offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: Stack(children: [
+                          // ── Solid gradient base ───────────────────────────
+                          Positioned.fill(child: DecoratedBox(decoration: decoration)),
+
+                          // ── Sunburst rays (only when alive) ──────────────
+                          if (alive)
+                            Positioned.fill(
+                              child: CustomPaint(
+                                painter: const _SunburstPainter(
+                                  count: 9,
+                                  focalX: 0.5,
+                                  focalY: -0.05,
+                                  rayAlpha: 0.15,
+                                ),
+                              ),
+                            ),
+
+                          // ── Content ───────────────────────────────────────
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 8),
+                            child: Column(children: [
+                              Text(type.emoji,
+                                  style: const TextStyle(fontSize: 22)),
+                              const SizedBox(height: 6),
+                              Text('$s',
+                                  style: GoogleFonts.rajdhani(
+                                      fontSize: 28, fontWeight: FontWeight.w900,
+                                      color: alive ? Colors.white : Colors.grey.shade400,
+                                      height: 1.0,
+                                      shadows: alive ? [
+                                        Shadow(
+                                          color: Colors.black.withValues(alpha: 0.25),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ] : null)),
+                              Text('day${s == 1 ? '' : 's'}',
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 9,
+                                      color: alive
+                                          ? Colors.white.withValues(alpha: 0.80)
+                                          : Colors.grey.shade400,
+                                      fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: alive
+                                      ? Colors.white.withValues(alpha: 0.22)
+                                      : Colors.grey.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(type.label,
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w700,
+                                        color: alive
+                                            ? Colors.white.withValues(alpha: 0.9)
+                                            : Colors.grey.shade400),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ]),
+                          ),
+                        ]),
+                      ),
+                    );
+                  },
                 ),
               ));
             })),
@@ -1252,6 +1348,46 @@ class _StreakBannerState extends State<_StreakBanner>
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sunburst ray painter — radiating wedge rays from a focal point
+// ─────────────────────────────────────────────────────────────────────────────
+class _SunburstPainter extends CustomPainter {
+  final int count;    // number of bright rays (gaps = equal count)
+  final double focalX, focalY; // focal point as fraction of width/height
+  final double rayAlpha;   // opacity of bright ray fills
+  const _SunburstPainter({
+    this.count    = 10,
+    this.focalX   = 0.50,
+    this.focalY   = -0.15,
+    this.rayAlpha = 0.16,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width  * focalX;
+    final cy = size.height * focalY;
+    final r  = math.sqrt(size.width * size.width + size.height * size.height) * 1.6;
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: rayAlpha)
+      ..style = PaintingStyle.fill;
+
+    final step = math.pi * 2 / (count * 2); // angle per slice
+    for (int i = 0; i < count; i++) {
+      final a0 = i * 2 * step;
+      final a1 = a0 + step;
+      final path = Path()
+        ..moveTo(cx, cy)
+        ..lineTo(cx + r * math.cos(a0), cy + r * math.sin(a0))
+        ..lineTo(cx + r * math.cos(a1), cy + r * math.sin(a1))
+        ..close();
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SunburstPainter o) => false;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1432,55 +1568,290 @@ class _CommunityCard extends StatelessWidget {
   String _fmtM(int n) => n >= 1000000 ? '${(n / 1000000).toStringAsFixed(1)}M' : '$n';
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Activity Card — bold solid card with unique per-type decoration
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum _CardPattern { arcRings, floatingDots, speedLines, diamondSparks }
+
 class _ActivityCard extends StatefulWidget {
   final String title, emoji, reward;
-  final Color bg, iconColor;
+  final Color solid, solidDeep;
+  final _CardPattern patternType;
   final VoidCallback onTap;
-  const _ActivityCard(this.title, this.emoji, this.bg, this.iconColor, this.reward, this.onTap);
+  const _ActivityCard(this.title, this.emoji, {
+    required this.solid,
+    required this.solidDeep,
+    required this.reward,
+    required this.patternType,
+    required this.onTap,
+  });
   @override State<_ActivityCard> createState() => _ActivityCardState();
 }
+
 class _ActivityCardState extends State<_ActivityCard> {
   bool _pressed = false;
   @override
   Widget build(BuildContext context) {
+    CustomPainter painter;
+    switch (widget.patternType) {
+      case _CardPattern.arcRings:      painter = const _ArcRingsPainter();     break;
+      case _CardPattern.floatingDots:  painter = const _FloatingDotsPainter(); break;
+      case _CardPattern.speedLines:    painter = const _SpeedLinesPainter();   break;
+      case _CardPattern.diamondSparks: painter = const _DiamondSparksPainter();break;
+    }
     return GestureDetector(
       onTapDown:   (_) => setState(() => _pressed = true),
       onTapUp:     (_) => setState(() => _pressed = false),
       onTapCancel: ()  => setState(() => _pressed = false),
       onTap: widget.onTap,
       child: AnimatedScale(
-        scale: _pressed ? 0.95 : 1.0, duration: const Duration(milliseconds: 120),
+        scale: _pressed ? 0.95 : 1.0,
+        duration: const Duration(milliseconds: 120),
         child: Container(
-          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: widget.bg, borderRadius: BorderRadius.circular(22),
-            boxShadow: [BoxShadow(color: widget.iconColor.withValues(alpha: 0.14), blurRadius: 14, offset: const Offset(0, 4))],
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: widget.solidDeep.withValues(alpha: 0.40),
+                blurRadius: 16, offset: const Offset(0, 6),
+              ),
+            ],
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-              width: 48, height: 48,
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.65), borderRadius: BorderRadius.circular(14)),
-              child: Center(child: Text(widget.emoji, style: const TextStyle(fontSize: 24))),
-            ),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(widget.title,
-                maxLines: 2, overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700,
-                    color: _C.text, letterSpacing: 0.3)),
-              const SizedBox(height: 2),
-              Text(widget.reward,
-                  maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: widget.iconColor)),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Stack(children: [
+              // ── Radial gradient base ────────────────────────────────
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [widget.solid, widget.solidDeep],
+                      center: const Alignment(-0.3, -0.5),
+                      radius: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+              // ── Unique decorative pattern ─────────────────────────────
+              Positioned.fill(child: CustomPaint(painter: painter)),
+              // ── Content ──────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Emoji bubble
+                    Container(
+                      width: 48, height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.30)),
+                      ),
+                      child: Center(child: Text(widget.emoji,
+                          style: const TextStyle(fontSize: 24))),
+                    ),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(widget.title,
+                        maxLines: 2, overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.rajdhani(
+                            fontSize: 17, fontWeight: FontWeight.w800,
+                            color: Colors.white, letterSpacing: 0.3,
+                            shadows: [Shadow(
+                              color: Colors.black.withValues(alpha: 0.20),
+                              blurRadius: 4,
+                            )])),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(widget.reward,
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.outfit(
+                                fontSize: 11, fontWeight: FontWeight.w800,
+                                color: Colors.white)),
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
             ]),
-          ]),
+          ),
         ),
       ),
     );
   }
 }
 
+// ─ Arc Rings — concentric quarter-circles emanating from top-right corner
+class _ArcRingsPainter extends CustomPainter {
+  const _ArcRingsPainter();
+  @override
+  void paint(Canvas canvas, Size s) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.14)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8;
+    for (int i = 1; i <= 5; i++) {
+      final r = s.width * 0.22 * i;
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(s.width, 0), radius: r),
+        math.pi * 0.5, math.pi * 0.5, false, paint,
+      );
+    }
+  }
+  @override bool shouldRepaint(_ArcRingsPainter _) => false;
+}
 
+// ─ Floating Dots — scattered circles, largest bottom-right
+class _FloatingDotsPainter extends CustomPainter {
+  const _FloatingDotsPainter();
+  static const _positions = [
+    [0.80, 0.12, 22.0], [0.60, 0.28, 8.0], [0.92, 0.55, 14.0],
+    [0.15, 0.72, 10.0], [0.70, 0.80, 30.0], [0.35, 0.18, 6.0],
+    [0.05, 0.42, 18.0],
+  ];
+  @override
+  void paint(Canvas canvas, Size s) {
+    for (final p in _positions) {
+      canvas.drawCircle(
+        Offset(s.width * p[0], s.height * p[1]),
+        p[2],
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.13)
+          ..style = PaintingStyle.fill,
+      );
+      // Ring outline
+      canvas.drawCircle(
+        Offset(s.width * p[0], s.height * p[1]),
+        p[2] + 4,
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.07)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2,
+      );
+    }
+  }
+  @override bool shouldRepaint(_FloatingDotsPainter _) => false;
+}
+
+// ─ Speed Lines — diagonal parallel lines top-left to bottom-right
+class _SpeedLinesPainter extends CustomPainter {
+  const _SpeedLinesPainter();
+  @override
+  void paint(Canvas canvas, Size s) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.11)
+      ..strokeWidth = 1.4
+      ..style = PaintingStyle.stroke;
+    const gap = 22.0;
+    final diag = s.width + s.height;
+    for (double offset = -diag; offset < diag; offset += gap) {
+      canvas.drawLine(
+        Offset(offset, 0),
+        Offset(offset + diag, diag),
+        paint,
+      );
+    }
+    // Bold accent line
+    final boldPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.18)
+      ..strokeWidth = 3.5;
+    canvas.drawLine(Offset(s.width * 0.1, 0), Offset(s.width, s.height * 0.82), boldPaint);
+  }
+  @override bool shouldRepaint(_SpeedLinesPainter _) => false;
+}
+
+// ─ Diamond Sparks — rotated small square gems scattered across card
+class _DiamondSparksPainter extends CustomPainter {
+  const _DiamondSparksPainter();
+  static const _gems = [
+    [0.75, 0.10, 12.0, 0.18], [0.85, 0.45, 7.0,  0.12],
+    [0.60, 0.72, 10.0, 0.14], [0.15, 0.15, 8.0,  0.10],
+    [0.30, 0.80, 14.0, 0.16], [0.90, 0.25, 5.0,  0.09],
+    [0.50, 0.35, 6.0,  0.08],
+  ];
+  @override
+  void paint(Canvas canvas, Size s) {
+    for (final g in _gems) {
+      final cx = s.width  * g[0];
+      final cy = s.height * g[1];
+      final r  = g[2];
+      final a  = g[3];
+      final path = Path()
+        ..moveTo(cx,     cy - r)
+        ..lineTo(cx + r, cy)
+        ..lineTo(cx,     cy + r)
+        ..lineTo(cx - r, cy)
+        ..close();
+      canvas.drawPath(path, Paint()
+        ..color = Colors.white.withValues(alpha: a)
+        ..style = PaintingStyle.fill);
+      canvas.drawPath(path, Paint()
+        ..color = Colors.white.withValues(alpha: a * 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0);
+    }
+  }
+  @override bool shouldRepaint(_DiamondSparksPainter _) => false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Home Background — very subtle Islamic-inspired lattice at low opacity
+// ─────────────────────────────────────────────────────────────────────────────
+class _HomeBgPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final dotPaint = Paint()
+      ..color = const Color(0xFF2BAE99).withValues(alpha: 0.07)
+      ..style = PaintingStyle.fill;
+    final arcPaint = Paint()
+      ..color = const Color(0xFF2BAE99).withValues(alpha: 0.04)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    // Dot grid — every 38px, off-center
+    const spacing = 38.0;
+    const dotR    = 2.2;
+    for (double x = spacing * 0.5; x < size.width; x += spacing) {
+      for (double y = spacing * 0.5; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), dotR, dotPaint);
+      }
+    }
+
+    // Soft wide arcs from top-right — Islamic crescent feel
+    for (int i = 1; i <= 4; i++) {
+      final r = size.width * 0.45 * i;
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(size.width, 0), radius: r),
+        math.pi * 0.45, math.pi * 0.65,
+        false, arcPaint,
+      );
+    }
+
+    // Faint large circle bottom-left
+    canvas.drawCircle(
+      Offset(0, size.height),
+      size.width * 0.55,
+      Paint()
+        ..color = const Color(0xFF2BAE99).withValues(alpha: 0.03)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_HomeBgPainter _) => false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 Widget _buildProjIcon(dynamic emojiVal, double size) {
   final e = emojiVal?.toString() ?? '🕌';
   if (e.startsWith('http')) {
@@ -1679,16 +2050,16 @@ class _NoorCounter extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: const Color(0xFFFFAA00).withValues(alpha: 0.22), width: 1,
+          color: const Color(0xFF2BAE99).withValues(alpha: 0.25), width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFFAA00).withValues(alpha: 0.16),
-            blurRadius: 22, offset: const Offset(0, 8),
+            color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+            blurRadius: 16, offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.38),
-            blurRadius: 8, offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6, offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -1701,10 +2072,10 @@ class _NoorCounter extends StatelessWidget {
             children: [
               // ── Drum display ─────────────────────────────────────────────
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF14220F), Color(0xFF0A1208)],
+                    colors: [Color(0xFFFFFFFF), Color(0xFFF5FAF9)],
                     begin: Alignment.topLeft, end: Alignment.bottomRight,
                   ),
                 ),
@@ -1723,7 +2094,7 @@ class _NoorCounter extends StatelessWidget {
                             child: Text(',',
                               style: GoogleFonts.rajdhani(
                                 fontSize: 20, fontWeight: FontWeight.w700,
-                                color: const Color(0xFFFFAA00).withValues(alpha: 0.55),
+                                color: const Color(0xFF2BAE99).withValues(alpha: 0.55),
                               ),
                             ),
                           )
@@ -1736,23 +2107,23 @@ class _NoorCounter extends StatelessWidget {
                 ),
               ),
 
-              // ── Thin amber divider — the seam between the two panels ──────
+              // ── Thin teal divider ──────────────────
               Container(
                 height: 0.8,
-                color: const Color(0xFFFFAA00).withValues(alpha: 0.35),
+                color: const Color(0xFF2BAE99).withValues(alpha: 0.3),
               ),
 
-              // ── Label strip — snapped directly to drums, no gap ───────────
+              // ── Label strip ─────────────────────────────────────────────
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF1A6B5A), Color(0xFF2BAE99)],
+                    colors: [Color(0xFF1A9E8C), Color(0xFF2BAE99)],
                     begin: Alignment.centerLeft, end: Alignment.centerRight,
                   ),
                 ),
                 child: Center(
-                  child: Text('NOOR POINTS EARNED TODAY',
+                  child: Text('YOUR TOTAL NOOR POINTS',
                       style: GoogleFonts.rajdhani(
                         fontSize: 13, fontWeight: FontWeight.w700,
                         color: Colors.white, letterSpacing: 2.0,
@@ -1781,18 +2152,18 @@ class _DrumDigit extends StatelessWidget {
       decoration: BoxDecoration(
         // Lighter in the middle → looks like a cylinder curving away from us
         gradient: const LinearGradient(
-          colors: [Color(0xFF1A3414), Color(0xFF2E5228), Color(0xFF1A3414)],
+          colors: [Color(0xFFE8F7F3), Color(0xFFF0FAF7), Color(0xFFE8F7F3)],
           stops: [0.0, 0.5, 1.0],
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFFFFAA00).withValues(alpha: 0.28), width: 0.8,
+          color: const Color(0xFF2BAE99).withValues(alpha: 0.30), width: 0.8,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 6, offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 4, offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -1803,7 +2174,7 @@ class _DrumDigit extends StatelessWidget {
           child: DecoratedBox(decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             gradient: LinearGradient(
-              colors: [Colors.black.withValues(alpha: 0.5), Colors.transparent],
+              colors: [const Color(0xFF2BAE99).withValues(alpha: 0.12), Colors.transparent],
               begin: Alignment.topCenter, end: Alignment.bottomCenter,
             ),
           )),
@@ -1814,20 +2185,20 @@ class _DrumDigit extends StatelessWidget {
           child: DecoratedBox(decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
             gradient: LinearGradient(
-              colors: [Colors.transparent, Colors.black.withValues(alpha: 0.5)],
+              colors: [Colors.transparent, const Color(0xFF2BAE99).withValues(alpha: 0.12)],
               begin: Alignment.topCenter, end: Alignment.bottomCenter,
             ),
           )),
         ),
-        // Amber fold line — the physical number-change crease of the drum
+        // Amber fold line → teal fold line
         Center(child: Container(
           height: 0.8,
           margin: const EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFAA00).withValues(alpha: 0.45),
+            color: const Color(0xFF2BAE99).withValues(alpha: 0.4),
             boxShadow: [BoxShadow(
-              color: const Color(0xFFFFAA00).withValues(alpha: 0.3),
-              blurRadius: 4,
+              color: const Color(0xFF2BAE99).withValues(alpha: 0.2),
+              blurRadius: 3,
             )],
           ),
         )),
@@ -1835,11 +2206,11 @@ class _DrumDigit extends StatelessWidget {
         Center(child: Text(digit,
           style: GoogleFonts.rajdhani(
             fontSize: 26, fontWeight: FontWeight.w700,
-            color: Colors.white, height: 1,
+            color: const Color(0xFF1A6B5A), height: 1,
             shadows: [
               Shadow(
-                color: const Color(0xFFFFAA00).withValues(alpha: 0.45),
-                blurRadius: 12,
+                color: const Color(0xFF2BAE99).withValues(alpha: 0.25),
+                blurRadius: 8,
               ),
             ],
           ),
@@ -2670,7 +3041,7 @@ class _BottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       (Icons.home_rounded,         Icons.home_outlined,        'Home',    _C.navHome),
-      (Icons.public_rounded,       Icons.public_outlined,      'Impact',  _C.navImpact),
+      (Icons.public_rounded,       Icons.public_outlined,      'Akhirah', _C.navImpact),
       (Icons.emoji_events_rounded, Icons.emoji_events_outlined,'Ranking', _C.navRanking),
       (Icons.person_rounded,       Icons.person_outline_rounded,'Profile', _C.navProfile),
     ];
@@ -2789,10 +3160,10 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
   final _rng = math.Random();
 
   // ── Colors ────────────────────────────────────────────────────────────
-  static const _trackBg    = Color(0xFF0A1F18);
-  static const _neonGreen  = Color(0xFF00FFA3);
+  static const _trackBg    = Color(0xFFEBF7F4);
+  static const _neonGreen  = Color(0xFF1A9E8C);
   static const _neonGold   = Color(0xFFFFD166);
-  static const _socketRing = Color(0xFF1C5C45);
+  static const _socketRing = Color(0xFF2BAE99);
 
   static const _sparkPalette = [
     Color(0xFF00FFA3), Color(0xFF00FFCC), Color(0xFFFFFFFF),
@@ -3077,7 +3448,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Progress fill (green, grows with drag) ────────────
+                // ── Progress fill (teal, grows with drag) ────────────
                 Positioned(
                   left: 0, top: 0, bottom: 0,
                   child: Container(
@@ -3085,10 +3456,10 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF0D3826),
-                          const Color(0xFF115C3D),
+                          const Color(0xFF1A9E8C).withValues(alpha: 0.25),
+                          const Color(0xFF2BAE99).withValues(alpha: 0.35),
                           Color.lerp(
-                            const Color(0xFF1A7A52),
+                            const Color(0xFF2BAE99),
                             _neonGold,
                             (pct - 0.6).clamp(0.0, 1.0) / 0.4,
                           )!,
@@ -3160,7 +3531,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                             style: GoogleFonts.rajdhani(
                               fontSize: 14.5,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white,
+                              color: const Color(0xFF0D6B5A),
                               letterSpacing: 1.2,
                             ),
                           ),
