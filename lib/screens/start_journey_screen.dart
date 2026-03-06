@@ -120,7 +120,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           _fi(Icons.volunteer_activism,   430, right: 22, size: 24, op: 0.06),
           _fi(Icons.book_rounded,         510, left: 28,  size: 22, op: 0.06),
           _fi(Icons.self_improvement,     575, right: 32, size: 24, op: 0.07),
-          _fi(Icons.auto_awesome,         380, left: 12,  size: 16, op: 0.09),
+          _fi(Icons.nights_stay_rounded,   380, left: 12,  size: 16, op: 0.09),
           _fi(Icons.spa_rounded,          650, left: 46,  size: 20, op: 0.06),
           _fi(Icons.star_border_rounded,  700, right: 26, size: 22, op: 0.07),
           _fi(Icons.circle_outlined,      460, left: 60,  size: 12, op: 0.06),

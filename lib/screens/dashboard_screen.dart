@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,7 +12,9 @@ import 'admin/admin_dashboard.dart';
 import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
+import '../services/streak_service.dart';
 import 'package:confetti/confetti.dart';
+import 'streak_screen.dart';
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
 
@@ -55,6 +58,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _totalXp     = 0;
   int _level       = 1;
   String _levelTitle = 'Seeker';
+  StreakSnapshot _streakSnap = StreakSnapshot.empty;
   String? _country;
 
   // Community project
@@ -66,6 +70,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _loadHomeData();
     // Claim daily login XP once per day (fire & forget)
     XpService.instance.claimDailyLoginXp();
+    // Record login streak
+    StreakService.instance.recordActivity(StreakType.login);
     // Start privacy-first analytics session
     TrackingService.instance.beginSession();
   }
@@ -104,6 +110,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _weekPoints  = (results[1] as num?)?.toInt() ?? 0;
       _monthPoints = (results[2] as num?)?.toInt() ?? 0;
       _streak      = (results[3] as num?)?.toInt() ?? 0;
+
+      // Load streak snapshot
+      final snap = await StreakService.instance.loadSnapshot();
+      _streakSnap = snap;
 
       final proj = await _supabase.from('community_projects')
           .select().eq('is_active', true).eq('is_completed', false).maybeSingle();
@@ -145,6 +155,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           weekPoints: _weekPoints,
           monthPoints: _monthPoints,
           streak: _streak,
+          streakSnap: _streakSnap,
           project: _project,
           onGoQuran:       () => _goToScreen(const QuranHubScreen()),
           onGoDhikr:       () => _goToScreen(const DhikrHubScreen()),
@@ -193,13 +204,15 @@ class _HomeTab extends StatefulWidget {
   final String name, levelTitle;
   final int noorPoints, todayPoints, weekPoints, monthPoints, streak, totalXp, level;
   final Map<String, dynamic>? project;
+  final StreakSnapshot streakSnap;
   final VoidCallback onGoQuran, onGoDhikr, onGoTafsir, onGoAchievements, onGoInvite;
   final Future<bool> Function() onValidate;
   const _HomeTab({
     required this.name, required this.noorPoints, required this.todayPoints,
     required this.weekPoints, required this.monthPoints, required this.streak,
     required this.totalXp, required this.level, required this.levelTitle,
-    required this.project, required this.onGoQuran, required this.onGoDhikr,
+    required this.project, required this.streakSnap,
+    required this.onGoQuran, required this.onGoDhikr,
     required this.onGoTafsir, required this.onValidate, required this.onGoAchievements,
     required this.onGoInvite,
   });
@@ -245,7 +258,7 @@ class _HomeTabState extends State<_HomeTab> {
                   BoxShadow(color: const Color(0xFF9B59B6).withValues(alpha: 0.5), blurRadius: 20)
                 ],
               ),
-              child: const Icon(Icons.star_rounded, color: Colors.white, size: 50),
+              child: const Icon(Icons.nights_stay_rounded, color: Colors.white, size: 50),
             ),
             const SizedBox(height: 24),
             Text(
@@ -392,7 +405,7 @@ class _HomeTabState extends State<_HomeTab> {
                         style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)))),
                   const SizedBox(width: 7),
                   Text(_fmt(widget.noorPoints),
-                      style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                      style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5)),
                 ]),
               ),
               const SizedBox(height: 4),
@@ -418,22 +431,17 @@ class _HomeTabState extends State<_HomeTab> {
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(color: const Color(0xFF5856D6),
                     borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white, width: 1.5)),
-                child: Text('LV ${widget.level}', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.white)),
+                child: Text('LV ${widget.level}', style: GoogleFonts.rajdhani(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5)),
               )),
             ]),
           ),
         ]),
 
-        // ── Big points number ─────────────────────────────────────────────
-        const SizedBox(height: 28),
-        Center(child: Column(children: [
-          Text(_fmt(widget.todayPoints > 0 ? widget.todayPoints : widget.noorPoints),
-              style: GoogleFonts.outfit(fontSize: 80, fontWeight: FontWeight.w700,
-                  color: _C.text, height: 1.0, letterSpacing: -3)),
-          const SizedBox(height: 6),
-          Text('Noor Points Earned Today',
-              style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: _C.sub)),
-        ])),
+        // ── Noor Counter (tasbih drum display) ────────────────────────────────
+        const SizedBox(height: 22),
+        Center(child: _NoorCounter(
+          value: widget.todayPoints > 0 ? widget.todayPoints : widget.noorPoints,
+        )),
 
         // ── Swipe-to-Validate button (close to Today's points) ────────────────
         const SizedBox(height: 18),
@@ -446,6 +454,10 @@ class _HomeTabState extends State<_HomeTab> {
           return awarded;
         }),
 
+        // ── Streak Banner ─────────────────────────────────────────────────
+        const SizedBox(height: 20),
+        _StreakBanner(snap: widget.streakSnap),
+
         // ── Progress card (Daily / Weekly / Monthly) ──────────────────────
         const SizedBox(height: 20),
         _ProgressCard(
@@ -455,6 +467,7 @@ class _HomeTabState extends State<_HomeTab> {
           streak:   widget.streak,
         ),
 
+
         // ── Community progress ────────────────────────────────────────────
         const SizedBox(height: 20),
         if (widget.project != null) _CommunityCard(project: widget.project!),
@@ -462,14 +475,41 @@ class _HomeTabState extends State<_HomeTab> {
         // ── My Donations ─────────────────────────────────────────────────
         if (_myDonations.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Row(children: [
-            Text('Community Donations',
-                style: GoogleFonts.outfit(
-                    fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
-            const Spacer(),
-            Text('${_myDonations.length} active',
-                style: GoogleFonts.outfit(
-                    fontSize: 13, fontWeight: FontWeight.w600, color: _C.sub)),
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('🎯 RECITE MORE.',
+                    style: GoogleFonts.rajdhani(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: _C.text,
+                        letterSpacing: 0.8,
+                        height: 1.0)),
+                Text('HELP REAL LIVES.',
+                    style: GoogleFonts.rajdhani(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF2BAE99),
+                        letterSpacing: 0.8,
+                        height: 1.1)),
+                const SizedBox(height: 3),
+                Text('Your Noor Points fund these projects',
+                    style: GoogleFonts.outfit(
+                        fontSize: 12, fontWeight: FontWeight.w500, color: _C.sub)),
+              ]),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFF2BAE99).withValues(alpha: 0.3)),
+              ),
+              child: Text('${_myDonations.length} active',
+                  style: GoogleFonts.rajdhani(
+                      fontSize: 13, fontWeight: FontWeight.w700,
+                      color: const Color(0xFF2BAE99))),
+            ),
           ]),
           const SizedBox(height: 12),
           _MyDonationsSection(
@@ -484,8 +524,9 @@ class _HomeTabState extends State<_HomeTab> {
 
         // ── Activity grid ─────────────────────────────────────────────────
         const SizedBox(height: 24),
-        Text('Earn Noor Points',
-            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
+        Text('EARN NOOR POINTS',
+            style: GoogleFonts.rajdhani(fontSize: 20, fontWeight: FontWeight.w700,
+                color: _C.text, letterSpacing: 1.0)),
         const SizedBox(height: 14),
         GridView.count(
           crossAxisCount: 2, shrinkWrap: true,
@@ -696,6 +737,154 @@ class _InviteSheetState extends State<_InviteSheet> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Streak Banner — compact 3-card row shown on home tab
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _StreakBanner extends StatefulWidget {
+  final StreakSnapshot snap;
+  const _StreakBanner({required this.snap});
+  @override
+  State<_StreakBanner> createState() => _StreakBannerState();
+}
+
+class _StreakBannerState extends State<_StreakBanner>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulse;
+  late Animation<double> _glow;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100))
+      ..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.5, end: 1.0)
+        .animate(CurvedAnimation(parent: _pulse, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() { _pulse.dispose(); super.dispose(); }
+
+  // Colors per streak type
+  static const _cols = [Color(0xFFFF6B35), Color(0xFF00C875), Color(0xFF5856D6)];
+  static const _bgCols = [Color(0xFFFFF0E6), Color(0xFFE6FFF5), Color(0xFFEEEDFF)];
+
+  @override
+  Widget build(BuildContext context) {
+    final streaks = [widget.snap.login, widget.snap.dhikr, widget.snap.quran];
+    final types   = StreakType.values;
+    final best    = streaks.reduce((a, b) => a > b ? a : b);
+    final next    = nextMilestone(best);
+
+    return GestureDetector(
+      onTap: () => Navigator.push(context,
+          MaterialPageRoute(builder: (_) => const StreakScreen())),
+      child: AnimatedBuilder(
+        animation: _glow,
+        builder: (_, __) => Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1C1C2E), Color(0xFF2C1A3A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF6B35).withValues(alpha: _glow.value * 0.15),
+                blurRadius: 20, spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Header row
+            Row(children: [
+              const Text('🔥', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text('STREAKS',
+                  style: GoogleFonts.rajdhani(
+                      fontSize: 15, fontWeight: FontWeight.w700,
+                      color: Colors.white, letterSpacing: 1.2)),
+              const Spacer(),
+              if (next != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF6B35).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.35)),
+                  ),
+                  child: Text('${next.emoji} Next: ${next.days}d',
+                      style: GoogleFonts.rajdhani(
+                          fontSize: 11, fontWeight: FontWeight.w700,
+                          color: const Color(0xFFFF9500))),
+                ),
+              const SizedBox(width: 6),
+              const Icon(Icons.chevron_right_rounded,
+                  color: Colors.white30, size: 18),
+            ]),
+            const SizedBox(height: 14),
+
+            // 3 streak chips
+            Row(children: List.generate(3, (i) {
+              final s = streaks[i];
+              final c = _cols[i];
+              final bg = _bgCols[i];
+              final alive = s > 0;
+              return Expanded(child: Padding(
+                padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: alive
+                        ? bg.withValues(alpha: 0.08)
+                        : Colors.white.withValues(alpha: 0.04),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: alive
+                          ? c.withValues(alpha: _glow.value * 0.55)
+                          : Colors.white.withValues(alpha: 0.06),
+                    ),
+                    boxShadow: alive ? [BoxShadow(
+                      color: c.withValues(alpha: _glow.value * 0.18),
+                      blurRadius: 12,
+                    )] : [],
+                  ),
+                  child: Column(children: [
+                    Text(types[i].emoji,
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 4),
+                    Text('$s',
+                        style: GoogleFonts.rajdhani(
+                            fontSize: 26, fontWeight: FontWeight.w900,
+                            color: alive ? c : Colors.white24,
+                            height: 1.0)),
+                    Text('day${s == 1 ? '' : 's'}',
+                        style: GoogleFonts.outfit(
+                            fontSize: 9,
+                            color: alive
+                                ? c.withValues(alpha: 0.7)
+                                : Colors.white24,
+                            fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Text(types[i].label,
+                        style: GoogleFonts.outfit(
+                            fontSize: 9, color: Colors.white30),
+                        overflow: TextOverflow.ellipsis),
+                  ]),
+                ),
+              ));
+            })),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Daily / Weekly / Monthly Progress Card
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -728,9 +917,10 @@ class _ProgressCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Header row: title + streak bubble
         Row(children: [
-          Text('Your Progress',
-              style: GoogleFonts.outfit(
-                  fontSize: 15, fontWeight: FontWeight.w800, color: _C.text)),
+          Text('YOUR PROGRESS',
+            style: GoogleFonts.rajdhani(
+                fontSize: 16, fontWeight: FontWeight.w700,
+                color: _C.text, letterSpacing: 1.0)),
           const Spacer(),
           // Streak flame
           Container(
@@ -748,9 +938,9 @@ class _ProgressCard extends StatelessWidget {
               const Text('🔥', style: TextStyle(fontSize: 13)),
               const SizedBox(width: 4),
               Text('$streak day${streak == 1 ? '' : 's'}',
-                  style: GoogleFonts.outfit(
-                      fontSize: 12, fontWeight: FontWeight.w800,
-                      color: Colors.white)),
+                style: GoogleFonts.rajdhani(
+                    fontSize: 13, fontWeight: FontWeight.w700,
+                    color: Colors.white, letterSpacing: 0.5)),
             ]),
           ),
         ]),
@@ -842,7 +1032,8 @@ class _CommunityCard extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('Community Progress: ${project['title']} ${project['emoji']}',
-            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF7A5C00)),
+            style: GoogleFonts.rajdhani(fontSize: 14, fontWeight: FontWeight.w700,
+                color: const Color(0xFF7A5C00), letterSpacing: 0.5),
             maxLines: 2, overflow: TextOverflow.ellipsis),
         const SizedBox(height: 14),
         TweenAnimationBuilder<double>(
@@ -861,7 +1052,8 @@ class _CommunityCard extends StatelessWidget {
               style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF7A5C00), fontWeight: FontWeight.w500)),
           const Spacer(),
           Text('${(pct * 100).toStringAsFixed(0)}%',
-              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: const Color(0xFF7A5C00))),
+            style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700,
+                color: const Color(0xFF7A5C00), letterSpacing: 0.5)),
         ]),
       ]),
     );
@@ -903,8 +1095,9 @@ class _ActivityCardState extends State<_ActivityCard> {
             ),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(widget.title,
-                  maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text)),
+                maxLines: 2, overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700,
+                    color: _C.text, letterSpacing: 0.3)),
               const SizedBox(height: 2),
               Text(widget.reward,
                   maxLines: 1, overflow: TextOverflow.ellipsis,
@@ -1026,7 +1219,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   children: [
                                     Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFF2BAE7C), shape: BoxShape.circle)),
                                     const SizedBox(width: 8),
-                                    Text('You', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                                    Text('Your Contribution', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
                                     const Spacer(),
                                     Text(fmt(myPts), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
                                   ]
@@ -1036,7 +1229,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   children: [
                                     Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
                                     const SizedBox(width: 8),
-                                    Text('Community', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                                    Text("Others' Contribution", style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
                                     const Spacer(),
                                     Text(fmt((current - myPts).clamp(0, current)), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
                                   ]
@@ -1081,6 +1274,233 @@ class _MyDonationsSection extends StatelessWidget {
               ),
         );
       },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NOOR COUNTER — Tasbih drum-wheel style
+// Each digit lives in its own physical scroll-wheel slot: dark Islamic-green
+// gradient with top/bottom depth shadows, amber gold fold line, white glow text.
+// Amber beads flank the drums like tasbih prayer beads.
+// ─────────────────────────────────────────────────────────────────────────────
+class _NoorCounter extends StatelessWidget {
+  final int value;
+  const _NoorCounter({required this.value});
+
+  /// Insert commas: 12345 → "12,345"
+  String _withCommas() {
+    final s = value.toString();
+    final buf = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+      buf.write(s[i]);
+    }
+    return buf.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt = _withCommas();
+    // One unified game-panel: drum display at top, label strip snapped at bottom.
+    // ClipRRect clips both sections to shared rounded corners; the outer
+    // DecoratedBox draws the single border + shadow around the whole unit.
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: const Color(0xFFFFAA00).withValues(alpha: 0.22), width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFAA00).withValues(alpha: 0.16),
+            blurRadius: 22, offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.38),
+            blurRadius: 8, offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(21),
+        child: IntrinsicWidth(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── Drum display ─────────────────────────────────────────────
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF14220F), Color(0xFF0A1208)],
+                    begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  ),
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const _NoorBead(),
+                      const SizedBox(width: 10),
+                      for (int i = 0; i < fmt.length; i++)
+                        if (fmt[i] == ',')
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(',',
+                              style: GoogleFonts.rajdhani(
+                                fontSize: 20, fontWeight: FontWeight.w700,
+                                color: const Color(0xFFFFAA00).withValues(alpha: 0.55),
+                              ),
+                            ),
+                          )
+                        else
+                          _DrumDigit(digit: fmt[i]),
+                      const SizedBox(width: 10),
+                      const _NoorBead(),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── Thin amber divider — the seam between the two panels ──────
+              Container(
+                height: 0.8,
+                color: const Color(0xFFFFAA00).withValues(alpha: 0.35),
+              ),
+
+              // ── Label strip — snapped directly to drums, no gap ───────────
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF1A6B5A), Color(0xFF2BAE99)],
+                    begin: Alignment.centerLeft, end: Alignment.centerRight,
+                  ),
+                ),
+                child: Center(
+                  child: Text('NOOR POINTS EARNED TODAY',
+                      style: GoogleFonts.rajdhani(
+                        fontSize: 13, fontWeight: FontWeight.w700,
+                        color: Colors.white, letterSpacing: 2.0,
+                      )),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Individual digit scroll-wheel slot
+class _DrumDigit extends StatelessWidget {
+  final String digit;
+  const _DrumDigit({required this.digit});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 33,
+      height: 46,
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      decoration: BoxDecoration(
+        // Lighter in the middle → looks like a cylinder curving away from us
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1A3414), Color(0xFF2E5228), Color(0xFF1A3414)],
+          stops: [0.0, 0.5, 1.0],
+          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: const Color(0xFFFFAA00).withValues(alpha: 0.28), width: 0.8,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.5),
+            blurRadius: 6, offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Stack(children: [
+        // Top depth shadow — receding top of the drum
+        Positioned(
+          top: 0, left: 0, right: 0, height: 12,
+          child: DecoratedBox(decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+            gradient: LinearGradient(
+              colors: [Colors.black.withValues(alpha: 0.5), Colors.transparent],
+              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            ),
+          )),
+        ),
+        // Bottom depth shadow
+        Positioned(
+          bottom: 0, left: 0, right: 0, height: 12,
+          child: DecoratedBox(decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
+            gradient: LinearGradient(
+              colors: [Colors.transparent, Colors.black.withValues(alpha: 0.5)],
+              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            ),
+          )),
+        ),
+        // Amber fold line — the physical number-change crease of the drum
+        Center(child: Container(
+          height: 0.8,
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFAA00).withValues(alpha: 0.45),
+            boxShadow: [BoxShadow(
+              color: const Color(0xFFFFAA00).withValues(alpha: 0.3),
+              blurRadius: 4,
+            )],
+          ),
+        )),
+        // The digit
+        Center(child: Text(digit,
+          style: GoogleFonts.rajdhani(
+            fontSize: 26, fontWeight: FontWeight.w700,
+            color: Colors.white, height: 1,
+            shadows: [
+              Shadow(
+                color: const Color(0xFFFFAA00).withValues(alpha: 0.45),
+                blurRadius: 12,
+              ),
+            ],
+          ),
+        )),
+      ]),
+    );
+  }
+}
+
+/// Amber tasbih bead flanking the drum row
+class _NoorBead extends StatelessWidget {
+  const _NoorBead();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 10, height: 10,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const RadialGradient(
+          colors: [Color(0xFFFFEE88), Color(0xFFFFAA00), Color(0xFFBB7700)],
+          stops: [0.0, 0.55, 1.0],
+          center: Alignment(-0.35, -0.35),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFAA00).withValues(alpha: 0.65),
+            blurRadius: 8, spreadRadius: 0,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1940,11 +2360,70 @@ class _BottomNav extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Swipe-to-Validate Button
+// Swipe-to-Validate  ✦  "Circuit Connect" Edition
+// Drag the crescent orb into the receptor socket to seal the day.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── Energy particle behind the dragging orb ───────────────────────────────────
+class _EnergyParticle {
+  double x, y;       // position relative to track
+  double vx, vy;    // velocity
+  double life;      // 1.0 → 0.0
+  final double size;
+  final Color color;
+  _EnergyParticle({
+    required this.x, required this.y,
+    required this.vx, required this.vy,
+    required this.size, required this.color,
+  }) : life = 1.0;
+}
+
+// ── Arc segments painter (lightning bolt between orb and socket) ──────────────
+class _ArcPainter extends CustomPainter {
+  final double fromX, toX, cy;
+  final double progress; // 0–1, drives opacity
+  final Color color;
+  const _ArcPainter({
+    required this.fromX, required this.toX,
+    required this.cy, required this.progress, required this.color,
+  });
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    final rng = math.Random(7);
+    final paint = Paint()
+      ..color = color.withValues(alpha: progress * 0.9)
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+    // Draw 3 jagged arcs
+    for (int arc = 0; arc < 3; arc++) {
+      final path = Path();
+      path.moveTo(fromX, cy);
+      final steps = 6;
+      for (int s = 1; s <= steps; s++) {
+        final t = s / steps;
+        final bx = fromX + (toX - fromX) * t;
+        final jitter = (rng.nextDouble() - 0.5) * 14 * progress;
+        path.lineTo(bx, cy + (arc == 1 ? -jitter : jitter));
+      }
+      path.lineTo(toX, cy);
+      paint.color = color.withValues(alpha: progress * (arc == 1 ? 0.9 : 0.45));
+      canvas.drawPath(path, paint);
+    }
+    // Glow at endpoints
+    final glowPaint = Paint()
+      ..color = color.withValues(alpha: progress * 0.35)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawCircle(Offset(fromX, cy), 8 * progress, glowPaint);
+    canvas.drawCircle(Offset(toX, cy), 10 * progress, glowPaint);
+  }
+  @override
+  bool shouldRepaint(_ArcPainter o) => o.progress != progress || o.fromX != fromX;
+}
+
+// ── Main widget ───────────────────────────────────────────────────────────────
 class _SwipeValidateButton extends StatefulWidget {
-  /// Returns true if XP was freshly awarded, false if already claimed today.
   final Future<bool> Function() onValidate;
   const _SwipeValidateButton({required this.onValidate});
   @override
@@ -1952,199 +2431,748 @@ class _SwipeValidateButton extends StatefulWidget {
 }
 
 class _SwipeValidateButtonState extends State<_SwipeValidateButton>
-    with SingleTickerProviderStateMixin {
-  double _drag       = 0;
-  bool   _completed  = false;
-  bool   _resetting  = false;
-  bool   _freshXp    = true;   // true = new XP, false = already claimed today
-  late AnimationController _sparkCtrl;
-  late Animation<double>   _sparkAnim;
+    with TickerProviderStateMixin {
 
-  static const double _trackH    = 62.0;
-  static const double _thumbSize = 52.0;
-  static const double _padding   = 5.0;
+  // ── Geometry ─────────────────────────────────────────────────────────────
+  static const double _trackH    = 68.0;
+  static const double _thumbSize = 56.0;
+  static const double _padding   = 6.0;
+
+  // ── State ──────────────────────────────────────────────────────────────
+  double _drag      = 0;
+  bool   _completed = false;
+  bool   _resetting = false;
+  bool   _freshXp   = true;
+  bool   _dragging  = false;
+
+  // Particles
+  final List<_EnergyParticle> _particles = [];
+  final _rng = math.Random();
+
+  // ── Colors ────────────────────────────────────────────────────────────
+  static const _trackBg    = Color(0xFF0A1F18);
+  static const _neonGreen  = Color(0xFF00FFA3);
+  static const _neonGold   = Color(0xFFFFD166);
+  static const _socketRing = Color(0xFF1C5C45);
+
+  static const _sparkPalette = [
+    Color(0xFF00FFA3), Color(0xFF00FFCC), Color(0xFFFFFFFF),
+    Color(0xFFFFD166), Color(0xFF39FFB6), Color(0xFFA0FFE0),
+  ];
+
+  // ── Controllers ──────────────────────────────────────────────────────
+  // Particle / trail ticker
+  late AnimationController _particleCtrl;
+
+  // Socket pulse (proximity-driven speed)
+  late AnimationController _socketCtrl;
+  late Animation<double>   _socketPulse;
+
+  // Arc flash on connect
+  late AnimationController _arcCtrl;
+  late Animation<double>   _arcAnim;
+
+  // Completion burst
+  late AnimationController _burstCtrl;
+  late Animation<double>   _burstAnim;
+
+  // Merged emblem scale-bounce
+  late AnimationController _snapCtrl;
+  late Animation<double>   _snapScale;
+
+  // Halo rotation
+  late AnimationController _haloCtrl;
+
+  // Circuit fill (golden wash left→right after connect)
+  late AnimationController _fillCtrl;
+  late Animation<double>   _fillAnim;
+
+  // Idle shimmer on text
+  late AnimationController _shimmerCtrl;
 
   @override
   void initState() {
     super.initState();
-    _sparkCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    _sparkAnim = CurvedAnimation(parent: _sparkCtrl, curve: Curves.easeOut);
+
+    _particleCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 16))
+      ..repeat();
+    _particleCtrl.addListener(_tickParticles);
+
+    _socketCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 800))
+      ..repeat(reverse: true);
+    _socketPulse = Tween<double>(begin: 0.5, end: 1.0)
+        .animate(CurvedAnimation(parent: _socketCtrl, curve: Curves.easeInOut));
+
+    _arcCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 350));
+    _arcAnim = Tween<double>(begin: 1.0, end: 0.0)
+        .animate(CurvedAnimation(parent: _arcCtrl, curve: Curves.easeOut));
+
+    _burstCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 650));
+    _burstAnim = CurvedAnimation(parent: _burstCtrl, curve: Curves.easeOut);
+
+    _snapCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 420));
+    _snapScale = TweenSequence([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.35), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.35, end: 0.90), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.90, end: 1.05), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 1.05, end: 1.00), weight: 15),
+    ]).animate(CurvedAnimation(parent: _snapCtrl, curve: Curves.linear));
+
+    _haloCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1800))
+      ..repeat();
+
+    _fillCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    _fillAnim = CurvedAnimation(parent: _fillCtrl, curve: Curves.easeOut);
+
+    _shimmerCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1600))
+      ..repeat(reverse: true);
   }
 
   @override
-  void dispose() { _sparkCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _particleCtrl.dispose();
+    _socketCtrl.dispose();
+    _arcCtrl.dispose();
+    _burstCtrl.dispose();
+    _snapCtrl.dispose();
+    _haloCtrl.dispose();
+    _fillCtrl.dispose();
+    _shimmerCtrl.dispose();
+    super.dispose();
+  }
+
+  // ── Particle tick ─────────────────────────────────────────────────────
+  void _tickParticles() {
+    if (!mounted) return;
+    setState(() {
+      for (final p in _particles) {
+        p.x   += p.vx;
+        p.y   += p.vy;
+        p.life -= 0.045;
+        p.vx  *= 0.94;
+        p.vy  *= 0.94;
+      }
+      _particles.removeWhere((p) => p.life <= 0);
+    });
+  }
+
+  void _spawnParticles(double knobCx, double cy) {
+    if (!_dragging) return;
+    final count = 2 + _rng.nextInt(2);
+    for (int i = 0; i < count; i++) {
+      final angle = _rng.nextDouble() * math.pi * 2;
+      final speed = 0.6 + _rng.nextDouble() * 1.4;
+      _particles.add(_EnergyParticle(
+        x: knobCx + (_rng.nextDouble() - 0.5) * 10,
+        y: cy    + (_rng.nextDouble() - 0.5) * 10,
+        vx: math.cos(angle) * speed - 0.5,   // slight leftward drift
+        vy: math.sin(angle) * speed * 0.55,
+        size: 1.8 + _rng.nextDouble() * 2.2,
+        color: _sparkPalette[_rng.nextInt(_sparkPalette.length)],
+      ));
+      if (_particles.length > 60) _particles.removeAt(0);
+    }
+  }
+
+  // ── Socket pulse speed (proximity) ───────────────────────────────────
+  void _updateSocketSpeed(double pct) {
+    // 0% proximity → 800ms period, 100% → 200ms
+    final ms = (800 - pct * 600).clamp(200.0, 800.0).toInt();
+    if (_socketCtrl.duration?.inMilliseconds != ms) {
+      _socketCtrl.duration = Duration(milliseconds: ms);
+    }
+  }
+
+  // ── Input handlers ────────────────────────────────────────────────────
+  void _onPanStart(DragStartDetails _) {
+    if (_completed || _resetting) return;
+    HapticFeedback.lightImpact();
+    setState(() => _dragging = true);
+  }
 
   void _onPanUpdate(DragUpdateDetails d, double maxDrag) {
     if (_completed || _resetting) return;
-    setState(() => _drag = (_drag + d.delta.dx).clamp(0, maxDrag));
+    setState(() {
+      _drag = (_drag + d.delta.dx).clamp(0.0, maxDrag);
+    });
+    final pct = maxDrag > 0 ? _drag / maxDrag : 0.0;
+    _updateSocketSpeed(pct);
+    // spawn particles behind the orb
+    _spawnParticles(_padding + _drag + _thumbSize / 2, _trackH / 2);
     if (_drag >= maxDrag) _complete(maxDrag);
   }
 
   void _onPanEnd(double maxDrag) {
     if (_completed || _resetting) return;
-    setState(() => _resetting = true);
-    Future.microtask(() async {
-      for (double t = _drag; t > 0; t -= 10) {
-        if (!mounted) return;
-        setState(() => _drag = t.clamp(0, maxDrag));
-        await Future.delayed(const Duration(milliseconds: 8));
-      }
-      if (mounted) setState(() { _drag = 0; _resetting = false; });
-    });
+    HapticFeedback.selectionClick();
+    setState(() { _dragging = false; _resetting = true; });
+    _resetKnob(maxDrag);
+  }
+
+  Future<void> _resetKnob(double maxDrag) async {
+    for (double t = _drag; t > 0; t -= 11) {
+      if (!mounted) return;
+      setState(() => _drag = t.clamp(0.0, maxDrag));
+      await Future.delayed(const Duration(milliseconds: 9));
+    }
+    if (mounted) setState(() { _drag = 0; _resetting = false; _particles.clear(); });
   }
 
   void _complete(double maxDrag) {
-    setState(() { _drag = maxDrag; _completed = true; });
+    setState(() { _drag = maxDrag; _completed = true; _dragging = false; });
+    // Step 1: heavy haptic snap
+    HapticFeedback.heavyImpact();
+    // Step 2: arc flash
+    _arcCtrl.forward(from: 0);
+    // Step 3: burst + snap scale + fill
+    Future.delayed(const Duration(milliseconds: 80), () {
+      if (!mounted) return;
+      _burstCtrl.forward(from: 0);
+      _snapCtrl.forward(from: 0);
+      _fillCtrl.forward(from: 0);
+      HapticFeedback.mediumImpact();
+    });
+
     widget.onValidate().then((awarded) {
       if (!mounted) return;
       setState(() => _freshXp = awarded);
-      // Only burst sparkles for a fresh XP award
-      if (awarded) _sparkCtrl.forward(from: 0);
-      // Auto-reset after brief display
-      Future.delayed(const Duration(milliseconds: 1800), () async {
+      // Hold completed state, then reset
+      Future.delayed(const Duration(milliseconds: 2200), () async {
         if (!mounted) return;
-        _sparkCtrl.reset();
-        for (double t = maxDrag; t > 0; t -= 12) {
+        _burstCtrl.reset();
+        _arcCtrl.reset();
+        _fillCtrl.reset();
+        _particles.clear();
+        for (double t = maxDrag; t > 0; t -= 14) {
           if (!mounted) return;
-          setState(() => _drag = t.clamp(0, maxDrag));
+          setState(() => _drag = t.clamp(0.0, maxDrag));
           await Future.delayed(const Duration(milliseconds: 10));
         }
-        if (mounted) setState(() { _drag = 0; _completed = false; _freshXp = true; });
+        if (mounted) {
+          setState(() {
+            _drag = 0; _completed = false;
+            _freshXp = true; _particles.clear();
+          });
+        }
       });
     });
   }
 
+
+  // ── Build ─────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    const trackBg = Color(0xFF1A1A2E);
-    const gold1   = Color(0xFFD4AF37);
-    const gold2   = Color(0xFFF5C842);
-    const radius  = 31.0;
+    const radius = _trackH / 2;
 
     return LayoutBuilder(builder: (_, box) {
-      final maxDrag = box.maxWidth - _thumbSize - _padding * 2;
-      final pct     = maxDrag > 0 ? (_drag / maxDrag).clamp(0.0, 1.0) : 0.0;
+      final maxDrag   = box.maxWidth - _thumbSize - _padding * 2;
+      final pct       = maxDrag > 0 ? (_drag / maxDrag).clamp(0.0, 1.0) : 0.0;
+      final knobCx    = _padding + _drag + _thumbSize / 2;
+      final socketCx  = box.maxWidth - _padding - _thumbSize / 2;  // right socket centre
+      final trackCy   = _trackH / 2;
+      final proximity = pct;  // 0 = far, 1 = touching
 
-      return GestureDetector(
-        onHorizontalDragUpdate: (d) => _onPanUpdate(d, maxDrag),
-        onHorizontalDragEnd:    (_) => _onPanEnd(maxDrag),
-        child: Container(
-          height: _trackH,
-          decoration: BoxDecoration(
-            color: trackBg,
-            borderRadius: BorderRadius.circular(radius),
-            boxShadow: [BoxShadow(
-                color: Colors.black.withValues(alpha: 0.20),
-                blurRadius: 16, offset: const Offset(0, 6))],
-          ),
-          child: Stack(alignment: Alignment.centerLeft, children: [
+      return AnimatedBuilder(
+        animation: Listenable.merge([
+          _socketPulse, _arcAnim, _burstAnim, _snapScale,
+          _haloCtrl, _fillAnim, _shimmerCtrl, _particleCtrl,
+        ]),
+        builder: (_, __) {
+          return GestureDetector(
+            onHorizontalDragStart:  _onPanStart,
+            onHorizontalDragUpdate: (d) => _onPanUpdate(d, maxDrag),
+            onHorizontalDragEnd:    (_) => _onPanEnd(maxDrag),
+            child: SizedBox(
+              height: _trackH,
+              child: Stack(clipBehavior: Clip.none, children: [
 
-            // Gold fill grows with drag
-            Container(
-              width: (_thumbSize + _padding + _drag).clamp(0.0, box.maxWidth),
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                    colors: [gold1, gold2],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight),
-                borderRadius: BorderRadius.circular(radius),
-              ),
-            ),
-
-            // Hint text fades as thumb slides right
-            Center(
-              child: Opacity(
-                opacity: (1 - pct * 2.4).clamp(0.0, 1.0),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.chevron_right_rounded,
-                      color: Colors.white54, size: 16),
-                  const Icon(Icons.chevron_right_rounded,
-                      color: Colors.white30, size: 16),
-                  const SizedBox(width: 4),
-                  Text('Swipe to Validate  ☭',
-                      style: GoogleFonts.outfit(
-                          fontSize: 13, fontWeight: FontWeight.w700,
-                          color: Colors.white70)),
-                ]),
-              ),
-            ),
-
-            // Completed celebration / already-claimed label
-            if (_completed)
-              Center(
-                child: Text(
-                  _freshXp
-                      ? '✅  JazakAllah! +${XpReward.validateCoins} XP'
-                      : '☑️  Already validated today',
-                  style: GoogleFonts.outfit(
-                      fontSize: 13, fontWeight: FontWeight.w800,
-                      color: Colors.white),
+                // ── Track background ───────────────────────────────────
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _trackBg,
+                      borderRadius: BorderRadius.circular(radius),
+                      border: Border.all(
+                        color: _socketRing.withValues(alpha: 0.5), width: 1.5,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x55000000),
+                          blurRadius: 20, offset: Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
 
-            // Draggable thumb
-            Positioned(
-              left: _padding + _drag,
-              child: AnimatedBuilder(
-                animation: _sparkAnim,
-                builder: (_, child) => Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    // Particle burst on complete
-                    if (_sparkAnim.value > 0)
-                      ...List.generate(8, (i) {
-                        final r = _sparkAnim.value * 30.0;
-                        return Transform.translate(
-                          offset: Offset(
-                              r * (i.isEven ? 1.0 : -0.8) * (i < 4 ? 1 : -0.6),
-                              r * (i < 4 ? -1.0 : 0.9)),
-                          child: Opacity(
-                            opacity: (1 - _sparkAnim.value).clamp(0.0, 1.0),
-                            child: Container(
-                              width: 5, height: 5,
-                              decoration: BoxDecoration(
-                                color: i.isEven ? gold2 : Colors.white,
-                                shape: BoxShape.circle,
+                // ── Golden circuit fill (animates left→right on complete)
+                if (_fillAnim.value > 0)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(radius),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: _fillAnim.value,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFFFFD166).withValues(alpha: 0.25),
+                                  const Color(0xFFFF9F1C).withValues(alpha: 0.15),
+                                  const Color(0xFF00FFA3).withValues(alpha: 0.20),
+                                ],
                               ),
                             ),
                           ),
-                        );
-                      }),
-                    child!,
-                  ],
-                ),
-                child: Container(
-                  width: _thumbSize, height: _thumbSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                        colors: [gold1, gold2],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    boxShadow: [BoxShadow(
-                        color: gold2.withValues(alpha: 0.55),
-                        blurRadius: 14, spreadRadius: 1)],
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Center(
-                    child: _completed
-                        ? const Icon(Icons.check_rounded,
-                            color: Color(0xFF1A1A2E), size: 26)
-                        : Text('☭',
-                            style: GoogleFonts.outfit(
-                                fontSize: 22,
-                                color: const Color(0xFF1A1A2E),
-                                fontWeight: FontWeight.w900)),
-                  ),
-                ),
-              ),
-            ),
 
-          ]),
-        ),
+                // ── Progress fill (green, grows with drag) ────────────
+                Positioned(
+                  left: 0, top: 0, bottom: 0,
+                  child: Container(
+                    width: (_thumbSize + _padding + _drag).clamp(0.0, box.maxWidth),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF0D3826),
+                          const Color(0xFF115C3D),
+                          Color.lerp(
+                            const Color(0xFF1A7A52),
+                            _neonGold,
+                            (pct - 0.6).clamp(0.0, 1.0) / 0.4,
+                          )!,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(radius),
+                    ),
+                  ),
+                ),
+
+                // ── Energy particles (CustomPaint) ────────────────────
+                if (_particles.isNotEmpty)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(radius),
+                      child: CustomPaint(
+                        painter: _ParticlePainter(
+                          particles: _particles,
+                          trackH: _trackH,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // ── Dashed dots on track (static circuit pattern) ─────
+                Positioned(
+                  left: _thumbSize + _padding * 2 + 8,
+                  right: _thumbSize + _padding * 2 + 8,
+                  top: 0, bottom: 0,
+                  child: Opacity(
+                    opacity: (1 - pct * 2).clamp(0.0, 0.5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List.generate(6, (i) => Container(
+                        width: 3, height: 3,
+                        decoration: BoxDecoration(
+                          color: _neonGreen.withValues(alpha: 0.25),
+                          shape: BoxShape.circle,
+                        ),
+                      )),
+                    ),
+                  ),
+                ),
+
+                // ── Centre label ──────────────────────────────────────
+                if (!_completed)
+                  Center(
+                    child: Opacity(
+                      opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
+                      child: AnimatedBuilder(
+                        animation: _shimmerCtrl,
+                        builder: (_, __) => ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: [
+                              Colors.white.withValues(alpha: 0.55),
+                              Colors.white.withValues(alpha: 0.9),
+                              Colors.white.withValues(alpha: 0.55),
+                            ],
+                            stops: [
+                              0.0,
+                              _shimmerCtrl.value,
+                              1.0,
+                            ],
+                          ).createShader(bounds),
+                          child: Text(
+                            'Seal the Day  ☽',
+                            style: GoogleFonts.rajdhani(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // ── Completed label ───────────────────────────────────
+                if (_completed)
+                  Center(
+                    child: Text(
+                      _freshXp
+                          ? '✦  JazakAllah!  +${XpReward.validateCoins} XP'
+                          : '✓  Already sealed today',
+                      style: GoogleFonts.rajdhani(
+                        fontSize: 14.5, fontWeight: FontWeight.w700,
+                        color: _freshXp ? _neonGold : Colors.white,
+                        letterSpacing: 0.9,
+                      ),
+                    ),
+                  ),
+
+                // ── Lightning arc flash ───────────────────────────────
+                if (_arcAnim.value > 0 && !_completed)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(radius),
+                      child: CustomPaint(
+                        painter: _ArcPainter(
+                          fromX: knobCx,
+                          toX:   socketCx,
+                          cy:    trackCy,
+                          progress: _arcAnim.value,
+                          color: _neonGreen,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (_arcAnim.value > 0 && _completed)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(radius),
+                      child: CustomPaint(
+                        painter: _ArcPainter(
+                          fromX: socketCx - 20,
+                          toX:   socketCx + 20,
+                          cy:    trackCy,
+                          progress: _arcAnim.value,
+                          color: _neonGold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // ── Socket receptor (right side) ──────────────────────
+                if (!_completed)
+                  Positioned(
+                    right: _padding,
+                    top: (_trackH - _thumbSize) / 2,
+                    child: _SocketWidget(
+                      size: _thumbSize,
+                      pulse: _socketPulse.value,
+                      proximity: proximity,
+                      neonGreen: _neonGreen,
+                      socketRing: _socketRing,
+                    ),
+                  ),
+
+                // ── Draggable orb (knob) ───────────────────────────────
+                Positioned(
+                  left: _padding + _drag,
+                  top: (_trackH - _thumbSize) / 2,
+                  child: _OrbWidget(
+                    size: _thumbSize,
+                    pct: pct,
+                    completed: _completed,
+                    snapScale: _snapScale.value,
+                    burstProgress: _burstAnim.value,
+                    haloAngle: _haloCtrl.value * math.pi * 2,
+                    freshXp: _freshXp,
+                    neonGreen: _neonGreen,
+                    neonGold: _neonGold,
+                  ),
+                ),
+
+              ]),
+            ),
+          );
+        },
       );
     });
   }
 }
+
+// ── Particle painter ──────────────────────────────────────────────────────────
+class _ParticlePainter extends CustomPainter {
+  final List<_EnergyParticle> particles;
+  final double trackH;
+  const _ParticlePainter({required this.particles, required this.trackH});
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final p in particles) {
+      final a = p.life.clamp(0.0, 1.0);
+      // Glow
+      canvas.drawCircle(
+        Offset(p.x, trackH / 2 + p.y - trackH / 2),
+        p.size + 3,
+        Paint()
+          ..color = p.color.withValues(alpha: a * 0.25)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+      // Core
+      canvas.drawCircle(
+        Offset(p.x, trackH / 2 + p.y - trackH / 2),
+        p.size,
+        Paint()..color = p.color.withValues(alpha: a * 0.85),
+      );
+    }
+  }
+  @override
+  bool shouldRepaint(_ParticlePainter o) => true;
+}
+
+// ── Socket widget (the right-side receptor that pulses and attracts) ──────────
+class _SocketWidget extends StatelessWidget {
+  final double size, pulse, proximity;
+  final Color neonGreen, socketRing;
+  const _SocketWidget({
+    required this.size, required this.pulse, required this.proximity,
+    required this.neonGreen, required this.socketRing,
+  });
+  @override
+  Widget build(BuildContext context) {
+    final glowAlpha  = (0.15 + pulse * 0.5 * proximity).clamp(0.0, 0.9);
+    final ringScale  = 1.0 + pulse * 0.18 * proximity;
+    return SizedBox(
+      width: size, height: size,
+      child: Center(
+        child: Stack(alignment: Alignment.center, children: [
+          // Outer proximity glow
+          Transform.scale(
+            scale: ringScale,
+            child: Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: neonGreen.withValues(alpha: glowAlpha),
+                    blurRadius: 18 + proximity * 16,
+                    spreadRadius: proximity * 6,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Ring border
+          Container(
+            width: size - 6,
+            height: size - 6,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: neonGreen.withValues(alpha: 0.20 + proximity * 0.55),
+                width: 1.5,
+              ),
+              color: socketRing.withValues(alpha: 0.3 + proximity * 0.3),
+            ),
+          ),
+          // Inner ring
+          Container(
+            width: size - 18,
+            height: size - 18,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: neonGreen.withValues(alpha: 0.10 + proximity * 0.40),
+                width: 1,
+              ),
+            ),
+          ),
+          // Star icon in socket
+          Text(
+            '✦',
+            style: TextStyle(
+              fontSize: 18,
+              color: neonGreen.withValues(alpha: 0.25 + proximity * 0.65),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// ── Orb / knob widget ─────────────────────────────────────────────────────────
+class _OrbWidget extends StatelessWidget {
+  final double size, pct, snapScale, burstProgress, haloAngle;
+  final bool completed, freshXp;
+  final Color neonGreen, neonGold;
+  const _OrbWidget({
+    required this.size, required this.pct, required this.completed,
+    required this.snapScale, required this.burstProgress, required this.haloAngle,
+    required this.freshXp, required this.neonGreen, required this.neonGold,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final orbColor  = Color.lerp(const Color(0xFF1A4A34), neonGold, pct * pct)!;
+    final glowColor = completed
+        ? (freshXp ? neonGold : neonGreen)
+        : neonGreen;
+    final glowAlpha = completed ? 0.70 : (0.15 + pct * 0.55);
+
+    return SizedBox(
+      width: size, height: size,
+      child: Stack(alignment: Alignment.center, clipBehavior: Clip.none, children: [
+
+        // ── Halo ring (spins when completed) ──────────────────────────
+        if (completed)
+          Transform.rotate(
+            angle: haloAngle,
+            child: Container(
+              width: size + 14,
+              height: size + 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: SweepGradient(
+                  colors: [
+                    neonGold.withValues(alpha: 0.0),
+                    neonGold.withValues(alpha: 0.6),
+                    neonGold.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+        // ── Glow aura ─────────────────────────────────────────────────
+        Transform.scale(
+          scale: snapScale,
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: glowColor.withValues(alpha: glowAlpha),
+                  blurRadius: 18 + pct * 14,
+                  spreadRadius: pct * 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // ── Orb body ──────────────────────────────────────────────────
+        Transform.scale(
+          scale: snapScale,
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: completed && freshXp
+                  ? const RadialGradient(
+                      colors: [Color(0xFFFFEEAA), Color(0xFFFFD166), Color(0xFF8B5E00)],
+                      stops: [0.0, 0.55, 1.0],
+                      center: Alignment(-0.25, -0.3),
+                    )
+                  : RadialGradient(
+                      colors: [const Color(0xFFF0F0F0), orbColor, const Color(0xFF0A1F18)],
+                      stops: const [0.0, 0.5, 1.0],
+                      center: const Alignment(-0.3, -0.35),
+                    ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.30),
+                  blurRadius: 12, offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  blurRadius: 4, offset: const Offset(-1, -2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: completed
+                  ? Text(
+                      freshXp ? '☀' : '✓',
+                      style: TextStyle(
+                        fontSize: freshXp ? 26 : 22,
+                        color: freshXp ? const Color(0xFF7A4500) : neonGreen,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    )
+                  : Text(
+                      '☽',
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Color.lerp(
+                          const Color(0xFF1A3E2F),
+                          neonGold,
+                          pct,
+                        ),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+
+        // ── Burst sparks (radial explosion on connect) ─────────────────
+        if (burstProgress > 0)
+          ...List.generate(16, (i) {
+            final angle = (i / 16.0) * math.pi * 2;
+            final r1 = burstProgress * (i.isEven ? 46.0 : 30.0);
+            final opacity = (1 - burstProgress * 1.1).clamp(0.0, 1.0);
+            final colors = [
+              neonGold, neonGreen, Colors.white,
+              neonGold, const Color(0xFF39FFD6), Colors.white,
+            ];
+            return Transform.translate(
+              offset: Offset(
+                r1 * math.cos(angle),
+                r1 * math.sin(angle),
+              ),
+              child: Opacity(
+                opacity: opacity,
+                child: Container(
+                  width: i.isEven ? 6 : 3.5,
+                  height: i.isEven ? 6 : 3.5,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors[i % colors.length],
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors[i % colors.length].withValues(alpha: 0.7),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+      ]),
+    );
+  }
+}
+
