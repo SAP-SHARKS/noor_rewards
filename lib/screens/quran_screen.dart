@@ -57,11 +57,59 @@ const List<_TransDef> _translations = [
 ];
 
 
-// ── Reciter options ────────────────────────────────────────────────────────────
+// ── Arabic font options ────────────────────────────────────────────────────────
+typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double height, FontWeight weight) style});
+
+final List<_ArabicFont> _kArabicFonts = [
+  (
+    name: 'Amiri',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.amiri(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Scheherazade',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Lateef',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.lateef(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Noto Naskh',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Reem Kufi',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.reemKufi(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Cairo',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.cairo(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Harmattan Naskh',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.harmattan(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+];
+
+// ── Reciter options ──────────────────────────────────────────────────────────
 const _reciters = [
-  ('ar.alafasy',      'Mishary',          '🎙️'),
-  ('ar.mahermuaiqly', 'Maher',            '🎙️'),
-  ('ar.abdulsamad',   'Al-Samad',         '🎙️'),
+  ('ar.alafasy',      'Mishary',   '🎙️'),
+  ('ar.mahermuaiqly', 'Maher',     '🎙️'),
+  ('ar.abdulsamad',   'Al-Samad',  '🎙️'),
 ];
 
 class QuranScreen extends StatefulWidget {
@@ -88,6 +136,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _darkMode          = false;   // dark reading mode
   double _arabicFontSize    = 28.0;    // 20-44
   double _translationFontSize = 15.0;  // 12-22
+  int    _arabicFontIdx     = 0;       // index into _kArabicFonts
   bool   _showTranslation   = false;   // show/hide translation block
   bool   _showProgressCard  = true;    // show/hide daily progress card
   bool   _showPointsBanner  = true;    // show/hide +points banner
@@ -1408,6 +1457,98 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       ),
                     ),
 
+                    // ═ ARABIC FONT STYLE
+                    sHead('ARABIC FONT STYLE', Icons.font_download_rounded),
+                    Padding(padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                            color: _darkMode
+                                ? const Color(0xFF2C2C2E)
+                                : const Color(0xFFF7F3EE),
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(children: [
+                              Container(width: 38, height: 38,
+                                decoration: BoxDecoration(
+                                    color: _accent.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Icon(Icons.text_format_rounded,
+                                    size: 20, color: _accent),
+                              ),
+                              const SizedBox(width: 12),
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text('Arabic Font Style',
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 14, fontWeight: FontWeight.w700, color: lblC)),
+                                Text(_kArabicFonts[_arabicFontIdx].name,
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 11, color: const Color(0xFF8E8E93))),
+                              ]),
+                            ]),
+                            const SizedBox(height: 16),
+                            ...List.generate(_kArabicFonts.length, (i) {
+                              final font = _kArabicFonts[i];
+                              final sel  = i == _arabicFontIdx;
+                              return GestureDetector(
+                                onTap: () {
+                                  setSt(() => _arabicFontIdx = i);
+                                  setState(() => _arabicFontIdx = i);
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: sel
+                                        ? _accent.withValues(alpha: 0.12)
+                                        : (_darkMode
+                                            ? const Color(0xFF1C1C1E)
+                                            : Colors.white),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: sel ? _accent : Colors.transparent,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Row(children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(font.name,
+                                              style: GoogleFonts.outfit(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: sel ? _accent : const Color(0xFF8E8E93))),
+                                          const SizedBox(height: 4),
+                                          Text(font.arabicPreview,
+                                              textDirection: TextDirection.rtl,
+                                              style: font.style(22, lblC, 1.6, FontWeight.w700)),
+                                        ],
+                                      ),
+                                    ),
+                                    if (sel)
+                                      Container(
+                                        width: 24, height: 24,
+                                        decoration: BoxDecoration(
+                                          color: _accent, shape: BoxShape.circle),
+                                        child: const Icon(Icons.check_rounded,
+                                            color: Colors.white, size: 15),
+                                      ),
+                                  ]),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    ),
+
                     // ═ READING LAYOUT
                     sHead('READING LAYOUT',
                         Icons.view_agenda_rounded),
@@ -1895,11 +2036,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       child: Text(
                         _arabic,
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.amiri(
-                            fontSize: _arabicFontSize,
-                            height: 2.1,
-                            color: txt,
-                            fontWeight: FontWeight.w700),
+                        style: _kArabicFonts[_arabicFontIdx].style(
+                            _arabicFontSize, txt, 2.1, FontWeight.w700),
                       ),
                     ),
                     if (_showTranslation) ...[
@@ -2339,6 +2477,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             arabic: arabic,
             translation: translation,
             arabicFontSize: _arabicFontSize,
+            arabicFontIdx: _arabicFontIdx,
             accentColor: _accent,
             txtColor: txtColor,
             subColor: subColor,
@@ -2639,6 +2778,7 @@ class _WbwWordChip extends StatefulWidget {
   final String arabic;
   final String translation;
   final double arabicFontSize;
+  final int    arabicFontIdx;
   final Color accentColor;
   final Color txtColor;
   final Color subColor;
@@ -2648,6 +2788,7 @@ class _WbwWordChip extends StatefulWidget {
     required this.arabic,
     required this.translation,
     required this.arabicFontSize,
+    required this.arabicFontIdx,
     required this.accentColor,
     required this.txtColor,
     required this.subColor,
@@ -2722,11 +2863,11 @@ class _WbwWordChipState extends State<_WbwWordChip>
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.visible,
-                  style: GoogleFonts.amiri(
-                    fontSize: widget.arabicFontSize * 0.80,
-                    fontWeight: FontWeight.w700,
-                    color: widget.txtColor,
-                    height: 1.5,
+                  style: _kArabicFonts[widget.arabicFontIdx].style(
+                    widget.arabicFontSize * 0.80,
+                    widget.txtColor,
+                    1.5,
+                    FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 3),

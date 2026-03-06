@@ -14,6 +14,7 @@ import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
 import '../services/streak_service.dart';
 import 'package:confetti/confetti.dart';
+import 'package:share_plus/share_plus.dart';
 import 'streak_screen.dart';
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
@@ -182,7 +183,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return awarded;
           },
         ),
-        _ImpactTab(),
+        const ImpactReportScreen(isTab: true),
         _RankingTab(currentUserId: _supabase.auth.currentUser?.id ?? ''),
         _ProfileTab(
             name: widget.name, noorPoints: _noorPoints,
@@ -594,7 +595,7 @@ class _HomeTabState extends State<_HomeTab> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Invite Friends Sheet
+// Invite Friends Sheet  — share · copy link · WhatsApp · apply code
 // ─────────────────────────────────────────────────────────────────────────────
 class _InviteSheet extends StatefulWidget {
   final String referralCode;
@@ -604,135 +605,504 @@ class _InviteSheet extends StatefulWidget {
   State<_InviteSheet> createState() => _InviteSheetState();
 }
 
-class _InviteSheetState extends State<_InviteSheet> {
-  final _codeController = TextEditingController();
-  bool _loading = false;
+class _InviteSheetState extends State<_InviteSheet>
+    with SingleTickerProviderStateMixin {
+  final _codeCtrl = TextEditingController();
+  bool _loading   = false;
   String? _error;
   String? _success;
+  bool _codeCopied = false;
+  bool _linkCopied = false;
+
+  late AnimationController _shimmerCtrl;
+  late Animation<double> _shimmer;
+
+  String get _shareLink =>
+      'https://noorrewards.app/join?ref=${widget.referralCode}';
+
+  String get _shareMessage =>
+      '🌙 Join me on Noor Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
+      'Use my code *${widget.referralCode}* and we both get 500 Noor Points! 🎁\n\n'
+      '👉 $_shareLink';
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat();
+    _shimmer = Tween<double>(begin: -1.5, end: 2.5)
+        .animate(CurvedAnimation(parent: _shimmerCtrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _shimmerCtrl.dispose();
+    _codeCtrl.dispose();
+    super.dispose();
+  }
+
+  void _copyCode() {
+    if (widget.referralCode.isEmpty) return;
+    Clipboard.setData(ClipboardData(text: widget.referralCode));
+    setState(() { _codeCopied = true; _linkCopied = false; });
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _codeCopied = false);
+    });
+  }
+
+  void _copyLink() {
+    Clipboard.setData(ClipboardData(text: _shareLink));
+    setState(() { _linkCopied = true; _codeCopied = false; });
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _linkCopied = false);
+    });
+  }
+
+  void _shareGeneral() {
+    // ignore: deprecated_member_use
+    Share.share(_shareMessage, subject: 'Join Noor Rewards 🌙');
+  }
+
+  void _shareWhatsApp() async {
+    final encoded = Uri.encodeComponent(_shareMessage);
+    // whatsapp:// deep link — opens WhatsApp directly if installed
+    final waUri = Uri.parse('whatsapp://send?text=$encoded');
+    try {
+      // ignore: deprecated_member_use
+      await Share.shareUri(waUri);
+    } catch (_) {
+      // WhatsApp not installed or shareUri failed — fallback: copy + system share
+      await Clipboard.setData(ClipboardData(text: _shareMessage));
+      if (!mounted) return;
+      // ignore: deprecated_member_use
+      Share.share(_shareMessage, subject: 'Join Noor Rewards 🌙');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Message copied — share or paste in WhatsApp!',
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+          backgroundColor: const Color(0xFF25D366),
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
 
   Future<void> _applyCode() async {
-    final code = _codeController.text.trim().toUpperCase();
+    final code = _codeCtrl.text.trim().toUpperCase();
     if (code.isEmpty) return;
     setState(() { _loading = true; _error = null; _success = null; });
     try {
       await Supabase.instance.client.rpc('apply_referral', params: {'inviter_code': code});
-      setState(() { _success = '500 Coins rewarded successfully!'; });
+      setState(() => _success = '🎉 500 Noor Points rewarded to you both!');
     } catch (e) {
-      final str = e.toString();
-      if(str.contains('Already referred')) {
+      final s = e.toString();
+      if (s.contains('Already referred')) {
         setState(() => _error = 'You have already used a referral code.');
-      } else if(str.contains('Invalid referral code')) {
+      } else if (s.contains('Invalid referral code')) {
         setState(() => _error = 'Invalid referral code.');
-      } else if(str.contains('Cannot refer yourself')) {
+      } else if (s.contains('Cannot refer yourself')) {
         setState(() => _error = 'You cannot use your own code.');
       } else {
-        setState(() => _error = 'An error occurred.');
+        setState(() => _error = 'An error occurred. Please try again.');
       }
     } finally {
       if (mounted) setState(() => _loading = false);
-      
-      // Attempt to refresh dashboard stats by finding ancestor state
       if (mounted) {
-        final parentState = context.findAncestorStateOfType<_DashboardScreenState>();
-        parentState?._loadHomeData();
+        context.findAncestorStateOfType<_DashboardScreenState>()?._loadHomeData();
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-          ),
-          const SizedBox(height: 20),
-          Text('Invite Friends 🤝', style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w800, color: _C.text)),
-          const SizedBox(height: 8),
-          Text('Share your code and you both earn 500 Noor Points!', style: GoogleFonts.outfit(fontSize: 15, color: _C.sub)),
-          const SizedBox(height: 24),
-          // My Code Section
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: const Color(0xFFF7F3EE), borderRadius: BorderRadius.circular(16)),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Your Referral Code', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 4),
-                      Text(widget.referralCode.isNotEmpty ? widget.referralCode : '...', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: 2, color: _C.text)),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.copy_rounded, color: Color(0xFF2BAE99)),
-                  onPressed: () {
-                    if (widget.referralCode.isNotEmpty) {
-                      Clipboard.setData(ClipboardData(text: widget.referralCode));
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied to clipboard!')));
-                    }
-                  },
-                ),
-              ],
+    final code = widget.referralCode;
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.88,
+      minChildSize: 0.55,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (ctx, scroll) => Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFF0F1923),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          children: [
+            // Drag handle
+            const SizedBox(height: 12),
+            Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                  color: Colors.white24, borderRadius: BorderRadius.circular(2)),
             ),
-          ),
-          const SizedBox(height: 32),
-          Text('Have an invite code?', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w700, color: _C.text)),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _codeController,
-                  textCapitalization: TextCapitalization.characters,
-                  decoration: InputDecoration(
-                    hintText: 'Enter code here...',
-                    hintStyle: GoogleFonts.outfit(fontSize: 15, color: Colors.grey[400]),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            Expanded(
+              child: ListView(
+                controller: scroll,
+                padding: EdgeInsets.fromLTRB(
+                    22, 20, 22, MediaQuery.of(context).viewInsets.bottom + 30),
+                children: [
+
+                  // ── Header ──────────────────────────────────────────────────
+                  Row(children: [
+                    Container(
+                      width: 46, height: 46,
+                      decoration: BoxDecoration(
+                          color: const Color(0xFF2BAE99).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(14)),
+                      child: const Center(child: Text('🤝', style: TextStyle(fontSize: 24))),
+                    ),
+                    const SizedBox(width: 14),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Invite Friends',
+                          style: GoogleFonts.outfit(
+                              fontSize: 22, fontWeight: FontWeight.w800,
+                              color: Colors.white)),
+                      Text('You both earn 500 Noor Points!',
+                          style: GoogleFonts.outfit(
+                              fontSize: 13, color: Colors.white54)),
+                    ]),
+                  ]),
+
+                  const SizedBox(height: 22),
+
+                  // ── Reward Banner ────────────────────────────────────────────
+                  AnimatedBuilder(
+                    animation: _shimmer,
+                    builder: (_, __) => Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF1E3A34), Color(0xFF0D2B26), Color(0xFF1E3A34)],
+                          stops: [0.0, 0.5, 1.0],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFF2BAE99).withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _RewardPill(icon: '🫵', label: 'You get', points: '+500'),
+                          Container(height: 40, width: 1, color: Colors.white12),
+                          _RewardPill(icon: '👥', label: 'Friend gets', points: '+500'),
+                          Container(height: 40, width: 1, color: Colors.white12),
+                          _RewardPill(icon: '⚡', label: 'Instant', points: 'XP'),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: _loading ? null : _applyCode,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: _loading ? Colors.grey : _C.text,
-                    borderRadius: BorderRadius.circular(14),
+
+                  const SizedBox(height: 22),
+
+                  // ── Your Code ────────────────────────────────────────────────
+                  Text('YOUR REFERRAL CODE',
+                      style: GoogleFonts.outfit(
+                          fontSize: 11, fontWeight: FontWeight.w800,
+                          color: Colors.white38, letterSpacing: 1.2)),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C2C38),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: Colors.white12),
+                    ),
+                    child: Row(children: [
+                      Expanded(
+                        child: Text(
+                          code.isNotEmpty ? code : '– – – – –',
+                          style: GoogleFonts.outfit(
+                              fontSize: 28, fontWeight: FontWeight.w900,
+                              letterSpacing: 8, color: Colors.white),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: _copyCode,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: _codeCopied
+                                ? const Color(0xFF2BAE99)
+                                : const Color(0xFF2BAE99).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: const Color(0xFF2BAE99).withValues(alpha: 0.5)),
+                          ),
+                          child: Row(mainAxisSize: MainAxisSize.min, children: [
+                            Icon(
+                              _codeCopied ? Icons.check_rounded : Icons.copy_rounded,
+                              size: 16, color: Colors.white,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(_codeCopied ? 'Copied!' : 'Copy',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 13, fontWeight: FontWeight.w700,
+                                    color: Colors.white)),
+                          ]),
+                        ),
+                      ),
+                    ]),
                   ),
-                  child: _loading 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
-                    : Text('Apply', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-                ),
+
+                  const SizedBox(height: 14),
+
+                  // ── Share Link Row ────────────────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C2C38),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white12),
+                    ),
+                    child: Row(children: [
+                      const Icon(Icons.link_rounded, size: 18, color: Colors.white38),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          _shareLink,
+                          style: GoogleFonts.outfit(
+                              fontSize: 12, color: Colors.white54),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: _copyLink,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _linkCopied
+                                ? const Color(0xFF2BAE99)
+                                : Colors.white10,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            _linkCopied ? 'Copied!' : 'Copy Link',
+                            style: GoogleFonts.outfit(
+                                fontSize: 12, fontWeight: FontWeight.w700,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+
+                  const SizedBox(height: 22),
+
+                  // ── Share Buttons ─────────────────────────────────────────────
+                  Text('SHARE VIA',
+                      style: GoogleFonts.outfit(
+                          fontSize: 11, fontWeight: FontWeight.w800,
+                          color: Colors.white38, letterSpacing: 1.2)),
+                  const SizedBox(height: 12),
+                  Row(children: [
+                    // WhatsApp
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _shareWhatsApp,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF1A4731), Color(0xFF128C7E)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: const Color(0xFF25D366).withValues(alpha: 0.25),
+                                  blurRadius: 12, offset: const Offset(0, 4))
+                            ],
+                          ),
+                          child: Column(mainAxisSize: MainAxisSize.min, children: [
+                            const Text('💬', style: TextStyle(fontSize: 26)),
+                            const SizedBox(height: 6),
+                            Text('WhatsApp',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 13, fontWeight: FontWeight.w700,
+                                    color: Colors.white)),
+                          ]),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // General Share
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _shareGeneral,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF1A2A4A), Color(0xFF2563EB)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: const Color(0xFF2563EB).withValues(alpha: 0.25),
+                                  blurRadius: 12, offset: const Offset(0, 4))
+                            ],
+                          ),
+                          child: Column(mainAxisSize: MainAxisSize.min, children: [
+                            const Text('📤', style: TextStyle(fontSize: 26)),
+                            const SizedBox(height: 6),
+                            Text('Share More',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 13, fontWeight: FontWeight.w700,
+                                    color: Colors.white)),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ]),
+
+                  const SizedBox(height: 30),
+
+                  // ── Divider ──────────────────────────────────────────────────
+                  Row(children: [
+                    Expanded(child: Divider(color: Colors.white12)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Have an invite code?',
+                          style: GoogleFonts.outfit(
+                              fontSize: 12, color: Colors.white38)),
+                    ),
+                    Expanded(child: Divider(color: Colors.white12)),
+                  ]),
+
+                  const SizedBox(height: 16),
+
+                  // ── Enter Code ───────────────────────────────────────────────
+                  Row(children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _codeCtrl,
+                        textCapitalization: TextCapitalization.characters,
+                        style: GoogleFonts.outfit(
+                            fontSize: 16, fontWeight: FontWeight.w700,
+                            color: Colors.white, letterSpacing: 2),
+                        decoration: InputDecoration(
+                          hintText: 'Enter code…',
+                          hintStyle: GoogleFonts.outfit(
+                              fontSize: 15, color: Colors.white24),
+                          filled: true,
+                          fillColor: const Color(0xFF1C2C38),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                  color: Color(0xFF2BAE99), width: 1.5)),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: _loading ? null : _applyCode,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 22, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: _loading
+                              ? Colors.white10
+                              : const Color(0xFF2BAE99),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: _loading
+                            ? const SizedBox(
+                                width: 20, height: 20,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2))
+                            : Text('Apply',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 15, fontWeight: FontWeight.w700,
+                                    color: Colors.white)),
+                      ),
+                    ),
+                  ]),
+
+                  if (_error != null) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(children: [
+                        const Icon(Icons.error_outline_rounded,
+                            size: 16, color: Colors.redAccent),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(_error!,
+                              style: GoogleFonts.outfit(
+                                  color: Colors.redAccent,
+                                  fontSize: 13, fontWeight: FontWeight.w500)),
+                        ),
+                      ]),
+                    ),
+                  ],
+                  if (_success != null) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFF2BAE99).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: const Color(0xFF2BAE99).withValues(alpha: 0.3))),
+                      child: Row(children: [
+                        const Icon(Icons.check_circle_rounded,
+                            size: 16, color: Color(0xFF2BAE99)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(_success!,
+                              style: GoogleFonts.outfit(
+                                  color: const Color(0xFF2BAE99),
+                                  fontSize: 13, fontWeight: FontWeight.w600)),
+                        ),
+                      ]),
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ),
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(_error!, style: GoogleFonts.outfit(color: Colors.red, fontSize: 13, fontWeight: FontWeight.w500)),
+            ),
           ],
-          if (_success != null) ...[
-            const SizedBox(height: 12),
-            Text(_success!, style: GoogleFonts.outfit(color: Colors.green, fontSize: 13, fontWeight: FontWeight.w600)),
-          ],
-        ],
+        ),
       ),
     );
+  }
+}
+
+// Small reward pill widget used in the banner
+class _RewardPill extends StatelessWidget {
+  final String icon, label, points;
+  const _RewardPill({required this.icon, required this.label, required this.points});
+  @override
+  Widget build(BuildContext context) {
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      Text(icon, style: const TextStyle(fontSize: 20)),
+      const SizedBox(height: 4),
+      Text(points,
+          style: GoogleFonts.outfit(
+              fontSize: 16, fontWeight: FontWeight.w900,
+              color: Color(0xFF2BAE99))),
+      Text(label,
+          style: GoogleFonts.outfit(
+              fontSize: 11, color: Colors.white38)),
+    ]);
   }
 }
 
@@ -1578,38 +1948,7 @@ class _ImpactTabState extends State<_ImpactTab> {
     return SafeArea(child: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // ── My personal stats banner ─────────────────────────────────────
-        GestureDetector(
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const ImpactReportScreen())),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF1A9E8C), Color(0xFF2BAE99)],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(
-                  color: const Color(0xFF2BAE99).withValues(alpha: 0.3),
-                  blurRadius: 16, offset: const Offset(0, 6))],
-            ),
-            child: Row(children: [
-              const Text('📊', style: TextStyle(fontSize: 28)),
-              const SizedBox(width: 14),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('My Impact Stats',
-                    style: GoogleFonts.outfit(
-                        fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
-                Text('See your worship time, XP & coins earned',
-                    style: GoogleFonts.outfit(fontSize: 12, color: Colors.white70)),
-              ])),
-              const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white70, size: 16),
-            ]),
-          ),
-        ),
+        // ── Community Impact heading only (Akhirah Balance is now the tab) ────
         // ── My personal donation history block removed (prevent repetition from Dashboard) ──
 
         Text('Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
