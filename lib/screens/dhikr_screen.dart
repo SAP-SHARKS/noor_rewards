@@ -10,6 +10,54 @@ import 'package:share_plus/share_plus.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 
+// ── Arabic font options (shared with Quran screen) ────────────────────────────
+typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double height, FontWeight weight) style});
+
+final List<_ArabicFont> _kArabicFonts = [
+  (
+    name: 'Amiri',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.amiri(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Scheherazade',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Lateef',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.lateef(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Noto Naskh',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Reem Kufi',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.reemKufi(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Cairo',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.cairo(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+  (
+    name: 'Harmattan Naskh',
+    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    style: (size, color, height, weight) =>
+        GoogleFonts.harmattan(fontSize: size, color: color, height: height, fontWeight: weight),
+  ),
+];
+
 // ── Models ────────────────────────────────────────────────────────────────────
 class _Azkar {
   final String id;
@@ -50,6 +98,7 @@ class _DhikrSettings {
   double arabicFontSize = 32.0;
   double translationFontSize = 14.0;
   bool darkMode = false;
+  int arabicFontIdx = 0;  // index into _kArabicFonts
 }
 
 IconData _parseIcon(String name) {
@@ -121,10 +170,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.arabicFontSize = prefs.getDouble('dhikr_ar_size') ?? 32.0;
       _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 14.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
+      _settings.arabicFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
       _isFirstTime = prefs.getBool('dhikr_first_time') ?? true;
       _favorites = prefs.getStringList('dhikr_favorites') ?? [];
     });
-    
     if (_isFirstTime) {
       await prefs.setBool('dhikr_first_time', false);
     }
@@ -135,6 +184,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     await prefs.setDouble('dhikr_ar_size', _settings.arabicFontSize);
     await prefs.setDouble('dhikr_tr_size', _settings.translationFontSize);
     await prefs.setBool('dhikr_dark_mode', _settings.darkMode);
+    await prefs.setInt('dhikr_ar_font', _settings.arabicFontIdx);
   }
 
   // ── Load Supabase Data ─────────────────────────────────────────────────────
@@ -327,77 +377,180 @@ class _DhikrScreenState extends State<DhikrScreen> {
           final sheetBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
           final txtColor = isDark ? Colors.white : const Color(0xFF1C1C1E);
 
-          return Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: sheetBg,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: SafeArea(
+          return DraggableScrollableSheet(
+            initialChildSize: 0.75,
+            minChildSize: 0.4,
+            maxChildSize: 0.95,
+            expand: false,
+            builder: (_, scrollCtrl) => Container(
+              decoration: BoxDecoration(
+                color: sheetBg,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Dua & Azkar Settings', 
-                          style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: txtColor)),
-                      IconButton(
-                        icon: Icon(Icons.close_rounded, color: txtColor),
-                        onPressed: () => Navigator.pop(context),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Appearance
-                  Text('Appearance', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFF0D9488))),
+                  // ── Drag handle ──────────────────────────────────────────────
                   const SizedBox(height: 10),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text('Dark Mode', style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                    activeTrackColor: const Color(0xFF0D9488),
-                    value: _settings.darkMode,
-                    onChanged: (val) {
-                      setModalState(() => _settings.darkMode = val);
-                      setState(() => _settings.darkMode = val);
-                      onUpdate?.call();
-                      _savePrefs();
-                    },
+                  Container(
+                    width: 40, height: 4,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2)),
                   ),
-                  const Divider(),
+                  const SizedBox(height: 6),
+                  // ── Title row ───────────────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Dua & Azkar Settings',
+                            style: GoogleFonts.outfit(
+                                fontSize: 20, fontWeight: FontWeight.w800,
+                                color: txtColor)),
+                        IconButton(
+                          icon: Icon(Icons.close_rounded, color: txtColor),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // ── Scrollable content ───────────────────────────────────────
+                  Expanded(
+                    child: ListView(
+                      controller: scrollCtrl,
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+                      children: [
+                        // Appearance
+                        Text('Appearance',
+                            style: GoogleFonts.outfit(
+                                fontSize: 14, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF0D9488))),
+                        const SizedBox(height: 10),
+                        SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text('Dark Mode',
+                              style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
+                          activeTrackColor: const Color(0xFF0D9488),
+                          value: _settings.darkMode,
+                          onChanged: (val) {
+                            setModalState(() => _settings.darkMode = val);
+                            setState(() => _settings.darkMode = val);
+                            onUpdate?.call();
+                            _savePrefs();
+                          },
+                        ),
+                        const Divider(),
 
-                  // Text Sizes
-                  const SizedBox(height: 10),
-                  Text('Arabic Text Size', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFF0D9488))),
-                  Slider(
-                    value: _settings.arabicFontSize,
-                    min: 20.0,
-                    max: 56.0,
-                    activeColor: const Color(0xFF0D9488),
-                    onChanged: (val) {
-                      setModalState(() => _settings.arabicFontSize = val);
-                      setState(() => _settings.arabicFontSize = val);
-                      onUpdate?.call();
-                      _savePrefs();
-                    },
-                  ),
+                        // Text Sizes
+                        const SizedBox(height: 10),
+                        Text('Arabic Text Size',
+                            style: GoogleFonts.outfit(
+                                fontSize: 14, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF0D9488))),
+                        Slider(
+                          value: _settings.arabicFontSize,
+                          min: 20.0,
+                          max: 56.0,
+                          activeColor: const Color(0xFF0D9488),
+                          onChanged: (val) {
+                            setModalState(() => _settings.arabicFontSize = val);
+                            setState(() => _settings.arabicFontSize = val);
+                            onUpdate?.call();
+                            _savePrefs();
+                          },
+                        ),
 
-                  Text('Translation Text Size', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFF0D9488))),
-                  Slider(
-                    value: _settings.translationFontSize,
-                    min: 12.0,
-                    max: 24.0,
-                    activeColor: const Color(0xFF0D9488),
-                    onChanged: (val) {
-                      setModalState(() => _settings.translationFontSize = val);
-                      setState(() => _settings.translationFontSize = val);
-                      onUpdate?.call();
-                      _savePrefs();
-                    },
+                        Text('Translation Text Size',
+                            style: GoogleFonts.outfit(
+                                fontSize: 14, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF0D9488))),
+                        Slider(
+                          value: _settings.translationFontSize,
+                          min: 12.0,
+                          max: 24.0,
+                          activeColor: const Color(0xFF0D9488),
+                          onChanged: (val) {
+                            setModalState(() => _settings.translationFontSize = val);
+                            setState(() => _settings.translationFontSize = val);
+                            onUpdate?.call();
+                            _savePrefs();
+                          },
+                        ),
+
+                        // ── Arabic Font Style Picker ───────────────────────────
+                        const Divider(),
+                        const SizedBox(height: 10),
+                        Text('Arabic Font Style',
+                            style: GoogleFonts.outfit(
+                                fontSize: 14, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF0D9488))),
+                        const SizedBox(height: 12),
+                        ...List.generate(_kArabicFonts.length, (i) {
+                          final font = _kArabicFonts[i];
+                          final sel  = i == _settings.arabicFontIdx;
+                          const accent = Color(0xFF0D9488);
+                          return GestureDetector(
+                            onTap: () {
+                              setModalState(() => _settings.arabicFontIdx = i);
+                              setState(() => _settings.arabicFontIdx = i);
+                              onUpdate?.call();
+                              _savePrefs();
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 150),
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: sel
+                                    ? accent.withValues(alpha: 0.10)
+                                    : (isDark
+                                        ? const Color(0xFF2C2C2E)
+                                        : const Color(0xFFF3F4F6)),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: sel ? accent : Colors.transparent,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(font.name,
+                                          style: GoogleFonts.outfit(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              color: sel
+                                                  ? accent
+                                                  : const Color(0xFF8E8E93))),
+                                      const SizedBox(height: 4),
+                                      Text(font.arabicPreview,
+                                          textDirection: TextDirection.rtl,
+                                          style: font.style(
+                                              22, txtColor, 1.6, FontWeight.w700)),
+                                    ],
+                                  ),
+                                ),
+                                if (sel)
+                                  Container(
+                                    width: 24, height: 24,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xFF0D9488),
+                                        shape: BoxShape.circle),
+                                    child: const Icon(Icons.check_rounded,
+                                        color: Colors.white, size: 15),
+                                  ),
+                              ]),
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
                 ],
               ),
             ),
@@ -473,7 +626,6 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
     final kPrimary  = const Color(0xFF0D9488);
-    final kPrimaryL = isDark ? const Color(0xFF3B2A30) : const Color(0xFFF9D5D8);
 
     return Scaffold(
       backgroundColor: kBg,
@@ -977,12 +1129,8 @@ class _AzkarCard extends StatelessWidget {
                     azkar.arabic,
                     textAlign: TextAlign.center,
                     textDirection: TextDirection.rtl,
-                    style: GoogleFonts.amiri(
-                      fontSize: settings.arabicFontSize, 
-                      fontWeight: FontWeight.w700, 
-                      color: kText, 
-                      height: 1.8
-                    ),
+                    style: _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)]
+                        .style(settings.arabicFontSize, kText, 1.8, FontWeight.w700),
                   ),
                   const SizedBox(height: 14),
                   Text(
