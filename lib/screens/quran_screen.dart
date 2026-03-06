@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
+import '../services/streak_service.dart';
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 const _kBg    = Color(0xFFF7F3EE);
@@ -359,13 +360,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── Fetch ayah from cache or API ─────────────────────────────────────────────
   Future<void> _fetchAyah(int surah, int ayah) async {
     if (mounted) setState(() => _loading = true);
-    final cacheKey = '$surah:$ayah:$_translationEdition:${_reciters[_reciterIdx].$1}';
+    final recEdition = _reciters[_reciterIdx].$1;
+    final cacheKey   = '$surah:$ayah:$_translationEdition:$recEdition';
 
-    // Check Hive cache (7-day TTL)
+    // ── 1. Hive cache hit (7-day TTL) — skip entry if translation is empty ──
     final cached = _cache.get(cacheKey);
     if (cached != null) {
       final cachedAt = DateTime.tryParse(cached['ts'] ?? '');
-      if (cachedAt != null && DateTime.now().difference(cachedAt).inDays < 7) {
+      final transOk  = (cached['trans'] as String? ?? '').isNotEmpty;
+      // A valid cache hit must: (a) be fresh AND (b) have a translation.
+      // If trans is empty it means it was cached before the API fallback was
+      // added; treat it as a miss so we re-fetch the correct text.
+      if (cachedAt != null &&
+          DateTime.now().difference(cachedAt).inDays < 7 &&
+          transOk) {
         setState(() {
           _arabic      = cached['arabic'] ?? '';
           _translation = cached['trans']  ?? '';
@@ -373,67 +381,83 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           _surahName   = cached['surahName'] ?? '';
           _loading     = false;
         });
-        // Also refresh WBW if mode is on
         if (_wordByWord) _fetchWordByWord(surah, ayah);
         return;
       }
     }
 
-    // ── Supabase call (Fetch Entire Surah) ───────────────────────────────────
+    // ── Fetch from network (cache miss) ──────────────────────────────────────
     try {
-      final recEdition = _reciters[_reciterIdx].$1;
-      
-      // Calculate global verse ID range for the entire surah
+      // Calculate global verse ID for this surah (1-indexed, cumulative)
       int startVerseId = 1;
-      for (int i = 1; i < surah; i++) {
-        startVerseId += _surahLengths[i];
-      }
-      int endVerseId = startVerseId + _surahLengths[surah] - 1;
+      for (int i = 1; i < surah; i++) startVerseId += _surahLengths[i];
 
-      // Fetch all Arabic verses for this surah
+      // Arabic text always from Supabase quran_verses (fully populated)
       final arabicList = await _sb.from('quran_verses')
           .select('ayah, text_uthmani')
           .eq('surah', surah);
+      final arabicMap = {
+        for (var item in arabicList)
+          item['ayah'] as int: item['text_uthmani'] as String
+      };
 
-      // Fetch all Translations for this surah
-      final transList = await _sb.from('quran_translations')
-          .select('verse_id, text')
-          .gte('verse_id', startVerseId)
-          .lte('verse_id', endVerseId)
-          .eq('edition', _translationEdition);
+      // Translation: Supabase DB has en.sahih only; use alquran.cloud for others
+      final Map<int, String> transMap = {};
 
-      // Create maps for quick lookup
-      final arabicMap = {for (var item in arabicList) item['ayah'] as int: item['text_uthmani'] as String};
-      final transMap = {for (var item in transList) item['verse_id'] as int: item['text'] as String};
+      if (_translationEdition == 'en.sahih') {
+        // Fast Supabase path for the default edition
+        final transList = await _sb.from('quran_translations')
+            .select('verse_id, text')
+            .gte('verse_id', startVerseId)
+            .lte('verse_id', startVerseId + _surahLengths[surah] - 1)
+            .eq('edition', 'en.sahih');
+        for (final item in transList) {
+          transMap[item['verse_id'] as int] = item['text'] as String? ?? '';
+        }
+      } else {
+        // Free alquran.cloud API — delivers the whole surah in one request
+        final apiUrl =
+            'https://api.alquran.cloud/v1/surah/$surah/$_translationEdition';
+        final res = await http
+            .get(Uri.parse(apiUrl), headers: {'Accept': 'application/json'})
+            .timeout(const Duration(seconds: 15));
+        if (res.statusCode == 200) {
+          final js = jsonDecode(res.body);
+          final ayahs = js['data']?['ayahs'] as List? ?? [];
+          for (final a in ayahs) {
+            final num = a['numberInSurah'] as int? ?? 0;
+            transMap[startVerseId + num - 1] = a['text'] as String? ?? '';
+          }
+        }
+        // On failure transMap stays empty; translation shows blank.
+      }
 
-      final sName = _surahNames[surah];
+      // Pre-cache every ayah in the surah so navigation is instant
+      final sName  = _surahNames[surah];
       final nowStr = DateTime.now().toIso8601String();
-
-      // Pre-cache all verses in the surah
       for (int a = 1; a <= _surahLengths[surah]; a++) {
-        int vId = startVerseId + a - 1;
-        String aText = arabicMap[a] ?? '';
-        String tText = transMap[vId] ?? '';
-        String audio = 'https://cdn.islamic.network/quran/audio/128/$recEdition/$vId.mp3';
-
-        String cKey = '$surah:$a:$_translationEdition:$recEdition';
+        final vId  = startVerseId + a - 1;
+        final cKey = '$surah:$a:$_translationEdition:$recEdition';
         await _cache.put(cKey, {
-          'arabic': aText, 'trans': tText, 'audio': audio,
-          'surahName': sName, 'ts': nowStr,
+          'arabic'   : arabicMap[a] ?? '',
+          'trans'    : transMap[vId] ?? '',
+          'audio'    : 'https://cdn.islamic.network/quran/audio/128/$recEdition/$vId.mp3',
+          'surahName': sName,
+          'ts'       : nowStr,
         });
       }
 
-      // Read current ayah from the newly populated cache
-      final newCached = _cache.get(cacheKey);
-      if (newCached != null && newCached['arabic'].toString().isNotEmpty) {
+      // Display the current ayah
+      final fresh = _cache.get(cacheKey);
+      if (fresh != null && fresh['arabic'].toString().isNotEmpty) {
         if (mounted) {
           setState(() {
-          _arabic = newCached['arabic'];
-          _translation = newCached['trans'];
-          _audioUrl = newCached['audio'];
-          _surahName = newCached['surahName'];
-          _loading = false;
-        });
+            _arabic      = fresh['arabic'];
+            _translation = fresh['trans'];
+            _audioUrl    = fresh['audio'];
+            _surahName   = fresh['surahName'];
+            _loading     = false;
+          });
         }
         if (_wordByWord) _fetchWordByWord(surah, ayah);
       } else {
@@ -476,8 +500,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a});
         // Award XP for reading one ayah
         await XpService.instance.earnXp(XpReward.ayahRead);
+        // Record quran streak (idempotent — only counts once per day)
+        StreakService.instance.recordActivity(StreakType.quran);
         // Award first-read badge on the very first ayah
-        if (_ayahsToday == 1) { // 1 because already incremented in setState
+        if (_ayahsToday == 1) {
           await XpService.instance.awardBadge('first_quran');
         }
       }
@@ -1397,7 +1423,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         (v) => _showProgressCard = v),
                     sTile('Show Points Banner',
                         '+Noor Points notification strip',
-                        Icons.stars_rounded,
+                        Icons.nights_stay_rounded,
                         _showPointsBanner,
                         (v) => _showPointsBanner = v),
                     sTile('Show Surah Header',
@@ -1487,9 +1513,17 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           ...List.generate(_translations.length, (i) {
                             final sel = _translations[i].id == _translationEdition;
                             return GestureDetector(
-                              onTap: () async {
-                                setSt(() => _translationEdition = _translations[i].id);
-                                setState(() => _translationEdition = _translations[i].id);
+                               onTap: () async {
+                                final newEdition = _translations[i].id;
+                                setSt(() => _translationEdition = newEdition);
+                                setState(() => _translationEdition = newEdition);
+                                // Clear stale cached entries for this surah+edition
+                                // so the fresh API fetch is triggered instead of
+                                // serving an old empty-translation cache hit.
+                                for (int a = 1; a <= _surahLengths[_surah]; a++) {
+                                  final ck = '$_surah:$a:$newEdition:${_reciters[_reciterIdx].$1}';
+                                  await _cache.delete(ck);
+                                }
                                 await _fetchAyah(_surah, _ayah);
                               },
                               child: AnimatedContainer(

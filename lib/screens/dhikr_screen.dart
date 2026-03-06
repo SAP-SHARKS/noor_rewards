@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/xp_service.dart';
+import '../services/streak_service.dart';
 
 // ── Models ────────────────────────────────────────────────────────────────────
 class _Azkar {
@@ -53,7 +54,7 @@ class _DhikrSettings {
 
 IconData _parseIcon(String name) {
   switch (name) {
-    case 'auto_awesome_rounded': return Icons.auto_awesome_rounded;
+    case 'auto_awesome_rounded': return Icons.nights_stay_rounded;
     case 'wb_sunny_rounded':     return Icons.wb_sunny_rounded;
     case 'nights_stay_rounded':  return Icons.nights_stay_rounded;
     case 'mosque_rounded':       return Icons.mosque_rounded;
@@ -166,7 +167,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
           _categories = const [
             _Category('all', 'All', Icons.apps_rounded),
             _Category('favorites', 'Favorites', Icons.favorite_rounded),
-            _Category('general', 'General', Icons.auto_awesome_rounded),
+            _Category('general', 'General', Icons.nights_stay_rounded),
             _Category('morning', 'Morning', Icons.wb_sunny_rounded),
             _Category('evening', 'Evening', Icons.nights_stay_rounded),
           ];
@@ -240,6 +241,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
   Future<void> _completeDhikr(String dhikrId, int target) async {
     try {
       await XpService.instance.earnDhikrXp(dhikrId);
+      // Record dhikr streak (idempotent — safe to call multiple times)
+      StreakService.instance.recordActivity(StreakType.dhikr);
       if (_setsCompleted == 0) await XpService.instance.awardBadge('first_dhikr');
       if (_setsCompleted + 1 >= 7) await XpService.instance.awardBadge('night_warrior');
 
@@ -489,19 +492,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       body: Stack(children: [
         SafeArea(child: Column(children: [
 
-        // ── Points banner (Optional) ────────────────────────────────────────
-        if (_pointsToday > 0)
-          Container(
-            margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(color: kPrimaryL, borderRadius: BorderRadius.circular(14)),
-            child: Row(children: [
-              const Text('🌟', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: 8),
-              Text('+$_pointsToday points earned today!',
-                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: kPrimary)),
-            ]),
-          ),
+        // Points banner removed — shown inside the meter
 
         // ── Category tabs ───────────────────────────────────────────────────
         const SizedBox(height: 14),
@@ -740,6 +731,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       isComplete: isComplete,
                       isFavorite: widget.favorites.contains(azkar.id),
                       settings: widget.settings,
+                      pointsToday: widget.parentState._pointsToday,
                       onReset: () {
                           widget.parentState._reset(azkar.id);
                           setState((){});
@@ -806,6 +798,7 @@ class _AzkarCard extends StatelessWidget {
   final bool isComplete;
   final bool isFavorite;
   final _DhikrSettings settings;
+  final int pointsToday;
   final VoidCallback onReset;
   final VoidCallback onFavorite;
   final VoidCallback onShare;
@@ -816,6 +809,7 @@ class _AzkarCard extends StatelessWidget {
     required this.isComplete,
     required this.isFavorite,
     required this.settings,
+    this.pointsToday = 0,
     required this.onReset,
     required this.onFavorite,
     required this.onShare,
@@ -895,6 +889,7 @@ class _AzkarCard extends StatelessWidget {
                   : (currentCount / azkar.recommendedCount).clamp(0.0, 1.0),
               isComplete: isComplete,
               tapCount: currentCount,
+              pointsToday: pointsToday,
             ),
 
             // ── Top Bar (Count Goal & Header) ──
@@ -1070,11 +1065,13 @@ class _NoorTree extends StatefulWidget {
   final double progress;   // 0.0 → 1.0
   final bool isComplete;
   final int tapCount;      // triggers particle burst on change
+  final int pointsToday;
 
   const _NoorTree({
     required this.progress,
     required this.isComplete,
     required this.tapCount,
+    this.pointsToday = 0,
   });
 
   @override
@@ -1162,6 +1159,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
             particles: _particles,
             isComplete: widget.isComplete,
             pulse: _pulse.value,
+            pointsToday: widget.pointsToday,
           ),
         ),
       ),
@@ -1198,6 +1196,7 @@ class _NoorTreePainter extends CustomPainter {
   final List<_Particle> particles;
   final bool isComplete;
   final double pulse;
+  final int pointsToday;
 
   const _NoorTreePainter({
     required this.progress,
@@ -1207,6 +1206,7 @@ class _NoorTreePainter extends CustomPainter {
     required this.particles,
     required this.isComplete,
     required this.pulse,
+    this.pointsToday = 0,
   });
 
   @override
@@ -1362,6 +1362,51 @@ class _NoorTreePainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
     tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Noor points badge — right next to the progress label
+    if (pointsToday > 0) {
+      final badgeLabel = '⚡ +$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: Color(0xFF00FFCC),   // neon cyan gaming colour
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: Color(0xFF00FFCC), blurRadius: 6),
+              Shadow(color: Color(0xFF00FFCC), blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      // Background pill
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..color = const Color(0xFF00FFCC).withValues(alpha: 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..color = const Color(0xFF00FFCC).withValues(alpha: 0.18)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.7,
+      );
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
   }
 
   void _drawBranches(Canvas canvas, Offset bot, Offset top,
@@ -1399,5 +1444,6 @@ class _NoorTreePainter extends CustomPainter {
   @override
   bool shouldRepaint(_NoorTreePainter o) =>
     o.progress != progress || o.sway != sway || o.starPhase != starPhase ||
-    o.particlePhase != particlePhase || o.isComplete != isComplete || o.pulse != pulse;
+    o.particlePhase != particlePhase || o.isComplete != isComplete ||
+    o.pulse != pulse || o.pointsToday != pointsToday;
 }
