@@ -1,6 +1,6 @@
-// lib/screens/impact_report_screen.dart
+﻿// lib/screens/impact_report_screen.dart
 //
-// Akhirah Balance — a premium Islamic banking-style dashboard showing
+// Akhirah Balance â€” a premium Islamic banking-style dashboard showing
 // the user's spiritual portfolio: deeds, streaks, and earnings.
 
 import 'dart:math' as math;
@@ -10,8 +10,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
 import '../services/donation_service.dart';
+import '../widgets/noor_icons.dart';
 
-// ── Palette ───────────────────────────────────────────────────────────────────
+// â”€â”€ Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _C {
   static const bg         = Color(0xFFF0F4F0);
   static const darkGreen  = Color(0xFF0D2B1F);
@@ -50,7 +51,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
 
-  // Derived "Akhirah holdings" — computed from points/xp
+  // Derived "Akhirah holdings" â€” computed from points/xp
   // Trees planted = every 100 noor points = 1 tree (symbolic)
   // Total Dhikr   = dhikr streak * 33 repetitions per day (symbolic)
   // Slaves freed  = every 1000 xp = 1 equivalent reward
@@ -124,7 +125,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     return 'Seeker';
   }
 
-  // ── Derived spiritual holdings ─────────────────────────────────────────────
+  // â”€â”€ Derived spiritual holdings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   int get _treesPlanted   => math.max(1, _noorPoints ~/ 100);
   int get _totalDhikr     => (_snap.dhikr * 33) + (_snap.quran * 20) + (_snap.login * 10);
   int get _slavesFreed    => math.max(0, _totalXp ~/ 1000);
@@ -177,7 +178,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     );
   }
 
-  // ── Hero / Balance Card ────────────────────────────────────────────────────
+  // â”€â”€ Hero / Balance Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildHero() => SliverToBoxAdapter(
     child: Container(
       decoration: const BoxDecoration(
@@ -229,7 +230,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       const Icon(Icons.workspace_premium_rounded,
                           color: _C.gold, size: 14),
                       const SizedBox(width: 5),
-                      Text('Lvl $_level · $_levelTitle',
+                      Text('Lvl $_level Â· $_levelTitle',
                           style: GoogleFonts.outfit(
                               fontSize: 12, fontWeight: FontWeight.w700,
                               color: _C.gold)),
@@ -281,12 +282,12 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
                 // Today / this week badges
                 Wrap(spacing: 10, runSpacing: 8, children: [
-                  _HeroBadge('🌅', '+${_fmt(_todayPoints)} deeds today',
+                  _HeroBadge(NoorIcon.sunrise(size:14), '+${_fmt(_todayPoints)} deeds today',
                       _C.teal.withValues(alpha: 0.25), _C.teal),
-                  _HeroBadge('📅', '+${_fmt(_weekPoints)} this week',
+                  _HeroBadge(NoorIcon.calendar(size:14), '+${_fmt(_weekPoints)} this week',
                       Colors.white.withValues(alpha: 0.1), Colors.white70),
                   if (_bestStreak > 0)
-                    _HeroBadge('🔥', 'Best: $_bestStreak day streak',
+                    _HeroBadge(NoorIcon.fire(size:14), 'Best: $_bestStreak day streak',
                         _C.gold.withValues(alpha: 0.15), _C.gold),
                 ]),
 
@@ -305,7 +306,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
                     ),
                     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      const Text('🌍', style: TextStyle(fontSize: 16)),
+                      NoorIcon.globe(size: 16),
                       const SizedBox(width: 8),
                       Text('Donate More & Earn',
                           style: GoogleFonts.outfit(
@@ -325,7 +326,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ),
   );
 
-  // ── Streak Banner ──────────────────────────────────────────────────────────
+  // â”€â”€ Streak Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildStreakBanner() {
     final best = _bestStreak;
     final current = _snap.login;
@@ -343,34 +344,35 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             blurRadius: 16, offset: const Offset(0, 4))],
       ),
       child: Row(children: [
-        const Text('🔥', style: TextStyle(fontSize: 32)),
+        NoorIcon.fire(size: 32),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('$current Day Streak',
               style: GoogleFonts.outfit(
                   fontSize: 18, fontWeight: FontWeight.w900, color: _C.text)),
-          Text('Keep it going — consistency is key!',
+          Text('Keep it going â€” consistency is key!',
               style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
         ])),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text('Best', style: GoogleFonts.outfit(fontSize: 10, color: _C.sub)),
-          Text('$best 🏆', style: GoogleFonts.outfit(
+          Text('$best ', style: GoogleFonts.outfit(
               fontSize: 15, fontWeight: FontWeight.w800, color: _C.gold)),
+          NoorIcon.trophy(size: 16),
         ]),
       ]),
     );
   }
 
-  // ── Mini stat pills ────────────────────────────────────────────────────────
+  // â”€â”€ Mini stat pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildMiniStats() => Row(children: [
-    Expanded(child: _MiniStat('🌳', _fmt(_treesPlanted), 'TREES', const Color(0xFF2D7A45))),
+    Expanded(child: _MiniStat(NoorIcon.tree(size:20), _fmt(_treesPlanted), 'TREES', const Color(0xFF2D7A45))),
     const SizedBox(width: 10),
-    Expanded(child: _MiniStat('📿', _fmt(_totalDhikr), 'DHIKR', _C.teal)),
+    Expanded(child: _MiniStat(NoorIcon.beads(size:20), _fmt(_totalDhikr), 'DHIKR', _C.teal)),
     const SizedBox(width: 10),
-    Expanded(child: _MiniStat('🛡️', _fmt(_slavesFreed), 'PROTECTED', _C.purple)),
+    Expanded(child: _MiniStat(NoorIcon.shield(size:20), _fmt(_slavesFreed), 'PROTECTED', _C.purple)),
   ]);
 
-  // ── Your Holdings ──────────────────────────────────────────────────────────
+  // â”€â”€ Your Holdings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildHoldingsSection() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -378,7 +380,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         Text('Your Holdings',
             style: GoogleFonts.outfit(
                 fontSize: 20, fontWeight: FontWeight.w900, color: _C.text)),
-        Text('See All →',
+        Text('See All â†’',
             style: GoogleFonts.outfit(
                 fontSize: 13, fontWeight: FontWeight.w700, color: _C.teal)),
       ]),
@@ -398,7 +400,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ),
     child: Column(children: [
       _HoldingRow(
-        emoji: '🌳',
+        icon: NoorIcon.tree(size:24),
         color: const Color(0xFF2D7A45),
         bgColor: const Color(0xFFE8F5EC),
         title: 'Trees in Jannah',
@@ -411,7 +413,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       ),
       const Divider(height: 1, indent: 70, endIndent: 20),
       _HoldingRow(
-        emoji: '📿',
+        icon: NoorIcon.beads(size:24),
         color: _C.teal,
         bgColor: const Color(0xFFE0F7F4),
         title: 'Total Dhikr',
@@ -424,7 +426,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       ),
       const Divider(height: 1, indent: 70, endIndent: 20),
       _HoldingRow(
-        emoji: '⛓️',
+        icon: NoorIcon.chains(size:24),
         color: _C.purple,
         bgColor: const Color(0xFFEEEAF8),
         title: 'Slaves Freed',
@@ -437,7 +439,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       ),
       const Divider(height: 1, indent: 70, endIndent: 20),
       _HoldingRow(
-        emoji: '🤲',
+        icon: NoorIcon.hands(size: 24),
         color: _C.gold,
         bgColor: const Color(0xFFFDF6E3),
         title: 'Sadaqah Given',
@@ -451,7 +453,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ]),
   );
 
-  // ── Streak detail cards ────────────────────────────────────────────────────
+  // â”€â”€ Streak detail cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildStreakDetailCards() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -460,19 +462,19 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               fontSize: 20, fontWeight: FontWeight.w900, color: _C.text)),
       const SizedBox(height: 14),
       Row(children: [
-        Expanded(child: _StreakCard('☀️', 'Daily Login', _snap.login,
+        Expanded(child: _StreakCard(NoorIcon.sunrise(size:22), 'Daily Login', _snap.login,
             _snap.bestLogin, const Color(0xFFFF9500))),
         const SizedBox(width: 10),
-        Expanded(child: _StreakCard('📿', 'Dhikr', _snap.dhikr,
+        Expanded(child: _StreakCard(NoorIcon.beads(size:22), 'Dhikr', _snap.dhikr,
             _snap.bestDhikr, _C.teal)),
         const SizedBox(width: 10),
-        Expanded(child: _StreakCard('📖', 'Quran', _snap.quran,
+        Expanded(child: _StreakCard(NoorIcon.book(size:22), 'Quran', _snap.quran,
             _snap.bestQuran, _C.purple)),
       ]),
     ],
   );
 
-  // ── Activity card (session time) ───────────────────────────────────────────
+  // â”€â”€ Activity card (session time) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildActivityCard() {
     final hours = _sessionSec ~/ 3600;
     final mins  = (_sessionSec % 3600) ~/ 60;
@@ -530,7 +532,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     );
   }
 
-  // ── Rewards card ──────────────────────────────────────────────────────────
+  // â”€â”€ Rewards card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildRewardsCard() => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
@@ -546,7 +548,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
-        const Text('✨', style: TextStyle(fontSize: 22)),
+        NoorIcon.sparkles(size: 22),
         const SizedBox(width: 10),
         Text('Noor Points Summary',
             style: GoogleFonts.outfit(
@@ -554,11 +556,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       ]),
       const SizedBox(height: 18),
       Row(children: [
-        Expanded(child: _DarkStat('Total Points', _fmt(_noorPoints), '🌟')),
+        Expanded(child: _DarkStat('Total Points', _fmt(_noorPoints), NoorIcon.star(size:16))),
         Container(height: 44, width: 1, color: Colors.white12),
-        Expanded(child: _DarkStat('Total XP', _fmt(_totalXp), '⚡')),
+        Expanded(child: _DarkStat('Total XP', _fmt(_totalXp), NoorIcon.lightning(size:16))),
         Container(height: 44, width: 1, color: Colors.white12),
-        Expanded(child: _DarkStat('Level', '$_level', '🏅')),
+        Expanded(child: _DarkStat('Level', '$_level', NoorIcon.medal(size:16))),
       ]),
       const SizedBox(height: 16),
       Container(
@@ -570,7 +572,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
         ),
         child: Center(child: Text(
-          '🌙  Every deed is recorded. Keep going!',
+          'ðŸŒ™  Every deed is recorded. Keep going!',
           style: GoogleFonts.outfit(
               fontSize: 13, fontWeight: FontWeight.w600,
               color: Colors.white70),
@@ -579,7 +581,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ]),
   );
 
-  // ── Community impact entry card (only shown when isTab) ─────────────────────
+  // â”€â”€ Community impact entry card (only shown when isTab) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildCommunityCard(BuildContext context) => GestureDetector(
     onTap: () => Navigator.push(
@@ -598,7 +600,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             blurRadius: 16, offset: const Offset(0, 6))],
       ),
       child: Row(children: [
-        const Text('🌍', style: TextStyle(fontSize: 30)),
+        NoorIcon.globe(size: 30),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Community Impact',
@@ -613,10 +615,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Community Impact Page (previously embedded _ImpactTab)
 // Navigated to from the Akhirah Balance tab
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _CommunityImpactPage extends StatefulWidget {
   const _CommunityImpactPage();
   @override State<_CommunityImpactPage> createState() => _CommunityImpactPageState();
@@ -698,7 +700,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                 decoration: BoxDecoration(color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(2))),
             const SizedBox(height: 20),
-            Text('${project['emoji'] ?? '🌍'}  ${project['title'] ?? ''}',
+            Text('${project['title'] ?? ''}',
                 style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text),
                 textAlign: TextAlign.center),
             const SizedBox(height: 6),
@@ -752,7 +754,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('JazakAllah! ${_fmt(selected)} pts donated 🤲',
+                                content: Text('JazakAllah! ${_fmt(selected)} pts donated ðŸ¤²',
                                     style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
                                 backgroundColor: _C.teal,
                                 behavior: SnackBarBehavior.floating,
@@ -774,7 +776,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                 child: Text(
                   _myAvailablePoints < selected
                       ? 'Insufficient Points'
-                      : 'Donate $selected Points 🤲',
+                      : 'Donate $selected Points ðŸ¤²',
                   style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800),
                 ),
               ),
@@ -826,7 +828,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     // Title row
                     Row(children: [
-                      Text(p['emoji'] ?? '🌍', style: const TextStyle(fontSize: 24)),
+                      NoorIcon.fromEmoji(p['emoji'] as String? ?? '', size: 24),
                       const SizedBox(width: 10),
                       Expanded(child: Text('${p['title']}',
                           style: GoogleFonts.outfit(
@@ -837,7 +839,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                           decoration: BoxDecoration(
                               color: _C.gold.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10)),
-                          child: Text('✅ Funded',
+                          child: Text('âœ… Funded',
                               style: GoogleFonts.outfit(
                                   fontSize: 11, fontWeight: FontWeight.w700,
                                   color: _C.gold)),
@@ -852,7 +854,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Text('Community Progress',
                           style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _C.sub)),
-                      Text('${_fmt(cur)} / ${_fmt(tgt)} pts  •  ${(pct * 100).toStringAsFixed(0)}%',
+                      Text('${_fmt(cur)} / ${_fmt(tgt)} pts  â€¢  ${(pct * 100).toStringAsFixed(0)}%',
                           style: GoogleFonts.outfit(
                               fontSize: 11, fontWeight: FontWeight.w700,
                               color: done ? _C.gold : _C.teal)),
@@ -879,7 +881,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                           border: Border.all(color: const Color(0xFF2D7A45).withValues(alpha: 0.2)),
                         ),
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          const Text('🤲', style: TextStyle(fontSize: 12)),
+                          const Text('ðŸ¤²', style: TextStyle(fontSize: 12)),
                           const SizedBox(width: 5),
                           Text('My contribution: ${_fmt(myPts)} pts  (${(myPct * 100).toStringAsFixed(1)}%)',
                               style: GoogleFonts.outfit(
@@ -903,7 +905,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                                 borderRadius: BorderRadius.circular(12)),
                           ),
                           onPressed: () => _showDonateSheet(p),
-                          icon: const Text('🤲', style: TextStyle(fontSize: 14)),
+                          icon: const Text('ðŸ¤²', style: TextStyle(fontSize: 14)),
                           label: Text('Donate & Earn Reward',
                               style: GoogleFonts.outfit(
                                   fontSize: 13, fontWeight: FontWeight.w700)),
@@ -916,7 +918,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
     );
   }
 }
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _Arc extends StatelessWidget {
   final double size;
@@ -930,15 +932,16 @@ class _Arc extends StatelessWidget {
 }
 
 class _HeroBadge extends StatelessWidget {
-  final String emoji, label;
+  final Widget icon;
+  final String label;
   final Color bg, fg;
-  const _HeroBadge(this.emoji, this.label, this.bg, this.fg);
+  const _HeroBadge(this.icon, this.label, this.bg, this.fg);
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
     decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
     child: Row(mainAxisSize: MainAxisSize.min, children: [
-      Text(emoji, style: const TextStyle(fontSize: 14)),
+      icon,
       const SizedBox(width: 6),
       Text(label,
           style: GoogleFonts.outfit(
@@ -948,9 +951,10 @@ class _HeroBadge extends StatelessWidget {
 }
 
 class _MiniStat extends StatelessWidget {
-  final String emoji, value, label;
+  final Widget icon;
+  final String value, label;
   final Color color;
-  const _MiniStat(this.emoji, this.value, this.label, this.color);
+  const _MiniStat(this.icon, this.value, this.label, this.color);
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
@@ -962,7 +966,7 @@ class _MiniStat extends StatelessWidget {
           color: Colors.black.withValues(alpha: 0.04), blurRadius: 10)],
     ),
     child: Column(children: [
-      Text(emoji, style: const TextStyle(fontSize: 26)),
+      icon,
       const SizedBox(height: 6),
       Text(value,
           style: GoogleFonts.outfit(
@@ -976,11 +980,12 @@ class _MiniStat extends StatelessWidget {
 }
 
 class _HoldingRow extends StatelessWidget {
-  final String emoji, title, subtitle, value, change;
+  final Widget icon;
+  final String title, subtitle, value, change;
   final Color color, bgColor;
   final bool positive, isFirst, isLast;
   const _HoldingRow({
-    required this.emoji, required this.color, required this.bgColor,
+    required this.icon, required this.color, required this.bgColor,
     required this.title, required this.subtitle,
     required this.value, required this.change,
     required this.positive, required this.isFirst, required this.isLast,
@@ -992,7 +997,7 @@ class _HoldingRow extends StatelessWidget {
       Container(
         width: 44, height: 44,
         decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(12)),
-        child: Center(child: Text(emoji, style: const TextStyle(fontSize: 22))),
+        child: Center(child: icon),
       ),
       const SizedBox(width: 14),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1016,10 +1021,11 @@ class _HoldingRow extends StatelessWidget {
 }
 
 class _StreakCard extends StatelessWidget {
-  final String emoji, label;
+  final Widget icon;
+  final String label;
   final int current, best;
   final Color color;
-  const _StreakCard(this.emoji, this.label, this.current, this.best, this.color);
+  const _StreakCard(this.icon, this.label, this.current, this.best, this.color);
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(14),
@@ -1031,7 +1037,7 @@ class _StreakCard extends StatelessWidget {
           color: Colors.black.withValues(alpha: 0.04), blurRadius: 10)],
     ),
     child: Column(children: [
-      Text(emoji, style: const TextStyle(fontSize: 22)),
+      icon,
       const SizedBox(height: 6),
       Text('$current',
           style: GoogleFonts.outfit(
@@ -1055,11 +1061,12 @@ class _StreakCard extends StatelessWidget {
 }
 
 class _DarkStat extends StatelessWidget {
-  final String label, value, emoji;
-  const _DarkStat(this.label, this.value, this.emoji);
+  final String label, value;
+  final Widget icon;
+  const _DarkStat(this.label, this.value, this.icon);
   @override
   Widget build(BuildContext context) => Column(children: [
-    Text(emoji, style: const TextStyle(fontSize: 18)),
+    icon,
     const SizedBox(height: 4),
     Text(value,
         style: GoogleFonts.outfit(
@@ -1103,3 +1110,4 @@ class _DayBar extends StatelessWidget {
     ]));
   }
 }
+

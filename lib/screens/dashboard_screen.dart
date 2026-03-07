@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,6 +16,7 @@ import '../services/streak_service.dart';
 import 'package:confetti/confetti.dart';
 import 'package:share_plus/share_plus.dart';
 import 'streak_screen.dart';
+import '../widgets/noor_icons.dart';
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
 
@@ -263,7 +264,7 @@ class _HomeTabState extends State<_HomeTab> {
             ),
             const SizedBox(height: 24),
             Text(
-              "🏆 Daily Azkaar Complete! Masha'Allah!",
+              "Daily Azkaar Complete! Masha'Allah!",
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white),
             ),
@@ -282,7 +283,7 @@ class _HomeTabState extends State<_HomeTab> {
                 border: Border.all(color: const Color(0xFFDD88FF).withValues(alpha: 0.3)),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Text('🔥', style: TextStyle(fontSize: 24)),
+                NoorIcon.fire(size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '+20 XP',
@@ -485,13 +486,13 @@ class _HomeTabState extends State<_HomeTab> {
           Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('🎯 RECITE MORE.',
+                Row(children: [NoorIcon.target(size: 18), const SizedBox(width: 6), Text('RECITE MORE.',
                     style: GoogleFonts.rajdhani(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                         color: _C.text,
                         letterSpacing: 0.8,
-                        height: 1.0)),
+                        height: 1.0))]),
                 Text('HELP REAL LIVES.',
                     style: GoogleFonts.rajdhani(
                         fontSize: 22,
@@ -540,25 +541,25 @@ class _HomeTabState extends State<_HomeTab> {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
           children: [
-            _ActivityCard('Read Quran',    '📖',
+            _ActivityCard('Read Quran',    NoorIcon.book(size: 28),
               solid: const Color(0xFF3B72F6),
               solidDeep: const Color(0xFF1A4DC4),
               reward: '+5 XP / ayah',
               patternType: _CardPattern.arcRings,
               onTap: widget.onGoQuran),
-            _ActivityCard('Dhikar & Dua',  '📿',
+            _ActivityCard('Dhikar & Dua',  NoorIcon.beads(size: 28),
               solid: const Color(0xFF18B97A),
               solidDeep: const Color(0xFF0A7A50),
               reward: '+10 XP / set',
               patternType: _CardPattern.floatingDots,
               onTap: widget.onGoDhikr),
-            _ActivityCard('Invite Friends','🤝',
+            _ActivityCard('Invite Friends', NoorIcon.handshake(size: 28),
               solid: const Color(0xFFE8446A),
               solidDeep: const Color(0xFFA81A43),
               reward: '+500 Coins',
               patternType: _CardPattern.speedLines,
               onTap: widget.onGoInvite),
-            _ActivityCard('Achievements',  '🏆',
+            _ActivityCard('Achievements',   NoorIcon.trophy(size: 28),
               solid: const Color(0xFF8B5CF6),
               solidDeep: const Color(0xFF5B21B6),
               reward: '${_fmt(widget.totalXp)} XP • Lv ${widget.level}',
@@ -647,9 +648,9 @@ class _InviteSheetState extends State<_InviteSheet>
       'https://noorrewards.app/join?ref=${widget.referralCode}';
 
   String get _shareMessage =>
-      '🌙 Join me on Noor Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
-      'Use my code *${widget.referralCode}* and we both get 500 Noor Points! 🎁\n\n'
-      '👉 $_shareLink';
+      'Join me on Noor Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
+      'Use my code *${widget.referralCode}* and we both get 500 Noor Points!\n\n'
+      '$_shareLink';
 
   @override
   void initState() {
@@ -687,7 +688,7 @@ class _InviteSheetState extends State<_InviteSheet>
 
   void _shareGeneral() {
     // ignore: deprecated_member_use
-    Share.share(_shareMessage, subject: 'Join Noor Rewards 🌙');
+    Share.share(_shareMessage, subject: 'Join Noor Rewards');
   }
 
   void _shareWhatsApp() async {
@@ -702,7 +703,7 @@ class _InviteSheetState extends State<_InviteSheet>
       await Clipboard.setData(ClipboardData(text: _shareMessage));
       if (!mounted) return;
       // ignore: deprecated_member_use
-      Share.share(_shareMessage, subject: 'Join Noor Rewards 🌙');
+      Share.share(_shareMessage, subject: 'Join Noor Rewards');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Message copied — share or paste in WhatsApp!',
@@ -722,7 +723,7 @@ class _InviteSheetState extends State<_InviteSheet>
     setState(() { _loading = true; _error = null; _success = null; });
     try {
       await Supabase.instance.client.rpc('apply_referral', params: {'inviter_code': code});
-      setState(() => _success = '🎉 500 Noor Points rewarded to you both!');
+      setState(() => _success = '500 Noor Points rewarded to you both!');
     } catch (e) {
       final s = e.toString();
       if (s.contains('Already referred')) {
@@ -779,7 +780,7 @@ class _InviteSheetState extends State<_InviteSheet>
                       decoration: BoxDecoration(
                           color: const Color(0xFF2BAE99).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(14)),
-                      child: const Center(child: Text('🤝', style: TextStyle(fontSize: 24))),
+                      child: Center(child: NoorIcon.handshake(size: 24)),
                     ),
                     const SizedBox(width: 14),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -811,11 +812,11 @@ class _InviteSheetState extends State<_InviteSheet>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _RewardPill(icon: '🫵', label: 'You get', points: '+500'),
+                          _RewardPill(icon: NoorIcon.pointing(size:20), label: 'You get', points: '+500'),
                           Container(height: 40, width: 1, color: Colors.white12),
-                          _RewardPill(icon: '👥', label: 'Friend gets', points: '+500'),
+                          _RewardPill(icon: NoorIcon.people(size:20), label: 'Friend gets', points: '+500'),
                           Container(height: 40, width: 1, color: Colors.white12),
-                          _RewardPill(icon: '⚡', label: 'Instant', points: 'XP'),
+                          _RewardPill(icon: NoorIcon.lightning(size:20), label: 'Instant', points: 'XP'),
                         ],
                       ),
                     ),
@@ -946,7 +947,7 @@ class _InviteSheetState extends State<_InviteSheet>
                             ],
                           ),
                           child: Column(mainAxisSize: MainAxisSize.min, children: [
-                            const Text('💬', style: TextStyle(fontSize: 26)),
+                            NoorIcon.chat(size: 26),
                             const SizedBox(height: 6),
                             Text('WhatsApp',
                                 style: GoogleFonts.outfit(
@@ -977,7 +978,7 @@ class _InviteSheetState extends State<_InviteSheet>
                             ],
                           ),
                           child: Column(mainAxisSize: MainAxisSize.min, children: [
-                            const Text('📤', style: TextStyle(fontSize: 26)),
+                            NoorIcon.share(size: 26),
                             const SizedBox(height: 6),
                             Text('Share More',
                                 style: GoogleFonts.outfit(
@@ -1114,12 +1115,13 @@ class _InviteSheetState extends State<_InviteSheet>
 
 // Small reward pill widget used in the banner
 class _RewardPill extends StatelessWidget {
-  final String icon, label, points;
+  final Widget icon;
+  final String label, points;
   const _RewardPill({required this.icon, required this.label, required this.points});
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(icon, style: const TextStyle(fontSize: 20)),
+      icon,
       const SizedBox(height: 4),
       Text(points,
           style: GoogleFonts.outfit(
@@ -1197,7 +1199,7 @@ class _StreakBannerState extends State<_StreakBanner>
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // Header row
             Row(children: [
-              const Text('🔥', style: TextStyle(fontSize: 16)),
+              NoorIcon.fire(size:16),
               const SizedBox(width: 6),
               Text('STREAKS',
                   style: GoogleFonts.rajdhani(
@@ -1293,8 +1295,7 @@ class _StreakBannerState extends State<_StreakBanner>
                             padding: const EdgeInsets.symmetric(
                                 vertical: 16, horizontal: 8),
                             child: Column(children: [
-                              Text(type.emoji,
-                                  style: const TextStyle(fontSize: 22)),
+                              NoorIcon.fromEmoji(type.emoji, size: 22),
                               const SizedBox(height: 6),
                               Text('$s',
                                   style: GoogleFonts.rajdhani(
@@ -1441,7 +1442,7 @@ class _ProgressCard extends StatelessWidget {
                   blurRadius: 8)],
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Text('🔥', style: TextStyle(fontSize: 13)),
+              NoorIcon.fire(size:13),
               const SizedBox(width: 4),
               Text('$streak day${streak == 1 ? '' : 's'}',
                 style: GoogleFonts.rajdhani(
@@ -1455,25 +1456,26 @@ class _ProgressCard extends StatelessWidget {
 
         // Three progress bars
         _ProgBar(label: 'Today',   pts: todayPts, goal: _dayGoal,
-            color: const Color(0xFF00897B), emoji: '☀️'),
+            color: const Color(0xFF00897B), icon: NoorIcon.sunrise(size:16)),
         const SizedBox(height: 12),
         _ProgBar(label: 'This Week', pts: weekPts, goal: _weekGoal,
-            color: const Color(0xFF5C6BC0), emoji: '📅'),
+            color: const Color(0xFF5C6BC0), icon: NoorIcon.calendar(size:16)),
         const SizedBox(height: 12),
         _ProgBar(label: 'This Month', pts: monthPts, goal: _monthGoal,
-            color: const Color(0xFFE91E8C), emoji: '🗓️'),
+            color: const Color(0xFFE91E8C), icon: NoorIcon.calendar(size:16)),
       ]),
     );
   }
 }
 
 class _ProgBar extends StatelessWidget {
-  final String label, emoji;
+  final String label;
   final int pts, goal;
+  final Widget icon;
   final Color color;
   const _ProgBar({
     required this.label, required this.pts,
-    required this.goal,  required this.color, required this.emoji,
+    required this.goal,  required this.color, required this.icon,
   });
 
   @override
@@ -1482,7 +1484,7 @@ class _ProgBar extends StatelessWidget {
     final done = pts >= goal;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
-        Text(emoji, style: const TextStyle(fontSize: 13)),
+        icon,
         const SizedBox(width: 6),
         Text(label, style: GoogleFonts.outfit(
             fontSize: 13, fontWeight: FontWeight.w700, color: _C.text)),
@@ -1493,7 +1495,7 @@ class _ProgBar extends StatelessWidget {
             decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8)),
-            child: Text('Goal ✅', style: GoogleFonts.outfit(
+            child: Text('Goal', style: GoogleFonts.outfit(
                 fontSize: 10, fontWeight: FontWeight.w800, color: color)),
           )
         else
@@ -1575,11 +1577,12 @@ class _CommunityCard extends StatelessWidget {
 enum _CardPattern { arcRings, floatingDots, speedLines, diamondSparks }
 
 class _ActivityCard extends StatefulWidget {
-  final String title, emoji, reward;
+  final String title, reward;
+  final Widget icon;
   final Color solid, solidDeep;
   final _CardPattern patternType;
   final VoidCallback onTap;
-  const _ActivityCard(this.title, this.emoji, {
+  const _ActivityCard(this.title, this.icon, {
     required this.solid,
     required this.solidDeep,
     required this.reward,
@@ -1651,8 +1654,7 @@ class _ActivityCardState extends State<_ActivityCard> {
                         border: Border.all(
                             color: Colors.white.withValues(alpha: 0.30)),
                       ),
-                      child: Center(child: Text(widget.emoji,
-                          style: const TextStyle(fontSize: 24))),
+                      child: Center(child: widget.icon),
                     ),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(widget.title,
@@ -1858,10 +1860,10 @@ Widget _buildProjIcon(dynamic emojiVal, double size) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(size / 3),
       child: Image.network(e, width: size * 1.5, height: size * 1.5, fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Text('🖼️', style: TextStyle(fontSize: size))),
+          errorBuilder: (_, __, ___) => NoorIcon.image(size: size)),
     );
   }
-  return Text(e, style: TextStyle(fontSize: size));
+  return NoorIcon.fromEmoji(e, size: size);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2349,7 +2351,7 @@ class _ImpactTabState extends State<_ImpactTab> {
                 decoration: BoxDecoration(
                     gradient: const LinearGradient(colors: [Color(0xFF89CFF0), Color(0xFF4ECDC4)]),
                     borderRadius: BorderRadius.circular(16)),
-                child: const Center(child: Text('💧', style: TextStyle(fontSize: 64))),
+                child: Center(child: NoorIcon.drop(size: 64)),
               ),
               const SizedBox(height: 16),
               ClipRRect(borderRadius: BorderRadius.circular(8),
@@ -2387,7 +2389,7 @@ class _ImpactTabState extends State<_ImpactTab> {
                       boxShadow: availablePoints > 0 ? [BoxShadow(color: _C.navImpact.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))] : null,
                     ),
                     child: Row(children: [
-                      const Text('🪙', style: TextStyle(fontSize: 12)),
+                      NoorIcon.coin(size: 14),
                       const SizedBox(width: 4),
                       Text('Donate', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: availablePoints > 0 ? Colors.white : Colors.grey.shade600)),
                     ]),
@@ -2400,7 +2402,7 @@ class _ImpactTabState extends State<_ImpactTab> {
         ],
 
         if (completed.isNotEmpty) ...[
-          Text('Completed Projects ✅',
+          Text('Completed Projects',
               style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
           const SizedBox(height: 12),
           for (final p in completed)
@@ -2588,7 +2590,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('🪙', style: TextStyle(fontSize: 18)),
+                    NoorIcon.coin(size: 18),
                     const SizedBox(width: 8),
                     Flexible(child: Text('Available Balance:', style: GoogleFonts.outfit(fontSize: 14, color: _C.sub), overflow: TextOverflow.ellipsis)),
                     const SizedBox(width: 8),
@@ -2765,7 +2767,7 @@ class _RankingTabState extends State<_RankingTab> {
               borderRadius: BorderRadius.circular(22),
               border: Border.all(color: const Color(0xFFE8C870))),
           child: Row(children: [
-            const Text('🏅', style: TextStyle(fontSize: 40)),
+            NoorIcon.medal(size: 40),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Your Rank: #$_myRank',
@@ -2826,7 +2828,7 @@ class _RankingTabState extends State<_RankingTab> {
                   ),
                   child: Center(
                     child: medalEmoji != null
-                        ? Text(medalEmoji, style: const TextStyle(fontSize: 20))
+                        ? (medalEmoji == '🥇' ? NoorIcon.goldMedal(size: 20) : medalEmoji == '🥈' ? NoorIcon.silverMedal(size: 20) : NoorIcon.bronzeMedal(size: 20))
                         : Text('${i + 1}',
                             style: GoogleFonts.outfit(
                                 fontSize: 14,
@@ -2857,7 +2859,7 @@ class _RankingTabState extends State<_RankingTab> {
               borderRadius: BorderRadius.circular(20)),
           child: Row(children: [
             Container(width: 52, height: 52, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: const Center(child: Text('🔥', style: TextStyle(fontSize: 26)))),
+                child: Center(child: NoorIcon.fire(size: 26))),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('7 Day Streak!',
@@ -2945,7 +2947,7 @@ class _ProfileTab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20)),
             child: Row(children: [
               Container(width: 52, height: 52, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  child: const Center(child: Text('🔥', style: TextStyle(fontSize: 26)))),
+                  child: Center(child: NoorIcon.fire(size: 26))),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('7 Day Streak',
@@ -3527,7 +3529,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                             ],
                           ).createShader(bounds),
                           child: Text(
-                            'Seal the Day  ☽',
+                            'Seal the Day',
                             style: GoogleFonts.rajdhani(
                               fontSize: 14.5,
                               fontWeight: FontWeight.w700,
@@ -3545,8 +3547,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                   Center(
                     child: Text(
                       _freshXp
-                          ? '✦  JazakAllah!  +${XpReward.validateCoins} XP'
-                          : '✓  Already sealed today',
+                          ? 'JazakAllah!  +${XpReward.validateCoins} XP'
+                          : 'Already sealed today',
                       style: GoogleFonts.rajdhani(
                         fontSize: 14.5, fontWeight: FontWeight.w700,
                         color: _freshXp ? _neonGold : Colors.white,
@@ -3715,14 +3717,7 @@ class _SocketWidget extends StatelessWidget {
               ),
             ),
           ),
-          // Star icon in socket
-          Text(
-            '✦',
-            style: TextStyle(
-              fontSize: 18,
-              color: neonGreen.withValues(alpha: 0.25 + proximity * 0.65),
-            ),
-          ),
+          NoorIcon.sparkles(size: 18),
         ]),
       ),
     );
@@ -3823,26 +3818,10 @@ class _OrbWidget extends StatelessWidget {
             ),
             child: Center(
               child: completed
-                  ? Text(
-                      freshXp ? '☀' : '✓',
-                      style: TextStyle(
-                        fontSize: freshXp ? 26 : 22,
-                        color: freshXp ? const Color(0xFF7A4500) : neonGreen,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    )
-                  : Text(
-                      '☽',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Color.lerp(
-                          const Color(0xFF1A3E2F),
-                          neonGold,
-                          pct,
-                        ),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+                  ? (freshXp
+                      ? NoorIcon.sun(size: 26)
+                      : NoorIcon.check(size: 22))
+                  : NoorIcon.moon(size: 22),
             ),
           ),
         ),

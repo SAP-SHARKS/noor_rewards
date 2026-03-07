@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/streak_service.dart';
+import '../widgets/noor_icons.dart';
 
 class StreakScreen extends StatefulWidget {
   const StreakScreen({super.key});
@@ -227,7 +228,7 @@ class _HeroFlame extends StatelessWidget {
               child: Center(child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('🔥', style: TextStyle(fontSize: 36)),
+                  NoorIcon.fire(size: 36),
                   Text('$streak',
                       style: GoogleFonts.rajdhani(
                           fontSize: 38, fontWeight: FontWeight.w900,
@@ -244,9 +245,9 @@ class _HeroFlame extends StatelessWidget {
         const SizedBox(height: 14),
         Text(
           streak == 0
-              ? 'Start your streak today! 🌟'
+              ? 'Start your streak today!'
               : streak >= 100
-                  ? '👑 Centurion — Masha\'Allah!'
+                  ? 'Centurion — Masha\'Allah!'
                   : 'Current best streak',
           style: GoogleFonts.outfit(
               fontSize: 14, color: Colors.white60,
@@ -261,7 +262,7 @@ class _HeroFlame extends StatelessWidget {
                   colors: [Color(0xFFFF6B35), Color(0xFFFF9500)]),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text('${milestone!.emoji}  Next: ${milestone!.label} (${milestone!.days} days)',
+            child: Text('Next: ${milestone!.label} (${milestone!.days} days)',
                 style: GoogleFonts.rajdhani(
                     fontSize: 13, fontWeight: FontWeight.w700,
                     color: Colors.white, letterSpacing: 0.4)),
@@ -492,7 +493,7 @@ class _MilestoneProgress extends StatelessWidget {
                   fontSize: 13, fontWeight: FontWeight.w700,
                   color: Colors.white54, letterSpacing: 1.2)),
           const Spacer(),
-          Text('${milestone.emoji}  +${milestone.xpBonus} XP',
+          Text('+${milestone.xpBonus} XP',
               style: GoogleFonts.rajdhani(
                   fontSize: 14, fontWeight: FontWeight.w700,
                   color: const Color(0xFFFFD700))),
@@ -523,7 +524,7 @@ class _MilestoneProgress extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go — keep it up! 💪',
+          '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go — keep it up!',
           style: GoogleFonts.outfit(
               fontSize: 12, color: Colors.white38,
               fontWeight: FontWeight.w500),
@@ -574,10 +575,9 @@ class _MilestoneList extends StatelessWidget {
                       color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                       blurRadius: 10)] : [],
                 ),
-                child: Center(child: Text(
-                  done ? m.emoji : '🔒',
-                  style: const TextStyle(fontSize: 18),
-                )),
+                child: Center(child: done
+                    ? NoorIcon.fromEmoji(m.emoji, size: 18)
+                    : NoorIcon.lock(size: 18)),
               ),
               const SizedBox(width: 14),
               Expanded(child: Column(

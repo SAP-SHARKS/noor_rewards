@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dhikr_screen.dart';
 import '../utils/asset_helper.dart';
+import '../widgets/noor_icons.dart';
 
 const _kBg = Color(0xFFF7F3EE);
 const _kText = Color(0xFF1C1C1E);
@@ -164,10 +165,13 @@ class DhikrHubScreen extends StatelessWidget {
                 Positioned(
                   right: -20,
                   bottom: -15,
-                  child: Text(emoji,
-                      style: const TextStyle(
-                          fontSize: 90,
-                          shadows: [Shadow(color: Colors.black26, offset: Offset(2, 5), blurRadius: 10)])),
+                  child: Opacity(
+                    opacity: 0.55,
+                    child: SizedBox(
+                      width: 90, height: 90,
+                      child: NoorIcon.fromEmoji(emoji, size: 90),
+                    ),
+                  ),
                 ),
               // Glassmorphic protection mask (only keep it for non-image cards, or make it subtle)
               if (!isCustomCard)
@@ -249,10 +253,7 @@ class DhikrHubScreen extends StatelessWidget {
               Positioned(
                 right: -10,
                 bottom: -10,
-                child: Text(emoji,
-                    style: const TextStyle(
-                        fontSize: 60,
-                        shadows: [Shadow(color: Colors.black26, offset: Offset(2, 5), blurRadius: 10)])),
+                child: Opacity(opacity:0.6,child:SizedBox(width:60,height:60,child:NoorIcon.fromEmoji(emoji,size:60))),
               ),
               // Glassmorphic protection mask
               Container(

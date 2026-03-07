@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
+import '../widgets/noor_icons.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double height, FontWeight weight) style});
@@ -329,7 +330,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const Text('🎉', style: TextStyle(fontSize: 56)),
+            NoorIcon.party(size: 56),
             const SizedBox(height: 16),
             Text('Masha\'Allah!',
                 style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: kText)),
@@ -579,7 +580,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
               Container(
                 width: 72, height: 72,
                 decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFE0F2FE)),
-                child: const Center(child: Text('🏆', style: TextStyle(fontSize: 40))),
+                child: Center(child: NoorIcon.trophy(size: 40)),
               ),
               const SizedBox(height: 20),
               Text('Daily Azkar Complete!', 
@@ -921,7 +922,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          isComplete ? 'Completed ✓' : '$count / $tapTarget',
+                          isComplete ? 'Completed' : '$count / $tapTarget',
                           style: GoogleFonts.outfit(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -1056,7 +1057,7 @@ class _AzkarCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      isComplete ? 'Completed ✓' : 'Target: ${azkar.recommendedCount}',
+                      isComplete ? 'Completed' : 'Target: ${azkar.recommendedCount}',
                       style: GoogleFonts.outfit(
                         fontSize: 12, 
                         fontWeight: FontWeight.w700, 
@@ -1171,7 +1172,7 @@ class _AzkarCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('✨', style: TextStyle(fontSize: 16)),
+                    NoorIcon.sparkles(size: 16),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
@@ -1497,7 +1498,7 @@ class _NoorTreePainter extends CustomPainter {
 
     // 8. Progress label
     final pct = (progress * 100).round();
-    final label = isComplete ? 'ماشاء الله ✨' : '$pct%';
+    final label = isComplete ? 'ماشاء الله' : '$pct%';
     final tp2 = TextPainter(
       text: TextSpan(
         text: label,
@@ -1513,7 +1514,7 @@ class _NoorTreePainter extends CustomPainter {
 
     // 9. Noor points badge — right next to the progress label
     if (pointsToday > 0) {
-      final badgeLabel = '⚡ +$pointsToday pts';
+      final badgeLabel = '+$pointsToday pts';
       final tp3 = TextPainter(
         text: TextSpan(
           text: badgeLabel,

@@ -1,0 +1,884 @@
+﻿FILE: main.dart LINE:64 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: app_config.dart LINE:12 >>> // ── Economy ────────────────────────────────────────────────────────────────
+FILE: app_config.dart LINE:25 >>> // ── Theme ──────────────────────────────────────────────────────────────────
+FILE: app_config.dart LINE:30 >>> // ── Feature Flags ──────────────────────────────────────────────────────────
+FILE: app_config.dart LINE:37 >>> // ── Limits ─────────────────────────────────────────────────────────────────
+FILE: app_config.dart LINE:43 >>> // ── Messages / Banners ─────────────────────────────────────────────────────
+FILE: app_config.dart LINE:51 >>> // ── Raw access (for admin panel dynamic rows) ──────────────────────────────
+FILE: app_config.dart LINE:55 >>> // ── Helpers ────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:19 >>> // ── Admin email whitelist (client-side guard) ─────────────────────────────────
+FILE: dashboard_screen.dart LINE:22 >>> // ── Palette ────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:82 >>> // End session — saves accumulated time + coins to Supabase
+FILE: dashboard_screen.dart LINE:198 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:200 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:201 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:203 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:266 >>> "🏆 Daily Azkaar Complete! Masha'Allah!",
+FILE: dashboard_screen.dart LINE:285 >>> const Text('🔥', style: TextStyle(fontSize: 24)),
+FILE: dashboard_screen.dart LINE:381 >>> // ── Subtle home background pattern ───────────────────────────────
+FILE: dashboard_screen.dart LINE:392 >>> // ── Top bar ───────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:447 >>> // ── Noor Counter (tasbih drum display) ────────────────────────────────
+FILE: dashboard_screen.dart LINE:453 >>> // ── Swipe-to-Validate button (close to Today's points) ────────────────
+FILE: dashboard_screen.dart LINE:464 >>> // ── Streak Banner ─────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:468 >>> // ── Progress card (Daily / Weekly / Monthly) ──────────────────────
+FILE: dashboard_screen.dart LINE:478 >>> // ── Community progress ────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:482 >>> // ── My Donations ─────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:488 >>> Text('🎯 RECITE MORE.',
+FILE: dashboard_screen.dart LINE:532 >>> // ── Activity grid ─────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:543 >>> _ActivityCard('Read Quran',    '📖',
+FILE: dashboard_screen.dart LINE:549 >>> _ActivityCard('Dhikar & Dua',  '📿',
+FILE: dashboard_screen.dart LINE:555 >>> _ActivityCard('Invite Friends','🤝',
+FILE: dashboard_screen.dart LINE:561 >>> _ActivityCard('Achievements',  '🏆',
+FILE: dashboard_screen.dart LINE:564 >>> reward: '${_fmt(widget.totalXp)} XP • Lv ${widget.level}',
+FILE: dashboard_screen.dart LINE:570 >>> // ── Ad Placement Placeholder ──────────────────────────────────────
+FILE: dashboard_screen.dart LINE:623 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:624 >>> // Invite Friends Sheet  — share · copy link · WhatsApp · apply code
+FILE: dashboard_screen.dart LINE:625 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:650 >>> '🌙 Join me on Noor Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
+FILE: dashboard_screen.dart LINE:651 >>> 'Use my code *${widget.referralCode}* and we both get 500 Noor Points! 🎁\n\n'
+FILE: dashboard_screen.dart LINE:652 >>> '👉 $_shareLink';
+FILE: dashboard_screen.dart LINE:690 >>> Share.share(_shareMessage, subject: 'Join Noor Rewards 🌙');
+FILE: dashboard_screen.dart LINE:695 >>> // whatsapp:// deep link — opens WhatsApp directly if installed
+FILE: dashboard_screen.dart LINE:701 >>> // WhatsApp not installed or shareUri failed — fallback: copy + system share
+FILE: dashboard_screen.dart LINE:705 >>> Share.share(_shareMessage, subject: 'Join Noor Rewards 🌙');
+FILE: dashboard_screen.dart LINE:708 >>> content: Text('Message copied — share or paste in WhatsApp!',
+FILE: dashboard_screen.dart LINE:725 >>> setState(() => _success = '🎉 500 Noor Points rewarded to you both!');
+FILE: dashboard_screen.dart LINE:775 >>> // ── Header ──────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:782 >>> child: const Center(child: Text('🤝', style: TextStyle(fontSize: 24))),
+FILE: dashboard_screen.dart LINE:798 >>> // ── Reward Banner ────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:814 >>> _RewardPill(icon: '🫵', label: 'You get', points: '+500'),
+FILE: dashboard_screen.dart LINE:816 >>> _RewardPill(icon: '👥', label: 'Friend gets', points: '+500'),
+FILE: dashboard_screen.dart LINE:818 >>> _RewardPill(icon: '⚡', label: 'Instant', points: 'XP'),
+FILE: dashboard_screen.dart LINE:826 >>> // ── Your Code ────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:842 >>> code.isNotEmpty ? code : '– – – – –',
+FILE: dashboard_screen.dart LINE:879 >>> // ── Share Link Row ────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:922 >>> // ── Share Buttons ─────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:949 >>> const Text('💬', style: TextStyle(fontSize: 26)),
+FILE: dashboard_screen.dart LINE:980 >>> const Text('📤', style: TextStyle(fontSize: 26)),
+FILE: dashboard_screen.dart LINE:994 >>> // ── Divider ──────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1008 >>> // ── Enter Code ───────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1018 >>> hintText: 'Enter code…',
+FILE: dashboard_screen.dart LINE:1135 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1136 >>> // Streak Banner — compact 3-card row shown on home tab
+FILE: dashboard_screen.dart LINE:1137 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1164 >>> // Solid card colors — (light center, deep outer) for radial gradient
+FILE: dashboard_screen.dart LINE:1166 >>> [Color(0xFFF9CB5C), Color(0xFFE08A0E)], // Login   — warm amber
+FILE: dashboard_screen.dart LINE:1167 >>> [Color(0xFF3DDBA0), Color(0xFF0B9E63)], // Dhikr   — emerald
+FILE: dashboard_screen.dart LINE:1168 >>> [Color(0xFF9B87F5), Color(0xFF4B35D4)], // Quran   — indigo violet
+FILE: dashboard_screen.dart LINE:1200 >>> const Text('🔥', style: TextStyle(fontSize: 16)),
+FILE: dashboard_screen.dart LINE:1227 >>> // 3 streak chips — solid bold cards with sunburst rays
+FILE: dashboard_screen.dart LINE:1275 >>> // ── Solid gradient base ───────────────────────────
+FILE: dashboard_screen.dart LINE:1278 >>> // ── Sunburst rays (only when alive) ──────────────
+FILE: dashboard_screen.dart LINE:1291 >>> // ── Content ───────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1353 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1354 >>> // Sunburst ray painter — radiating wedge rays from a focal point
+FILE: dashboard_screen.dart LINE:1355 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1393 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1395 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1406 >>> // Target goals — gamification benchmarks
+FILE: dashboard_screen.dart LINE:1444 >>> const Text('🔥', style: TextStyle(fontSize: 13)),
+FILE: dashboard_screen.dart LINE:1458 >>> color: const Color(0xFF00897B), emoji: '☀️'),
+FILE: dashboard_screen.dart LINE:1461 >>> color: const Color(0xFF5C6BC0), emoji: '📅'),
+FILE: dashboard_screen.dart LINE:1464 >>> color: const Color(0xFFE91E8C), emoji: '🗓️'),
+FILE: dashboard_screen.dart LINE:1496 >>> child: Text('Goal ✅', style: GoogleFonts.outfit(
+FILE: dashboard_screen.dart LINE:1571 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1572 >>> // Activity Card — bold solid card with unique per-type decoration
+FILE: dashboard_screen.dart LINE:1573 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1624 >>> // ── Radial gradient base ────────────────────────────────
+FILE: dashboard_screen.dart LINE:1636 >>> // ── Unique decorative pattern ─────────────────────────────
+FILE: dashboard_screen.dart LINE:1638 >>> // ── Content ──────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1693 >>> // ─ Arc Rings — concentric quarter-circles emanating from top-right corner
+FILE: dashboard_screen.dart LINE:1713 >>> // ─ Floating Dots — scattered circles, largest bottom-right
+FILE: dashboard_screen.dart LINE:1745 >>> // ─ Speed Lines — diagonal parallel lines top-left to bottom-right
+FILE: dashboard_screen.dart LINE:1772 >>> // ─ Diamond Sparks — rotated small square gems scattered across card
+FILE: dashboard_screen.dart LINE:1806 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1807 >>> // Home Background — very subtle Islamic-inspired lattice at low opacity
+FILE: dashboard_screen.dart LINE:1808 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1820 >>> // Dot grid — every 38px, off-center
+FILE: dashboard_screen.dart LINE:1829 >>> // Soft wide arcs from top-right — Islamic crescent feel
+FILE: dashboard_screen.dart LINE:1854 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1856 >>> final e = emojiVal?.toString() ?? '🕌';
+FILE: dashboard_screen.dart LINE:1861 >>> errorBuilder: (_, __, ___) => Text('🖼️', style: TextStyle(fontSize: size))),
+FILE: dashboard_screen.dart LINE:1867 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1868 >>> // MY DONATIONS SECTION – shared by Home and Impact tabs
+FILE: dashboard_screen.dart LINE:1869 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:1888 >>> clipBehavior: Clip.hardEdge,   // ← cards are clipped; no peeking until swipe
+FILE: dashboard_screen.dart LINE:2007 >>> child: Text(myPts == 0 ? 'Donate Now →' : 'Donate More →',
+FILE: dashboard_screen.dart LINE:2022 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2023 >>> // NOOR COUNTER — Tasbih drum-wheel style
+FILE: dashboard_screen.dart LINE:2027 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2032 >>> /// Insert commas: 12345 → "12,345"
+FILE: dashboard_screen.dart LINE:2073 >>> // ── Drum display ─────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2110 >>> // ── Thin teal divider ──────────────────
+FILE: dashboard_screen.dart LINE:2116 >>> // ── Label strip ─────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2153 >>> // Lighter in the middle → looks like a cylinder curving away from us
+FILE: dashboard_screen.dart LINE:2171 >>> // Top depth shadow — receding top of the drum
+FILE: dashboard_screen.dart LINE:2193 >>> // Amber fold line → teal fold line
+FILE: dashboard_screen.dart LINE:2249 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2250 >>> // IMPACT TAB  — reads from community_projects
+FILE: dashboard_screen.dart LINE:2251 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2322 >>> // ── Community Impact heading only (Akhirah Balance is now the tab) ────
+FILE: dashboard_screen.dart LINE:2323 >>> // ── My personal donation history block removed (prevent repetition from Dashboard) ──
+FILE: dashboard_screen.dart LINE:2352 >>> child: const Center(child: Text('💧', style: TextStyle(fontSize: 64))),
+FILE: dashboard_screen.dart LINE:2376 >>> // ── Donate Button ──
+FILE: dashboard_screen.dart LINE:2390 >>> const Text('🪙', style: TextStyle(fontSize: 12)),
+FILE: dashboard_screen.dart LINE:2403 >>> Text('Completed Projects ✅',
+FILE: dashboard_screen.dart LINE:2420 >>> Text('\$${p['estimated_usd'].toStringAsFixed(0)} funded • ${p['sponsor']}',
+FILE: dashboard_screen.dart LINE:2430 >>> // ── Donate Dialog ──────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2456 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2458 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2591 >>> const Text('🪙', style: TextStyle(fontSize: 18)),
+FILE: dashboard_screen.dart LINE:2722 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2723 >>> // RANKING TAB  — reads from profiles, shows leaderboard
+FILE: dashboard_screen.dart LINE:2724 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2768 >>> const Text('🏅', style: TextStyle(fontSize: 40)),
+FILE: dashboard_screen.dart LINE:2780 >>> Text('Top Contributors — All Time XP',
+FILE: dashboard_screen.dart LINE:2798 >>> final medalEmoji = i == 0 ? '🥇' : i == 1 ? '🥈' : i == 2 ? '🥉' : null;
+FILE: dashboard_screen.dart LINE:2812 >>> // Uniform 40×40 badge for ALL ranks
+FILE: dashboard_screen.dart LINE:2841 >>> Text('$title • Lv $lv',
+FILE: dashboard_screen.dart LINE:2860 >>> child: const Center(child: Text('🔥', style: TextStyle(fontSize: 26)))),
+FILE: dashboard_screen.dart LINE:2875 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2877 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:2915 >>> child: Text('$levelTitle • Level $level',
+FILE: dashboard_screen.dart LINE:2948 >>> child: const Center(child: Text('🔥', style: TextStyle(fontSize: 26)))),
+FILE: dashboard_screen.dart LINE:3032 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3034 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3072 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3073 >>> // Swipe-to-Validate  ✦  "Circuit Connect" Edition
+FILE: dashboard_screen.dart LINE:3075 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3077 >>> // ── Energy particle behind the dragging orb ───────────────────────────────────
+FILE: dashboard_screen.dart LINE:3081 >>> double life;      // 1.0 → 0.0
+FILE: dashboard_screen.dart LINE:3091 >>> // ── Arc segments painter (lightning bolt between orb and socket) ──────────────
+FILE: dashboard_screen.dart LINE:3094 >>> final double progress; // 0–1, drives opacity
+FILE: dashboard_screen.dart LINE:3135 >>> // ── Main widget ───────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3146 >>> // ── Geometry ─────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3151 >>> // ── State ──────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3162 >>> // ── Colors ────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3173 >>> // ── Controllers ──────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3196 >>> // Circuit fill (golden wash left→right after connect)
+FILE: dashboard_screen.dart LINE:3262 >>> // ── Particle tick ─────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3295 >>> // ── Socket pulse speed (proximity) ───────────────────────────────────
+FILE: dashboard_screen.dart LINE:3297 >>> // 0% proximity → 800ms period, 100% → 200ms
+FILE: dashboard_screen.dart LINE:3304 >>> // ── Input handlers ────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3380 >>> // ── Build ─────────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3407 >>> // ── Track background ───────────────────────────────────
+FILE: dashboard_screen.dart LINE:3426 >>> // ── Golden circuit fill (animates left→right on complete)
+FILE: dashboard_screen.dart LINE:3451 >>> // ── Progress fill (teal, grows with drag) ────────────
+FILE: dashboard_screen.dart LINE:3475 >>> // ── Energy particles (CustomPaint) ────────────────────
+FILE: dashboard_screen.dart LINE:3489 >>> // ── Dashed dots on track (static circuit pattern) ─────
+FILE: dashboard_screen.dart LINE:3509 >>> // ── Centre label ──────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3530 >>> 'Seal the Day  ☽',
+FILE: dashboard_screen.dart LINE:3543 >>> // ── Completed label ───────────────────────────────────
+FILE: dashboard_screen.dart LINE:3548 >>> ? '✦  JazakAllah!  +${XpReward.validateCoins} XP'
+FILE: dashboard_screen.dart LINE:3549 >>> : '✓  Already sealed today',
+FILE: dashboard_screen.dart LINE:3558 >>> // ── Lightning arc flash ───────────────────────────────
+FILE: dashboard_screen.dart LINE:3590 >>> // ── Socket receptor (right side) ──────────────────────
+FILE: dashboard_screen.dart LINE:3604 >>> // ── Draggable orb (knob) ───────────────────────────────
+FILE: dashboard_screen.dart LINE:3630 >>> // ── Particle painter ──────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3659 >>> // ── Socket widget (the right-side receptor that pulses and attracts) ──────────
+FILE: dashboard_screen.dart LINE:3720 >>> '✦',
+FILE: dashboard_screen.dart LINE:3732 >>> // ── Orb / knob widget ─────────────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3755 >>> // ── Halo ring (spins when completed) ──────────────────────────
+FILE: dashboard_screen.dart LINE:3775 >>> // ── Glow aura ─────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3794 >>> // ── Orb body ──────────────────────────────────────────────────
+FILE: dashboard_screen.dart LINE:3827 >>> freshXp ? '☀' : '✓',
+FILE: dashboard_screen.dart LINE:3835 >>> '☽',
+FILE: dashboard_screen.dart LINE:3850 >>> // ── Burst sparks (radial explosion on connect) ─────────────────
+FILE: dhikr_hub_screen.dart LINE:15 >>> {'title': 'Duas of Ummah', 'id': 'ummah', 'color': const Color(0xFF6B4EE6), 'icon': '🌍'},
+FILE: dhikr_hub_screen.dart LINE:16 >>> {'title': 'Morning', 'id': 'morning', 'color': const Color(0xFFF59E0B), 'icon': '🌅'},
+FILE: dhikr_hub_screen.dart LINE:17 >>> {'title': 'Evening', 'id': 'evening', 'color': const Color(0xFFD97706), 'icon': '🌇'},
+FILE: dhikr_hub_screen.dart LINE:18 >>> {'title': 'Before Sleep', 'id': 'sleeping', 'color': const Color(0xFF312E81), 'icon': '🌌'},
+FILE: dhikr_hub_screen.dart LINE:19 >>> {'title': 'Tahajjud', 'id': 'tahajjud', 'color': const Color(0xFF1E1B4B), 'icon': '🌑'},
+FILE: dhikr_hub_screen.dart LINE:20 >>> {'title': 'Salah', 'id': 'post_prayer', 'color': const Color(0xFF0EA5E9), 'icon': '🕌'},
+FILE: dhikr_hub_screen.dart LINE:21 >>> {'title': 'Salawat', 'id': 'salawat', 'color': const Color(0xFFEC4899), 'icon': '❤️'},
+FILE: dhikr_hub_screen.dart LINE:22 >>> {'title': 'Sunnah Duas', 'id': 'sunnah', 'color': const Color(0xFF10B981), 'icon': '📖'},
+FILE: dhikr_hub_screen.dart LINE:23 >>> {'title': 'Quranic Duas', 'id': 'quranic', 'color': const Color(0xFF059669), 'icon': '📗'},
+FILE: dhikr_hub_screen.dart LINE:24 >>> {'title': 'Istighfar', 'id': 'istighfar', 'color': const Color(0xFF64748B), 'icon': '📿'},
+FILE: dhikr_hub_screen.dart LINE:25 >>> {'title': 'Dhikar All Times', 'id': 'general', 'color': const Color(0xFF8B5CF6), 'icon': '🤲'},
+FILE: dhikr_hub_screen.dart LINE:26 >>> {'title': 'Names of Allah', 'id': 'asmaul_husna', 'color': const Color(0xFFD946EF), 'icon': '✨'},
+FILE: dhikr_hub_screen.dart LINE:30 >>> {'title': 'Nightmares', 'id': 'nightmares', 'color': const Color(0xFF334155), 'icon': '🌩️'},
+FILE: dhikr_hub_screen.dart LINE:31 >>> {'title': 'Waking up', 'id': 'waking_up', 'color': const Color(0xFFFCD34D), 'icon': '☀️'},
+FILE: dhikr_hub_screen.dart LINE:32 >>> {'title': 'Clothes', 'id': 'clothes', 'color': const Color(0xFF38BDF8), 'icon': '👕'},
+FILE: dhikr_hub_screen.dart LINE:33 >>> {'title': 'Wudu', 'id': 'wudu', 'color': const Color(0xFF2DD4BF), 'icon': '💧'},
+FILE: dhikr_hub_screen.dart LINE:34 >>> {'title': 'Food & Drink', 'id': 'food_drink', 'color': const Color(0xFFF43F5E), 'icon': '🍽️'},
+FILE: dhikr_hub_screen.dart LINE:35 >>> {'title': 'Home', 'id': 'home', 'color': const Color(0xFF84CC16), 'icon': '🏠'},
+FILE: dhikr_hub_screen.dart LINE:36 >>> {'title': 'Istikharah', 'id': 'istikharah', 'color': const Color(0xFF0284C7), 'icon': '🧭'},
+FILE: dhikr_hub_screen.dart LINE:37 >>> {'title': 'Adaan & Masjid', 'id': 'masjid', 'color': const Color(0xFF65A30D), 'icon': '🕌'},
+FILE: dhikr_hub_screen.dart LINE:38 >>> {'title': 'Diff & Happy', 'id': 'difficulty', 'color': const Color(0xFFEAB308), 'icon': '⚖️'},
+FILE: dhikr_hub_screen.dart LINE:39 >>> {'title': 'Iman Protect', 'id': 'iman_protection', 'color': const Color(0xFF0F766E), 'icon': '🛡️'},
+FILE: dhikr_hub_screen.dart LINE:40 >>> {'title': 'Travel', 'id': 'travel', 'color': const Color(0xFF0284C7), 'icon': '✈️'},
+FILE: dhikr_hub_screen.dart LINE:41 >>> {'title': 'Shopping', 'id': 'shopping', 'color': const Color(0xFF14B8A6), 'icon': '🛍️'},
+FILE: dhikr_hub_screen.dart LINE:42 >>> {'title': 'Marriage', 'id': 'family', 'color': const Color(0xFFF43F5E), 'icon': '👨‍👩‍👧'},
+FILE: dhikr_hub_screen.dart LINE:43 >>> {'title': 'Social', 'id': 'social', 'color': const Color(0xFFA855F7), 'icon': '🤝'},
+FILE: dhikr_hub_screen.dart LINE:44 >>> {'title': 'Nature', 'id': 'nature', 'color': const Color(0xFF22C55E), 'icon': '🌿'},
+FILE: dhikr_hub_screen.dart LINE:45 >>> {'title': 'Death', 'id': 'death', 'color': const Color(0xFF475569), 'icon': '🥀'},
+FILE: dhikr_hub_screen.dart LINE:46 >>> {'title': 'Gatherings', 'id': 'gatherings', 'color': const Color(0xFFF59E0B), 'icon': '👥'},
+FILE: dhikr_hub_screen.dart LINE:47 >>> {'title': 'Hajj & Umrah', 'id': 'hajj', 'color': const Color(0xFF000000), 'icon': '🕋'},
+FILE: dhikr_screen.dart LINE:13 >>> // ── Arabic font options (shared with Quran screen) ────────────────────────────
+FILE: dhikr_screen.dart LINE:19 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:25 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:31 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:37 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:43 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:49 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:55 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: dhikr_screen.dart LINE:61 >>> // ── Models ────────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:116 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:124 >>> // ── State ─────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:190 >>> // ── Load Supabase Data ─────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:251 >>> // ── Actions ───────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:269 >>> final text = '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n— Shared via Noor App';
+FILE: dhikr_screen.dart LINE:294 >>> // Record dhikr streak (idempotent — safe to call multiple times)
+FILE: dhikr_screen.dart LINE:304 >>> // If already claimed today, just proceed silently — no error shown
+FILE: dhikr_screen.dart LINE:313 >>> // Silent — never show raw DB errors to user
+FILE: dhikr_screen.dart LINE:332 >>> const Text('🎉', style: TextStyle(fontSize: 56)),
+FILE: dhikr_screen.dart LINE:337 >>> Text('$target counts complete • +20 Noor Points • +$xpEarned XP',
+FILE: dhikr_screen.dart LINE:392 >>> // ── Drag handle ──────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:401 >>> // ── Title row ───────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:418 >>> // ── Scrollable content ───────────────────────────────────────
+FILE: dhikr_screen.dart LINE:481 >>> // ── Arabic Font Style Picker ───────────────────────────
+FILE: dhikr_screen.dart LINE:582 >>> child: const Center(child: Text('🏆', style: TextStyle(fontSize: 40))),
+FILE: dhikr_screen.dart LINE:613 >>> // ── Build ─────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:647 >>> // Points banner removed — shown inside the meter
+FILE: dhikr_screen.dart LINE:649 >>> // ── Category tabs ───────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:688 >>> // ── Beautiful Master List ───────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:798 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:800 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:924 >>> isComplete ? 'Completed ✓' : '$count / $tapTarget',
+FILE: dhikr_screen.dart LINE:944 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:946 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: dhikr_screen.dart LINE:993 >>> final cleanSource = source.substring(0, bracketMatch.start).replaceAll(RegExp(r'[-—\.,\s]+$'), '').trim();
+FILE: dhikr_screen.dart LINE:999 >>> final keywordMatch = RegExp(r'(?:[-—\.,\s]+|^)((?:Sahih\s)?(?:Muslim|Bukhari|Abu Dawud|Tirmidhi|Ibn Majah|Nasai|Ahmad|Quran|Surah).*)$', caseSensitive: false).firstMatch(source);
+FILE: dhikr_screen.dart LINE:1002 >>> final cleanSource = source.substring(0, keywordMatch.start).replaceAll(RegExp(r'[-—\.,\s]+$'), '').trim();
+FILE: dhikr_screen.dart LINE:1037 >>> // ── Noor Tree Animation ──
+FILE: dhikr_screen.dart LINE:1047 >>> // ── Top Bar (Count Goal & Header) ──
+FILE: dhikr_screen.dart LINE:1059 >>> isComplete ? 'Completed ✓' : 'Target: ${azkar.recommendedCount}',
+FILE: dhikr_screen.dart LINE:1099 >>> // ── Context / Chapter Subtitle ──
+FILE: dhikr_screen.dart LINE:1123 >>> // ── Main Text Content ──
+FILE: dhikr_screen.dart LINE:1161 >>> // ── Highly Visible Benefit Box ──
+FILE: dhikr_screen.dart LINE:1174 >>> const Text('✨', style: TextStyle(fontSize: 16)),
+FILE: dhikr_screen.dart LINE:1190 >>> // ── Display Reference at the Bottom ──
+FILE: dhikr_screen.dart LINE:1210 >>> // 🌳 Noor Tree (شجرة النور) — Islamic growth animation
+FILE: dhikr_screen.dart LINE:1213 >>> final double progress;   // 0.0 → 1.0
+FILE: dhikr_screen.dart LINE:1500 >>> final label = isComplete ? 'ماشاء الله ✨' : '$pct%';
+FILE: dhikr_screen.dart LINE:1514 >>> // 9. Noor points badge — right next to the progress label
+FILE: dhikr_screen.dart LINE:1516 >>> final badgeLabel = '⚡ +$pointsToday pts';
+FILE: impact_report_screen.dart LINE:3 >>> // Akhirah Balance — a premium Islamic banking-style dashboard showing
+FILE: impact_report_screen.dart LINE:14 >>> // ── Palette ───────────────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:53 >>> // Derived "Akhirah holdings" — computed from points/xp
+FILE: impact_report_screen.dart LINE:127 >>> // ── Derived spiritual holdings ─────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:180 >>> // ── Hero / Balance Card ────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:232 >>> Text('Lvl $_level · $_levelTitle',
+FILE: impact_report_screen.dart LINE:284 >>> _HeroBadge('🌅', '+${_fmt(_todayPoints)} deeds today',
+FILE: impact_report_screen.dart LINE:286 >>> _HeroBadge('📅', '+${_fmt(_weekPoints)} this week',
+FILE: impact_report_screen.dart LINE:289 >>> _HeroBadge('🔥', 'Best: $_bestStreak day streak',
+FILE: impact_report_screen.dart LINE:308 >>> const Text('🌍', style: TextStyle(fontSize: 16)),
+FILE: impact_report_screen.dart LINE:328 >>> // ── Streak Banner ──────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:346 >>> const Text('🔥', style: TextStyle(fontSize: 32)),
+FILE: impact_report_screen.dart LINE:352 >>> Text('Keep it going — consistency is key!',
+FILE: impact_report_screen.dart LINE:357 >>> Text('$best 🏆', style: GoogleFonts.outfit(
+FILE: impact_report_screen.dart LINE:364 >>> // ── Mini stat pills ────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:366 >>> Expanded(child: _MiniStat('🌳', _fmt(_treesPlanted), 'TREES', const Color(0xFF2D7A45))),
+FILE: impact_report_screen.dart LINE:368 >>> Expanded(child: _MiniStat('📿', _fmt(_totalDhikr), 'DHIKR', _C.teal)),
+FILE: impact_report_screen.dart LINE:370 >>> Expanded(child: _MiniStat('🛡️', _fmt(_slavesFreed), 'PROTECTED', _C.purple)),
+FILE: impact_report_screen.dart LINE:373 >>> // ── Your Holdings ──────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:381 >>> Text('See All →',
+FILE: impact_report_screen.dart LINE:401 >>> emoji: '🌳',
+FILE: impact_report_screen.dart LINE:414 >>> emoji: '📿',
+FILE: impact_report_screen.dart LINE:427 >>> emoji: '⛓️',
+FILE: impact_report_screen.dart LINE:440 >>> emoji: '🤲',
+FILE: impact_report_screen.dart LINE:454 >>> // ── Streak detail cards ────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:463 >>> Expanded(child: _StreakCard('☀️', 'Daily Login', _snap.login,
+FILE: impact_report_screen.dart LINE:466 >>> Expanded(child: _StreakCard('📿', 'Dhikr', _snap.dhikr,
+FILE: impact_report_screen.dart LINE:469 >>> Expanded(child: _StreakCard('📖', 'Quran', _snap.quran,
+FILE: impact_report_screen.dart LINE:475 >>> // ── Activity card (session time) ───────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:533 >>> // ── Rewards card ──────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:549 >>> const Text('✨', style: TextStyle(fontSize: 22)),
+FILE: impact_report_screen.dart LINE:557 >>> Expanded(child: _DarkStat('Total Points', _fmt(_noorPoints), '🌟')),
+FILE: impact_report_screen.dart LINE:559 >>> Expanded(child: _DarkStat('Total XP', _fmt(_totalXp), '⚡')),
+FILE: impact_report_screen.dart LINE:561 >>> Expanded(child: _DarkStat('Level', '$_level', '🏅')),
+FILE: impact_report_screen.dart LINE:573 >>> '🌙  Every deed is recorded. Keep going!',
+FILE: impact_report_screen.dart LINE:582 >>> // ── Community impact entry card (only shown when isTab) ─────────────────────
+FILE: impact_report_screen.dart LINE:601 >>> const Text('🌍', style: TextStyle(fontSize: 30)),
+FILE: impact_report_screen.dart LINE:616 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:619 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: impact_report_screen.dart LINE:701 >>> Text('${project['emoji'] ?? '🌍'}  ${project['title'] ?? ''}',
+FILE: impact_report_screen.dart LINE:755 >>> content: Text('JazakAllah! ${_fmt(selected)} pts donated 🤲',
+FILE: impact_report_screen.dart LINE:777 >>> : 'Donate $selected Points 🤲',
+FILE: impact_report_screen.dart LINE:829 >>> Text(p['emoji'] ?? '🌍', style: const TextStyle(fontSize: 24)),
+FILE: impact_report_screen.dart LINE:840 >>> child: Text('✅ Funded',
+FILE: impact_report_screen.dart LINE:855 >>> Text('${_fmt(cur)} / ${_fmt(tgt)} pts  •  ${(pct * 100).toStringAsFixed(0)}%',
+FILE: impact_report_screen.dart LINE:882 >>> const Text('🤲', style: TextStyle(fontSize: 12)),
+FILE: impact_report_screen.dart LINE:906 >>> icon: const Text('🤲', style: TextStyle(fontSize: 14)),
+FILE: impact_report_screen.dart LINE:919 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:10 >>> // ── Palette ───────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:19 >>> // ── Level tier colours ────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:33 >>> case 'Seeker':   return '🌱';
+FILE: level_screen.dart LINE:34 >>> case 'Believer': return '🌟';
+FILE: level_screen.dart LINE:35 >>> case 'Devoted':  return '💜';
+FILE: level_screen.dart LINE:36 >>> case 'Champion': return '🏆';
+FILE: level_screen.dart LINE:37 >>> case 'Legend':   return '👑';
+FILE: level_screen.dart LINE:38 >>> default:         return '✨';
+FILE: level_screen.dart LINE:42 >>> // Activity type → readable label + emoji + colour
+FILE: level_screen.dart LINE:45 >>> case 'login':    return (label: 'Daily Login',       emoji: '☀️',  color: const Color(0xFF00897B));
+FILE: level_screen.dart LINE:46 >>> case 'validate': return (label: 'Validate & Support',emoji: '✅',  color: const Color(0xFF6B4EBB));
+FILE: level_screen.dart LINE:47 >>> case 'quran':    return (label: 'Read Quran',         emoji: '📖',  color: const Color(0xFF1565C0));
+FILE: level_screen.dart LINE:48 >>> case 'dhikr':    return (label: 'Dhikar & Dua',       emoji: '📿',  color: const Color(0xFF558B2F));
+FILE: level_screen.dart LINE:49 >>> case 'tafsir':   return (label: 'Listen Tafsir',      emoji: '🎧',  color: const Color(0xFFAD1457));
+FILE: level_screen.dart LINE:50 >>> case 'challenge':return (label: 'Challenge',          emoji: '🏅',  color: const Color(0xFFF5A623));
+FILE: level_screen.dart LINE:51 >>> default:         return (label: type,                 emoji: '⭐',  color: _kSub);
+FILE: level_screen.dart LINE:55 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:159 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:160 >>> // TAB 1 — PROGRESS
+FILE: level_screen.dart LINE:161 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:182 >>> // ── Hero level card ────────────────────────────────────────────────
+FILE: level_screen.dart LINE:196 >>> Text(info != null ? _tierEmoji(info.title) : '🌱',
+FILE: level_screen.dart LINE:234 >>> // ── Stats row ─────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:237 >>> _MiniStat('🔥', '$streak', 'Day Streak'),
+FILE: level_screen.dart LINE:239 >>> _MiniStat('⭐', '$xp', 'Total XP'),
+FILE: level_screen.dart LINE:241 >>> _MiniStat('🏅', 'Lv $level', 'Current Level'),
+FILE: level_screen.dart LINE:244 >>> // ── XP Earning guide ───────────────────────────────────────────────
+FILE: level_screen.dart LINE:250 >>> _XpRow('📖', 'Read 1 Ayah',          '+${XpReward.ayahRead} XP'),
+FILE: level_screen.dart LINE:251 >>> _XpRow('📚', 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
+FILE: level_screen.dart LINE:252 >>> _XpRow('📿', 'SubhanAllah ×33',       '+8 XP'),
+FILE: level_screen.dart LINE:253 >>> _XpRow('📿', 'La ilaha illallah ×100','+15 XP'),
+FILE: level_screen.dart LINE:254 >>> _XpRow('☀️',  'Daily Login',            '+${XpReward.dailyLogin} XP'),
+FILE: level_screen.dart LINE:255 >>> _XpRow('✨', 'Validate & Support',    '+${XpReward.validateCoins} XP'),
+FILE: level_screen.dart LINE:257 >>> // ── Level tiers ────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:269 >>> (title: 'Seeker',   emoji: '🌱', range: '1–5',   xp: '0–500 XP',        color: Color(0xFF78C1F3), unlocks: 'Basic features'),
+FILE: level_screen.dart LINE:270 >>> (title: 'Believer', emoji: '🌟', range: '6–10',  xp: '500–1,500 XP',    color: Color(0xFF4CAF50), unlocks: 'Custom profile themes'),
+FILE: level_screen.dart LINE:271 >>> (title: 'Devoted',  emoji: '💜', range: '11–20', xp: '1,500–5,000 XP',  color: Color(0xFFAB47BC), unlocks: 'Leaderboard badge'),
+FILE: level_screen.dart LINE:272 >>> (title: 'Champion', emoji: '🏆', range: '21–50', xp: '5,000–20,000 XP', color: Color(0xFFF5A623), unlocks: 'Exclusive voting rights'),
+FILE: level_screen.dart LINE:273 >>> (title: 'Legend',   emoji: '👑', range: '50+',   xp: '20,000+ XP',      color: Color(0xFFE53935), unlocks: 'Hall of Fame listing'),
+FILE: level_screen.dart LINE:329 >>> final levelNum  = int.tryParse(tier.range.split('–').first.replaceAll('+','')) ?? 1;
+FILE: level_screen.dart LINE:383 >>> final parts = range.split('–');
+FILE: level_screen.dart LINE:390 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:391 >>> // TAB 2 — BADGES
+FILE: level_screen.dart LINE:392 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:415 >>> const Text('🏅', style: TextStyle(fontSize: 40)),
+FILE: level_screen.dart LINE:421 >>> Text('Keep going — more badges to unlock!',
+FILE: level_screen.dart LINE:429 >>> Text('Earned ✅',
+FILE: level_screen.dart LINE:443 >>> Text('Locked 🔒',
+FILE: level_screen.dart LINE:487 >>> earned ? badge.emoji : '🔒',
+FILE: level_screen.dart LINE:507 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:508 >>> // TAB 3 — CHALLENGES
+FILE: level_screen.dart LINE:509 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:531 >>> _SectionHeader('🕋 Seasonal Events'),
+FILE: level_screen.dart LINE:537 >>> _SectionHeader('📅 Weekly Challenges'),
+FILE: level_screen.dart LINE:543 >>> _SectionHeader('⭐ Special Events'),
+FILE: level_screen.dart LINE:552 >>> const Text('🌙', style: TextStyle(fontSize: 56)),
+FILE: level_screen.dart LINE:558 >>> Text('Check back soon — Ramadan & Dhul-Hijjah events are coming!',
+FILE: level_screen.dart LINE:592 >>> const Text('🌙', style: TextStyle(fontSize: 44)),
+FILE: level_screen.dart LINE:599 >>> Text('3× XP multiplier • Special badges • Community wells goal',
+FILE: level_screen.dart LINE:609 >>> child: Text('Coming Soon — Stay Consistent!',
+FILE: level_screen.dart LINE:627 >>> final emoji       = challenge['emoji']         as String? ?? '⭐';
+FILE: level_screen.dart LINE:691 >>> _RewardChip('${multiplier.toStringAsFixed(0)}× XP Boost', Colors.orange),
+FILE: level_screen.dart LINE:715 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:716 >>> // TAB 4 — HISTORY  (Today / This Week / This Month / All Time)
+FILE: level_screen.dart LINE:717 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:774 >>> // ── Period selector ────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:805 >>> // ── Body ──────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:838 >>> // ── Empty state ───────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:847 >>> const Text('🌙', style: TextStyle(fontSize: 64)),
+FILE: level_screen.dart LINE:853 >>> Text('Start earning XP — read Quran, do Dhikar & Dua, or log in daily.',
+FILE: level_screen.dart LINE:861 >>> // ── Summary hero ──────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:945 >>> // ── Mini donut chart ──────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:1005 >>> // ── Breakdown chip ────────────────────────────────────────────────────────────
+FILE: level_screen.dart LINE:1037 >>> // ── Individual activity row ───────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:7 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:9 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:30 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:32 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:53 >>> arabicText: 'السَّلَامُ عَلَيْكُم',
+FILE: onboarding_screen.dart LINE:57 >>> 'Welcome to Noor Rewards — where every good deed is a step closer to Allah\'s mercy and light.',
+FILE: onboarding_screen.dart LINE:63 >>> arabicText: 'خير الدُنيا والآخرة',
+FILE: onboarding_screen.dart LINE:67 >>> 'Every word you read earns you Sawab — a light in your Akhirah.\nYour Noor Coins fund real causes that change real lives.',
+FILE: onboarding_screen.dart LINE:73 >>> arabicText: 'سُبْحَانَ اللَّه',
+FILE: onboarding_screen.dart LINE:83 >>> arabicText: 'اقْرَأْ',
+FILE: onboarding_screen.dart LINE:84 >>> transliteration: 'Iqra — Read',
+FILE: onboarding_screen.dart LINE:93 >>> arabicText: 'صَدَقَة',
+FILE: onboarding_screen.dart LINE:94 >>> transliteration: 'Sadaqah — Charity',
+FILE: onboarding_screen.dart LINE:151 >>> // ── Page content ──────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:162 >>> // ── Skip button (top right) ───────────────────────────────────────
+FILE: onboarding_screen.dart LINE:195 >>> // ── Bottom controls ───────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:229 >>> Color(0xFF00D4AA), // Teal    — peace page
+FILE: onboarding_screen.dart LINE:230 >>> Color(0xFFFFC94D), // Amber   — dual benefit page  ← NEW
+FILE: onboarding_screen.dart LINE:231 >>> Color(0xFFFFAA00), // Gold    — zikr page
+FILE: onboarding_screen.dart LINE:232 >>> Color(0xFF00C875), // Emerald — quran page
+FILE: onboarding_screen.dart LINE:233 >>> Color(0xFFDD88FF), // Lavender— sadaqah page
+FILE: onboarding_screen.dart LINE:239 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:241 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:302 >>> // ── Illustration — takes all remaining space ────────────────
+FILE: onboarding_screen.dart LINE:318 >>> // ── Text content — natural height, no Expanded ─────────────
+FILE: onboarding_screen.dart LINE:386 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:388 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:419 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:421 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:479 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:481 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:521 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:523 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: onboarding_screen.dart LINE:525 >>> /// NEW Page 2 — Dual Benefit (Sawab + Noor Coins for noble cause)
+FILE: onboarding_screen.dart LINE:583 >>> // ─ Orbit ring
+FILE: onboarding_screen.dart LINE:596 >>> // ─ Centre pulsing core
+FILE: onboarding_screen.dart LINE:620 >>> child: Text('★', style: TextStyle(fontSize: 28, color: Color(0xFFFFC94D))),
+FILE: onboarding_screen.dart LINE:625 >>> // ─ Orbiting Sawab orb (golden light)
+FILE: onboarding_screen.dart LINE:631 >>> emoji: '✨',
+FILE: onboarding_screen.dart LINE:637 >>> // ─ Orbiting Coins orb (neon green)
+FILE: onboarding_screen.dart LINE:643 >>> emoji: '🪙',
+FILE: onboarding_screen.dart LINE:649 >>> // ─ Two benefit cards at bottom
+FILE: onboarding_screen.dart LINE:658 >>> icon: '✨',
+FILE: onboarding_screen.dart LINE:665 >>> icon: '🪙',
+FILE: onboarding_screen.dart LINE:791 >>> /// Page 1 — Crescent Moon + twinkling stars + shooting star
+FILE: onboarding_screen.dart LINE:967 >>> // Punch out crescent with BlendMode.clear — NO dark circle
+FILE: onboarding_screen.dart LINE:981 >>> /// Page 3 — Tasbih Beads light up one-by-one (Zikr)
+FILE: onboarding_screen.dart LINE:1040 >>> '$litUpTo×',
+FILE: onboarding_screen.dart LINE:1112 >>> /// Page 4 — Quran: book closed → opens page by page
+FILE: onboarding_screen.dart LINE:1271 >>> // ── Spine ──
+FILE: onboarding_screen.dart LINE:1289 >>> // ── Left cover ──
+FILE: onboarding_screen.dart LINE:1298 >>> // ── Right cover ──
+FILE: onboarding_screen.dart LINE:1311 >>> // ── Left page ──
+FILE: onboarding_screen.dart LINE:1320 >>> // ── Right page ──
+FILE: onboarding_screen.dart LINE:1329 >>> // ── Text lines reveal ──
+FILE: onboarding_screen.dart LINE:1375 >>> /// Page 5 — Sadaqah: coins float up from a glowing hand, heart pulses
+FILE: onboarding_screen.dart LINE:1495 >>> child: Text('✦', style: TextStyle(fontSize: 10, color: Colors.white)),
+FILE: onboarding_screen.dart LINE:1518 >>> Text('🤲', style: const TextStyle(fontSize: 36)),
+FILE: profile_setup_screen.dart LINE:33 >>> _GoalItem(icon: Icons.blur_circular_rounded, color: Color(0xFFFFAA00), title: 'Maintain Daily Azkar', description: 'Keep your heart alive — SubhanAllah, Alhamdulillah, AllahuAkbar, 99 times each', reward: '+20 per set'),
+FILE: profile_setup_screen.dart LINE:35 >>> _GoalItem(icon: Icons.volunteer_activism_rounded, color: Color(0xFF4FC3F7), title: 'Give Sadaqah Generously', description: 'Every dirham given sincerely extinguishes sin as water does fire — give and grow', reward: '+50 per gift'),
+FILE: profile_setup_screen.dart LINE:36 >>> _GoalItem(icon: Icons.school_rounded, color: Color(0xFFFF8A65), title: 'Deepen Islamic Knowledge', description: 'Explore seerah, fiqh and tafseer — the Prophet ﷺ said: "Seek knowledge from the cradle"', reward: '+25 per lesson'),
+FILE: profile_setup_screen.dart LINE:79 >>> // ── 1. Upsert into profiles table (primary persistent store) ──────────
+FILE: profile_setup_screen.dart LINE:88 >>> // ── 2. Cache a lightweight flag in auth metadata (fast app-start reads)
+FILE: profile_setup_screen.dart LINE:94 >>> // Fail silently — app flow continues regardless
+FILE: profile_setup_screen.dart LINE:154 >>> Text('مَا اسْمُكَ؟', style: GoogleFonts.amiri(fontSize: 28, color: const Color(0xFF00C875), fontWeight: FontWeight.bold)),
+FILE: profile_setup_screen.dart LINE:160 >>> _InputField(ctrl: _nameCtrl, hint: 'Ahmad, Fatima, Yusuf…', icon: Icons.person_outline_rounded, accent: const Color(0xFF00C875), onSubmit: _next),
+FILE: profile_setup_screen.dart LINE:169 >>> Text('مِنْ أَيْنَ أَنْتَ؟', style: GoogleFonts.amiri(fontSize: 28, color: const Color(0xFFFFAA00), fontWeight: FontWeight.bold)),
+FILE: profile_setup_screen.dart LINE:175 >>> _InputField(ctrl: _countryCtrl, hint: 'Pakistan, Egypt, Malaysia…', icon: Icons.public_rounded, accent: const Color(0xFFFFAA00), onSubmit: _next),
+FILE: profile_setup_screen.dart LINE:178 >>> Wrap(spacing: 10, runSpacing: 10, children: ['🇵🇰 Pakistan', '🇸🇦 Saudi Arabia', '🇪🇬 Egypt', '🇲🇾 Malaysia', '🇧🇩 Bangladesh', '🇬🇧 UK'].map((c) {
+FILE: profile_setup_screen.dart LINE:201 >>> Text('لِمَاذَا أَنْتَ هُنَا؟', style: GoogleFonts.amiri(fontSize: 26, color: const Color(0xFFDD88FF), fontWeight: FontWeight.bold)),
+FILE: profile_setup_screen.dart LINE:205 >>> Text('Choose your spiritual goals — you can select multiple', style: GoogleFonts.outfit(fontSize: 13, color: Colors.white54, height: 1.5)),
+FILE: quran_hub_screen.dart LINE:7 >>> // ── Palette ───────────────────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:17 >>> // ── Surah names (1-indexed, index 0 unused) ───────────────────────────────────
+FILE: quran_hub_screen.dart LINE:61 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:149 >>> // ── Navigate into the reading screen ─────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:160 >>> // ── Surah picker sheet ────────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:230 >>> // ── Verse / Ayah picker ───────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:298 >>> // ── Bookmarks / Favourites list sheet ─────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:339 >>> Text('Tap the ${isFavourites ? '❤️' : '🔖'} icon while reading to save verses.',
+FILE: quran_hub_screen.dart LINE:376 >>> Text('Surah $s  •  Verse $a',
+FILE: quran_hub_screen.dart LINE:403 >>> // ── Sticky header ─────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:426 >>> Text('القرآن الكريم',
+FILE: quran_hub_screen.dart LINE:445 >>> // ── Daily progress strip ─────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:449 >>> // ── Continue reading card ─────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:460 >>> // ── Start new position ────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:486 >>> // ── Big start button ──────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:511 >>> // ── Saved / Favourites grid ───────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:533 >>> // ── Quick access tiles ────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:569 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:571 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: quran_hub_screen.dart LINE:599 >>> const Text('🌟', style: TextStyle(fontSize: 14)),
+FILE: quran_hub_screen.dart LINE:658 >>> child: const Center(child: Text('📖', style: TextStyle(fontSize: 26))),
+FILE: quran_hub_screen.dart LINE:666 >>> Text('Surah ${widget.surah}  •  Verse ${widget.ayah}  •  Continue reading',
+FILE: quran_screen.dart LINE:13 >>> // ── Palette ────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:22 >>> // ── All 114 surah lengths (1-indexed, index 0 is unused) ──────────────────────
+FILE: quran_screen.dart LINE:40 >>> // ── Translation options ─────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:41 >>> // All from api.alquran.cloud — fetched on-demand, cached 7 days in Hive.
+FILE: quran_screen.dart LINE:46 >>> // ── English ────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:47 >>> (id:'en.sahih',       name:'English — Sahih Intl.',    author:'Saheeh International',            rtl:false),
+FILE: quran_screen.dart LINE:48 >>> (id:'en.pickthall',   name:'English — Pickthall',      author:'Mohammad Marmaduke Pickthall',    rtl:false),
+FILE: quran_screen.dart LINE:49 >>> (id:'en.asad',        name:'English — The Message',    author:'Muhammad Asad',                   rtl:false),
+FILE: quran_screen.dart LINE:50 >>> // ── Urdu ───────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:51 >>> (id:'ur.jalandhry',   name:'اردو — جالندھری',           author:'Fateh Muhammad Jalandhry',        rtl:true),
+FILE: quran_screen.dart LINE:52 >>> (id:'ur.kanzuliman',  name:'اردو — کنز الایمان',        author:'Imam Ahmad Raza Khan',            rtl:true),
+FILE: quran_screen.dart LINE:53 >>> (id:'ur.ahmedali',    name:'اردو — احمد علی',           author:'Shah Ahmed Ali',                  rtl:true),
+FILE: quran_screen.dart LINE:54 >>> (id:'ur.maududi',     name:'اردو — تفہیم القرآن',       author:'Maulana Sayyid Abul Ala Maududi', rtl:true),
+FILE: quran_screen.dart LINE:55 >>> // ── French ─────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:56 >>> (id:'fr.hamidullah',  name:'Français — Hamidullah',    author:'Muhammad Hamidullah',             rtl:false),
+FILE: quran_screen.dart LINE:60 >>> // ── Arabic font options ────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:66 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:72 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:78 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:84 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:90 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:96 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:102 >>> arabicPreview: 'بِسْمِ ٱللَّهِ',
+FILE: quran_screen.dart LINE:108 >>> // ── Reciter options ──────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:110 >>> ('ar.alafasy',      'Mishary',   '🎙️'),
+FILE: quran_screen.dart LINE:111 >>> ('ar.mahermuaiqly', 'Maher',     '🎙️'),
+FILE: quran_screen.dart LINE:112 >>> ('ar.abdulsamad',   'Al-Samad',  '🎙️'),
+FILE: quran_screen.dart LINE:123 >>> // ── Position ─────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:126 >>> // ── Loaded data ───────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:130 >>> // ── Settings ──────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:134 >>> // ── Reader Settings ───────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:151 >>> int    _currentPage       = 1;       // Quran page (1–604)
+FILE: quran_screen.dart LINE:169 >>> // ── Stats ─────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:172 >>> // ── Bookmarks (stored as "surah:ayah" strings) ────────────────────────────────
+FILE: quran_screen.dart LINE:176 >>> // ── UI state ──────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:180 >>> // ── Inline tafsir (bottom-sheet) ──────────────────────────────────────────────
+FILE: quran_screen.dart LINE:182 >>> (id:'en-tafisr-ibn-kathir',     name:'Ibn Kathir (EN)',  emoji:'🕌', src:'cdn',   slug:'en-tafisr-ibn-kathir',     rtl:false),
+FILE: quran_screen.dart LINE:183 >>> (id:'en-tafsir-maarif-ul-quran',name:'Maarif ul Quran',  emoji:'📚', src:'cdn',   slug:'en-tafsir-maarif-ul-quran', rtl:false),
+FILE: quran_screen.dart LINE:184 >>> (id:'ur-tafseer-ibn-e-kaseer',  name:'ابن کثیر (اردو)', emoji:'📖', src:'cdn',   slug:'ur-tafseer-ibn-e-kaseer',   rtl:true),
+FILE: quran_screen.dart LINE:185 >>> (id:'ur-tafsir-bayan-ul-quran', name:'بیان القرآن',     emoji:'🎓', src:'cdn',   slug:'ur-tafsir-bayan-ul-quran',  rtl:true),
+FILE: quran_screen.dart LINE:192 >>> // ── Feature-discovery hint tooltip ───────────────────────────────────────────
+FILE: quran_screen.dart LINE:194 >>> (icon: '🌙', text: 'Want Dark mode?'),
+FILE: quran_screen.dart LINE:195 >>> (icon: '🔡', text: 'Adjust font size'),
+FILE: quran_screen.dart LINE:196 >>> (icon: '🌍', text: 'Change translation'),
+FILE: quran_screen.dart LINE:197 >>> (icon: '⛶',  text: 'Try full screen!'),
+FILE: quran_screen.dart LINE:198 >>> (icon: '🎨', text: 'Change colour theme'),
+FILE: quran_screen.dart LINE:199 >>> (icon: '🔤', text: 'Arabic font size'),
+FILE: quran_screen.dart LINE:207 >>> // ── Audio ─────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:212 >>> // ── Cache ─────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:217 >>> // ── Theme accent ──────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:219 >>> (Color(0xFF2BAE99), 'Teal',   '🌊'),
+FILE: quran_screen.dart LINE:220 >>> (Color(0xFF6C63FF), 'Indigo', '🔮'),
+FILE: quran_screen.dart LINE:221 >>> (Color(0xFFE67E22), 'Amber',  '🔥'),
+FILE: quran_screen.dart LINE:222 >>> (Color(0xFFE91E63), 'Rose',   '🌸'),
+FILE: quran_screen.dart LINE:223 >>> (Color(0xFF2196F3), 'Blue',   '💧'),
+FILE: quran_screen.dart LINE:227 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:323 >>> // _timerShouldRun is user intent — only explicit play/pause changes it.
+FILE: quran_screen.dart LINE:333 >>> // whatever the user last chose — even through multiple lock/unlock cycles.
+FILE: quran_screen.dart LINE:361 >>> // ── Load last read position + today's stats ───────────────────────────────────
+FILE: quran_screen.dart LINE:383 >>> // ── Load all bookmarks for this user ─────────────────────────────────────────
+FILE: quran_screen.dart LINE:396 >>> // ── Load favourites for this user ─────────────────────────────────────────────
+FILE: quran_screen.dart LINE:409 >>> // ── Fetch ayah from cache or API ─────────────────────────────────────────────
+FILE: quran_screen.dart LINE:415 >>> // ── 1. Hive cache hit (7-day TTL) — skip entry if translation is empty ──
+FILE: quran_screen.dart LINE:438 >>> // ── Fetch from network (cache miss) ──────────────────────────────────────
+FILE: quran_screen.dart LINE:467 >>> // Free alquran.cloud API — delivers the whole surah in one request
+FILE: quran_screen.dart LINE:520 >>> // ── Navigate to next ayah ────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:552 >>> // Record quran streak (idempotent — only counts once per day)
+FILE: quran_screen.dart LINE:568 >>> // ── Navigate to previous ayah ─────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:580 >>> // ── Fetch word-by-word data ───────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:623 >>> // ── Surah → first page lookup (Hafs Uthmani) — offline fallback ──────────────
+FILE: quran_screen.dart LINE:666 >>> // ── Full-page Mushaf: fetch all ayahs for a page ─────────────────────────────
+FILE: quran_screen.dart LINE:712 >>> // ── Full-page timer: 1 XP per 30 seconds ─────────────────────────────────────
+FILE: quran_screen.dart LINE:713 >>> // Fresh start — resets seconds (use when entering full-page or navigating pages)
+FILE: quran_screen.dart LINE:723 >>> // Resume — continues from current _pageSeconds (use after pause/screen-unlock)
+FILE: quran_screen.dart LINE:756 >>> // ── Jump to specific surah ────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:795 >>> // ── Toggle bookmark ───────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:818 >>> // ── Inline Tafsir ────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:904 >>> Expanded(child: Text('Tafsir · $_surahName $_surah:$_ayah',
+FILE: quran_screen.dart LINE:971 >>> const Text('📖', style: TextStyle(fontSize: 40)),
+FILE: quran_screen.dart LINE:1005 >>> // ── Audio playback ────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:1016 >>> // Always stop → setUrl → play (most reliable pattern across devices)
+FILE: quran_screen.dart LINE:1031 >>> _showSnack('Audio unavailable — check internet connection.');
+FILE: quran_screen.dart LINE:1062 >>> // ── Toggle favourite ──────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:1096 >>> _showSnack(adding ? '♥️ Added to Favourites' : 'Removed from Favourites');
+FILE: quran_screen.dart LINE:1099 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:1215 >>> // ═ APPEARANCE
+FILE: quran_screen.dart LINE:1460 >>> // ═ ARABIC FONT STYLE
+FILE: quran_screen.dart LINE:1552 >>> // ═ READING LAYOUT
+FILE: quran_screen.dart LINE:1576 >>> // ═ AUDIO & PLAYBACK
+FILE: quran_screen.dart LINE:1593 >>> // ═ NOTIFICATIONS
+FILE: quran_screen.dart LINE:1607 >>> // ═ ADVANCED
+FILE: quran_screen.dart LINE:1725 >>> // ── build() ────────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:1773 >>> // Tune button — glows when hint is showing
+FILE: quran_screen.dart LINE:1818 >>> const Text('🌟', style: TextStyle(fontSize: 16)),
+FILE: quran_screen.dart LINE:1857 >>> Text('$_surahName • Surah $_surah',
+FILE: quran_screen.dart LINE:1865 >>> '${_surahLengths[_surah]}  •  Tap to change',
+FILE: quran_screen.dart LINE:1914 >>> // ── Action pills row ─────────────────────────────────────────
+FILE: quran_screen.dart LINE:1920 >>> // 📖 Read Tafsir
+FILE: quran_screen.dart LINE:1929 >>> // 🎧 Listen
+FILE: quran_screen.dart LINE:1944 >>> // 🗒️ Full Page — always visible
+FILE: quran_screen.dart LINE:1947 >>> label: _fullPageMode ? 'Page $_currentPage  ✕' : 'Full Page',
+FILE: quran_screen.dart LINE:1962 >>> _currentPage = page;   // ← sync to current position
+FILE: quran_screen.dart LINE:1974 >>> // 🔤 Word by Word
+FILE: quran_screen.dart LINE:2005 >>> // ── Full Page Mushaf Mode ──────────────────────────────────
+FILE: quran_screen.dart LINE:2008 >>> // ── Word-by-Word Mode ────────────────────────────────────
+FILE: quran_screen.dart LINE:2033 >>> // ── Full Verse Mode ──────────────────────────────────────
+FILE: quran_screen.dart LINE:2075 >>> // ── Full Page Timer Bar ──────────────────────────────────────────────
+FILE: quran_screen.dart LINE:2097 >>> Text('Page Reading · Page $_currentPage',
+FILE: quran_screen.dart LINE:2121 >>> // User explicitly pausing — clear intent
+FILE: quran_screen.dart LINE:2230 >>> // Audio player — shown only when user taps Listen
+FILE: quran_screen.dart LINE:2304 >>> // ── Full-Page Mushaf View ─────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:2349 >>> // ── Page header ──
+FILE: quran_screen.dart LINE:2359 >>> '— صفحة $_currentPage —',
+FILE: quran_screen.dart LINE:2366 >>> // ── Continuous RTL text with ayah markers ──
+FILE: quran_screen.dart LINE:2404 >>> 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+FILE: quran_screen.dart LINE:2464 >>> // ── Word-by-Word View ─────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:2508 >>> // ── Row 1: Reciter chips in horizontally scrollable row ───────────────
+FILE: quran_screen.dart LINE:2510 >>> const Text('🎙️', style: TextStyle(fontSize: 13)),
+FILE: quran_screen.dart LINE:2542 >>> // ── Row 2: Seek slider ──────────────────────────────────────────
+FILE: quran_screen.dart LINE:2560 >>> // ── Row 3: Controls + timer on same row ───────────────────────────
+FILE: quran_screen.dart LINE:2661 >>> // ── All 114 surah names ───────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:2688 >>> // ── Pill Button Widget ────────────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:2776 >>> // ── Word-by-Word Chip Widget ──────────────────────────────────────────────────
+FILE: quran_screen.dart LINE:2859 >>> // Arabic word — naturally sized
+FILE: quran_screen.dart LINE:2874 >>> // Gold underline — stretches to match the column's intrinsic width
+FILE: quran_screen.dart LINE:2883 >>> // English translation — centered, same width as Arabic
+FILE: start_journey_screen.dart LINE:51 >>> // ── Deep gradient background ───────────────────────────────────────
+FILE: start_journey_screen.dart LINE:69 >>> // ── Radial emerald glow (behind lantern) ───────────────────────────
+FILE: start_journey_screen.dart LINE:91 >>> // ── Bottom gold glow ───────────────────────────────────────────────
+FILE: start_journey_screen.dart LINE:113 >>> // ── Floating Islamic icons in background ───────────────────────────
+FILE: start_journey_screen.dart LINE:129 >>> // ── Islamic geometric star tiling ──────────────────────────────────
+FILE: start_journey_screen.dart LINE:134 >>> // ── Main content ───────────────────────────────────────────────────
+FILE: start_journey_screen.dart LINE:187 >>> 'نُورُ الرَّحْمَةِ',
+FILE: start_journey_screen.dart LINE:312 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: start_journey_screen.dart LINE:314 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: start_journey_screen.dart LINE:356 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: start_journey_screen.dart LINE:358 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:2 >>> // Full-page streak showcase — gamified, animated, spiritual aesthetic.
+FILE: streak_screen.dart LINE:71 >>> // ── Animated radial background ─────────────────────────────────────
+FILE: streak_screen.dart LINE:80 >>> // ── App bar ──────────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:103 >>> // ── Hero flame ───────────────────────────────────────
+FILE: streak_screen.dart LINE:112 >>> // ── 3 flame cards ─────────────────────────────────────
+FILE: streak_screen.dart LINE:129 >>> // ── 7-day calendar ────────────────────────────────────
+FILE: streak_screen.dart LINE:133 >>> // ── Milestone progress ────────────────────────────────
+FILE: streak_screen.dart LINE:142 >>> // ── All milestones list ───────────────────────────────
+FILE: streak_screen.dart LINE:152 >>> // ── Background aura painter ───────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:182 >>> // ── Hero flame widget ─────────────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:230 >>> const Text('🔥', style: TextStyle(fontSize: 36)),
+FILE: streak_screen.dart LINE:247 >>> ? 'Start your streak today! 🌟'
+FILE: streak_screen.dart LINE:249 >>> ? '👑 Centurion — Masha\'Allah!'
+FILE: streak_screen.dart LINE:282 >>> // ── Individual flame card (one per streak type) ───────────────────────────────
+FILE: streak_screen.dart LINE:358 >>> // ── 7-day calendar ────────────────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:466 >>> // ── Milestone progress bar ────────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:526 >>> '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go — keep it up! 💪',
+FILE: streak_screen.dart LINE:536 >>> // ── Full milestone list ───────────────────────────────────────────────────────
+FILE: streak_screen.dart LINE:578 >>> done ? m.emoji : '🔒',
+FILE: tafsir_hub_screen.dart LINE:6 >>> // ── Palette ────────────────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:13 >>> // ── Featured Surahs ──────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:15 >>> (1,  'Al-Fatihah',     'The Opening',         '🌟', 7),
+FILE: tafsir_hub_screen.dart LINE:16 >>> (2,  'Al-Baqarah',     'The Cow',             '📖', 286),
+FILE: tafsir_hub_screen.dart LINE:17 >>> (18, 'Al-Kahf',        'The Cave',            '🕌', 110),
+FILE: tafsir_hub_screen.dart LINE:18 >>> (36, 'Ya-Sin',         'Ya-Sin',              '✨', 83),
+FILE: tafsir_hub_screen.dart LINE:19 >>> (55, 'Ar-Rahman',      'The Most Gracious',   '💚', 78),
+FILE: tafsir_hub_screen.dart LINE:20 >>> (56, "Al-Waqi'ah",     "The Inevitable",      '🌙', 96),
+FILE: tafsir_hub_screen.dart LINE:21 >>> (67, 'Al-Mulk',        'The Sovereignty',     '👑', 30),
+FILE: tafsir_hub_screen.dart LINE:22 >>> (112,'Al-Ikhlas',      'The Sincerity',       '❤️', 4),
+FILE: tafsir_hub_screen.dart LINE:25 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:78 >>> // ── Hero AppBar ──────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:119 >>> const Text('📚', style: TextStyle(fontSize: 42)),
+FILE: tafsir_hub_screen.dart LINE:137 >>> // ── Body ─────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:142 >>> // ── Resume card ─────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:155 >>> // ── Points info ─────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:169 >>> child: Text('🎧', style: TextStyle(fontSize: 22))),
+FILE: tafsir_hub_screen.dart LINE:186 >>> // ── Featured surahs ─────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:214 >>> // ── Browse all ───────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:248 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:250 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:305 >>> child: Text('▶️', style: TextStyle(fontSize: 24))),
+FILE: tafsir_hub_screen.dart LINE:329 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_hub_screen.dart LINE:331 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:12 >>> // ── Palette ────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:21 >>> // ── Surah lengths (1-indexed) ─────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:65 >>> // ── Tafsir sources ───────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:67 >>> //  'cloud'  → api.alquran.cloud/v1/ayah/{ref}/editions/quran-simple,en.sahih,{id}
+FILE: tafsir_screen.dart LINE:68 >>> //  'cdn'    → cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/{slug}/{surah}.json
+FILE: tafsir_screen.dart LINE:74 >>> // ── English ──────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:75 >>> (id:'en-tafisr-ibn-kathir',    name:'Ibn Kathir (EN)',   emoji:'🕌', src:'cdn',   slug:'en-tafisr-ibn-kathir',    rtl:false),
+FILE: tafsir_screen.dart LINE:76 >>> (id:'en-tafsir-maarif-ul-quran',name:"Maarif ul Quran", emoji:'📚', src:'cdn',   slug:'en-tafsir-maarif-ul-quran', rtl:false),
+FILE: tafsir_screen.dart LINE:77 >>> // ── Urdu ─────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:78 >>> (id:'ur-tafseer-ibn-e-kaseer', name:'ابن کثیر (اردو)',  emoji:'📖', src:'cdn',   slug:'ur-tafseer-ibn-e-kaseer',   rtl:true),
+FILE: tafsir_screen.dart LINE:79 >>> (id:'ur-tafsir-bayan-ul-quran',name:'بیان القرآن',      emoji:'🎓', src:'cdn',   slug:'ur-tafsir-bayan-ul-quran',  rtl:true),
+FILE: tafsir_screen.dart LINE:80 >>> // ── Arabic (classical) ───────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:81 >>> (id:'ar.muyassar',             name:'المیسَّر',          emoji:'🌙', src:'cloud', slug:'',                          rtl:true),
+FILE: tafsir_screen.dart LINE:82 >>> (id:'ar.jalalayn',             name:'الجلالین',          emoji:'📜', src:'cloud', slug:'',                          rtl:true),
+FILE: tafsir_screen.dart LINE:83 >>> (id:'ar.qurtubi',              name:'القرطبی',           emoji:'🏛️', src:'cloud', slug:'',                          rtl:true),
+FILE: tafsir_screen.dart LINE:86 >>> // ── Reciters for audio ────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:93 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:103 >>> // ── Position ────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:107 >>> // ── Content ─────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:113 >>> // ── Settings ─────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:120 >>> // ── Points ───────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:123 >>> // ── Audio ────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:130 >>> // ── Supabase / cache ─────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:137 >>> // ── Lifecycle ────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:176 >>> // ── Data loading ─────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:185 >>> // ── Cache hit ────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:195 >>> // ── Fetch Arabic + English translation for the entire Surah ──────────────
+FILE: tafsir_screen.dart LINE:215 >>> // ── Fetch tafsir text for the entire Surah (if CDN) ──────────────────────
+FILE: tafsir_screen.dart LINE:245 >>> // ── Pre-cache all verses in the Surah ────────────────────────────────────
+FILE: tafsir_screen.dart LINE:308 >>> // ── Audio controls ────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:319 >>> // ── Navigation ────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:342 >>> // ── Settings sheet ────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:363 >>> // ── Surah picker ──────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:411 >>> // ── Build ─────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:442 >>> // ── Surah selector bar ─────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:451 >>> Text('$_surahName • Surah $_surah',
+FILE: tafsir_screen.dart LINE:464 >>> // ── Main scrollable content ────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:469 >>> // ── Arabic ayah card ─────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:500 >>> // ── Translation ──────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:533 >>> // ── Tafsir text ──────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:553 >>> Text('Tafsir · ${_tafsirEditions[_tafsirIdx].name}',
+FILE: tafsir_screen.dart LINE:601 >>> // ── Audio player ──────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:605 >>> // ── Nav buttons ───────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:755 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: tafsir_screen.dart LINE:757 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: welcome_gate_screen.dart LINE:92 >>> Text('مَرْحَبًا', style: GoogleFonts.amiri(fontSize: 46, color: const Color(0xFFFFAA00), fontWeight: FontWeight.bold, height: 1.2)),
+FILE: welcome_gate_screen.dart LINE:100 >>> TextSpan(text: ' 🌙', style: GoogleFonts.outfit(fontSize: 26)),
+FILE: admin_dashboard.dart LINE:2 >>> // Full admin panel — sidebar nav + 6 sections
+FILE: admin_dashboard.dart LINE:15 >>> // ── palette ─────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:26 >>> // ── nav items ────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:39 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:65 >>> // ── Sidebar ────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:67 >>> // ── Content ────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:94 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:96 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:113 >>> const Text('🌙', style: TextStyle(fontSize: 28)),
+FILE: admin_dashboard.dart LINE:168 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:170 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:207 >>> // Back button — always present on phone
+FILE: admin_dashboard.dart LINE:227 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:228 >>> // SECTION 0 — Overview
+FILE: admin_dashboard.dart LINE:229 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:266 >>> _StatCard('👥', 'Total Users',    _loading ? '…' : '$_totalUsers',    _kAccent),
+FILE: admin_dashboard.dart LINE:267 >>> _StatCard('⭐', 'Total XP Earned', _loading ? '…' : '$_totalXp',      const Color(0xFF6B4EBB)),
+FILE: admin_dashboard.dart LINE:268 >>> _StatCard('🕌', 'Projects',         _loading ? '…' : '$_totalProjects', _kGold),
+FILE: admin_dashboard.dart LINE:269 >>> _StatCard('🏅', 'Badges Earned',    _loading ? '…' : '$_totalBadges',  const Color(0xFFE05C6A)),
+FILE: admin_dashboard.dart LINE:281 >>> _ConfigChip('Maintenance',   cfg.maintenanceMode ? 'ON 🔴' : 'Off'),
+FILE: admin_dashboard.dart LINE:282 >>> _ConfigChip('Banner',        cfg.bannerEnabled ? 'LIVE 🟢' : 'Off'),
+FILE: admin_dashboard.dart LINE:335 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:336 >>> // SECTION 1 — Economy Controls
+FILE: admin_dashboard.dart LINE:337 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:349 >>> (key: 'coins_per_ayah',         label: 'Coins per Ayah',            icon: '📖'),
+FILE: admin_dashboard.dart LINE:350 >>> (key: 'coins_per_dhikr',        label: 'Coins per Dhikr Set',       icon: '📿'),
+FILE: admin_dashboard.dart LINE:351 >>> (key: 'coins_per_tafsir_10min', label: 'Coins per 10min Tafsir',    icon: '🎧'),
+FILE: admin_dashboard.dart LINE:352 >>> (key: 'coins_per_dua',          label: 'Coins per Dua',             icon: '🤲'),
+FILE: admin_dashboard.dart LINE:353 >>> (key: 'xp_per_ayah',            label: 'XP per Ayah',               icon: '⭐'),
+FILE: admin_dashboard.dart LINE:354 >>> (key: 'xp_per_dhikr',           label: 'XP per Dhikr Set',          icon: '✨'),
+FILE: admin_dashboard.dart LINE:355 >>> (key: 'xp_per_tafsir_10min',    label: 'XP per 10min Tafsir',       icon: '🌟'),
+FILE: admin_dashboard.dart LINE:356 >>> (key: 'xp_daily_login',         label: 'XP Daily Login',            icon: '☀️'),
+FILE: admin_dashboard.dart LINE:357 >>> (key: 'xp_validate_coins',      label: 'XP for Validation',         icon: '✅'),
+FILE: admin_dashboard.dart LINE:358 >>> (key: 'daily_free_cap',         label: 'Daily Free Coins Cap',      icon: '🔒'),
+FILE: admin_dashboard.dart LINE:359 >>> (key: 'weekly_xp_cap',          label: 'Weekly XP Cap',             icon: '📅'),
+FILE: admin_dashboard.dart LINE:382 >>> _snack('Economy config saved ✅');
+FILE: admin_dashboard.dart LINE:393 >>> _SectionHeader('Earning Rates', '💰',
+FILE: admin_dashboard.dart LINE:415 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:416 >>> // SECTION 2 — Theme & Colors
+FILE: admin_dashboard.dart LINE:417 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:428 >>> // ── Quick-theme presets ───────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:430 >>> (name: 'Noor Classic', emoji: '🌿',
+FILE: admin_dashboard.dart LINE:433 >>> (name: 'Midnight',     emoji: '🌙',
+FILE: admin_dashboard.dart LINE:436 >>> (name: 'Rose Garden',  emoji: '🌸',
+FILE: admin_dashboard.dart LINE:439 >>> (name: 'Ocean',        emoji: '🌊',
+FILE: admin_dashboard.dart LINE:442 >>> (name: 'Autumn',       emoji: '🍂',
+FILE: admin_dashboard.dart LINE:445 >>> (name: 'Monochrome',   emoji: '🖤',
+FILE: admin_dashboard.dart LINE:489 >>> const SnackBar(content: Text('Theme updated — app recolors instantly ✅'),
+FILE: admin_dashboard.dart LINE:502 >>> // ── Quick Theme Presets ─────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:503 >>> Text('⚡ Quick Themes', style: GoogleFonts.outfit(
+FILE: admin_dashboard.dart LINE:506 >>> Text('One tap to load a preset — then fine-tune with the colour pickers below.',
+FILE: admin_dashboard.dart LINE:585 >>> // ── Manual colour pickers ────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:586 >>> _SectionHeader('App Colors', '🎨',
+FILE: admin_dashboard.dart LINE:699 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:700 >>> // SECTION 3 — Projects Manager
+FILE: admin_dashboard.dart LINE:701 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:743 >>> final emojiCtrl  = TextEditingController(text: existing?['emoji']  ?? '🕌');
+FILE: admin_dashboard.dart LINE:752 >>> emojiCtrl.text = '🖼️ [Custom Image Attached]';
+FILE: admin_dashboard.dart LINE:783 >>> _Field('Emoji (e.g. 🕌)', emojiCtrl),
+FILE: admin_dashboard.dart LINE:796 >>> return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(text, fit: BoxFit.cover, errorBuilder: (_,__,___)=>const Text('🖼️')));
+FILE: admin_dashboard.dart LINE:798 >>> return Text(text.isNotEmpty ? text : '🕌', style: const TextStyle(fontSize: 20));
+FILE: admin_dashboard.dart LINE:829 >>> emojiCtrl.text = '🕌';
+FILE: admin_dashboard.dart LINE:884 >>> Expanded(child: _SectionHeader('Charity Projects', '🕌', 'Manage community projects.')),
+FILE: admin_dashboard.dart LINE:919 >>> final e = p['emoji']?.toString() ?? '🕌';
+FILE: admin_dashboard.dart LINE:925 >>> errorBuilder: (_, __, ___) => const Text('🖼️', style: TextStyle(fontSize: 22))),
+FILE: admin_dashboard.dart LINE:931 >>> errorBuilder: (_, __, ___) => const Text('🖼️', style: TextStyle(fontSize: 22))),
+FILE: admin_dashboard.dart LINE:1006 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1007 >>> // SECTION 4 — User Management
+FILE: admin_dashboard.dart LINE:1008 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1057 >>> _SectionHeader('Users', '👥', 'Top 100 users by XP.'),
+FILE: admin_dashboard.dart LINE:1062 >>> hintText: 'Search name…',
+FILE: admin_dashboard.dart LINE:1140 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1141 >>> // SECTION 5 — Feature Flags
+FILE: admin_dashboard.dart LINE:1142 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1156 >>> (key: 'maintenance_mode',    label: 'Maintenance Mode 🔴', desc: 'Block all users from using app'),
+FILE: admin_dashboard.dart LINE:1170 >>> _SectionHeader('Feature Flags', '🚩', 'Toggle features on/off for all users instantly.'),
+FILE: admin_dashboard.dart LINE:1198 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1199 >>> // SECTION 6 — Banners & Messages
+FILE: admin_dashboard.dart LINE:1200 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1229 >>> if (mounted) { setState(() => _saving = false); _snack('Messages saved ✅'); }
+FILE: admin_dashboard.dart LINE:1245 >>> _SectionHeader('Banners & Messages', '📢', 'Control in-app announcements and contact info.'),
+FILE: admin_dashboard.dart LINE:1274 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1275 >>> // SECTION 7 — Raw Config (all rows, editable inline)
+FILE: admin_dashboard.dart LINE:1276 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1319 >>> _SectionHeader('All Config Keys', '⚙️', 'Click the edit icon to change any value directly.'),
+FILE: admin_dashboard.dart LINE:1408 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: admin_dashboard.dart LINE:1410 >>> // ─────────────────────────────────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:3 >>> // Admin Dashboard — Sponsor Report screen.
+FILE: sponsor_analytics_section.dart LINE:12 >>> // ── Palette (mirrors admin_dashboard.dart) ─────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:73 >>> // ── Header ─────────────────────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:76 >>> Text('🌍', style: const TextStyle(fontSize: 22)),
+FILE: sponsor_analytics_section.dart LINE:87 >>> // ── Summary chips ──────────────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:98 >>> _SummaryChip('👥', 'Active Users', _fmtNum(totalUsers), _kAccent),
+FILE: sponsor_analytics_section.dart LINE:99 >>> _SummaryChip('🪙', 'Total Coins', _fmtNum(totalCoins), _kGold),
+FILE: sponsor_analytics_section.dart LINE:100 >>> _SummaryChip('⏱️', 'Avg Session', _fmtDur(avgSession), _kPurple),
+FILE: sponsor_analytics_section.dart LINE:101 >>> _SummaryChip('🌐', 'Countries', '${_countryData.length}', _kRose),
+FILE: sponsor_analytics_section.dart LINE:105 >>> // ── Country bar chart ──────────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:114 >>> title: '📍 Active Users by Country',
+FILE: sponsor_analytics_section.dart LINE:175 >>> // ── Device session chart ───────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:194 >>> title: '📱 Users by Device Type',
+FILE: sponsor_analytics_section.dart LINE:235 >>> // ── Coins-by-region table ──────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:240 >>> title: '🪙 Noor Coins by Region',
+FILE: sponsor_analytics_section.dart LINE:259 >>> final country = (r['country_code'] ?? '—') as String;
+FILE: sponsor_analytics_section.dart LINE:287 >>> // ── Helpers ────────────────────────────────────────────────────────────────
+FILE: sponsor_analytics_section.dart LINE:305 >>> if (sec <= 0) return '—';
+FILE: sponsor_analytics_section.dart LINE:313 >>> if (code.length != 2) return '🌐';
+FILE: sponsor_analytics_section.dart LINE:321 >>> // ═════════════════════════════════════════════════════════════════════════════
+FILE: sponsor_analytics_section.dart LINE:323 >>> // ═════════════════════════════════════════════════════════════════════════════
+FILE: settings_service.dart LINE:12 >>> // ── Singleton ────────────────────────────────────────────────────────────
+FILE: settings_service.dart LINE:16 >>> // ── State ────────────────────────────────────────────────────────────────
+FILE: settings_service.dart LINE:24 >>> // ── Supabase client ───────────────────────────────────────────────────────
+FILE: settings_service.dart LINE:27 >>> // ── Public API ────────────────────────────────────────────────────────────
+FILE: settings_service.dart LINE:65 >>> // ── Private ───────────────────────────────────────────────────────────────
+FILE: settings_service.dart LINE:93 >>> // Any INSERT / UPDATE / DELETE → re-fetch the full table
+FILE: streak_service.dart LINE:2 >>> // Three-type streak system: login · dhikr · quran
+FILE: streak_service.dart LINE:7 >>> // ── Streak type enum ──────────────────────────────────────────────────────────
+FILE: streak_service.dart LINE:21 >>> case StreakType.login:  return '☀️';
+FILE: streak_service.dart LINE:22 >>> case StreakType.dhikr: return '📿';
+FILE: streak_service.dart LINE:23 >>> case StreakType.quran: return '📖';
+FILE: streak_service.dart LINE:28 >>> // ── Full streak snapshot for a user ──────────────────────────────────────────
+FILE: streak_service.dart LINE:74 >>> // ── Milestone definition ──────────────────────────────────────────────────────
+FILE: streak_service.dart LINE:87 >>> StreakMilestone(days: 3,   label: 'Warming Up',    emoji: '🌱', xpBonus: 15),
+FILE: streak_service.dart LINE:88 >>> StreakMilestone(days: 7,   label: 'One Week',       emoji: '🔥', xpBonus: 30),
+FILE: streak_service.dart LINE:89 >>> StreakMilestone(days: 14,  label: 'Two Weeks',      emoji: '⚡', xpBonus: 60),
+FILE: streak_service.dart LINE:90 >>> StreakMilestone(days: 30,  label: 'One Month',      emoji: '🌟', xpBonus: 100),
+FILE: streak_service.dart LINE:91 >>> StreakMilestone(days: 60,  label: 'Two Months',     emoji: '💎', xpBonus: 200),
+FILE: streak_service.dart LINE:92 >>> StreakMilestone(days: 100, label: 'The Centurion',  emoji: '👑', xpBonus: 400),
+FILE: streak_service.dart LINE:112 >>> // ── Streak Service ────────────────────────────────────────────────────────────
+FILE: streak_service.dart LINE:119 >>> // ── Record activity (idempotent — safe to call multiple times per day) ──────
+FILE: streak_service.dart LINE:172 >>> // ── Load full snapshot ────────────────────────────────────────────────────
+FILE: streak_service.dart LINE:236 >>> // ── Convenience: combined "max" streak for top-bar display ───────────────
+FILE: tracking_service.dart LINE:4 >>> //   • No IP addresses stored
+FILE: tracking_service.dart LINE:5 >>> //   • No GPS / location permissions required
+FILE: tracking_service.dart LINE:6 >>> //   • Country resolved server-side via ip-api.com (free, no key needed)
+FILE: tracking_service.dart LINE:7 >>> //   • All writes are tied to auth.uid() — RLS enforced on Supabase
+FILE: tracking_service.dart LINE:26 >>> // ── Session lifecycle ──────────────────────────────────────────────────────
+FILE: tracking_service.dart LINE:54 >>> // Fail silently — analytics must never crash the app
+FILE: tracking_service.dart LINE:63 >>> // ── Internal ───────────────────────────────────────────────────────────────
+FILE: tracking_service.dart LINE:83 >>> /// Returns ISO 3166-1 alpha-2 country code ('PK', 'GB', …) using ip-api.
+FILE: tracking_service.dart LINE:84 >>> /// The raw IP is NEVER stored — we only keep the country code.
+FILE: xp_service.dart LINE:7 >>> // ── XP Rewards ─────────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:14 >>> // ── Per-dhikr XP weights ──────────────────────────────────────────────────
+FILE: xp_service.dart LINE:16 >>> // Higher count or deeper meaning → higher XP.
+FILE: xp_service.dart LINE:18 >>> // General — short (×33)
+FILE: xp_service.dart LINE:22 >>> // General — higher count (×100), deeper significance
+FILE: xp_service.dart LINE:26 >>> // Morning adhkar — one-off supplications
+FILE: xp_service.dart LINE:30 >>> 'morning_tasbih':           12, // ×100
+FILE: xp_service.dart LINE:31 >>> // Evening adhkar — one-off supplications
+FILE: xp_service.dart LINE:34 >>> 'evening_tasbih':           12, // ×100
+FILE: xp_service.dart LINE:52 >>> // ── Level info ─────────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:67 >>> String get displayTitle => '$title • Level $level';
+FILE: xp_service.dart LINE:77 >>> // ── Badge model ────────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:92 >>> // ── Strict level thresholds (in-app fallback — mirrors DB xp_levels table) ────
+FILE: xp_service.dart LINE:113 >>> // ── XP Service ─────────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:120 >>> // ── Earn XP ──────────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:147 >>> // ── Per-dhikr XP ─────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:152 >>> // ── Active challenge multiplier ───────────────────────────────────────────────
+FILE: xp_service.dart LINE:186 >>> // ── Milestone badge auto-award ────────────────────────────────────────────────
+FILE: xp_service.dart LINE:188 >>> /// Fire-and-forget — errors are silently swallowed.
+FILE: xp_service.dart LINE:198 >>> // ── Award badge ───────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:199 >>> /// Awards a badge by ID (idempotent — safe to call multiple times).
+FILE: xp_service.dart LINE:215 >>> // ── Daily login XP ────────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:244 >>> // ── Validate & Support XP ─────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:273 >>> // ── Daily Dhikr Goal XP ──────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:300 >>> // Silently fail — never crash the UI over a reward insert
+FILE: xp_service.dart LINE:305 >>> // ── Load current user profile ─────────────────────────────────────────────────
+FILE: xp_service.dart LINE:325 >>> // ── Load all levels ───────────────────────────────────────────────────────────
+FILE: xp_service.dart LINE:335 >>> // ── Resolve LevelInfo (DB-first, strict fallback curve) ──────────────────────
+FILE: xp_service.dart LINE:374 >>> // Beyond the last defined level — use a steep curve
+FILE: xp_service.dart LINE:396 >>> // ── Load badges with earned status ───────────────────────────────────────────
+FILE: xp_service.dart LINE:417 >>> emoji:       b['emoji']       ?? '🏅',
+FILE: xp_service.dart LINE:426 >>> // ── Load active challenges with user progress ─────────────────────────────────
+FILE: xp_service.dart LINE:461 >>> // ── Global leaderboard ───────────────────────────────────────────────────────
+FILE: impact_animation.dart LINE:58 >>> // Official LottieFiles CDN — success checkmark (green/gold compatible)
+FILE: impact_animation.dart LINE:166 >>> // "Impact Made!" title — Emerald green
+FILE: impact_animation.dart LINE:168 >>> 'Impact Made! 🌟',
+FILE: impact_animation.dart LINE:179 >>> // Subtitle — Gold accent text
