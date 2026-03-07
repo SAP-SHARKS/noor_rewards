@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'quran_screen.dart';
+import '../widgets/noor_icons.dart';
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 const _kBg    = Color(0xFFF7F3EE);
@@ -336,7 +337,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                 const SizedBox(height: 12),
                 Text('No $title yet', style: GoogleFonts.outfit(fontSize: 16, color: _kSub)),
                 const SizedBox(height: 6),
-                Text('Tap the ${isFavourites ? '❤️' : '🔖'} icon while reading to save verses.',
+                 Text('Tap the heart/bookmark icon while reading to save verses.',
                     style: GoogleFonts.outfit(fontSize: 13, color: Colors.grey.shade400),
                     textAlign: TextAlign.center),
               ])))
@@ -596,7 +597,7 @@ class _ProgressStrip extends StatelessWidget {
       child: Row(children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            const Text('🌟', style: TextStyle(fontSize: 14)),
+            NoorIcon.star(size: 14),
             const SizedBox(width: 6),
             Text("Today's Progress",
                 style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _kTeal)),
@@ -655,7 +656,7 @@ class _ContinueCardState extends State<_ContinueCard> {
               decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16)),
-              child: const Center(child: Text('📖', style: TextStyle(fontSize: 26))),
+              child: Center(child: NoorIcon.book(size: 26)),
             ),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

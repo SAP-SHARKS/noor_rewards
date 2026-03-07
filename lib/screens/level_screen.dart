@@ -1,4 +1,4 @@
-// lib/screens/level_screen.dart
+﻿// lib/screens/level_screen.dart
 // Full XP / Levels / Badges / Challenges / History screen
 
 import 'dart:math' as math;
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
+import '../widgets/noor_icons.dart';
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 const _kBg     = Color(0xFFF7F3EE);
@@ -28,27 +29,27 @@ Color _tierColor(String title) {
   }
 }
 
-String _tierEmoji(String title) {
+Widget _tierIcon(String title, {double size = 32}) {
   switch (title) {
-    case 'Seeker':   return '🌱';
-    case 'Believer': return '🌟';
-    case 'Devoted':  return '💜';
-    case 'Champion': return '🏆';
-    case 'Legend':   return '👑';
-    default:         return '✨';
+    case 'Seeker':   return NoorIcon.seedling(size: size);
+    case 'Believer': return NoorIcon.star(size: size);
+    case 'Devoted':  return NoorIcon.heart(size: size);
+    case 'Champion': return NoorIcon.trophy(size: size);
+    case 'Legend':   return NoorIcon.crown(size: size);
+    default:         return NoorIcon.sparkles(size: size);
   }
 }
 
 // Activity type → readable label + emoji + colour
-({String label, String emoji, Color color}) _activityMeta(String type) {
+({String label, Widget icon, Color color}) _activityMeta(String type) {
   switch (type) {
-    case 'login':    return (label: 'Daily Login',       emoji: '☀️',  color: const Color(0xFF00897B));
-    case 'validate': return (label: 'Validate & Support',emoji: '✅',  color: const Color(0xFF6B4EBB));
-    case 'quran':    return (label: 'Read Quran',         emoji: '📖',  color: const Color(0xFF1565C0));
-    case 'dhikr':    return (label: 'Dhikar & Dua',       emoji: '📿',  color: const Color(0xFF558B2F));
-    case 'tafsir':   return (label: 'Listen Tafsir',      emoji: '🎧',  color: const Color(0xFFAD1457));
-    case 'challenge':return (label: 'Challenge',          emoji: '🏅',  color: const Color(0xFFF5A623));
-    default:         return (label: type,                 emoji: '⭐',  color: _kSub);
+    case 'login':    return (label: 'Daily Login',       icon: NoorIcon.sunrise(size:22),  color: const Color(0xFF00897B));
+    case 'validate': return (label: 'Validate & Support',icon: NoorIcon.check(size:22),    color: const Color(0xFF6B4EBB));
+    case 'quran':    return (label: 'Read Quran',         icon: NoorIcon.book(size:22),     color: const Color(0xFF1565C0));
+    case 'dhikr':    return (label: 'Dhikar & Dua',       icon: NoorIcon.beads(size:22),    color: const Color(0xFF558B2F));
+    case 'tafsir':   return (label: 'Listen Tafsir',      icon: NoorIcon.headphones(size:22),color: const Color(0xFFAD1457));
+    case 'challenge':return (label: 'Challenge',          icon: NoorIcon.medal(size:22),    color: const Color(0xFFF5A623));
+    default:         return (label: type,                 icon: NoorIcon.star(size:22),     color: _kSub);
   }
 }
 
@@ -193,8 +194,7 @@ class _ProgressTab extends StatelessWidget {
           ),
           child: Column(children: [
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(info != null ? _tierEmoji(info.title) : '🌱',
-                  style: const TextStyle(fontSize: 48)),
+              info != null ? _tierIcon(info.title, size: 48) : NoorIcon.seedling(size: 48),
             ]),
             const SizedBox(height: 12),
             Text('Level $level',
@@ -234,11 +234,11 @@ class _ProgressTab extends StatelessWidget {
         // ── Stats row ─────────────────────────────────────────────────────
         const SizedBox(height: 20),
         Row(children: [
-          _MiniStat('🔥', '$streak', 'Day Streak'),
+          _MiniStat(NoorIcon.fire(size:22), '$streak', 'Day Streak'),
           const SizedBox(width: 12),
-          _MiniStat('⭐', '$xp', 'Total XP'),
+          _MiniStat(NoorIcon.star(size:22), '$xp', 'Total XP'),
           const SizedBox(width: 12),
-          _MiniStat('🏅', 'Lv $level', 'Current Level'),
+          _MiniStat(NoorIcon.medal(size:22), 'Lv $level', 'Current Level'),
         ]),
 
         // ── XP Earning guide ───────────────────────────────────────────────
@@ -247,12 +247,12 @@ class _ProgressTab extends StatelessWidget {
             style: GoogleFonts.outfit(
                 fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
         const SizedBox(height: 14),
-        _XpRow('📖', 'Read 1 Ayah',          '+${XpReward.ayahRead} XP'),
-        _XpRow('📚', 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
-        _XpRow('📿', 'SubhanAllah ×33',       '+8 XP'),
-        _XpRow('📿', 'La ilaha illallah ×100','+15 XP'),
-        _XpRow('☀️',  'Daily Login',            '+${XpReward.dailyLogin} XP'),
-        _XpRow('✨', 'Validate & Support',    '+${XpReward.validateCoins} XP'),
+        _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${XpReward.ayahRead} XP'),
+        _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
+        _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+8 XP'),
+        _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+15 XP'),
+        _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${XpReward.dailyLogin} XP'),
+        _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${XpReward.validateCoins} XP'),
 
         // ── Level tiers ────────────────────────────────────────────────────
         const SizedBox(height: 28),
@@ -275,8 +275,9 @@ class _ProgressTab extends StatelessWidget {
 }
 
 class _MiniStat extends StatelessWidget {
-  final String emoji, value, label;
-  const _MiniStat(this.emoji, this.value, this.label);
+  final Widget icon;
+  final String value, label;
+  const _MiniStat(this.icon, this.value, this.label);
   @override
   Widget build(BuildContext context) => Expanded(
     child: Container(
@@ -284,7 +285,7 @@ class _MiniStat extends StatelessWidget {
       decoration: BoxDecoration(color: _kWhite, borderRadius: BorderRadius.circular(18),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
       child: Column(children: [
-        Text(emoji, style: const TextStyle(fontSize: 22)),
+        icon,
         const SizedBox(height: 6),
         Text(value, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: _kText)),
         const SizedBox(height: 2),
@@ -295,8 +296,9 @@ class _MiniStat extends StatelessWidget {
 }
 
 class _XpRow extends StatelessWidget {
-  final String emoji, label, reward;
-  const _XpRow(this.emoji, this.label, this.reward);
+  final Widget icon;
+  final String label, reward;
+  const _XpRow(this.icon, this.label, this.reward);
   @override
   Widget build(BuildContext context) => Container(
     margin: const EdgeInsets.only(bottom: 10),
@@ -304,7 +306,7 @@ class _XpRow extends StatelessWidget {
     decoration: BoxDecoration(color: _kWhite, borderRadius: BorderRadius.circular(14),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 6)]),
     child: Row(children: [
-      Text(emoji, style: const TextStyle(fontSize: 20)),
+      icon,
       const SizedBox(width: 12),
       Expanded(child: Text(label,
           style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: _kText))),
@@ -345,7 +347,10 @@ class _TierCard extends StatelessWidget {
             : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 6)],
       ),
       child: Row(children: [
-        Text(tier.emoji, style: const TextStyle(fontSize: 32)),
+        SizedBox(
+          width: 32, height: 32,
+          child: _tierIcon(tier.title, size: 32),
+        ),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
@@ -412,7 +417,7 @@ class _BadgesTab extends StatelessWidget {
             border: Border.all(color: _kGold.withValues(alpha: 0.3)),
           ),
           child: Row(children: [
-            const Text('🏅', style: TextStyle(fontSize: 40)),
+            NoorIcon.medal(size: 40),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('${earned.length} / ${badges.length} Earned',
@@ -426,7 +431,7 @@ class _BadgesTab extends StatelessWidget {
 
         if (earned.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Text('Earned ✅',
+          Text('Earned',
               style: GoogleFonts.outfit(
                   fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
           const SizedBox(height: 12),
@@ -440,7 +445,7 @@ class _BadgesTab extends StatelessWidget {
 
         if (locked.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Text('Locked 🔒',
+          Text('Locked',
               style: GoogleFonts.outfit(
                   fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
           const SizedBox(height: 12),
@@ -483,10 +488,9 @@ class _BadgeCard extends StatelessWidget {
                 ? _kGold.withValues(alpha: 0.12)
                 : Colors.grey.withValues(alpha: 0.08),
           ),
-          child: Center(child: Text(
-            earned ? badge.emoji : '🔒',
-            style: TextStyle(fontSize: earned ? 28 : 22),
-          )),
+          child: Center(child: earned
+            ? NoorIcon.fromEmoji(badge.emoji, size: earned ? 28 : 22)
+            : NoorIcon.lock(size: 22)),
         ),
       ]),
       const SizedBox(height: 8),
@@ -528,19 +532,19 @@ class _ChallengesTab extends StatelessWidget {
           _RamadanBanner(),
           if (seasonal.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _SectionHeader('🕋 Seasonal Events'),
+            _SectionHeader('Seasonal Events', NoorIcon.kaaba(size:18)),
             const SizedBox(height: 12),
             for (final c in seasonal) _ChallengeCard(c),
           ],
           if (weekly.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _SectionHeader('📅 Weekly Challenges'),
+            _SectionHeader('Weekly Challenges', NoorIcon.calendar(size:18)),
             const SizedBox(height: 12),
             for (final c in weekly) _ChallengeCard(c),
           ],
           if (special.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _SectionHeader('⭐ Special Events'),
+            _SectionHeader('Special Events', NoorIcon.star(size:18)),
             const SizedBox(height: 12),
             for (final c in special) _ChallengeCard(c),
           ],
@@ -549,7 +553,7 @@ class _ChallengesTab extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(40),
                 child: Column(children: [
-                  const Text('🌙', style: TextStyle(fontSize: 56)),
+                  NoorIcon.moon(size: 56),
                   const SizedBox(height: 16),
                   Text('No active challenges right now',
                       style: GoogleFonts.outfit(fontSize: 16, color: _kSub),
@@ -569,10 +573,13 @@ class _ChallengesTab extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String text;
-  const _SectionHeader(this.text);
+  final Widget? icon;
+  const _SectionHeader(this.text, [this.icon]);
   @override
-  Widget build(BuildContext context) => Text(text,
-      style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _kText));
+  Widget build(BuildContext context) => Row(children: [
+    if (icon != null) ...[ icon!, const SizedBox(width: 8) ],
+    Text(text, style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
+  ]);
 }
 
 class _RamadanBanner extends StatelessWidget {
@@ -589,7 +596,7 @@ class _RamadanBanner extends StatelessWidget {
           blurRadius: 20, offset: const Offset(0, 6))],
     ),
     child: Row(children: [
-      const Text('🌙', style: TextStyle(fontSize: 44)),
+      NoorIcon.moon(size: 44),
       const SizedBox(width: 16),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('Ramadan Challenge',
@@ -844,7 +851,7 @@ class _EmptyHistory extends StatelessWidget {
     child: Padding(
       padding: const EdgeInsets.all(40),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text('🌙', style: TextStyle(fontSize: 64)),
+        NoorIcon.moon(size: 64),
         const SizedBox(height: 16),
         Text('No activity $label',
             style: GoogleFonts.outfit(
@@ -926,7 +933,7 @@ class _HistorySummary extends StatelessWidget {
             children: byType.entries.map((e) {
               final meta = _activityMeta(e.key);
               return _BreakdownChip(
-                  emoji: meta.emoji, label: meta.label,
+                  icon: meta.icon, label: meta.label,
                   xp: e.value, color: meta.color);
             }).toList(),
           ),
@@ -1004,11 +1011,12 @@ class _DonutPainter extends CustomPainter {
 
 // ── Breakdown chip ────────────────────────────────────────────────────────────
 class _BreakdownChip extends StatelessWidget {
-  final String emoji, label;
+  final Widget icon;
+  final String label;
   final int xp;
   final Color color;
   const _BreakdownChip({
-    required this.emoji, required this.label,
+    required this.icon, required this.label,
     required this.xp,    required this.color,
   });
   @override
@@ -1020,7 +1028,7 @@ class _BreakdownChip extends StatelessWidget {
       border: Border.all(color: color.withValues(alpha: 0.2)),
     ),
     child: Row(mainAxisSize: MainAxisSize.min, children: [
-      Text(emoji, style: const TextStyle(fontSize: 14)),
+      icon,
       const SizedBox(width: 6),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label,
@@ -1072,8 +1080,7 @@ class _ActivityRow extends StatelessWidget {
             shape: BoxShape.circle,
             color: meta.color.withValues(alpha: 0.1),
           ),
-          child: Center(child: Text(meta.emoji,
-              style: const TextStyle(fontSize: 20))),
+          child: Center(child: meta.icon),
         ),
         const SizedBox(width: 12),
         // Label + time

@@ -1,4 +1,4 @@
-// lib/screens/admin/admin_dashboard.dart
+﻿// lib/screens/admin/admin_dashboard.dart
 // Full admin panel — sidebar nav + 6 sections
 
 import 'dart:convert';
@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../services/settings_service.dart';
+import '../../widgets/noor_icons.dart';
 import 'sponsor_analytics_section.dart';
 
 // ── palette ─────────────────────────────────────────────────────────────────
@@ -110,7 +111,7 @@ class _Sidebar extends StatelessWidget {
         // Logo
         Row(children: [
           const SizedBox(width: 20),
-          const Text('🌙', style: TextStyle(fontSize: 28)),
+          NoorIcon.moon(size: 28),
           const SizedBox(width: 10),
           Text('NoorAdmin',
               style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _kWhite)),
@@ -263,10 +264,10 @@ class _OverviewSectionState extends State<_OverviewSection> {
             style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: _kSub)),
         const SizedBox(height: 16),
         Wrap(spacing: 16, runSpacing: 16, children: [
-          _StatCard('👥', 'Total Users',    _loading ? '…' : '$_totalUsers',    _kAccent),
-          _StatCard('⭐', 'Total XP Earned', _loading ? '…' : '$_totalXp',      const Color(0xFF6B4EBB)),
-          _StatCard('🕌', 'Projects',         _loading ? '…' : '$_totalProjects', _kGold),
-          _StatCard('🏅', 'Badges Earned',    _loading ? '…' : '$_totalBadges',  const Color(0xFFE05C6A)),
+          _StatCard(NoorIcon.people(size:26), 'Total Users',    _loading ? '…' : '$_totalUsers',    _kAccent),
+          _StatCard(NoorIcon.star(size:26),   'Total XP Earned', _loading ? '…' : '$_totalXp',      const Color(0xFF6B4EBB)),
+          _StatCard(NoorIcon.kaaba(size:26),  'Projects',         _loading ? '…' : '$_totalProjects', _kGold),
+          _StatCard(NoorIcon.medal(size:26),  'Badges Earned',    _loading ? '…' : '$_totalBadges',  const Color(0xFFE05C6A)),
         ]),
         const SizedBox(height: 32),
         Text('Active Config Snapshot',
@@ -287,9 +288,10 @@ class _OverviewSectionState extends State<_OverviewSection> {
 }
 
 class _StatCard extends StatelessWidget {
-  final String emoji, label, value;
+  final Widget icon;
+  final String label, value;
   final Color color;
-  const _StatCard(this.emoji, this.label, this.value, this.color);
+  const _StatCard(this.icon, this.label, this.value, this.color);
   @override
   Widget build(BuildContext context) {
     final w = (MediaQuery.of(context).size.width - 80) / 2;
@@ -303,7 +305,7 @@ class _StatCard extends StatelessWidget {
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(emoji, style: const TextStyle(fontSize: 26)),
+        icon,
         const SizedBox(height: 8),
         Text(value, style: GoogleFonts.outfit(
             fontSize: 26, fontWeight: FontWeight.w900, color: color)),
@@ -390,7 +392,7 @@ class _EconomySectionState extends State<_EconomySection> {
   Widget build(BuildContext context) => SingleChildScrollView(
     padding: const EdgeInsets.all(28),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _SectionHeader('Earning Rates', '💰',
+      _SectionHeader('Earning Rates', Icons.trending_up_rounded,
           'Changes take effect immediately in the app for all users.'),
       const SizedBox(height: 20),
       LayoutBuilder(builder: (ctx, constraints) {
@@ -400,7 +402,7 @@ class _EconomySectionState extends State<_EconomySection> {
           children: _fields.map((f) => SizedBox(
             width: itemW,
             child: _NumField(
-              label: '${f.icon}  ${f.label}',
+              label: f.label,
               controller: _ctrl[f.key]!,
             ),
           )).toList(),
@@ -500,7 +502,7 @@ class _ThemeSectionState extends State<_ThemeSection> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
         // ── Quick Theme Presets ─────────────────────────────────────────────
-        Text('⚡ Quick Themes', style: GoogleFonts.outfit(
+        Text('Quick Themes', style: GoogleFonts.outfit(
             fontSize: 15, fontWeight: FontWeight.w800, color: _kText)),
         const SizedBox(height: 6),
         Text('One tap to load a preset — then fine-tune with the colour pickers below.',
@@ -551,7 +553,7 @@ class _ThemeSectionState extends State<_ThemeSection> {
                     ]),
                     const SizedBox(height: 8),
                     Row(children: [
-                      Text(p.emoji, style: const TextStyle(fontSize: 16)),
+                      const Icon(Icons.palette_rounded, size: 16, color: _kSub),
                       const SizedBox(width: 6),
                       Expanded(child: Text(p.name,
                           style: GoogleFonts.outfit(
@@ -583,7 +585,7 @@ class _ThemeSectionState extends State<_ThemeSection> {
         const SizedBox(height: 28),
 
         // ── Manual colour pickers ────────────────────────────────────────────
-        _SectionHeader('App Colors', '🎨',
+        _SectionHeader('App Colors', Icons.palette_rounded,
             'Tap a color to open the picker. Changes push to all users in real-time.'),
         const SizedBox(height: 24),
         Wrap(spacing: 20, runSpacing: 20, children: [
@@ -881,7 +883,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
-        Expanded(child: _SectionHeader('Charity Projects', '🕌', 'Manage community projects.')),
+        Expanded(child: _SectionHeader('Charity Projects', Icons.volunteer_activism, 'Manage community projects.')),
         const SizedBox(width: 8),
         ElevatedButton.icon(
           icon: const Icon(Icons.add_rounded, color: _kWhite, size: 16),
@@ -1054,7 +1056,7 @@ class _UsersSectionState extends State<_UsersSection> {
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Header
-      _SectionHeader('Users', '👥', 'Top 100 users by XP.'),
+      _SectionHeader('Users', Icons.people_rounded, 'Top 100 users by XP.'),
       const SizedBox(height: 10),
       // Full-width search field on its own row
       TextField(
@@ -1167,7 +1169,7 @@ class _FeatureFlagsSectionState extends State<_FeatureFlagsSection> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(28),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _SectionHeader('Feature Flags', '🚩', 'Toggle features on/off for all users instantly.'),
+        _SectionHeader('Feature Flags', Icons.flag_rounded, 'Toggle features on/off for all users instantly.'),
         const SizedBox(height: 20),
         ..._flags.map((f) {
           final active = cfg.rawValue(f.key) == 'true';
@@ -1242,7 +1244,7 @@ class _BannersSectionState extends State<_BannersSection> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(28),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _SectionHeader('Banners & Messages', '📢', 'Control in-app announcements and contact info.'),
+        _SectionHeader('Banners & Messages', Icons.campaign_rounded, 'Control in-app announcements and contact info.'),
         const SizedBox(height: 20),
         // Banner toggle
         Container(
@@ -1316,7 +1318,7 @@ class _RawConfigSectionState extends State<_RawConfigSection> {
         : SingleChildScrollView(
             padding: const EdgeInsets.all(28),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _SectionHeader('All Config Keys', '⚙️', 'Click the edit icon to change any value directly.'),
+              _SectionHeader('All Config Keys', Icons.settings_rounded, 'Click the edit icon to change any value directly.'),
               const SizedBox(height: 20),
               ...grouped.entries.map((e) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: const EdgeInsets.only(bottom: 8, top: 12),
@@ -1409,12 +1411,13 @@ class _RawConfigSectionState extends State<_RawConfigSection> {
 // Shared widgets
 // ─────────────────────────────────────────────────────────────────────────────
 class _SectionHeader extends StatelessWidget {
-  final String title, emoji, desc;
-  const _SectionHeader(this.title, this.emoji, this.desc);
+  final String title, desc;
+  final IconData icon;
+  const _SectionHeader(this.title, this.icon, this.desc);
   @override
   Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Row(children: [
-      Text(emoji, style: const TextStyle(fontSize: 22)),
+      Icon(icon, size: 20, color: _kAccent),
       const SizedBox(width: 8),
       Flexible(
         child: Text(title,
