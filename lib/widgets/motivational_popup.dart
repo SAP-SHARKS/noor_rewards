@@ -6,16 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 // NoorMotivationalPopup
 // Full-screen inspiration popup, inspired by Quranly / Madacamp / SweetCoin.
-// Shows randomly, with 3 rotating CTA types.
+// Repeats every ~3 minutes. User can permanently silence with "Don't Disturb".
 // ─────────────────────────────────────────────────────────────────────────────
 
 enum _CtaType { quran, share, dhikr }
 
 class _Card {
-  final String arabic;        // Optional Arabic ayah / hadith text
-  final String quote;         // English motivational quote
-  final String source;        // Source label (e.g. "Quran 9:119")
-  final List<Color> gradient; // Background gradient
+  final String arabic;
+  final String quote;
+  final String source;
+  final List<Color> gradient;
   final _CtaType cta;
 
   const _Card({
@@ -28,7 +28,7 @@ class _Card {
 }
 
 const _kCards = [
-  // ── Quran CTA cards ──────────────────────────────────────────────────────
+  // ── Quran CTA ─────────────────────────────────────────────────────────────
   _Card(
     arabic: 'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
     quote: 'Verily, with hardship comes ease.\nEvery trial is a door to something greater.',
@@ -65,7 +65,7 @@ const _kCards = [
     cta: _CtaType.quran,
   ),
 
-  // ── Share CTA cards ───────────────────────────────────────────────────────
+  // ── Share CTA ─────────────────────────────────────────────────────────────
   _Card(
     arabic: '',
     quote: 'Make your time precious.\nShare goodness with a friend today —\nevery good deed shared is a sadaqah.',
@@ -88,7 +88,7 @@ const _kCards = [
     cta: _CtaType.share,
   ),
 
-  // ── Dhikr CTA cards ───────────────────────────────────────────────────────
+  // ── Dhikr CTA ────────────────────────────────────────────────────────────
   _Card(
     arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
     quote: 'Verily, in the remembrance of Allah\ndo hearts find rest.',
@@ -113,16 +113,16 @@ const _kCards = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Public helper — call this from initState after a random delay
+// Public helper
 // ─────────────────────────────────────────────────────────────────────────────
 Future<void> showMotivationalPopup(
   BuildContext context, {
   required VoidCallback onGoQuran,
   required VoidCallback onGoDhikr,
   required VoidCallback onShare,
+  required VoidCallback onDoNotDisturb, // called when user taps "Don't Disturb"
 }) {
-  final rng  = math.Random();
-  final card = _kCards[rng.nextInt(_kCards.length)];
+  final card = _kCards[math.Random().nextInt(_kCards.length)];
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -138,9 +138,10 @@ Future<void> showMotivationalPopup(
     },
     pageBuilder: (ctx, _, __) => _MotivationalPopupBody(
       card: card,
-      onGoQuran: onGoQuran,
-      onGoDhikr: onGoDhikr,
-      onShare:   onShare,
+      onGoQuran:       onGoQuran,
+      onGoDhikr:       onGoDhikr,
+      onShare:         onShare,
+      onDoNotDisturb:  onDoNotDisturb,
     ),
   );
 }
@@ -150,12 +151,13 @@ Future<void> showMotivationalPopup(
 // ─────────────────────────────────────────────────────────────────────────────
 class _MotivationalPopupBody extends StatefulWidget {
   final _Card card;
-  final VoidCallback onGoQuran, onGoDhikr, onShare;
+  final VoidCallback onGoQuran, onGoDhikr, onShare, onDoNotDisturb;
   const _MotivationalPopupBody({
     required this.card,
     required this.onGoQuran,
     required this.onGoDhikr,
     required this.onShare,
+    required this.onDoNotDisturb,
   });
   @override
   State<_MotivationalPopupBody> createState() => _MotivationalPopupBodyState();
@@ -165,12 +167,10 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
     with TickerProviderStateMixin {
   late AnimationController _particleCtrl;
   late AnimationController _textCtrl;
-  late Animation<double> _textFade;
-  late Animation<Offset> _textSlide;
-  final _rng = math.Random();
+  late Animation<double>   _textFade;
+  late Animation<Offset>   _textSlide;
 
-  // Pre-generated particle positions (relative 0..1)
-  final _particles = List.generate(18, (i) => _Particle());
+  final _particles = List.generate(18, (_) => _Particle());
 
   @override
   void initState() {
@@ -205,11 +205,10 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
     final card = widget.card;
     final size = MediaQuery.of(context).size;
 
-    // CTA config
     final (String ctaLabel, IconData ctaIcon, Color ctaColor) = switch (card.cta) {
-      _CtaType.quran => ('Open Quran', Icons.menu_book_rounded, const Color(0xFF0D9488)),
-      _CtaType.dhikr => ('Dua & Azkaar', Icons.favorite_rounded, const Color(0xFFF59E0B)),
-      _CtaType.share => ('Share with Friends', Icons.share_rounded, const Color(0xFF3B82F6)),
+      _CtaType.quran => ('Open Quran',        Icons.menu_book_rounded, const Color(0xFF0D9488)),
+      _CtaType.dhikr => ('Dua & Azkaar',      Icons.favorite_rounded,  const Color(0xFFF59E0B)),
+      _CtaType.share => ('Share with Friends', Icons.share_rounded,     const Color(0xFF3B82F6)),
     };
 
     void onCtaTap() {
@@ -221,6 +220,12 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
       }
     }
 
+    void onDndTap() {
+      HapticFeedback.lightImpact();
+      Navigator.of(context).pop();
+      widget.onDoNotDisturb();
+    }
+
     return Material(
       color: Colors.transparent,
       child: Center(
@@ -228,7 +233,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
             width: double.infinity,
-            constraints: BoxConstraints(maxHeight: size.height * 0.88),
+            constraints: BoxConstraints(maxHeight: size.height * 0.90),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: card.gradient,
@@ -248,7 +253,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
               borderRadius: BorderRadius.circular(32),
               child: Stack(
                 children: [
-                  // ── Animated particle layer ──────────────────────────────
+                  // ── Particles ──────────────────────────────────────────────
                   Positioned.fill(
                     child: AnimatedBuilder(
                       animation: _particleCtrl,
@@ -262,7 +267,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                     ),
                   ),
 
-                  // ── Decorative arc/ring ───────────────────────────────────
+                  // ── Decorative rings ───────────────────────────────────────
                   Positioned(
                     top: -80, right: -80,
                     child: Container(
@@ -290,29 +295,59 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                     ),
                   ),
 
-                  // ── Content ───────────────────────────────────────────────
+                  // ── Content ────────────────────────────────────────────────
                   Positioned.fill(
                     child: SafeArea(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
+                        padding: const EdgeInsets.fromLTRB(28, 20, 28, 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Close button
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: GestureDetector(
-                                onTap: () => Navigator.of(context).pop(),
-                                child: Container(
-                                  width: 36, height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.12),
-                                    shape: BoxShape.circle,
+                            // Top row: DND left, close right
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // 🔕 Don't Disturb
+                                GestureDetector(
+                                  onTap: onDndTap,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 7),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.10),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                          color: Colors.white.withValues(alpha: 0.18)),
+                                    ),
+                                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                      const Icon(Icons.notifications_off_rounded,
+                                          color: Colors.white60, size: 13),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        "Don't Disturb",
+                                        style: GoogleFonts.outfit(
+                                          color: Colors.white60,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ]),
                                   ),
-                                  child: const Icon(Icons.close_rounded,
-                                      color: Colors.white70, size: 18),
                                 ),
-                              ),
+                                // ✕ close
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: Container(
+                                    width: 34, height: 34,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.12),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.close_rounded,
+                                        color: Colors.white70, size: 17),
+                                  ),
+                                ),
+                              ],
                             ),
 
                             const Spacer(),
@@ -349,7 +384,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                               ),
                             ),
 
-                            const SizedBox(height: 28),
+                            const SizedBox(height: 24),
 
                             // Arabic text
                             if (card.arabic.isNotEmpty)
@@ -371,9 +406,9 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                                 ),
                               ),
 
-                            if (card.arabic.isNotEmpty) const SizedBox(height: 18),
+                            if (card.arabic.isNotEmpty) const SizedBox(height: 16),
 
-                            // Decorative divider line
+                            // Divider
                             FadeTransition(
                               opacity: _textFade,
                               child: Row(children: [
@@ -383,24 +418,22 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                                   child: Container(
                                     width: 6, height: 6,
                                     decoration: const BoxDecoration(
-                                      color: Colors.white54,
-                                      shape: BoxShape.circle,
-                                    ),
+                                        color: Colors.white54, shape: BoxShape.circle),
                                   ),
                                 ),
                                 Expanded(child: Container(height: 0.5, color: Colors.white24)),
                               ]),
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 18),
 
-                            // Quote text
+                            // Quote
                             SlideTransition(
                               position: _textSlide,
                               child: FadeTransition(
                                 opacity: _textFade,
                                 child: Text(
-                                  widget.card.quote,
+                                  card.quote,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.outfit(
                                     fontSize: 19,
@@ -413,9 +446,9 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                               ),
                             ),
 
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 14),
 
-                            // Source label
+                            // Source pill
                             FadeTransition(
                               opacity: _textFade,
                               child: Container(
@@ -442,7 +475,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
 
                             const Spacer(),
 
-                            // Primary CTA button
+                            // CTA button
                             FadeTransition(
                               opacity: _textFade,
                               child: SizedBox(
@@ -468,9 +501,9 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                               ),
                             ),
 
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
 
-                            // "Maybe later" dismiss
+                            // Maybe later
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
                               child: Text(
@@ -498,7 +531,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Particle data model
+// Particle model
 // ─────────────────────────────────────────────────────────────────────────────
 class _Particle {
   final double x, y, size, speed, phase;
@@ -511,7 +544,7 @@ class _Particle {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Particle painter — soft floating bokeh circles
+// Particle painter
 // ─────────────────────────────────────────────────────────────────────────────
 class _ParticlePainter extends CustomPainter {
   final List<_Particle> particles;
@@ -528,17 +561,15 @@ class _ParticlePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (final p in particles) {
       final t = (progress * p.speed + p.phase / (math.pi * 2)) % 1.0;
-      final dy = -t * size.height * 0.35; // float upward
+      final dy = -t * size.height * 0.35;
       final opacity = math.sin(t * math.pi).clamp(0.0, 1.0) * 0.25;
-
-      final paint = Paint()
-        ..color = Colors.white.withValues(alpha: opacity)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
 
       canvas.drawCircle(
         Offset(p.x * size.width, p.y * size.height + dy),
         p.size,
-        paint,
+        Paint()
+          ..color = Colors.white.withValues(alpha: opacity)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
       );
     }
   }
