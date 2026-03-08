@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -47,6 +48,7 @@ const List<_TransDef> _translations = [
   (id:'en.sahih',       name:'English — Sahih Intl.',    author:'Saheeh International',            rtl:false),
   (id:'en.pickthall',   name:'English — Pickthall',      author:'Mohammad Marmaduke Pickthall',    rtl:false),
   (id:'en.asad',        name:'English — The Message',    author:'Muhammad Asad',                   rtl:false),
+  (id:'en.hilali',      name:'English — Muhsin Khan',    author:'Muhsin Khan & Hilali',            rtl:false),
   // ── Urdu ───────────────────────────────────────────────────────────────────────
   (id:'ur.jalandhry',   name:'اردو — جالندھری',           author:'Fateh Muhammad Jalandhry',        rtl:true),
   (id:'ur.kanzuliman',  name:'اردو — کنز الایمان',        author:'Imam Ahmad Raza Khan',            rtl:true),
@@ -54,6 +56,17 @@ const List<_TransDef> _translations = [
   (id:'ur.maududi',     name:'اردو — تفہیم القرآن',       author:'Maulana Sayyid Abul Ala Maududi', rtl:true),
   // ── French ─────────────────────────────────────────────────────────────────────
   (id:'fr.hamidullah',  name:'Français — Hamidullah',    author:'Muhammad Hamidullah',             rtl:false),
+  // ── Turkish ────────────────────────────────────────────────────────────────────
+  (id:'tr.diyanet',     name:'Türkçe — Diyanet',         author:'Diyanet İşleri',                  rtl:false),
+  (id:'tr.ates',        name:'Türkçe — Süleyman Ateş',   author:'Süleyman Ateş',                   rtl:false),
+  // ── Indonesian ─────────────────────────────────────────────────────────────────
+  (id:'id.indonesian',  name:'Bahasa — Indonesian',      author:'Ministry of Religious Affairs',   rtl:false),
+  // ── Bengali ────────────────────────────────────────────────────────────────────
+  (id:'bn.bengali',     name:'বাংলা — Muhiuddin Khan',  author:'Muhiuddin Khan',                  rtl:false),
+  // ── German ─────────────────────────────────────────────────────────────────────
+  (id:'de.aburida',     name:'Deutsch — Abu Rida',       author:'Abu Rida Muhammad ibn Ahmad',     rtl:false),
+  // ── Spanish ────────────────────────────────────────────────────────────────────
+  (id:'es.asad',        name:'Español — Asad',           author:'Muhammad Asad',                   rtl:false),
 ];
 
 
@@ -1056,6 +1069,71 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return '$m:$s';
   }
 
+  // ── Translation block helpers ─────────────────────────────────────────────────
+  /// Returns widgets for the language label pill + author sub-label (for LTR/RTL header row)
+  List<Widget> _buildTranslationHeaderLeft(
+      String langLabel, String authorLabel, Color accent, bool darkMode) {
+    return [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: darkMode ? 0.25 : 0.12),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              langLabel,
+              style: GoogleFonts.outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: accent,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            authorLabel,
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              color: darkMode
+                  ? Colors.white.withValues(alpha: 0.4)
+                  : const Color(0xFF8E8E93),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  /// Small circular icon button used inside the translation card header
+  Widget _buildTransActionBtn({
+    required IconData icon,
+    required String tooltip,
+    required Color accent,
+    required bool darkMode,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Tooltip(
+        message: tooltip,
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: accent.withValues(alpha: darkMode ? 0.2 : 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 14, color: accent),
+        ),
+      ),
+    );
+  }
+
   bool get _isBookmarked  => _bookmarks.contains('$_surah:$_ayah');
   bool get _isFavourited  => _favourites.contains('$_surah:$_ayah');
 
@@ -1627,89 +1705,143 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             color: _darkMode
                                 ? const Color(0xFF2C2C2E)
                                 : const Color(0xFFF7F3EE),
-                            borderRadius:
-                                BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(16)),
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                          Row(children: [
-                            Container(width: 38, height: 38,
-                              decoration: BoxDecoration(
-                                  color: _accent.withValues(alpha: 0.12),
-                                  borderRadius:
-                                      BorderRadius.circular(10)),
-                              child: Icon(
-                                  Icons.language_rounded,
-                                  size: 20, color: _accent),
-                            ),
-                            const SizedBox(width: 12),
-                            Text('Translation Language',
-                                style: GoogleFonts.outfit(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: lblC)),
-                          ]),
-                          const SizedBox(height: 12),
-                          ...List.generate(_translations.length, (i) {
-                            final sel = _translations[i].id == _translationEdition;
-                            return GestureDetector(
-                               onTap: () async {
-                                final newEdition = _translations[i].id;
-                                setSt(() => _translationEdition = newEdition);
-                                setState(() => _translationEdition = newEdition);
-                                // Clear stale cached entries for this surah+edition
-                                // so the fresh API fetch is triggered instead of
-                                // serving an old empty-translation cache hit.
-                                for (int a = 1; a <= _surahLengths[_surah]; a++) {
-                                  final ck = '$_surah:$a:$newEdition:${_reciters[_reciterIdx].$1}';
-                                  await _cache.delete(ck);
-                                }
-                                await _fetchAyah(_surah, _ayah);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 120),
-                                margin: const EdgeInsets.only(bottom: 8),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 10),
+                            Row(children: [
+                              Container(width: 38, height: 38,
                                 decoration: BoxDecoration(
+                                    color: _accent.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Icon(Icons.language_rounded,
+                                    size: 20, color: _accent),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Translation Language',
+                                      style: GoogleFonts.outfit(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: lblC)),
+                                  Text('${_translations.length} translations available',
+                                      style: GoogleFonts.outfit(
+                                          fontSize: 10,
+                                          color: const Color(0xFF8E8E93))),
+                                ],
+                              )),
+                            ]),
+                            const SizedBox(height: 14),
+                            ...List.generate(_translations.length, (i) {
+                              final t = _translations[i];
+                              final sel = t.id == _translationEdition;
+                              // Language flag emoji
+                              final String flag;
+                              if (t.id.startsWith('en.')) flag = '🇬🇧';
+                              else if (t.id.startsWith('ur.')) flag = '🇵🇰';
+                              else if (t.id.startsWith('fr.')) flag = '🇫🇷';
+                              else if (t.id.startsWith('tr.')) flag = '🇹🇷';
+                              else if (t.id.startsWith('id.')) flag = '🇮🇩';
+                              else if (t.id.startsWith('bn.')) flag = '🇧🇩';
+                              else if (t.id.startsWith('de.')) flag = '🇩🇪';
+                              else if (t.id.startsWith('es.')) flag = '🇪🇸';
+                              else flag = '🌐';
+                              return GestureDetector(
+                                onTap: () async {
+                                  final newEdition = t.id;
+                                  setSt(() => _translationEdition = newEdition);
+                                  setState(() => _translationEdition = newEdition);
+                                  for (int a = 1; a <= _surahLengths[_surah]; a++) {
+                                    final ck = '$_surah:$a:$newEdition:${_reciters[_reciterIdx].$1}';
+                                    await _cache.delete(ck);
+                                  }
+                                  await _fetchAyah(_surah, _ayah);
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 10),
+                                  decoration: BoxDecoration(
                                     color: sel
                                         ? _accent.withValues(alpha: 0.12)
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(12),
+                                        : (_darkMode
+                                            ? const Color(0xFF1C1C1E)
+                                            : Colors.white),
+                                    borderRadius: BorderRadius.circular(14),
                                     border: Border.all(
+                                      color: sel
+                                          ? _accent
+                                          : (_darkMode
+                                              ? Colors.white12
+                                              : Colors.grey.shade200),
+                                      width: sel ? 1.5 : 1,
+                                    ),
+                                    boxShadow: sel ? [
+                                      BoxShadow(
+                                        color: _accent.withValues(alpha: 0.12),
+                                        blurRadius: 8, spreadRadius: 0,
+                                      )
+                                    ] : [],
+                                  ),
+                                  child: Row(children: [
+                                    // Flag bubble
+                                    Container(
+                                      width: 36, height: 36,
+                                      decoration: BoxDecoration(
                                         color: sel
-                                            ? _accent
-                                            : Colors.grey.shade300)),
-                                child: Row(children: [
-                                  Expanded(child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(_translations[i].name,
-                                          maxLines: 1, // Added maxLines
-                                          overflow: TextOverflow.ellipsis, // Added overflow
-                                          style: GoogleFonts.outfit(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              color: sel
-                                                  ? _accent
-                                                  : const Color(0xFF1C1C1E))),
-                                      Text(_translations[i].author,
-                                          maxLines: 1, // Added maxLines
-                                          overflow: TextOverflow.ellipsis, // Added overflow
-                                          style: GoogleFonts.outfit(
-                                              fontSize: 10,
-                                              color: const Color(0xFF8E8E93))),
-                                    ],
-                                  )),
-                                  if (sel)
-                                    Icon(Icons.check_circle_rounded,
-                                        color: _accent, size: 18),
-                                ]),
-                              ),
-                            );
-                          }),
-                        ]),
+                                            ? _accent.withValues(alpha: 0.15)
+                                            : (_darkMode
+                                                ? Colors.white.withValues(alpha: 0.06)
+                                                : Colors.grey.shade100),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Center(
+                                        child: Text(flag, style: const TextStyle(fontSize: 18)),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(t.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textDirection: t.rtl
+                                                ? TextDirection.rtl
+                                                : TextDirection.ltr,
+                                            style: GoogleFonts.outfit(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                                color: sel
+                                                    ? _accent
+                                                    : (_darkMode
+                                                        ? Colors.white
+                                                        : const Color(0xFF1C1C1E)))),
+                                        Text(t.author,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.outfit(
+                                                fontSize: 10,
+                                                color: const Color(0xFF8E8E93))),
+                                      ],
+                                    )),
+                                    if (sel)
+                                      Container(
+                                        width: 22, height: 22,
+                                        decoration: BoxDecoration(
+                                            color: _accent, shape: BoxShape.circle),
+                                        child: const Icon(Icons.check_rounded,
+                                            color: Colors.white, size: 13),
+                                      ),
+                                  ]),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -2031,41 +2163,167 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       _buildWordByWordView(txt, sub),
                   ] else ...[ 
                     // ── Full Verse Mode ──────────────────────────────────────
+                    // Ayah number ornament (Quranly-inspired)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 38, height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: _accent, width: 1.5),
+                            color: _accent.withValues(alpha: 0.08),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '$_ayah',
+                              style: GoogleFonts.outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: _accent,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     Directionality(
                       textDirection: TextDirection.rtl,
                       child: Text(
                         _arabic,
                         textAlign: TextAlign.right,
                         style: _kArabicFonts[_arabicFontIdx].style(
-                            _arabicFontSize, txt, 2.1, FontWeight.w700),
+                            _arabicFontSize, txt, 2.2, FontWeight.w700),
                       ),
                     ),
                     if (_showTranslation) ...[
                       const SizedBox(height: 20),
-                      Divider(height: 1,
-                          color: _darkMode
-                              ? Colors.white12
-                              : Colors.grey.shade100),
-                      const SizedBox(height: 16),
-                      // RTL-aware translation rendering
+                      // ── Premium Translation Block (Quranly-inspired) ──────────
                       (() {
                         final def = _translations.firstWhere(
                           (t) => t.id == _translationEdition,
                           orElse: () => _translations.first,
                         );
-                        return Text(
-                          _translation,
-                          textAlign: def.rtl ? TextAlign.right : TextAlign.left,
-                          textDirection: def.rtl ? TextDirection.rtl : TextDirection.ltr,
-                          style: def.rtl
-                              ? GoogleFonts.amiri(
-                                  fontSize: _translationFontSize + 2,
-                                  color: sub,
-                                  height: 1.9)
-                              : GoogleFonts.outfit(
-                                  fontSize: _translationFontSize,
-                                  color: sub,
-                                  height: 1.75),
+                        // Friendly language label
+                        final langLabel = def.name.split('—').first.trim();
+                        final authorLabel = def.author;
+                        return Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            color: _darkMode
+                                ? const Color(0xFF2C2C2E)
+                                : _accent.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _darkMode
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : _accent.withValues(alpha: 0.18),
+                            ),
+                          ),
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // Accent sidebar bar
+                                Container(
+                                  width: 4,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [_accent, _accent.withValues(alpha: 0.5)],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                  ),
+                                ),
+                                // Content
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                                    child: Column(
+                                      crossAxisAlignment: def.rtl
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                      children: [
+                                        // Language pill header
+                                        Row(
+                                          mainAxisAlignment: def.rtl
+                                              ? MainAxisAlignment.spaceBetween
+                                              : MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            if (!def.rtl) ..._buildTranslationHeaderLeft(
+                                              langLabel, authorLabel, _accent, _darkMode),
+                                            // Right side: copy + share
+                                            Row(mainAxisSize: MainAxisSize.min, children: [
+                                              _buildTransActionBtn(
+                                                icon: Icons.copy_rounded,
+                                                tooltip: 'Copy',
+                                                accent: _accent,
+                                                darkMode: _darkMode,
+                                                onTap: () {
+                                                  Clipboard.setData(ClipboardData(
+                                                    text: '$_arabic\n\n$_translation',
+                                                  ));
+                                                  _showSnack('Ayah copied to clipboard');
+                                                },
+                                              ),
+                                              const SizedBox(width: 6),
+                                              _buildTransActionBtn(
+                                                icon: Icons.share_rounded,
+                                                tooltip: 'Share',
+                                                accent: _accent,
+                                                darkMode: _darkMode,
+                                                onTap: () {
+                                                  _showSnack('Sharing coming soon');
+                                                },
+                                              ),
+                                            ]),
+                                            if (def.rtl) ..._buildTranslationHeaderLeft(
+                                              langLabel, authorLabel, _accent, _darkMode),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        // Subtle separator
+                                        Divider(
+                                          height: 1,
+                                          color: _darkMode
+                                              ? Colors.white.withValues(alpha: 0.08)
+                                              : _accent.withValues(alpha: 0.15),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        // Translation text
+                                        Text(
+                                          _translation,
+                                          textAlign: def.rtl ? TextAlign.right : TextAlign.left,
+                                          textDirection: def.rtl
+                                              ? TextDirection.rtl
+                                              : TextDirection.ltr,
+                                          style: def.rtl
+                                              ? GoogleFonts.amiri(
+                                                  fontSize: _translationFontSize + 3,
+                                                  color: _darkMode
+                                                      ? Colors.white.withValues(alpha: 0.85)
+                                                      : const Color(0xFF2C2C2E),
+                                                  height: 2.0,
+                                                  fontWeight: FontWeight.w500,
+                                                )
+                                              : GoogleFonts.outfit(
+                                                  fontSize: _translationFontSize,
+                                                  color: _darkMode
+                                                      ? Colors.white.withValues(alpha: 0.85)
+                                                      : const Color(0xFF2C2C2E),
+                                                  height: 1.85,
+                                                  fontWeight: FontWeight.w400,
+                                                  letterSpacing: 0.1,
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       })(),
                     ],

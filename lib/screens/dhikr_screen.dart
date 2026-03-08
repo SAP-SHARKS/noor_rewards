@@ -141,6 +141,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
   bool _isFirstTime = false;
   late ConfettiController _confettiController;
 
+  // ── Smart notification queue ────────────────────────────────────────
+  // Completions queued during a short session (< 4 pages or < 60s).
+  // Shown as one aggregate dialog when the user returns to the list.
+  final List<({String id, int target})> _pendingCompletions = [];
+
   @override
   void initState() {
     super.initState();
@@ -272,16 +277,80 @@ class _DhikrScreenState extends State<DhikrScreen> {
     Share.share(text);
   }
 
-  void _tap(String id, int target) {
+  // ── _tap (does NOT show dialog — detail screen owns that logic) ──────────────
+  // Returns true if the tap caused the azkar to complete.
+  bool _tap(String id, int target) {
     HapticFeedback.lightImpact();
+    bool justCompleted = false;
     setState(() {
       final current = _counts[id] ?? 0;
       if (current < target) {
         _counts[id] = current + 1;
         if (_counts[id] == target) {
-          Future.delayed(const Duration(milliseconds: 200), () => _showCompleteDialog(id, target));
+          justCompleted = true;
         }
       }
+    });
+    return justCompleted;
+  }
+
+  // Shows all queued pending completions as one aggregate "MashAllah" notification.
+  // Called by _DhikrDetailScreen when the user pops back after a short session.
+  void _showPendingCompletions() {
+    if (_pendingCompletions.isEmpty || !mounted) return;
+    final count = _pendingCompletions.length;
+    final totalXp = _pendingCompletions.fold<int>(
+        0, (sum, c) => sum + XpReward.dhikrXp(c.id));
+    // Drain the queue
+    _pendingCompletions.clear();
+    // Small delay so the navigation animation completes first
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (!mounted) return;
+      final isDark = _settings.darkMode;
+      final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
+      final kSub  = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
+      final kBg   = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+      showDialog(
+        context: context,
+        builder: (_) => Dialog(
+          backgroundColor: kBg,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              NoorIcon.party(size: 56),
+              const SizedBox(height: 16),
+              Text('Masha\'Allah!',
+                  style: GoogleFonts.outfit(
+                      fontSize: 26, fontWeight: FontWeight.w800, color: kText)),
+              const SizedBox(height: 8),
+              Text(
+                count == 1
+                    ? 'You completed 1 Azkar set\n+20 Noor Points • +$totalXp XP'
+                    : 'You completed $count Azkar sets\n+${count * 20} Noor Points • +$totalXp XP',
+                style: GoogleFonts.outfit(fontSize: 14, color: kSub),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(width: double.infinity, child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D9488),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  elevation: 0,
+                ),
+                child: Text('Alhamdulillah ♥',
+                    style: GoogleFonts.outfit(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white)),
+              )),
+            ]),
+          ),
+        ),
+      );
     });
   }
 
@@ -315,12 +384,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
     }
   }
 
-  void _showCompleteDialog(String dhikrId, int target) {
+  void _showCompleteDialog(String dhikrId, int target, {int pagesCount = 1}) {
     final xpEarned = XpReward.dhikrXp(dhikrId);
     final isDark = _settings.darkMode;
     final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
     final kBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+
+    final String bodyText = pagesCount > 1
+        ? 'You completed $pagesCount Azkar sets\n+${pagesCount * 20} Noor Points • +${xpEarned * pagesCount} XP'
+        : '$target counts complete • +20 Noor Points • +$xpEarned XP';
 
     showDialog(
       context: context,
@@ -335,35 +408,26 @@ class _DhikrScreenState extends State<DhikrScreen> {
             Text('Masha\'Allah!',
                 style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: kText)),
             const SizedBox(height: 8),
-            Text('$target counts complete • +20 Noor Points • +$xpEarned XP',
+            Text(bodyText,
                 style: GoogleFonts.outfit(fontSize: 14, color: kSub),
                 textAlign: TextAlign.center),
             const SizedBox(height: 24),
             SizedBox(width: double.infinity, child: ElevatedButton(
-              onPressed: () { 
-                Navigator.pop(context); 
-                _completeDhikr(dhikrId, target); 
-              },
+              // Rewards already claimed — just dismiss
+              onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0D9488),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
               ),
-              child: Text('Claim Rewards',
+              child: Text('Alhamdulillah ♥',
                   style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
             )),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () { 
-                Navigator.pop(context); 
-                setState(() => _counts[dhikrId] = 0); 
-              },
-              child: Text('Reset', style: GoogleFonts.outfit(color: kSub)),
-            ),
           ]),
         ),
       ),
+
     );
   }
 
@@ -715,6 +779,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     settings: _settings,
                     parentState: this,
                   )));
+                  // After returning from the detail screen, show any
+                  // completions that were queued during the session.
+                  _showPendingCompletions();
                   setState((){}); // Refresh counts on the index list when they return
                 },
                 child: Container(
@@ -820,9 +887,19 @@ class _DhikrDetailScreen extends StatefulWidget {
 class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   late PageController _pageController;
 
+  // ── Session tracking for smart notification logic ────────────────────
+  late DateTime _sessionStart;
+  // Number of azkar pages completed in THIS session visit
+  int _pagesCompletedInSession = 0;
+  // Min pages threshold before we show mid-session popup
+  static const int _kMinPagesForImmediatePopup = 4;
+  // Min time (seconds) before we show mid-session popup
+  static const int _kMinSecondsForImmediatePopup = 60;
+
   @override
   void initState() {
     super.initState();
+    _sessionStart = DateTime.now();
     _pageController = PageController(initialPage: widget.initialIndex);
   }
 
@@ -833,7 +910,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
       final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
       final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
-      return Scaffold(
+      return PopScope(
+        // When user taps back, pass any pending completions to parent
+        onPopInvokedWithResult: (didPop, _) {
+          // Nothing extra needed — parent already calls _showPendingCompletions()
+        },
+        child: Scaffold(
         backgroundColor: kBg,
         appBar: AppBar(
           backgroundColor: kWhite,
@@ -903,8 +985,52 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   bottom: 24,
                   child: GestureDetector(
                     onTap: isComplete ? null : () {
-                        widget.parentState._tap(azkar.id, tapTarget);
+                        final justCompleted = widget.parentState._tap(azkar.id, tapTarget);
                         setState((){});
+
+                        if (justCompleted) {
+                          _pagesCompletedInSession++;
+                          // Run XP + streak logic silently (no dialog here)
+                          widget.parentState._completeDhikr(azkar.id, tapTarget);
+
+                          final secondsElapsed =
+                              DateTime.now().difference(_sessionStart).inSeconds;
+                          final enoughTime =
+                              secondsElapsed >= _kMinSecondsForImmediatePopup;
+                          final enoughPages =
+                              _pagesCompletedInSession >= _kMinPagesForImmediatePopup;
+
+                          if (enoughTime && enoughPages) {
+                            // ✅ Show the aggregate popup immediately
+                            Future.delayed(const Duration(milliseconds: 250), () {
+                              if (!mounted) return;
+                              widget.parentState._showCompleteDialog(
+                                  azkar.id, tapTarget,
+                                  pagesCount: _pagesCompletedInSession);
+                              // Reset session counters after showing
+                              _pagesCompletedInSession = 0;
+                              _sessionStart = DateTime.now();
+                            });
+                          } else {
+                            // ⏳ Queue for after exit
+                            widget.parentState._pendingCompletions
+                                .add((id: azkar.id, target: tapTarget));
+                          }
+
+                          // ── Auto-swipe to next Zikar ──────────────────────
+                          // Wait briefly so user sees "Completed ✓" before the swipe
+                          final nextIndex = index + 1;
+                          if (nextIndex < widget.azkars.length) {
+                            Future.delayed(const Duration(milliseconds: 700), () {
+                              if (!mounted) return;
+                              _pageController.animateToPage(
+                                nextIndex,
+                                duration: const Duration(milliseconds: 450),
+                                curve: Curves.easeInOut,
+                              );
+                            });
+                          }
+                        }
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
@@ -922,7 +1048,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          isComplete ? 'Completed' : '$count / $tapTarget',
+                          isComplete ? 'Completed ✓' : '$count / $tapTarget',
                           style: GoogleFonts.outfit(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -938,7 +1064,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             );
           },
         ),
-      );
+      ));
   }
 }
 

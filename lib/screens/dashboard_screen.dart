@@ -1,4 +1,5 @@
-﻿import 'dart:math' as math;
+﻿import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,6 +19,7 @@ import 'package:share_plus/share_plus.dart';
 import 'streak_screen.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
+import '../widgets/motivational_popup.dart';
 
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
@@ -68,6 +70,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // Community project
   Map<String, dynamic>? _project;
 
+  // ── Motivational popup ───────────────────────────────────────────────────
+  Timer? _startupPopupTimer;  // Fires ~5 s after launch
+  Timer? _randomPopupTimer;   // Fires randomly 60–150 s after the first
+
   @override
   void initState() {
     super.initState();
@@ -78,13 +84,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
     StreakService.instance.recordActivity(StreakType.login);
     // Start privacy-first analytics session
     TrackingService.instance.beginSession();
+    // Schedule random motivational popup
+    _scheduleMotivationalPopup();
   }
 
   @override
   void dispose() {
+    _startupPopupTimer?.cancel();
+    _randomPopupTimer?.cancel();
     // End session — saves accumulated time + coins to Supabase
     TrackingService.instance.endSession();
     super.dispose();
+  }
+
+  // ────────────────────────────────────────────────────────────────────────
+  // Motivational popup scheduler
+  //
+  // Popup #1 — Startup  : fires 5 seconds after app opens (every session)
+  // Popup #2 — Random   : fires at a random point 60–150 s after #1
+  // Both fire every session — no cooldown gate.
+  // ────────────────────────────────────────────────────────────────────────
+  void _scheduleMotivationalPopup() {
+    // ── Helper: build the callbacks once ─────────────────────────────
+    void doShow() {
+      if (!mounted) return;
+      showMotivationalPopup(
+        context,
+        onGoQuran: () => _goToScreen(const QuranHubScreen()),
+        onGoDhikr: () => _goToScreen(const DhikrHubScreen()),
+        onShare: () {
+          final uid = _supabase.auth.currentUser?.id;
+          if (uid == null) return;
+          _supabase
+              .from('profiles')
+              .select('referral_code')
+              .eq('id', uid)
+              .single()
+              .then((res) {
+            final code = res['referral_code'] as String?;
+            if (!mounted) return;
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (ctx) => _InviteSheet(referralCode: code ?? ''),
+            );
+          });
+        },
+      );
+    }
+
+    // ── Popup #1: always shown ~5 s after app opens ──────────────────
+    _startupPopupTimer = Timer(const Duration(seconds: 5), () {
+      doShow();
+
+      // ── Popup #2: random 60–150 s after popup #1 ────────────────
+      final randomSec = 60 + math.Random().nextInt(91); // 60–150
+      _randomPopupTimer = Timer(Duration(seconds: randomSec), doShow);
+    });
   }
 
   Future<void> _loadHomeData() async {
