@@ -2534,28 +2534,50 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       setState(() => _fullScreenMode = false),
                 ),
                 const Spacer(),
+                // ── Back: previous page OR previous ayah ──────────────────
                 _fsFab(
                   icon: Icons.arrow_back_ios_rounded,
-                  onTap: _prevAyah,
+                  onTap: _fullPageMode
+                      ? (_currentPage > 1
+                          ? () {
+                              setState(() { _currentPage--; _pageSeconds = 0; });
+                              _fetchFullPage(_currentPage);
+                            }
+                          : () {})
+                      : _prevAyah,
                 ),
                 const SizedBox(width: 10),
+                // ── Next: page (no points) OR ayah (+10 pts) ──────────────
                 GestureDetector(
-                  onTap: _nextAyah,
+                  onTap: _fullPageMode
+                      ? (_currentPage < 604
+                          ? () {
+                              setState(() { _currentPage++; _pageSeconds = 0; });
+                              _fetchFullPage(_currentPage);
+                            }
+                          : null)
+                      : _nextAyah,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 13),
                     decoration: BoxDecoration(
-                        color: _accent,
+                        // Dimmed when full-page and on last page
+                        color: (_fullPageMode && _currentPage >= 604)
+                            ? _accent.withValues(alpha: 0.4)
+                            : _accent,
                         borderRadius: BorderRadius.circular(14)),
                     child: Row(children: [
                       const Icon(Icons.arrow_forward_ios_rounded,
                           color: Colors.white, size: 18),
                       const SizedBox(width: 6),
-                      Text('+10 pts',
-                          style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white)),
+                      Text(
+                        // Full-page mode → no points label
+                        _fullPageMode ? 'Next Page' : '+10 pts',
+                        style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
                     ]),
                   ),
                 ),
