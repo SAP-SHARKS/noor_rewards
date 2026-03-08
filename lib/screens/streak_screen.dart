@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/streak_service.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/noor_offline.dart';
 
 class StreakScreen extends StatefulWidget {
   const StreakScreen({super.key});
@@ -97,7 +98,11 @@ class _StreakScreenState extends State<StreakScreen>
           ),
 
           Expanded(child: _loading
-              ? const Center(child: CircularProgressIndicator(color: Color(0xFFFF6B35)))
+              ? const NoorInlineLoader(
+                  height: double.infinity,
+                  color: Color(0xFFFF6B35),
+                  label: 'Loading streaks…',
+                )
               : SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                   child: Column(children: [

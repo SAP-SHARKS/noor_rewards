@@ -810,8 +810,10 @@ class _SettingsSheetState extends State<_SettingsSheet> {
     );
 
     Widget sw(String label, bool val, ValueChanged<bool> cb) => Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: GoogleFonts.outfit(fontSize: 14, color: lbl)),
+      children: [
+        Expanded(
+          child: Text(label, style: GoogleFonts.outfit(fontSize: 14, color: lbl)),
+        ),
         Switch(value: val, onChanged: cb,
             activeThumbColor: _kGreen, materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
       ]);

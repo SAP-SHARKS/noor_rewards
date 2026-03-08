@@ -17,6 +17,8 @@ import 'package:confetti/confetti.dart';
 import 'package:share_plus/share_plus.dart';
 import 'streak_screen.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/noor_offline.dart';
+
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
 
@@ -2622,11 +2624,20 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('$_selectedAmount', style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.w800, color: _C.navImpact, height: 1.0)),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 200),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text('$_selectedAmount',
+                          style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.w800,
+                              color: _C.navImpact, height: 1.0)),
+                    ),
+                  ),
                   const SizedBox(width: 6),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 6),
-                    child: Text('points', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: _C.sub)),
+                    child: Text('points', style: GoogleFonts.outfit(fontSize: 16,
+                        fontWeight: FontWeight.w600, color: _C.sub)),
                   ),
                 ],
               ),
@@ -2752,7 +2763,11 @@ class _RankingTabState extends State<_RankingTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator(color: _C.navRanking));
+    if (_loading) return const NoorInlineLoader(
+      height: double.infinity,
+      color: _C.navRanking,
+      label: 'Loading leaderboard…',
+    );
     return SafeArea(child: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -2839,8 +2854,10 @@ class _RankingTabState extends State<_RankingTab> {
                 const SizedBox(width: 12),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(isMe ? '$name (you)' : name,
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: _C.text)),
                   Text('$title • Lv $lv',
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                 ])),
                 Text('$xp XP',

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'quran_screen.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/noor_offline.dart';
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 const _kBg    = Color(0xFFF7F3EE);
@@ -394,7 +395,13 @@ class _QuranHubScreenState extends State<QuranHubScreen>
     return Scaffold(
       backgroundColor: _kBg,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: _kTeal, strokeWidth: 2))
+          ? const Center(
+              child: NoorInlineLoader(
+                height: double.infinity,
+                color: _kTeal,
+                label: 'Loading Quran…',
+              ),
+            )
           : FadeTransition(opacity: _fadeAnim, child: _buildBody()),
     );
   }
