@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/noor_offline.dart';
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 const _kBg     = Color(0xFFF7F3EE);
@@ -812,7 +813,11 @@ class _HistoryTabState extends State<_HistoryTab> {
       // ── Body ──────────────────────────────────────────────────────────────
       Expanded(
         child: _loading
-            ? const Center(child: CircularProgressIndicator(color: _kPurple))
+            ? const NoorInlineLoader(
+                height: double.infinity,
+                color: _kPurple,
+                label: 'Loading history…',
+              )
             : _rows.isEmpty
                 ? _EmptyHistory(label: _labels[_period])
                 : RefreshIndicator(
@@ -1030,14 +1035,17 @@ class _BreakdownChip extends StatelessWidget {
     child: Row(mainAxisSize: MainAxisSize.min, children: [
       icon,
       const SizedBox(width: 6),
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label,
-            style: GoogleFonts.outfit(
-                fontSize: 11, fontWeight: FontWeight.w700, color: _kText)),
-        Text('+$xp XP',
-            style: GoogleFonts.outfit(
-                fontSize: 10, fontWeight: FontWeight.w600, color: color)),
-      ]),
+      Flexible(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label,
+              maxLines: 1, overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.outfit(
+                  fontSize: 11, fontWeight: FontWeight.w700, color: _kText)),
+          Text('+$xp XP',
+              style: GoogleFonts.outfit(
+                  fontSize: 10, fontWeight: FontWeight.w600, color: color)),
+        ]),
+      ),
     ]),
   );
 }

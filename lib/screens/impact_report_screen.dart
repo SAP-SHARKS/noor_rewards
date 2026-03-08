@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
 import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/noor_offline.dart';
 
 // â”€â”€ Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _C {
@@ -148,7 +149,12 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     return Scaffold(
       backgroundColor: _C.bg,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: _C.teal))
+          ? const Center(
+              child: NoorInlineLoader(
+                height: double.infinity,
+                label: 'Loading your report…',
+              ),
+            )
           : FadeTransition(
               opacity: _fade,
               child: CustomScrollView(
@@ -851,13 +857,17 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                     const SizedBox(height: 14),
 
                     // Community progress bar
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Row(children: [
                       Text('Community Progress',
                           style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _C.sub)),
-                      Text('${_fmt(cur)} / ${_fmt(tgt)} pts  â€¢  ${(pct * 100).toStringAsFixed(0)}%',
-                          style: GoogleFonts.outfit(
-                              fontSize: 11, fontWeight: FontWeight.w700,
-                              color: done ? _C.gold : _C.teal)),
+                      const Spacer(),
+                      Flexible(
+                        child: Text('${_fmt(cur)} / ${_fmt(tgt)} pts  •  ${(pct * 100).toStringAsFixed(0)}%',
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.outfit(
+                                fontSize: 11, fontWeight: FontWeight.w700,
+                                color: done ? _C.gold : _C.teal)),
+                      ),
                     ]),
                     const SizedBox(height: 6),
                     ClipRRect(
