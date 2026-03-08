@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'quran_hub_screen.dart';
 import 'dhikr_hub_screen.dart';
 import 'tafsir_hub_screen.dart';
@@ -71,8 +72,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<String, dynamic>? _project;
 
   // ── Motivational popup ───────────────────────────────────────────────────
-  Timer? _startupPopupTimer;  // Fires ~5 s after launch
-  Timer? _randomPopupTimer;   // Fires randomly 60–150 s after the first
+  Timer? _startupPopupTimer;   // First popup at ~5 s
+  Timer? _repeatingPopupTimer; // Then repeats every ~3 minutes
+  bool   _dndPopup = false;    // Set permanently when user taps “Don’t Disturb”
+  static const _kDndKey = 'motivational_popup_dnd';
 
   @override
   void initState() {
@@ -91,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void dispose() {
     _startupPopupTimer?.cancel();
-    _randomPopupTimer?.cancel();
+    _repeatingPopupTimer?.cancel();
     // End session — saves accumulated time + coins to Supabase
     TrackingService.instance.endSession();
     super.dispose();
@@ -100,14 +103,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ────────────────────────────────────────────────────────────────────────
   // Motivational popup scheduler
   //
-  // Popup #1 — Startup  : fires 5 seconds after app opens (every session)
-  // Popup #2 — Random   : fires at a random point 60–150 s after #1
-  // Both fire every session — no cooldown gate.
+  // • Reads DND flag from SharedPreferences — skips entirely if set.
+  // • Popup #1: fires 5 s after app opens.
+  // • Then repeats every ~3 minutes (160–200 s random) indefinitely.
+  // • If user taps “Don’t Disturb” the flag is saved and all timers cancelled.
   // ────────────────────────────────────────────────────────────────────────
-  void _scheduleMotivationalPopup() {
-    // ── Helper: build the callbacks once ─────────────────────────────
+  Future<void> _scheduleMotivationalPopup() async {
+    // ── Check DND preference ───────────────────────────────────────
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool(_kDndKey) == true) return; // User said “Don’t Disturb”
+    } catch (_) {}
+
+    // ── Helper: show popup once ──────────────────────────────────
     void doShow() {
-      if (!mounted) return;
+      if (!mounted || _dndPopup) return;
       showMotivationalPopup(
         context,
         onGoQuran: () => _goToScreen(const QuranHubScreen()),
@@ -131,17 +141,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
           });
         },
+        onDoNotDisturb: _markDoNotDisturb,
       );
     }
 
-    // ── Popup #1: always shown ~5 s after app opens ──────────────────
+    // ── Popup #1: 5 seconds after app opens ───────────────────────
     _startupPopupTimer = Timer(const Duration(seconds: 5), () {
       doShow();
 
-      // ── Popup #2: random 60–150 s after popup #1 ────────────────
-      final randomSec = 60 + math.Random().nextInt(91); // 60–150
-      _randomPopupTimer = Timer(Duration(seconds: randomSec), doShow);
+      // ── Repeat every ~3 minutes (random 160–200 s) ────────────────
+      _repeatingPopupTimer = Timer.periodic(
+        Duration(seconds: 160 + math.Random().nextInt(41)), // 160–200 s ≈ 3 min
+        (_) => doShow(),
+      );
     });
+  }
+
+  // Permanently silence the popup — saves to SharedPreferences
+  Future<void> _markDoNotDisturb() async {
+    _dndPopup = true;
+    _startupPopupTimer?.cancel();
+    _repeatingPopupTimer?.cancel();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_kDndKey, true);
+    } catch (_) {}
   }
 
   Future<void> _loadHomeData() async {
