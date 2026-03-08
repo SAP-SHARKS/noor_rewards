@@ -1,6 +1,6 @@
 ﻿// lib/screens/impact_report_screen.dart
 //
-// Akhirah Balance â€” a premium Islamic banking-style dashboard showing
+// Akhirah Balance — a premium Islamic banking-style dashboard showing
 // the user's spiritual portfolio: deeds, streaks, and earnings.
 
 import 'dart:math' as math;
@@ -52,7 +52,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
 
-  // Derived "Akhirah holdings" â€” computed from points/xp
+  // Derived "Akhirah holdings" — computed from points/xp
   // Trees planted = every 100 noor points = 1 tree (symbolic)
   // Total Dhikr   = dhikr streak * 33 repetitions per day (symbolic)
   // Slaves freed  = every 1000 xp = 1 equivalent reward
@@ -356,7 +356,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           Text('$current Day Streak',
               style: GoogleFonts.outfit(
                   fontSize: 18, fontWeight: FontWeight.w900, color: _C.text)),
-          Text('Keep it going â€” consistency is key!',
+          Text('Keep it going \u2014 consistency is key!',
               style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
         ])),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
