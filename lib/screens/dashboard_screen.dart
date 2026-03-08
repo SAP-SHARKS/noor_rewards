@@ -72,10 +72,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<String, dynamic>? _project;
 
   // ── Motivational popup ───────────────────────────────────────────────────
-  Timer? _startupPopupTimer;   // First popup at ~5 s
-  Timer? _repeatingPopupTimer; // Then repeats every ~3 minutes
-  bool   _dndPopup = false;    // Set permanently when user taps “Don’t Disturb”
-  static const _kDndKey = 'motivational_popup_dnd';
+  Timer? _startupPopupTimer;     // First popup at ~5 s
+  Timer? _repeatingPopupTimer;   // Repeats every ~3 minutes
+  bool   _sessionDnd    = false; // True after first DND tap — resets on restart
+  bool   _isInFocusScreen = false; // True while user is reading Quran/Dhikr/Tafsir
+  static const _kDndKey       = 'motivational_popup_dnd';       // permanent flag
+  static const _kDndCountKey  = 'motivational_popup_dnd_count'; // tap counter
 
   @override
   void initState() {
@@ -117,7 +119,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     // ── Helper: show popup once ──────────────────────────────────
     void doShow() {
-      if (!mounted || _dndPopup) return;
+      // Skip if: widget gone | session DND | user is reading Quran/Dhikr/Tafsir
+      if (!mounted || _sessionDnd || _isInFocusScreen) return;
       showMotivationalPopup(
         context,
         onGoQuran: () => _goToScreen(const QuranHubScreen()),
@@ -157,14 +160,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  // Permanently silence the popup — saves to SharedPreferences
+  // DND logic:
+  //   Tap #1 (any session) — session-only: cancels timers but resets on next launch.
+  //   Tap #2 (next session after first DND) — permanent: written to SharedPreferences.
   Future<void> _markDoNotDisturb() async {
-    _dndPopup = true;
+    _sessionDnd = true;
     _startupPopupTimer?.cancel();
     _repeatingPopupTimer?.cancel();
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_kDndKey, true);
+      // Increment the DND tap count across sessions
+      final prevCount = prefs.getInt(_kDndCountKey) ?? 0;
+      final newCount  = prevCount + 1;
+      await prefs.setInt(_kDndCountKey, newCount);
+      if (newCount >= 2) {
+        // Second tap — permanent block
+        await prefs.setBool(_kDndKey, true);
+      }
+      // First tap: timers cancelled for this session; next restart they re-fire
     } catch (_) {}
   }
 
@@ -219,8 +232,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _signOut() async => _supabase.auth.signOut();
 
   void _goToScreen(Widget screen) async {
+    // Suppress popups while user is in a reading/focus screen
+    _isInFocusScreen = true;
     final result = await Navigator.push<int>(
         context, MaterialPageRoute(builder: (_) => screen));
+    _isInFocusScreen = false;
     if ((result ?? 0) > 0) _loadHomeData(); // refresh points on return
   }
 
