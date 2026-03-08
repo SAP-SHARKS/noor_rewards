@@ -12,13 +12,27 @@ import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 
 // ── Palette ────────────────────────────────────────────────────────────────────
-const _kBg    = Color(0xFFF7F3EE);
+const _kBg    = Color(0xFFEDF7F4); // Light mint (gradient start)
 const _kWhite = Color(0xFFFFFFFF);
 const _kText  = Color(0xFF1C1C1E);
 const _kSub   = Color(0xFF8E8E93);
 const _kTeal  = Color(0xFF2BAE99);
 const _kTealL = Color(0xFFC8ECE8);
 const _kGold  = Color(0xFFFFAA00);
+
+// Screen-level gradient for the Quran reading background
+// Deep teal-mint top → cool sky-blue mid → soft pearl bottom
+// More contrast = noticeably visible gradient on the screen
+const _kBgGradient = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xFFC8EDE6), // rich teal-mint
+    Color(0xFFD6EEF7), // cool sky blue
+    Color(0xFFEFF8F4), // soft pale green-white
+  ],
+  stops: [0.0, 0.5, 1.0],
+);
 
 // ── All 114 surah lengths (1-indexed, index 0 is unused) ──────────────────────
 // 115 entries: index 0 = unused, indices 1-114 = surah ayah counts
@@ -1864,7 +1878,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final sub    = _darkMode ? const Color(0xFF8E8E93) : _kSub;
 
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: _darkMode ? const Color(0xFF000000) : Colors.transparent,
       appBar: _fullScreenMode ? null : AppBar(
         backgroundColor: barBg,
         surfaceTintColor: barBg,
@@ -1920,19 +1934,29 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           ),
         ],
       ),
-      body: Stack(children: [
-        Column(children: [
+      body: _darkMode
+          ? _buildBody(bg, cardBg, barBg, txt, sub)
+          : DecoratedBox(
+              decoration: const BoxDecoration(gradient: _kBgGradient),
+              child: _buildBody(bg, cardBg, barBg, txt, sub),
+            ),
+    );
+  }
 
-          Expanded(child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity == null) return;
-              if (details.primaryVelocity! < -300) {
-                _nextAyah();
-              } else if (details.primaryVelocity! > 300) {
-                _prevAyah();
-              }
-            },
+  Widget _buildBody(Color bg, Color cardBg, Color barBg, Color txt, Color sub) {
+    return Stack(children: [
+      Column(children: [
+
+        Expanded(child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onHorizontalDragEnd: (details) {
+            if (details.primaryVelocity == null) return;
+            if (details.primaryVelocity! < -300) {
+              _nextAyah();
+            } else if (details.primaryVelocity! > 300) {
+              _prevAyah();
+            }
+          },
             child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(20, 16, 20,
                 _fullScreenMode ? 80 : 0),
@@ -2543,9 +2567,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               ]),
             )),
           ),
-      ]),
-    );
+      ]);
   }
+
 
   Widget _fsFab({required IconData icon, required VoidCallback onTap}) =>
       GestureDetector(

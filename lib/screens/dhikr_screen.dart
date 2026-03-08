@@ -680,20 +680,32 @@ class _DhikrScreenState extends State<DhikrScreen> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: Color(0xFFF7F3EE),
+        backgroundColor: Color(0xFFF0F9F4),
         body: Center(child: CircularProgressIndicator(color: Color(0xFF0D9488))),
       );
     }
 
     final isDark = _settings.darkMode;
-    final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F3EE);
     final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
     final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
     final kPrimary  = const Color(0xFF0D9488);
 
-    return Scaffold(
-      backgroundColor: kBg,
+    // ── Gradient background: rich amber-gold → warm sage green (diagonal)
+    // Richer, deeper version — warm and spiritual feel for Dua & Azkaar
+    const bgGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color(0xFFFFEAB0), // rich warm golden-amber
+        Color(0xFFD4EDDA), // soft sage green
+        Color(0xFFEAF6F0), // pale mint-white
+      ],
+      stops: [0.0, 0.55, 1.0],
+    );
+
+    final scaffold = Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
       appBar: AppBar(
         backgroundColor: kWhite,
         surfaceTintColor: kWhite,
@@ -860,6 +872,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
         ),
       ),
     ]));
+    // ── Navigator.pop returns _pointsToday so parent can refresh ──
+    if (isDark) return scaffold;
+    return DecoratedBox(
+      decoration: const BoxDecoration(gradient: bgGradient),
+      child: scaffold,
+    );
   }
 }
 
@@ -906,17 +924,25 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   @override
   Widget build(BuildContext context) {
       final isDark = widget.settings.darkMode;
-      final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F3EE);
       final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
       final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
-      return PopScope(
-        // When user taps back, pass any pending completions to parent
-        onPopInvokedWithResult: (didPop, _) {
-          // Nothing extra needed — parent already calls _showPendingCompletions()
-        },
+      // Same rich amber-gold → sage green gradient for reading consistency
+      const bgGradient = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFFFFEAB0), // rich warm golden-amber
+          Color(0xFFD4EDDA), // soft sage green
+          Color(0xFFEAF6F0), // pale mint-white
+        ],
+        stops: [0.0, 0.55, 1.0],
+      );
+
+      final inner = PopScope(
+        onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
         appBar: AppBar(
           backgroundColor: kWhite,
           elevation: 0,
@@ -1065,6 +1091,11 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           },
         ),
       ));
+      if (isDark) return inner;
+      return DecoratedBox(
+        decoration: const BoxDecoration(gradient: bgGradient),
+        child: inner,
+      );
   }
 }
 
