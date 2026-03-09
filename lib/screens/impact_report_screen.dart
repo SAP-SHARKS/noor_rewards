@@ -164,13 +164,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     padding: const EdgeInsets.fromLTRB(18, 0, 18, 40),
                     sliver: SliverList(delegate: SliverChildListDelegate([
                       const SizedBox(height: 20),
-                      _buildStreakBanner(),
-                      const SizedBox(height: 20),
                       _buildMiniStats(),
                       const SizedBox(height: 24),
                       _buildHoldingsSection(),
-                      const SizedBox(height: 24),
-                      _buildStreakDetailCards(),
                       const SizedBox(height: 24),
                       _buildActivityCard(),
                       const SizedBox(height: 24),
@@ -332,43 +328,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ),
   );
 
-  // â”€â”€ Streak Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  Widget _buildStreakBanner() {
-    final best = _bestStreak;
-    final current = _snap.login;
-    if (current == 0 && best == 0) return const SizedBox.shrink();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFFF8E1), Color(0xFFFFF3CD)],
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _C.gold.withValues(alpha: 0.3)),
-        boxShadow: [BoxShadow(
-            color: _C.gold.withValues(alpha: 0.12),
-            blurRadius: 16, offset: const Offset(0, 4))],
-      ),
-      child: Row(children: [
-        NoorIcon.fire(size: 32),
-        const SizedBox(width: 14),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('$current Day Streak',
-              style: GoogleFonts.outfit(
-                  fontSize: 18, fontWeight: FontWeight.w900, color: _C.text)),
-          Text('Keep it going \u2014 consistency is key!',
-              style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-        ])),
-        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text('Best', style: GoogleFonts.outfit(fontSize: 10, color: _C.sub)),
-          Text('$best ', style: GoogleFonts.outfit(
-              fontSize: 15, fontWeight: FontWeight.w800, color: _C.gold)),
-          NoorIcon.trophy(size: 16),
-        ]),
-      ]),
-    );
-  }
-
   // â”€â”€ Mini stat pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildMiniStats() => Row(children: [
     Expanded(child: _MiniStat(NoorIcon.tree(size:20), _fmt(_treesPlanted), 'TREES', const Color(0xFF2D7A45))),
@@ -457,27 +416,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         isLast: true,
       ),
     ]),
-  );
-
-  // â”€â”€ Streak detail cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  Widget _buildStreakDetailCards() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Streak Portfolio',
-          style: GoogleFonts.outfit(
-              fontSize: 20, fontWeight: FontWeight.w900, color: _C.text)),
-      const SizedBox(height: 14),
-      Row(children: [
-        Expanded(child: _StreakCard(NoorIcon.sunrise(size:22), 'Daily Login', _snap.login,
-            _snap.bestLogin, const Color(0xFFFF9500))),
-        const SizedBox(width: 10),
-        Expanded(child: _StreakCard(NoorIcon.beads(size:22), 'Dhikr', _snap.dhikr,
-            _snap.bestDhikr, _C.teal)),
-        const SizedBox(width: 10),
-        Expanded(child: _StreakCard(NoorIcon.book(size:22), 'Quran', _snap.quran,
-            _snap.bestQuran, _C.purple)),
-      ]),
-    ],
   );
 
   // â”€â”€ Activity card (session time) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -585,39 +523,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         )),
       ),
     ]),
-  );
-
-  // â”€â”€ Community impact entry card (only shown when isTab) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-  Widget _buildCommunityCard(BuildContext context) => GestureDetector(
-    onTap: () => Navigator.push(
-        context, MaterialPageRoute(builder: (_) => const _CommunityImpactPage())),
-    child: Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1A3A4A), Color(0xFF2563EB)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(
-            color: const Color(0xFF2563EB).withValues(alpha: 0.3),
-            blurRadius: 16, offset: const Offset(0, 6))],
-      ),
-      child: Row(children: [
-        NoorIcon.globe(size: 30),
-        const SizedBox(width: 14),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Community Impact',
-              style: GoogleFonts.outfit(
-                  fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
-          Text('See projects your Noor Points support',
-              style: GoogleFonts.outfit(fontSize: 12, color: Colors.white60)),
-        ])),
-        const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white60, size: 16),
-      ]),
-    ),
   );
 }
 
@@ -1030,45 +935,6 @@ class _HoldingRow extends StatelessWidget {
   );
 }
 
-class _StreakCard extends StatelessWidget {
-  final Widget icon;
-  final String label;
-  final int current, best;
-  final Color color;
-  const _StreakCard(this.icon, this.label, this.current, this.best, this.color);
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: _C.card,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: _C.border),
-      boxShadow: [BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04), blurRadius: 10)],
-    ),
-    child: Column(children: [
-      icon,
-      const SizedBox(height: 6),
-      Text('$current',
-          style: GoogleFonts.outfit(
-              fontSize: 22, fontWeight: FontWeight.w900, color: color)),
-      Text('days', style: GoogleFonts.outfit(fontSize: 10, color: _C.sub)),
-      const SizedBox(height: 6),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(6)),
-        child: Text('Best $best',
-            style: GoogleFonts.outfit(
-                fontSize: 9, fontWeight: FontWeight.w700, color: color)),
-      ),
-      const SizedBox(height: 4),
-      Text(label, style: GoogleFonts.outfit(fontSize: 10, color: _C.sub),
-          textAlign: TextAlign.center),
-    ]),
-  );
-}
 
 class _DarkStat extends StatelessWidget {
   final String label, value;
