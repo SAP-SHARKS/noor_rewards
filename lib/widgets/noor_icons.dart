@@ -144,7 +144,7 @@ class NoorIcon {
       case '👕': return shirt(size: size);
       case '📍': return pin(size: size);
       case '📱': return phone(size: size);
-      case '👨\u200d👩\u200d👧': case '👨‍👩‍👧': return family(size: size);
+      case '👨\u200d👩\u200d👧': return family(size: size);
       case '🍂': return autumn(size: size);
       case '🎓': return graduation(size: size);
       case '📜': return scroll(size: size);
@@ -152,8 +152,6 @@ class NoorIcon {
       case '⏱️': return timer(size: size);
       case '🔡': case '🔤': return font(size: size);
       case '💎': return diamond(size: size);
-      case '🖤': return moon(size: size);
-      case '🎙️': return microphone(size: size);
       default: return star(size: size);
     }
   }

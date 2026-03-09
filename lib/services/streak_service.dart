@@ -154,9 +154,9 @@ class StreakService {
         final last = DateTime.parse(lastStr);
         final todayDt = DateTime.parse(today);
         final diff = todayDt.difference(last).inDays;
-        if (diff == 0) return current;      // already done today
-        if (diff == 1) newStreak = current + 1;
-        else           newStreak = 1;       // missed a day
+        if (diff == 0) { return current; }      // already done today
+        if (diff == 1) { newStreak = current + 1; }
+        else           { newStreak = 1; }         // missed a day
       }
 
       await _sb.from('profiles').update({

@@ -466,7 +466,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     try {
       // Calculate global verse ID for this surah (1-indexed, cumulative)
       int startVerseId = 1;
-      for (int i = 1; i < surah; i++) startVerseId += _surahLengths[i];
+      for (int i = 1; i < surah; i++) { startVerseId += _surahLengths[i]; }
 
       // Arabic text always from Supabase quran_verses (fully populated)
       final arabicList = await _sb.from('quran_verses')
@@ -1753,15 +1753,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               final sel = t.id == _translationEdition;
                               // Language flag emoji
                               final String flag;
-                              if (t.id.startsWith('en.')) flag = '🇬🇧';
-                              else if (t.id.startsWith('ur.')) flag = '🇵🇰';
-                              else if (t.id.startsWith('fr.')) flag = '🇫🇷';
-                              else if (t.id.startsWith('tr.')) flag = '🇹🇷';
-                              else if (t.id.startsWith('id.')) flag = '🇮🇩';
-                              else if (t.id.startsWith('bn.')) flag = '🇧🇩';
-                              else if (t.id.startsWith('de.')) flag = '🇩🇪';
-                              else if (t.id.startsWith('es.')) flag = '🇪🇸';
-                              else flag = '🌐';
+                              if (t.id.startsWith('en.')) { flag = '🇬🇧'; }
+                              else if (t.id.startsWith('ur.')) { flag = '🇵🇰'; }
+                              else if (t.id.startsWith('fr.')) { flag = '🇫🇷'; }
+                              else if (t.id.startsWith('tr.')) { flag = '🇹🇷'; }
+                              else if (t.id.startsWith('id.')) { flag = '🇮🇩'; }
+                              else if (t.id.startsWith('bn.')) { flag = '🇧🇩'; }
+                              else if (t.id.startsWith('de.')) { flag = '🇩🇪'; }
+                              else if (t.id.startsWith('es.')) { flag = '🇪🇸'; }
+                              else { flag = '🌐'; }
                               return GestureDetector(
                                 onTap: () async {
                                   final newEdition = t.id;
@@ -2916,7 +2916,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       padding: EdgeInsets.fromLTRB(20, 12, 20, 16 + bottomPad),
       child: Row(children: [
         Expanded(child: OutlinedButton.icon(
-          onPressed: _saving ? null : _prevAyah,
+          onPressed: _saving ? null : (_fullPageMode
+              ? (_currentPage > 1
+                  ? () {
+                      setState(() { _currentPage--; _pageSeconds = 0; });
+                      _fetchFullPage(_currentPage);
+                    }
+                  : null)
+              : _prevAyah),
           icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
           label: Text('Previous',
               style: GoogleFonts.outfit(
@@ -2934,7 +2941,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         )),
         const SizedBox(width: 12),
         Expanded(child: ElevatedButton.icon(
-          onPressed: _saving ? null : _nextAyah,
+          onPressed: _saving ? null : (_fullPageMode
+              ? (_currentPage < 604
+                  ? () {
+                      setState(() { _currentPage++; _pageSeconds = 0; });
+                      _fetchFullPage(_currentPage);
+                    }
+                  : null)
+              : _nextAyah),
           icon: _saving
               ? const SizedBox(
                   width: 16, height: 16,
@@ -2943,13 +2957,16 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               : const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14, color: Colors.white),
-          label: Text('Next +10 pts',
-              style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white)),
+          label: Text(
+            _fullPageMode ? 'Next' : 'Next +10 pts',
+            style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.white)),
           style: ElevatedButton.styleFrom(
-            backgroundColor: _accent,
+            backgroundColor: (_fullPageMode && _currentPage >= 604)
+                ? _accent.withValues(alpha: 0.4)
+                : _accent,
             disabledBackgroundColor: _accent.withValues(alpha: 0.4),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(

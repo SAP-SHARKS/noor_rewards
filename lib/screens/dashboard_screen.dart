@@ -34,10 +34,6 @@ class _C {
   static const communityBg = Color(0xFFFEF3D4);
   static const communityBr = Color(0xFFE8C870);
   static const amber       = Color(0xFFF5A623);
-  static const quranCard   = Color(0xFFC8ECE8);
-  static const dhikrCard   = Color(0xFFF9D5D8);
-  static const quranIcon   = Color(0xFF2BAE99);
-  static const dhikrIcon   = Color(0xFFE05C6A);
   static const navHome     = Color(0xFFE8643A);
   static const navImpact   = Color(0xFF2BAE9B);
   static const navRanking  = Color(0xFFD4A017);
@@ -125,6 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         context,
         onGoQuran: () => _goToScreen(const QuranHubScreen()),
         onGoDhikr: () => _goToScreen(const DhikrHubScreen()),
+        onGoBoost: () => _goToScreen(const QuranHubScreen()),
         onShare: () {
           final uid = _supabase.auth.currentUser?.id;
           if (uid == null) return;
@@ -283,12 +280,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return awarded;
           },
         ),
-        const ImpactReportScreen(isTab: true),
-        _RankingTab(currentUserId: _supabase.auth.currentUser?.id ?? ''),
+        const LevelScreen(),           // Tab 1 — Journey
+        const ImpactReportScreen(isTab: true), // Tab 2 — Akhirah
         _ProfileTab(
             name: widget.name, noorPoints: _noorPoints,
             totalXp: _totalXp, level: _level, levelTitle: _levelTitle,
-            country: _country, onSignOut: _signOut),
+            country: _country, streak: _streak,
+            currentUserId: _supabase.auth.currentUser?.id ?? '',
+            onSignOut: _signOut),
       ]),
       bottomNavigationBar: _BottomNav(tab: _tab, onTap: (i) => setState(() => _tab = i)),
     );
@@ -340,74 +339,25 @@ class _HomeTabState extends State<_HomeTab> {
   }
 
   void _showValidateModal() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: _C.darkBtn,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        contentPadding: const EdgeInsets.all(24),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80, height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                    colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)]),
-                boxShadow: [
-                  BoxShadow(color: const Color(0xFF9B59B6).withValues(alpha: 0.5), blurRadius: 20)
-                ],
-              ),
-              child: const Icon(Icons.nights_stay_rounded, color: Colors.white, size: 50),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              "Daily Azkaar Complete! Masha'Allah!",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "You've completed your daily prayers and tracking. Keep up your streak, believer!",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(fontSize: 14, color: Colors.white.withValues(alpha: 0.8)),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFDD88FF).withValues(alpha: 0.3)),
-              ),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                NoorIcon.fire(size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  '+20 XP',
-                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w700, color: const Color(0xFFDD88FF)),
-                ),
-              ]),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(ctx),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4A017),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-                child: Text('Alhamdulillah',
-                    style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black)),
-              ),
-            ),
-          ],
-        ),
-      ),
+    showValidationRewardPopup(
+      context,
+      xpEarned: 20, // XpReward.validateCoins
+      bonusPoints: 0, // streak bonus could be added here later
+      onContinue: _triggerBoostPopup,
     );
+  }
+
+  // Shows the Noor Boost popup — called after validation is confirmed
+  void _triggerBoostPopup() {
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      showNoorBoostPopup(
+        context,
+        onGoQuran:  widget.onGoQuran,
+        onGoDhikr:  widget.onGoDhikr,
+        onGoInvite: widget.onGoInvite,
+      );
+    });
   }
 
   Future<void> _loadDonations() async {
@@ -554,9 +504,14 @@ class _HomeTabState extends State<_HomeTab> {
         const SizedBox(height: 18),
         _SwipeValidateButton(onValidate: () async {
           final awarded = await widget.onValidate();
-          if (awarded && mounted) {
+          if (!mounted) return awarded;
+          if (awarded) {
+            // Fresh XP: play confetti + full celebration modal
             _confettiController.play();
-            _showValidateModal();
+            _showValidateModal(); // modal calls _triggerBoostPopup on dismiss
+          } else {
+            // Already validated today: skip the modal but still show boost nudge
+            _triggerBoostPopup();
           }
           return awarded;
         }),
@@ -1268,9 +1223,6 @@ class _StreakBannerState extends State<_StreakBanner>
     [Color(0xFF3DDBA0), Color(0xFF0B9E63)], // Dhikr   — emerald
     [Color(0xFF9B87F5), Color(0xFF4B35D4)], // Quran   — indigo violet
   ];
-  // Muted inactive version
-  static const _deadColor = Color(0xFFEAEAEA);
-
   @override
   Widget build(BuildContext context) {
     final streaks = [widget.snap.login, widget.snap.dhikr, widget.snap.quran];
@@ -2830,14 +2782,14 @@ class _AmountPill extends StatelessWidget {
 
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RANKING TAB  — reads from profiles, shows leaderboard
+// RANKING SHEET — modal bottom sheet leaderboard (demoted from nav tab)
 // ─────────────────────────────────────────────────────────────────────────────
-class _RankingTab extends StatefulWidget {
+class _RankingSheet extends StatefulWidget {
   final String currentUserId;
-  const _RankingTab({required this.currentUserId});
-  @override State<_RankingTab> createState() => _RankingTabState();
+  const _RankingSheet({required this.currentUserId});
+  @override State<_RankingSheet> createState() => _RankingSheetState();
 }
-class _RankingTabState extends State<_RankingTab> {
+class _RankingSheetState extends State<_RankingSheet> {
   List<Map<String, dynamic>> _leaders = [];
   int _myRank = 0;
   bool _loading = true;
@@ -2846,7 +2798,6 @@ class _RankingTabState extends State<_RankingTab> {
 
   Future<void> _load() async {
     try {
-      // Use the leaderboard_global view which includes level_title & xp
       final res = await Supabase.instance.client
           .from('leaderboard_global')
           .select()
@@ -2860,131 +2811,153 @@ class _RankingTabState extends State<_RankingTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const NoorInlineLoader(
-      height: double.infinity,
-      color: _C.navRanking,
-      label: 'Loading leaderboard…',
-    );
-    return SafeArea(child: SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 110),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Leaderboard', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
-        const SizedBox(height: 20),
-
-        // User rank card
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFFFFF3D4), Color(0xFFFFE0A0)]),
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: const Color(0xFFE8C870))),
-          child: Row(children: [
-            NoorIcon.medal(size: 40),
-            const SizedBox(width: 16),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Your Rank: #$_myRank',
-                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _C.text)),
-              Text('Out of ${_leaders.length} users',
-                  style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-            ])),
-          ]),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (ctx, scrollCtrl) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
-        const SizedBox(height: 20),
-
-        Text('Top Contributors — All Time XP',
-            style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: _C.text)),
-        const SizedBox(height: 12),
-
-        Container(
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22),
-              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12)]),
-          child: Column(children: List.generate(_leaders.take(10).length, (i) {
-            final p = _leaders[i];
-            final isMe = p['id'] == widget.currentUserId;
-            // Badge colors: gold / silver / bronze / teal for rest
-            final badgeColors = [
-              [const Color(0xFFFFD700), const Color(0xFFFFA500)], // gold
-              [const Color(0xFFB0BEC5), const Color(0xFF78909C)], // silver
-              [const Color(0xFFCD7F32), const Color(0xFFA0522D)], // bronze
-            ];
-            final isTop3 = i < 3;
-            final badgeGrad = isTop3 ? badgeColors[i] : [const Color(0xFF2BAE99), const Color(0xFF1A9E8C)];
-            final medalEmoji = i == 0 ? '🥇' : i == 1 ? '🥈' : i == 2 ? '🥉' : null;
-            final xp    = (p['total_xp']      as num?)?.toInt() ?? 0;
-            final lv    = (p['level']         as num?)?.toInt() ?? 1;
-            final title = (p['level_title']   as String?) ?? 'Seeker';
-            final name  = (p['display_name']  as String?)?.split(' ').first ?? 'User';
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isMe ? const Color(0xFFFFF3D4) : Colors.transparent,
-                borderRadius: BorderRadius.circular(22),
-                border: i < _leaders.take(10).length - 1
-                    ? const Border(bottom: BorderSide(color: Color(0xFFF5F5F5))) : null,
-              ),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                // Uniform 40×40 badge for ALL ranks
+        child: Column(children: [
+          // Handle + header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+            child: Column(children: [
+              Container(width: 40, height: 4,
+                  decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(height: 16),
+              Row(children: [
                 Container(
-                  width: 40, height: 40,
+                  width: 44, height: 44,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: badgeGrad,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [BoxShadow(
-                      color: badgeGrad.last.withValues(alpha: 0.35),
-                      blurRadius: 8, offset: const Offset(0, 3),
-                    )],
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFF1A1040), Color(0xFF2D1B69)]),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Center(
-                    child: medalEmoji != null
-                        ? (medalEmoji == '🥇' ? NoorIcon.goldMedal(size: 20) : medalEmoji == '🥈' ? NoorIcon.silverMedal(size: 20) : NoorIcon.bronzeMedal(size: 20))
-                        : Text('${i + 1}',
-                            style: GoogleFonts.outfit(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white)),
-                  ),
+                  child: Center(child: NoorIcon.trophy(size: 22)),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(isMe ? '$name (you)' : name,
-                      maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: _C.text)),
-                  Text('$title • Lv $lv',
-                      maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
+                  Text('Leaderboard',
+                      style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _C.text)),
+                  Text('Top contributors by lifetime XP',
+                      style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
                 ])),
-                Text('$xp XP',
-                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _C.navRanking)),
+                IconButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  icon: const Icon(Icons.close_rounded, color: Color(0xFF8E8E93)),
+                ),
               ]),
-            );
-          })),
-        ),
+            ]),
+          ),
 
-        const SizedBox(height: 16),
-        // Streak banner
-        Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFFFFF0F5), Color(0xFFFFE0EC)]),
-              borderRadius: BorderRadius.circular(20)),
-          child: Row(children: [
-            Container(width: 52, height: 52, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: Center(child: NoorIcon.fire(size: 26))),
-            const SizedBox(width: 14),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('7 Day Streak!',
-                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFFFF6B9D))),
-              Text('Keep it going to unlock rewards',
-                  style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-            ])),
-          ]),
-        ),
-      ]),
-    ));
+          Divider(height: 1, color: Colors.grey.shade100),
+
+          Expanded(child: _loading
+            ? const NoorInlineLoader(height: double.infinity, color: _C.navRanking, label: 'Loading…')
+            : ListView(
+                controller: scrollCtrl,
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+                children: [
+                  // My rank hero card
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                          begin: Alignment.topLeft, end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: [BoxShadow(
+                            color: const Color(0xFF2D1B69).withValues(alpha: 0.35),
+                            blurRadius: 16, offset: const Offset(0, 6))]),
+                    child: Row(children: [
+                      NoorIcon.medal(size: 40),
+                      const SizedBox(width: 16),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('Your Rank: #$_myRank',
+                            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white)),
+                        Text('Out of ${_leaders.length} believers',
+                            style: GoogleFonts.outfit(fontSize: 12, color: Colors.white60)),
+                      ])),
+                    ]),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Text('Top 10 Contributors',
+                      style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: _C.text)),
+                  const SizedBox(height: 12),
+
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: const Color(0xFFF0F0F5)),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12)]),
+                    child: Column(children: List.generate(_leaders.take(10).length, (i) {
+                      final p = _leaders[i];
+                      final isMe = p['id'] == widget.currentUserId;
+                      final badgeColors = [
+                        [const Color(0xFFFFD700), const Color(0xFFFFA500)],
+                        [const Color(0xFFB0BEC5), const Color(0xFF78909C)],
+                        [const Color(0xFFCD7F32), const Color(0xFFA0522D)],
+                      ];
+                      final isTop3 = i < 3;
+                      final badgeGrad = isTop3 ? badgeColors[i] : [const Color(0xFF2BAE99), const Color(0xFF1A9E8C)];
+                      final xp    = (p['total_xp']     as num?)?.toInt() ?? 0;
+                      final lv    = (p['level']        as num?)?.toInt() ?? 1;
+                      final title = (p['level_title']  as String?) ?? 'Seeker';
+                      final nm    = (p['display_name'] as String?)?.split(' ').first ?? 'User';
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isMe ? const Color(0xFFFFF3D4) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(22),
+                          border: i < _leaders.take(10).length - 1
+                              ? const Border(bottom: BorderSide(color: Color(0xFFF5F5F5))) : null,
+                        ),
+                        child: Row(children: [
+                          Container(
+                            width: 40, height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(colors: badgeGrad,
+                                  begin: Alignment.topLeft, end: Alignment.bottomRight),
+                              boxShadow: [BoxShadow(
+                                  color: badgeGrad.last.withValues(alpha: 0.35),
+                                  blurRadius: 8, offset: const Offset(0, 3))],
+                            ),
+                            child: Center(child: i < 3
+                              ? (i == 0 ? NoorIcon.goldMedal(size: 20)
+                                : i == 1 ? NoorIcon.silverMedal(size: 20)
+                                : NoorIcon.bronzeMedal(size: 20))
+                              : Text('${i + 1}',
+                                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white))),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(isMe ? '$nm (you)' : nm,
+                                maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: _C.text)),
+                            Text('$title • Lv $lv',
+                                maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
+                          ])),
+                          Text('$xp XP',
+                              style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _C.navRanking)),
+                        ]),
+                      );
+                    })),
+                  ),
+                ],
+              ),
+          ),
+        ]),
+      ),
+    );
   }
 }
 
@@ -2992,13 +2965,14 @@ class _RankingTabState extends State<_RankingTab> {
 // PROFILE TAB
 // ─────────────────────────────────────────────────────────────────────────────
 class _ProfileTab extends StatelessWidget {
-  final String name, levelTitle;
-  final int noorPoints, totalXp, level;
+  final String name, levelTitle, currentUserId;
+  final int noorPoints, totalXp, level, streak;
   final String? country;
   final VoidCallback onSignOut;
   const _ProfileTab({required this.name, required this.noorPoints,
       required this.totalXp, required this.level, required this.levelTitle,
-      required this.country, required this.onSignOut});
+      required this.country, required this.streak, required this.currentUserId,
+      required this.onSignOut});
 
   @override
   Widget build(BuildContext context) {
@@ -3041,34 +3015,73 @@ class _ProfileTab extends StatelessWidget {
         ),
 
         Padding(padding: const EdgeInsets.all(20), child: Column(children: [
-          // Stats grid
-          Row(children: [
-            _StatCard('Noor Points', '$noorPoints', _C.navRanking),
-            const SizedBox(width: 12),
-            _StatCard('Total XP',   '$totalXp',    const Color(0xFF6B4EBB)),
-            const SizedBox(width: 12),
-            _StatCard('Level',      'Lv $level',   _C.navImpact),
-            const SizedBox(width: 12),
-            _StatCard('Title',      levelTitle,    _C.navHome),
-          ]),
-          const SizedBox(height: 20),
+          // Compact rank card + tap to leaderboard
+          GestureDetector(
+            onTap: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => _RankingSheet(currentUserId: currentUserId),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [BoxShadow(color: const Color(0xFF2D1B69).withValues(alpha: 0.3), blurRadius: 14, offset: const Offset(0, 4))],
+              ),
+              child: Row(children: [
+                Container(
+                  width: 46, height: 46,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFAA00).withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFFFAA00).withValues(alpha: 0.4)),
+                  ),
+                  child: Center(child: NoorIcon.trophy(size: 22)),
+                ),
+                const SizedBox(width: 14),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('Community Leaderboard',
+                      style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white)),
+                  Text('Tap to see your ranking',
+                      style: GoogleFonts.outfit(fontSize: 11, color: Colors.white54)),
+                ])),
+                const Icon(Icons.arrow_forward_ios_rounded, size: 15, color: Color(0xFFFFAA00)),
+              ]),
+            ),
+          ),
+          const SizedBox(height: 14),
 
-          // Streak card
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFFFFF0F5), Color(0xFFFFE0EC)]),
-                borderRadius: BorderRadius.circular(20)),
-            child: Row(children: [
-              Container(width: 52, height: 52, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  child: Center(child: NoorIcon.fire(size: 26))),
-              const SizedBox(width: 14),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('7 Day Streak',
-                    style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: const Color(0xFFFF6B9D))),
-                Text('Current streak', style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-              ])),
-            ]),
+          // Streak card (real data)
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LevelScreen())),
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    streak > 0 ? const Color(0xFFFFF0F5) : const Color(0xFFF5F5F5),
+                    streak > 0 ? const Color(0xFFFFE0EC) : const Color(0xFFEEEEEE),
+                  ]),
+                  borderRadius: BorderRadius.circular(20)),
+              child: Row(children: [
+                Container(width: 52, height: 52,
+                    decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                    child: Center(child: NoorIcon.fire(size: 26))),
+                const SizedBox(width: 14),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    streak > 0 ? '$streak Day Streak 🔥' : 'Start your streak today!',
+                    style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800,
+                        color: streak > 0 ? const Color(0xFFFF6B9D) : _C.sub)),
+                  Text('Tap to view your Journey', style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+                ])),
+                const Icon(Icons.arrow_forward_ios_rounded, size: 15, color: Color(0xFFFF6B9D)),
+              ]),
+            ),
           ),
           const SizedBox(height: 16),
 
@@ -3129,22 +3142,6 @@ class _ProfileTab extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String label, value;
-  final Color color;
-  const _StatCard(this.label, this.value, this.color);
-  @override Widget build(BuildContext context) => Expanded(child: Container(
-    padding: const EdgeInsets.symmetric(vertical: 14),
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
-        color: color.withValues(alpha: 0.1), border: Border.all(color: color.withValues(alpha: 0.2))),
-    child: Column(children: [
-      Text(value, style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w800, color: color)),
-      const SizedBox(height: 3),
-      Text(label, style: GoogleFonts.outfit(fontSize: 9, color: _C.sub), textAlign: TextAlign.center),
-    ]),
-  ));
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // BOTTOM NAV
 // ─────────────────────────────────────────────────────────────────────────────
@@ -3156,10 +3153,10 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      (Icons.home_rounded,         Icons.home_outlined,        'Home',    _C.navHome),
-      (Icons.public_rounded,       Icons.public_outlined,      'Akhirah', _C.navImpact),
-      (Icons.emoji_events_rounded, Icons.emoji_events_outlined,'Ranking', _C.navRanking),
-      (Icons.person_rounded,       Icons.person_outline_rounded,'Profile', _C.navProfile),
+      (Icons.home_rounded,                Icons.home_outlined,                'Home',    _C.navHome),
+      (Icons.trending_up_rounded,         Icons.trending_up_outlined,         'Journey', _C.navRanking),
+      (Icons.mosque_rounded,              Icons.mosque_outlined,              'Akhirah', _C.navImpact),
+      (Icons.person_rounded,              Icons.person_outline_rounded,       'Profile', _C.navProfile),
     ];
     return Container(
       height: 72,

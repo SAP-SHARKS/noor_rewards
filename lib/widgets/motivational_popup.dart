@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 // Repeats every ~3 minutes. User can permanently silence with "Don't Disturb".
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum _CtaType { quran, share, dhikr }
+enum _CtaType { quran, share, dhikr, boost }
 
 class _Card {
   final String arabic;
@@ -92,7 +92,7 @@ const _kCards = [
   _Card(
     arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
     quote: 'Verily, in the remembrance of Allah\ndo hearts find rest.',
-    source: 'Quran • Ar-Ra\'d 13:28',
+    source: "Quran • Ar-Ra'd 13:28",
     gradient: [Color(0xFF1A1000), Color(0xFFCA8A04), Color(0xFFFBBF24)],
     cta: _CtaType.dhikr,
   ),
@@ -110,17 +110,34 @@ const _kCards = [
     gradient: [Color(0xFF0A1F0A), Color(0xFF15803D), Color(0xFF86EFAC)],
     cta: _CtaType.dhikr,
   ),
+
+  // ── Boost CTA ────────────────────────────────────────────────────────────
+  _Card(
+    arabic: 'وَاعْلَمُوا أَنَّمَا أَمْوَالُكُمْ وَأَوْلَادُكُمْ فِتْنَةٌ',
+    quote: 'Your time is your most\nprecious asset. Invest it wisely\nin what endures forever.',
+    source: 'Quran • Al-Anfal 8:28',
+    gradient: [Color(0xFF1A0D00), Color(0xFFB45309), Color(0xFFFFAA00)],
+    cta: _CtaType.boost,
+  ),
+  _Card(
+    arabic: '',
+    quote: 'Every minute in worship\nis a seed planted in Jannah.\nHow many have you planted today?',
+    source: 'The Prophet ﷺ said: "Take advantage of five before five."',
+    gradient: [Color(0xFF071A0F), Color(0xFF065F46), Color(0xFF34D399)],
+    cta: _CtaType.boost,
+  ),
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Public helper
+// Public helper — random motivational popup (Quran / Dhikr / Share / Boost)
 // ─────────────────────────────────────────────────────────────────────────────
 Future<void> showMotivationalPopup(
   BuildContext context, {
   required VoidCallback onGoQuran,
   required VoidCallback onGoDhikr,
   required VoidCallback onShare,
-  required VoidCallback onDoNotDisturb, // called when user taps "Don't Disturb"
+  required VoidCallback onDoNotDisturb,
+  VoidCallback? onGoBoost,
 }) {
   final card = _kCards[math.Random().nextInt(_kCards.length)];
   return showGeneralDialog(
@@ -141,22 +158,263 @@ Future<void> showMotivationalPopup(
       onGoQuran:       onGoQuran,
       onGoDhikr:       onGoDhikr,
       onShare:         onShare,
+      onGoBoost:       onGoBoost ?? onGoQuran,
       onDoNotDisturb:  onDoNotDisturb,
     ),
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Body widget
+// showValidationRewardPopup — dopamine hit shown immediately after coin seal
+// ─────────────────────────────────────────────────────────────────────────────
+Future<void> showValidationRewardPopup(
+  BuildContext context, {
+  required int xpEarned,
+  required int bonusPoints,
+  VoidCallback? onContinue,
+}) {
+  return showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'validation_reward',
+    barrierColor: Colors.black.withValues(alpha: 0.75),
+    transitionDuration: const Duration(milliseconds: 420),
+    transitionBuilder: (ctx, anim, _, child) {
+      final curved = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
+      return FadeTransition(
+        opacity: anim,
+        child: ScaleTransition(scale: curved, child: child),
+      );
+    },
+    pageBuilder: (ctx, _, __) => _ValidationRewardBody(
+      xpEarned: xpEarned,
+      bonusPoints: bonusPoints,
+      onContinue: onContinue,
+    ),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _ValidationRewardBody — celebratory popup with XP & bonus breakdown
+// ─────────────────────────────────────────────────────────────────────────────
+class _ValidationRewardBody extends StatefulWidget {
+  final int xpEarned, bonusPoints;
+  final VoidCallback? onContinue;
+  const _ValidationRewardBody({
+    required this.xpEarned,
+    required this.bonusPoints,
+    this.onContinue,
+  });
+  @override
+  State<_ValidationRewardBody> createState() => _ValidationRewardBodyState();
+}
+
+class _ValidationRewardBodyState extends State<_ValidationRewardBody>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _scale, _fade;
+
+  @override
+  void initState() {
+    super.initState();
+    HapticFeedback.heavyImpact();
+    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _scale = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack);
+    _fade  = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _ctrl.forward();
+  }
+
+  @override void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    const gold   = Color(0xFFFFAA00);
+    const purple = Color(0xFF9B59B6);
+    const dark   = Color(0xFF1C1C2E);
+    final total  = widget.xpEarned + widget.bonusPoints;
+
+    return Material(
+      color: Colors.transparent,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: ScaleTransition(
+            scale: _scale,
+            child: FadeTransition(
+              opacity: _fade,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF1C1C2E), Color(0xFF2D1B69), Color(0xFF1C1C2E)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: gold.withValues(alpha: 0.35), width: 1.5),
+                  boxShadow: [
+                    BoxShadow(color: purple.withValues(alpha: 0.5), blurRadius: 40, spreadRadius: 2),
+                    BoxShadow(color: gold.withValues(alpha: 0.25), blurRadius: 20),
+                  ],
+                ),
+                padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // — Stars burst icon
+                    Container(
+                      width: 80, height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(colors: [
+                          gold.withValues(alpha: 0.30),
+                          dark.withValues(alpha: 0.80),
+                        ]),
+                        border: Border.all(color: gold.withValues(alpha: 0.50), width: 2),
+                        boxShadow: [BoxShadow(color: gold.withValues(alpha: 0.40), blurRadius: 24)],
+                      ),
+                      child: const Icon(Icons.verified_rounded, color: gold, size: 40),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // — Title
+                    Text('Coins Sealed! ماشاء الله',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.rajdhani(
+                        fontSize: 26, fontWeight: FontWeight.w900,
+                        color: Colors.white, letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'You have been rewarded for\nyour consistency today!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13, color: Colors.white.withValues(alpha: 0.65), height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // — XP breakdown card
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      child: Column(children: [
+                        _RewardRow('⚡ Validation XP', '+${widget.xpEarned} XP', gold),
+                        if (widget.bonusPoints > 0) ...[
+                          const SizedBox(height: 10),
+                          _RewardRow('🔥 Streak Bonus', '+${widget.bonusPoints} XP',
+                              const Color(0xFFFF6B35)),
+                          const SizedBox(height: 10),
+                          Divider(color: Colors.white.withValues(alpha: 0.10), height: 1),
+                          const SizedBox(height: 10),
+                          _RewardRow('✨ Total Earned', '+$total XP', Colors.white,
+                              big: true),
+                        ],
+                      ]),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // — CTA
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          widget.onContinue?.call();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: gold,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
+                        ),
+                        child: Text('Alhamdulillah! 🤲',
+                          style: GoogleFonts.outfit(
+                            fontSize: 16, fontWeight: FontWeight.w800, color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RewardRow extends StatelessWidget {
+  final String label, value;
+  final Color color;
+  final bool big;
+  const _RewardRow(this.label, this.value, this.color, {this.big = false});
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(label, style: GoogleFonts.outfit(
+        fontSize: big ? 14 : 13,
+        fontWeight: big ? FontWeight.w800 : FontWeight.w500,
+        color: Colors.white.withValues(alpha: big ? 0.90 : 0.65),
+      )),
+      Text(value, style: GoogleFonts.outfit(
+        fontSize: big ? 16 : 14,
+        fontWeight: FontWeight.w800,
+        color: color,
+      )),
+    ],
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// showNoorBoostPopup — always shows a Noor Boost card (used post-validation)
+// ─────────────────────────────────────────────────────────────────────────────
+Future<void> showNoorBoostPopup(
+  BuildContext context, {
+  required VoidCallback onGoQuran,
+  required VoidCallback onGoDhikr,
+  VoidCallback? onGoInvite,
+}) {
+  return showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'noor_boost_popup',
+    barrierColor: Colors.black.withValues(alpha: 0.80),
+    transitionDuration: const Duration(milliseconds: 480),
+    transitionBuilder: (ctx, anim, _, child) {
+      final curved = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
+      return FadeTransition(
+        opacity: anim,
+        child: ScaleTransition(scale: curved, child: child),
+      );
+    },
+    pageBuilder: (ctx, _, __) => _NoorBoostPopupBody(
+      onGoQuran:  onGoQuran,
+      onGoDhikr:  onGoDhikr,
+      onGoInvite: onGoInvite,
+    ),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Body widget — standard motivational popup
 // ─────────────────────────────────────────────────────────────────────────────
 class _MotivationalPopupBody extends StatefulWidget {
   final _Card card;
-  final VoidCallback onGoQuran, onGoDhikr, onShare, onDoNotDisturb;
+  final VoidCallback onGoQuran, onGoDhikr, onShare, onGoBoost, onDoNotDisturb;
   const _MotivationalPopupBody({
     required this.card,
     required this.onGoQuran,
     required this.onGoDhikr,
     required this.onShare,
+    required this.onGoBoost,
     required this.onDoNotDisturb,
   });
   @override
@@ -209,6 +467,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
       _CtaType.quran => ('Open Quran',        Icons.menu_book_rounded, const Color(0xFF0D9488)),
       _CtaType.dhikr => ('Dua & Azkaar',      Icons.favorite_rounded,  const Color(0xFFF59E0B)),
       _CtaType.share => ('Share with Friends', Icons.share_rounded,     const Color(0xFF3B82F6)),
+      _CtaType.boost => ('Earn More Noor',     Icons.bolt_rounded,      const Color(0xFFFFAA00)),
     };
 
     void onCtaTap() {
@@ -217,6 +476,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
         case _CtaType.quran: widget.onGoQuran(); break;
         case _CtaType.dhikr: widget.onGoDhikr(); break;
         case _CtaType.share: widget.onShare();   break;
+        case _CtaType.boost: widget.onGoBoost(); break;
       }
     }
 
@@ -376,7 +636,9 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                                         ? Icons.menu_book_rounded
                                         : card.cta == _CtaType.dhikr
                                             ? Icons.favorite_rounded
-                                            : Icons.share_rounded,
+                                            : card.cta == _CtaType.boost
+                                                ? Icons.bolt_rounded
+                                                : Icons.share_rounded,
                                     color: Colors.white,
                                     size: 32,
                                   ),
@@ -528,6 +790,540 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Noor Boost Popup Body — shown right after coin validation
+// ─────────────────────────────────────────────────────────────────────────────
+class _NoorBoostPopupBody extends StatefulWidget {
+  final VoidCallback onGoQuran, onGoDhikr;
+  final VoidCallback? onGoInvite;
+  const _NoorBoostPopupBody({
+    required this.onGoQuran,
+    required this.onGoDhikr,
+    this.onGoInvite,
+  });
+  @override
+  State<_NoorBoostPopupBody> createState() => _NoorBoostPopupBodyState();
+}
+
+class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
+    with TickerProviderStateMixin {
+  late AnimationController _glowCtrl;
+  late AnimationController _rayCtrl;
+  late AnimationController _contentCtrl;
+  late Animation<double> _contentFade;
+  late Animation<Offset> _contentSlide;
+
+  // Which CTA to show — randomly quran or dhikr
+  late bool _showQuran;
+
+  @override
+  void initState() {
+    super.initState();
+    HapticFeedback.heavyImpact();
+    _showQuran = math.Random().nextBool();
+
+    _glowCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2200))
+      ..repeat(reverse: true);
+
+    _rayCtrl = AnimationController(
+        vsync: this, duration: const Duration(seconds: 10))
+      ..repeat();
+
+    _contentCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 650));
+    _contentFade = CurvedAnimation(parent: _contentCtrl, curve: Curves.easeOut);
+    _contentSlide = Tween<Offset>(
+            begin: const Offset(0, 0.06), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _contentCtrl, curve: Curves.easeOut));
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) _contentCtrl.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _glowCtrl.dispose();
+    _rayCtrl.dispose();
+    _contentCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    const gold  = Color(0xFFFFAA00);
+    const teal  = Color(0xFF0D9488);
+    const dark  = Color(0xFF0A1A10);
+
+    final benefitRows = [
+      (
+        icon: '📖',
+        title: 'Read 5 Quran Pages',
+        desc: 'Complete now → earn +50 XP bonus',
+        onTap: () {
+          Navigator.of(context).pop();
+          widget.onGoQuran();
+        },
+      ),
+      (
+        icon: '📿',
+        title: 'Complete a Dhikr Set',
+        desc: 'Finish your Azkaar → earn +30 XP bonus',
+        onTap: () {
+          Navigator.of(context).pop();
+          widget.onGoDhikr();
+        },
+      ),
+      (
+        icon: '🤝',
+        title: 'Invite a Friend',
+        desc: 'Share Noor with someone → earn +100 NP',
+        onTap: () {
+          Navigator.of(context).pop();
+          widget.onGoInvite?.call();
+        },
+      ),
+    ];
+
+    return Material(
+      color: Colors.transparent,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Container(
+            width: double.infinity,
+            constraints: BoxConstraints(maxHeight: size.height * 0.88),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF071A0F), Color(0xFF0A2A18), Color(0xFF0D3D22)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: gold.withValues(alpha: 0.35),
+                  blurRadius: 60,
+                  spreadRadius: 4,
+                ),
+                BoxShadow(
+                  color: teal.withValues(alpha: 0.25),
+                  blurRadius: 30,
+                ),
+              ],
+              border: Border.all(
+                color: gold.withValues(alpha: 0.25),
+                width: 1.5,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: Stack(
+                children: [
+                  // ── Rotating sunburst rays ─────────────────────────────────
+                  Positioned(
+                    top: -60, left: 0, right: 0,
+                    child: AnimatedBuilder(
+                      animation: _rayCtrl,
+                      builder: (_, __) => Transform.rotate(
+                        angle: _rayCtrl.value * math.pi * 2,
+                        child: SizedBox(
+                          height: 320,
+                          child: CustomPaint(
+                            painter: _SunburstRayPainter(
+                              color: gold.withValues(alpha: 0.07),
+                              rayCount: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // ── Green glow orb behind emblem ──────────────────────────
+                  Positioned(
+                    top: 30, left: 0, right: 0,
+                    child: AnimatedBuilder(
+                      animation: _glowCtrl,
+                      builder: (_, __) => Center(
+                        child: Container(
+                          width: 180 + _glowCtrl.value * 20,
+                          height: 180 + _glowCtrl.value * 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(colors: [
+                              gold.withValues(alpha: 0.18 + _glowCtrl.value * 0.08),
+                              teal.withValues(alpha: 0.10 + _glowCtrl.value * 0.04),
+                              Colors.transparent,
+                            ]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // ── Content ────────────────────────────────────────────────
+                  Positioned.fill(
+                    child: SafeArea(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // ── Top: close button ────────────────────────────
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () => Navigator.of(context).pop(),
+                                child: Container(
+                                  width: 34, height: 34,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.10),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: Colors.white.withValues(alpha: 0.15)),
+                                  ),
+                                  child: const Icon(Icons.close_rounded,
+                                      color: Colors.white60, size: 17),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            // ── Emblem: crescent + star ──────────────────────
+                            SlideTransition(
+                              position: _contentSlide,
+                              child: FadeTransition(
+                                opacity: _contentFade,
+                                child: AnimatedBuilder(
+                                  animation: _glowCtrl,
+                                  builder: (_, __) => Container(
+                                    width: 110, height: 110,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: RadialGradient(colors: [
+                                        gold.withValues(alpha: 0.30 + _glowCtrl.value * 0.10),
+                                        dark.withValues(alpha: 0.80),
+                                        dark,
+                                      ]),
+                                      border: Border.all(
+                                        color: gold.withValues(alpha: 0.50 + _glowCtrl.value * 0.25),
+                                        width: 2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: gold.withValues(alpha: 0.35 + _glowCtrl.value * 0.15),
+                                          blurRadius: 28,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          // Crescent shape via two stacked circles
+                                          Container(
+                                            width: 58, height: 58,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: gold.withValues(alpha: 0.90),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            right: 8, top: 8,
+                                            child: Container(
+                                              width: 46, height: 46,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: dark,
+                                              ),
+                                            ),
+                                          ),
+                                          // Small star
+                                          const Positioned(
+                                            right: 0, top: 2,
+                                            child: Icon(Icons.star_rounded,
+                                                color: gold, size: 18),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // ── Heading ──────────────────────────────────────
+                            SlideTransition(
+                              position: _contentSlide,
+                              child: FadeTransition(
+                                opacity: _contentFade,
+                                child: Column(children: [
+                                  Text(
+                                    'MULTIPLY YOUR',
+                                    style: GoogleFonts.rajdhani(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      letterSpacing: 2.5,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                  ShaderMask(
+                                    shaderCallback: (bounds) => const LinearGradient(
+                                      colors: [Color(0xFFFFAA00), Color(0xFFFFD166), Color(0xFFFFAA00)],
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      'NOOR POINTS!',
+                                      style: GoogleFonts.rajdhani(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white,
+                                        letterSpacing: 2.5,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            // ── Subheading ───────────────────────────────────
+                            FadeTransition(
+                              opacity: _contentFade,
+                              child: Text(
+                                'Keep your spiritual momentum going\nand watch your Noor grow ✨',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  color: Colors.white.withValues(alpha: 0.65),
+                                  height: 1.55,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            // ── 3 benefit rows ────────────────────────────────
+                            FadeTransition(
+                              opacity: _contentFade,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.06),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.10)),
+                                ),
+                                child: Column(
+                                  children: List.generate(benefitRows.length, (i) {
+                                    final row = benefitRows[i];
+                                    return Column(children: [
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: i == 0 ? const Radius.circular(20) : Radius.zero,
+                                            bottom: i == benefitRows.length - 1
+                                                ? const Radius.circular(20) : Radius.zero,
+                                          ),
+                                          onTap: row.onTap,
+                                          splashColor: gold.withValues(alpha: 0.12),
+                                          highlightColor: gold.withValues(alpha: 0.06),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 14),
+                                            child: Row(children: [
+                                          Container(
+                                            width: 44, height: 44,
+                                            decoration: BoxDecoration(
+                                              color: gold.withValues(alpha: 0.12),
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: gold.withValues(alpha: 0.25)),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                row.icon,
+                                                style: const TextStyle(fontSize: 22),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  row.title,
+                                                  style: GoogleFonts.outfit(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  row.desc,
+                                                  style: GoogleFonts.outfit(
+                                                    fontSize: 12,
+                                                    color: Colors.white.withValues(alpha: 0.60),
+                                                    height: 1.4,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                              const Icon(Icons.arrow_forward_ios_rounded,
+                                                  color: Color(0xFFFFAA00), size: 15),
+                                            ]),
+                                          ),
+                                        ),
+                                      ),
+                                      if (i < benefitRows.length - 1)
+                                        Divider(
+                                          height: 1,
+                                          color: Colors.white.withValues(alpha: 0.08),
+                                          indent: 16, endIndent: 16,
+                                        ),
+                                    ]);
+                                  }),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            // ── Primary CTA button ────────────────────────────
+                            FadeTransition(
+                              opacity: _contentFade,
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.of(context).pop();
+                                    if (_showQuran) {
+                                      widget.onGoQuran();
+                                    } else {
+                                      widget.onGoDhikr();
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [Color(0xFFFFAA00), Color(0xFFFF8C00)],
+                                      ),
+                                      borderRadius: BorderRadius.circular(18),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: gold.withValues(alpha: 0.45),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 6),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          _showQuran
+                                              ? Icons.menu_book_rounded
+                                              : Icons.favorite_rounded,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          _showQuran ? 'Open Quran Now' : 'Start Azkaar Now',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w800,
+                                            color: Colors.white,
+                                            letterSpacing: 0.3,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            // ── Skip ─────────────────────────────────────────
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(
+                                'Maybe later',
+                                style: GoogleFonts.outfit(
+                                  color: Colors.white.withValues(alpha: 0.40),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sunburst ray painter (used in boost popup background)
+// ─────────────────────────────────────────────────────────────────────────────
+class _SunburstRayPainter extends CustomPainter {
+  final Color color;
+  final int rayCount;
+  const _SunburstRayPainter({required this.color, required this.rayCount});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final paint = Paint()..color = color;
+
+    for (int i = 0; i < rayCount; i++) {
+      final angle = (i / rayCount) * math.pi * 2;
+      final halfWidth = math.pi / rayCount * 0.55;
+      final path = Path()
+        ..moveTo(cx, cy)
+        ..lineTo(
+          cx + math.cos(angle - halfWidth) * size.height,
+          cy + math.sin(angle - halfWidth) * size.height,
+        )
+        ..lineTo(
+          cx + math.cos(angle + halfWidth) * size.height,
+          cy + math.sin(angle + halfWidth) * size.height,
+        )
+        ..close();
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SunburstRayPainter old) =>
+      old.color != color || old.rayCount != rayCount;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
