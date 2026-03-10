@@ -181,6 +181,8 @@ class _ProgressTabState extends State<_ProgressTab> {
   // ── History state ──────────────────────────────────────────────────────────
   int _period = 0;
   bool _histLoading = true;
+  bool _showAllActivity = false;
+  bool _showAllXpGuide = false;
   List<Map<String, dynamic>> _rows = [];
 
   static const _periods = ['today', 'week', 'month', 'all'];
@@ -200,7 +202,7 @@ class _ProgressTabState extends State<_ProgressTab> {
 
   void _switchPeriod(int i) {
     if (_period == i) return;
-    setState(() => _period = i);
+    setState(() { _period = i; _showAllActivity = false; });
     _loadHistory();
   }
 
@@ -219,167 +221,302 @@ class _ProgressTabState extends State<_ProgressTab> {
   Widget build(BuildContext context) {
     final info     = widget.levelInfo;
     final color    = info != null ? _tierColor(info.title) : _kPurple;
-    final progress = info?.progress(widget.xp) ?? 0.0;
+    final lvProgress = info?.progress(widget.xp) ?? 0.0;
     final toNext   = info?.xpToNextLevel(widget.xp) ?? 0;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+      padding: EdgeInsets.zero,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-        // ── Hero level card ────────────────────────────────────────────────
+        // ═══════════════════════════════════════════════════════════════════
+        // SPLIT HERO — Level (left) + XP Period (right) in one premium card
+        // ═══════════════════════════════════════════════════════════════════
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.04)],
-              begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: [
+                color.withValues(alpha: 0.92),
+                color.withValues(alpha: 0.65),
+                const Color(0xFF1A1040),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(36),
+              bottomRight: Radius.circular(36),
+            ),
           ),
           child: Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              info != null ? _tierIcon(info.title, size: 48) : NoorIcon.seedling(size: 48),
-            ]),
-            const SizedBox(height: 12),
-            Text('Level ${widget.level}',
-                style: GoogleFonts.outfit(
-                    fontSize: 42, fontWeight: FontWeight.w900,
-                    color: color, height: 1.0)),
-            const SizedBox(height: 4),
-            Text(info?.title ?? 'Seeker',
-                style: GoogleFonts.outfit(
-                    fontSize: 20, fontWeight: FontWeight.w700, color: _kText)),
-            const SizedBox(height: 20),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: progress),
-                duration: const Duration(milliseconds: 1200),
-                curve: Curves.easeOut,
-                builder: (_, v, __) => LinearProgressIndicator(
-                  value: v, minHeight: 14,
-                  backgroundColor: color.withValues(alpha: 0.12),
-                  valueColor: AlwaysStoppedAnimation(color),
+            // ── Period selector tabs ───────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
+                padding: const EdgeInsets.all(4),
+                child: Row(children: List.generate(_pLabels.length, (i) {
+                  final sel = _period == i;
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () => _switchPeriod(i),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: sel ? Colors.white : Colors.transparent,
+                          borderRadius: BorderRadius.circular(11),
+                        ),
+                        child: Text(_pLabels[i],
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.outfit(
+                                fontSize: 11, fontWeight: FontWeight.w700,
+                                color: sel ? color : Colors.white70)),
+                      ),
+                    ),
+                  );
+                })),
               ),
             ),
-            const SizedBox(height: 10),
-            Row(children: [
-              Text('${widget.xp} XP',
-                  style: GoogleFonts.outfit(
-                      fontSize: 13, fontWeight: FontWeight.w700, color: color)),
-              const Spacer(),
-              Text('$toNext XP to next level',
-                  style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-            ]),
+
+            // ── Split: Level | XP ─────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+              child: IntrinsicHeight(
+                child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  // Left half — Level ──────────────────────────────────────
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(children: [
+                        info != null ? _tierIcon(info.title, size: 28) : NoorIcon.seedling(size: 28),
+                        const SizedBox(width: 8),
+                        Text(info?.title ?? 'Seeker',
+                            style: GoogleFonts.outfit(
+                                fontSize: 13, fontWeight: FontWeight.w600,
+                                color: Colors.white70)),
+                      ]),
+                      const SizedBox(height: 8),
+                      Text('Level ${widget.level}',
+                          style: GoogleFonts.rajdhani(
+                              fontSize: 48, fontWeight: FontWeight.w900,
+                              color: Colors.white, height: 1.0)),
+                      const SizedBox(height: 2),
+                      Text('${widget.streak} day streak 🔥',
+                          style: GoogleFonts.outfit(
+                              fontSize: 11, fontWeight: FontWeight.w600,
+                              color: Colors.white60)),
+                      const SizedBox(height: 14),
+                      // XP progress bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0, end: lvProgress),
+                          duration: const Duration(milliseconds: 1200),
+                          curve: Curves.easeOut,
+                          builder: (_, v, __) => LinearProgressIndicator(
+                            value: v, minHeight: 8,
+                            backgroundColor: Colors.white.withValues(alpha: 0.15),
+                            valueColor: const AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text('$toNext XP to Level ${widget.level + 1}',
+                          style: GoogleFonts.outfit(
+                              fontSize: 10, color: Colors.white60)),
+                    ]),
+                  ),
+
+                  // Divider
+                  Container(
+                    width: 1,
+                    margin: const EdgeInsets.symmetric(horizontal: 18),
+                    color: Colors.white.withValues(alpha: 0.18),
+                  ),
+
+                  // Right half — Period XP ──────────────────────────────────
+                  SizedBox(
+                    width: 120,
+                    child: _histLoading
+                      ? const Center(child: SizedBox(width: 24, height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)))
+                      : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(_pLabels[_period],
+                              style: GoogleFonts.outfit(
+                                  fontSize: 11, color: Colors.white60, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 4),
+                          TweenAnimationBuilder<int>(
+                            tween: IntTween(begin: 0, end: _totalXp),
+                            duration: const Duration(milliseconds: 900),
+                            curve: Curves.easeOut,
+                            builder: (_, v, __) => Text('$v XP',
+                                style: GoogleFonts.rajdhani(
+                                    fontSize: 32, fontWeight: FontWeight.w900,
+                                    color: Colors.white, height: 1.1)),
+                          ),
+                          Text('$_totalActions action${_totalActions == 1 ? '' : 's'}',
+                              style: GoogleFonts.outfit(
+                                  fontSize: 11, color: Colors.white60)),
+                          const SizedBox(height: 12),
+                          if (_byType.isNotEmpty)
+                            SizedBox(
+                              width: 72, height: 72,
+                              child: CustomPaint(
+                                painter: _DonutPainter(
+                                  byType: _byType,
+                                  total: _byType.values.fold(0, (a, b) => a + b),
+                                ),
+                              ),
+                            ),
+                        ]),
+                  ),
+                ]),
+              ),
+            ),
           ]),
         ),
 
-        // ── Stats row ─────────────────────────────────────────────────────
-        const SizedBox(height: 20),
-        Row(children: [
-          _MiniStat(NoorIcon.fire(size:22), '${widget.streak}', 'Day Streak'),
-          const SizedBox(width: 12),
-          _MiniStat(NoorIcon.star(size:22), '${widget.xp}', 'Total XP'),
-          const SizedBox(width: 12),
-          _MiniStat(NoorIcon.medal(size:22), 'Lv ${widget.level}', 'Current Level'),
-        ]),
-
-        // ── XP Earning guide ───────────────────────────────────────────────
-        const SizedBox(height: 28),
-        Text('How to Earn XP',
-            style: GoogleFonts.outfit(
-                fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
-        const SizedBox(height: 14),
-        _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${XpReward.ayahRead} XP'),
-        _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
-        _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+8 XP'),
-        _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+15 XP'),
-        _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${XpReward.dailyLogin} XP'),
-        _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${XpReward.validateCoins} XP'),
-
-        // ── Level tiers ────────────────────────────────────────────────────
-        const SizedBox(height: 28),
-        Text('Level Tiers',
-            style: GoogleFonts.outfit(
-                fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
-        const SizedBox(height: 14),
-        for (final tier in _tierGroups) _TierCard(tier: tier, currentLevel: widget.level),
-
-        // ── Activity History ───────────────────────────────────────────────
-        const SizedBox(height: 32),
-        Row(children: [
-          NoorIcon.lightning(size: 20),
-          const SizedBox(width: 8),
-          Text('Activity History',
-              style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
-        ]),
-        const SizedBox(height: 14),
-
-        // Period selector
-        Container(
-          decoration: BoxDecoration(
-            color: _kWhite,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
+        // ── Breakdown chips ────────────────────────────────────────────────
+        if (!_histLoading && _byType.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Breakdown',
+                  style: GoogleFonts.outfit(
+                      fontSize: 16, fontWeight: FontWeight.w800, color: _kText)),
+              const SizedBox(height: 10),
+              Wrap(spacing: 8, runSpacing: 8,
+                children: _byType.entries.map((e) {
+                  final meta = _activityMeta(e.key);
+                  return _BreakdownChip(
+                      icon: meta.icon, label: meta.label,
+                      xp: e.value, color: meta.color);
+                }).toList(),
+              ),
+            ]),
           ),
-          padding: const EdgeInsets.all(6),
-          child: Row(
-            children: List.generate(_pLabels.length, (i) {
-              final sel = _period == i;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => _switchPeriod(i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.symmetric(vertical: 9),
+        ],
+
+        // ── Activity Log ───────────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            if (!_histLoading && _rows.isNotEmpty) ...[
+              Text('Activity Log',
+                  style: GoogleFonts.outfit(
+                      fontSize: 16, fontWeight: FontWeight.w800, color: _kText)),
+              const SizedBox(height: 10),
+              // Show 2 rows by default, all rows when expanded
+              for (final row in (_showAllActivity ? _rows : _rows.take(2).toList()))
+                _ActivityRow(row),
+              // See More / Show Less button
+              if (_rows.length > 2) ...[
+                const SizedBox(height: 4),
+                GestureDetector(
+                  onTap: () => setState(() => _showAllActivity = !_showAllActivity),
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 4, bottom: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 11),
                     decoration: BoxDecoration(
-                      color: sel ? _kPurple : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
+                      color: _kPurple.withValues(alpha: 0.07),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: _kPurple.withValues(alpha: 0.18)),
                     ),
-                    child: Text(_pLabels[i],
-                        textAlign: TextAlign.center,
+                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Icon(
+                        _showAllActivity
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        color: _kPurple, size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        _showAllActivity
+                            ? 'Show Less'
+                            : 'See More  (${_rows.length - 2} more)',
                         style: GoogleFonts.outfit(
-                            fontSize: 11, fontWeight: FontWeight.w700,
-                            color: sel ? Colors.white : _kPurple)),
+                            fontSize: 13, fontWeight: FontWeight.w700,
+                            color: _kPurple),
+                      ),
+                    ]),
                   ),
                 ),
-              );
-            }),
-          ),
+              ],
+            ] else if (!_histLoading && _rows.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(child: Column(children: [
+                  NoorIcon.moon(size: 44),
+                  const SizedBox(height: 10),
+                  Text('No activity ${_pLabels[_period].toLowerCase()}',
+                      style: GoogleFonts.outfit(
+                          fontSize: 15, fontWeight: FontWeight.w700, color: _kText)),
+                  const SizedBox(height: 4),
+                  Text('Start earning XP — read Quran, do Dhikr & Dua.',
+                      style: GoogleFonts.outfit(fontSize: 12, color: _kSub),
+                      textAlign: TextAlign.center),
+                ])),
+              ),
+          ]),
         ),
-        const SizedBox(height: 16),
 
-        if (_histLoading)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 40),
-            child: NoorInlineLoader(height: 100, color: _kPurple, label: 'Loading history…'),
-          )
-        else if (_rows.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32),
-            child: Center(child: Column(children: [
-              NoorIcon.moon(size: 52),
-              const SizedBox(height: 12),
-              Text('No activity ${_pLabels[_period].toLowerCase()}',
-                  style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: _kText)),
-              const SizedBox(height: 6),
-              Text('Start earning XP — read Quran, do Dhikr & Dua, or log in daily.',
-                  style: GoogleFonts.outfit(fontSize: 13, color: _kSub), textAlign: TextAlign.center),
-            ])),
-          )
-        else ...[
-          // Summary hero card
-          _HistorySummary(
-            totalXp: _totalXp, totalActions: _totalActions,
-            byType: _byType, period: _pLabels[_period],
-          ),
-          const SizedBox(height: 4),
-          // Activity rows
-          for (final row in _rows) _ActivityRow(row),
-        ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // ── How to Earn XP ─────────────────────────────────────────────
+            Text('How to Earn XP',
+                style: GoogleFonts.outfit(
+                    fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
+            const SizedBox(height: 14),
+            _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${XpReward.ayahRead} XP'),
+            _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
+            if (_showAllXpGuide) ...[
+              _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+8 XP'),
+              _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+15 XP'),
+              _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${XpReward.dailyLogin} XP'),
+              _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${XpReward.validateCoins} XP'),
+            ],
+            GestureDetector(
+              onTap: () => setState(() => _showAllXpGuide = !_showAllXpGuide),
+              child: Container(
+                margin: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                decoration: BoxDecoration(
+                  color: _kPurple.withValues(alpha: 0.07),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: _kPurple.withValues(alpha: 0.18)),
+                ),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Icon(
+                    _showAllXpGuide
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: _kPurple, size: 18,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _showAllXpGuide ? 'Show Less' : 'See More  (4 more)',
+                    style: GoogleFonts.outfit(
+                        fontSize: 13, fontWeight: FontWeight.w700,
+                        color: _kPurple),
+                  ),
+                ]),
+              ),
+            ),
+
+            // ── Level Tiers ────────────────────────────────────────────────
+            const SizedBox(height: 28),
+            Text('Level Tiers',
+                style: GoogleFonts.outfit(
+                    fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
+            const SizedBox(height: 14),
+            for (final tier in _tierGroups) _TierCard(tier: tier, currentLevel: widget.level),
+            const SizedBox(height: 40),
+          ]),
+        ),
       ]),
     );
   }
@@ -393,26 +530,6 @@ class _ProgressTabState extends State<_ProgressTab> {
   ];
 }
 
-class _MiniStat extends StatelessWidget {
-  final Widget icon;
-  final String value, label;
-  const _MiniStat(this.icon, this.value, this.label);
-  @override
-  Widget build(BuildContext context) => Expanded(
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      decoration: BoxDecoration(color: _kWhite, borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
-      child: Column(children: [
-        icon,
-        const SizedBox(height: 6),
-        Text(value, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: _kText)),
-        const SizedBox(height: 2),
-        Text(label, style: GoogleFonts.outfit(fontSize: 10, color: _kSub), textAlign: TextAlign.center),
-      ]),
-    ),
-  );
-}
 
 class _XpRow extends StatelessWidget {
   final Widget icon;
@@ -838,108 +955,8 @@ class _RewardChip extends StatelessWidget {
   );
 }
 
-// ── Summary hero ──────────────────────────────────────────────────────────────
-class _HistorySummary extends StatelessWidget {
-  final int totalXp, totalActions;
-  final Map<String, int> byType;
-  final String period;
-  const _HistorySummary({
-    required this.totalXp, required this.totalActions,
-    required this.byType,  required this.period,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-        // Hero XP card
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF6B4EBB), Color(0xFF9B59B6)],
-              begin: Alignment.topLeft, end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [BoxShadow(
-                color: _kPurple.withValues(alpha: 0.35),
-                blurRadius: 20, offset: const Offset(0, 6))],
-          ),
-          child: Row(children: [
-            // Animated XP counter
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(period,
-                  style: GoogleFonts.outfit(
-                      fontSize: 13, color: Colors.white.withValues(alpha: 0.8))),
-              const SizedBox(height: 6),
-              TweenAnimationBuilder<int>(
-                tween: IntTween(begin: 0, end: totalXp),
-                duration: const Duration(milliseconds: 900),
-                curve: Curves.easeOut,
-                builder: (_, v, __) => Text('$v XP',
-                    style: GoogleFonts.outfit(
-                        fontSize: 40, fontWeight: FontWeight.w900,
-                        color: Colors.white, height: 1.0)),
-              ),
-              const SizedBox(height: 4),
-              Text('across $totalActions action${totalActions == 1 ? '' : 's'}',
-                  style: GoogleFonts.outfit(
-                      fontSize: 12, color: Colors.white.withValues(alpha: 0.75))),
-            ])),
-            const SizedBox(width: 16),
-            // Mini donut
-            if (byType.isNotEmpty)
-              _MiniDonut(byType: byType),
-          ]),
-        ),
-
-        // Breakdown chips
-        if (byType.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Text('Breakdown',
-              style: GoogleFonts.outfit(
-                  fontSize: 15, fontWeight: FontWeight.w800, color: _kText)),
-          const SizedBox(height: 10),
-          Wrap(spacing: 8, runSpacing: 8,
-            children: byType.entries.map((e) {
-              final meta = _activityMeta(e.key);
-              return _BreakdownChip(
-                  icon: meta.icon, label: meta.label,
-                  xp: e.value, color: meta.color);
-            }).toList(),
-          ),
-        ],
-
-        const SizedBox(height: 20),
-        Text('Activity Log',
-            style: GoogleFonts.outfit(
-                fontSize: 15, fontWeight: FontWeight.w800, color: _kText)),
-        const SizedBox(height: 8),
-      ]),
-    );
-  }
-}
 
 // ── Mini donut chart ──────────────────────────────────────────────────────────
-class _MiniDonut extends StatelessWidget {
-  final Map<String, int> byType;
-  const _MiniDonut({required this.byType});
-
-  @override
-  Widget build(BuildContext context) {
-    final total = byType.values.fold<int>(0, (a, b) => a + b);
-    if (total == 0) return const SizedBox.shrink();
-    return SizedBox(
-      width: 72, height: 72,
-      child: CustomPaint(
-        painter: _DonutPainter(byType: byType, total: total),
-      ),
-    );
-  }
-}
-
 class _DonutPainter extends CustomPainter {
   final Map<String, int> byType;
   final int total;

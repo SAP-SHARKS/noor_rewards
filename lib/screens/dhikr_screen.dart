@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
+import '../services/live_notification_service.dart';
 import '../widgets/noor_icons.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
@@ -361,6 +362,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
   Future<void> _completeDhikr(String dhikrId, int target) async {
     try {
       await XpService.instance.earnDhikrXp(dhikrId);
+      // Update live notification counter
+      NoorLiveNotificationService.instance.recordDhikr();
       // Record dhikr streak (idempotent — safe to call multiple times)
       StreakService.instance.recordActivity(StreakType.dhikr);
       if (_setsCompleted == 0) await XpService.instance.awardBadge('first_dhikr');

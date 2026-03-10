@@ -10,6 +10,7 @@ import 'screens/profile_setup_screen.dart';
 import 'screens/welcome_gate_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/settings_service.dart';
+import 'services/live_notification_service.dart';
 import 'utils/asset_helper.dart';
 
 Future<void> main() async {
@@ -26,6 +27,9 @@ Future<void> main() async {
   
   // Pre-load all available asset registry to automatically populate custom image cards
   await AssetHelper.loadAssets();
+
+  // Init the live "Noor Today" notification (like Sweatcoin's step counter)
+  await NoorLiveNotificationService.instance.init();
 
   runApp(
     ChangeNotifierProvider<SettingsService>.value(
