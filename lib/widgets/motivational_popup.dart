@@ -277,11 +277,15 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     const SizedBox(height: 20),
 
                     // — Title
-                    Text('Coins Sealed! ماشاء الله',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.rajdhani(
-                        fontSize: 26, fontWeight: FontWeight.w900,
-                        color: Colors.white, letterSpacing: 1.5,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text('Coins Sealed! ماشاء الله',
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.rajdhani(
+                          fontSize: 26, fontWeight: FontWeight.w900,
+                          color: Colors.white, letterSpacing: 1.5,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),

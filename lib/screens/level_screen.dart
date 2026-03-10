@@ -112,22 +112,22 @@ class _LevelScreenState extends State<LevelScreen>
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
-        backgroundColor: _kWhite,
-        surfaceTintColor: _kWhite,
+        backgroundColor: const Color(0xFF0A2318),
+        surfaceTintColor: const Color(0xFF0A2318),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: _kText, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white70, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Journey',
             style: GoogleFonts.outfit(
-                fontSize: 20, fontWeight: FontWeight.w800, color: _kText)),
+                fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabs,
-          labelColor: _kPurple,
-          unselectedLabelColor: _kSub,
-          indicatorColor: _kPurple,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white54,
+          indicatorColor: const Color(0xFF2BAE99),
           indicatorSize: TabBarIndicatorSize.label,
           isScrollable: true,
           tabAlignment: TabAlignment.center,
@@ -141,7 +141,7 @@ class _LevelScreenState extends State<LevelScreen>
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: _kPurple))
+          ? const Center(child: CircularProgressIndicator(color: _kGreen))
           : TabBarView(
               controller: _tabs,
               children: [
@@ -629,8 +629,29 @@ class _TierCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TAB 2 — BADGES
+// TAB 2 — BADGES  (Premium gaming « Trophy Vault » redesign)
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Per-badge accent color derived from the badge emoji / category
+Color _badgeColor(String emoji) {
+  switch (emoji) {
+    case '📖': return const Color(0xFF3B82F6);
+    case '🌟': return const Color(0xFFF5A623);
+    case '🔥': return const Color(0xFFEF4444);
+    case '💎': return const Color(0xFF06B6D4);
+    case '🏆': return const Color(0xFFD4AF37);
+    case '🌙': return const Color(0xFF818CF8);
+    case '☀️': return const Color(0xFFFBBF24);
+    case '💜': return const Color(0xFF9B59B6);
+    case '🤝': return const Color(0xFF10B981);
+    case '🎯': return const Color(0xFFEC4899);
+    case '⚡': return const Color(0xFFFFD700);
+    case '🌱': return const Color(0xFF4CAF50);
+    case '👑': return const Color(0xFFFF6B6B);
+    default:   return const Color(0xFF2BAE99);
+  }
+}
+
 class _BadgesTab extends StatelessWidget {
   final List<BadgeInfo> badges;
   const _BadgesTab({required this.badges});
@@ -639,59 +660,185 @@ class _BadgesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final earned  = badges.where((b) => b.earned).toList();
     final locked  = badges.where((b) => !b.earned).toList();
+    final pct     = badges.isEmpty ? 0.0 : earned.length / badges.length;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+      padding: EdgeInsets.zero,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+        // ── Trophy Vault Header ─────────────────────────────────────────────
         Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [_kGold.withValues(alpha: 0.15), _kGold.withValues(alpha: 0.04)],
+              colors: [Color(0xFF0D1B2A), Color(0xFF1A2F4A), Color(0xFF0D1B2A)],
+              begin: Alignment.topLeft, end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _kGold.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(36),
+              bottomRight: Radius.circular(36),
+            ),
           ),
-          child: Row(children: [
-            NoorIcon.medal(size: 40),
-            const SizedBox(width: 16),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('${earned.length} / ${badges.length} Earned',
+          child: Column(children: [
+            // Glowing trophy icon
+            Container(
+              width: 80, height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const RadialGradient(
+                  colors: [Color(0xFFFFD700), Color(0xFFFF8C00), Color(0xFF8B4513)],
+                  stops: [0.0, 0.6, 1.0],
+                ),
+                boxShadow: [
+                  BoxShadow(color: const Color(0xFFFFD700).withValues(alpha: 0.5), blurRadius: 28, spreadRadius: 4),
+                  BoxShadow(color: const Color(0xFFFFD700).withValues(alpha: 0.2), blurRadius: 60, spreadRadius: 12),
+                ],
+              ),
+              child: const Center(child: Text('🏆', style: TextStyle(fontSize: 38))),
+            ),
+            const SizedBox(height: 16),
+            Text('Trophy Vault',
+                style: GoogleFonts.rajdhani(
+                    fontSize: 30, fontWeight: FontWeight.w900,
+                    color: Colors.white, letterSpacing: 1.5)),
+            const SizedBox(height: 4),
+            Text('${earned.length} / ${badges.length} badges collected',
+                style: GoogleFonts.outfit(
+                    fontSize: 13, color: Colors.white.withValues(alpha: 0.6))),
+            const SizedBox(height: 20),
+            // Progress bar
+            Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: pct),
+                duration: const Duration(milliseconds: 1200),
+                curve: Curves.easeOut,
+                builder: (_, v, __) => FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: v,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [BoxShadow(
+                        color: const Color(0xFFFFD700).withValues(alpha: 0.6),
+                        blurRadius: 8,
+                      )],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('${(pct * 100).round()}% Complete',
                   style: GoogleFonts.outfit(
-                      fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
-              Text('Keep going — more badges to unlock!',
-                  style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-            ])),
+                      fontSize: 11, color: const Color(0xFFFFD700),
+                      fontWeight: FontWeight.w700)),
+              Text('${badges.length - earned.length} to unlock',
+                  style: GoogleFonts.outfit(
+                      fontSize: 11, color: Colors.white.withValues(alpha: 0.45))),
+            ]),
           ]),
         ),
 
+        // ── Earned badges ───────────────────────────────────────────────────
         if (earned.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Text('Earned',
-              style: GoogleFonts.outfit(
-                  fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
-          const SizedBox(height: 12),
-          GridView.count(
-            crossAxisCount: 2, shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1.1,
-            children: earned.map((b) => _BadgeCard(b, true)).toList(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 28, 20, 12),
+            child: Row(children: [
+              Container(
+                width: 6, height: 22,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text('EARNED',
+                  style: GoogleFonts.rajdhani(
+                      fontSize: 18, fontWeight: FontWeight.w900,
+                      color: const Color(0xFF1C1C1E), letterSpacing: 1.2)),
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.4)),
+                ),
+                child: Text('${earned.length}',
+                    style: GoogleFonts.rajdhani(
+                        fontSize: 13, fontWeight: FontWeight.w800,
+                        color: const Color(0xFFFF8C00))),
+              ),
+            ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.95,
+              children: earned.map((b) => _BadgeCard(b, true)).toList(),
+            ),
           ),
         ],
 
+        // ── Locked badges ───────────────────────────────────────────────────
         if (locked.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Text('Locked',
-              style: GoogleFonts.outfit(
-                  fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
-          const SizedBox(height: 12),
-          GridView.count(
-            crossAxisCount: 2, shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1.1,
-            children: locked.map((b) => _BadgeCard(b, false)).toList(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 28, 20, 12),
+            child: Row(children: [
+              Container(
+                width: 6, height: 22,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8E8E93).withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text('LOCKED',
+                  style: GoogleFonts.rajdhani(
+                      fontSize: 18, fontWeight: FontWeight.w900,
+                      color: const Color(0xFF8E8E93), letterSpacing: 1.2)),
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8E8E93).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text('${locked.length}',
+                    style: GoogleFonts.rajdhani(
+                        fontSize: 13, fontWeight: FontWeight.w800,
+                        color: const Color(0xFF8E8E93))),
+              ),
+            ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.95,
+              children: locked.map((b) => _BadgeCard(b, false)).toList(),
+            ),
           ),
         ],
+        const SizedBox(height: 40),
       ]),
     );
   }
@@ -703,45 +850,102 @@ class _BadgeCard extends StatelessWidget {
   const _BadgeCard(this.badge, this.earned);
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: earned ? _kWhite : const Color(0xFFF5F5F5),
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(
-          color: earned ? _kGold.withValues(alpha: 0.4) : Colors.grey.shade200),
-      boxShadow: earned
-          ? [BoxShadow(color: _kGold.withValues(alpha: 0.15), blurRadius: 12, offset: const Offset(0, 4))]
-          : [],
-    ),
-    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Stack(alignment: Alignment.center, children: [
-        Container(
-          width: 56, height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: earned
-                ? _kGold.withValues(alpha: 0.12)
-                : Colors.grey.withValues(alpha: 0.08),
-          ),
-          child: Center(child: earned
-            ? NoorIcon.fromEmoji(badge.emoji, size: earned ? 28 : 22)
-            : NoorIcon.lock(size: 22)),
+  Widget build(BuildContext context) {
+    final accent = _badgeColor(badge.emoji);
+    return Container(
+      decoration: BoxDecoration(
+        color: earned
+            ? const Color(0xFF0D1B2A)
+            : const Color(0xFFF2F2F7),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: earned
+              ? accent.withValues(alpha: 0.5)
+              : const Color(0xFFE5E5EA),
+          width: earned ? 1.5 : 1.0,
         ),
-      ]),
-      const SizedBox(height: 8),
-      Text(badge.name,
-          style: GoogleFonts.outfit(
-              fontSize: 12, fontWeight: FontWeight.w800,
-              color: earned ? _kText : _kSub),
-          textAlign: TextAlign.center, maxLines: 2),
-      const SizedBox(height: 3),
-      Text('+${badge.xpReward} XP',
-          style: GoogleFonts.outfit(
-              fontSize: 11, fontWeight: FontWeight.w600,
-              color: earned ? _kGold : _kSub)),
-    ]),
-  );
+        boxShadow: earned
+            ? [
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.3),
+                  blurRadius: 20, offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.1),
+                  blurRadius: 40, spreadRadius: 4,
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 6, offset: const Offset(0, 2),
+                )
+              ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          // ── Badge icon ──────────────────────────────────────────────────
+          Container(
+            width: 68, height: 68,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: earned
+                  ? accent.withValues(alpha: 0.15)
+                  : Colors.grey.withValues(alpha: 0.08),
+              border: earned
+                  ? Border.all(color: accent.withValues(alpha: 0.4), width: 2)
+                  : null,
+              boxShadow: earned
+                  ? [BoxShadow(color: accent.withValues(alpha: 0.4), blurRadius: 16, spreadRadius: 2)]
+                  : [],
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (earned)
+                  Text(badge.emoji,
+                      style: const TextStyle(fontSize: 32))
+                else
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Icon(Icons.lock_outline_rounded, color: Colors.grey.shade400, size: 26),
+                  ]),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          // ── Badge name ──────────────────────────────────────────────────
+          Text(badge.name,
+              style: GoogleFonts.outfit(
+                  fontSize: 12, fontWeight: FontWeight.w800,
+                  color: earned ? Colors.white : const Color(0xFF8E8E93),
+                  height: 1.3),
+              textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 6),
+          // ── XP reward chip ──────────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: earned
+                  ? accent.withValues(alpha: 0.2)
+                  : Colors.grey.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(10),
+              border: earned
+                  ? Border.all(color: accent.withValues(alpha: 0.35))
+                  : null,
+            ),
+            child: Text(
+              earned ? '+${badge.xpReward} XP ✓' : '+${badge.xpReward} XP',
+              style: GoogleFonts.rajdhani(
+                  fontSize: 12, fontWeight: FontWeight.w800,
+                  color: earned ? accent : const Color(0xFF8E8E93),
+                  letterSpacing: 0.5),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

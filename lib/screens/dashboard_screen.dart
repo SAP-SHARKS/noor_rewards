@@ -10,6 +10,7 @@ import 'dhikr_hub_screen.dart';
 import 'tafsir_hub_screen.dart';
 import 'level_screen.dart';
 import 'impact_report_screen.dart';
+import 'profile_settings_screen.dart';
 import 'admin/admin_dashboard.dart';
 import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
@@ -63,18 +64,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _levelTitle = 'Seeker';
   StreakSnapshot _streakSnap = StreakSnapshot.empty;
   String? _country;
+  String? _avatarUrl;
 
   // Community project
   Map<String, dynamic>? _project;
 
   // ── Motivational popup ───────────────────────────────────────────────────
-  Timer? _startupPopupTimer;     // First popup at ~5 s
+  Timer? _startupPopupTimer;     // First popup after drum-counter animation
   Timer? _repeatingPopupTimer;   // Next popup timer (re-armed after each dismissal)
-  bool   _popupVisible  = false; // True while a popup sheet is on screen
-  bool   _sessionDnd    = false; // True after first DND tap — resets on restart
-  bool   _isInFocusScreen = false; // True while user is reading Quran/Dhikr/Tafsir
+  bool   _popupVisible      = false; // True while a popup sheet is on screen
+  bool   _sessionDnd        = false; // True after first DND tap — resets on restart
+  bool   _isInFocusScreen   = false; // True while user is reading Quran/Dhikr/Tafsir
+  bool   _counterAnimating  = true;  // Blocks popup while drum counter is rolling
   static const _kDndKey       = 'motivational_popup_dnd';       // permanent flag
   static const _kDndCountKey  = 'motivational_popup_dnd_count'; // tap counter
+
+  // ── Home-tab visit tracking (drives counter re-animation) ────────────────
+  int _homeVisitCount = 0;  // increments each time user lands on Home
 
   @override
   void initState() {
@@ -117,8 +123,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (prefs.getBool(_kDndKey) == true) return; // permanent block
     } catch (_) {}
 
-    // First popup fires 5 s after launch
-    _startupPopupTimer = Timer(const Duration(seconds: 5), _doShowPopup);
+    // Animation takes 300ms delay + 1400ms roll + 500ms breathing room = 2200ms.
+    // The very first popup waits for the counter to finish before showing.
+    _startupPopupTimer = Timer(const Duration(milliseconds: 2200), _doShowPopup);
   }
 
   // Arms the NEXT single popup timer — called only after current popup closes.
@@ -131,7 +138,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Shows one popup; when it closes (any action), schedules the next timer.
   void _doShowPopup() {
-    if (!mounted || _sessionDnd || _isInFocusScreen || _popupVisible) return;
+    // Block if: DND, focus screen, another popup visible, OR counter still rolling
+    if (!mounted || _sessionDnd || _isInFocusScreen || _popupVisible || _counterAnimating) return;
     _popupVisible = true;
     showMotivationalPopup(
       context,
@@ -194,11 +202,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (uid == null) return;
     try {
       final profile = await _supabase.from('profiles')
-          .select('noor_points, country, total_xp, level').eq('id', uid).maybeSingle();
+          .select('noor_points, country, total_xp, level, avatar_url').eq('id', uid).maybeSingle();
       _noorPoints = (profile?['noor_points'] as num?)?.toInt() ?? 0;
       _totalXp    = (profile?['total_xp']    as num?)?.toInt() ?? 0;
       _level      = (profile?['level']       as num?)?.toInt() ?? 1;
       _country    = profile?['country'] as String?;
+      _avatarUrl  = profile?['avatar_url'] as String?;
 
       // Resolve level title from xp_levels table
       final levels = await _supabase.from('xp_levels')
@@ -266,11 +275,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           streak: _streak,
           streakSnap: _streakSnap,
           project: _project,
+          homeVisitCount: _homeVisitCount,
+          avatarUrl: _avatarUrl,
           onGoQuran:       () => _goToScreen(const QuranHubScreen()),
           onGoDhikr:       () => _goToScreen(const DhikrHubScreen()),
           onGoTafsir:      () => _goToScreen(const TafsirHubScreen()),
           onGoAchievements:() => Navigator.push(context,
               MaterialPageRoute(builder: (_) => const LevelScreen())),
+          onGoProfile: () => setState(() => _tab = 3),
           onGoInvite: () {
             final uid = Supabase.instance.client.auth.currentUser?.id;
             if (uid == null) return;
@@ -297,10 +309,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
             name: widget.name, noorPoints: _noorPoints,
             totalXp: _totalXp, level: _level, levelTitle: _levelTitle,
             country: _country, streak: _streak,
+            avatarUrl: _avatarUrl,
             currentUserId: _supabase.auth.currentUser?.id ?? '',
             onSignOut: _signOut),
       ]),
-      bottomNavigationBar: _BottomNav(tab: _tab, onTap: (i) => setState(() => _tab = i)),
+      bottomNavigationBar: _BottomNav(
+        tab: _tab,
+        onTap: (i) {
+          if (i == 0 && _tab != 0) {
+            // User returning to Home tab: kick off a new counter animation
+            // and block any popup for the duration (300ms + 1400ms + 500ms = 2200ms).
+            setState(() {
+              _tab = i;
+              _homeVisitCount++;
+              _counterAnimating = true;
+            });
+            Future.delayed(const Duration(milliseconds: 2200), () {
+              if (mounted) setState(() => _counterAnimating = false);
+            });
+          } else {
+            setState(() => _tab = i);
+          }
+        },
+      ),
     );
   }
 }
@@ -313,16 +344,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
 // ─────────────────────────────────────────────────────────────────────────────
 class _HomeTab extends StatefulWidget {
   final String name, levelTitle;
+  final String? avatarUrl;
   final int noorPoints, todayPoints, weekPoints, monthPoints, streak, totalXp, level;
+  final int homeVisitCount;
   final Map<String, dynamic>? project;
   final StreakSnapshot streakSnap;
   final VoidCallback onGoQuran, onGoDhikr, onGoTafsir, onGoAchievements, onGoInvite;
+  final VoidCallback? onGoProfile;
   final Future<bool> Function() onValidate;
   const _HomeTab({
     required this.name, required this.noorPoints, required this.todayPoints,
     required this.weekPoints, required this.monthPoints, required this.streak,
     required this.totalXp, required this.level, required this.levelTitle,
     required this.project, required this.streakSnap,
+    required this.homeVisitCount,
+    this.avatarUrl,
+    this.onGoProfile,
     required this.onGoQuran, required this.onGoDhikr,
     required this.onGoTafsir, required this.onValidate, required this.onGoAchievements,
     required this.onGoInvite,
@@ -487,14 +524,21 @@ class _HomeTabState extends State<_HomeTab> {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: widget.onGoAchievements,
+            onTap: () => widget.onGoProfile?.call(),
             child: Stack(clipBehavior: Clip.none, children: [
               Container(width: 48, height: 48,
-                decoration: BoxDecoration(shape: BoxShape.circle,
-                    gradient: const LinearGradient(colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)])),
-                child: Center(child: Text(
-                    firstName.isNotEmpty ? firstName[0].toUpperCase() : 'N',
-                    style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)))),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)]),
+                  image: widget.avatarUrl != null
+                      ? DecorationImage(image: NetworkImage(widget.avatarUrl!), fit: BoxFit.cover)
+                      : null,
+                ),
+                child: widget.avatarUrl == null
+                    ? Center(child: Text(
+                        firstName.isNotEmpty ? firstName[0].toUpperCase() : 'N',
+                        style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)))
+                    : null),
               Positioned(bottom: -4, right: -4, child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(color: const Color(0xFF5856D6),
@@ -509,6 +553,7 @@ class _HomeTabState extends State<_HomeTab> {
         const SizedBox(height: 22),
         Center(child: _NoorCounter(
           value: widget.todayPoints > 0 ? widget.todayPoints : widget.noorPoints,
+          visitCount: widget.homeVisitCount,
         )),
 
         // ── Swipe-to-Validate button (close to Today's points) ────────────────
@@ -589,8 +634,12 @@ class _HomeTabState extends State<_HomeTab> {
             donations: _myDonations,
             availablePoints: widget.noorPoints,
             onDonateMore: (project) {
-              final parentState = context.findAncestorStateOfType<_DashboardScreenState>();
-              parentState?.setState(() => parentState._tab = 1);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CommunityImpactPage(),
+                ),
+              );
             },
           ),
         ],
@@ -2084,18 +2133,57 @@ class _MyDonationsSection extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NOOR COUNTER — Tasbih drum-wheel style
-// Each digit lives in its own physical scroll-wheel slot: dark Islamic-green
-// gradient with top/bottom depth shadows, amber gold fold line, white glow text.
-// Amber beads flank the drums like tasbih prayer beads.
+// NOOR COUNTER — Tasbih drum-wheel style with slot-machine roll animation
+// Each digit rapidly spins through 0→9 before landing on the final value.
 // ─────────────────────────────────────────────────────────────────────────────
-class _NoorCounter extends StatelessWidget {
+class _NoorCounter extends StatefulWidget {
   final int value;
-  const _NoorCounter({required this.value});
+  /// Increments each time the user navigates to the Home tab.
+  /// A change here re-fires the slot-machine animation regardless of value.
+  final int visitCount;
+  const _NoorCounter({required this.value, this.visitCount = 0});
+  @override
+  State<_NoorCounter> createState() => _NoorCounterState();
+}
 
-  /// Insert commas: 12345 → "12,345"
-  String _withCommas() {
-    final s = value.toString();
+class _NoorCounterState extends State<_NoorCounter>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    );
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    // Small delay so the screen finishes building first
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _ctrl.forward();
+    });
+  }
+
+  @override
+  void didUpdateWidget(_NoorCounter old) {
+    super.didUpdateWidget(old);
+    // Re-animate if value OR visit-count changes (triggers every home tab switch)
+    if (old.value != widget.value || old.visitCount != widget.visitCount) {
+      _ctrl
+        ..reset()
+        ..forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  /// Insert commas into an already-padded digit string (preserves leading zeros)
+  String _withCommasStr(String s) {
     final buf = StringBuffer();
     for (int i = 0; i < s.length; i++) {
       if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
@@ -2106,180 +2194,275 @@ class _NoorCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = _withCommas();
-    // One unified game-panel: drum display at top, label strip snapped at bottom.
-    // ClipRRect clips both sections to shared rounded corners; the outer
-    // DecoratedBox draws the single border + shadow around the whole unit.
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFF2BAE99).withValues(alpha: 0.25), width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
-            blurRadius: 16, offset: const Offset(0, 6),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 6, offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(21),
-        child: IntrinsicWidth(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Drum display ─────────────────────────────────────────────
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFFFFFF), Color(0xFFF5FAF9)],
-                    begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  ),
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const _NoorBead(),
-                      const SizedBox(width: 10),
-                      for (int i = 0; i < fmt.length; i++)
-                        if (fmt[i] == ',')
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(',',
-                              style: GoogleFonts.rajdhani(
-                                fontSize: 20, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF2BAE99).withValues(alpha: 0.55),
-                              ),
-                            ),
-                          )
-                        else
-                          _DrumDigit(digit: fmt[i]),
-                      const SizedBox(width: 10),
-                      const _NoorBead(),
-                    ],
-                  ),
-                ),
-              ),
+    // fmtFull drives the structural layout (stable widths/commas)
+    final targetStr = widget.value.toString();
+    final fmtFull   = _withCommasStr(targetStr);
 
-              // ── Thin teal divider ──────────────────
-              Container(
-                height: 0.8,
-                color: const Color(0xFF2BAE99).withValues(alpha: 0.3),
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (context, _) {
+        return ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: const Color(0xFF2BAE99).withValues(alpha: 0.25), width: 1,
               ),
-
-              // ── Label strip ─────────────────────────────────────────────
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF1A9E8C), Color(0xFF2BAE99)],
-                    begin: Alignment.centerLeft, end: Alignment.centerRight,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+                  blurRadius: 16, offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 6, offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(21),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // ── Drum display ──────────────────────────────────────────
+                  SizedBox(
+                    height: 114,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFFFFFF), Color(0xFFF5FAF9)],
+                          begin: Alignment.topLeft, end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const _NoorBead(),
+                            const SizedBox(width: 10),
+                            for (int i = 0; i < fmtFull.length; i++)
+                              if (fmtFull[i] == ',')
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Text(',',
+                                    style: GoogleFonts.rajdhani(
+                                      fontSize: 20, fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF2BAE99).withValues(alpha: 0.55),
+                                    ),
+                                  ),
+                                )
+                              else
+                                _DrumDigit(
+                                  targetDigit: int.parse(fmtFull[i]),
+                                  progress: _anim.value,
+                                  slotIndex: i,
+                                  totalSlots: fmtFull.length,
+                                ),
+                            const SizedBox(width: 10),
+                            const _NoorBead(),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Text('YOUR TOTAL NOOR POINTS',
-                      style: GoogleFonts.rajdhani(
-                        fontSize: 13, fontWeight: FontWeight.w700,
-                        color: Colors.white, letterSpacing: 2.0,
-                      )),
+
+                  // ── Thin teal divider ───────────────────────────────────
+                  Container(
+                    height: 0.8,
+                    color: const Color(0xFF2BAE99).withValues(alpha: 0.3),
+                  ),
+
+                  // ── Label strip ────────────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1A9E8C), Color(0xFF2BAE99)],
+                        begin: Alignment.centerLeft, end: Alignment.centerRight,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text('YOUR TOTAL NOOR POINTS',
+                          style: GoogleFonts.rajdhani(
+                            fontSize: 13, fontWeight: FontWeight.w700,
+                            color: Colors.white, letterSpacing: 2.0,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Slot-machine drum digit — scrolls a column of 0-9 rapidly before landing.
+/// Each slot spins [_kExtraSpins] full rotations plus the target digit offset,
+/// giving the authentic odometer / tasbih-counter roll feel.
+class _DrumDigit extends StatelessWidget {
+  /// The actual digit to land on (0-9).
+  final int targetDigit;
+  /// Overall counter progress 0.0 → 1.0.
+  final double progress;
+  /// Slot position (0 = leftmost).
+  final int slotIndex;
+  final int totalSlots;
+
+  // How many extra full rotations each slot does before landing.
+  // Rightmost digit spins most (cascading slot-machine feel).
+  static const double _kExtraSpinsBase  = 3.0;  // minimum extra full rotations
+  static const double _kExtraSpinsStep  = 0.8;  // additional spins per slot from right
+  static const double _digitHeight      = 62.0;
+  static const double _slotH            = 62.0;
+
+  const _DrumDigit({
+    required this.targetDigit,
+    this.progress = 1.0,
+    this.slotIndex = 0,
+    this.totalSlots = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Rightmost digit: more spins; leftmost: fewer.
+    final posFromRight = totalSlots - 1 - slotIndex;
+    final extraSpins   = _kExtraSpinsBase + posFromRight * _kExtraSpinsStep;
+
+    // Stagger: rightmost starts immediately, leftmost starts a little later.
+    // This way the first digit that settles is the rightmost one.
+    final staggerDelay = slotIndex * 0.04;   // leftmost slots start slightly later
+    final localProg    = ((progress - staggerDelay) / (1.0 - staggerDelay)).clamp(0.0, 1.0);
+
+    // Apply easeOut so the spin decelerates nicely.
+    final easedProg = Curves.easeOut.transform(localProg);
+
+    // Total scroll distance in digits:
+    //   We scroll from 0 downward (digit 0 at top → digit 9 at bottom = 1 rotation).
+    //   extraSpins full rotations + arrive exactly at targetDigit.
+    final totalDigitScroll = extraSpins * 10 + targetDigit;
+    // Current scroll in pixels (upward scroll = translate negative Y).
+    final scrolledDigits   = easedProg * totalDigitScroll;
+    // Which digit row we are currently at (fractional).
+    final fractionalRow    = scrolledDigits % 10;
+    // Translate the 10-digit column upward by fractionalRow * digitHeight.
+    final translateY       = -fractionalRow * _digitHeight;
+
+    return ClipRect(
+      child: SizedBox(
+        width: 48,
+        height: _slotH,
+        child: Stack(children: [
+          // ── Dig column: renders 0-9 twice for seamless wrap ──────────
+          Transform.translate(
+            offset: Offset(0, translateY),
+            child: OverflowBox(
+              maxHeight: double.infinity,
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: 48,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (int d = 0; d <= 9; d++)
+                      _DigitCell(digit: d, height: _digitHeight),
+                    // Duplicate first row so the column wraps seamlessly
+                    _DigitCell(digit: 0, height: _digitHeight),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+
+          // ── Top fade mask ───────────────────────────────────────────
+          Positioned(
+            top: 0, left: 0, right: 0, height: 14,
+            child: DecoratedBox(decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [const Color(0xFFF5FAF9), const Color(0xFFF5FAF9).withValues(alpha: 0)],
+                begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              ),
+            )),
+          ),
+
+          // ── Bottom fade mask ────────────────────────────────────────
+          Positioned(
+            bottom: 0, left: 0, right: 0, height: 14,
+            child: DecoratedBox(decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [const Color(0xFFF5FAF9).withValues(alpha: 0), const Color(0xFFF5FAF9)],
+                begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              ),
+            )),
+          ),
+
+          // ── Centre fold line ───────────────────────────────────────
+          Center(child: Container(
+            height: 0.8,
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            color: const Color(0xFF2BAE99).withValues(alpha: 0.35),
+          )),
+        ]),
       ),
     );
   }
 }
 
-/// Individual digit scroll-wheel slot
-class _DrumDigit extends StatelessWidget {
-  final String digit;
-  const _DrumDigit({required this.digit});
+/// Single digit cell inside the rolling column.
+class _DigitCell extends StatelessWidget {
+  final int digit;
+  final double height;
+  const _DigitCell({required this.digit, required this.height});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 33,
-      height: 46,
-      margin: const EdgeInsets.symmetric(horizontal: 2),
+      width: 48,
+      height: height,
+      margin: EdgeInsets.zero,
       decoration: BoxDecoration(
-        // Lighter in the middle → looks like a cylinder curving away from us
         gradient: const LinearGradient(
-          colors: [Color(0xFFE8F7F3), Color(0xFFF0FAF7), Color(0xFFE8F7F3)],
+          colors: [Color(0xFFD4F0E8), Color(0xFFEBF9F4), Color(0xFFD4F0E8)],
           stops: [0.0, 0.5, 1.0],
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
         ),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF2BAE99).withValues(alpha: 0.30), width: 0.8,
+          color: const Color(0xFF2BAE99).withValues(alpha: 0.4), width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
+            color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+            blurRadius: 6, offset: const Offset(0, 2),
+          ),
+          BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 4, offset: const Offset(0, 2),
+            blurRadius: 3, offset: const Offset(0, 1),
           ),
         ],
       ),
-      child: Stack(children: [
-        // Top depth shadow — receding top of the drum
-        Positioned(
-          top: 0, left: 0, right: 0, height: 12,
-          child: DecoratedBox(decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            gradient: LinearGradient(
-              colors: [const Color(0xFF2BAE99).withValues(alpha: 0.12), Colors.transparent],
-              begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            ),
-          )),
-        ),
-        // Bottom depth shadow
-        Positioned(
-          bottom: 0, left: 0, right: 0, height: 12,
-          child: DecoratedBox(decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
-            gradient: LinearGradient(
-              colors: [Colors.transparent, const Color(0xFF2BAE99).withValues(alpha: 0.12)],
-              begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            ),
-          )),
-        ),
-        // Amber fold line → teal fold line
-        Center(child: Container(
-          height: 0.8,
-          margin: const EdgeInsets.symmetric(horizontal: 5),
-          decoration: BoxDecoration(
-            color: const Color(0xFF2BAE99).withValues(alpha: 0.4),
-            boxShadow: [BoxShadow(
-              color: const Color(0xFF2BAE99).withValues(alpha: 0.2),
-              blurRadius: 3,
-            )],
-          ),
-        )),
-        // The digit
-        Center(child: Text(digit,
+      child: Center(
+        child: Text(
+          '$digit',
           style: GoogleFonts.rajdhani(
-            fontSize: 26, fontWeight: FontWeight.w700,
-            color: const Color(0xFF1A6B5A), height: 1,
+            fontSize: 36, fontWeight: FontWeight.w800,
+            color: const Color(0xFF0E5040), height: 1,
             shadows: [
               Shadow(
-                color: const Color(0xFF2BAE99).withValues(alpha: 0.25),
+                color: const Color(0xFF2BAE99).withValues(alpha: 0.35),
                 blurRadius: 8,
               ),
             ],
           ),
-        )),
-      ]),
+        ),
+      ),
     );
   }
 }
@@ -2975,182 +3158,527 @@ class _RankingSheetState extends State<_RankingSheet> {
 // ─────────────────────────────────────────────────────────────────────────────
 // PROFILE TAB
 // ─────────────────────────────────────────────────────────────────────────────
-class _ProfileTab extends StatelessWidget {
+class _ProfileTab extends StatefulWidget {
   final String name, levelTitle, currentUserId;
   final int noorPoints, totalXp, level, streak;
   final String? country;
+  final String? avatarUrl;
   final VoidCallback onSignOut;
   const _ProfileTab({required this.name, required this.noorPoints,
       required this.totalXp, required this.level, required this.levelTitle,
       required this.country, required this.streak, required this.currentUserId,
+      this.avatarUrl,
       required this.onSignOut});
+  @override
+  State<_ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<_ProfileTab> {
+  List<Map<String, dynamic>> _leaders = [];
+  int  _myRank    = 0;
+  bool _lbLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLeaderboard();
+  }
+
+  Future<void> _openSettings(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ProfileSettingsScreen()),
+    );
+    // Reload leaderboard in case anything changed
+    _loadLeaderboard();
+  }
+
+  Future<void> _loadLeaderboard() async {
+    try {
+      final res = await Supabase.instance.client
+          .from('leaderboard_global')
+          .select()
+          .limit(100);
+      _leaders = List<Map<String, dynamic>>.from(res);
+      _myRank  = _leaders.indexWhere((p) => p['id'] == widget.currentUserId) + 1;
+      if (_myRank == 0) _myRank = _leaders.length + 1;
+    } catch (_) {}
+    if (mounted) setState(() => _lbLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
-    final first = name.split(' ').first;
-    return SafeArea(child: SingleChildScrollView(
+    final user    = Supabase.instance.client.auth.currentUser;
+    final first   = widget.name.split(' ').first;
+    final name    = widget.name;
+    final country = widget.country;
+    final level   = widget.level;
+    final levelTitle = widget.levelTitle;
+    final streak  = widget.streak;
+    final avatarUrl  = widget.avatarUrl;
+    final statusBarH = MediaQuery.of(context).padding.top;
+
+    return SafeArea(
+      top: false,
+      child: SingleChildScrollView(
       child: Column(children: [
-        // Profile header (warm gradient)
+
+        // ── Profile header — Akhirah-style deep green + arcs ──────────────
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(20, 32, 20, 28),
           decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [Color(0xFFFFE5D9), Color(0xFFFFD4BF)]),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF0A2318), Color(0xFF133828), Color(0xFF1A4731)],
+            ),
           ),
-          child: Column(children: [
-            Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
-              Container(
-                width: 96, height: 96,
-                decoration: BoxDecoration(shape: BoxShape.circle,
-                    gradient: const LinearGradient(colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)]),
-                    border: Border.all(color: Colors.white, width: 3),
-                    boxShadow: [BoxShadow(color: const Color(0xFFDD88FF).withValues(alpha: 0.4), blurRadius: 20)]),
-                child: Center(child: Text(first.isNotEmpty ? first[0].toUpperCase() : 'N',
-                    style: GoogleFonts.outfit(fontSize: 42, fontWeight: FontWeight.w800, color: Colors.white))),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Decorative arc circles — same as Akhirah
+              Positioned(top: -40, right: -40,
+                  child: _ProfileArc(180, Colors.white.withValues(alpha: 0.04))),
+              Positioned(bottom: -20, left: -30,
+                  child: _ProfileArc(130, Colors.white.withValues(alpha: 0.03))),
+              Positioned(top: 40, right: 40,
+                  child: _ProfileArc(70, const Color(0xFFD4AF37).withValues(alpha: 0.08))),
+              Positioned(top: -10, left: 60,
+                  child: _ProfileArc(50, const Color(0xFF2BAE99).withValues(alpha: 0.06))),
+
+              // Content — padded below status bar
+              Padding(
+                padding: EdgeInsets.fromLTRB(22, statusBarH + 18, 22, 36),
+                child: Column(children: [
+                  // Top row: "My Profile" title + level pill (mirrors Akhirah top bar)
+                  Row(children: [
+                    Text('My Profile',
+                        style: GoogleFonts.outfit(
+                            fontSize: 18, fontWeight: FontWeight.w800,
+                            color: Colors.white)),
+                    const Spacer(),
+                    // Level pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                      ),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(Icons.workspace_premium_rounded,
+                            color: Color(0xFFD4AF37), size: 14),
+                        const SizedBox(width: 5),
+                        Text('Lvl $level · $levelTitle',
+                            style: GoogleFonts.outfit(
+                                fontSize: 12, fontWeight: FontWeight.w700,
+                                color: const Color(0xFFD4AF37))),
+                      ]),
+                    ),
+                    const SizedBox(width: 10),
+                    // Settings button
+                    GestureDetector(
+                      onTap: () => _openSettings(context),
+                      child: Container(
+                        width: 38, height: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2)),
+                        ),
+                        child: const Icon(Icons.settings_rounded,
+                            color: Colors.white, size: 18),
+                      ),
+                    ),
+                  ]),
+
+                  const SizedBox(height: 28),
+
+                  // Avatar
+                  Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
+                    Container(
+                      width: 100, height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)],
+                          begin: Alignment.topLeft, end: Alignment.bottomRight,
+                        ),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.25), width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF9B59B6).withValues(alpha: 0.5),
+                            blurRadius: 28, offset: const Offset(0, 8),
+                          ),
+                          BoxShadow(
+                            color: Colors.white.withValues(alpha: 0.06),
+                            blurRadius: 0, spreadRadius: 4,
+                          ),
+                        ],
+                        image: avatarUrl != null
+                            ? DecorationImage(
+                                image: NetworkImage(avatarUrl), fit: BoxFit.cover)
+                            : null,
+                      ),
+                      child: avatarUrl == null
+                          ? Center(child: Text(
+                              first.isNotEmpty ? first[0].toUpperCase() : 'N',
+                              style: GoogleFonts.outfit(
+                                  fontSize: 44, fontWeight: FontWeight.w800,
+                                  color: Colors.white),
+                            ))
+                          : null,
+                    ),
+                  ]),
+
+                  const SizedBox(height: 18),
+
+                  // Name
+                  Text(name,
+                      style: GoogleFonts.rajdhani(
+                          fontSize: 28, fontWeight: FontWeight.w800,
+                          color: Colors.white, letterSpacing: 0.5)),
+                  const SizedBox(height: 4),
+
+                  // Email / Country
+                  if (user?.email != null)
+                    Text(user!.email ?? '',
+                        style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.5))),
+                  if (country != null && country.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(Icons.public_rounded,
+                          size: 12, color: Colors.white.withValues(alpha: 0.5)),
+                      const SizedBox(width: 4),
+                      Text(country,
+                          style: GoogleFonts.outfit(
+                              fontSize: 12,
+                              color: Colors.white.withValues(alpha: 0.55))),
+                    ]),
+                  ],
+                ]),
               ),
-              Positioned(bottom: -6, child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: const Color(0xFFFF9671), borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white, width: 2)),
-                child: Text('$levelTitle • Level $level',
-                    style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
-              )),
-            ]),
-            const SizedBox(height: 20),
-            Text(name, style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w800, color: _C.text)),
-            const SizedBox(height: 4),
-            if (country != null && country!.isNotEmpty)
-              Text(country!, style: GoogleFonts.outfit(fontSize: 13, color: _C.sub)),
-          ]),
+            ],
+          ),
         ),
 
-        Padding(padding: const EdgeInsets.all(20), child: Column(children: [
-          // Compact rank card + tap to leaderboard
-          GestureDetector(
-            onTap: () => showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => _RankingSheet(currentUserId: currentUserId),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
-                  begin: Alignment.topLeft, end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(color: const Color(0xFF2D1B69).withValues(alpha: 0.3), blurRadius: 14, offset: const Offset(0, 4))],
-              ),
-              child: Row(children: [
-                Container(
-                  width: 46, height: 46,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFAA00).withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFFFAA00).withValues(alpha: 0.4)),
-                  ),
-                  child: Center(child: NoorIcon.trophy(size: 22)),
-                ),
-                const SizedBox(width: 14),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('Community Leaderboard',
-                      style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white)),
-                  Text('Tap to see your ranking',
-                      style: GoogleFonts.outfit(fontSize: 11, color: Colors.white54)),
-                ])),
-                const Icon(Icons.arrow_forward_ios_rounded, size: 15, color: Color(0xFFFFAA00)),
-              ]),
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // Streak card (real data)
-          GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LevelScreen())),
-            child: Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    streak > 0 ? const Color(0xFFFFF0F5) : const Color(0xFFF5F5F5),
-                    streak > 0 ? const Color(0xFFFFE0EC) : const Color(0xFFEEEEEE),
-                  ]),
-                  borderRadius: BorderRadius.circular(20)),
-              child: Row(children: [
-                Container(width: 52, height: 52,
-                    decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                    child: Center(child: NoorIcon.fire(size: 26))),
-                const SizedBox(width: 14),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(
-                    streak > 0 ? '$streak Day Streak 🔥' : 'Start your streak today!',
-                    style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800,
-                        color: streak > 0 ? const Color(0xFFFF6B9D) : _C.sub)),
-                  Text('Tap to view your Journey', style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
-                ])),
-                const Icon(Icons.arrow_forward_ios_rounded, size: 15, color: Color(0xFFFF6B9D)),
-              ]),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Email
+          // ── Body — warm beige background matching the rest of the app ──────
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)]),
-            child: Row(children: [
-              const Icon(Icons.email_rounded, color: Color(0xFF4FC3F7), size: 20),
-              const SizedBox(width: 12),
-              Expanded(child: Text(user?.email ?? '',
-                  style: GoogleFonts.outfit(fontSize: 14, color: _C.text))),
-            ]),
-          ),
-          const SizedBox(height: 8),
+            color: _C.bg,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+              child: Column(children: [
 
-          // Admin Panel button (only for admin emails)
-          if (_kAdminEmails.contains(user?.email)) ...[  
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const AdminDashboard())),
-              child: Container(
-                width: double.infinity, height: 54,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(colors: [Color(0xFF0F172A), Color(0xFF1E3A5F)]),
-                  boxShadow: [BoxShadow(color: const Color(0xFF0F172A).withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 4))],
+                // ── Community Leaderboard — inline card ─────────────────
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: _C.border),
+                    boxShadow: [BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 12, offset: const Offset(0, 4),
+                    )],
+                  ),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    // Header row
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                      child: Row(children: [
+                        Container(
+                          width: 40, height: 40,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(child: NoorIcon.trophy(size: 20)),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text('Community Leaderboard',
+                              style: GoogleFonts.outfit(
+                                  fontSize: 15, fontWeight: FontWeight.w800,
+                                  color: _C.text)),
+                          Text('Top contributors by lifetime XP',
+                              style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
+                        ])),
+                      ]),
+                    ),
+
+                    // My rank hero
+                    if (!_lbLoading)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [BoxShadow(
+                              color: const Color(0xFF2D1B69).withValues(alpha: 0.35),
+                              blurRadius: 14, offset: const Offset(0, 5),
+                            )],
+                          ),
+                          child: Row(children: [
+                            NoorIcon.medal(size: 36),
+                            const SizedBox(width: 14),
+                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text('Your Rank: #$_myRank',
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 18, fontWeight: FontWeight.w800,
+                                      color: Colors.white)),
+                              Text('Out of ${_leaders.length} believers',
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 11, color: Colors.white60)),
+                            ])),
+                          ]),
+                        ),
+                      ),
+
+                    // Loading indicator
+                    if (_lbLoading)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Center(child: CircularProgressIndicator(
+                            color: Color(0xFF2BAE99), strokeWidth: 2.5)),
+                      ),
+
+                    // Top 10 list
+                    if (!_lbLoading && _leaders.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                        child: Text('Top 10 Contributors',
+                            style: GoogleFonts.outfit(
+                                fontSize: 13, fontWeight: FontWeight.w700,
+                                color: _C.sub, letterSpacing: 0.5)),
+                      ),
+                      ...List.generate(_leaders.take(10).length, (i) {
+                        final p      = _leaders[i];
+                        final isMe   = p['id'] == widget.currentUserId;
+                        final isTop3 = i < 3;
+                        final badgeColors = [
+                          [const Color(0xFFFFD700), const Color(0xFFFFA500)],
+                          [const Color(0xFFB0BEC5), const Color(0xFF78909C)],
+                          [const Color(0xFFCD7F32), const Color(0xFFA0522D)],
+                        ];
+                        final badgeGrad = isTop3
+                            ? badgeColors[i]
+                            : [const Color(0xFF2BAE99), const Color(0xFF1A9E8C)];
+                        final xp    = (p['total_xp']     as num?)?.toInt() ?? 0;
+                        final lv    = (p['level']        as num?)?.toInt() ?? 1;
+                        final title = (p['level_title']  as String?) ?? 'Seeker';
+                        final nm    = (p['display_name'] as String?)?.split(' ').first ?? 'User';
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                          decoration: BoxDecoration(
+                            color: isMe
+                                ? const Color(0xFFFFF3D4)
+                                : Colors.transparent,
+                            borderRadius: i == _leaders.take(10).length - 1
+                                ? const BorderRadius.vertical(bottom: Radius.circular(22))
+                                : BorderRadius.zero,
+                            border: i < _leaders.take(10).length - 1
+                                ? const Border(bottom: BorderSide(color: Color(0xFFF5F5F5)))
+                                : null,
+                          ),
+                          child: Row(children: [
+                            Container(
+                              width: 38, height: 38,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                    colors: badgeGrad,
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight),
+                                boxShadow: [BoxShadow(
+                                    color: badgeGrad.last.withValues(alpha: 0.35),
+                                    blurRadius: 8, offset: const Offset(0, 3))],
+                              ),
+                              child: Center(child: i < 3
+                                ? (i == 0 ? NoorIcon.goldMedal(size: 18)
+                                  : i == 1 ? NoorIcon.silverMedal(size: 18)
+                                  : NoorIcon.bronzeMedal(size: 18))
+                                : Text('${i + 1}',
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 13, fontWeight: FontWeight.w800,
+                                        color: Colors.white))),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text(isMe ? '$nm (you)' : nm,
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 14, fontWeight: FontWeight.w700,
+                                      color: _C.text)),
+                              Text('$title • Lv $lv',
+                                  style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
+                            ])),
+                            Text('$xp XP',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 13, fontWeight: FontWeight.w700,
+                                    color: _C.navRanking)),
+                          ]),
+                        );
+                      }),
+                    ],
+                    const SizedBox(height: 8),
+                  ]),
                 ),
-                child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF2BAE99), size: 22),
-                  const SizedBox(width: 10),
-                  Text('Admin Panel', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
-                ])),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-          // Sign out
-          GestureDetector(
-            onTap: onSignOut,
-            child: Container(
-              width: double.infinity, height: 54,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
-                  color: Colors.red.withValues(alpha: 0.08),
-                  border: Border.all(color: Colors.red.withValues(alpha: 0.25))),
-              child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.logout_rounded, color: Colors.red, size: 20),
-                const SizedBox(width: 10),
-                Text('Sign Out', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red)),
-              ])),
+                const SizedBox(height: 14),
+
+                // Streak card — warm beige with amber/teal accents
+                GestureDetector(
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const LevelScreen())),
+                  child: Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: _C.border),
+                      boxShadow: [BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 10, offset: const Offset(0, 3),
+                      )],
+                    ),
+                    child: Row(children: [
+                      Container(
+                        width: 52, height: 52,
+                        decoration: BoxDecoration(
+                          color: _C.amber.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _C.amber.withValues(alpha: 0.3)),
+                        ),
+                        child: Center(child: NoorIcon.fire(size: 26)),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(
+                          streak > 0 ? '$streak Day Streak 🔥' : 'Start your streak today!',
+                          style: GoogleFonts.rajdhani(
+                            fontSize: 20, fontWeight: FontWeight.w800,
+                            color: streak > 0 ? _C.amber : _C.sub,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        Text('Tap to view your Journey',
+                            style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+                      ])),
+                      Icon(Icons.arrow_forward_ios_rounded, size: 15,
+                          color: streak > 0 ? _C.amber : _C.sub),
+                    ]),
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Email row — standard white card matching app style
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: _C.border),
+                    boxShadow: [BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                    )],
+                  ),
+                  child: Row(children: [
+                    Container(
+                      width: 36, height: 36,
+                      decoration: BoxDecoration(
+                        color: _C.teal.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.email_outlined, color: _C.teal, size: 18),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(user?.email ?? '',
+                        style: GoogleFonts.outfit(fontSize: 14, color: _C.text),
+                        overflow: TextOverflow.ellipsis)),
+                  ]),
+                ),
+                const SizedBox(height: 14),
+
+                // Admin Panel button (admins only)
+                if (_kAdminEmails.contains(user?.email)) ...[
+                  GestureDetector(
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const AdminDashboard())),
+                    child: Container(
+                      width: double.infinity, height: 54,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: _C.darkBtn,
+                        boxShadow: [BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 12, offset: const Offset(0, 4),
+                        )],
+                      ),
+                      child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(Icons.admin_panel_settings_rounded, color: _C.teal, size: 22),
+                        const SizedBox(width: 10),
+                        Text('Admin Panel', style: GoogleFonts.outfit(
+                            fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                      ])),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                ],
+
+                // Sign Out
+                GestureDetector(
+                  onTap: widget.onSignOut,
+                  child: Container(
+                    width: double.infinity, height: 54,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.white,
+                      border: Border.all(color: const Color(0xFFFFECEC)),
+                      boxShadow: [BoxShadow(
+                        color: const Color(0xFFD32F2F).withValues(alpha: 0.06),
+                        blurRadius: 12, offset: const Offset(0, 4),
+                      )],
+                    ),
+                    child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.logout_rounded, color: Color(0xFFD32F2F), size: 20),
+                      const SizedBox(width: 10),
+                      Text('Sign Out', style: GoogleFonts.outfit(
+                          fontSize: 16, fontWeight: FontWeight.w700,
+                          color: const Color(0xFFD32F2F))),
+                    ])),
+                  ),
+                ),
+              ]),
             ),
           ),
-        ])),
-      ]),
-    ));
+        ]),
+      ),
+    );
   }
+}
+
+// Decorative circle arc — identical to Akhirah's _Arc widget but scoped here
+class _ProfileArc extends StatelessWidget {
+  final double size;
+  final Color color;
+  const _ProfileArc(this.size, this.color);
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size, height: size,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -3283,15 +3811,15 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
   final List<_EnergyParticle> _particles = [];
   final _rng = math.Random();
 
-  // ── Colors ────────────────────────────────────────────────────────────
-  static const _trackBg    = Color(0xFFEBF7F4);
-  static const _neonGreen  = Color(0xFF1A9E8C);
-  static const _neonGold   = Color(0xFFFFD166);
-  static const _socketRing = Color(0xFF2BAE99);
+  // ── Colors — app-native teal/green palette ────────────────────────────
+  // Matches the Akhira/Profile header and the app's signature teal accent.
+  static const _neonGreen  = Color(0xFF2BAE99);   // app teal
+  static const _neonGold   = Color(0xFFD4AF37);   // soft Islamic gold
+  static const _socketRing = Color(0xFF1A9E8C);   // deeper teal ring
 
   static const _sparkPalette = [
-    Color(0xFF00FFA3), Color(0xFF00FFCC), Color(0xFFFFFFFF),
-    Color(0xFFFFD166), Color(0xFF39FFB6), Color(0xFFA0FFE0),
+    Color(0xFF2BAE99), Color(0xFF1A9E8C), Color(0xFF4ECDC4),
+    Color(0xFFD4AF37), Color(0xFF80E5D8), Color(0xFFFFFFFF),
   ];
 
   // ── Controllers ──────────────────────────────────────────────────────
@@ -3532,15 +4060,22 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: _trackBg,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0A2318), Color(0xFF133828), Color(0xFF1A4731)],
+                        begin: Alignment.topLeft, end: Alignment.bottomRight,
+                      ),
                       borderRadius: BorderRadius.circular(radius),
                       border: Border.all(
-                        color: _socketRing.withValues(alpha: 0.5), width: 1.5,
+                        color: const Color(0xFF2BAE99).withValues(alpha: 0.5), width: 1.5,
                       ),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          color: Color(0x55000000),
-                          blurRadius: 20, offset: Offset(0, 8),
+                          color: const Color(0xFF2BAE99).withValues(alpha: 0.22),
+                          blurRadius: 24, offset: const Offset(0, 8),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 12, offset: const Offset(0, 4),
                         ),
                       ],
                     ),
@@ -3572,7 +4107,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Progress fill (teal, grows with drag) ────────────
+                // ── Progress fill (teal→gold, grows with drag) ──────────
                 Positioned(
                   left: 0, top: 0, bottom: 0,
                   child: Container(
@@ -3580,8 +4115,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF1A9E8C).withValues(alpha: 0.25),
-                          const Color(0xFF2BAE99).withValues(alpha: 0.35),
+                          const Color(0xFF1A9E8C).withValues(alpha: 0.5),
+                          const Color(0xFF2BAE99).withValues(alpha: 0.65),
                           Color.lerp(
                             const Color(0xFF2BAE99),
                             _neonGold,
@@ -3610,27 +4145,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Dashed dots on track (static circuit pattern) ─────
-                Positioned(
-                  left: _thumbSize + _padding * 2 + 8,
-                  right: _thumbSize + _padding * 2 + 8,
-                  top: 0, bottom: 0,
-                  child: Opacity(
-                    opacity: (1 - pct * 2).clamp(0.0, 0.5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(6, (i) => Container(
-                        width: 3, height: 3,
-                        decoration: BoxDecoration(
-                          color: _neonGreen.withValues(alpha: 0.25),
-                          shape: BoxShape.circle,
-                        ),
-                      )),
-                    ),
-                  ),
-                ),
-
-                // ── Centre label ──────────────────────────────────────
+                // ── Centre label — glowing white on dark bg ────────────
                 if (!_completed)
                   Center(
                     child: Opacity(
@@ -3640,9 +4155,9 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         builder: (_, __) => ShaderMask(
                           shaderCallback: (bounds) => LinearGradient(
                             colors: [
-                              Colors.white.withValues(alpha: 0.55),
-                              Colors.white.withValues(alpha: 0.9),
-                              Colors.white.withValues(alpha: 0.55),
+                              Colors.white.withValues(alpha: 0.7),
+                              const Color(0xFFD4AF37),
+                              Colors.white.withValues(alpha: 0.7),
                             ],
                             stops: [
                               0.0,
@@ -3651,12 +4166,12 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                             ],
                           ).createShader(bounds),
                           child: Text(
-                            'Seal the Day',
+                            'Seal the Day  ✨',
                             style: GoogleFonts.rajdhani(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0D6B5A),
-                              letterSpacing: 1.2,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ),

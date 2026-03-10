@@ -232,7 +232,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       const Icon(Icons.workspace_premium_rounded,
                           color: _C.gold, size: 14),
                       const SizedBox(width: 5),
-                      Text('Lvl $_level Â· $_levelTitle',
+                      Text('Lvl $_level · $_levelTitle',
                           style: GoogleFonts.outfit(
                               fontSize: 12, fontWeight: FontWeight.w700,
                               color: _C.gold)),
@@ -295,10 +295,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
                 const SizedBox(height: 18),
 
-                // Donate More & Earn button
                 GestureDetector(
                   onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const _CommunityImpactPage())),
+                      MaterialPageRoute(builder: (_) => const CommunityImpactPage())),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
@@ -516,7 +515,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
         ),
         child: Center(child: Text(
-          'ðŸŒ™  Every deed is recorded. Keep going!',
+          '🌙  Every deed is recorded. Keep going!',
           style: GoogleFonts.outfit(
               fontSize: 13, fontWeight: FontWeight.w600,
               color: Colors.white70),
@@ -526,16 +525,16 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——————————————————————————————————————————————————————————————————————————
 // Community Impact Page (previously embedded _ImpactTab)
 // Navigated to from the Akhirah Balance tab
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-class _CommunityImpactPage extends StatefulWidget {
-  const _CommunityImpactPage();
-  @override State<_CommunityImpactPage> createState() => _CommunityImpactPageState();
+// ——————————————————————————————————————————————————————————————————————————
+class CommunityImpactPage extends StatefulWidget {
+  const CommunityImpactPage({super.key});
+  @override State<CommunityImpactPage> createState() => _CommunityImpactPageState();
 }
 
-class _CommunityImpactPageState extends State<_CommunityImpactPage> {
+class _CommunityImpactPageState extends State<CommunityImpactPage> {
   List<Map<String, dynamic>> _projects = [];
   int _myAvailablePoints = 0;
   bool _loading = true;
@@ -665,7 +664,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('JazakAllah! ${_fmt(selected)} pts donated ðŸ¤²',
+                                content: Text('JazakAllah! ${_fmt(selected)} pts donated 🤲',
                                     style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
                                 backgroundColor: _C.teal,
                                 behavior: SnackBarBehavior.floating,
@@ -687,7 +686,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                 child: Text(
                   _myAvailablePoints < selected
                       ? 'Insufficient Points'
-                      : 'Donate $selected Points ðŸ¤²',
+                      : 'Donate $selected Points 🤲',
                   style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800),
                 ),
               ),
@@ -750,7 +749,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                           decoration: BoxDecoration(
                               color: _C.gold.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10)),
-                          child: Text('âœ… Funded',
+                          child: Text('✅ Funded',
                               style: GoogleFonts.outfit(
                                   fontSize: 11, fontWeight: FontWeight.w700,
                                   color: _C.gold)),
@@ -788,21 +787,26 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
 
                     // My contribution row
                     Row(children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2D7A45).withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF2D7A45).withValues(alpha: 0.2)),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2D7A45).withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF2D7A45).withValues(alpha: 0.2)),
+                          ),
+                          child: Row(mainAxisSize: MainAxisSize.min, children: [
+                            const Text('🤲', style: TextStyle(fontSize: 12)),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text('My contribution: ${_fmt(myPts)} pts  (${(myPct * 100).toStringAsFixed(1)}%)',
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 11, fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF2D7A45))),
+                            ),
+                          ]),
                         ),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          const Text('ðŸ¤²', style: TextStyle(fontSize: 12)),
-                          const SizedBox(width: 5),
-                          Text('My contribution: ${_fmt(myPts)} pts  (${(myPct * 100).toStringAsFixed(1)}%)',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 11, fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF2D7A45))),
-                        ]),
                       ),
                     ]),
                     const SizedBox(height: 14),
@@ -820,7 +824,7 @@ class _CommunityImpactPageState extends State<_CommunityImpactPage> {
                                 borderRadius: BorderRadius.circular(12)),
                           ),
                           onPressed: () => _showDonateSheet(p),
-                          icon: const Text('ðŸ¤²', style: TextStyle(fontSize: 14)),
+                          icon: const Text('🤲', style: TextStyle(fontSize: 14)),
                           label: Text('Donate & Earn Reward',
                               style: GoogleFonts.outfit(
                                   fontSize: 13, fontWeight: FontWeight.w700)),
