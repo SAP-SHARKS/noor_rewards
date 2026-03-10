@@ -10,6 +10,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
+import '../services/live_notification_service.dart';
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 const _kBg    = Color(0xFFEDF7F4); // Light mint (gradient start)
@@ -576,6 +577,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a});
         // Award XP for reading one ayah
         await XpService.instance.earnXp(XpReward.ayahRead);
+        // Update live notification counter
+        NoorLiveNotificationService.instance.recordAyah();
         // Record quran streak (idempotent — only counts once per day)
         StreakService.instance.recordActivity(StreakType.quran);
         // Award first-read badge on the very first ayah

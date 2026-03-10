@@ -69,7 +69,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // ── Motivational popup ───────────────────────────────────────────────────
   Timer? _startupPopupTimer;     // First popup at ~5 s
-  Timer? _repeatingPopupTimer;   // Repeats every ~3 minutes
+  Timer? _repeatingPopupTimer;   // Next popup timer (re-armed after each dismissal)
+  bool   _popupVisible  = false; // True while a popup sheet is on screen
   bool   _sessionDnd    = false; // True after first DND tap — resets on restart
   bool   _isInFocusScreen = false; // True while user is reading Quran/Dhikr/Tafsir
   static const _kDndKey       = 'motivational_popup_dnd';       // permanent flag
@@ -101,59 +102,69 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ────────────────────────────────────────────────────────────────────────
   // Motivational popup scheduler
   //
-  // • Reads DND flag from SharedPreferences — skips entirely if set.
+  // KEY FIX: The countdown to the NEXT popup doesn't start until the user
+  // dismisses the current one (via whenComplete). This prevents stacking when
+  // the phone is left idle — no matter how long the app is open, only one
+  // popup can ever be queued at a time.
+  //
   // • Popup #1: fires 5 s after app opens.
-  // • Then repeats every ~3 minutes (160–200 s random) indefinitely.
-  // • If user taps “Don’t Disturb” the flag is saved and all timers cancelled.
+  // • After dismissal, next popup is scheduled 160–200 s later.
+  // • _popupVisible gate prevents a new show if one is already on screen.
   // ────────────────────────────────────────────────────────────────────────
   Future<void> _scheduleMotivationalPopup() async {
-    // ── Check DND preference ───────────────────────────────────────
     try {
       final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool(_kDndKey) == true) return; // User said “Don’t Disturb”
+      if (prefs.getBool(_kDndKey) == true) return; // permanent block
     } catch (_) {}
 
-    // ── Helper: show popup once ──────────────────────────────────
-    void doShow() {
-      // Skip if: widget gone | session DND | user is reading Quran/Dhikr/Tafsir
-      if (!mounted || _sessionDnd || _isInFocusScreen) return;
-      showMotivationalPopup(
-        context,
-        onGoQuran: () => _goToScreen(const QuranHubScreen()),
-        onGoDhikr: () => _goToScreen(const DhikrHubScreen()),
-        onGoBoost: () => _goToScreen(const QuranHubScreen()),
-        onShare: () {
-          final uid = _supabase.auth.currentUser?.id;
-          if (uid == null) return;
-          _supabase
-              .from('profiles')
-              .select('referral_code')
-              .eq('id', uid)
-              .single()
-              .then((res) {
-            final code = res['referral_code'] as String?;
-            if (!mounted) return;
-            showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              builder: (ctx) => _InviteSheet(referralCode: code ?? ''),
-            );
-          });
-        },
-        onDoNotDisturb: _markDoNotDisturb,
-      );
-    }
+    // First popup fires 5 s after launch
+    _startupPopupTimer = Timer(const Duration(seconds: 5), _doShowPopup);
+  }
 
-    // ── Popup #1: 5 seconds after app opens ───────────────────────
-    _startupPopupTimer = Timer(const Duration(seconds: 5), () {
-      doShow();
+  // Arms the NEXT single popup timer — called only after current popup closes.
+  void _scheduleNextPopup() {
+    if (!mounted || _sessionDnd || _popupVisible) return;
+    _repeatingPopupTimer?.cancel();
+    final delay = 160 + math.Random().nextInt(41); // 160–200 s ≈ 2.5–3 min
+    _repeatingPopupTimer = Timer(Duration(seconds: delay), _doShowPopup);
+  }
 
-      // ── Repeat every ~3 minutes (random 160–200 s) ────────────────
-      _repeatingPopupTimer = Timer.periodic(
-        Duration(seconds: 160 + math.Random().nextInt(41)), // 160–200 s ≈ 3 min
-        (_) => doShow(),
-      );
+  // Shows one popup; when it closes (any action), schedules the next timer.
+  void _doShowPopup() {
+    if (!mounted || _sessionDnd || _isInFocusScreen || _popupVisible) return;
+    _popupVisible = true;
+    showMotivationalPopup(
+      context,
+      onGoQuran: () => _goToScreen(const QuranHubScreen()),
+      onGoDhikr: () => _goToScreen(const DhikrHubScreen()),
+      onGoBoost: () => _goToScreen(const QuranHubScreen()),
+      onShare: () {
+        final uid = _supabase.auth.currentUser?.id;
+        if (uid == null) return;
+        _supabase
+            .from('profiles')
+            .select('referral_code')
+            .eq('id', uid)
+            .single()
+            .then((res) {
+          final code = res['referral_code'] as String?;
+          if (!mounted) return;
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (ctx) => _InviteSheet(referralCode: code ?? ''),
+          );
+        });
+      },
+      onDoNotDisturb: _markDoNotDisturb,
+    ).whenComplete(() {
+      // Popup was dismissed (via any action or swipe-down).
+      // Only NOW do we arm the next timer — countdown starts from dismissal.
+      if (mounted && !_sessionDnd) {
+        _popupVisible = false;
+        _scheduleNextPopup();
+      }
     });
   }
 
