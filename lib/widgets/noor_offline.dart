@@ -651,12 +651,7 @@ class _InlineBeadPainter extends CustomPainter {
     const spacing = 16.0;
     final startX = (size.width - (beadCount - 1) * spacing) / 2;
 
-    // Thread line
-    final linePaint = Paint()
-      ..color = accent.withValues(alpha: 0.25)
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-    canvas.drawLine(Offset(startX - 4, cy), Offset(startX + (beadCount - 1) * spacing + 4, cy), linePaint);
+    // Thread line removed — beads float freely
 
     for (int i = 0; i < beadCount; i++) {
       final x = startX + i * spacing;
