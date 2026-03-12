@@ -459,7 +459,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           DateTime.now().difference(cachedAt).inDays < 7 &&
           transOk) {
         setState(() {
-          _arabic      = cached['arabic'] ?? '';
+          _arabic      = _QuranScreenState._stripQuranicAnnotations(cached['arabic'] ?? '');
           _translation = cached['trans']  ?? '';
           _audioUrl    = cached['audio'];
           _surahName   = cached['surahName'] ?? '';
@@ -536,7 +536,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (fresh != null && fresh['arabic'].toString().isNotEmpty) {
         if (mounted) {
           setState(() {
-            _arabic      = fresh['arabic'];
+            _arabic      = _QuranScreenState._stripQuranicAnnotations(fresh['arabic']);
             _translation = fresh['trans'];
             _audioUrl    = fresh['audio'];
             _surahName   = fresh['surahName'];
@@ -644,7 +644,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     try {
       final url = 'https://api.quran.com/api/v4/verses/by_key/$surah:$ayah'
-          '?words=true&word_fields=text_uthmani,text_indopak&word_translation_language=en';
+          '?words=true&word_fields=text_uthmani,text_indopak,transliteration&word_translation_language=en';
       final res = await http.get(Uri.parse(url),
           headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 10));
       if (res.statusCode == 200) {
@@ -655,6 +655,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             .where((w) => w['char_type_name'] != 'end')
             .map<Map<String, dynamic>>((w) => {
               'arabic': w['text_uthmani'] ?? w['text'] ?? '',
+              'transliteration': w['transliteration']?['text'] ?? '',
               'translation': w['translation']?['text'] ?? '',
             }).toList();
         await _cache.put(wbwCacheKey, {
@@ -2591,21 +2592,48 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
   // ── Word-by-Word grid ──────────────────────────────────────────────────────
   Widget _buildWordByWordGrid(Color txt, Color sub) {
-    return Wrap(
-      spacing: 6,
-      runSpacing: 4,
-      textDirection: TextDirection.rtl,
-      children: _wbwWords.map((w) => _WbwWordChip(
-        arabic: w['arabic'] as String? ?? '',
-        translation: w['translation'] as String? ?? '',
-        subColor: sub,
-        arabicFontSize: _arabicFontSize * 0.65,
-        arabicFontIdx: _arabicFontIdx,
-        accentColor: _accent,
-        txtColor: txt,
-        darkMode: _darkMode,
-      )).toList(),
-    );
+    return LayoutBuilder(builder: (ctx, constraints) {
+      // 3 cards per row, uniform width, RTL order
+      const cols = 3;
+      const hGap = 8.0;
+      final cardW = (constraints.maxWidth - hGap * (cols - 1)) / cols;
+
+      // Build rows of 3 right-to-left
+      final rows = <Widget>[];
+      for (int i = 0; i < _wbwWords.length; i += cols) {
+        final rowWords = _wbwWords.sublist(i, (i + cols).clamp(0, _wbwWords.length));
+        // RTL: words go right→left, so reverse the row
+        final rowWidgets = rowWords.reversed.map((w) => SizedBox(
+          width: cardW,
+          child: _WbwWordChip(
+            arabic: _QuranScreenState._stripQuranicAnnotations(w['arabic'] as String? ?? ''),
+            transliteration: w['transliteration'] as String? ?? '',
+            translation: w['translation'] as String? ?? '',
+            arabicFontSize: _arabicFontSize * 0.70,
+            arabicFontIdx: _arabicFontIdx,
+            accentColor: _accent,
+            txtColor: txt,
+            subColor: sub,
+            darkMode: _darkMode,
+          ),
+        )).toList();
+
+        // Pad last row if not full
+        while (rowWidgets.length < cols) {
+          rowWidgets.insert(0, SizedBox(width: cardW));
+        }
+
+        rows.add(Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: rowWidgets
+              .expand((w) => [w, if (w != rowWidgets.last) const SizedBox(width: hGap)])
+              .toList(),
+        ));
+        rows.add(const SizedBox(height: 8));
+      }
+
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows);
+    });
   }
 
   // ── Bottom navigation row (Prev / Play-Pause / Next) ──────────────────────
@@ -2789,11 +2817,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     const double lh = 2.2;  // line-height multiplier
     final double fontSize = _arabicFontSize * fs;
 
-    // Build one big span: arabic text + U+06DD marker per ayah
+    // Build one big span: clean Arabic per ayah — waqf/annotation marks stripped
     final spans = ayahs
         .map((a) => TextSpan(
-              // ﴾n﴿ ornamental brackets — render cleanly in Scheherazade New on all devices
-              text: '${a["arabic"]} \uFD3F${_toArabicNumeral(a["ayah"] as int)}\uFD3E ',
+              text: '${_stripQuranicAnnotations(a["arabic"] as String? ?? '')} ',
             ))
         .toList();
 
@@ -2817,6 +2844,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       ),
     );
   }
+
+  /// Strips Quranic annotation characters that render as visible ornament
+  /// glyphs in Scheherazade New (waqf signs, tajweed marks, rub el-hizb, etc).
+  /// Standard harakat (diacritics ً ٌ ٍ َ ُ ِ ّ ْ) are fully preserved.
+  ///
+  /// Stripped ranges:
+  ///   U+06D6–U+06DC  waqf / pause marks (ۖ ۗ ۘ ۙ ۚ ۛ ۜ)
+  ///   U+06DD         Arabic End of Ayah ornament (۝)
+  ///   U+06DE         Arabic Start of Rub El Hizb (۞)
+  ///   U+06DF–U+06E4  tajweed marks (۟ ۠ ۡ ۢ ۣ ۤ)
+  ///   U+06E7–U+06E8  small high Meem / Noon (ۧ ۨ)
+  ///   U+06EA–U+06ED  combining stop marks (۪ ۫ ۬ ۭ)
+  static String _stripQuranicAnnotations(String s) =>
+      s.replaceAll(RegExp(r'[\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]'), '');
 
   // Convert an integer to Arabic-Indic digit string (٠١٢٣٤٥٦٧٨٩)
   String _toArabicNumeral(int n) {
@@ -3130,8 +3171,15 @@ class _PillButtonState extends State<_PillButton>
 }
 
 // ── Word-by-Word Chip Widget ──────────────────────────────────────────────────
+/// A premium card for each Quranic word in the WbW grid.
+/// Always-visible border card (like Quran Majeed) with:
+///   • Large Arabic word (Scheherazade New / user font)
+///   • Thin gold divider
+///   • Italic transliteration in muted gold (if available)
+///   • English translation in sub-color
 class _WbwWordChip extends StatefulWidget {
   final String arabic;
+  final String transliteration;
   final String translation;
   final double arabicFontSize;
   final int    arabicFontIdx;
@@ -3142,6 +3190,7 @@ class _WbwWordChip extends StatefulWidget {
 
   const _WbwWordChip({
     required this.arabic,
+    required this.transliteration,
     required this.translation,
     required this.arabicFontSize,
     required this.arabicFontIdx,
@@ -3157,17 +3206,17 @@ class _WbwWordChip extends StatefulWidget {
 
 class _WbwWordChipState extends State<_WbwWordChip>
     with SingleTickerProviderStateMixin {
-  bool _highlighted = false;
+  bool _pressed = false;
   late AnimationController _ctrl;
-  late Animation<double> _scaleAnim;
+  late Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 150));
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.93).animate(
-        CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+        vsync: this, duration: const Duration(milliseconds: 120));
+    _scale = Tween<double>(begin: 1.0, end: 0.94)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -3178,88 +3227,101 @@ class _WbwWordChipState extends State<_WbwWordChip>
 
   @override
   Widget build(BuildContext context) {
-    final goldUnderline = widget.accentColor.withValues(alpha: 0.75);
+    final cardBg   = widget.darkMode
+        ? const Color(0xFF2C2C2E)
+        : Colors.white;
+    final borderClr = widget.darkMode
+        ? Colors.white.withValues(alpha: 0.10)
+        : const Color(0xFFE0E0E0);
     final highlightBg = widget.accentColor.withValues(alpha: 0.10);
+    final goldClr  = widget.accentColor;
 
     return GestureDetector(
-      onTapDown: (_) {
-        setState(() => _highlighted = true);
-        _ctrl.forward();
-      },
-      onTapUp: (_) {
-        setState(() => _highlighted = false);
-        _ctrl.reverse();
-      },
-      onTapCancel: () {
-        setState(() => _highlighted = false);
-        _ctrl.reverse();
-      },
+      onTapDown:  (_) { setState(() => _pressed = true);  _ctrl.forward(); },
+      onTapUp:    (_) { setState(() => _pressed = false); _ctrl.reverse(); },
+      onTapCancel: () { setState(() => _pressed = false); _ctrl.reverse(); },
       child: ScaleTransition(
-        scale: _scaleAnim,
+        scale: _scale,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-          // Top padding increased to 14 so superscript harakat (like ٌ ً ٍ)
-          // have enough room above the glyph and are never clipped.
-          padding: const EdgeInsets.fromLTRB(8, 14, 8, 5),
-          // Clip.none ensures the container never clips children that
-          // paint outside their logical box (e.g. tall diacritics).
-          clipBehavior: Clip.none,
+          duration: const Duration(milliseconds: 120),
           decoration: BoxDecoration(
-            color: _highlighted ? highlightBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            border: _highlighted
-                ? Border.all(color: widget.accentColor.withValues(alpha: 0.3))
-                : null,
+            color: _pressed ? highlightBg : cardBg,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: _pressed
+                  ? goldClr.withValues(alpha: 0.45)
+                  : borderClr,
+              width: _pressed ? 1.5 : 1.0,
+            ),
+            boxShadow: _pressed
+                ? []
+                : [BoxShadow(
+                    color: Colors.black.withValues(alpha: widget.darkMode ? 0.25 : 0.05),
+                    blurRadius: 4, offset: const Offset(0, 1))],
           ),
-          child: IntrinsicWidth(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Arabic word — naturally sized; no maxLines so layout
-                // measures the true glyph height including diacritics.
-                // lineHeight 1.6 gives harakat (above & below) breathing room.
-                Text(
+          padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Arabic word — FittedBox auto-shrinks tall diacritics to fit card width
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
                   widget.arabic,
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.center,
-                  overflow: TextOverflow.visible,
                   style: _kArabicFonts[widget.arabicFontIdx].style(
-                    widget.arabicFontSize * 0.80,
+                    widget.arabicFontSize,
                     widget.txtColor,
-                    1.6,   // raised from 1.5 — more vertical room for harakat
-                    FontWeight.w700,
+                    1.8,  // generous height so diacritics have room
+                    FontWeight.w600,
                   ),
                 ),
-                // 6 px gap keeps descending marks (مّ tanwin-meem)
-                // from bleeding through the underline.
-                const SizedBox(height: 6),
-                // Accent underline — stretches to match the column's intrinsic width
-                Container(
-                  height: 1.5,
-                  decoration: BoxDecoration(
-                    color: goldUnderline,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
+              ),
+              const SizedBox(height: 5),
+              // Gold divider
+              Container(
+                height: 1.2,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    goldClr.withValues(alpha: 0.0),
+                    goldClr.withValues(alpha: 0.6),
+                    goldClr.withValues(alpha: 0.0),
+                  ]),
                 ),
-                const SizedBox(height: 3),
-                // English translation — centered, same width as Arabic
+              ),
+              const SizedBox(height: 4),
+              // Transliteration (italic, gold-tinted) — only if non-empty
+              if (widget.transliteration.isNotEmpty) ...[
                 Text(
-                  widget.translation,
-                  textDirection: TextDirection.ltr,
+                  widget.transliteration,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: widget.subColor,
+                  style: GoogleFonts.lora(
+                    fontSize: 9.5,
+                    fontStyle: FontStyle.italic,
+                    color: goldClr.withValues(alpha: 0.85),
                     height: 1.3,
                   ),
                 ),
+                const SizedBox(height: 3),
               ],
-            ),
+              // English translation
+              Text(
+                widget.translation,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w500,
+                  color: widget.subColor,
+                  height: 1.3,
+                ),
+              ),
+            ],
           ),
         ),
       ),
