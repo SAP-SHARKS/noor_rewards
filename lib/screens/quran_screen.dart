@@ -11,6 +11,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
+import '../services/quran_api_service.dart';   // Quran Foundation authenticated API
+
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 const _kBg    = Color(0xFFEDF7F4); // Light mint (gradient start)
@@ -485,7 +487,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           item['ayah'] as int: item['text_uthmani'] as String
       };
 
-      // Translation: Supabase DB has en.sahih only; use alquran.cloud for others
+      // Translation: Supabase DB is primary for en.sahih (fastest).
+      // All other editions go through QuranApiService, which tries the
+      // authenticated Quran Foundation API first (so alquran.cloud is only
+      // used as a last fallback for unsupported editions).
       final Map<int, String> transMap = {};
 
       if (_translationEdition == 'en.sahih') {
@@ -499,21 +504,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           transMap[item['verse_id'] as int] = item['text'] as String? ?? '';
         }
       } else {
-        // Free alquran.cloud API — delivers the whole surah in one request
-        final apiUrl =
-            'https://api.alquran.cloud/v1/surah/$surah/$_translationEdition';
-        final res = await http
-            .get(Uri.parse(apiUrl), headers: {'Accept': 'application/json'})
-            .timeout(const Duration(seconds: 15));
-        if (res.statusCode == 200) {
-          final js = jsonDecode(res.body);
-          final ayahs = js['data']?['ayahs'] as List? ?? [];
-          for (final a in ayahs) {
-            final num = a['numberInSurah'] as int? ?? 0;
-            transMap[startVerseId + num - 1] = a['text'] as String? ?? '';
-          }
-        }
-        // On failure transMap stays empty; translation shows blank.
+        // Authenticated Quran Foundation API (alquran.cloud is only used as
+        // an internal fallback inside QuranApiService for unknown editions)
+        final fetched = await QuranApiService.instance.surahTranslation(
+          surah:       surah,
+          edition:     _translationEdition,
+          surahLength: _surahLengths[surah],
+          startVerseId: startVerseId,
+        );
+        transMap.addAll(fetched);
       }
 
       // Pre-cache every ayah in the surah so navigation is instant
@@ -643,21 +642,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
     }
     try {
-      final url = 'https://api.quran.com/api/v4/verses/by_key/$surah:$ayah'
-          '?words=true&word_fields=text_uthmani,text_indopak,transliteration&word_translation_language=en';
-      final res = await http.get(Uri.parse(url),
-          headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 10));
-      if (res.statusCode == 200) {
-        final js = jsonDecode(res.body);
-        final verse = js['verse'];
-        final rawWords = verse?['words'] as List? ?? [];
-        final words = rawWords
-            .where((w) => w['char_type_name'] != 'end')
-            .map<Map<String, dynamic>>((w) => {
-              'arabic': w['text_uthmani'] ?? w['text'] ?? '',
-              'transliteration': w['transliteration']?['text'] ?? '',
-              'translation': w['translation']?['text'] ?? '',
-            }).toList();
+      // Authenticated Quran Foundation API (token from .env)
+      final words = await QuranApiService.instance.wordsByKey('$surah:$ayah');
+      if (words.isNotEmpty) {
         await _cache.put(wbwCacheKey, {
           'words': words,
           'ts': DateTime.now().toIso8601String(),
@@ -728,21 +715,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
     }
     try {
-      final url = 'https://api.quran.com/api/v4/verses/by_page/$page'
-          '?words=false&fields=text_uthmani,verse_key,page_number&per_page=50';
-      final res = await http.get(Uri.parse(url),
-          headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 12));
-      if (res.statusCode == 200) {
-        final js = jsonDecode(res.body);
-        final verses = js['verses'] as List? ?? [];
-        final ayahs = verses.map<Map<String, dynamic>>((v) {
-          final key = (v['verse_key'] as String).split(':');
-          return {
-            'surah': int.tryParse(key[0]) ?? 1,
-            'ayah': int.tryParse(key[1]) ?? 1,
-            'arabic': v['text_uthmani'] ?? '',
-          };
-        }).toList();
+      // Authenticated Quran Foundation API (token from .env)
+      final ayahs = await QuranApiService.instance.versesByPage(page);
+      if (ayahs.isNotEmpty) {
         await _cache.put(cacheKey, {
           'ayahs': ayahs,
           'ts': DateTime.now().toIso8601String(),
@@ -2776,6 +2751,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Group consecutive ayahs by surah → each group becomes ONE justified RichText
     final List<Widget> blocks = [];
     String? lastSurah;
+    // Track which surahs need bismillah handling:
+    //   • surahNum → 'strip'  : bismillah embedded in ayah-1 text, strip it
+    //   • surahNum → 'skip'   : ayah-1 IS the bismillah (Surah 1), skip entirely
+    final Map<int, String> bismillahAction = {};
     final List<Map<String, dynamic>> currentGroup = [];
 
     void flushGroup() {
@@ -2794,13 +2773,35 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         if (ayahNum == 1 && surahNum >= 1) {
           if (surahNum > 1) blocks.add(const SizedBox(height: 16));
           blocks.add(_buildMushafSurahBanner(surahNum, goldClr, textClr));
-          if (surahNum != 1 && surahNum != 9) {
+          if (surahNum == 1) {
+            // Al-Fatiha: ayah 1 text IS the Bismillah — show the golden
+            // banner and skip ayah 1 from the text block completely.
             blocks.add(_buildMushafBismillah(textClr, goldClr));
+            bismillahAction[surahNum] = 'skip';
+          } else if (surahNum != 9) {
+            // All other surahs except At-Tawbah: bismillah is embedded at
+            // the START of ayah 1's text — show banner & strip from text.
+            blocks.add(_buildMushafBismillah(textClr, goldClr));
+            bismillahAction[surahNum] = 'strip';
           }
+          // Surah 9 (At-Tawbah): no bismillah at all — do nothing.
           blocks.add(const SizedBox(height: 6));
         }
       }
-      currentGroup.add(ayah);
+
+      final action = bismillahAction[surahNum];
+      if (ayahNum == 1 && action == 'skip') {
+        // Ayah 1 of Al-Fatiha is entirely the Bismillah — already shown as
+        // the golden banner above, so we skip it from the text flow.
+        continue;
+      } else if (ayahNum == 1 && action == 'strip') {
+        // Strip the embedded Bismillah prefix so it doesn't appear twice.
+        final raw      = ayah['arabic'] as String? ?? '';
+        final stripped = _stripBismillahPrefix(raw);
+        currentGroup.add({...ayah, 'arabic': stripped});
+      } else {
+        currentGroup.add(ayah);
+      }
     }
     flushGroup();
 
@@ -2831,17 +2832,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       fontWeight: FontWeight.w400,
     );
 
-    return CustomPaint(
-      // Foreground painter draws subtle ruled lines AFTER text (visually below each row)
-      foregroundPainter: _MushafRuledPainter(
-        lineHeightPx: fontSize * lh,
-        lineColor: goldClr.withValues(alpha: 0.28),
-      ),
-      child: Text.rich(
-        TextSpan(style: textStyle, children: spans),
-        textDirection: TextDirection.rtl,
-        textAlign: TextAlign.justify,
-      ),
+    return Text.rich(
+      TextSpan(style: textStyle, children: spans),
+      textDirection: TextDirection.rtl,
+      textAlign: TextAlign.justify,
     );
   }
 
@@ -2858,12 +2852,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   ///   U+06EA–U+06ED  combining stop marks (۪ ۫ ۬ ۭ)
   static String _stripQuranicAnnotations(String s) =>
       s.replaceAll(RegExp(r'[\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]'), '');
-
-  // Convert an integer to Arabic-Indic digit string (٠١٢٣٤٥٦٧٨٩)
-  String _toArabicNumeral(int n) {
-    const d = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-    return n.toString().runes.map((r) => d[r - 48]).join();
-  }
 
 
 
@@ -2900,18 +2888,58 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// Strips the Bismillah prefix from a verse string.
+  /// Covers the exact Uthmani encoding stored in our DB:
+  ///   بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+  /// plus an optional BOM / zero-width no-break space (\uFEFF) at the very start.
+  static String _stripBismillahPrefix(String s) {
+    // Normalise: remove leading BOM / ZWNBSP that the DB may prepend on surah 1
+    var text = s.replaceAll('\uFEFF', '').trim();
+    // The Bismillah in Uthmani script (exactly as stored)
+    const basmala = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+    if (text.startsWith(basmala)) {
+      text = text.substring(basmala.length).trimLeft();
+    }
+    return text;
+  }
+
   Widget _buildMushafBismillah(Color textClr, Color goldClr) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Text(
-        'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.rtl,
-        style: GoogleFonts.scheherazadeNew(
-            fontSize: _arabicFontSize * 0.88,
-            color: textClr,
-            fontWeight: FontWeight.w600,
-            height: 2.2),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          // Subtle gold-tinted panel — like Quran Majeed's Bismillah banner
+          color: goldClr.withValues(alpha: 0.07),
+          border: Border.symmetric(
+            horizontal: BorderSide(color: goldClr.withValues(alpha: 0.35), width: 0.8),
+          ),
+        ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          // Left ornament
+          Text('﴾', style: TextStyle(
+              fontFamily: 'ScheherazadeNew',
+              fontSize: _arabicFontSize * 0.8,
+              color: goldClr.withValues(alpha: 0.6))),
+          const SizedBox(width: 10),
+          // Bismillah text — centered, gold, slightly larger than body
+          Text(
+            'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+            style: GoogleFonts.scheherazadeNew(
+                fontSize: _arabicFontSize * 0.96,
+                color: goldClr,
+                fontWeight: FontWeight.w700,
+                height: 1.8),
+          ),
+          const SizedBox(width: 10),
+          // Right ornament
+          Text('﴿', style: TextStyle(
+              fontFamily: 'ScheherazadeNew',
+              fontSize: _arabicFontSize * 0.8,
+              color: goldClr.withValues(alpha: 0.6))),
+        ]),
       ),
     );
   }
@@ -2996,35 +3024,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 } // end _QuranScreenState
 
-// ── Mushaf ruled-line painter ─────────────────────────────────────────────────
-/// Draws a thin decorative horizontal rule below each line of Arabic text,
-/// mimicking the ruled-page feel of the Quran Majeed app.
-class _MushafRuledPainter extends CustomPainter {
-  final double lineHeightPx; // fontSize × lineHeightMultiplier
-  final Color  lineColor;
 
-  const _MushafRuledPainter({required this.lineHeightPx, required this.lineColor});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = lineColor
-      ..strokeWidth = 0.65
-      ..isAntiAlias = true;
-
-    // Rule sits in the whitespace BETWEEN lines (leading area), well below glyphs.
-    // Arabic cap-height ≈ 55–60 % of lineHeightPx; put rule at ≈ 88 %
-    double y = lineHeightPx * 0.88;
-    while (y <= size.height + 1) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-      y += lineHeightPx;
-    }
-  }
-
-  @override
-  bool shouldRepaint(_MushafRuledPainter old) =>
-      old.lineHeightPx != lineHeightPx || old.lineColor != lineColor;
-}
 
 // ── All 114 surah names ───────────────────────────────────────────────────────
 const _surahNames = [
