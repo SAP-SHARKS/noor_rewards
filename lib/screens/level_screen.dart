@@ -1,4 +1,4 @@
-﻿// lib/screens/level_screen.dart
+// lib/screens/level_screen.dart
 // Full XP / Levels / Badges / Challenges / History screen
 
 import 'dart:math' as math;
@@ -338,8 +338,8 @@ class _ProgressTabState extends State<_ProgressTab> {
                   ),
 
                   // Right half — Period XP ──────────────────────────────────
-                  SizedBox(
-                    width: 120,
+                  Flexible(
+                    flex: 2,
                     child: _histLoading
                       ? const Center(child: SizedBox(width: 24, height: 24,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)))

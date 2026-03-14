@@ -11,6 +11,7 @@ import 'screens/welcome_gate_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/settings_service.dart';
 import 'services/live_notification_service.dart';
+import 'services/quran_api_config.dart';       // Quran Foundation credentials
 import 'utils/asset_helper.dart';
 
 Future<void> main() async {
@@ -21,6 +22,9 @@ Future<void> main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
   );
+
+  // Load .env — Quran Foundation API credentials (Pre-live or Production)
+  await QuranApiConfig.load();
 
   // Pre-load remote config (waits for first fetch, then subscribes to Realtime)
   await SettingsService.instance.initialize();
@@ -50,6 +54,24 @@ class MyApp extends StatelessWidget {
       title: 'NoorRewards',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(cfg),
+      // ── Global MediaQuery override ──────────────────────────────────────────
+      // Caps the textScaler so that device accessibility font-size settings
+      // cannot exceed 1.15× — preventing Row/Card overflow on any device.
+      // Bold-text accessibility override is also normalised so layouts
+      // stay consistent regardless of the phone's display settings.
+      builder: (context, child) {
+        final mq = MediaQuery.of(context);
+        return MediaQuery(
+          data: mq.copyWith(
+            textScaler: mq.textScaler.clamp(
+              minScaleFactor: 0.85,
+              maxScaleFactor: 1.15,
+            ),
+            boldText: false,
+          ),
+          child: child!,
+        );
+      },
       home: const AuthGate(),
     );
   }

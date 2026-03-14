@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -2073,8 +2073,8 @@ class _MyDonationsSection extends StatelessWidget {
                                   children: [
                                     Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFF2BAE7C), shape: BoxShape.circle)),
                                     const SizedBox(width: 8),
-                                    Text('Your Contribution', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
-                                    const Spacer(),
+                                    Flexible(child: Text('Your Contribution', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
+                                    const SizedBox(width: 4),
                                     Text(fmt(myPts), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
                                   ]
                                 ),
@@ -2083,8 +2083,8 @@ class _MyDonationsSection extends StatelessWidget {
                                   children: [
                                     Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
                                     const SizedBox(width: 8),
-                                    Text("Others' Contribution", style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
-                                    const Spacer(),
+                                    Flexible(child: Text("Others'", maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
+                                    const SizedBox(width: 4),
                                     Text(fmt((current - myPts).clamp(0, current)), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
                                   ]
                                 ),
@@ -2093,8 +2093,8 @@ class _MyDonationsSection extends StatelessWidget {
                                   children: [
                                     Container(width: 8, height: 8, decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle)),
                                     const SizedBox(width: 8),
-                                    Text('Needed', style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
-                                    const Spacer(),
+                                    Flexible(child: Text('Needed', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
+                                    const SizedBox(width: 4),
                                     Text(fmt(remaining), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
                                   ]
                                 ),
@@ -3257,23 +3257,26 @@ class _ProfileTabState extends State<_ProfileTab> {
                             fontSize: 18, fontWeight: FontWeight.w800,
                             color: Colors.white)),
                     const Spacer(),
-                    // Level pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                    // Level pill — Flexible so long titles don't overflow
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.workspace_premium_rounded,
+                              color: Color(0xFFD4AF37), size: 14),
+                          const SizedBox(width: 5),
+                          Flexible(child: Text('Lvl $level · $levelTitle',
+                              maxLines: 1, overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                  fontSize: 12, fontWeight: FontWeight.w700,
+                                  color: const Color(0xFFD4AF37)))),
+                        ]),
                       ),
-                      child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.workspace_premium_rounded,
-                            color: Color(0xFFD4AF37), size: 14),
-                        const SizedBox(width: 5),
-                        Text('Lvl $level · $levelTitle',
-                            style: GoogleFonts.outfit(
-                                fontSize: 12, fontWeight: FontWeight.w700,
-                                color: const Color(0xFFD4AF37))),
-                      ]),
                     ),
                     const SizedBox(width: 10),
                     // Settings button

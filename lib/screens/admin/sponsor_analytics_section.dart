@@ -204,29 +204,33 @@ class _SponsorAnalyticsSectionState extends State<SponsorAnalyticsSection> {
             )),
           ),
           const SizedBox(width: 16),
-          // Legend + avg session
-          Column(mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _deviceData.asMap().entries.map((e) {
-            final label   = (e.value['device_type'] ?? 'Other') as String;
-            final avgSec  = (e.value['avg_session_sec'] as num?)?.toInt() ?? 0;
-            final colors  = [_kAccent, _kPurple, _kGold, _kRose];
-            final color   = colors[e.key % colors.length];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(children: [
-                Container(width: 12, height: 12,
-                    decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-                const SizedBox(width: 6),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(label, style: GoogleFonts.outfit(
-                      fontSize: 12, fontWeight: FontWeight.w700, color: _kText)),
-                  Text(_fmtDur(avgSec),
-                      style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
+          // Legend + avg session — constrained so long names don't overflow
+          SizedBox(
+            width: 110,
+            child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _deviceData.asMap().entries.map((e) {
+              final label   = (e.value['device_type'] ?? 'Other') as String;
+              final avgSec  = (e.value['avg_session_sec'] as num?)?.toInt() ?? 0;
+              final colors  = [_kAccent, _kPurple, _kGold, _kRose];
+              final color   = colors[e.key % colors.length];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(children: [
+                  Container(width: 12, height: 12,
+                      decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+                  const SizedBox(width: 6),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                            fontSize: 12, fontWeight: FontWeight.w700, color: _kText)),
+                    Text(_fmtDur(avgSec),
+                        style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
+                  ])),
                 ]),
-              ]),
-            );
-          }).toList()),
+              );
+            }).toList()),
+          ),
         ]),
       ),
     );

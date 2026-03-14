@@ -472,10 +472,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Dua & Azkar Settings',
+                        Flexible(child: Text('Dua & Azkar Settings',
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
                                 fontSize: 20, fontWeight: FontWeight.w800,
-                                color: txtColor)),
+                                color: txtColor))),
                         IconButton(
                           icon: Icon(Icons.close_rounded, color: txtColor),
                           onPressed: () => Navigator.pop(context),
