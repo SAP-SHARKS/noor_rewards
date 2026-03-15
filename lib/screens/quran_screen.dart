@@ -179,7 +179,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // Full-page Mushaf — PageView-based (one Quran page per PageView page)
   bool   _fullPageMode      = false;
   int    _currentPage       = 1;         // current Quran page (1–604)
-  PageController? _mushafPageController; // drives the PageView
+  Key    _feedCenterKey     = UniqueKey();
+  int    _feedJumpPage      = 1;
   Timer? _pageTimer;
   int    _pageSeconds       = 0;
   int    _pageXpEarned      = 0;
@@ -771,47 +772,31 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     if (page > 1) _loadPageForScroll(page - 1);
   }
 
-  // ── Enter Mushaf in PageView mode (one Quran page per vertical swipe) ──────
+  // ── Enter Mushaf in Continuous Feed mode ──────
   void _enterFullPageScrollMode(int startPage) {
-    _mushafPageController?.dispose();
+    _fullPageScrollController?.dispose();
     _loadedPages.clear();
     _loadingPages.clear();
+    
     _currentPage = startPage;
-    // PageView is 0-indexed; Quran pages are 1-indexed
-    _mushafPageController = PageController(initialPage: startPage - 1);
-    _mushafPageController!.addListener(_onMushafPageChanged);
-    // Pre-load this page and neighbors for instant first swipe
+    _feedJumpPage = startPage;
+    _feedCenterKey = UniqueKey(); // Resets CustomScrollView to center on this newly opened page
+    
+    _fullPageScrollController = ScrollController();
+    _fullPageScrollController!.addListener(_onMushafScroll);
+
+    // Pre-load this page and neighbors for instant display
     _loadPageForScroll(startPage);
     _loadPageForScroll(startPage + 1);
     if (startPage > 1) _loadPageForScroll(startPage - 1);
+    
+    if (_timerShouldRun) _startPageTimer();
   }
 
-  // PageController listener — tracks page *while dragging* (like Quran Majeed).
-  // Also resets the XP timer and updates surah name whenever a new page settles.
-  void _onMushafPageChanged() {
-    final ctrl = _mushafPageController;
-    if (ctrl == null || !ctrl.hasClients) return;
-    final rawPage = ctrl.page;
-    if (rawPage == null) return;
-    final quranPage = rawPage.round() + 1; // 0-based → 1-based
-    if (quranPage == _currentPage) return;
-
-    // Pre-fetch the incoming page and its neighbour instantly
-    _loadPageForScroll(quranPage);
-    _loadPageForScroll(quranPage + 1);
-    if (quranPage > 1) _loadPageForScroll(quranPage - 1);
-
-    // Update surah name for overlay header
-    final surahForPage = _resolveSurahForPage(quranPage);
-    setState(() {
-      _currentPage = quranPage;
-      _surahName = _surahNames[surahForPage - 1];
-    });
-
-    // Reset XP timer for each new page (Quran Majeed awards time-based XP per page)
-    if (_timerShouldRun) _startPageTimer();
-
-    _savePagePosition();
+  // Scroll listener - tracks scroll activity to keep the XP timer alive, 
+  // and allows fetching further pages as they lazily build.
+  void _onMushafScroll() {
+    _savePagePosition(); // Persist last known state occasionally
   }
 
 
@@ -2699,8 +2684,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _controlsHideTimer?.cancel();
     _timerShouldRun = false;
     _stopPageTimer();
-    _mushafPageController?.dispose();
-    _mushafPageController = null;
+    _fullPageScrollController?.dispose();
+    _fullPageScrollController = null;
 
     // ── Sync position back to normal-mode state ─────────────────────────────
     // Derive surah from current page so normal-mode resumes at the same spot.
@@ -2716,18 +2701,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _savePagePosition();                     // persist page + surah + ayah
   }
 
-  void _onPageViewPageChanged(int index) {
-    final newPage = index + 1;
-    final newSurah = _resolveSurahForPage(newPage);
-    setState(() {
-      _currentPage = newPage;
-      if (newSurah > 0 && newSurah <= 114) {
-        _surahName = _surahNames[newSurah - 1];
-      }
-    });
-    // Restart timer for this page
-    _pageSeconds = 0;
-  }
 
 
   Widget _buildMushafPage() {
@@ -2747,19 +2720,36 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         behavior: HitTestBehavior.opaque,
         onTap: _toggleMushafControls,
         child: Stack(children: [
-          // ── Vertical PageView: swipe UP = next page, swipe DOWN = prev page ──
-          // ClampingScrollPhysics lets the gesture fully control the drag;
-          // PageScrollPhysics handles the snap-to-page settling.
-          PageView.builder(
-            controller: _mushafPageController,
-            scrollDirection: Axis.vertical,
-            physics: const ClampingScrollPhysics(),
-            itemCount: 604,
-            onPageChanged: _onPageViewPageChanged,
-            itemBuilder: (context, index) {
-              final pageNum = index + 1;
-              return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
-            },
+          // ── Continuous Feed (like Quran Majeed) ──
+          // Beautiful native infinite scroll feed using CustomScrollView
+          // This allows users to read with ANY font size without breaking page flow or needing nested scroll hacks
+          CustomScrollView(
+            center: _feedCenterKey,
+            controller: _fullPageScrollController,
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // Scroll UP: previous pages
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final pageNum = _feedJumpPage - 1 - index;
+                    if (pageNum < 1) return null; // We reached page 1
+                    return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
+                  },
+                ),
+              ),
+              // Scroll DOWN: current and next pages
+              SliverList(
+                key: _feedCenterKey,
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final pageNum = _feedJumpPage + index;
+                    if (pageNum > 604) return null; // Max Quran pages 604
+                    return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
+                  },
+                ),
+              ),
+            ],
           ),
           // ── Overlay: fades in/out on tap ──────────────────────────────────
           AnimatedOpacity(
@@ -2798,35 +2788,35 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       );
     }
 
-    // Filled page — LayoutBuilder lets us know the exact screen size.
-    return LayoutBuilder(builder: (ctx, constraints) {
-      final availH = constraints.maxHeight;
-      final availW = constraints.maxWidth;
-      // Generous side padding to perfectly match printed Mushaf margins, avoiding edges
-      const hPad = 26.0;
-      // Reserve vertical space for Top and Bottom overlays
-      const topReserve    = 76.0;
-      const bottomReserve = 60.0;
-      final textH = availH - topReserve - bottomReserve;
-      final textW = availW - hPad * 2;
+    // Return purely responsive box mapping. Scroll dimensions are now infinitely controlled by the outer CustomScrollView.
+    return Builder(
+      builder: (ctx) {
+        // Approximate header update as pages lazily scroll into the render buffer
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _currentPage != pageNum) {
+            setState(() {
+              _currentPage = pageNum;
+              final surahForPage = _resolveSurahForPage(pageNum);
+              _surahName = _surahNames[surahForPage - 1];
+            });
+          }
+        });
 
-      return ColoredBox(
-        color: pageBg,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(hPad, topReserve, hPad, bottomReserve),
-          child: _buildMushafPageBlock(
-              pageNum, ayahs, textClr, goldClr, pageBg,
-              maxW: textW, maxH: textH),
-        ),
-      );
-    });
+        return ColoredBox(
+          color: pageBg,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 30.0),
+            child: _buildMushafPageBlock(pageNum, ayahs, textClr, goldClr, pageBg),
+          ),
+        );
+      }
+    );
   }
 
   // Builds the page content block.
   // We use native text reflowing so the user's Font Size choice actually works.
   Widget _buildMushafPageBlock(int pageNum, List<Map<String, dynamic>> ayahs,
-      Color textClr, Color goldClr, Color pageBg,
-      {double maxW = 340, double maxH = 600}) {
+      Color textClr, Color goldClr, Color pageBg) {
     if (ayahs.isEmpty) {
       return Center(child: SizedBox(width: 24, height: 24,
           child: CircularProgressIndicator(
@@ -2878,7 +2868,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     flushGroup();
 
     // ── Page number footer — small centred ornament like a printed Quran ────
-    blocks.add(const SizedBox(height: 6));
+    blocks.add(const SizedBox(height: 16));
     blocks.add(Center(
       child: Text(
         '— $pageNum —',
@@ -2887,39 +2877,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             fontStyle: FontStyle.italic),
       ),
     ));
+    blocks.add(const SizedBox(height: 16));
 
-    // Removed FittedBox to allow native text reflowing when the user increases font size.
-    // Uses BouncingScrollPhysics so the reader elastic-stretches at the top/bottom bounds,
-    // and seamlessly flips the entire page upon release if pulled far enough!
-    return SizedBox(
-      width: maxW,
-      height: maxH,
-      child: NotificationListener<ScrollEndNotification>(
-        onNotification: (notif) {
-          final metrics = notif.metrics;
-          // If the elastic stretch (bounce) exceeds 30 pixels past the bottom
-          if (metrics.pixels > metrics.maxScrollExtent + 30.0) {
-            _mushafPageController?.nextPage(
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeOut);
-          } 
-          // If the elastic stretch (bounce) exceeds 30 pixels past the top
-          else if (metrics.pixels < metrics.minScrollExtent - 30.0) {
-            _mushafPageController?.previousPage(
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeOut);
-          }
-          return false;
-        },
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: blocks,
-          ),
-        ),
-      ),
+    // NO nested scrolling! Render natively so it forms part of the unified scrolling feed
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: blocks,
     );
   }
 
