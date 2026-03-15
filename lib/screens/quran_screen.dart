@@ -2754,7 +2754,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             controller: _mushafPageController,
             scrollDirection: Axis.horizontal,
             reverse: true, // RTL paging: index 0 (page 1) starts on the far right
-            physics: const _MushafPagePhysics(),
+            physics: const ClampingScrollPhysics(),
             itemCount: 604,
             onPageChanged: _onPageViewPageChanged,
             itemBuilder: (context, index) {
@@ -3583,14 +3583,3 @@ class _WbwWordChipState extends State<_WbwWordChip>
 }
 
 
-// ── Custom scroll physics for the Mushaf PageView ─────────────────────────────
-// Combines ClampingScrollPhysics (no rubber-band over-scroll, so swipes feel
-// snappy and native on Android) with PageScrollPhysics (snap-to-page settling).
-// This is exactly the feel Quran Majeed uses for its page-turn gesture.
-class _MushafPagePhysics extends PageScrollPhysics {
-  const _MushafPagePhysics() : super(parent: const ClampingScrollPhysics());
-
-  @override
-  _MushafPagePhysics applyTo(ScrollPhysics? ancestor) =>
-      _MushafPagePhysics();
-}
