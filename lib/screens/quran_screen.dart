@@ -2747,13 +2747,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         behavior: HitTestBehavior.opaque,
         onTap: _toggleMushafControls,
         child: Stack(children: [
-          // ── Horizontal PageView (Arabic RTL): swipe LEFT = next page, swipe RIGHT = prev page ──
+          // ── Vertical PageView: swipe UP = next page, swipe DOWN = prev page ──
           // ClampingScrollPhysics lets the gesture fully control the drag;
           // PageScrollPhysics handles the snap-to-page settling.
           PageView.builder(
             controller: _mushafPageController,
-            scrollDirection: Axis.horizontal,
-            reverse: true, // RTL paging: index 0 (page 1) starts on the far right
+            scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
             itemCount: 604,
             onPageChanged: _onPageViewPageChanged,
@@ -2889,15 +2888,32 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       ),
     ));
 
-    // Removed FittedBox to allow native text reflowing and vertical scrolling when the user increases font size!
+    // Removed FittedBox to allow native text reflowing and vertical scrolling when the user increases font size.
+    // We use NotificationListener to capture overscrolls (swiping past the top/bottom bounds)
+    // and route them seamlessly into PageView transitions!
     return SizedBox(
       width: maxW,
       height: maxH,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: blocks,
+      child: NotificationListener<OverscrollNotification>(
+        onNotification: (notif) {
+          if (notif.overscroll > 8.0) {
+            _mushafPageController?.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut);
+          } else if (notif.overscroll < -8.0) {
+            _mushafPageController?.previousPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut);
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: blocks,
+          ),
         ),
       ),
     );
