@@ -2888,27 +2888,31 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       ),
     ));
 
-    // Removed FittedBox to allow native text reflowing and vertical scrolling when the user increases font size.
-    // We use NotificationListener to capture overscrolls (swiping past the top/bottom bounds)
-    // and route them seamlessly into PageView transitions!
+    // Removed FittedBox to allow native text reflowing when the user increases font size.
+    // Uses BouncingScrollPhysics so the reader elastic-stretches at the top/bottom bounds,
+    // and seamlessly flips the entire page upon release if pulled far enough!
     return SizedBox(
       width: maxW,
       height: maxH,
-      child: NotificationListener<OverscrollNotification>(
+      child: NotificationListener<ScrollEndNotification>(
         onNotification: (notif) {
-          if (notif.overscroll > 8.0) {
+          final metrics = notif.metrics;
+          // If the elastic stretch (bounce) exceeds 30 pixels past the bottom
+          if (metrics.pixels > metrics.maxScrollExtent + 30.0) {
             _mushafPageController?.nextPage(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 350),
                 curve: Curves.easeOut);
-          } else if (notif.overscroll < -8.0) {
+          } 
+          // If the elastic stretch (bounce) exceeds 30 pixels past the top
+          else if (metrics.pixels < metrics.minScrollExtent - 30.0) {
             _mushafPageController?.previousPage(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 350),
                 curve: Curves.easeOut);
           }
           return false;
         },
         child: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
