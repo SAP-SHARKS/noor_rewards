@@ -54,18 +54,15 @@ class MyApp extends StatelessWidget {
       title: 'NoorRewards',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(cfg),
-      // ── Global MediaQuery override ──────────────────────────────────────────
       // Caps the textScaler so that device accessibility font-size settings
-      // cannot exceed 1.15× — preventing Row/Card overflow on any device.
-      // Bold-text accessibility override is also normalised so layouts
-      // stay consistent regardless of the phone's display settings.
+      // cannot break gamified fixed-height layouts and cause global overflow.
       builder: (context, child) {
         final mq = MediaQuery.of(context);
         return MediaQuery(
           data: mq.copyWith(
             textScaler: mq.textScaler.clamp(
-              minScaleFactor: 0.85,
-              maxScaleFactor: 1.15,
+              minScaleFactor: 1.0,
+              maxScaleFactor: 1.0,
             ),
             boldText: false,
           ),

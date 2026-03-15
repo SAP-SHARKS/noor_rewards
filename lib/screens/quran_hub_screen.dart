@@ -151,10 +151,35 @@ class _QuranHubScreenState extends State<QuranHubScreen>
   // ── Navigate into the reading screen ─────────────────────────────────────────
   Future<void> _startReading({int? surah, int? ayah}) async {
     HapticFeedback.mediumImpact();
-    final pts = await Navigator.push<int>(context,
+    final s = surah ?? _selSurah;
+    final a = ayah  ?? _selAyah;
+    final nav = Navigator.of(context); // capture before async gap
+
+    // Persist chosen position so Resume is immediately in sync
+    final uid = _sb.auth.currentUser?.id;
+    if (uid != null) {
+      try {
+        await _sb.from('quran_progress').update({
+          'current_surah': s,
+          'current_ayah' : a,
+          'updated_at'   : DateTime.now().toIso8601String(),
+        }).eq('user_id', uid);
+      } catch (_) {}
+    }
+
+    // Update local resume card right away
+    if (mounted) {
+      setState(() {
+        _lastSurah     = s;
+        _lastAyah      = a;
+        _lastSurahName = _surahNames[s.clamp(1, 114)];
+      });
+    }
+
+    final pts = await nav.push<int>(
       MaterialPageRoute(builder: (_) => QuranScreen(
-        initialSurah: surah ?? _selSurah,
-        initialAyah: ayah ?? _selAyah,
+        initialSurah: s,
+        initialAyah:  a,
       )));
     if ((pts ?? 0) > 0 && mounted) _loadData();
   }

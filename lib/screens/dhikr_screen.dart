@@ -989,7 +989,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               children: [
                 Positioned.fill(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 20, bottom: 120),
+                    padding: const EdgeInsets.only(top: 6, bottom: 120),
                     child: _AzkarCard(
                       azkar: azkar,
                       currentCount: count,
@@ -1101,6 +1101,24 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         child: inner,
       );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Arabic text cleaner — strips brackets, parentheses, and Quranic waqf/
+// annotation characters that sometimes appear in source data.
+// ─────────────────────────────────────────────────────────────────────────────
+String _cleanArabic(String s) {
+  // Remove footnote markers like [1], (2)
+  s = s.replaceAll(RegExp(r'\[\d+\]'), '');
+  s = s.replaceAll(RegExp(r'\(\d+\)'), '');
+  // Remove leftover bracket characters (so things like ((text)) keep the text)
+  s = s.replaceAll(RegExp(r'[\[\]\(\)\{\}«»﴿﴾]'), '');
+  // Remove Quranic waqf/tajweed marks (same ranges as Quran screen stripper)
+  s = s.replaceAll(RegExp(r'[\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]'), '');
+  // Remove Arabic end-of-ayah ornament ۝ if it crept in
+  s = s.replaceAll('\u06DD', '');
+  // Collapse extra whitespace
+  return s.replaceAll(RegExp(r'  +'), ' ').trim();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1288,7 +1306,7 @@ class _AzkarCard extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    azkar.arabic,
+                    _cleanArabic(azkar.arabic),
                     textAlign: TextAlign.center,
                     textDirection: TextDirection.rtl,
                     style: _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)]
@@ -1459,7 +1477,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
     return AnimatedBuilder(
       animation: Listenable.merge([_swayCtrl, _growCtrl, _starCtrl, _pCtrl, _pulseCtrl]),
       builder: (_, __) => SizedBox(
-        height: 190,
+        height: 150,
         child: CustomPaint(
           painter: _NoorTreePainter(
             progress: _grow.value,

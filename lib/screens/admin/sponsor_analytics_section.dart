@@ -272,8 +272,8 @@ class _SponsorAnalyticsSectionState extends State<SponsorAnalyticsSection> {
               Expanded(child: Row(children: [
                 Text(_countryFlag(country), style: const TextStyle(fontSize: 18)),
                 const SizedBox(width: 8),
-                Text(country, style: GoogleFonts.outfit(
-                    fontSize: 13, fontWeight: FontWeight.w700, color: _kText)),
+                Expanded(child: Text(country, style: GoogleFonts.outfit(
+                    fontSize: 13, fontWeight: FontWeight.w700, color: _kText), overflow: TextOverflow.ellipsis)),
               ])),
               Text('$users', style: GoogleFonts.outfit(fontSize: 13, color: _kSub)),
               const SizedBox(width: 16),

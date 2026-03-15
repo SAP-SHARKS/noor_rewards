@@ -158,12 +158,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Settings ──────────────────────────────────────────────────────────────────
   String _translationEdition = 'en.sahih';
-  int _reciterIdx = 0;
+  final int _reciterIdx = 0;
 
   // ── Reader Settings ───────────────────────────────────────────────────
   // Display
   bool   _darkMode          = false;   // dark reading mode
   double _arabicFontSize    = 28.0;    // 20-44
+  double _mushafFontSize    = 32.0;    // 16-48 (for full page mode)
   double _translationFontSize = 15.0;  // 12-22
   int    _arabicFontIdx     = 0;       // index into _kArabicFonts
   bool   _showTranslation   = false;   // show/hide translation block
@@ -175,19 +176,18 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _wordByWord        = false;   // word-by-word mode
   List<Map<String, dynamic>> _wbwWords = [];  // [{arabic, translation}]
   bool   _wbwLoading        = false;
-  // Full-page Mushaf mode
-  bool   _fullPageMode      = false;   // full mushaf page mode
-  int    _currentPage       = 1;       // Quran page (1–604)
-  Timer? _pageTimer;                   // counts seconds on current page
-  int    _pageSeconds       = 0;       // seconds spent reading this page
-  int    _pageXpEarned      = 0;       // XP earned this session (full-page)
-  // _timerShouldRun = USER INTENT for timer. Set by explicit actions only.
-  // Lifecycle events (lock/unlock) read it but NEVER write it.
-  // This guarantees auto-resume works through any lock/unlock sequence.
+  // Full-page Mushaf — PageView-based (one Quran page per PageView page)
+  bool   _fullPageMode      = false;
+  int    _currentPage       = 1;         // current Quran page (1–604)
+  PageController? _mushafPageController; // drives the PageView
+  Timer? _pageTimer;
+  int    _pageSeconds       = 0;
+  int    _pageXpEarned      = 0;
   bool   _timerShouldRun    = false;
-  // Continuous scroll full-page mode
-  final Map<int, List<Map<String, dynamic>>> _loadedPages = {}; // page# → ayahs
-  final Set<int> _loadingPages = {}; // pages currently being fetched
+  // Cache: page# → list of ayahs  (fetched once per page, held in memory)
+  final Map<int, List<Map<String, dynamic>>> _loadedPages    = {};
+  final Set<int>                              _loadingPages   = {};
+  // Keep scroll controller for backward compat (unused in PageView path)
   ScrollController? _fullPageScrollController;
   bool   _autoAdvance       = false;   // advance ayah when audio ends
   bool   _repeatAyah        = false;   // repeat current ayah audio
@@ -240,8 +240,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Audio ─────────────────────────────────────────────────────────────────────
   final _player = AudioPlayer();
-  Duration _pos = Duration.zero, _dur = Duration.zero;
-  bool _isPlaying = false, _audioLoading = false;
+  bool _isPlaying = false;
 
   // ── Cache ─────────────────────────────────────────────────────────────────────
   late Box _cache;
@@ -277,12 +276,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         _nextAyah(fromAutoPlay: true);
       }
     });
-    _player.positionStream.listen((p) {
-      if (mounted) setState(() => _pos = p);
-    });
-    _player.durationStream.listen((d) {
-      if (d != null && mounted) setState(() => _dur = d);
-    });
+
     // Show feature-discovery hint once per page visit (via Overlay so it overlaps AppBar)
     _hintIdx = DateTime.now().millisecond % _kHints.length;
     _hintTimer = Timer(const Duration(milliseconds: 2500), () {
@@ -447,7 +441,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   Future<void> _fetchAyah(int surah, int ayah) async {
     if (mounted) setState(() => _loading = true);
     final recEdition = _reciters[_reciterIdx].$1;
-    final cacheKey   = '$surah:$ayah:$_translationEdition:$recEdition';
+    final cacheKey   = '$surah:$ayah:_translationEdition:$recEdition';
 
     // ── 1. Hive cache hit (7-day TTL) — skip entry if translation is empty ──
     final cached = _cache.get(cacheKey);
@@ -520,7 +514,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       final nowStr = DateTime.now().toIso8601String();
       for (int a = 1; a <= _surahLengths[surah]; a++) {
         final vId  = startVerseId + a - 1;
-        final cKey = '$surah:$a:$_translationEdition:$recEdition';
+        final cKey = '$surah:$a:_translationEdition:$recEdition';
         await _cache.put(cKey, {
           'arabic'   : arabicMap[a] ?? '',
           'trans'    : transMap[vId] ?? '',
@@ -562,6 +556,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     bool earnRewards = !fromAutoPlay && !_autoAdvance && !_repeatAyah;
 
     setState(() {
+      // Sync _currentPage when crossing a surah boundary so Mushaf stays aligned
+      if (nextSurah != _surah) {
+        _currentPage = _kSurahStartPage[nextSurah.clamp(1, 114)];
+      }
       _surah = nextSurah; _ayah = nextAyah; _wbwWords = [];
       if (earnRewards) {
         _ayahsToday++; _pointsToday += XpReward.ayahRead;
@@ -602,14 +600,16 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
-  // Lightweight save: only page position (no XP/streaks) — called on mushaf nav
+  // Lightweight save: page + surah + ayah position (no XP/streaks) — called on mushaf nav
   Future<void> _savePagePosition() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
     try {
       await _sb.from('quran_progress').update({
-        'current_page': _currentPage,
-        'updated_at': DateTime.now().toIso8601String(),
+        'current_surah': _surah,
+        'current_ayah' : _ayah,
+        'current_page' : _currentPage,
+        'updated_at'   : DateTime.now().toIso8601String(),
       }).eq('user_id', uid);
     } catch (_) {}
   }
@@ -622,7 +622,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       prevSurah = _surah > 1 ? _surah - 1 : 114;
       prevAyah  = _surahLengths[prevSurah]; // last ayah of prev surah
     }
-    setState(() { _surah = prevSurah; _ayah = prevAyah; _wbwWords = []; });
+    setState(() {
+      // Sync _currentPage when crossing a surah boundary
+      if (prevSurah != _surah) {
+        _currentPage = _kSurahStartPage[prevSurah.clamp(1, 114)];
+      }
+      _surah = prevSurah; _ayah = prevAyah; _wbwWords = [];
+    });
     _fetchAyah(prevSurah, prevAyah);
   }
 
@@ -675,17 +681,32 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     603,604,604,604,                         // 111-114
   ];
 
+  /// Reverse lookup: given a Quran page number, return the surah whose
+  /// start page is ≤ that page (i.e. the surah a user is currently reading).
+  static int _resolveSurahForPage(int page) {
+    int surah = 1;
+    for (int s = 1; s <= 114; s++) {
+      if (_kSurahStartPage[s] <= page) {
+        surah = s;
+      } else {
+        break;
+      }
+    }
+    return surah;
+  }
+
   // Resolves the Quran page number for the current _surah:_ayah.
+
   // 1. Checks Hive cache (30-day TTL)
   // 2. Fetches from api.quran.com
   // 3. Falls back to surah start-page table
   Future<int> _resolvePageForCurrentAyah() async {
-    final cacheKey = 'pagenum_${_surah}_$_ayah';
+    final cacheKey = 'pagenum_${_surah}__ayah';
     final cached = _cache.get(cacheKey);
     if (cached is int) return cached;
 
     try {
-      final url = 'https://api.quran.com/api/v4/verses/by_key/$_surah:$_ayah'
+      final url = 'https://api.quran.com/api/v4/verses/by_key/_surah:_ayah'
           '?fields=page_number';
       final res = await http
           .get(Uri.parse(url), headers: {'Accept': 'application/json'})
@@ -750,37 +771,47 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     if (page > 1) _loadPageForScroll(page - 1);
   }
 
-  // ── Set up full-page continuous scroll mode ──
+  // ── Enter Mushaf in PageView mode (one Quran page per vertical swipe) ──────
   void _enterFullPageScrollMode(int startPage) {
-    _fullPageScrollController?.dispose();
-    _fullPageScrollController = ScrollController();
-    _fullPageScrollController!.addListener(_onFullPageScroll);
+    _mushafPageController?.dispose();
     _loadedPages.clear();
     _loadingPages.clear();
     _currentPage = startPage;
+    // PageView is 0-indexed; Quran pages are 1-indexed
+    _mushafPageController = PageController(initialPage: startPage - 1);
+    _mushafPageController!.addListener(_onMushafPageChanged);
+    // Pre-load this page and neighbors for instant first swipe
     _loadPageForScroll(startPage);
     _loadPageForScroll(startPage + 1);
     if (startPage > 1) _loadPageForScroll(startPage - 1);
   }
 
-  // ── Scroll listener: update _currentPage + prefetch pages as user scrolls ──
-  void _onFullPageScroll() {
-    final ctrl = _fullPageScrollController;
+  // PageController listener — tracks page *while dragging* (like Quran Majeed).
+  // Also resets the XP timer and updates surah name whenever a new page settles.
+  void _onMushafPageChanged() {
+    final ctrl = _mushafPageController;
     if (ctrl == null || !ctrl.hasClients) return;
-    final pos = ctrl.position.pixels;
-    final max = ctrl.position.maxScrollExtent;
-    // Prefetch next page when 75% scrolled
-    if (pos > max * 0.75) {
-      final nextPage = (_loadedPages.keys.isEmpty ? _currentPage
-          : _loadedPages.keys.reduce((a, b) => a > b ? a : b)) + 1;
-      _loadPageForScroll(nextPage);
-    }
-    // Prefetch prev page when near top
-    if (pos < ctrl.position.viewportDimension * 0.5) {
-      final prevPage = (_loadedPages.keys.isEmpty ? _currentPage
-          : _loadedPages.keys.reduce((a, b) => a < b ? a : b)) - 1;
-      _loadPageForScroll(prevPage);
-    }
+    final rawPage = ctrl.page;
+    if (rawPage == null) return;
+    final quranPage = rawPage.round() + 1; // 0-based → 1-based
+    if (quranPage == _currentPage) return;
+
+    // Pre-fetch the incoming page and its neighbour instantly
+    _loadPageForScroll(quranPage);
+    _loadPageForScroll(quranPage + 1);
+    if (quranPage > 1) _loadPageForScroll(quranPage - 1);
+
+    // Update surah name for overlay header
+    final surahForPage = _resolveSurahForPage(quranPage);
+    setState(() {
+      _currentPage = quranPage;
+      _surahName = _surahNames[surahForPage - 1];
+    });
+
+    // Reset XP timer for each new page (Quran Majeed awards time-based XP per page)
+    if (_timerShouldRun) _startPageTimer();
+
+    _savePagePosition();
   }
 
 
@@ -847,7 +878,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               final n = i + 1;
               final isCurrent = n == _surah;
               return ListTile(
-                onTap: () { Navigator.pop(context); setState(() { _surah = n; _ayah = 1; }); _fetchAyah(n, 1); },
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() { _surah = n; _ayah = 1; });
+                  _fetchAyah(n, 1);
+                  // Sync _currentPage so Mushaf opens at the correct page
+                  _currentPage = _kSurahStartPage[n.clamp(1, 114)];
+                  // Also persist so DB stays in sync
+                  _savePagePosition();
+                },
                 leading: Container(width: 36, height: 36,
                   decoration: BoxDecoration(shape: BoxShape.circle,
                       color: isCurrent ? _kTeal : const Color(0xFFF0FBF9)),
@@ -869,7 +908,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Toggle bookmark ───────────────────────────────────────────────────────────
   Future<void> _toggleBookmark() async {
-    final key = '$_surah:$_ayah';
+    final key = '$_surah:_ayah';
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
 
@@ -885,7 +924,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         await _sb.from('quran_bookmarks').insert({
           'user_id': uid, 'surah': _surah, 'ayah': _ayah, 'surah_name': _surahName,
         });
-        if (mounted) _showSnack('Bookmarked $_surahName $_surah:$_ayah');
+        if (mounted) _showSnack('Bookmarked _surahName _surah:_ayah');
       } catch (_) { setState(() => _bookmarks.remove(key)); }
     }
   }
@@ -902,7 +941,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     try {
       final cdnUrl = 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main'
-          '/tafsir/${def.slug}/$_surah.json';
+          '/tafsir/${def.slug}/_surah.json';
       final res = await http.get(Uri.parse(cdnUrl)).timeout(const Duration(seconds: 15));
       if (res.statusCode == 200) {
         final js = jsonDecode(res.body);
@@ -976,7 +1015,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       decoration: BoxDecoration(color: _accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
                       child: Icon(Icons.menu_book_rounded, color: _accent, size: 20)),
                     const SizedBox(width: 10),
-                    Expanded(child: Text('Tafsir · $_surahName $_surah:$_ayah',
+                    Expanded(child: Text('Tafsir · _surahName _surah:_ayah',
                         style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: lblC))),
                     IconButton(icon: Icon(Icons.close_rounded, color: subC, size: 22),
                         onPressed: () => Navigator.pop(ctx)),
@@ -1089,20 +1128,16 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       return;
     }
     // Always stop → setUrl → play (most reliable pattern across devices)
-    setState(() => _audioLoading = true);
     try {
       await _player.stop();
       await _player.setUrl(_audioUrl!);
-      setState(() => _audioLoading = false);
       await _player.play();
     } on PlayerException catch (e) {
       if (mounted) {
-        setState(() => _audioLoading = false);
         _showSnack('Playback error: ${e.message ?? "Unknown error"}');
       }
     } catch (_) {
       if (mounted) {
-        setState(() => _audioLoading = false);
         _showSnack('Audio unavailable — check internet connection.');
       }
     }
@@ -1186,14 +1221,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  bool get _isBookmarked  => _bookmarks.contains('$_surah:$_ayah');
-  bool get _isFavourited  => _favourites.contains('$_surah:$_ayah');
+  bool get _isBookmarked  => _bookmarks.contains('$_surah:_ayah');
+  bool get _isFavourited  => _favourites.contains('$_surah:_ayah');
 
   // ── Toggle favourite ──────────────────────────────────────────────────────────
   Future<void> _toggleFavourite() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) { _showSnack('Sign in to save favourites'); return; }
-    final key = '$_surah:$_ayah';
+    final key = '$_surah:_ayah';
     final adding = !_isFavourited;
     setState(() {
       if (adding) {
@@ -2014,7 +2049,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   child: Row(children: [
                     const Text('🌟', style: TextStyle(fontSize: 16)),
                     const SizedBox(width: 8),
-                    Text('+$_pointsToday Noor Points earned today!',
+                    Text('+_pointsToday Noor Points earned today!',
                         style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -2051,14 +2086,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       Expanded(child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        Text('$_surahName • Surah $_surah',
+                        Text('$_surahName • Surah _surah',
                             style: GoogleFonts.outfit(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white)),
                         const SizedBox(height: 2),
                         Text(
-                            'Ayah $_ayah of '
+                            'Ayah _ayah of '
                             '${_surahLengths[_surah]}  •  Tap to change',
                             style: GoogleFonts.outfit(
                                 fontSize: 12,
@@ -2214,7 +2249,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: Column(children: [
                           Icon(Icons.wifi_off_rounded, color: sub, size: 36),
                           const SizedBox(height: 8),
-                          Text('Word data unavailable.\nCheck your connection.',
+                          Text('Word data unavailable. Check your connection.',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(fontSize: 13, color: sub)),
                         ]),
@@ -2322,7 +2357,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                                 darkMode: _darkMode,
                                                 onTap: () {
                                                   Clipboard.setData(ClipboardData(
-                                                    text: '$_arabic\n\n$_translation',
+                                                    text: '$_arabic\n\n_translation',
                                                   ));
                                                   _showSnack('Ayah copied to clipboard');
                                                 },
@@ -2418,7 +2453,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _accent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10)),
-                        child: Text('+$_pointsToday pts',
+                        child: Text('+_pointsToday pts',
                             style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
@@ -2664,41 +2699,73 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _controlsHideTimer?.cancel();
     _timerShouldRun = false;
     _stopPageTimer();
-    _fullPageScrollController?.dispose();
-    _fullPageScrollController = null;
-    _savePagePosition(); // persist page to Supabase
-    setState(() { _fullPageMode = false; _loadedPages.clear(); });
+    _mushafPageController?.dispose();
+    _mushafPageController = null;
+
+    // ── Sync position back to normal-mode state ─────────────────────────────
+    // Derive surah from current page so normal-mode resumes at the same spot.
+    final syncedSurah = _resolveSurahForPage(_currentPage);
+    setState(() {
+      _fullPageMode = false;
+      _loadedPages.clear();
+      _surah     = syncedSurah;
+      _ayah      = 1;                         // start of that surah (safe default)
+      _surahName = _surahNames[syncedSurah - 1];
+    });
+    _fetchAyah(syncedSurah, 1);              // re-fetch for normal ayah card
+    _savePagePosition();                     // persist page + surah + ayah
+  }
+
+  void _onPageViewPageChanged(int index) {
+    final newPage = index + 1;
+    final newSurah = _resolveSurahForPage(newPage);
+    setState(() {
+      _currentPage = newPage;
+      if (newSurah > 0 && newSurah <= 114) {
+        _surahName = _surahNames[newSurah - 1];
+      }
+    });
+    // Restart timer for this page
+    _pageSeconds = 0;
   }
 
 
   Widget _buildMushafPage() {
     final isDark  = _darkMode;
-    // Parchment / night colours
-    final pageBg  = isDark ? const Color(0xFF16100A) : const Color(0xFFFFFFFF);
-    final textClr = isDark ? const Color(0xFFE8D5A8) : const Color(0xFF1C120A);
+    // Very soft greenish/parchment background — perfectly matching the Quran Majeed aesthetic
+    final pageBg  = isDark ? const Color(0xFF0F0B06) : const Color(0xFFF4F7EB);
+    final textClr = isDark ? const Color(0xFFE8D5A8) : const Color(0xFF0A0A0A);
     final goldClr = isDark ? const Color(0xFFD4A843) : const Color(0xFF8B6914);
-    final overlayBg = (isDark
-        ? Colors.black.withValues(alpha: 0.82)
-        : const Color(0xFF2E1F0A).withValues(alpha: 0.88));
+    final overlayBg = isDark
+        ? Colors.black.withValues(alpha: 0.90)
+        : const Color(0xFFF4F7EB).withValues(alpha: 0.95);
 
     return Scaffold(
       backgroundColor: pageBg,
       body: GestureDetector(
+        // Single tap: toggle the overlay controls
         behavior: HitTestBehavior.opaque,
         onTap: _toggleMushafControls,
         child: Stack(children: [
-          // ── Scrollable mushaf content ──────────────────────────────────
-          SafeArea(
-            child: SingleChildScrollView(
-              controller: _fullPageScrollController,
-              padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
-              child: _buildMushafScrollContent(textClr, goldClr, pageBg),
-            ),
+          // ── Horizontal PageView (Arabic RTL): swipe LEFT = next page, swipe RIGHT = prev page ──
+          // ClampingScrollPhysics lets the gesture fully control the drag;
+          // PageScrollPhysics handles the snap-to-page settling.
+          PageView.builder(
+            controller: _mushafPageController,
+            scrollDirection: Axis.horizontal,
+            reverse: true, // RTL paging: index 0 (page 1) starts on the far right
+            physics: const _MushafPagePhysics(),
+            itemCount: 604,
+            onPageChanged: _onPageViewPageChanged,
+            itemBuilder: (context, index) {
+              final pageNum = index + 1;
+              return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
+            },
           ),
-          // ── Overlay (fades in/out on tap) ──────────────────────────────
+          // ── Overlay: fades in/out on tap ──────────────────────────────────
           AnimatedOpacity(
             opacity: _showMushafControls ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 250),
             child: IgnorePointer(
               ignoring: !_showMushafControls,
               child: _buildMushafOverlay(overlayBg, goldClr, textClr),
@@ -2709,51 +2776,67 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildMushafScrollContent(Color textClr, Color goldClr, Color pageBg) {
-    final sortedPages = _loadedPages.keys.toList()..sort();
-    if (sortedPages.isEmpty) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.65,
-        child: Center(child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(color: goldClr, strokeWidth: 2),
-            const SizedBox(height: 18),
-            Text('Loading page $_currentPage…',
-                style: GoogleFonts.lora(fontSize: 14, color: textClr.withValues(alpha: 0.6))),
-          ],
-        )),
+  // One slide in the PageView — content fitted to fill the visible screen exactly
+  // (like Quran Majeed: no inner scrolling, the whole page is always visible).
+  Widget _buildMushafPageView(int pageNum, Color textClr, Color goldClr, Color pageBg) {
+    if (!_loadedPages.containsKey(pageNum) && !_loadingPages.contains(pageNum)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadPageForScroll(pageNum));
+    }
+    final ayahs = _loadedPages[pageNum];
+
+    // Loading state — minimal, centred
+    if (ayahs == null) {
+      return ColoredBox(
+        color: pageBg,
+        child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          SizedBox(width: 28, height: 28,
+              child: CircularProgressIndicator(color: goldClr, strokeWidth: 1.8)),
+          const SizedBox(height: 14),
+          Text('Loading page $pageNum…',
+              style: GoogleFonts.lora(fontSize: 12,
+                  color: textClr.withValues(alpha: 0.45))),
+        ])),
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (int i = 0; i < sortedPages.length; i++) ...[
-          _buildMushafPageBlock(sortedPages[i], _loadedPages[sortedPages[i]] ?? [],
-              textClr, goldClr, pageBg),
-          if (i < sortedPages.length - 1)
-            _buildMushafPageDivider(sortedPages[i] + 1, goldClr, textClr),
-        ],
-      ],
-    );
+
+    // Filled page — LayoutBuilder lets us know the exact screen size.
+    return LayoutBuilder(builder: (ctx, constraints) {
+      final availH = constraints.maxHeight;
+      final availW = constraints.maxWidth;
+      // Generous side padding to perfectly match printed Mushaf margins, avoiding edges
+      const hPad = 26.0;
+      // Reserve vertical space for Top and Bottom overlays
+      const topReserve    = 76.0;
+      const bottomReserve = 60.0;
+      final textH = availH - topReserve - bottomReserve;
+      final textW = availW - hPad * 2;
+
+      return ColoredBox(
+        color: pageBg,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(hPad, topReserve, hPad, bottomReserve),
+          child: _buildMushafPageBlock(
+              pageNum, ayahs, textClr, goldClr, pageBg,
+              maxW: textW, maxH: textH),
+        ),
+      );
+    });
   }
 
+  // Builds the page content block.
+  // We use native text reflowing so the user's Font Size choice actually works.
   Widget _buildMushafPageBlock(int pageNum, List<Map<String, dynamic>> ayahs,
-      Color textClr, Color goldClr, Color pageBg) {
+      Color textClr, Color goldClr, Color pageBg,
+      {double maxW = 340, double maxH = 600}) {
     if (ayahs.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Center(child: CircularProgressIndicator(
-            color: goldClr.withValues(alpha: 0.5), strokeWidth: 2)),
-      );
+      return Center(child: SizedBox(width: 24, height: 24,
+          child: CircularProgressIndicator(
+              color: goldClr.withValues(alpha: 0.5), strokeWidth: 1.8)));
     }
 
-    // Group consecutive ayahs by surah → each group becomes ONE justified RichText
+    // ── Group consecutive ayahs by surah ─────────────────────────────────────
     final List<Widget> blocks = [];
     String? lastSurah;
-    // Track which surahs need bismillah handling:
-    //   • surahNum → 'strip'  : bismillah embedded in ayah-1 text, strip it
-    //   • surahNum → 'skip'   : ayah-1 IS the bismillah (Surah 1), skip entirely
     final Map<int, String> bismillahAction = {};
     final List<Map<String, dynamic>> currentGroup = [];
 
@@ -2771,33 +2854,23 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         flushGroup();
         lastSurah = surahKey;
         if (ayahNum == 1 && surahNum >= 1) {
-          if (surahNum > 1) blocks.add(const SizedBox(height: 16));
+          if (surahNum > 1) blocks.add(const SizedBox(height: 10));
           blocks.add(_buildMushafSurahBanner(surahNum, goldClr, textClr));
           if (surahNum == 1) {
-            // Al-Fatiha: ayah 1 text IS the Bismillah — show the golden
-            // banner and skip ayah 1 from the text block completely.
             blocks.add(_buildMushafBismillah(textClr, goldClr));
             bismillahAction[surahNum] = 'skip';
           } else if (surahNum != 9) {
-            // All other surahs except At-Tawbah: bismillah is embedded at
-            // the START of ayah 1's text — show banner & strip from text.
             blocks.add(_buildMushafBismillah(textClr, goldClr));
             bismillahAction[surahNum] = 'strip';
           }
-          // Surah 9 (At-Tawbah): no bismillah at all — do nothing.
-          blocks.add(const SizedBox(height: 6));
+          blocks.add(const SizedBox(height: 4));
         }
       }
-
       final action = bismillahAction[surahNum];
       if (ayahNum == 1 && action == 'skip') {
-        // Ayah 1 of Al-Fatiha is entirely the Bismillah — already shown as
-        // the golden banner above, so we skip it from the text flow.
         continue;
       } else if (ayahNum == 1 && action == 'strip') {
-        // Strip the embedded Bismillah prefix so it doesn't appear twice.
-        final raw      = ayah['arabic'] as String? ?? '';
-        final stripped = _stripBismillahPrefix(raw);
+        final stripped = _stripBismillahPrefix(ayah['arabic'] as String? ?? '');
         currentGroup.add({...ayah, 'arabic': stripped});
       } else {
         currentGroup.add(ayah);
@@ -2805,25 +2878,75 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     flushGroup();
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks),
+    // ── Page number footer — small centred ornament like a printed Quran ────
+    blocks.add(const SizedBox(height: 6));
+    blocks.add(Center(
+      child: Text(
+        '— $pageNum —',
+        style: GoogleFonts.lora(
+            fontSize: 10, color: goldClr.withValues(alpha: 0.55),
+            fontStyle: FontStyle.italic),
+      ),
+    ));
+
+    // Removed FittedBox to allow native text reflowing and vertical scrolling when the user increases font size!
+    return SizedBox(
+      width: maxW,
+      height: maxH,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: blocks,
+        ),
+      ),
     );
   }
 
-  /// Single justified RTL block for a surah-group of ayahs with ruled underlines.
+  /// Single justified RTL block for a surah-group of ayahs.
+  /// Uses a fixed generous font size — the FittedBox parent will scale
+  /// the entire page down to fit, so we don't need to calculate per-block.
   Widget _buildMushafTextBlock(
       List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr) {
-    const double fs = 0.86; // fraction of _arabicFontSize
-    const double lh = 2.2;  // line-height multiplier
-    final double fontSize = _arabicFontSize * fs;
+    // Tunable base font size to fit ~15 lines beautifully into the logical width
+    final double fontSize = _mushafFontSize;
+    const double lh       = 1.95;   // Safe line height for Scheherazade New (avoids cropping glyphs)
 
-    // Build one big span: clean Arabic per ayah — waqf/annotation marks stripped
-    final spans = ayahs
-        .map((a) => TextSpan(
-              text: '${_stripQuranicAnnotations(a["arabic"] as String? ?? '')} ',
-            ))
-        .toList();
+    // Build one large span: each ayah separated by the end-of-ayah circle ۝
+    final spans = <InlineSpan>[];
+    for (int i = 0; i < ayahs.length; i++) {
+      final a = ayahs[i];
+      final text = _stripQuranicAnnotations(a['arabic'] as String? ?? '');
+      final ayahNum = a['ayah'] as int? ?? (i + 1);
+      // Convert to Arabic digits so the U+06DD character natively encloses them
+      final numStr = ayahNum.toString().split('').map((e) => '٠١٢٣٤٥٦٧٨٩'[int.parse(e)]).join('');
+
+      spans.add(TextSpan(text: text));
+      // Use a WidgetSpan with a Stack to forcefully center the digits inside the ornament.
+      spans.add(const TextSpan(text: ' '));
+      spans.add(WidgetSpan(
+        alignment: PlaceholderAlignment.middle,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Text('\u06DD', style: GoogleFonts.scheherazadeNew(
+              fontSize: fontSize * 1.5,
+              color: goldClr.withValues(alpha: 0.75),
+              height: 1.0,
+            )),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(numStr, style: GoogleFonts.scheherazadeNew(
+                fontSize: fontSize * 0.55,
+                color: textClr,
+                height: 1.0,
+              )),
+            ),
+          ],
+        ),
+      ));
+      spans.add(const TextSpan(text: ' '));
+    }
 
     final textStyle = GoogleFonts.scheherazadeNew(
       fontSize: fontSize,
@@ -2944,45 +3067,32 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildMushafPageDivider(int nextPage, Color goldClr, Color textClr) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(children: [
-        Expanded(child: Divider(color: goldClr.withValues(alpha: 0.3), thickness: 0.8)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: Text(
-            '— $_currentPage —',
-            style: GoogleFonts.lora(
-                fontSize: 11, color: goldClr.withValues(alpha: 0.7),
-                fontStyle: FontStyle.italic),
-          ),
-        ),
-        Expanded(child: Divider(color: goldClr.withValues(alpha: 0.3), thickness: 0.8)),
-      ]),
-    );
-  }
 
   Widget _buildMushafOverlay(Color overlayBg, Color goldClr, Color textClr) {
     final pad = MediaQuery.of(context).padding;
     return Column(children: [
-      // ── Top bar — minimal, no distractions ───────────────────────────────
+      // ── Top bar: gradient fade — Exit · Surah · Juz · XP ─────────────────
       Container(
-        color: overlayBg,
-        padding: EdgeInsets.fromLTRB(16, pad.top + 8, 16, 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            colors: [overlayBg, overlayBg.withValues(alpha: 0)],
+          ),
+        ),
+        padding: EdgeInsets.fromLTRB(14, pad.top + 4, 14, 30),
         child: Row(children: [
           // Exit button
           GestureDetector(
             onTap: _exitMushafMode,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: goldClr.withValues(alpha: 0.18),
+                color: goldClr.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: goldClr.withValues(alpha: 0.4)),
+                border: Border.all(color: goldClr.withValues(alpha: 0.35)),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.arrow_back_ios_rounded, color: goldClr, size: 14),
+                Icon(Icons.arrow_back_ios_rounded, color: goldClr, size: 13),
                 const SizedBox(width: 4),
                 Text('Exit', style: GoogleFonts.lora(
                     fontSize: 13, fontWeight: FontWeight.w600, color: goldClr)),
@@ -2990,37 +3100,180 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             ),
           ),
           const Spacer(),
-          // Page + timer info (centred)
-          Column(children: [
+          // Centred surah + juz label
+          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Text(_surahName,
-                style: GoogleFonts.lora(fontSize: 11,
-                    color: Colors.white.withValues(alpha: 0.65))),
-            Text('Page $_currentPage  ·  $_pageTimerLabel',
-                style: GoogleFonts.lora(fontSize: 13,
-                    fontWeight: FontWeight.w700, color: goldClr)),
+                style: GoogleFonts.lora(fontSize: 16, fontWeight: FontWeight.w700,
+                    color: textClr)),
+            const SizedBox(height: 1),
+            Text('Page $_currentPage  ·  Juz ${_juzForPage(_currentPage)}',
+                style: GoogleFonts.lora(fontSize: 12,
+                    color: goldClr)),
           ]),
-          const Spacer(),
-          // XP badge (or invisible spacer so the page info stays centred)
-          SizedBox(
-            width: 60,
-            child: _pageXpEarned > 0
-                ? Container(
+          // XP badge + Settings button
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_pageXpEarned > 0)
+                Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                     decoration: BoxDecoration(
-                      color: goldClr.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
+                      color: goldClr.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text('+$_pageXpEarned XP',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                            fontSize: 11, fontWeight: FontWeight.w700,
-                            color: goldClr)),
-                  )
-                : const SizedBox.shrink(),
+                        style: GoogleFonts.outfit(fontSize: 11,
+                            fontWeight: FontWeight.w700, color: goldClr))),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: _openMushafSettings,
+                child: Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: goldClr.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: goldClr.withValues(alpha: 0.35)),
+                  ),
+                  child: Icon(Icons.tune_rounded, color: goldClr, size: 16),
+                ),
+              ),
+            ],
           ),
         ]),
       ),
+      // Simple spacer — navigation is swipe-only (no tap buttons)
+      const Spacer()
+,
+      // ── Bottom bar: progress + page counter + timer ───────────────────────
+      Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter, end: Alignment.topCenter,
+            colors: [overlayBg, overlayBg.withValues(alpha: 0)],
+          ),
+        ),
+        padding: EdgeInsets.fromLTRB(20, 30, 20, pad.bottom + 8),
+        child: Column(children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: (_currentPage / 604).clamp(0.0, 1.0),
+              minHeight: 3,
+              backgroundColor: goldClr.withValues(alpha: 0.12),
+              valueColor: AlwaysStoppedAnimation(goldClr.withValues(alpha: 0.70)),
+            ),
+          ),
+          const SizedBox(height: 7),
+          Row(children: [
+            Text('$_currentPage / 604',
+                style: GoogleFonts.lora(fontSize: 12,
+                    fontWeight: FontWeight.w600, color: textClr)),
+            const Spacer(),
+            Icon(Icons.timer_outlined, color: goldClr, size: 14),
+            const SizedBox(width: 4),
+            Text(_pageTimerLabel,
+                style: GoogleFonts.lora(fontSize: 12,
+                    fontWeight: FontWeight.w600, color: textClr)),
+          ]),
+        ]),
+      ),
     ]);
+  }
+
+  void _openMushafSettings() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Mushaf Settings', 
+                      style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: _darkMode ? Colors.white : Colors.black)),
+                    const SizedBox(height: 20),
+                    ListTile(
+                      leading: Icon(Icons.bookmark_border_rounded, color: _accent),
+                      title: Text('Bookmark Page', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Page bookmarked!')));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.share_rounded, color: _accent),
+                      title: Text('Share Page', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sharing coming soon...')));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.format_size_rounded, color: _accent),
+                      title: Text('Font Size', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove_circle_outline, color: _accent),
+                            onPressed: () {
+                              setModalState(() {
+                                _mushafFontSize = (_mushafFontSize - 2).clamp(16.0, 48.0);
+                              });
+                              setState(() {}); 
+                            },
+                          ),
+                          Text('${_mushafFontSize.toInt()}', style: GoogleFonts.outfit(fontSize: 16, color: _darkMode ? Colors.white : Colors.black)),
+                          IconButton(
+                            icon: Icon(Icons.add_circle_outline, color: _accent),
+                            onPressed: () {
+                              setModalState(() {
+                                _mushafFontSize = (_mushafFontSize + 2).clamp(16.0, 48.0);
+                              });
+                              setState(() {}); 
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.palette_outlined, color: _accent),
+                      title: Text('Customise', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
+                      subtitle: Text('Save custom page settings', style: GoogleFonts.outfit(color: Colors.grey, fontSize: 13)),
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Customise settings coming soon!')));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        );
+      },
+    );
+  }
+
+  // Juz number (1–30) for a given Quran page (1–604).
+  static int _juzForPage(int page) {
+    const juzStart = [
+       1, 22, 42, 62, 82,102,121,142,162,182,
+     201,222,242,262,282,302,322,342,362,382,
+     402,422,442,462,482,502,522,542,562,582,
+    ];
+    for (int i = juzStart.length - 1; i >= 0; i--) {
+      if (page >= juzStart[i]) return i + 1;
+    }
+    return 1;
   }
 } // end _QuranScreenState
 
@@ -3327,4 +3580,17 @@ class _WbwWordChipState extends State<_WbwWordChip>
       ),
     );
   }
+}
+
+
+// ── Custom scroll physics for the Mushaf PageView ─────────────────────────────
+// Combines ClampingScrollPhysics (no rubber-band over-scroll, so swipes feel
+// snappy and native on Android) with PageScrollPhysics (snap-to-page settling).
+// This is exactly the feel Quran Majeed uses for its page-turn gesture.
+class _MushafPagePhysics extends PageScrollPhysics {
+  const _MushafPagePhysics() : super(parent: const ClampingScrollPhysics());
+
+  @override
+  _MushafPagePhysics applyTo(ScrollPhysics? ancestor) =>
+      _MushafPagePhysics();
 }
