@@ -3001,18 +3001,43 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  /// Strips the Bismillah prefix from a verse string.
-  /// Covers the exact Uthmani encoding stored in our DB:
-  ///   بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-  /// plus an optional BOM / zero-width no-break space (\uFEFF) at the very start.
   static String _stripBismillahPrefix(String s) {
-    // Normalise: remove leading BOM / ZWNBSP that the DB may prepend on surah 1
-    var text = s.replaceAll('\uFEFF', '').trim();
-    // The Bismillah in Uthmani script (exactly as stored)
-    const basmala = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
-    if (text.startsWith(basmala)) {
-      text = text.substring(basmala.length).trimLeft();
+    // Normalise: remove leading BOM / ZWNBSP that the DB may prepend
+    var text = s.replaceAll('\uFEFF', '').trimLeft();
+    
+    // Quick fast-path for exact Uthmani (Quran Majeed) style matches
+    const basmalaUthmani = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+    final exactVariations = [
+      basmalaUthmani,
+      'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+      'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ',
+      'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ',
+      'بِسمِ اللَّهِ الرَّحمٰنِ الرَّحيمِ',
+      'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',
+    ];
+    for (final v in exactVariations) {
+      if (text.startsWith(v)) {
+        return text.substring(v.length).trimLeft();
+      }
     }
+
+    // Advanced dynamic Regex matching (catches all forms of diacritics / tatweels)
+    // opt matches ANY combination of diacritics including Dagger Alifs and Tatweel extenders
+    const opt = r'[\u064B-\u065F\u0670\u06DF-\u06E8\u0600-\u060F\u0610-\u061A\u0640]*';
+    const sp = r'[\s]*'; 
+    final basmalaRegex = RegExp(
+        '^' +
+        'ب' + opt + 'س' + opt + 'م' + opt + sp +
+        '[اٱإ]' + opt + 'ل' + opt + 'ل' + opt + 'ه' + opt + sp +
+        '[اٱإ]' + opt + 'ل' + opt + 'ر' + opt + 'ح' + opt + 'م' + opt + 'ن' + opt + sp +
+        '[اٱإ]' + opt + 'ل' + opt + 'ر' + opt + 'ح' + opt + '[يی]' + opt + 'م' + opt + sp
+    );
+
+    final match = basmalaRegex.firstMatch(text);
+    if (match != null) {
+      return text.substring(match.end).trimLeft();
+    }
+    
     return text;
   }
 
@@ -3028,6 +3053,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             horizontal: BorderSide(color: goldClr.withValues(alpha: 0.35), width: 0.8),
           ),
         ),
+        // Ensures the Bismillah never overflows the screen horizontally on big font sizes
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           // Left ornament
           Text('﴾', style: TextStyle(
@@ -3053,6 +3081,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               fontSize: _arabicFontSize * 0.8,
               color: goldClr.withValues(alpha: 0.6))),
         ]),
+        ),
       ),
     );
   }
