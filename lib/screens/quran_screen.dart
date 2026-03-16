@@ -2243,6 +2243,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       _buildWordByWordGrid(txt, sub),
                   ] else ...[ 
                     // ── Full Verse Mode ──────────────────────────────────────
+                    if (_ayah == 1 && _surah > 1 && _surah != 9) ...[
+                      _buildMushafBismillah(txt, _accent),
+                      const SizedBox(height: 16),
+                    ],
                     // Ayah number ornament (Quranly-inspired)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -2271,7 +2275,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     Directionality(
                       textDirection: TextDirection.rtl,
                       child: Text(
-                        _arabic,
+                        _ayah == 1 && _surah > 1 && _surah != 9
+                            ? _QuranScreenState._stripBismillahPrefix(_arabic)
+                            : _arabic,
                         textAlign: TextAlign.right,
                         style: _kArabicFonts[_arabicFontIdx].style(
                             _arabicFontSize, txt, 2.2, FontWeight.w700),
