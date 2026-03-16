@@ -86,8 +86,7 @@ const List<_TransDef> _translations = [
 ];
 
 
-// ── Arabic font options ────────────────────────────────────────────────────────
-typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double height, FontWeight weight) style});
+typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double? height, FontWeight weight) style});
 
 final List<_ArabicFont> _kArabicFonts = [
   (
@@ -2280,7 +2279,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             : _arabic,
                         textAlign: TextAlign.right,
                         style: _kArabicFonts[_arabicFontIdx].style(
-                            _arabicFontSize, txt, 2.2, FontWeight.w700),
+                            _arabicFontSize, txt, null, FontWeight.w700),
                       ),
                     ),
                     if (_showTranslation) ...[
