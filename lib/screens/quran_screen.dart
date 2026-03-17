@@ -135,9 +135,9 @@ final List<_ArabicFont> _kArabicFonts = [
 
 // ── Reciter options ──────────────────────────────────────────────────────────
 const _reciters = [
-  ('ar.alafasy',      'Mishary',   '🎙️'),
-  ('ar.mahermuaiqly', 'Maher',     '🎙️'),
-  ('ar.abdulsamad',   'Al-Samad',  '🎙️'),
+  ('ar.alafasy',      'Mishary',   '🎙️', '128'),
+  ('ar.mahermuaiqly', 'Maher',     '🎙️', '128'),
+  ('ar.abdulsamad',   'Al-Samad',  '🎙️', '64'),
 ];
 
 class QuranScreen extends StatefulWidget {
@@ -157,7 +157,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Settings ──────────────────────────────────────────────────────────────────
   String _translationEdition = 'en.sahih';
-  final int _reciterIdx = 0;
+  int _reciterIdx = 0;
 
   // ── Reader Settings ───────────────────────────────────────────────────
   // Display
@@ -240,7 +240,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Audio ─────────────────────────────────────────────────────────────────────
   final _player = AudioPlayer();
-  bool _isPlaying = false;
+  Duration _pos = Duration.zero, _dur = Duration.zero;
+  bool _isPlaying = false, _audioLoading = false;
 
   // ── Cache ─────────────────────────────────────────────────────────────────────
   late Box _cache;
@@ -275,6 +276,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (s.processingState == ProcessingState.completed && _autoAdvance && mounted) {
         _nextAyah(fromAutoPlay: true);
       }
+    });
+    _player.positionStream.listen((p) {
+      if (mounted) setState(() => _pos = p);
+    });
+    _player.durationStream.listen((d) {
+      if (d != null && mounted) setState(() => _dur = d);
     });
 
     // Show feature-discovery hint once per page visit (via Overlay so it overlaps AppBar)
@@ -441,7 +448,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   Future<void> _fetchAyah(int surah, int ayah) async {
     if (mounted) setState(() => _loading = true);
     final recEdition = _reciters[_reciterIdx].$1;
-    final cacheKey   = '$surah:$ayah:_translationEdition:$recEdition';
+    final cacheKey   = '$surah:$ayah:$_translationEdition:$recEdition';
 
     // ── 1. Hive cache hit (7-day TTL) — skip entry if translation is empty ──
     final cached = _cache.get(cacheKey);
@@ -512,13 +519,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       // Pre-cache every ayah in the surah so navigation is instant
       final sName  = _surahNames[surah];
       final nowStr = DateTime.now().toIso8601String();
+      final recBitrate = _reciters[_reciterIdx].$4;
       for (int a = 1; a <= _surahLengths[surah]; a++) {
         final vId  = startVerseId + a - 1;
-        final cKey = '$surah:$a:_translationEdition:$recEdition';
+        final cKey = '$surah:$a:$_translationEdition:$recEdition';
         await _cache.put(cKey, {
           'arabic'   : arabicMap[a] ?? '',
           'trans'    : transMap[vId] ?? '',
-          'audio'    : 'https://cdn.islamic.network/quran/audio/128/$recEdition/$vId.mp3',
+          'audio'    : 'https://cdn.islamic.network/quran/audio/$recBitrate/$recEdition/$vId.mp3',
           'surahName': sName,
           'ts'       : nowStr,
         });
@@ -1111,20 +1119,29 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       await _player.pause();
       return;
     }
-    // Always stop → setUrl → play (most reliable pattern across devices)
+    setState(() => _audioLoading = true);
     try {
       await _player.stop();
       await _player.setUrl(_audioUrl!);
+      setState(() => _audioLoading = false);
       await _player.play();
     } on PlayerException catch (e) {
       if (mounted) {
+        setState(() => _audioLoading = false);
         _showSnack('Playback error: ${e.message ?? "Unknown error"}');
       }
     } catch (_) {
       if (mounted) {
+        setState(() => _audioLoading = false);
         _showSnack('Audio unavailable — check internet connection.');
       }
     }
+  }
+
+  Future<void> _loadAudioForReciter() async {
+    await _player.stop();
+    setState(() { _pos = Duration.zero; _dur = Duration.zero; _isPlaying = false; });
+    await _fetchAyah(_surah, _ayah);
   }
 
 
@@ -1925,6 +1942,135 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
+
+
+  String _fmtDur(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  Widget _buildAudioPlayer() {
+    final bool hasAudio = _audioUrl != null && !_loading;
+    final sliderVal = _dur.inMilliseconds > 0
+        ? _pos.inMilliseconds.toDouble().clamp(0.0, _dur.inMilliseconds.toDouble())
+        : 0.0;
+    final sliderMax = _dur.inMilliseconds > 0 ? _dur.inMilliseconds.toDouble() : 1.0;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
+      decoration: BoxDecoration(
+        color: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12)],
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        // ── Row 1: Reciter chips ─────────────────────
+        Row(children: [
+          const Text('🎧', style: TextStyle(fontSize: 13)),
+          const SizedBox(width: 5),
+          Text('Reciter:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _darkMode ? Colors.grey.shade400 : const Color(0xFF8E8E93))),
+          const SizedBox(width: 6),
+          Expanded(child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: List.generate(_reciters.length, (i) {
+              final sel = i == _reciterIdx;
+              return GestureDetector(
+                onTap: () async {
+                  if (_reciterIdx == i) return;
+                  setState(() => _reciterIdx = i);
+                  await _loadAudioForReciter();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(right: i < _reciters.length - 1 ? 6 : 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: sel ? _accent : (_darkMode ? Colors.white10 : const Color(0xFFF7F3EE)),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: sel ? _accent : (_darkMode ? Colors.white24 : Colors.grey.shade200)),
+                  ),
+                  child: Text(_reciters[i].$2,
+                      style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w700,
+                          color: sel ? Colors.white : (_darkMode ? Colors.grey.shade300 : const Color(0xFF8E8E93)))),
+                ),
+              );
+            })),
+          )),
+        ]),
+        // ── Row 2: Seek slider ────────────────────────────────────────
+        SliderTheme(
+          data: SliderThemeData(
+            trackHeight: 4,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+            activeTrackColor: hasAudio ? _accent : Colors.grey.shade300,
+            inactiveTrackColor: hasAudio ? _accent.withValues(alpha: 0.3) : Colors.grey.shade200,
+            thumbColor: hasAudio ? _accent : Colors.grey.shade400,
+            overlayColor: _accent.withValues(alpha: 0.2),
+            disabledActiveTrackColor: Colors.grey.shade300,
+          ),
+          child: Slider(
+            value: sliderVal, min: 0, max: sliderMax,
+            onChanged: hasAudio ? (v) => _player.seek(Duration(milliseconds: v.toInt())) : null,
+          ),
+        ),
+        // ── Row 3: Controls ──────────────────────────────────────
+        Row(children: [
+          IconButton(
+            padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+            icon: Icon(Icons.skip_previous_rounded, size: 26, color: hasAudio ? _accent : Colors.grey.shade300),
+            onPressed: hasAudio ? () => _prevAyah() : null,
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: hasAudio ? _togglePlay : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 52, height: 52,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: !hasAudio
+                    ? (_darkMode ? Colors.white12 : Colors.grey.shade200)
+                    : _isPlaying ? const Color(0xFF1FA882) : _accent,
+                boxShadow: hasAudio ? [BoxShadow(color: _accent.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))] : null,
+              ),
+              child: _audioLoading
+                  ? const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5)))
+                  : Icon(
+                      !hasAudio ? Icons.hourglass_top_rounded
+                          : _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      color: hasAudio ? Colors.white : Colors.grey.shade400, size: 26),
+            ),
+          ),
+          const SizedBox(width: 12),
+          IconButton(
+            padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+            icon: Icon(Icons.skip_next_rounded, size: 26, color: hasAudio ? _accent : Colors.grey.shade300),
+            onPressed: hasAudio ? () => _nextAyah() : null,
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: _darkMode ? Colors.black26 : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: _darkMode ? Colors.white12 : Colors.grey.shade200),
+            ),
+            child: Text(
+              hasAudio ? '${_fmtDur(_pos)} / ${_fmtDur(_dur)}' : 'Loading...',
+              style: GoogleFonts.outfit(
+                  fontSize: 12, fontWeight: FontWeight.w600,
+                  color: _darkMode ? Colors.grey.shade300 : const Color(0xFF8E8E93),
+                  fontFeatures: const [FontFeature.tabularFigures()]),
+            ),
+          ),
+        ]),
+      ]),
+    );
+  }
+
   // ── build() ────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -2393,9 +2539,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               const SizedBox(height: 16),
             ]),
           ))),
-          // Audio player stub — re-implement separately
-          if (!_fullScreenMode && _showAudioPlayer)
-            const SizedBox.shrink(),
+          // Audio player
+          if (!_fullScreenMode)
+            AnimatedSize(
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeInOut,
+              child: _showAudioPlayer
+                  ? _buildAudioPlayer()
+                  : const SizedBox.shrink(),
+            ),
           // Nav row
           if (!_fullScreenMode)
             _buildInlineNavRow(barBg: barBg, txt: txt),
