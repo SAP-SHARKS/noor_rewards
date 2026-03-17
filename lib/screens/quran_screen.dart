@@ -881,7 +881,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         await _sb.from('quran_bookmarks').insert({
           'user_id': uid, 'surah': _surah, 'ayah': _ayah, 'surah_name': _surahName,
         });
-        if (mounted) _showSnack('Bookmarked _surahName _surah:_ayah');
+        if (mounted) _showSnack('Bookmarked $_surahName $_surah:$_ayah');
       } catch (_) { setState(() => _bookmarks.remove(key)); }
     }
   }
@@ -898,7 +898,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     try {
       final cdnUrl = 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main'
-          '/tafsir/${def.slug}/_surah.json';
+          '/tafsir/${def.slug}/$_surah.json';
       final res = await http.get(Uri.parse(cdnUrl)).timeout(const Duration(seconds: 15));
       if (res.statusCode == 200) {
         final js = jsonDecode(res.body);
@@ -972,7 +972,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       decoration: BoxDecoration(color: _accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
                       child: Icon(Icons.menu_book_rounded, color: _accent, size: 20)),
                     const SizedBox(width: 10),
-                    Expanded(child: Text('Tafsir · _surahName _surah:_ayah',
+                    Expanded(child: Text('Tafsir · $_surahName $_surah:$_ayah',
                         style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: lblC))),
                     IconButton(icon: Icon(Icons.close_rounded, color: subC, size: 22),
                         onPressed: () => Navigator.pop(ctx)),
