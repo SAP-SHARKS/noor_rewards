@@ -2295,40 +2295,43 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       _buildMushafBismillah(txt, _accent),
                       const SizedBox(height: 16),
                     ],
-                    // Ayah number ornament (Quranly-inspired)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          width: 38, height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: _accent, width: 1.5),
-                            color: _accent.withValues(alpha: 0.08),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '$_ayah',
-                              style: GoogleFonts.outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                color: _accent,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
                     Directionality(
                       textDirection: TextDirection.rtl,
-                      child: Text(
-                        _ayah == 1 && _surah > 1 && _surah != 9
-                            ? _QuranScreenState._stripBismillahPrefix(_arabic)
-                            : _arabic,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: _ayah == 1 && _surah > 1 && _surah != 9
+                                  ? '${_QuranScreenState._stripBismillahPrefix(_arabic)} '
+                                  : '$_arabic ',
+                              style: _kQuranScripts[_quranScriptIdx].style(
+                                  _arabicFontSize, txt, 2.2, FontWeight.w700),
+                            ),
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                                width: 34, height: 34,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: _accent, width: 1.5),
+                                  color: _accent.withValues(alpha: 0.08),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '$_ayah',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: _accent,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         textAlign: TextAlign.right,
-                        style: _kQuranScripts[_quranScriptIdx].style(
-                            _arabicFontSize, txt, 2.2, FontWeight.w700),
                       ),
                     ),
                     if (_showTranslation) ...[
