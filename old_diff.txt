@@ -1,0 +1,1248 @@
+﻿commit 6b89d6f532168e156991ba8b49954f22d1d13b3b
+Author: SAP-SHARKS <support@sapsharks.com>
+Date:   Thu Mar 12 14:02:11 2026 +0500
+
+    update
+
+diff --git a/lib/screens/quran_screen.dart b/lib/screens/quran_screen.dart
+index 6f30703..6d4a067 100644
+--- a/lib/screens/quran_screen.dart
++++ b/lib/screens/quran_screen.dart
+@@ -18,7 +18,6 @@ const _kWhite = Color(0xFFFFFFFF);
+ const _kText  = Color(0xFF1C1C1E);
+ const _kSub   = Color(0xFF8E8E93);
+ const _kTeal  = Color(0xFF2BAE99);
+-const _kTealL = Color(0xFFC8ECE8);
+ const _kGold  = Color(0xFFFFAA00);
+ 
+ // Screen-level gradient for the Quran reading background
+@@ -177,8 +176,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+   // Full-page Mushaf mode
+   bool   _fullPageMode      = false;   // full mushaf page mode
+   int    _currentPage       = 1;       // Quran page (1ΓÇô604)
+-  List<Map<String, dynamic>> _pageAyahs = []; // [{surah, ayah, arabic}]
+-  bool   _pageLoading       = false;
+   Timer? _pageTimer;                   // counts seconds on current page
+   int    _pageSeconds       = 0;       // seconds spent reading this page
+   int    _pageXpEarned      = 0;       // XP earned this session (full-page)
+@@ -186,6 +183,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+   // Lifecycle events (lock/unlock) read it but NEVER write it.
+   // This guarantees auto-resume works through any lock/unlock sequence.
+   bool   _timerShouldRun    = false;
++  // Continuous scroll full-page mode
++  final Map<int, List<Map<String, dynamic>>> _loadedPages = {}; // page# ΓåÆ ayahs
++  final Set<int> _loadingPages = {}; // pages currently being fetched
++  ScrollController? _fullPageScrollController;
+   bool   _autoAdvance       = false;   // advance ayah when audio ends
+   bool   _repeatAyah        = false;   // repeat current ayah audio
+   // Notifications + alerts
+@@ -193,6 +194,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+   bool   _soundAlerts       = true;    // sound alert on milestone
+   // Theme accent (index into _kThemeAccents)
+   int    _themeIdx          = 0;
++  // Mushaf immersive overlay (tap-to-show controls)
++  bool   _showMushafControls = true;
++  Timer? _controlsHideTimer;
+ 
+   // ΓöÇΓöÇ Stats ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   int _ayahsToday = 0, _pointsToday = 0;
+@@ -376,6 +380,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+     _hintTimer?.cancel();
+     _hintOverlay?.remove();
+     _pageTimer?.cancel();
++    _controlsHideTimer?.cancel();
++    _fullPageScrollController?.dispose();
+     _player.dispose();
+     super.dispose();
+   }
+@@ -397,8 +403,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+       setState(() {
+         // Only override to saved position if user didn't request a specific start
+         if (widget.initialSurah == 2 && widget.initialAyah == 1) {
+-          _surah = row['current_surah'] ?? 2;
+-          _ayah  = row['current_ayah']  ?? 1;
++          _surah        = row['current_surah'] ?? 2;
++          _ayah         = row['current_ayah']  ?? 1;
++          _currentPage  = row['current_page']  ?? 1;
+         }
+         if ((row['last_read_date'] ?? '') == today) {
+           _ayahsToday  = row['ayahs_read_today'] ?? 0;
+@@ -589,12 +596,25 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+       final today = _todayStr();
+       await _sb.from('quran_progress').update({
+         'current_surah': s, 'current_ayah': a,
++        'current_page': _currentPage,
+         'ayahs_read_today': _ayahsToday,
+         'last_read_date': today, 'updated_at': DateTime.now().toIso8601String(),
+       }).eq('user_id', uid);
+     } catch (_) {}
+   }
+ 
++  // Lightweight save: only page position (no XP/streaks) ΓÇö called on mushaf nav
++  Future<void> _savePagePosition() async {
++    final uid = _sb.auth.currentUser?.id;
++    if (uid == null) return;
++    try {
++      await _sb.from('quran_progress').update({
++        'current_page': _currentPage,
++        'updated_at': DateTime.now().toIso8601String(),
++      }).eq('user_id', uid);
++    } catch (_) {}
++  }
++
+   // ΓöÇΓöÇ Navigate to previous ayah ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   Future<void> _prevAyah() async {
+     await _player.stop();
+@@ -694,22 +714,18 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+   }
+ 
+   // ΓöÇΓöÇ Full-page Mushaf: fetch all ayahs for a page ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-  Future<void> _fetchFullPage(int page) async {
+-    if (mounted) setState(() { _pageLoading = true; _pageAyahs = []; });
+-
++  Future<List<Map<String, dynamic>>> _fetchPageAyahs(int page) async {
++    if (page < 1 || page > 604) return [];
+     final cacheKey = 'fullpage_$page';
+     final cached = _cache.get(cacheKey);
+     if (cached != null) {
+       final cachedAt = DateTime.tryParse((cached as Map)['ts'] ?? '');
+       if (cachedAt != null && DateTime.now().difference(cachedAt).inDays < 30) {
+-        final ayahs = (cached['ayahs'] as List)
++        return (cached['ayahs'] as List)
+             .map((a) => Map<String, dynamic>.from(a as Map))
+             .toList();
+-        if (mounted) setState(() { _pageAyahs = ayahs; _pageLoading = false; });
+-        return;
+       }
+     }
+-
+     try {
+       final url = 'https://api.quran.com/api/v4/verses/by_page/$page'
+           '?words=false&fields=text_uthmani,verse_key,page_number&per_page=50';
+@@ -730,15 +746,68 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+           'ayahs': ayahs,
+           'ts': DateTime.now().toIso8601String(),
+         });
+-        if (mounted) setState(() { _pageAyahs = ayahs; _pageLoading = false; });
+-      } else {
+-        if (mounted) setState(() => _pageLoading = false);
++        return ayahs;
+       }
+-    } catch (_) {
+-      if (mounted) setState(() => _pageLoading = false);
++    } catch (_) {}
++    return [];
++  }
++
++  // ΓöÇΓöÇ Load a page into _loadedPages for continuous scroll ΓöÇΓöÇ
++  Future<void> _loadPageForScroll(int page) async {
++    if (_loadingPages.contains(page) || _loadedPages.containsKey(page)) return;
++    if (page < 1 || page > 604) return;
++    _loadingPages.add(page);
++    final ayahs = await _fetchPageAyahs(page);
++    _loadingPages.remove(page);
++    if (mounted) setState(() => _loadedPages[page] = ayahs);
++  }
++
++  // ΓöÇΓöÇ Fetch a single page (used by timer-bar prev/next arrows) ΓöÇΓöÇ
++  Future<void> _fetchFullPage(int page) async {
++    if (page < 1 || page > 604) return;
++    // Clear only the target page so it re-fetches; keep neighboring pages loaded
++    _loadedPages.remove(page);
++    _loadingPages.remove(page);
++    await _loadPageForScroll(page);
++    // Pre-load neighbors
++    _loadPageForScroll(page + 1);
++    if (page > 1) _loadPageForScroll(page - 1);
++  }
++
++  // ΓöÇΓöÇ Set up full-page continuous scroll mode ΓöÇΓöÇ
++  void _enterFullPageScrollMode(int startPage) {
++    _fullPageScrollController?.dispose();
++    _fullPageScrollController = ScrollController();
++    _fullPageScrollController!.addListener(_onFullPageScroll);
++    _loadedPages.clear();
++    _loadingPages.clear();
++    _currentPage = startPage;
++    _loadPageForScroll(startPage);
++    _loadPageForScroll(startPage + 1);
++    if (startPage > 1) _loadPageForScroll(startPage - 1);
++  }
++
++  // ΓöÇΓöÇ Scroll listener: update _currentPage + prefetch pages as user scrolls ΓöÇΓöÇ
++  void _onFullPageScroll() {
++    final ctrl = _fullPageScrollController;
++    if (ctrl == null || !ctrl.hasClients) return;
++    final pos = ctrl.position.pixels;
++    final max = ctrl.position.maxScrollExtent;
++    // Prefetch next page when 75% scrolled
++    if (pos > max * 0.75) {
++      final nextPage = (_loadedPages.keys.isEmpty ? _currentPage
++          : _loadedPages.keys.reduce((a, b) => a > b ? a : b)) + 1;
++      _loadPageForScroll(nextPage);
++    }
++    // Prefetch prev page when near top
++    if (pos < ctrl.position.viewportDimension * 0.5) {
++      final prevPage = (_loadedPages.keys.isEmpty ? _currentPage
++          : _loadedPages.keys.reduce((a, b) => a < b ? a : b)) - 1;
++      _loadPageForScroll(prevPage);
+     }
+   }
+ 
++
+   // ΓöÇΓöÇ Full-page timer: 1 XP per 30 seconds ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   // Fresh start ΓÇö resets seconds (use when entering full-page or navigating pages)
+   // Sets _timerShouldRun = true (user intent: timer should run).
+@@ -1063,11 +1132,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+     }
+   }
+ 
+-  Future<void> _loadAudioForReciter() async {
+-    await _player.stop();
+-    setState(() { _pos = Duration.zero; _dur = Duration.zero; _isPlaying = false; });
+-    await _fetchAyah(_surah, _ayah); // re-fetch gets new audio URL for new reciter
+-  }
+ 
+   String _todayStr() => DateTime.now().toIso8601String().split('T')[0];
+ 
+@@ -1080,11 +1144,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+     ));
+   }
+ 
+-  String _fmtDur(Duration d) {
+-    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+-    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+-    return '$m:$s';
+-  }
+ 
+   // ΓöÇΓöÇ Translation block helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   /// Returns widgets for the language label pill + author sub-label (for LTR/RTL header row)
+@@ -1874,6 +1933,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+   // ΓöÇΓöÇ build() ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   @override
+   Widget build(BuildContext context) {
++    // Full mushaf mode takes over the entire screen
++    if (_fullPageMode) return _buildMushafPage();
++
+     final bg     = _darkMode ? const Color(0xFF000000) : _kBg;
+     final cardBg = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
+     final barBg  = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
+@@ -2100,33 +2162,31 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+                         },
+                       ),
+                     ],
+-                    // ≡ƒùÆ∩╕Å Full Page ΓÇö always visible
++                    // ≡ƒôû Full Page Mushaf ΓÇö always visible
+                     _PillButton(
+                       icon: Icons.menu_book_outlined,
+-                      label: _fullPageMode ? 'Page $_currentPage  Γ£ò' : 'Full Page',
+-                      active: _fullPageMode,
++                      label: 'Mushaf',
++                      active: false,
+                       activeColor: const Color(0xFF4CAF50),
+                       darkMode: _darkMode,
+                       onTap: () async {
+-                        final entering = !_fullPageMode;
+-                        if (entering) {
+-                          // Resolve the exact page for the current ayah first
+-                          final page = await _resolvePageForCurrentAyah();
+-                          await _player.stop();
+-                          setState(() {
+-                            _showAudioPlayer = false;
+-                            _wordByWord = false;
+-                            _wbwWords = [];
+-                            _fullPageMode = true;
+-                            _currentPage = page;   // ΓåÉ sync to current position
+-                          });
+-                          _fetchFullPage(page);
+-                          _startPageTimer();
+-                        } else {
+-                          _timerShouldRun = false; // clear intent on exit
+-                          _stopPageTimer();
+-                          setState(() => _fullPageMode = false);
+-                        }
++                        final page = await _resolvePageForCurrentAyah();
++                        await _player.stop();
++                        setState(() {
++                          _showAudioPlayer = false;
++                          _wordByWord      = false;
++                          _wbwWords        = [];
++                          _fullPageMode    = true;
++                          _currentPage     = page;
++                          _showMushafControls = true;
++                        });
++                        _enterFullPageScrollMode(page);
++                        _startPageTimer();
++                        // Auto-hide overlay after 4 s
++                        _controlsHideTimer?.cancel();
++                        _controlsHideTimer = Timer(const Duration(seconds: 4), () {
++                          if (mounted) setState(() => _showMushafControls = false);
++                        });
+                       },
+                     ),
+                     if (!_fullPageMode)
+@@ -2160,10 +2220,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+                       child: CircularProgressIndicator(
+                           color: _kTeal, strokeWidth: 2),
+                     ))
+-                  else if (_fullPageMode) ...[
+-                    // ΓöÇΓöÇ Full Page Mushaf Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-                    _buildFullPageMushaf(txt, sub, cardBg),
+-                  ] else if (_wordByWord) ...[ 
++                  else if (_wordByWord) ...[ 
+                     // ΓöÇΓöÇ Word-by-Word Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+                     if (_wbwLoading)
+                       Center(child: Padding(
+@@ -2187,7 +2244,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+                         ]),
+                       ))
+                     else
+-                      _buildWordByWordView(txt, sub),
++                      _buildWordByWordGrid(txt, sub),
+                   ] else ...[ 
+                     // ΓöÇΓöÇ Full Verse Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+                     // Ayah number ornament (Quranly-inspired)
+@@ -2357,91 +2414,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+                   ],
+                 ]),
+               ),
+-              // ΓöÇΓöÇ Full Page Timer Bar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-              if (_fullPageMode) ...[
+-                const SizedBox(height: 10),
+-                Container(
+-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+-                  decoration: BoxDecoration(
+-                    color: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+-                    borderRadius: BorderRadius.circular(20),
+-                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 12)],
+-                    border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
+-                  ),
+-                  child: Row(children: [
+-                    Container(
+-                      width: 38, height: 38,
+-                      decoration: const BoxDecoration(
+-                        color: Color(0x1F4CAF50),
+-                        shape: BoxShape.circle,
+-                      ),
+-                      child: const Icon(Icons.timer_rounded, color: Color(0xFF4CAF50), size: 20),
+-                    ),
+-                    const SizedBox(width: 12),
+-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+-                      Text('Page Reading ┬╖ Page $_currentPage',
+-                          style: GoogleFonts.outfit(fontSize: 11, color: sub, fontWeight: FontWeight.w500)),
+-                      Text(_pageTimerLabel,
+-                          style: GoogleFonts.outfit(
+-                              fontSize: 22, fontWeight: FontWeight.w800,
+-                              color: const Color(0xFF4CAF50), letterSpacing: 1.5)),
+-                    ]),
+-                    const Spacer(),
+-                    if (_pageXpEarned > 0)
+-                      Container(
+-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+-                        margin: const EdgeInsets.only(right: 8),
+-                        decoration: BoxDecoration(
+-                          color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+-                          borderRadius: BorderRadius.circular(10),
+-                        ),
+-                        child: Text('+$_pageXpEarned XP',
+-                            style: GoogleFonts.outfit(
+-                                fontSize: 12, fontWeight: FontWeight.w700,
+-                                color: const Color(0xFF4CAF50))),
+-                      ),
+-                    GestureDetector(
+-                      onTap: () {
+-                        if (_pageTimer != null) {
+-                          // User explicitly pausing ΓÇö clear intent
+-                          _timerShouldRun = false;
+-                          _stopPageTimer();
+-                          setState(() {});
+-                        } else {
+-                          _resumePageTimer(); // sets _timerShouldRun = true
+-                        }
+-                      },
+-                      child: Container(
+-                        width: 38, height: 38,
+-                        decoration: const BoxDecoration(
+-                          color: Color(0x1F4CAF50),
+-                          shape: BoxShape.circle,
+-                        ),
+-                        child: Icon(
+-                          _pageTimer != null ? Icons.pause_rounded : Icons.play_arrow_rounded,
+-                          color: const Color(0xFF4CAF50), size: 22),
+-                      ),
+-                    ),
+-                    const SizedBox(width: 6),
+-                    GestureDetector(
+-                      onTap: _currentPage > 1 ? () {
+-                        setState(() { _currentPage--; _pageSeconds = 0; });
+-                        _fetchFullPage(_currentPage);
+-                      } : null,
+-                      child: Icon(Icons.chevron_left_rounded,
+-                          color: _currentPage > 1 ? txt : Colors.grey.shade400, size: 28),
+-                    ),
+-                    GestureDetector(
+-                      onTap: _currentPage < 604 ? () {
+-                        setState(() { _currentPage++; _pageSeconds = 0; });
+-                        _fetchFullPage(_currentPage);
+-                      } : null,
+-                      child: Icon(Icons.chevron_right_rounded,
+-                          color: _currentPage < 604 ? txt : Colors.grey.shade400, size: 28),
+-                    ),
+-                  ]),
+-                ),
+-              ],
+               // Progress card
+               if (_showProgressCard) ...[
+                 const SizedBox(height: 14),
+@@ -2512,17 +2484,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+               const SizedBox(height: 16),
+             ]),
+           ))),
+-          // Audio player ΓÇö shown only when user taps Listen
++          // Audio player stub ΓÇö re-implement separately
++          if (!_fullScreenMode && _showAudioPlayer)
++            const SizedBox.shrink(),
++          // Nav row
+           if (!_fullScreenMode)
+-            AnimatedSize(
+-              duration: const Duration(milliseconds: 280),
+-              curve: Curves.easeInOut,
+-              child: _showAudioPlayer
+-                  ? _buildAudioPlayer()
+-                  : const SizedBox.shrink(),
+-            ),
+-          if (!_fullScreenMode)
+-            _buildNavRow(barBg: barBg, txt: txt),
++            _buildInlineNavRow(barBg: barBg, txt: txt),
+         ]),
+         // Floating controls in full-screen mode
+         if (_fullScreenMode)
+@@ -2608,378 +2575,414 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
+         ),
+       );
+ 
+-  // ΓöÇΓöÇ Full-Page Mushaf View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-  Widget _buildFullPageMushaf(Color txtColor, Color subColor, Color cardBg) {
+-    if (_pageLoading) {
+-      return Center(child: Padding(
+-        padding: const EdgeInsets.symmetric(vertical: 48),
+-        child: Column(children: [
+-          CircularProgressIndicator(color: const Color(0xFF4CAF50), strokeWidth: 2),
+-          const SizedBox(height: 14),
+-          Text('Loading page $_currentPage...',
+-              style: GoogleFonts.outfit(fontSize: 13, color: subColor)),
+-        ]),
+-      ));
++  // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  // MUSHAF IMMERSIVE MODE
++  // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++  void _toggleMushafControls() {
++    _controlsHideTimer?.cancel();
++    if (!mounted) return;
++    setState(() => _showMushafControls = !_showMushafControls);
++    if (_showMushafControls) {
++      _controlsHideTimer = Timer(const Duration(seconds: 4), () {
++        if (mounted) setState(() => _showMushafControls = false);
++      });
+     }
++  }
++  // ΓöÇΓöÇ Word-by-Word grid ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  Widget _buildWordByWordGrid(Color txt, Color sub) {
++    return Wrap(
++      spacing: 6,
++      runSpacing: 4,
++      textDirection: TextDirection.rtl,
++      children: _wbwWords.map((w) => _WbwWordChip(
++        arabic: w['arabic'] as String? ?? '',
++        translation: w['translation'] as String? ?? '',
++        subColor: sub,
++        arabicFontSize: _arabicFontSize * 0.65,
++        arabicFontIdx: _arabicFontIdx,
++        accentColor: _accent,
++        txtColor: txt,
++        darkMode: _darkMode,
++      )).toList(),
++    );
++  }
+ 
+-    if (_pageAyahs.isEmpty) {
+-      return Center(child: Padding(
+-        padding: const EdgeInsets.symmetric(vertical: 48),
+-        child: Column(children: [
+-          Icon(Icons.wifi_off_rounded, color: subColor, size: 40),
+-          const SizedBox(height: 10),
+-          Text('Page unavailable.\nCheck your connection.',
+-              textAlign: TextAlign.center,
+-              style: GoogleFonts.outfit(fontSize: 13, color: subColor)),
+-          const SizedBox(height: 16),
+-          GestureDetector(
+-            onTap: () => _fetchFullPage(_currentPage),
+-            child: Container(
+-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+-              decoration: BoxDecoration(
+-                color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+-                borderRadius: BorderRadius.circular(12),
+-                border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.4)),
+-              ),
+-              child: Text('Retry', style: GoogleFonts.outfit(
+-                  fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFF4CAF50))),
++  // ΓöÇΓöÇ Bottom navigation row (Prev / Play-Pause / Next) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  Widget _buildInlineNavRow({required Color barBg, required Color txt}) {
++    final bottomPad = MediaQuery.of(context).padding.bottom;
++    return Container(
++      color: barBg,
++      padding: EdgeInsets.fromLTRB(20, 12, 20, 16 + bottomPad),
++      child: Row(children: [
++        // Prev
++        Expanded(child: ElevatedButton.icon(
++          onPressed: _saving ? null : _prevAyah,
++          icon: _saving
++              ? const SizedBox(width: 16, height: 16,
++                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
++              : const Icon(Icons.arrow_back_ios_rounded, size: 14, color: Colors.white),
++          label: Text('Prev',
++              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
++                  color: Colors.white)),
++          style: ElevatedButton.styleFrom(
++            backgroundColor: _darkMode ? const Color(0xFF3A3A3C) : const Color(0xFF636366),
++            disabledBackgroundColor: (_darkMode ? const Color(0xFF3A3A3C) : const Color(0xFF636366)).withValues(alpha: 0.4),
++            padding: const EdgeInsets.symmetric(vertical: 14),
++            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
++            elevation: 0,
++          ),
++        )),
++        const SizedBox(width: 10),
++        // Next +10 pts
++        Expanded(flex: 2, child: ElevatedButton.icon(
++          onPressed: _saving ? null : _nextAyah,
++          icon: _saving
++              ? const SizedBox(width: 16, height: 16,
++                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
++              : const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.white),
++          label: Text('Next +10 pts',
++              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
++                  color: Colors.white)),
++          style: ElevatedButton.styleFrom(
++            backgroundColor: _accent,
++            disabledBackgroundColor: _accent.withValues(alpha: 0.4),
++            padding: const EdgeInsets.symmetric(vertical: 14),
++            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
++            elevation: 0,
++          ),
++        )),
++      ]),
++    );
++  }
++
++
++  void _exitMushafMode() {
++    _controlsHideTimer?.cancel();
++    _timerShouldRun = false;
++    _stopPageTimer();
++    _fullPageScrollController?.dispose();
++    _fullPageScrollController = null;
++    _savePagePosition(); // persist page to Supabase
++    setState(() { _fullPageMode = false; _loadedPages.clear(); });
++  }
++
++
++  Widget _buildMushafPage() {
++    final isDark  = _darkMode;
++    // Parchment / night colours
++    final pageBg  = isDark ? const Color(0xFF16100A) : const Color(0xFFFFFFFF);
++    final textClr = isDark ? const Color(0xFFE8D5A8) : const Color(0xFF1C120A);
++    final goldClr = isDark ? const Color(0xFFD4A843) : const Color(0xFF8B6914);
++    final overlayBg = (isDark
++        ? Colors.black.withValues(alpha: 0.82)
++        : const Color(0xFF2E1F0A).withValues(alpha: 0.88));
++
++    return Scaffold(
++      backgroundColor: pageBg,
++      body: GestureDetector(
++        behavior: HitTestBehavior.opaque,
++        onTap: _toggleMushafControls,
++        child: Stack(children: [
++          // ΓöÇΓöÇ Scrollable mushaf content ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++          SafeArea(
++            child: SingleChildScrollView(
++              controller: _fullPageScrollController,
++              padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
++              child: _buildMushafScrollContent(textClr, goldClr, pageBg),
++            ),
++          ),
++          // ΓöÇΓöÇ Overlay (fades in/out on tap) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++          AnimatedOpacity(
++            opacity: _showMushafControls ? 1.0 : 0.0,
++            duration: const Duration(milliseconds: 300),
++            child: IgnorePointer(
++              ignoring: !_showMushafControls,
++              child: _buildMushafOverlay(overlayBg, goldClr, textClr),
+             ),
+           ),
+         ]),
+-      ));
++      ),
++    );
++  }
++
++  Widget _buildMushafScrollContent(Color textClr, Color goldClr, Color pageBg) {
++    final sortedPages = _loadedPages.keys.toList()..sort();
++    if (sortedPages.isEmpty) {
++      return SizedBox(
++        height: MediaQuery.of(context).size.height * 0.65,
++        child: Center(child: Column(
++          mainAxisAlignment: MainAxisAlignment.center,
++          children: [
++            CircularProgressIndicator(color: goldClr, strokeWidth: 2),
++            const SizedBox(height: 18),
++            Text('Loading page $_currentPageΓÇª',
++                style: GoogleFonts.lora(fontSize: 14, color: textClr.withValues(alpha: 0.6))),
++          ],
++        )),
++      );
+     }
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        for (int i = 0; i < sortedPages.length; i++) ...[
++          _buildMushafPageBlock(sortedPages[i], _loadedPages[sortedPages[i]] ?? [],
++              textClr, goldClr, pageBg),
++          if (i < sortedPages.length - 1)
++            _buildMushafPageDivider(sortedPages[i] + 1, goldClr, textClr),
++        ],
++      ],
++    );
++  }
+ 
+-    // Detect surah changes within the page for bismillah breaks
++  Widget _buildMushafPageBlock(int pageNum, List<Map<String, dynamic>> ayahs,
++      Color textClr, Color goldClr, Color pageBg) {
++    if (ayahs.isEmpty) {
++      return Padding(
++        padding: const EdgeInsets.symmetric(vertical: 40),
++        child: Center(child: CircularProgressIndicator(
++            color: goldClr.withValues(alpha: 0.5), strokeWidth: 2)),
++      );
++    }
++
++    // Group consecutive ayahs by surah ΓåÆ each group becomes ONE justified RichText
++    final List<Widget> blocks = [];
+     String? lastSurah;
++    final List<Map<String, dynamic>> currentGroup = [];
+ 
+-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+-      // ΓöÇΓöÇ Page header ΓöÇΓöÇ
+-      Center(
+-        child: Container(
+-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+-          margin: const EdgeInsets.only(bottom: 14),
+-          decoration: BoxDecoration(
+-            border: Border.all(color: _accent.withValues(alpha: 0.35)),
+-            borderRadius: BorderRadius.circular(8),
+-          ),
+-          child: Text(
+-            'ΓÇö ╪╡┘ü╪¡╪⌐ $_currentPage ΓÇö',
+-            textDirection: TextDirection.rtl,
+-            style: GoogleFonts.amiri(fontSize: 14, color: _accent, fontWeight: FontWeight.w600),
+-          ),
+-        ),
+-      ),
++    void flushGroup() {
++      if (currentGroup.isEmpty) return;
++      blocks.add(_buildMushafTextBlock(currentGroup, textClr, goldClr));
++      currentGroup.clear();
++    }
+ 
+-      // ΓöÇΓöÇ Continuous RTL text with ayah markers ΓöÇΓöÇ
+-      Directionality(
+-        textDirection: TextDirection.rtl,
+-        child: Wrap(
+-          alignment: WrapAlignment.start,
+-          runSpacing: 0,
+-          children: _pageAyahs.expand<Widget>((ayah) {
+-            final surahNum = ayah['surah'] as int;
+-            final ayahNum  = ayah['ayah'] as int;
+-            final arabic   = ayah['arabic'] as String;
+-            final surahKey = '$surahNum';
+-            final widgets  = <Widget>[];
+-
+-            // Surah name header when surah changes within the page
+-            if (lastSurah != surahKey) {
+-              lastSurah = surahKey;
+-              if (ayahNum == 1 && surahNum > 1) {
+-                widgets.add(SizedBox(width: double.infinity,
+-                  child: Column(children: [
+-                    const SizedBox(height: 10),
+-                    Container(
+-                      width: double.infinity,
+-                      padding: const EdgeInsets.symmetric(vertical: 8),
+-                      decoration: BoxDecoration(
+-                        color: _accent.withValues(alpha: 0.08),
+-                        borderRadius: BorderRadius.circular(8),
+-                      ),
+-                      child: Text(
+-                        _surahNames[surahNum - 1],
+-                        textAlign: TextAlign.center,
+-                        style: GoogleFonts.amiri(fontSize: 16, fontWeight: FontWeight.w700, color: _accent),
+-                      ),
+-                    ),
+-                    // Bismillah (except Surah 9)
+-                    if (surahNum != 9)
+-                      Padding(
+-                        padding: const EdgeInsets.symmetric(vertical: 6),
+-                        child: Text(
+-                          '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É ┘▒┘ä╪▒┘Ä┘æ╪¡┘Æ┘à┘Ä┘░┘å┘É ┘▒┘ä╪▒┘Ä┘æ╪¡┘É┘è┘à┘É',
+-                          textAlign: TextAlign.center,
+-                          textDirection: TextDirection.rtl,
+-                          style: GoogleFonts.amiri(fontSize: 18, color: txtColor, fontWeight: FontWeight.w700, height: 2.0),
+-                        ),
+-                      ),
+-                    const SizedBox(height: 4),
+-                  ]),
+-                ));
+-              }
+-            }
++    for (final ayah in ayahs) {
++      final surahNum = ayah['surah'] as int;
++      final ayahNum  = ayah['ayah'] as int;
++      final surahKey = '$surahNum';
++      if (lastSurah != surahKey) {
++        flushGroup();
++        lastSurah = surahKey;
++        if (ayahNum == 1 && surahNum >= 1) {
++          if (surahNum > 1) blocks.add(const SizedBox(height: 16));
++          blocks.add(_buildMushafSurahBanner(surahNum, goldClr, textClr));
++          if (surahNum != 1 && surahNum != 9) {
++            blocks.add(_buildMushafBismillah(textClr, goldClr));
++          }
++          blocks.add(const SizedBox(height: 6));
++        }
++      }
++      currentGroup.add(ayah);
++    }
++    flushGroup();
+ 
+-            // Ayah text + end marker inline
+-            widgets.add(
+-              RichText(
+-                textDirection: TextDirection.rtl,
+-                text: TextSpan(
+-                  children: [
+-                    TextSpan(
+-                      text: arabic,
+-                      style: GoogleFonts.amiri(
+-                        fontSize: _arabicFontSize * 0.78,
+-                        height: 2.0,
+-                        color: txtColor,
+-                        fontWeight: FontWeight.w400,
+-                      ),
+-                    ),
+-                    // Ayah number circle (Unicode circle with number)
+-                    WidgetSpan(
+-                      alignment: PlaceholderAlignment.middle,
+-                      child: Container(
+-                        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+-                        width: 28, height: 28,
+-                        decoration: BoxDecoration(
+-                          shape: BoxShape.circle,
+-                          border: Border.all(color: _accent.withValues(alpha: 0.5)),
+-                          color: _accent.withValues(alpha: 0.06),
+-                        ),
+-                        child: Center(
+-                          child: Text(
+-                            '$ayahNum',
+-                            style: GoogleFonts.outfit(
+-                              fontSize: 9, fontWeight: FontWeight.w700,
+-                              color: _accent, height: 1,
+-                            ),
+-                          ),
+-                        ),
+-                      ),
+-                    ),
+-                  ],
+-                ),
+-              ),
+-            );
+-            return widgets;
+-          }).toList(),
+-        ),
+-      ),
+-    ]);
++    return Padding(
++      padding: const EdgeInsets.only(bottom: 8),
++      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks),
++    );
+   }
+ 
+-  // ΓöÇΓöÇ Word-by-Word View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-  Widget _buildWordByWordView(Color txtColor, Color subColor) {
+-    return Directionality(
+-      textDirection: TextDirection.rtl,
+-      child: Wrap(
+-        alignment: WrapAlignment.start,
+-        crossAxisAlignment: WrapCrossAlignment.end,
+-        spacing: 2,      // horizontal gap between chips
+-        runSpacing: 8,   // vertical gap between rows
+-        children: _wbwWords.map((wordData) {
+-          final arabic = wordData['arabic'] as String? ?? '';
+-          final translation = wordData['translation'] as String? ?? '';
+-          return _WbwWordChip(
+-            arabic: arabic,
+-            translation: translation,
+-            arabicFontSize: _arabicFontSize,
+-            arabicFontIdx: _arabicFontIdx,
+-            accentColor: _accent,
+-            txtColor: txtColor,
+-            subColor: subColor,
+-            darkMode: _darkMode,
+-          );
+-        }).toList(),
++  /// Single justified RTL block for a surah-group of ayahs with ruled underlines.
++  Widget _buildMushafTextBlock(
++      List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr) {
++    const double fs = 0.86; // fraction of _arabicFontSize
++    const double lh = 2.2;  // line-height multiplier
++    final double fontSize = _arabicFontSize * fs;
++
++    // Build one big span: arabic text + U+06DD marker per ayah
++    final spans = ayahs
++        .map((a) => TextSpan(
++              // ∩┤╛n∩┤┐ ornamental brackets ΓÇö render cleanly in Scheherazade New on all devices
++              text: '${a["arabic"]} \uFD3F${_toArabicNumeral(a["ayah"] as int)}\uFD3E ',
++            ))
++        .toList();
++
++    final textStyle = GoogleFonts.scheherazadeNew(
++      fontSize: fontSize,
++      height: lh,
++      color: textClr,
++      fontWeight: FontWeight.w400,
++    );
++
++    return CustomPaint(
++      // Foreground painter draws subtle ruled lines AFTER text (visually below each row)
++      foregroundPainter: _MushafRuledPainter(
++        lineHeightPx: fontSize * lh,
++        lineColor: goldClr.withValues(alpha: 0.28),
++      ),
++      child: Text.rich(
++        TextSpan(style: textStyle, children: spans),
++        textDirection: TextDirection.rtl,
++        textAlign: TextAlign.justify,
+       ),
+     );
+   }
+ 
++  // Convert an integer to Arabic-Indic digit string (┘á┘í┘ó┘ú┘ñ┘Ñ┘ª┘º┘¿┘⌐)
++  String _toArabicNumeral(int n) {
++    const d = ['┘á','┘í','┘ó','┘ú','┘ñ','┘Ñ','┘ª','┘º','┘¿','┘⌐'];
++    return n.toString().runes.map((r) => d[r - 48]).join();
++  }
+ 
+ 
+-  Widget _buildAudioPlayer() {
+-    final bool hasAudio = _audioUrl != null && !_loading;
+-    final sliderVal = _dur.inMilliseconds > 0
+-        ? _pos.inMilliseconds.toDouble().clamp(0.0, _dur.inMilliseconds.toDouble())
+-        : 0.0;
+-    final sliderMax = _dur.inMilliseconds > 0 ? _dur.inMilliseconds.toDouble() : 1.0;
+ 
++  Widget _buildMushafSurahBanner(int surahNum, Color goldClr, Color textClr) {
+     return Container(
+-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
++      margin: const EdgeInsets.symmetric(vertical: 8),
+       decoration: BoxDecoration(
+-        color: _kWhite, borderRadius: BorderRadius.circular(20),
+-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12)],
++        border: Border.all(color: goldClr.withValues(alpha: 0.55), width: 1.5),
++        borderRadius: BorderRadius.circular(6),
+       ),
+-      child: Column(mainAxisSize: MainAxisSize.min, children: [
+-        // ΓöÇΓöÇ Row 1: Reciter chips in horizontally scrollable row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-        Row(children: [
+-          const Text('≡ƒÄÖ∩╕Å', style: TextStyle(fontSize: 13)),
+-          const SizedBox(width: 5),
+-          Text('Reciter:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _kSub)),
+-          const SizedBox(width: 6),
+-          Expanded(child: SingleChildScrollView(
+-            scrollDirection: Axis.horizontal,
+-            child: Row(children: List.generate(_reciters.length, (i) {
+-              final sel = i == _reciterIdx;
+-              return GestureDetector(
+-                onTap: () async {
+-                  if (_reciterIdx == i) return;
+-                  setState(() => _reciterIdx = i);
+-                  await _loadAudioForReciter();
+-                },
+-                child: AnimatedContainer(
+-                  duration: const Duration(milliseconds: 200),
+-                  margin: EdgeInsets.only(right: i < 2 ? 6 : 0),
+-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+-                  decoration: BoxDecoration(
+-                    color: sel ? _kTeal : _kBg,
+-                    borderRadius: BorderRadius.circular(20),
+-                    border: Border.all(color: sel ? _kTeal : Colors.grey.shade200),
+-                  ),
+-                  child: Text(_reciters[i].$2,
+-                      style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w700,
+-                          color: sel ? Colors.white : _kSub)),
+-                ),
+-              );
+-            })),
+-          )),
+-        ]),
+-
+-        // ΓöÇΓöÇ Row 2: Seek slider ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-        SliderTheme(
+-          data: SliderThemeData(
+-            trackHeight: 4,
+-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+-            activeTrackColor: hasAudio ? _kTeal : Colors.grey.shade300,
+-            inactiveTrackColor: hasAudio ? _kTealL : Colors.grey.shade200,
+-            thumbColor: hasAudio ? _kTeal : Colors.grey.shade400,
+-            overlayColor: _kTeal.withValues(alpha: 0.2),
+-            disabledActiveTrackColor: Colors.grey.shade300,
++      child: Stack(alignment: Alignment.center, children: [
++        // Corner ornaments
++        for (final pos in [Alignment.topLeft, Alignment.topRight,
++            Alignment.bottomLeft, Alignment.bottomRight])
++          Positioned(
++            top:    pos == Alignment.topLeft    || pos == Alignment.topRight    ? 4 : null,
++            bottom: pos == Alignment.bottomLeft || pos == Alignment.bottomRight ? 4 : null,
++            left:   pos == Alignment.topLeft    || pos == Alignment.bottomLeft  ? 6 : null,
++            right:  pos == Alignment.topRight   || pos == Alignment.bottomRight ? 6 : null,
++            child: Text('Γ¥ï', style: TextStyle(fontSize: 9, color: goldClr.withValues(alpha: 0.5))),
+           ),
+-          child: Slider(
+-            value: sliderVal, min: 0, max: sliderMax,
+-            onChanged: hasAudio ? (v) => _player.seek(Duration(milliseconds: v.toInt())) : null,
++        Padding(
++          padding: const EdgeInsets.symmetric(vertical: 10),
++          child: Text(
++            '╪│┘Å┘ê╪▒┘Ä╪⌐┘Å ${_surahNamesArabic[surahNum - 1]}',
++            textAlign: TextAlign.center,
++            textDirection: TextDirection.rtl,
++            style: GoogleFonts.scheherazadeNew(
++                fontSize: 18, fontWeight: FontWeight.w700,
++                color: goldClr, letterSpacing: 1.5),
+           ),
+         ),
++      ]),
++    );
++  }
+ 
+-        // ΓöÇΓöÇ Row 3: Controls + timer on same row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-        Row(children: [
+-          IconButton(
+-            padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+-            icon: Icon(Icons.skip_previous_rounded, size: 26,
+-                color: hasAudio ? _kTeal : Colors.grey.shade300),
+-            onPressed: hasAudio ? _prevAyah : null,
++  Widget _buildMushafBismillah(Color textClr, Color goldClr) {
++    return Padding(
++      padding: const EdgeInsets.symmetric(vertical: 4),
++      child: Text(
++        '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É ┘▒┘ä╪▒┘Ä┘æ╪¡┘Æ┘à┘Ä┘░┘å┘É ┘▒┘ä╪▒┘Ä┘æ╪¡┘É┘è┘à┘É',
++        textAlign: TextAlign.center,
++        textDirection: TextDirection.rtl,
++        style: GoogleFonts.scheherazadeNew(
++            fontSize: _arabicFontSize * 0.88,
++            color: textClr,
++            fontWeight: FontWeight.w600,
++            height: 2.2),
++      ),
++    );
++  }
++
++  Widget _buildMushafPageDivider(int nextPage, Color goldClr, Color textClr) {
++    return Padding(
++      padding: const EdgeInsets.symmetric(vertical: 20),
++      child: Row(children: [
++        Expanded(child: Divider(color: goldClr.withValues(alpha: 0.3), thickness: 0.8)),
++        Padding(
++          padding: const EdgeInsets.symmetric(horizontal: 14),
++          child: Text(
++            'ΓÇö $_currentPage ΓÇö',
++            style: GoogleFonts.lora(
++                fontSize: 11, color: goldClr.withValues(alpha: 0.7),
++                fontStyle: FontStyle.italic),
+           ),
+-          const SizedBox(width: 12),
++        ),
++        Expanded(child: Divider(color: goldClr.withValues(alpha: 0.3), thickness: 0.8)),
++      ]),
++    );
++  }
++
++  Widget _buildMushafOverlay(Color overlayBg, Color goldClr, Color textClr) {
++    final pad = MediaQuery.of(context).padding;
++    return Column(children: [
++      // ΓöÇΓöÇ Top bar ΓÇö minimal, no distractions ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++      Container(
++        color: overlayBg,
++        padding: EdgeInsets.fromLTRB(16, pad.top + 8, 16, 12),
++        child: Row(children: [
++          // Exit button
+           GestureDetector(
+-            onTap: hasAudio ? _togglePlay : null,
+-            child: AnimatedContainer(
+-              duration: const Duration(milliseconds: 150),
+-              width: 52, height: 52,
++            onTap: _exitMushafMode,
++            child: Container(
++              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+               decoration: BoxDecoration(
+-                shape: BoxShape.circle,
+-                color: !hasAudio
+-                    ? Colors.grey.shade200
+-                    : _isPlaying ? const Color(0xFF1FA882) : _kTeal,
+-                boxShadow: hasAudio ? [BoxShadow(
+-                    color: _kTeal.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))] : null,
++                color: goldClr.withValues(alpha: 0.18),
++                borderRadius: BorderRadius.circular(10),
++                border: Border.all(color: goldClr.withValues(alpha: 0.4)),
+               ),
+-              child: _audioLoading
+-                  ? const Center(child: SizedBox(width: 20, height: 20,
+-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5)))
+-                  : Icon(
+-                      !hasAudio ? Icons.hourglass_top_rounded
+-                          : _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+-                      color: hasAudio ? Colors.white : Colors.grey.shade400, size: 26),
++              child: Row(mainAxisSize: MainAxisSize.min, children: [
++                Icon(Icons.arrow_back_ios_rounded, color: goldClr, size: 14),
++                const SizedBox(width: 4),
++                Text('Exit', style: GoogleFonts.lora(
++                    fontSize: 13, fontWeight: FontWeight.w600, color: goldClr)),
++              ]),
+             ),
+           ),
+-          const SizedBox(width: 12),
+-          IconButton(
+-            padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+-            icon: Icon(Icons.skip_next_rounded, size: 26,
+-                color: hasAudio ? _kTeal : Colors.grey.shade300),
+-            onPressed: hasAudio ? _nextAyah : null,
+-          ),
+           const Spacer(),
+-          Text(
+-            hasAudio ? '${_fmtDur(_pos)} / ${_fmtDur(_dur)}' : 'Loading audio...',
+-            style: GoogleFonts.outfit(fontSize: 11, color: _kSub),
++          // Page + timer info (centred)
++          Column(children: [
++            Text(_surahName,
++                style: GoogleFonts.lora(fontSize: 11,
++                    color: Colors.white.withValues(alpha: 0.65))),
++            Text('Page $_currentPage  ┬╖  $_pageTimerLabel',
++                style: GoogleFonts.lora(fontSize: 13,
++                    fontWeight: FontWeight.w700, color: goldClr)),
++          ]),
++          const Spacer(),
++          // XP badge (or invisible spacer so the page info stays centred)
++          SizedBox(
++            width: 60,
++            child: _pageXpEarned > 0
++                ? Container(
++                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
++                    decoration: BoxDecoration(
++                      color: goldClr.withValues(alpha: 0.15),
++                      borderRadius: BorderRadius.circular(10),
++                    ),
++                    child: Text('+$_pageXpEarned XP',
++                        textAlign: TextAlign.center,
++                        style: GoogleFonts.outfit(
++                            fontSize: 11, fontWeight: FontWeight.w700,
++                            color: goldClr)),
++                  )
++                : const SizedBox.shrink(),
+           ),
+         ]),
+-      ]),
+-    );
++      ),
++    ]);
+   }
++} // end _QuranScreenState
+ 
+-  Widget _buildNavRow({required Color barBg, required Color txt}) {
+-    final bottomPad = MediaQuery.of(context).padding.bottom;
+-    return Container(
+-      color: barBg,
+-      padding: EdgeInsets.fromLTRB(20, 12, 20, 16 + bottomPad),
+-      child: Row(children: [
+-        Expanded(child: OutlinedButton.icon(
+-          onPressed: _saving ? null : (_fullPageMode
+-              ? (_currentPage > 1
+-                  ? () {
+-                      setState(() { _currentPage--; _pageSeconds = 0; });
+-                      _fetchFullPage(_currentPage);
+-                    }
+-                  : null)
+-              : _prevAyah),
+-          icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
+-          label: Text('Previous',
+-              style: GoogleFonts.outfit(
+-                  fontSize: 14, fontWeight: FontWeight.w700)),
+-          style: OutlinedButton.styleFrom(
+-            padding: const EdgeInsets.symmetric(vertical: 14),
+-            side: BorderSide(
+-                color: _darkMode
+-                    ? Colors.white24
+-                    : Colors.grey.shade300),
+-            shape: RoundedRectangleBorder(
+-                borderRadius: BorderRadius.circular(14)),
+-            foregroundColor: txt,
+-          ),
+-        )),
+-        const SizedBox(width: 12),
+-        Expanded(child: ElevatedButton.icon(
+-          onPressed: _saving ? null : (_fullPageMode
+-              ? (_currentPage < 604
+-                  ? () {
+-                      setState(() { _currentPage++; _pageSeconds = 0; });
+-                      _fetchFullPage(_currentPage);
+-                    }
+-                  : null)
+-              : _nextAyah),
+-          icon: _saving
+-              ? const SizedBox(
+-                  width: 16, height: 16,
+-                  child: CircularProgressIndicator(
+-                      color: Colors.white, strokeWidth: 2))
+-              : const Icon(
+-                  Icons.arrow_forward_ios_rounded,
+-                  size: 14, color: Colors.white),
+-          label: Text(
+-            _fullPageMode ? 'Next' : 'Next +10 pts',
+-            style: GoogleFonts.outfit(
+-                fontSize: 14,
+-                fontWeight: FontWeight.w700,
+-                color: Colors.white)),
+-          style: ElevatedButton.styleFrom(
+-            backgroundColor: (_fullPageMode && _currentPage >= 604)
+-                ? _accent.withValues(alpha: 0.4)
+-                : _accent,
+-            disabledBackgroundColor: _accent.withValues(alpha: 0.4),
+-            padding: const EdgeInsets.symmetric(vertical: 14),
+-            shape: RoundedRectangleBorder(
+-                borderRadius: BorderRadius.circular(14)),
+-            elevation: 0,
+-          ),
+-        )),
+-      ]),
+-    );
++// ΓöÇΓöÇ Mushaf ruled-line painter ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++/// Draws a thin decorative horizontal rule below each line of Arabic text,
++/// mimicking the ruled-page feel of the Quran Majeed app.
++class _MushafRuledPainter extends CustomPainter {
++  final double lineHeightPx; // fontSize ├ù lineHeightMultiplier
++  final Color  lineColor;
++
++  const _MushafRuledPainter({required this.lineHeightPx, required this.lineColor});
++
++  @override
++  void paint(Canvas canvas, Size size) {
++    final paint = Paint()
++      ..color = lineColor
++      ..strokeWidth = 0.65
++      ..isAntiAlias = true;
++
++    // Rule sits in the whitespace BETWEEN lines (leading area), well below glyphs.
++    // Arabic cap-height Γëê 55ΓÇô60 % of lineHeightPx; put rule at Γëê 88 %
++    double y = lineHeightPx * 0.88;
++    while (y <= size.height + 1) {
++      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
++      y += lineHeightPx;
++    }
+   }
++
++  @override
++  bool shouldRepaint(_MushafRuledPainter old) =>
++      old.lineHeightPx != lineHeightPx || old.lineColor != lineColor;
+ }
+ 
+ // ΓöÇΓöÇ All 114 surah names ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+@@ -3009,6 +3012,35 @@ const _surahNames = [
+   'Al-Masad','Al-Ikhlas','Al-Falaq','An-Nas',
+ ];
+ 
++// ΓöÇΓöÇ Surah names in Arabic (for mushaf banner headers) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++const _surahNamesArabic = [
++  '╪º┘ä┘Æ┘ü┘Ä╪º╪¬┘É╪¡┘Ä╪⌐','╪º┘ä┘Æ╪¿┘Ä┘é┘Ä╪▒┘Ä╪⌐','╪ó┘ä┘É ╪╣┘É┘à┘Æ╪▒┘Ä╪º┘å','╪º┘ä┘å┘É┘æ╪│┘Ä╪º╪í','╪º┘ä┘Æ┘à┘Ä╪º╪ª┘É╪»┘Ä╪⌐',
++  '╪º┘ä┘Æ╪ú┘Ä┘å┘Æ╪╣┘Ä╪º┘à','╪º┘ä┘Æ╪ú┘Ä╪╣┘Æ╪▒┘Ä╪º┘ü','╪º┘ä┘Æ╪ú┘Ä┘å┘Æ┘ü┘Ä╪º┘ä','╪º┘ä╪¬┘Ä┘æ┘ê┘Æ╪¿┘Ä╪⌐','┘è┘Å┘ê┘å┘Å╪│',
++  '┘ç┘Å┘ê╪»','┘è┘Å┘ê╪│┘Å┘ü','╪º┘ä╪▒┘Ä┘æ╪╣┘Æ╪»','╪Ñ┘É╪¿┘Æ╪▒┘Ä╪º┘ç┘É┘è┘à','╪º┘ä┘Æ╪¡┘É╪¼┘Æ╪▒',
++  '╪º┘ä┘å┘Ä┘æ╪¡┘Æ┘ä','╪º┘ä┘Æ╪Ñ┘É╪│┘Æ╪▒┘Ä╪º╪í','╪º┘ä┘Æ┘â┘Ä┘ç┘Æ┘ü','┘à┘Ä╪▒┘Æ┘è┘Ä┘à','╪╖┘ç',
++  '╪º┘ä┘Æ╪ú┘Ä┘å┘Æ╪¿┘É┘è┘Ä╪º╪í','╪º┘ä┘Æ╪¡┘Ä╪¼┘æ','╪º┘ä┘Æ┘à┘Å╪ñ┘Æ┘à┘É┘å┘Å┘ê┘å','╪º┘ä┘å┘Å┘æ┘ê╪▒','╪º┘ä┘Æ┘ü┘Å╪▒┘Æ┘é┘Ä╪º┘å',
++  '╪º┘ä╪┤┘Å┘æ╪╣┘Ä╪▒┘Ä╪º╪í','╪º┘ä┘å┘Ä┘æ┘à┘Æ┘ä','╪º┘ä┘Æ┘é┘Ä╪╡┘Ä╪╡','╪º┘ä┘Æ╪╣┘Ä┘å┘Æ┘â┘Ä╪¿┘Å┘ê╪¬','╪º┘ä╪▒┘Å┘æ┘ê┘à',
++  '┘ä┘Å┘é┘Æ┘à┘Ä╪º┘å','╪º┘ä╪│┘Ä┘æ╪¼┘Æ╪»┘Ä╪⌐','╪º┘ä┘Æ╪ú┘Ä╪¡┘Æ╪▓┘Ä╪º╪¿','╪│┘Ä╪¿┘Ä╪ú','┘ü┘Ä╪º╪╖┘É╪▒',
++  '┘è╪│','╪º┘ä╪╡┘Ä┘æ╪º┘ü┘Ä┘æ╪º╪¬','╪╡','╪º┘ä╪▓┘Å┘æ┘à┘Ä╪▒','╪║┘Ä╪º┘ü┘É╪▒',
++  '┘ü┘Å╪╡┘É┘æ┘ä┘Ä╪¬','╪º┘ä╪┤┘Å┘æ┘ê╪▒┘Ä┘ë','╪º┘ä╪▓┘Å┘æ╪«┘Æ╪▒┘Å┘ü','╪º┘ä╪»┘Å┘æ╪«┘Ä╪º┘å','╪º┘ä┘Æ╪¼┘Ä╪º╪½┘É┘è┘Ä╪⌐',
++  '╪º┘ä┘Æ╪ú┘Ä╪¡┘Æ┘é┘Ä╪º┘ü','┘à┘Å╪¡┘Ä┘à┘Ä┘æ╪»','╪º┘ä┘Æ┘ü┘Ä╪¬┘Æ╪¡','╪º┘ä┘Æ╪¡┘Å╪¼┘Å╪▒┘Ä╪º╪¬','┘é',
++  '╪º┘ä╪░┘Ä┘æ╪º╪▒┘É┘è┘Ä╪º╪¬','╪º┘ä╪╖┘Å┘æ┘ê╪▒','╪º┘ä┘å┘Ä┘æ╪¼┘Æ┘à','╪º┘ä┘Æ┘é┘Ä┘à┘Ä╪▒','╪º┘ä╪▒┘Ä┘æ╪¡┘Æ┘à┘Ä┘å',
++  '╪º┘ä┘Æ┘ê┘Ä╪º┘é┘É╪╣┘Ä╪⌐','╪º┘ä┘Æ╪¡┘Ä╪»┘É┘è╪»','╪º┘ä┘Æ┘à┘Å╪¼┘Ä╪º╪»┘Ä┘ä┘Ä╪⌐','╪º┘ä┘Æ╪¡┘Ä╪┤┘Æ╪▒','╪º┘ä┘Æ┘à┘Å┘à┘Æ╪¬┘Ä╪¡┘Ä┘å┘Ä╪⌐',
++  '╪º┘ä╪╡┘Ä┘æ┘ü┘æ','╪º┘ä┘Æ╪¼┘Å┘à┘Å╪╣┘Ä╪⌐','╪º┘ä┘Æ┘à┘Å┘å┘Ä╪º┘ü┘É┘é┘Å┘ê┘å','╪º┘ä╪¬┘Ä┘æ╪║┘Ä╪º╪¿┘Å┘å','╪º┘ä╪╖┘Ä┘æ┘ä┘Ä╪º┘é',
++  '╪º┘ä╪¬┘Ä┘æ╪¡┘Æ╪▒┘É┘è┘à','╪º┘ä┘Æ┘à┘Å┘ä┘Æ┘â','╪º┘ä┘Æ┘é┘Ä┘ä┘Ä┘à','╪º┘ä┘Æ╪¡┘Ä╪º┘é┘Ä┘æ╪⌐','╪º┘ä┘Æ┘à┘Ä╪╣┘Ä╪º╪▒┘É╪¼',
++  '┘å┘Å┘ê╪¡','╪º┘ä┘Æ╪¼┘É┘å┘æ','╪º┘ä┘Æ┘à┘Å╪▓┘Ä┘æ┘à┘É┘æ┘ä','╪º┘ä┘Æ┘à┘Å╪»┘Ä┘æ╪½┘É┘æ╪▒','╪º┘ä┘Æ┘é┘É┘è┘Ä╪º┘à┘Ä╪⌐',
++  '╪º┘ä┘Æ╪Ñ┘É┘å┘Æ╪│┘Ä╪º┘å','╪º┘ä┘Æ┘à┘Å╪▒┘Æ╪│┘Ä┘ä┘Ä╪º╪¬','╪º┘ä┘å┘Ä┘æ╪¿┘Ä╪ú','╪º┘ä┘å┘Ä┘æ╪º╪▓┘É╪╣┘Ä╪º╪¬','╪╣┘Ä╪¿┘Ä╪│',
++  '╪º┘ä╪¬┘Ä┘æ┘â┘Æ┘ê┘É┘è╪▒','╪º┘ä┘Æ╪Ñ┘É┘å┘ü┘É╪╖┘Ä╪º╪▒','╪º┘ä┘Æ┘à┘Å╪╖┘Ä┘ü┘É┘æ┘ü┘É┘è┘å','╪º┘ä┘É╪º┘å╪┤┘É┘é┘Ä╪º┘é','╪º┘ä┘Æ╪¿┘Å╪▒┘Å┘ê╪¼',
++  '╪º┘ä╪╖┘Ä┘æ╪º╪▒┘É┘é','╪º┘ä┘Æ╪ú┘Ä╪╣┘Æ┘ä┘Ä┘ë','╪º┘ä┘Æ╪║┘Ä╪º╪┤┘É┘è┘Ä╪⌐','╪º┘ä┘Æ┘ü┘Ä╪¼┘Æ╪▒','╪º┘ä┘Æ╪¿┘Ä┘ä┘Ä╪»',
++  '╪º┘ä╪┤┘Ä┘æ┘à┘Æ╪│','╪º┘ä┘ä┘Ä┘æ┘è┘Æ┘ä','╪º┘ä╪╢┘Å┘æ╪¡┘Ä┘ë','╪º┘ä╪┤┘Ä┘æ╪▒┘Æ╪¡','╪º┘ä╪¬┘É┘æ┘è┘å',
++  '╪º┘ä┘Æ╪╣┘Ä┘ä┘Ä┘é','╪º┘ä┘Æ┘é┘Ä╪»┘Æ╪▒','╪º┘ä┘Æ╪¿┘Ä┘è┘É┘æ┘å┘Ä╪⌐','╪º┘ä╪▓┘Ä┘æ┘ä┘Æ╪▓┘Ä┘ä┘Ä╪⌐','╪º┘ä┘Æ╪╣┘Ä╪º╪»┘É┘è┘Ä╪º╪¬',
++  '╪º┘ä┘Æ┘é┘Ä╪º╪▒┘É╪╣┘Ä╪⌐','╪º┘ä╪¬┘Ä┘æ┘â┘Ä╪º╪½┘Å╪▒','╪º┘ä┘Æ╪╣┘Ä╪╡┘Æ╪▒','╪º┘ä┘Æ┘ç┘Å┘à┘Ä╪▓┘Ä╪⌐','╪º┘ä┘Æ┘ü┘É┘è┘ä',
++  '┘é┘Å╪▒┘Ä┘è┘Æ╪┤','╪º┘ä┘Æ┘à┘Ä╪º╪╣┘Å┘ê┘å','╪º┘ä┘Æ┘â┘Ä┘ê┘Æ╪½┘Ä╪▒','╪º┘ä┘Æ┘â┘Ä╪º┘ü┘É╪▒┘Å┘ê┘å','╪º┘ä┘å┘Ä┘æ╪╡┘Æ╪▒',
++  '╪º┘ä┘Æ┘à┘Ä╪│┘Ä╪»','╪º┘ä┘Æ╪Ñ┘É╪«┘Æ┘ä┘Ä╪º╪╡','╪º┘ä┘Æ┘ü┘Ä┘ä┘Ä┘é','╪º┘ä┘å┘Ä┘æ╪º╪│',
++];
++
++
++
+ // ΓöÇΓöÇ Pill Button Widget ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+ class _PillButton extends StatefulWidget {
+   final IconData icon;
+@@ -3167,7 +3199,12 @@ class _WbwWordChipState extends State<_WbwWordChip>
+         child: AnimatedContainer(
+           duration: const Duration(milliseconds: 150),
+           margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+-          padding: const EdgeInsets.fromLTRB(8, 6, 8, 5),
++          // Top padding increased to 14 so superscript harakat (like ┘î ┘ï ┘ì)
++          // have enough room above the glyph and are never clipped.
++          padding: const EdgeInsets.fromLTRB(8, 14, 8, 5),
++          // Clip.none ensures the container never clips children that
++          // paint outside their logical box (e.g. tall diacritics).
++          clipBehavior: Clip.none,
+           decoration: BoxDecoration(
+             color: _highlighted ? highlightBg : Colors.transparent,
+             borderRadius: BorderRadius.circular(8),
+@@ -3180,22 +3217,25 @@ class _WbwWordChipState extends State<_WbwWordChip>
+               mainAxisSize: MainAxisSize.min,
+               crossAxisAlignment: CrossAxisAlignment.stretch,
+               children: [
+-                // Arabic word ΓÇö naturally sized
++                // Arabic word ΓÇö naturally sized; no maxLines so layout
++                // measures the true glyph height including diacritics.
++                // lineHeight 1.6 gives harakat (above & below) breathing room.
+                 Text(
+                   widget.arabic,
+                   textDirection: TextDirection.rtl,
+                   textAlign: TextAlign.center,
+-                  maxLines: 1,
+                   overflow: TextOverflow.visible,
+                   style: _kArabicFonts[widget.arabicFontIdx].style(
+                     widget.arabicFontSize * 0.80,
+                     widget.txtColor,
+-                    1.5,
++                    1.6,   // raised from 1.5 ΓÇö more vertical room for harakat
+                     FontWeight.w700,
+                   ),
+                 ),
+-                const SizedBox(height: 3),
+-                // Gold underline ΓÇö stretches to match the column's intrinsic width
++                // 6 px gap keeps descending marks (┘à┘æ tanwin-meem)
++                // from bleeding through the underline.
++                const SizedBox(height: 6),
++                // Accent underline ΓÇö stretches to match the column's intrinsic width
+                 Container(
+                   height: 1.5,
+                   decoration: BoxDecoration(

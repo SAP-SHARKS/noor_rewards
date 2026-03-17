@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
@@ -11,19 +11,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
-import '../services/quran_api_service.dart';   // Quran Foundation authenticated API
 
-
-// ── Palette ────────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Palette ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const _kBg    = Color(0xFFEDF7F4); // Light mint (gradient start)
 const _kWhite = Color(0xFFFFFFFF);
 const _kText  = Color(0xFF1C1C1E);
 const _kSub   = Color(0xFF8E8E93);
 const _kTeal  = Color(0xFF2BAE99);
+const _kTealL = Color(0xFFC8ECE8);
 const _kGold  = Color(0xFFFFAA00);
 
 // Screen-level gradient for the Quran reading background
-// Deep teal-mint top → cool sky-blue mid → soft pearl bottom
+// Deep teal-mint top ΓåÆ cool sky-blue mid ΓåÆ soft pearl bottom
 // More contrast = noticeably visible gradient on the screen
 const _kBgGradient = LinearGradient(
   begin: Alignment.topLeft,
@@ -36,7 +35,7 @@ const _kBgGradient = LinearGradient(
   stops: [0.0, 0.5, 1.0],
 );
 
-// ── All 114 surah lengths (1-indexed, index 0 is unused) ──────────────────────
+// ΓöÇΓöÇ All 114 surah lengths (1-indexed, index 0 is unused) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 // 115 entries: index 0 = unused, indices 1-114 = surah ayah counts
 const _surahLengths = [
   0,   // padding
@@ -54,90 +53,91 @@ const _surahLengths = [
    5,   4,   5,   6,                                  // 111-114 (An-Nas=6)
 ];
 
-// ── Translation options ─────────────────────────────────────────────────────────
-// All from api.alquran.cloud — fetched on-demand, cached 7 days in Hive.
+// ΓöÇΓöÇ Translation options ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// All from api.alquran.cloud ΓÇö fetched on-demand, cached 7 days in Hive.
 // (editionId, displayName, author, isRTL)
 typedef _TransDef = ({String id, String name, String author, bool rtl});
 
 const List<_TransDef> _translations = [
-  // ── English ────────────────────────────────────────────────────────────────────
-  (id:'en.sahih',       name:'English — Sahih Intl.',    author:'Saheeh International',            rtl:false),
-  (id:'en.pickthall',   name:'English — Pickthall',      author:'Mohammad Marmaduke Pickthall',    rtl:false),
-  (id:'en.asad',        name:'English — The Message',    author:'Muhammad Asad',                   rtl:false),
-  (id:'en.hilali',      name:'English — Muhsin Khan',    author:'Muhsin Khan & Hilali',            rtl:false),
-  // ── Urdu ───────────────────────────────────────────────────────────────────────
-  (id:'ur.jalandhry',   name:'اردو — جالندھری',           author:'Fateh Muhammad Jalandhry',        rtl:true),
-  (id:'ur.kanzuliman',  name:'اردو — کنز الایمان',        author:'Imam Ahmad Raza Khan',            rtl:true),
-  (id:'ur.ahmedali',    name:'اردو — احمد علی',           author:'Shah Ahmed Ali',                  rtl:true),
-  (id:'ur.maududi',     name:'اردو — تفہیم القرآن',       author:'Maulana Sayyid Abul Ala Maududi', rtl:true),
-  // ── French ─────────────────────────────────────────────────────────────────────
-  (id:'fr.hamidullah',  name:'Français — Hamidullah',    author:'Muhammad Hamidullah',             rtl:false),
-  // ── Turkish ────────────────────────────────────────────────────────────────────
-  (id:'tr.diyanet',     name:'Türkçe — Diyanet',         author:'Diyanet İşleri',                  rtl:false),
-  (id:'tr.ates',        name:'Türkçe — Süleyman Ateş',   author:'Süleyman Ateş',                   rtl:false),
-  // ── Indonesian ─────────────────────────────────────────────────────────────────
-  (id:'id.indonesian',  name:'Bahasa — Indonesian',      author:'Ministry of Religious Affairs',   rtl:false),
-  // ── Bengali ────────────────────────────────────────────────────────────────────
-  (id:'bn.bengali',     name:'বাংলা — Muhiuddin Khan',  author:'Muhiuddin Khan',                  rtl:false),
-  // ── German ─────────────────────────────────────────────────────────────────────
-  (id:'de.aburida',     name:'Deutsch — Abu Rida',       author:'Abu Rida Muhammad ibn Ahmad',     rtl:false),
-  // ── Spanish ────────────────────────────────────────────────────────────────────
-  (id:'es.asad',        name:'Español — Asad',           author:'Muhammad Asad',                   rtl:false),
+  // ΓöÇΓöÇ English ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'en.sahih',       name:'English ΓÇö Sahih Intl.',    author:'Saheeh International',            rtl:false),
+  (id:'en.pickthall',   name:'English ΓÇö Pickthall',      author:'Mohammad Marmaduke Pickthall',    rtl:false),
+  (id:'en.asad',        name:'English ΓÇö The Message',    author:'Muhammad Asad',                   rtl:false),
+  (id:'en.hilali',      name:'English ΓÇö Muhsin Khan',    author:'Muhsin Khan & Hilali',            rtl:false),
+  // ΓöÇΓöÇ Urdu ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'ur.jalandhry',   name:'╪º╪▒╪»┘ê ΓÇö ╪¼╪º┘ä┘å╪»┌╛╪▒█î',           author:'Fateh Muhammad Jalandhry',        rtl:true),
+  (id:'ur.kanzuliman',  name:'╪º╪▒╪»┘ê ΓÇö ┌⌐┘å╪▓ ╪º┘ä╪º█î┘à╪º┘å',        author:'Imam Ahmad Raza Khan',            rtl:true),
+  (id:'ur.ahmedali',    name:'╪º╪▒╪»┘ê ΓÇö ╪º╪¡┘à╪» ╪╣┘ä█î',           author:'Shah Ahmed Ali',                  rtl:true),
+  (id:'ur.maududi',     name:'╪º╪▒╪»┘ê ΓÇö ╪¬┘ü█ü█î┘à ╪º┘ä┘é╪▒╪ó┘å',       author:'Maulana Sayyid Abul Ala Maududi', rtl:true),
+  // ΓöÇΓöÇ French ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'fr.hamidullah',  name:'Fran├ºais ΓÇö Hamidullah',    author:'Muhammad Hamidullah',             rtl:false),
+  // ΓöÇΓöÇ Turkish ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'tr.diyanet',     name:'T├╝rk├ºe ΓÇö Diyanet',         author:'Diyanet ─░┼ƒleri',                  rtl:false),
+  (id:'tr.ates',        name:'T├╝rk├ºe ΓÇö S├╝leyman Ate┼ƒ',   author:'S├╝leyman Ate┼ƒ',                   rtl:false),
+  // ΓöÇΓöÇ Indonesian ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'id.indonesian',  name:'Bahasa ΓÇö Indonesian',      author:'Ministry of Religious Affairs',   rtl:false),
+  // ΓöÇΓöÇ Bengali ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'bn.bengali',     name:'αª¼αª╛αªéαª▓αª╛ ΓÇö Muhiuddin Khan',  author:'Muhiuddin Khan',                  rtl:false),
+  // ΓöÇΓöÇ German ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'de.aburida',     name:'Deutsch ΓÇö Abu Rida',       author:'Abu Rida Muhammad ibn Ahmad',     rtl:false),
+  // ΓöÇΓöÇ Spanish ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  (id:'es.asad',        name:'Espa├▒ol ΓÇö Asad',           author:'Muhammad Asad',                   rtl:false),
 ];
 
 
-typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double? height, FontWeight weight) style});
+// ΓöÇΓöÇ Arabic font options ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double height, FontWeight weight) style});
 
 final List<_ArabicFont> _kArabicFonts = [
   (
     name: 'Amiri',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.amiri(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Scheherazade',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Lateef',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.lateef(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Noto Naskh',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Reem Kufi',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.reemKufi(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Cairo',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.cairo(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Harmattan Naskh',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    arabicPreview: '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É',
     style: (size, color, height, weight) =>
         GoogleFonts.harmattan(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
 ];
 
-// ── Reciter options ──────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Reciter options ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const _reciters = [
-  ('ar.alafasy',      'Mishary',   '🎙️'),
-  ('ar.mahermuaiqly', 'Maher',     '🎙️'),
-  ('ar.abdulsamad',   'Al-Samad',  '🎙️'),
+  ('ar.alafasy',      'Mishary',   '≡ƒÄÖ∩╕Å'),
+  ('ar.mahermuaiqly', 'Maher',     '≡ƒÄÖ∩╕Å'),
+  ('ar.abdulsamad',   'Al-Samad',  '≡ƒÄÖ∩╕Å'),
 ];
 
 class QuranScreen extends StatefulWidget {
@@ -148,22 +148,21 @@ class QuranScreen extends StatefulWidget {
 }
 
 class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
-  // ── Position ─────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Position ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   int _surah = 2, _ayah = 1;
 
-  // ── Loaded data ───────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Loaded data ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   String _arabic = '', _translation = '', _surahName = 'Al-Baqarah';
   String? _audioUrl;
 
-  // ── Settings ──────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Settings ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   String _translationEdition = 'en.sahih';
-  final int _reciterIdx = 0;
+  int _reciterIdx = 0;
 
-  // ── Reader Settings ───────────────────────────────────────────────────
+  // ΓöÇΓöÇ Reader Settings ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   // Display
   bool   _darkMode          = false;   // dark reading mode
   double _arabicFontSize    = 28.0;    // 20-44
-  double _mushafFontSize    = 32.0;    // 16-48 (for full page mode)
   double _translationFontSize = 15.0;  // 12-22
   int    _arabicFontIdx     = 0;       // index into _kArabicFonts
   bool   _showTranslation   = false;   // show/hide translation block
@@ -175,20 +174,18 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _wordByWord        = false;   // word-by-word mode
   List<Map<String, dynamic>> _wbwWords = [];  // [{arabic, translation}]
   bool   _wbwLoading        = false;
-  // Full-page Mushaf — PageView-based (one Quran page per PageView page)
-  bool   _fullPageMode      = false;
-  int    _currentPage       = 1;         // current Quran page (1–604)
-  Key    _feedCenterKey     = UniqueKey();
-  int    _feedJumpPage      = 1;
-  Timer? _pageTimer;
-  int    _pageSeconds       = 0;
-  int    _pageXpEarned      = 0;
+  // Full-page Mushaf mode
+  bool   _fullPageMode      = false;   // full mushaf page mode
+  int    _currentPage       = 1;       // Quran page (1ΓÇô604)
+  List<Map<String, dynamic>> _pageAyahs = []; // [{surah, ayah, arabic}]
+  bool   _pageLoading       = false;
+  Timer? _pageTimer;                   // counts seconds on current page
+  int    _pageSeconds       = 0;       // seconds spent reading this page
+  int    _pageXpEarned      = 0;       // XP earned this session (full-page)
+  // _timerShouldRun = USER INTENT for timer. Set by explicit actions only.
+  // Lifecycle events (lock/unlock) read it but NEVER write it.
+  // This guarantees auto-resume works through any lock/unlock sequence.
   bool   _timerShouldRun    = false;
-  // Cache: page# → list of ayahs  (fetched once per page, held in memory)
-  final Map<int, List<Map<String, dynamic>>> _loadedPages    = {};
-  final Set<int>                              _loadingPages   = {};
-  // Keep scroll controller for backward compat (unused in PageView path)
-  ScrollController? _fullPageScrollController;
   bool   _autoAdvance       = false;   // advance ayah when audio ends
   bool   _repeatAyah        = false;   // repeat current ayah audio
   // Notifications + alerts
@@ -196,41 +193,38 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _soundAlerts       = true;    // sound alert on milestone
   // Theme accent (index into _kThemeAccents)
   int    _themeIdx          = 0;
-  // Mushaf immersive overlay (tap-to-show controls)
-  bool   _showMushafControls = true;
-  Timer? _controlsHideTimer;
 
-  // ── Stats ─────────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Stats ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   int _ayahsToday = 0, _pointsToday = 0;
 
-  // ── Bookmarks (stored as "surah:ayah" strings) ────────────────────────────────
+  // ΓöÇΓöÇ Bookmarks (stored as "surah:ayah" strings) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   final Set<String> _bookmarks  = {};
   final Set<String> _favourites = {};
 
-  // ── UI state ──────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ UI state ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   bool _loading = true;
   final bool _saving = false;
 
-  // ── Inline tafsir (bottom-sheet) ──────────────────────────────────────────────
+  // ΓöÇΓöÇ Inline tafsir (bottom-sheet) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   static const _qTafsirEditions = [
-    (id:'en-tafisr-ibn-kathir',     name:'Ibn Kathir (EN)',  emoji:'🕌', src:'cdn',   slug:'en-tafisr-ibn-kathir',     rtl:false),
-    (id:'en-tafsir-maarif-ul-quran',name:'Maarif ul Quran',  emoji:'📚', src:'cdn',   slug:'en-tafsir-maarif-ul-quran', rtl:false),
-    (id:'ur-tafseer-ibn-e-kaseer',  name:'ابن کثیر (اردو)', emoji:'📖', src:'cdn',   slug:'ur-tafseer-ibn-e-kaseer',   rtl:true),
-    (id:'ur-tafsir-bayan-ul-quran', name:'بیان القرآن',     emoji:'🎓', src:'cdn',   slug:'ur-tafsir-bayan-ul-quran',  rtl:true),
+    (id:'en-tafisr-ibn-kathir',     name:'Ibn Kathir (EN)',  emoji:'≡ƒòî', src:'cdn',   slug:'en-tafisr-ibn-kathir',     rtl:false),
+    (id:'en-tafsir-maarif-ul-quran',name:'Maarif ul Quran',  emoji:'≡ƒôÜ', src:'cdn',   slug:'en-tafsir-maarif-ul-quran', rtl:false),
+    (id:'ur-tafseer-ibn-e-kaseer',  name:'╪º╪¿┘å ┌⌐╪½█î╪▒ (╪º╪▒╪»┘ê)', emoji:'≡ƒôû', src:'cdn',   slug:'ur-tafseer-ibn-e-kaseer',   rtl:true),
+    (id:'ur-tafsir-bayan-ul-quran', name:'╪¿█î╪º┘å ╪º┘ä┘é╪▒╪ó┘å',     emoji:'≡ƒÄô', src:'cdn',   slug:'ur-tafsir-bayan-ul-quran',  rtl:true),
   ];
   int    _tafsirEditionIdx = 0;
   String _tafsirText       = '';
   bool   _tafsirLoading    = false;
   bool   _showAudioPlayer  = false;  // hidden until user taps Listen
 
-  // ── Feature-discovery hint tooltip ───────────────────────────────────────────
+  // ΓöÇΓöÇ Feature-discovery hint tooltip ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   static const _kHints = [
-    (icon: '🌙', text: 'Want Dark mode?'),
-    (icon: '🔡', text: 'Adjust font size'),
-    (icon: '🌍', text: 'Change translation'),
-    (icon: '⛶',  text: 'Try full screen!'),
-    (icon: '🎨', text: 'Change colour theme'),
-    (icon: '🔤', text: 'Arabic font size'),
+    (icon: '≡ƒîÖ', text: 'Want Dark mode?'),
+    (icon: '≡ƒöí', text: 'Adjust font size'),
+    (icon: '≡ƒîì', text: 'Change translation'),
+    (icon: 'Γ¢╢',  text: 'Try full screen!'),
+    (icon: '≡ƒÄ¿', text: 'Change colour theme'),
+    (icon: '≡ƒöñ', text: 'Arabic font size'),
   ];
   bool          _showHint    = false;  // for tune-button glow only
   int           _hintIdx     = 0;
@@ -238,26 +232,27 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   OverlayEntry? _hintOverlay;
 
 
-  // ── Audio ─────────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Audio ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   final _player = AudioPlayer();
-  bool _isPlaying = false;
+  Duration _pos = Duration.zero, _dur = Duration.zero;
+  bool _isPlaying = false, _audioLoading = false;
 
-  // ── Cache ─────────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Cache ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   late Box _cache;
 
   final _sb = Supabase.instance.client;
 
-  // ── Theme accent ──────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Theme accent ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   static const _kThemeAccents = [
-    (Color(0xFF2BAE99), 'Teal',   '🌊'),
-    (Color(0xFF6C63FF), 'Indigo', '🔮'),
-    (Color(0xFFE67E22), 'Amber',  '🔥'),
-    (Color(0xFFE91E63), 'Rose',   '🌸'),
-    (Color(0xFF2196F3), 'Blue',   '💧'),
+    (Color(0xFF2BAE99), 'Teal',   '≡ƒîè'),
+    (Color(0xFF6C63FF), 'Indigo', '≡ƒö«'),
+    (Color(0xFFE67E22), 'Amber',  '≡ƒöÑ'),
+    (Color(0xFFE91E63), 'Rose',   '≡ƒî╕'),
+    (Color(0xFF2196F3), 'Blue',   '≡ƒÆº'),
   ];
   Color get _accent => _kThemeAccents[_themeIdx.clamp(0, _kThemeAccents.length - 1)].$1;
 
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   @override
   void initState() {
     super.initState();
@@ -276,7 +271,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         _nextAyah(fromAutoPlay: true);
       }
     });
-
+    _player.positionStream.listen((p) {
+      if (mounted) setState(() => _pos = p);
+    });
+    _player.durationStream.listen((d) {
+      if (d != null && mounted) setState(() => _dur = d);
+    });
     // Show feature-discovery hint once per page visit (via Overlay so it overlaps AppBar)
     _hintIdx = DateTime.now().millisecond % _kHints.length;
     _hintTimer = Timer(const Duration(milliseconds: 2500), () {
@@ -348,7 +348,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden) {
       // Stop the physical timer but DO NOT touch _timerShouldRun.
-      // _timerShouldRun is user intent — only explicit play/pause changes it.
+      // _timerShouldRun is user intent ΓÇö only explicit play/pause changes it.
       // If we wrote it here, any intermediate paused event (e.g. lock screen
       // transition on some Android versions) would destroy the intent.
       if (_pageTimer != null) {
@@ -358,7 +358,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       // Screen is back. Restart physical timer if user wanted it running.
       // _timerShouldRun was never cleared by paused, so it reliably holds
-      // whatever the user last chose — even through multiple lock/unlock cycles.
+      // whatever the user last chose ΓÇö even through multiple lock/unlock cycles.
       if (_timerShouldRun && _pageTimer == null) {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted && _fullPageMode && _timerShouldRun && _pageTimer == null) {
@@ -376,8 +376,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _hintTimer?.cancel();
     _hintOverlay?.remove();
     _pageTimer?.cancel();
-    _controlsHideTimer?.cancel();
-    _fullPageScrollController?.dispose();
     _player.dispose();
     super.dispose();
   }
@@ -388,7 +386,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     await _fetchAyah(_surah, _ayah);
   }
 
-  // ── Load last read position + today's stats ───────────────────────────────────
+  // ΓöÇΓöÇ Load last read position + today's stats ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _loadProgress() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
@@ -399,9 +397,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       setState(() {
         // Only override to saved position if user didn't request a specific start
         if (widget.initialSurah == 2 && widget.initialAyah == 1) {
-          _surah        = row['current_surah'] ?? 2;
-          _ayah         = row['current_ayah']  ?? 1;
-          _currentPage  = row['current_page']  ?? 1;
+          _surah = row['current_surah'] ?? 2;
+          _ayah  = row['current_ayah']  ?? 1;
         }
         if ((row['last_read_date'] ?? '') == today) {
           _ayahsToday  = row['ayahs_read_today'] ?? 0;
@@ -411,7 +408,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
-  // ── Load all bookmarks for this user ─────────────────────────────────────────
+  // ΓöÇΓöÇ Load all bookmarks for this user ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _loadBookmarks() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
@@ -424,7 +421,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
-  // ── Load favourites for this user ─────────────────────────────────────────────
+  // ΓöÇΓöÇ Load favourites for this user ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _loadFavourites() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
@@ -437,13 +434,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
-  // ── Fetch ayah from cache or API ─────────────────────────────────────────────
+  // ΓöÇΓöÇ Fetch ayah from cache or API ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _fetchAyah(int surah, int ayah) async {
     if (mounted) setState(() => _loading = true);
     final recEdition = _reciters[_reciterIdx].$1;
-    final cacheKey   = '$surah:$ayah:_translationEdition:$recEdition';
+    final cacheKey   = '$surah:$ayah:$_translationEdition:$recEdition';
 
-    // ── 1. Hive cache hit (7-day TTL) — skip entry if translation is empty ──
+    // ΓöÇΓöÇ 1. Hive cache hit (7-day TTL) ΓÇö skip entry if translation is empty ΓöÇΓöÇ
     final cached = _cache.get(cacheKey);
     if (cached != null) {
       final cachedAt = DateTime.tryParse(cached['ts'] ?? '');
@@ -455,7 +452,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           DateTime.now().difference(cachedAt).inDays < 7 &&
           transOk) {
         setState(() {
-          _arabic      = _QuranScreenState._stripQuranicAnnotations(cached['arabic'] ?? '');
+          _arabic      = cached['arabic'] ?? '';
           _translation = cached['trans']  ?? '';
           _audioUrl    = cached['audio'];
           _surahName   = cached['surahName'] ?? '';
@@ -466,7 +463,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
     }
 
-    // ── Fetch from network (cache miss) ──────────────────────────────────────
+    // ΓöÇΓöÇ Fetch from network (cache miss) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     try {
       // Calculate global verse ID for this surah (1-indexed, cumulative)
       int startVerseId = 1;
@@ -481,10 +478,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           item['ayah'] as int: item['text_uthmani'] as String
       };
 
-      // Translation: Supabase DB is primary for en.sahih (fastest).
-      // All other editions go through QuranApiService, which tries the
-      // authenticated Quran Foundation API first (so alquran.cloud is only
-      // used as a last fallback for unsupported editions).
+      // Translation: Supabase DB has en.sahih only; use alquran.cloud for others
       final Map<int, String> transMap = {};
 
       if (_translationEdition == 'en.sahih') {
@@ -498,15 +492,21 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           transMap[item['verse_id'] as int] = item['text'] as String? ?? '';
         }
       } else {
-        // Authenticated Quran Foundation API (alquran.cloud is only used as
-        // an internal fallback inside QuranApiService for unknown editions)
-        final fetched = await QuranApiService.instance.surahTranslation(
-          surah:       surah,
-          edition:     _translationEdition,
-          surahLength: _surahLengths[surah],
-          startVerseId: startVerseId,
-        );
-        transMap.addAll(fetched);
+        // Free alquran.cloud API ΓÇö delivers the whole surah in one request
+        final apiUrl =
+            'https://api.alquran.cloud/v1/surah/$surah/$_translationEdition';
+        final res = await http
+            .get(Uri.parse(apiUrl), headers: {'Accept': 'application/json'})
+            .timeout(const Duration(seconds: 15));
+        if (res.statusCode == 200) {
+          final js = jsonDecode(res.body);
+          final ayahs = js['data']?['ayahs'] as List? ?? [];
+          for (final a in ayahs) {
+            final num = a['numberInSurah'] as int? ?? 0;
+            transMap[startVerseId + num - 1] = a['text'] as String? ?? '';
+          }
+        }
+        // On failure transMap stays empty; translation shows blank.
       }
 
       // Pre-cache every ayah in the surah so navigation is instant
@@ -514,7 +514,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       final nowStr = DateTime.now().toIso8601String();
       for (int a = 1; a <= _surahLengths[surah]; a++) {
         final vId  = startVerseId + a - 1;
-        final cKey = '$surah:$a:_translationEdition:$recEdition';
+        final cKey = '$surah:$a:$_translationEdition:$recEdition';
         await _cache.put(cKey, {
           'arabic'   : arabicMap[a] ?? '',
           'trans'    : transMap[vId] ?? '',
@@ -529,7 +529,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (fresh != null && fresh['arabic'].toString().isNotEmpty) {
         if (mounted) {
           setState(() {
-            _arabic      = _QuranScreenState._stripQuranicAnnotations(fresh['arabic']);
+            _arabic      = fresh['arabic'];
             _translation = fresh['trans'];
             _audioUrl    = fresh['audio'];
             _surahName   = fresh['surahName'];
@@ -545,7 +545,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
   }
 
-  // ── Navigate to next ayah ────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Navigate to next ayah ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _nextAyah({bool fromAutoPlay = false}) async {
     await _player.stop();
 
@@ -556,10 +556,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     bool earnRewards = !fromAutoPlay && !_autoAdvance && !_repeatAyah;
 
     setState(() {
-      // Sync _currentPage when crossing a surah boundary so Mushaf stays aligned
-      if (nextSurah != _surah) {
-        _currentPage = _kSurahStartPage[nextSurah.clamp(1, 114)];
-      }
       _surah = nextSurah; _ayah = nextAyah; _wbwWords = [];
       if (earnRewards) {
         _ayahsToday++; _pointsToday += XpReward.ayahRead;
@@ -583,7 +579,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         await XpService.instance.earnXp(XpReward.ayahRead);
         // Update live notification counter
         NoorLiveNotificationService.instance.recordAyah();
-        // Record quran streak (idempotent — only counts once per day)
+        // Record quran streak (idempotent ΓÇö only counts once per day)
         StreakService.instance.recordActivity(StreakType.quran);
         // Award first-read badge on the very first ayah
         if (_ayahsToday == 1) {
@@ -593,28 +589,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       final today = _todayStr();
       await _sb.from('quran_progress').update({
         'current_surah': s, 'current_ayah': a,
-        'current_page': _currentPage,
         'ayahs_read_today': _ayahsToday,
         'last_read_date': today, 'updated_at': DateTime.now().toIso8601String(),
       }).eq('user_id', uid);
     } catch (_) {}
   }
 
-  // Lightweight save: page + surah + ayah position (no XP/streaks) — called on mushaf nav
-  Future<void> _savePagePosition() async {
-    final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return;
-    try {
-      await _sb.from('quran_progress').update({
-        'current_surah': _surah,
-        'current_ayah' : _ayah,
-        'current_page' : _currentPage,
-        'updated_at'   : DateTime.now().toIso8601String(),
-      }).eq('user_id', uid);
-    } catch (_) {}
-  }
-
-  // ── Navigate to previous ayah ─────────────────────────────────────────────────
+  // ΓöÇΓöÇ Navigate to previous ayah ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _prevAyah() async {
     await _player.stop();
     int prevAyah = _ayah - 1, prevSurah = _surah;
@@ -622,17 +603,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       prevSurah = _surah > 1 ? _surah - 1 : 114;
       prevAyah  = _surahLengths[prevSurah]; // last ayah of prev surah
     }
-    setState(() {
-      // Sync _currentPage when crossing a surah boundary
-      if (prevSurah != _surah) {
-        _currentPage = _kSurahStartPage[prevSurah.clamp(1, 114)];
-      }
-      _surah = prevSurah; _ayah = prevAyah; _wbwWords = [];
-    });
+    setState(() { _surah = prevSurah; _ayah = prevAyah; _wbwWords = []; });
     _fetchAyah(prevSurah, prevAyah);
   }
 
-  // ── Fetch word-by-word data ───────────────────────────────────────────────────
+  // ΓöÇΓöÇ Fetch word-by-word data ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _fetchWordByWord(int surah, int ayah) async {
     setState(() { _wbwLoading = true; _wbwWords = []; });
     final wbwCacheKey = 'wbw_${surah}_$ayah';
@@ -648,9 +623,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
     }
     try {
-      // Authenticated Quran Foundation API (token from .env)
-      final words = await QuranApiService.instance.wordsByKey('$surah:$ayah');
-      if (words.isNotEmpty) {
+      final url = 'https://api.quran.com/api/v4/verses/by_key/$surah:$ayah'
+          '?words=true&word_fields=text_uthmani,text_indopak&word_translation_language=en';
+      final res = await http.get(Uri.parse(url),
+          headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 10));
+      if (res.statusCode == 200) {
+        final js = jsonDecode(res.body);
+        final verse = js['verse'];
+        final rawWords = verse?['words'] as List? ?? [];
+        final words = rawWords
+            .where((w) => w['char_type_name'] != 'end')
+            .map<Map<String, dynamic>>((w) => {
+              'arabic': w['text_uthmani'] ?? w['text'] ?? '',
+              'translation': w['translation']?['text'] ?? '',
+            }).toList();
         await _cache.put(wbwCacheKey, {
           'words': words,
           'ts': DateTime.now().toIso8601String(),
@@ -664,7 +650,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
   }
 
-  // ── Surah → first page lookup (Hafs Uthmani) — offline fallback ──────────────
+  // ΓöÇΓöÇ Surah ΓåÆ first page lookup (Hafs Uthmani) ΓÇö offline fallback ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   static const _kSurahStartPage = <int>[
     0,  // 0 unused (1-indexed)
     1,2,50,77,106,128,151,177,187,208,       // 1-10
@@ -681,32 +667,17 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     603,604,604,604,                         // 111-114
   ];
 
-  /// Reverse lookup: given a Quran page number, return the surah whose
-  /// start page is ≤ that page (i.e. the surah a user is currently reading).
-  static int _resolveSurahForPage(int page) {
-    int surah = 1;
-    for (int s = 1; s <= 114; s++) {
-      if (_kSurahStartPage[s] <= page) {
-        surah = s;
-      } else {
-        break;
-      }
-    }
-    return surah;
-  }
-
   // Resolves the Quran page number for the current _surah:_ayah.
-
   // 1. Checks Hive cache (30-day TTL)
   // 2. Fetches from api.quran.com
   // 3. Falls back to surah start-page table
   Future<int> _resolvePageForCurrentAyah() async {
-    final cacheKey = 'pagenum_${_surah}__ayah';
+    final cacheKey = 'pagenum_${_surah}_$_ayah';
     final cached = _cache.get(cacheKey);
     if (cached is int) return cached;
 
     try {
-      final url = 'https://api.quran.com/api/v4/verses/by_key/_surah:_ayah'
+      final url = 'https://api.quran.com/api/v4/verses/by_key/$_surah:$_ayah'
           '?fields=page_number';
       final res = await http
           .get(Uri.parse(url), headers: {'Accept': 'application/json'})
@@ -722,85 +693,54 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return _kSurahStartPage[_surah.clamp(1, 114)];
   }
 
-  // ── Full-page Mushaf: fetch all ayahs for a page ─────────────────────────────
-  Future<List<Map<String, dynamic>>> _fetchPageAyahs(int page) async {
-    if (page < 1 || page > 604) return [];
+  // ΓöÇΓöÇ Full-page Mushaf: fetch all ayahs for a page ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  Future<void> _fetchFullPage(int page) async {
+    if (mounted) setState(() { _pageLoading = true; _pageAyahs = []; });
+
     final cacheKey = 'fullpage_$page';
     final cached = _cache.get(cacheKey);
     if (cached != null) {
       final cachedAt = DateTime.tryParse((cached as Map)['ts'] ?? '');
       if (cachedAt != null && DateTime.now().difference(cachedAt).inDays < 30) {
-        return (cached['ayahs'] as List)
+        final ayahs = (cached['ayahs'] as List)
             .map((a) => Map<String, dynamic>.from(a as Map))
             .toList();
+        if (mounted) setState(() { _pageAyahs = ayahs; _pageLoading = false; });
+        return;
       }
     }
+
     try {
-      // Authenticated Quran Foundation API (token from .env)
-      final ayahs = await QuranApiService.instance.versesByPage(page);
-      if (ayahs.isNotEmpty) {
+      final url = 'https://api.quran.com/api/v4/verses/by_page/$page'
+          '?words=false&fields=text_uthmani,verse_key,page_number&per_page=50';
+      final res = await http.get(Uri.parse(url),
+          headers: {'Accept': 'application/json'}).timeout(const Duration(seconds: 12));
+      if (res.statusCode == 200) {
+        final js = jsonDecode(res.body);
+        final verses = js['verses'] as List? ?? [];
+        final ayahs = verses.map<Map<String, dynamic>>((v) {
+          final key = (v['verse_key'] as String).split(':');
+          return {
+            'surah': int.tryParse(key[0]) ?? 1,
+            'ayah': int.tryParse(key[1]) ?? 1,
+            'arabic': v['text_uthmani'] ?? '',
+          };
+        }).toList();
         await _cache.put(cacheKey, {
           'ayahs': ayahs,
           'ts': DateTime.now().toIso8601String(),
         });
-        return ayahs;
+        if (mounted) setState(() { _pageAyahs = ayahs; _pageLoading = false; });
+      } else {
+        if (mounted) setState(() => _pageLoading = false);
       }
-    } catch (_) {}
-    return [];
+    } catch (_) {
+      if (mounted) setState(() => _pageLoading = false);
+    }
   }
 
-  // ── Load a page into _loadedPages for continuous scroll ──
-  Future<void> _loadPageForScroll(int page) async {
-    if (_loadingPages.contains(page) || _loadedPages.containsKey(page)) return;
-    if (page < 1 || page > 604) return;
-    _loadingPages.add(page);
-    final ayahs = await _fetchPageAyahs(page);
-    _loadingPages.remove(page);
-    if (mounted) setState(() => _loadedPages[page] = ayahs);
-  }
-
-  // ── Fetch a single page (used by timer-bar prev/next arrows) ──
-  Future<void> _fetchFullPage(int page) async {
-    if (page < 1 || page > 604) return;
-    // Clear only the target page so it re-fetches; keep neighboring pages loaded
-    _loadedPages.remove(page);
-    _loadingPages.remove(page);
-    await _loadPageForScroll(page);
-    // Pre-load neighbors
-    _loadPageForScroll(page + 1);
-    if (page > 1) _loadPageForScroll(page - 1);
-  }
-
-  // ── Enter Mushaf in Continuous Feed mode ──────
-  void _enterFullPageScrollMode(int startPage) {
-    _fullPageScrollController?.dispose();
-    _loadedPages.clear();
-    _loadingPages.clear();
-    
-    _currentPage = startPage;
-    _feedJumpPage = startPage;
-    _feedCenterKey = UniqueKey(); // Resets CustomScrollView to center on this newly opened page
-    
-    _fullPageScrollController = ScrollController();
-    _fullPageScrollController!.addListener(_onMushafScroll);
-
-    // Pre-load this page and neighbors for instant display
-    _loadPageForScroll(startPage);
-    _loadPageForScroll(startPage + 1);
-    if (startPage > 1) _loadPageForScroll(startPage - 1);
-    
-    if (_timerShouldRun) _startPageTimer();
-  }
-
-  // Scroll listener - tracks scroll activity to keep the XP timer alive, 
-  // and allows fetching further pages as they lazily build.
-  void _onMushafScroll() {
-    _savePagePosition(); // Persist last known state occasionally
-  }
-
-
-  // ── Full-page timer: 1 XP per 30 seconds ─────────────────────────────────────
-  // Fresh start — resets seconds (use when entering full-page or navigating pages)
+  // ΓöÇΓöÇ Full-page timer: 1 XP per 30 seconds ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  // Fresh start ΓÇö resets seconds (use when entering full-page or navigating pages)
   // Sets _timerShouldRun = true (user intent: timer should run).
   void _startPageTimer() {
     _timerShouldRun = true;
@@ -810,7 +750,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _pageTimer = _makePageTimer();
   }
 
-  // Resume — continues from current _pageSeconds (use after pause/screen-unlock)
+  // Resume ΓÇö continues from current _pageSeconds (use after pause/screen-unlock)
   // Sets _timerShouldRun = true.
   void _resumePageTimer() {
     _timerShouldRun = true;
@@ -843,7 +783,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return '$m:$s';
   }
 
-  // ── Jump to specific surah ────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Jump to specific surah ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   void _showSurahPicker() {
     showModalBottomSheet(
       context: context, isScrollControlled: true,
@@ -862,15 +802,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               final n = i + 1;
               final isCurrent = n == _surah;
               return ListTile(
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() { _surah = n; _ayah = 1; });
-                  _fetchAyah(n, 1);
-                  // Sync _currentPage so Mushaf opens at the correct page
-                  _currentPage = _kSurahStartPage[n.clamp(1, 114)];
-                  // Also persist so DB stays in sync
-                  _savePagePosition();
-                },
+                onTap: () { Navigator.pop(context); setState(() { _surah = n; _ayah = 1; }); _fetchAyah(n, 1); },
                 leading: Container(width: 36, height: 36,
                   decoration: BoxDecoration(shape: BoxShape.circle,
                       color: isCurrent ? _kTeal : const Color(0xFFF0FBF9)),
@@ -890,9 +822,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  // ── Toggle bookmark ───────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Toggle bookmark ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _toggleBookmark() async {
-    final key = '$_surah:_ayah';
+    final key = '$_surah:$_ayah';
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
 
@@ -908,12 +840,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         await _sb.from('quran_bookmarks').insert({
           'user_id': uid, 'surah': _surah, 'ayah': _ayah, 'surah_name': _surahName,
         });
-        if (mounted) _showSnack('Bookmarked _surahName _surah:_ayah');
+        if (mounted) _showSnack('Bookmarked $_surahName $_surah:$_ayah');
       } catch (_) { setState(() => _bookmarks.remove(key)); }
     }
   }
 
-  // ── Inline Tafsir ────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Inline Tafsir ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _fetchTafsirText({required int editionIdx, void Function()? onDone}) async {
     final def = _qTafsirEditions[editionIdx];
     final cacheKey = 'qtafsir_${_surah}_${_ayah}_${def.id}';
@@ -925,7 +857,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     try {
       final cdnUrl = 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main'
-          '/tafsir/${def.slug}/_surah.json';
+          '/tafsir/${def.slug}/$_surah.json';
       final res = await http.get(Uri.parse(cdnUrl)).timeout(const Duration(seconds: 15));
       if (res.statusCode == 200) {
         final js = jsonDecode(res.body);
@@ -999,7 +931,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       decoration: BoxDecoration(color: _accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
                       child: Icon(Icons.menu_book_rounded, color: _accent, size: 20)),
                     const SizedBox(width: 10),
-                    Expanded(child: Text('Tafsir · _surahName _surah:_ayah',
+                    Expanded(child: Text('Tafsir ┬╖ $_surahName $_surah:$_ayah',
                         style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: lblC))),
                     IconButton(icon: Icon(Icons.close_rounded, color: subC, size: 22),
                         onPressed: () => Navigator.pop(ctx)),
@@ -1066,7 +998,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         Center(child: Padding(
                           padding: const EdgeInsets.all(32),
                           child: Column(children: [
-                            const Text('📖', style: TextStyle(fontSize: 40)),
+                            const Text('≡ƒôû', style: TextStyle(fontSize: 40)),
                             const SizedBox(height: 12),
                             Text('Tafsir not available for this ayah.',
                                 textAlign: TextAlign.center,
@@ -1100,7 +1032,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  // ── Audio playback ────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Audio playback ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
   Future<void> _togglePlay() async {
     if (_audioUrl == null || _audioUrl!.isEmpty) {
@@ -1111,22 +1043,31 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       await _player.pause();
       return;
     }
-    // Always stop → setUrl → play (most reliable pattern across devices)
+    // Always stop ΓåÆ setUrl ΓåÆ play (most reliable pattern across devices)
+    setState(() => _audioLoading = true);
     try {
       await _player.stop();
       await _player.setUrl(_audioUrl!);
+      setState(() => _audioLoading = false);
       await _player.play();
     } on PlayerException catch (e) {
       if (mounted) {
+        setState(() => _audioLoading = false);
         _showSnack('Playback error: ${e.message ?? "Unknown error"}');
       }
     } catch (_) {
       if (mounted) {
-        _showSnack('Audio unavailable — check internet connection.');
+        setState(() => _audioLoading = false);
+        _showSnack('Audio unavailable ΓÇö check internet connection.');
       }
     }
   }
 
+  Future<void> _loadAudioForReciter() async {
+    await _player.stop();
+    setState(() { _pos = Duration.zero; _dur = Duration.zero; _isPlaying = false; });
+    await _fetchAyah(_surah, _ayah); // re-fetch gets new audio URL for new reciter
+  }
 
   String _todayStr() => DateTime.now().toIso8601String().split('T')[0];
 
@@ -1139,8 +1080,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     ));
   }
 
+  String _fmtDur(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
 
-  // ── Translation block helpers ─────────────────────────────────────────────────
+  // ΓöÇΓöÇ Translation block helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   /// Returns widgets for the language label pill + author sub-label (for LTR/RTL header row)
   List<Widget> _buildTranslationHeaderLeft(
       String langLabel, String authorLabel, Color accent, bool darkMode) {
@@ -1205,14 +1151,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  bool get _isBookmarked  => _bookmarks.contains('$_surah:_ayah');
-  bool get _isFavourited  => _favourites.contains('$_surah:_ayah');
+  bool get _isBookmarked  => _bookmarks.contains('$_surah:$_ayah');
+  bool get _isFavourited  => _favourites.contains('$_surah:$_ayah');
 
-  // ── Toggle favourite ──────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Toggle favourite ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   Future<void> _toggleFavourite() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) { _showSnack('Sign in to save favourites'); return; }
-    final key = '$_surah:_ayah';
+    final key = '$_surah:$_ayah';
     final adding = !_isFavourited;
     setState(() {
       if (adding) {
@@ -1242,10 +1188,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         }
       });
     }
-    _showSnack(adding ? '♥️ Added to Favourites' : 'Removed from Favourites');
+    _showSnack(adding ? 'ΓÖÑ∩╕Å Added to Favourites' : 'Removed from Favourites');
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   void _openSettings() {
     showModalBottomSheet(
       context: context,
@@ -1361,7 +1307,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   padding:
                       const EdgeInsets.fromLTRB(20, 0, 20, 40),
                   children: [
-                    // ═ APPEARANCE
+                    // ΓòÉ APPEARANCE
                     sHead('APPEARANCE', Icons.palette_rounded),
                     sTile('Dark Mode',
                         'Comfortable night-time reading',
@@ -1606,7 +1552,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       ),
                     ),
 
-                    // ═ ARABIC FONT STYLE
+                    // ΓòÉ ARABIC FONT STYLE
                     sHead('ARABIC FONT STYLE', Icons.font_download_rounded),
                     Padding(padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
@@ -1698,7 +1644,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       ),
                     ),
 
-                    // ═ READING LAYOUT
+                    // ΓòÉ READING LAYOUT
                     sHead('READING LAYOUT',
                         Icons.view_agenda_rounded),
                     sTile('Show Translation',
@@ -1722,7 +1668,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         _showSurahBanner,
                         (v) => _showSurahBanner = v),
 
-                    // ═ AUDIO & PLAYBACK
+                    // ΓòÉ AUDIO & PLAYBACK
                     sHead('AUDIO & PLAYBACK',
                         Icons.headphones_rounded),
                     sTile('Auto-Advance',
@@ -1739,7 +1685,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               v ? LoopMode.one : LoopMode.off);
                         }),
 
-                    // ═ NOTIFICATIONS
+                    // ΓòÉ NOTIFICATIONS
                     sHead('NOTIFICATIONS & ALERTS',
                         Icons.notifications_rounded),
                     sTile('Daily Reading Reminder',
@@ -1753,7 +1699,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         _soundAlerts,
                         (v) => _soundAlerts = v),
 
-                    // ═ ADVANCED
+                    // ΓòÉ ADVANCED
                     sHead('ADVANCED', Icons.settings_rounded),
                     sTile('Word-by-Word Mode',
                         'Show each Arabic word with its English meaning',
@@ -1810,15 +1756,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               final sel = t.id == _translationEdition;
                               // Language flag emoji
                               final String flag;
-                              if (t.id.startsWith('en.')) { flag = '🇬🇧'; }
-                              else if (t.id.startsWith('ur.')) { flag = '🇵🇰'; }
-                              else if (t.id.startsWith('fr.')) { flag = '🇫🇷'; }
-                              else if (t.id.startsWith('tr.')) { flag = '🇹🇷'; }
-                              else if (t.id.startsWith('id.')) { flag = '🇮🇩'; }
-                              else if (t.id.startsWith('bn.')) { flag = '🇧🇩'; }
-                              else if (t.id.startsWith('de.')) { flag = '🇩🇪'; }
-                              else if (t.id.startsWith('es.')) { flag = '🇪🇸'; }
-                              else { flag = '🌐'; }
+                              if (t.id.startsWith('en.')) { flag = '≡ƒç¼≡ƒçº'; }
+                              else if (t.id.startsWith('ur.')) { flag = '≡ƒç╡≡ƒç░'; }
+                              else if (t.id.startsWith('fr.')) { flag = '≡ƒç½≡ƒç╖'; }
+                              else if (t.id.startsWith('tr.')) { flag = '≡ƒç╣≡ƒç╖'; }
+                              else if (t.id.startsWith('id.')) { flag = '≡ƒç«≡ƒç⌐'; }
+                              else if (t.id.startsWith('bn.')) { flag = '≡ƒçº≡ƒç⌐'; }
+                              else if (t.id.startsWith('de.')) { flag = '≡ƒç⌐≡ƒç¬'; }
+                              else if (t.id.startsWith('es.')) { flag = '≡ƒç¬≡ƒç╕'; }
+                              else { flag = '≡ƒîÉ'; }
                               return GestureDetector(
                                 onTap: () async {
                                   final newEdition = t.id;
@@ -1925,12 +1871,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  // ── build() ────────────────────────────────────────────────────────────
+  // ΓöÇΓöÇ build() ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   @override
   Widget build(BuildContext context) {
-    // Full mushaf mode takes over the entire screen
-    if (_fullPageMode) return _buildMushafPage();
-
     final bg     = _darkMode ? const Color(0xFF000000) : _kBg;
     final cardBg = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
     final barBg  = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
@@ -1976,7 +1919,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             ),
             onPressed: _toggleBookmark, tooltip: 'Bookmark',
           ),
-          // Tune button — glows when hint is showing
+          // Tune button ΓÇö glows when hint is showing
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.only(right: 4),
@@ -2031,9 +1974,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       color: _accent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(14)),
                   child: Row(children: [
-                    const Text('🌟', style: TextStyle(fontSize: 16)),
+                    const Text('≡ƒîƒ', style: TextStyle(fontSize: 16)),
                     const SizedBox(width: 8),
-                    Text('+_pointsToday Noor Points earned today!',
+                    Text('+$_pointsToday Noor Points earned today!',
                         style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -2070,15 +2013,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       Expanded(child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        Text('$_surahName • Surah _surah',
+                        Text('$_surahName ΓÇó Surah $_surah',
                             style: GoogleFonts.outfit(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white)),
                         const SizedBox(height: 2),
                         Text(
-                            'Ayah _ayah of '
-                            '${_surahLengths[_surah]}  •  Tap to change',
+                            'Ayah $_ayah of '
+                            '${_surahLengths[_surah]}  ΓÇó  Tap to change',
                             style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: Colors.white
@@ -2127,13 +2070,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  // ── Action pills row ─────────────────────────────────────────
+                  // ΓöÇΓöÇ Action pills row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
                     if (!_fullPageMode) ...[
-                      // 📖 Read Tafsir
+                      // ≡ƒôû Read Tafsir
                       _PillButton(
                         icon: Icons.menu_book_rounded,
                         label: 'Tafsir',
@@ -2142,7 +2085,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         darkMode: _darkMode,
                         onTap: _openTafsirSheet,
                       ),
-                      // 🎧 Listen
+                      // ≡ƒÄº Listen
                       _PillButton(
                         icon: _showAudioPlayer && _isPlaying
                             ? Icons.pause_circle_rounded
@@ -2157,35 +2100,37 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         },
                       ),
                     ],
-                    // 📖 Full Page Mushaf — always visible
+                    // ≡ƒùÆ∩╕Å Full Page ΓÇö always visible
                     _PillButton(
                       icon: Icons.menu_book_outlined,
-                      label: 'Mushaf',
-                      active: false,
+                      label: _fullPageMode ? 'Page $_currentPage  Γ£ò' : 'Full Page',
+                      active: _fullPageMode,
                       activeColor: const Color(0xFF4CAF50),
                       darkMode: _darkMode,
                       onTap: () async {
-                        final page = await _resolvePageForCurrentAyah();
-                        await _player.stop();
-                        setState(() {
-                          _showAudioPlayer = false;
-                          _wordByWord      = false;
-                          _wbwWords        = [];
-                          _fullPageMode    = true;
-                          _currentPage     = page;
-                          _showMushafControls = true;
-                        });
-                        _enterFullPageScrollMode(page);
-                        _startPageTimer();
-                        // Auto-hide overlay after 4 s
-                        _controlsHideTimer?.cancel();
-                        _controlsHideTimer = Timer(const Duration(seconds: 4), () {
-                          if (mounted) setState(() => _showMushafControls = false);
-                        });
+                        final entering = !_fullPageMode;
+                        if (entering) {
+                          // Resolve the exact page for the current ayah first
+                          final page = await _resolvePageForCurrentAyah();
+                          await _player.stop();
+                          setState(() {
+                            _showAudioPlayer = false;
+                            _wordByWord = false;
+                            _wbwWords = [];
+                            _fullPageMode = true;
+                            _currentPage = page;   // ΓåÉ sync to current position
+                          });
+                          _fetchFullPage(page);
+                          _startPageTimer();
+                        } else {
+                          _timerShouldRun = false; // clear intent on exit
+                          _stopPageTimer();
+                          setState(() => _fullPageMode = false);
+                        }
                       },
                     ),
                     if (!_fullPageMode)
-                      // 🔤 Word by Word
+                      // ≡ƒöñ Word by Word
                       _PillButton(
                         icon: Icons.translate_rounded,
                         label: 'Word by Word',
@@ -2215,8 +2160,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       child: CircularProgressIndicator(
                           color: _kTeal, strokeWidth: 2),
                     ))
-                  else if (_wordByWord) ...[ 
-                    // ── Word-by-Word Mode ────────────────────────────────────
+                  else if (_fullPageMode) ...[
+                    // ΓöÇΓöÇ Full Page Mushaf Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+                    _buildFullPageMushaf(txt, sub, cardBg),
+                  ] else if (_wordByWord) ...[ 
+                    // ΓöÇΓöÇ Word-by-Word Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
                     if (_wbwLoading)
                       Center(child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 32),
@@ -2233,19 +2181,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: Column(children: [
                           Icon(Icons.wifi_off_rounded, color: sub, size: 36),
                           const SizedBox(height: 8),
-                          Text('Word data unavailable. Check your connection.',
+                          Text('Word data unavailable.\nCheck your connection.',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(fontSize: 13, color: sub)),
                         ]),
                       ))
                     else
-                      _buildWordByWordGrid(txt, sub),
+                      _buildWordByWordView(txt, sub),
                   ] else ...[ 
-                    // ── Full Verse Mode ──────────────────────────────────────
-                    if (_ayah == 1 && _surah > 1 && _surah != 9) ...[
-                      _buildMushafBismillah(txt, _accent),
-                      const SizedBox(height: 16),
-                    ],
+                    // ΓöÇΓöÇ Full Verse Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
                     // Ayah number ornament (Quranly-inspired)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -2274,9 +2218,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     Directionality(
                       textDirection: TextDirection.rtl,
                       child: Text(
-                        _ayah == 1 && _surah > 1 && _surah != 9
-                            ? _QuranScreenState._stripBismillahPrefix(_arabic)
-                            : _arabic,
+                        _arabic,
                         textAlign: TextAlign.right,
                         style: _kArabicFonts[_arabicFontIdx].style(
                             _arabicFontSize, txt, 2.2, FontWeight.w700),
@@ -2284,38 +2226,130 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ),
                     if (_showTranslation) ...[
                       const SizedBox(height: 20),
-                      // ── Clean Translation Block ──────────
+                      // ΓöÇΓöÇ Premium Translation Block (Quranly-inspired) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
                       (() {
                         final def = _translations.firstWhere(
                           (t) => t.id == _translationEdition,
                           orElse: () => _translations.first,
                         );
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10, left: 4, right: 4),
-                          child: Text(
-                            _translation,
-                            textAlign: def.rtl ? TextAlign.right : TextAlign.left,
-                            textDirection: def.rtl
-                                ? TextDirection.rtl
-                                : TextDirection.ltr,
-                            style: def.rtl
-                                ? GoogleFonts.amiri(
-                                    fontSize: _translationFontSize + 3,
-                                    color: _darkMode
-                                        ? Colors.white.withValues(alpha: 0.85)
-                                        : const Color(0xFF2C2C2E),
-                                    height: 2.0,
-                                    fontWeight: FontWeight.w500,
-                                  )
-                                : GoogleFonts.outfit(
-                                    fontSize: _translationFontSize,
-                                    color: _darkMode
-                                        ? Colors.white.withValues(alpha: 0.85)
-                                        : const Color(0xFF2C2C2E),
-                                    height: 1.85,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 0.1,
+                        // Friendly language label
+                        final langLabel = def.name.split('ΓÇö').first.trim();
+                        final authorLabel = def.author;
+                        return Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            color: _darkMode
+                                ? const Color(0xFF2C2C2E)
+                                : _accent.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _darkMode
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : _accent.withValues(alpha: 0.18),
+                            ),
+                          ),
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // Accent sidebar bar
+                                Container(
+                                  width: 4,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [_accent, _accent.withValues(alpha: 0.5)],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
                                   ),
+                                ),
+                                // Content
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                                    child: Column(
+                                      crossAxisAlignment: def.rtl
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                      children: [
+                                        // Language pill header
+                                        Row(
+                                          mainAxisAlignment: def.rtl
+                                              ? MainAxisAlignment.spaceBetween
+                                              : MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            if (!def.rtl) ..._buildTranslationHeaderLeft(
+                                              langLabel, authorLabel, _accent, _darkMode),
+                                            // Right side: copy + share
+                                            Row(mainAxisSize: MainAxisSize.min, children: [
+                                              _buildTransActionBtn(
+                                                icon: Icons.copy_rounded,
+                                                tooltip: 'Copy',
+                                                accent: _accent,
+                                                darkMode: _darkMode,
+                                                onTap: () {
+                                                  Clipboard.setData(ClipboardData(
+                                                    text: '$_arabic\n\n$_translation',
+                                                  ));
+                                                  _showSnack('Ayah copied to clipboard');
+                                                },
+                                              ),
+                                              const SizedBox(width: 6),
+                                              _buildTransActionBtn(
+                                                icon: Icons.share_rounded,
+                                                tooltip: 'Share',
+                                                accent: _accent,
+                                                darkMode: _darkMode,
+                                                onTap: () {
+                                                  _showSnack('Sharing coming soon');
+                                                },
+                                              ),
+                                            ]),
+                                            if (def.rtl) ..._buildTranslationHeaderLeft(
+                                              langLabel, authorLabel, _accent, _darkMode),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        // Subtle separator
+                                        Divider(
+                                          height: 1,
+                                          color: _darkMode
+                                              ? Colors.white.withValues(alpha: 0.08)
+                                              : _accent.withValues(alpha: 0.15),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        // Translation text
+                                        Text(
+                                          _translation,
+                                          textAlign: def.rtl ? TextAlign.right : TextAlign.left,
+                                          textDirection: def.rtl
+                                              ? TextDirection.rtl
+                                              : TextDirection.ltr,
+                                          style: def.rtl
+                                              ? GoogleFonts.amiri(
+                                                  fontSize: _translationFontSize + 3,
+                                                  color: _darkMode
+                                                      ? Colors.white.withValues(alpha: 0.85)
+                                                      : const Color(0xFF2C2C2E),
+                                                  height: 2.0,
+                                                  fontWeight: FontWeight.w500,
+                                                )
+                                              : GoogleFonts.outfit(
+                                                  fontSize: _translationFontSize,
+                                                  color: _darkMode
+                                                      ? Colors.white.withValues(alpha: 0.85)
+                                                      : const Color(0xFF2C2C2E),
+                                                  height: 1.85,
+                                                  fontWeight: FontWeight.w400,
+                                                  letterSpacing: 0.1,
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       })(),
@@ -2323,6 +2357,91 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   ],
                 ]),
               ),
+              // ΓöÇΓöÇ Full Page Timer Bar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+              if (_fullPageMode) ...[
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 12)],
+                    border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
+                  ),
+                  child: Row(children: [
+                    Container(
+                      width: 38, height: 38,
+                      decoration: const BoxDecoration(
+                        color: Color(0x1F4CAF50),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.timer_rounded, color: Color(0xFF4CAF50), size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Page Reading ┬╖ Page $_currentPage',
+                          style: GoogleFonts.outfit(fontSize: 11, color: sub, fontWeight: FontWeight.w500)),
+                      Text(_pageTimerLabel,
+                          style: GoogleFonts.outfit(
+                              fontSize: 22, fontWeight: FontWeight.w800,
+                              color: const Color(0xFF4CAF50), letterSpacing: 1.5)),
+                    ]),
+                    const Spacer(),
+                    if (_pageXpEarned > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text('+$_pageXpEarned XP',
+                            style: GoogleFonts.outfit(
+                                fontSize: 12, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF4CAF50))),
+                      ),
+                    GestureDetector(
+                      onTap: () {
+                        if (_pageTimer != null) {
+                          // User explicitly pausing ΓÇö clear intent
+                          _timerShouldRun = false;
+                          _stopPageTimer();
+                          setState(() {});
+                        } else {
+                          _resumePageTimer(); // sets _timerShouldRun = true
+                        }
+                      },
+                      child: Container(
+                        width: 38, height: 38,
+                        decoration: const BoxDecoration(
+                          color: Color(0x1F4CAF50),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _pageTimer != null ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          color: const Color(0xFF4CAF50), size: 22),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: _currentPage > 1 ? () {
+                        setState(() { _currentPage--; _pageSeconds = 0; });
+                        _fetchFullPage(_currentPage);
+                      } : null,
+                      child: Icon(Icons.chevron_left_rounded,
+                          color: _currentPage > 1 ? txt : Colors.grey.shade400, size: 28),
+                    ),
+                    GestureDetector(
+                      onTap: _currentPage < 604 ? () {
+                        setState(() { _currentPage++; _pageSeconds = 0; });
+                        _fetchFullPage(_currentPage);
+                      } : null,
+                      child: Icon(Icons.chevron_right_rounded,
+                          color: _currentPage < 604 ? txt : Colors.grey.shade400, size: 28),
+                    ),
+                  ]),
+                ),
+              ],
               // Progress card
               if (_showProgressCard) ...[
                 const SizedBox(height: 14),
@@ -2351,7 +2470,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _accent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10)),
-                        child: Text('+_pointsToday pts',
+                        child: Text('+$_pointsToday pts',
                             style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
@@ -2393,12 +2512,17 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               const SizedBox(height: 16),
             ]),
           ))),
-          // Audio player stub — re-implement separately
-          if (!_fullScreenMode && _showAudioPlayer)
-            const SizedBox.shrink(),
-          // Nav row
+          // Audio player ΓÇö shown only when user taps Listen
           if (!_fullScreenMode)
-            _buildInlineNavRow(barBg: barBg, txt: txt),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeInOut,
+              child: _showAudioPlayer
+                  ? _buildAudioPlayer()
+                  : const SizedBox.shrink(),
+            ),
+          if (!_fullScreenMode)
+            _buildNavRow(barBg: barBg, txt: txt),
         ]),
         // Floating controls in full-screen mode
         if (_fullScreenMode)
@@ -2413,7 +2537,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       setState(() => _fullScreenMode = false),
                 ),
                 const Spacer(),
-                // ── Back: previous page OR previous ayah ──────────────────
+                // ΓöÇΓöÇ Back: previous page OR previous ayah ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
                 _fsFab(
                   icon: Icons.arrow_back_ios_rounded,
                   onTap: _fullPageMode
@@ -2426,7 +2550,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       : _prevAyah,
                 ),
                 const SizedBox(width: 10),
-                // ── Next: page (no points) OR ayah (+10 pts) ──────────────
+                // ΓöÇΓöÇ Next: page (no points) OR ayah (+10 pts) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
                 GestureDetector(
                   onTap: _fullPageMode
                       ? (_currentPage < 604
@@ -2450,7 +2574,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           color: Colors.white, size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        // Full-page mode → no points label
+                        // Full-page mode ΓåÆ no points label
                         _fullPageMode ? 'Next Page' : '+10 pts',
                         style: GoogleFonts.outfit(
                             fontSize: 13,
@@ -2484,728 +2608,381 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         ),
       );
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // MUSHAF IMMERSIVE MODE
-  // ─────────────────────────────────────────────────────────────────────────────
-
-  void _toggleMushafControls() {
-    _controlsHideTimer?.cancel();
-    if (!mounted) return;
-    setState(() => _showMushafControls = !_showMushafControls);
-    if (_showMushafControls) {
-      _controlsHideTimer = Timer(const Duration(seconds: 4), () {
-        if (mounted) setState(() => _showMushafControls = false);
-      });
-    }
-  }
-  // ── Word-by-Word grid ──────────────────────────────────────────────────────
-  Widget _buildWordByWordGrid(Color txt, Color sub) {
-    return LayoutBuilder(builder: (ctx, constraints) {
-      // 3 cards per row, uniform width, RTL order
-      const cols = 3;
-      const hGap = 8.0;
-      final cardW = (constraints.maxWidth - hGap * (cols - 1)) / cols;
-
-      // Build rows of 3 right-to-left
-      final rows = <Widget>[];
-      for (int i = 0; i < _wbwWords.length; i += cols) {
-        final rowWords = _wbwWords.sublist(i, (i + cols).clamp(0, _wbwWords.length));
-        // RTL: words go right→left, so reverse the row
-        final rowWidgets = rowWords.reversed.map((w) => SizedBox(
-          width: cardW,
-          child: _WbwWordChip(
-            arabic: _QuranScreenState._stripQuranicAnnotations(w['arabic'] as String? ?? ''),
-            transliteration: w['transliteration'] as String? ?? '',
-            translation: w['translation'] as String? ?? '',
-            arabicFontSize: _arabicFontSize * 0.70,
-            arabicFontIdx: _arabicFontIdx,
-            accentColor: _accent,
-            txtColor: txt,
-            subColor: sub,
-            darkMode: _darkMode,
-          ),
-        )).toList();
-
-        // Pad last row if not full
-        while (rowWidgets.length < cols) {
-          rowWidgets.insert(0, SizedBox(width: cardW));
-        }
-
-        rows.add(Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: rowWidgets
-              .expand((w) => [w, if (w != rowWidgets.last) const SizedBox(width: hGap)])
-              .toList(),
-        ));
-        rows.add(const SizedBox(height: 8));
-      }
-
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows);
-    });
-  }
-
-  // ── Bottom navigation row (Prev / Play-Pause / Next) ──────────────────────
-  Widget _buildInlineNavRow({required Color barBg, required Color txt}) {
-    final bottomPad = MediaQuery.of(context).padding.bottom;
-    return Container(
-      color: barBg,
-      padding: EdgeInsets.fromLTRB(20, 12, 20, 16 + bottomPad),
-      child: Row(children: [
-        // Prev
-        Expanded(child: ElevatedButton.icon(
-          onPressed: _saving ? null : _prevAyah,
-          icon: _saving
-              ? const SizedBox(width: 16, height: 16,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Icon(Icons.arrow_back_ios_rounded, size: 14, color: Colors.white),
-          label: Text('Prev',
-              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
-                  color: Colors.white)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _darkMode ? const Color(0xFF3A3A3C) : const Color(0xFF636366),
-            disabledBackgroundColor: (_darkMode ? const Color(0xFF3A3A3C) : const Color(0xFF636366)).withValues(alpha: 0.4),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            elevation: 0,
-          ),
-        )),
-        const SizedBox(width: 10),
-        // Next +10 pts
-        Expanded(flex: 2, child: ElevatedButton.icon(
-          onPressed: _saving ? null : _nextAyah,
-          icon: _saving
-              ? const SizedBox(width: 16, height: 16,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.white),
-          label: Text('Next +10 pts',
-              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
-                  color: Colors.white)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _accent,
-            disabledBackgroundColor: _accent.withValues(alpha: 0.4),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            elevation: 0,
-          ),
-        )),
-      ]),
-    );
-  }
-
-
-  void _exitMushafMode() {
-    _controlsHideTimer?.cancel();
-    _timerShouldRun = false;
-    _stopPageTimer();
-    _fullPageScrollController?.dispose();
-    _fullPageScrollController = null;
-
-    // ── Sync position back to normal-mode state ─────────────────────────────
-    // Derive surah from current page so normal-mode resumes at the same spot.
-    final syncedSurah = _resolveSurahForPage(_currentPage);
-    setState(() {
-      _fullPageMode = false;
-      _loadedPages.clear();
-      _surah     = syncedSurah;
-      _ayah      = 1;                         // start of that surah (safe default)
-      _surahName = _surahNames[syncedSurah - 1];
-    });
-    _fetchAyah(syncedSurah, 1);              // re-fetch for normal ayah card
-    _savePagePosition();                     // persist page + surah + ayah
-  }
-
-
-
-  Widget _buildMushafPage() {
-    final isDark  = _darkMode;
-    // Very soft greenish/parchment background — perfectly matching the Quran Majeed aesthetic
-    final pageBg  = isDark ? const Color(0xFF0F0B06) : Colors.white;
-    final textClr = isDark ? const Color(0xFFE8D5A8) : const Color(0xFF0A0A0A);
-    final goldClr = isDark ? const Color(0xFFD4A843) : const Color(0xFF8B6914);
-    final overlayBg = isDark
-        ? Colors.black.withValues(alpha: 0.90)
-        : Colors.white.withValues(alpha: 0.95);
-
-    return Scaffold(
-      backgroundColor: pageBg,
-      body: GestureDetector(
-        // Single tap: toggle the overlay controls
-        behavior: HitTestBehavior.opaque,
-        onTap: _toggleMushafControls,
-        child: Stack(children: [
-          // ── Continuous Feed (like Quran Majeed) ──
-          // Beautiful native infinite scroll feed using CustomScrollView
-          // This allows users to read with ANY font size without breaking page flow or needing nested scroll hacks
-          CustomScrollView(
-            center: _feedCenterKey,
-            controller: _fullPageScrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              // Scroll UP: previous pages
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final pageNum = _feedJumpPage - 1 - index;
-                    if (pageNum < 1) return null; // We reached page 1
-                    return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
-                  },
-                ),
-              ),
-              // Scroll DOWN: current and next pages
-              SliverList(
-                key: _feedCenterKey,
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final pageNum = _feedJumpPage + index;
-                    if (pageNum > 604) return null; // Max Quran pages 604
-                    return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
-                  },
-                ),
-              ),
-            ],
-          ),
-          // ── Overlay: fades in/out on tap ──────────────────────────────────
-          AnimatedOpacity(
-            opacity: _showMushafControls ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 250),
-            child: IgnorePointer(
-              ignoring: !_showMushafControls,
-              child: _buildMushafOverlay(overlayBg, goldClr, textClr),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
-
-  // One slide in the PageView — content fitted to fill the visible screen exactly
-  // (like Quran Majeed: no inner scrolling, the whole page is always visible).
-  Widget _buildMushafPageView(int pageNum, Color textClr, Color goldClr, Color pageBg) {
-    if (!_loadedPages.containsKey(pageNum) && !_loadingPages.contains(pageNum)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _loadPageForScroll(pageNum));
-    }
-    final ayahs = _loadedPages[pageNum];
-
-    // Loading state — minimal, centred
-    if (ayahs == null) {
-      return ColoredBox(
-        color: pageBg,
-        child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SizedBox(width: 28, height: 28,
-              child: CircularProgressIndicator(color: goldClr, strokeWidth: 1.8)),
-          const SizedBox(height: 14),
-          Text('Loading page $pageNum…',
-              style: GoogleFonts.lora(fontSize: 12,
-                  color: textClr.withValues(alpha: 0.45))),
-        ])),
-      );
-    }
-
-    // Return purely responsive box mapping. Scroll dimensions are now infinitely controlled by the outer CustomScrollView.
-    return Builder(
-      builder: (ctx) {
-        // Approximate header update as pages lazily scroll into the render buffer
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _currentPage != pageNum) {
-            setState(() {
-              _currentPage = pageNum;
-              final surahForPage = _resolveSurahForPage(pageNum);
-              _surahName = _surahNames[surahForPage - 1];
-            });
-          }
-        });
-
-        return ColoredBox(
-          color: pageBg,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 30.0),
-            child: _buildMushafPageBlock(pageNum, ayahs, textClr, goldClr, pageBg),
-          ),
-        );
-      }
-    );
-  }
-
-  // Builds the page content block.
-  // We use native text reflowing so the user's Font Size choice actually works.
-  Widget _buildMushafPageBlock(int pageNum, List<Map<String, dynamic>> ayahs,
-      Color textClr, Color goldClr, Color pageBg) {
-    if (ayahs.isEmpty) {
-      return Center(child: SizedBox(width: 24, height: 24,
-          child: CircularProgressIndicator(
-              color: goldClr.withValues(alpha: 0.5), strokeWidth: 1.8)));
-    }
-
-    // ── Group consecutive ayahs by surah ─────────────────────────────────────
-    final List<Widget> blocks = [];
-    String? lastSurah;
-    final Map<int, String> bismillahAction = {};
-    final List<Map<String, dynamic>> currentGroup = [];
-
-    void flushGroup() {
-      if (currentGroup.isEmpty) return;
-      blocks.add(_buildMushafTextBlock(currentGroup, textClr, goldClr));
-      currentGroup.clear();
-    }
-
-    for (final ayah in ayahs) {
-      final surahNum = ayah['surah'] as int;
-      final ayahNum  = ayah['ayah'] as int;
-      final surahKey = '$surahNum';
-      if (lastSurah != surahKey) {
-        flushGroup();
-        lastSurah = surahKey;
-        if (ayahNum == 1 && surahNum >= 1) {
-          if (surahNum > 1) blocks.add(const SizedBox(height: 10));
-          blocks.add(_buildMushafSurahBanner(surahNum, goldClr, textClr));
-          if (surahNum == 1) {
-            blocks.add(_buildMushafBismillah(textClr, goldClr));
-            bismillahAction[surahNum] = 'skip';
-          } else if (surahNum != 9) {
-            blocks.add(_buildMushafBismillah(textClr, goldClr));
-            bismillahAction[surahNum] = 'strip';
-          }
-          blocks.add(const SizedBox(height: 4));
-        }
-      }
-      final action = bismillahAction[surahNum];
-      if (ayahNum == 1 && action == 'skip') {
-        continue;
-      } else if (ayahNum == 1 && action == 'strip') {
-        final stripped = _stripBismillahPrefix(ayah['arabic'] as String? ?? '');
-        currentGroup.add({...ayah, 'arabic': stripped});
-      } else {
-        currentGroup.add(ayah);
-      }
-    }
-    flushGroup();
-
-    // ── Page number footer — small centred ornament like a printed Quran ────
-    blocks.add(const SizedBox(height: 16));
-    blocks.add(Center(
-      child: Text(
-        '— $pageNum —',
-        style: GoogleFonts.lora(
-            fontSize: 10, color: goldClr.withValues(alpha: 0.55),
-            fontStyle: FontStyle.italic),
-      ),
-    ));
-    blocks.add(const SizedBox(height: 16));
-
-    // NO nested scrolling! Render natively so it forms part of the unified scrolling feed
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: blocks,
-    );
-  }
-
-  /// Single justified RTL block for a surah-group of ayahs.
-  /// Uses a fixed generous font size — the FittedBox parent will scale
-  /// the entire page down to fit, so we don't need to calculate per-block.
-  Widget _buildMushafTextBlock(
-      List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr) {
-    // Tunable base font size to fit ~15 lines beautifully into the logical width
-    final double fontSize = _mushafFontSize;
-    const double lh       = 1.95;   // Safe line height for Scheherazade New (avoids cropping glyphs)
-
-    // Build one large span: each ayah separated by the end-of-ayah circle ۝
-    final spans = <InlineSpan>[];
-    for (int i = 0; i < ayahs.length; i++) {
-      final a = ayahs[i];
-      final text = _stripQuranicAnnotations(a['arabic'] as String? ?? '');
-      final ayahNum = a['ayah'] as int? ?? (i + 1);
-      // Convert to Arabic digits so the U+06DD character natively encloses them
-      final numStr = ayahNum.toString().split('').map((e) => '٠١٢٣٤٥٦٧٨٩'[int.parse(e)]).join('');
-
-      spans.add(TextSpan(text: text));
-      // Use a WidgetSpan with a Stack to forcefully center the digits inside the ornament.
-      spans.add(const TextSpan(text: ' '));
-      spans.add(WidgetSpan(
-        alignment: PlaceholderAlignment.middle,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Text('\u06DD', style: GoogleFonts.scheherazadeNew(
-              fontSize: fontSize * 1.5,
-              color: goldClr.withValues(alpha: 0.75),
-              height: 1.0,
-            )),
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(numStr, style: GoogleFonts.scheherazadeNew(
-                fontSize: fontSize * 0.55,
-                color: textClr,
-                height: 1.0,
-              )),
-            ),
-          ],
-        ),
-      ));
-      spans.add(const TextSpan(text: ' '));
-    }
-
-    final textStyle = GoogleFonts.scheherazadeNew(
-      fontSize: fontSize,
-      height: lh,
-      color: textClr,
-      fontWeight: FontWeight.w400,
-    );
-
-    return Text.rich(
-      TextSpan(style: textStyle, children: spans),
-      textDirection: TextDirection.rtl,
-      textAlign: TextAlign.justify,
-    );
-  }
-
-  /// Strips Quranic annotation characters that render as visible ornament
-  /// glyphs in Scheherazade New (waqf signs, tajweed marks, rub el-hizb, etc).
-  /// Standard harakat (diacritics ً ٌ ٍ َ ُ ِ ّ ْ) are fully preserved.
-  ///
-  /// Stripped ranges:
-  ///   U+06D6–U+06DC  waqf / pause marks (ۖ ۗ ۘ ۙ ۚ ۛ ۜ)
-  ///   U+06DD         Arabic End of Ayah ornament (۝)
-  ///   U+06DE         Arabic Start of Rub El Hizb (۞)
-  ///   U+06DF–U+06E4  tajweed marks (۟ ۠ ۡ ۢ ۣ ۤ)
-  ///   U+06E7–U+06E8  small high Meem / Noon (ۧ ۨ)
-  ///   U+06EA–U+06ED  combining stop marks (۪ ۫ ۬ ۭ)
-  static String _stripQuranicAnnotations(String s) =>
-      s.replaceAll(RegExp(r'[\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]'), '');
-
-
-
-  Widget _buildMushafSurahBanner(int surahNum, Color goldClr, Color textClr) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: goldClr.withValues(alpha: 0.55), width: 1.5),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Stack(alignment: Alignment.center, children: [
-        // Corner ornaments
-        for (final pos in [Alignment.topLeft, Alignment.topRight,
-            Alignment.bottomLeft, Alignment.bottomRight])
-          Positioned(
-            top:    pos == Alignment.topLeft    || pos == Alignment.topRight    ? 4 : null,
-            bottom: pos == Alignment.bottomLeft || pos == Alignment.bottomRight ? 4 : null,
-            left:   pos == Alignment.topLeft    || pos == Alignment.bottomLeft  ? 6 : null,
-            right:  pos == Alignment.topRight   || pos == Alignment.bottomRight ? 6 : null,
-            child: Text('❋', style: TextStyle(fontSize: 9, color: goldClr.withValues(alpha: 0.5))),
-          ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Text(
-            'سُورَةُ ${_surahNamesArabic[surahNum - 1]}',
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
-            style: GoogleFonts.scheherazadeNew(
-                fontSize: 18, fontWeight: FontWeight.w700,
-                color: goldClr, letterSpacing: 1.5),
-          ),
-        ),
-      ]),
-    );
-  }
-
-  static String _stripBismillahPrefix(String s) {
-    // Normalise: remove leading BOM / ZWNBSP that the DB may prepend
-    var text = s.replaceAll('\uFEFF', '').trimLeft();
-    
-    // Quick fast-path for exact Uthmani (Quran Majeed) style matches
-    const basmalaUthmani = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
-    final exactVariations = [
-      basmalaUthmani,
-      'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-      'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ',
-      'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ',
-      'بِسمِ اللَّهِ الرَّحمٰنِ الرَّحيمِ',
-      'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',
-    ];
-    for (final v in exactVariations) {
-      if (text.startsWith(v)) {
-        return text.substring(v.length).trimLeft();
-      }
-    }
-
-    // Advanced dynamic Regex matching (catches all forms of diacritics / tatweels)
-    // opt matches ANY combination of diacritics including Dagger Alifs and Tatweel extenders
-    const opt = r'[\u064B-\u065F\u0670\u06DF-\u06E8\u0600-\u060F\u0610-\u061A\u0640]*';
-    const sp = r'[\s]*'; 
-    final basmalaRegex = RegExp(
-        '^' +
-        'ب' + opt + 'س' + opt + 'م' + opt + sp +
-        '[اٱإ]' + opt + 'ل' + opt + 'ل' + opt + 'ه' + opt + sp +
-        '[اٱإ]' + opt + 'ل' + opt + 'ر' + opt + 'ح' + opt + 'م' + opt + 'ن' + opt + sp +
-        '[اٱإ]' + opt + 'ل' + opt + 'ر' + opt + 'ح' + opt + '[يی]' + opt + 'م' + opt + sp
-    );
-
-    final match = basmalaRegex.firstMatch(text);
-    if (match != null) {
-      return text.substring(match.end).trimLeft();
-    }
-    
-    return text;
-  }
-
-  Widget _buildMushafBismillah(Color textClr, Color goldClr) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          // Subtle gold-tinted panel — like Quran Majeed's Bismillah banner
-          color: goldClr.withValues(alpha: 0.07),
-          border: Border.symmetric(
-            horizontal: BorderSide(color: goldClr.withValues(alpha: 0.35), width: 0.8),
-          ),
-        ),
-        // Ensures the Bismillah never overflows the screen horizontally on big font sizes
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          // Left ornament
-          Text('﴾', style: TextStyle(
-              fontFamily: 'ScheherazadeNew',
-              fontSize: _arabicFontSize * 0.8,
-              color: goldClr.withValues(alpha: 0.6))),
-          const SizedBox(width: 10),
-          // Bismillah text — centered, gold, slightly larger than body
-          Text(
-            'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
-            style: GoogleFonts.scheherazadeNew(
-                fontSize: _arabicFontSize * 0.96,
-                color: goldClr,
-                fontWeight: FontWeight.w700,
-                height: 1.8),
-          ),
-          const SizedBox(width: 10),
-          // Right ornament
-          Text('﴿', style: TextStyle(
-              fontFamily: 'ScheherazadeNew',
-              fontSize: _arabicFontSize * 0.8,
-              color: goldClr.withValues(alpha: 0.6))),
-        ]),
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildMushafOverlay(Color overlayBg, Color goldClr, Color textClr) {
-    final pad = MediaQuery.of(context).padding;
-    return Column(children: [
-      // ── Top bar: gradient fade — Exit · Surah · Juz · XP ─────────────────
-      Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [overlayBg, overlayBg.withValues(alpha: 0)],
-          ),
-        ),
-        padding: EdgeInsets.fromLTRB(14, pad.top + 4, 14, 30),
-        child: Row(children: [
-          // Exit button
-          GestureDetector(
-            onTap: _exitMushafMode,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: goldClr.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: goldClr.withValues(alpha: 0.35)),
-              ),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.arrow_back_ios_rounded, color: goldClr, size: 13),
-                const SizedBox(width: 4),
-                Text('Exit', style: GoogleFonts.lora(
-                    fontSize: 13, fontWeight: FontWeight.w600, color: goldClr)),
-              ]),
-            ),
-          ),
-          const Spacer(),
-          // Centred surah + juz label
-          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(_surahName,
-                style: GoogleFonts.lora(fontSize: 16, fontWeight: FontWeight.w700,
-                    color: textClr)),
-            const SizedBox(height: 1),
-            Text('Page $_currentPage  ·  Juz ${_juzForPage(_currentPage)}',
-                style: GoogleFonts.lora(fontSize: 12,
-                    color: goldClr)),
-          ]),
-          // XP badge + Settings button
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (_pageXpEarned > 0)
-                Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: goldClr.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text('+$_pageXpEarned XP',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(fontSize: 11,
-                            fontWeight: FontWeight.w700, color: goldClr))),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: _openMushafSettings,
-                child: Container(
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                    color: goldClr.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: goldClr.withValues(alpha: 0.35)),
-                  ),
-                  child: Icon(Icons.tune_rounded, color: goldClr, size: 16),
-                ),
-              ),
-            ],
-          ),
-        ]),
-      ),
-      // Simple spacer — navigation is swipe-only (no tap buttons)
-      const Spacer()
-,
-      // ── Bottom bar: progress + page counter + timer ───────────────────────
-      Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter, end: Alignment.topCenter,
-            colors: [overlayBg, overlayBg.withValues(alpha: 0)],
-          ),
-        ),
-        padding: EdgeInsets.fromLTRB(20, 30, 20, pad.bottom + 8),
+  // ΓöÇΓöÇ Full-Page Mushaf View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  Widget _buildFullPageMushaf(Color txtColor, Color subColor, Color cardBg) {
+    if (_pageLoading) {
+      return Center(child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
         child: Column(children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(
-              value: (_currentPage / 604).clamp(0.0, 1.0),
-              minHeight: 3,
-              backgroundColor: goldClr.withValues(alpha: 0.12),
-              valueColor: AlwaysStoppedAnimation(goldClr.withValues(alpha: 0.70)),
+          CircularProgressIndicator(color: const Color(0xFF4CAF50), strokeWidth: 2),
+          const SizedBox(height: 14),
+          Text('Loading page $_currentPage...',
+              style: GoogleFonts.outfit(fontSize: 13, color: subColor)),
+        ]),
+      ));
+    }
+
+    if (_pageAyahs.isEmpty) {
+      return Center(child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Column(children: [
+          Icon(Icons.wifi_off_rounded, color: subColor, size: 40),
+          const SizedBox(height: 10),
+          Text('Page unavailable.\nCheck your connection.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontSize: 13, color: subColor)),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => _fetchFullPage(_currentPage),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.4)),
+              ),
+              child: Text('Retry', style: GoogleFonts.outfit(
+                  fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFF4CAF50))),
             ),
           ),
-          const SizedBox(height: 7),
-          Row(children: [
-            Text('$_currentPage / 604',
-                style: GoogleFonts.lora(fontSize: 12,
-                    fontWeight: FontWeight.w600, color: textClr)),
-            const Spacer(),
-            Icon(Icons.timer_outlined, color: goldClr, size: 14),
-            const SizedBox(width: 4),
-            Text(_pageTimerLabel,
-                style: GoogleFonts.lora(fontSize: 12,
-                    fontWeight: FontWeight.w600, color: textClr)),
-          ]),
         ]),
-      ),
-    ]);
-  }
+      ));
+    }
 
-  void _openMushafSettings() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    // Detect surah changes within the page for bismillah breaks
+    String? lastSurah;
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // ΓöÇΓöÇ Page header ΓöÇΓöÇ
+      Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          margin: const EdgeInsets.only(bottom: 14),
+          decoration: BoxDecoration(
+            border: Border.all(color: _accent.withValues(alpha: 0.35)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            'ΓÇö ╪╡┘ü╪¡╪⌐ $_currentPage ΓÇö',
+            textDirection: TextDirection.rtl,
+            style: GoogleFonts.amiri(fontSize: 14, color: _accent, fontWeight: FontWeight.w600),
+          ),
+        ),
       ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Mushaf Settings', 
-                      style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: _darkMode ? Colors.white : Colors.black)),
-                    const SizedBox(height: 20),
-                    ListTile(
-                      leading: Icon(Icons.bookmark_border_rounded, color: _accent),
-                      title: Text('Bookmark Page', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Page bookmarked!')));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.share_rounded, color: _accent),
-                      title: Text('Share Page', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sharing coming soon...')));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.format_size_rounded, color: _accent),
-                      title: Text('Font Size', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.remove_circle_outline, color: _accent),
-                            onPressed: () {
-                              setModalState(() {
-                                _mushafFontSize = (_mushafFontSize - 2).clamp(16.0, 48.0);
-                              });
-                              setState(() {}); 
-                            },
-                          ),
-                          Text('${_mushafFontSize.toInt()}', style: GoogleFonts.outfit(fontSize: 16, color: _darkMode ? Colors.white : Colors.black)),
-                          IconButton(
-                            icon: Icon(Icons.add_circle_outline, color: _accent),
-                            onPressed: () {
-                              setModalState(() {
-                                _mushafFontSize = (_mushafFontSize + 2).clamp(16.0, 48.0);
-                              });
-                              setState(() {}); 
-                            },
-                          ),
-                        ],
+
+      // ΓöÇΓöÇ Continuous RTL text with ayah markers ΓöÇΓöÇ
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: Wrap(
+          alignment: WrapAlignment.start,
+          runSpacing: 0,
+          children: _pageAyahs.expand<Widget>((ayah) {
+            final surahNum = ayah['surah'] as int;
+            final ayahNum  = ayah['ayah'] as int;
+            final arabic   = ayah['arabic'] as String;
+            final surahKey = '$surahNum';
+            final widgets  = <Widget>[];
+
+            // Surah name header when surah changes within the page
+            if (lastSurah != surahKey) {
+              lastSurah = surahKey;
+              if (ayahNum == 1 && surahNum > 1) {
+                widgets.add(SizedBox(width: double.infinity,
+                  child: Column(children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _accent.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _surahNames[surahNum - 1],
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.amiri(fontSize: 16, fontWeight: FontWeight.w700, color: _accent),
                       ),
                     ),
-                    ListTile(
-                      leading: Icon(Icons.palette_outlined, color: _accent),
-                      title: Text('Customise', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      subtitle: Text('Save custom page settings', style: GoogleFonts.outfit(color: Colors.grey, fontSize: 13)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Customise settings coming soon!')));
-                      },
+                    // Bismillah (except Surah 9)
+                    if (surahNum != 9)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          '╪¿┘É╪│┘Æ┘à┘É ┘▒┘ä┘ä┘Ä┘æ┘ç┘É ┘▒┘ä╪▒┘Ä┘æ╪¡┘Æ┘à┘Ä┘░┘å┘É ┘▒┘ä╪▒┘Ä┘æ╪¡┘É┘è┘à┘É',
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                          style: GoogleFonts.amiri(fontSize: 18, color: txtColor, fontWeight: FontWeight.w700, height: 2.0),
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                  ]),
+                ));
+              }
+            }
+
+            // Ayah text + end marker inline
+            widgets.add(
+              RichText(
+                textDirection: TextDirection.rtl,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: arabic,
+                      style: GoogleFonts.amiri(
+                        fontSize: _arabicFontSize * 0.78,
+                        height: 2.0,
+                        color: txtColor,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    // Ayah number circle (Unicode circle with number)
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        width: 28, height: 28,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _accent.withValues(alpha: 0.5)),
+                          color: _accent.withValues(alpha: 0.06),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$ayahNum',
+                            style: GoogleFonts.outfit(
+                              fontSize: 9, fontWeight: FontWeight.w700,
+                              color: _accent, height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             );
-          }
-        );
-      },
+            return widgets;
+          }).toList(),
+        ),
+      ),
+    ]);
+  }
+
+  // ΓöÇΓöÇ Word-by-Word View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  Widget _buildWordByWordView(Color txtColor, Color subColor) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.end,
+        spacing: 2,      // horizontal gap between chips
+        runSpacing: 8,   // vertical gap between rows
+        children: _wbwWords.map((wordData) {
+          final arabic = wordData['arabic'] as String? ?? '';
+          final translation = wordData['translation'] as String? ?? '';
+          return _WbwWordChip(
+            arabic: arabic,
+            translation: translation,
+            arabicFontSize: _arabicFontSize,
+            arabicFontIdx: _arabicFontIdx,
+            accentColor: _accent,
+            txtColor: txtColor,
+            subColor: subColor,
+            darkMode: _darkMode,
+          );
+        }).toList(),
+      ),
     );
   }
 
-  // Juz number (1–30) for a given Quran page (1–604).
-  static int _juzForPage(int page) {
-    const juzStart = [
-       1, 22, 42, 62, 82,102,121,142,162,182,
-     201,222,242,262,282,302,322,342,362,382,
-     402,422,442,462,482,502,522,542,562,582,
-    ];
-    for (int i = juzStart.length - 1; i >= 0; i--) {
-      if (page >= juzStart[i]) return i + 1;
-    }
-    return 1;
+
+
+  Widget _buildAudioPlayer() {
+    final bool hasAudio = _audioUrl != null && !_loading;
+    final sliderVal = _dur.inMilliseconds > 0
+        ? _pos.inMilliseconds.toDouble().clamp(0.0, _dur.inMilliseconds.toDouble())
+        : 0.0;
+    final sliderMax = _dur.inMilliseconds > 0 ? _dur.inMilliseconds.toDouble() : 1.0;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
+      decoration: BoxDecoration(
+        color: _kWhite, borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12)],
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        // ΓöÇΓöÇ Row 1: Reciter chips in horizontally scrollable row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        Row(children: [
+          const Text('≡ƒÄÖ∩╕Å', style: TextStyle(fontSize: 13)),
+          const SizedBox(width: 5),
+          Text('Reciter:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _kSub)),
+          const SizedBox(width: 6),
+          Expanded(child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: List.generate(_reciters.length, (i) {
+              final sel = i == _reciterIdx;
+              return GestureDetector(
+                onTap: () async {
+                  if (_reciterIdx == i) return;
+                  setState(() => _reciterIdx = i);
+                  await _loadAudioForReciter();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(right: i < 2 ? 6 : 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: sel ? _kTeal : _kBg,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: sel ? _kTeal : Colors.grey.shade200),
+                  ),
+                  child: Text(_reciters[i].$2,
+                      style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w700,
+                          color: sel ? Colors.white : _kSub)),
+                ),
+              );
+            })),
+          )),
+        ]),
+
+        // ΓöÇΓöÇ Row 2: Seek slider ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        SliderTheme(
+          data: SliderThemeData(
+            trackHeight: 4,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+            activeTrackColor: hasAudio ? _kTeal : Colors.grey.shade300,
+            inactiveTrackColor: hasAudio ? _kTealL : Colors.grey.shade200,
+            thumbColor: hasAudio ? _kTeal : Colors.grey.shade400,
+            overlayColor: _kTeal.withValues(alpha: 0.2),
+            disabledActiveTrackColor: Colors.grey.shade300,
+          ),
+          child: Slider(
+            value: sliderVal, min: 0, max: sliderMax,
+            onChanged: hasAudio ? (v) => _player.seek(Duration(milliseconds: v.toInt())) : null,
+          ),
+        ),
+
+        // ΓöÇΓöÇ Row 3: Controls + timer on same row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        Row(children: [
+          IconButton(
+            padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+            icon: Icon(Icons.skip_previous_rounded, size: 26,
+                color: hasAudio ? _kTeal : Colors.grey.shade300),
+            onPressed: hasAudio ? _prevAyah : null,
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: hasAudio ? _togglePlay : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 52, height: 52,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: !hasAudio
+                    ? Colors.grey.shade200
+                    : _isPlaying ? const Color(0xFF1FA882) : _kTeal,
+                boxShadow: hasAudio ? [BoxShadow(
+                    color: _kTeal.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))] : null,
+              ),
+              child: _audioLoading
+                  ? const Center(child: SizedBox(width: 20, height: 20,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5)))
+                  : Icon(
+                      !hasAudio ? Icons.hourglass_top_rounded
+                          : _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      color: hasAudio ? Colors.white : Colors.grey.shade400, size: 26),
+            ),
+          ),
+          const SizedBox(width: 12),
+          IconButton(
+            padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+            icon: Icon(Icons.skip_next_rounded, size: 26,
+                color: hasAudio ? _kTeal : Colors.grey.shade300),
+            onPressed: hasAudio ? _nextAyah : null,
+          ),
+          const Spacer(),
+          Text(
+            hasAudio ? '${_fmtDur(_pos)} / ${_fmtDur(_dur)}' : 'Loading audio...',
+            style: GoogleFonts.outfit(fontSize: 11, color: _kSub),
+          ),
+        ]),
+      ]),
+    );
   }
-} // end _QuranScreenState
 
+  Widget _buildNavRow({required Color barBg, required Color txt}) {
+    final bottomPad = MediaQuery.of(context).padding.bottom;
+    return Container(
+      color: barBg,
+      padding: EdgeInsets.fromLTRB(20, 12, 20, 16 + bottomPad),
+      child: Row(children: [
+        Expanded(child: OutlinedButton.icon(
+          onPressed: _saving ? null : (_fullPageMode
+              ? (_currentPage > 1
+                  ? () {
+                      setState(() { _currentPage--; _pageSeconds = 0; });
+                      _fetchFullPage(_currentPage);
+                    }
+                  : null)
+              : _prevAyah),
+          icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
+          label: Text('Previous',
+              style: GoogleFonts.outfit(
+                  fontSize: 14, fontWeight: FontWeight.w700)),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            side: BorderSide(
+                color: _darkMode
+                    ? Colors.white24
+                    : Colors.grey.shade300),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
+            foregroundColor: txt,
+          ),
+        )),
+        const SizedBox(width: 12),
+        Expanded(child: ElevatedButton.icon(
+          onPressed: _saving ? null : (_fullPageMode
+              ? (_currentPage < 604
+                  ? () {
+                      setState(() { _currentPage++; _pageSeconds = 0; });
+                      _fetchFullPage(_currentPage);
+                    }
+                  : null)
+              : _nextAyah),
+          icon: _saving
+              ? const SizedBox(
+                  width: 16, height: 16,
+                  child: CircularProgressIndicator(
+                      color: Colors.white, strokeWidth: 2))
+              : const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14, color: Colors.white),
+          label: Text(
+            _fullPageMode ? 'Next' : 'Next +10 pts',
+            style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: (_fullPageMode && _currentPage >= 604)
+                ? _accent.withValues(alpha: 0.4)
+                : _accent,
+            disabledBackgroundColor: _accent.withValues(alpha: 0.4),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
+            elevation: 0,
+          ),
+        )),
+      ]),
+    );
+  }
+}
 
-
-// ── All 114 surah names ───────────────────────────────────────────────────────
+// ΓöÇΓöÇ All 114 surah names ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const _surahNames = [
   'Al-Fatiha','Al-Baqarah','Ali \'Imran','An-Nisa','Al-Ma\'idah',
   'Al-An\'am','Al-A\'raf','Al-Anfal','At-Tawbah','Yunus',
@@ -3232,36 +3009,7 @@ const _surahNames = [
   'Al-Masad','Al-Ikhlas','Al-Falaq','An-Nas',
 ];
 
-// ── Surah names in Arabic (for mushaf banner headers) ────────────────────────
-const _surahNamesArabic = [
-  'الْفَاتِحَة','الْبَقَرَة','آلِ عِمْرَان','النِّسَاء','الْمَائِدَة',
-  'الْأَنْعَام','الْأَعْرَاف','الْأَنْفَال','التَّوْبَة','يُونُس',
-  'هُود','يُوسُف','الرَّعْد','إِبْرَاهِيم','الْحِجْر',
-  'النَّحْل','الْإِسْرَاء','الْكَهْف','مَرْيَم','طه',
-  'الْأَنْبِيَاء','الْحَجّ','الْمُؤْمِنُون','النُّور','الْفُرْقَان',
-  'الشُّعَرَاء','النَّمْل','الْقَصَص','الْعَنْكَبُوت','الرُّوم',
-  'لُقْمَان','السَّجْدَة','الْأَحْزَاب','سَبَأ','فَاطِر',
-  'يس','الصَّافَّات','ص','الزُّمَر','غَافِر',
-  'فُصِّلَت','الشُّورَى','الزُّخْرُف','الدُّخَان','الْجَاثِيَة',
-  'الْأَحْقَاف','مُحَمَّد','الْفَتْح','الْحُجُرَات','ق',
-  'الذَّارِيَات','الطُّور','النَّجْم','الْقَمَر','الرَّحْمَن',
-  'الْوَاقِعَة','الْحَدِيد','الْمُجَادَلَة','الْحَشْر','الْمُمْتَحَنَة',
-  'الصَّفّ','الْجُمُعَة','الْمُنَافِقُون','التَّغَابُن','الطَّلَاق',
-  'التَّحْرِيم','الْمُلْك','الْقَلَم','الْحَاقَّة','الْمَعَارِج',
-  'نُوح','الْجِنّ','الْمُزَّمِّل','الْمُدَّثِّر','الْقِيَامَة',
-  'الْإِنْسَان','الْمُرْسَلَات','النَّبَأ','النَّازِعَات','عَبَس',
-  'التَّكْوِير','الْإِنفِطَار','الْمُطَفِّفِين','الِانشِقَاق','الْبُرُوج',
-  'الطَّارِق','الْأَعْلَى','الْغَاشِيَة','الْفَجْر','الْبَلَد',
-  'الشَّمْس','اللَّيْل','الضُّحَى','الشَّرْح','التِّين',
-  'الْعَلَق','الْقَدْر','الْبَيِّنَة','الزَّلْزَلَة','الْعَادِيَات',
-  'الْقَارِعَة','التَّكَاثُر','الْعَصْر','الْهُمَزَة','الْفِيل',
-  'قُرَيْش','الْمَاعُون','الْكَوْثَر','الْكَافِرُون','النَّصْر',
-  'الْمَسَد','الْإِخْلَاص','الْفَلَق','النَّاس',
-];
-
-
-
-// ── Pill Button Widget ────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Pill Button Widget ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _PillButton extends StatefulWidget {
   final IconData icon;
   final String label;
@@ -3349,16 +3097,9 @@ class _PillButtonState extends State<_PillButton>
   }
 }
 
-// ── Word-by-Word Chip Widget ──────────────────────────────────────────────────
-/// A premium card for each Quranic word in the WbW grid.
-/// Always-visible border card (like Quran Majeed) with:
-///   • Large Arabic word (Scheherazade New / user font)
-///   • Thin gold divider
-///   • Italic transliteration in muted gold (if available)
-///   • English translation in sub-color
+// ΓöÇΓöÇ Word-by-Word Chip Widget ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _WbwWordChip extends StatefulWidget {
   final String arabic;
-  final String transliteration;
   final String translation;
   final double arabicFontSize;
   final int    arabicFontIdx;
@@ -3369,7 +3110,6 @@ class _WbwWordChip extends StatefulWidget {
 
   const _WbwWordChip({
     required this.arabic,
-    required this.transliteration,
     required this.translation,
     required this.arabicFontSize,
     required this.arabicFontIdx,
@@ -3385,17 +3125,17 @@ class _WbwWordChip extends StatefulWidget {
 
 class _WbwWordChipState extends State<_WbwWordChip>
     with SingleTickerProviderStateMixin {
-  bool _pressed = false;
+  bool _highlighted = false;
   late AnimationController _ctrl;
-  late Animation<double> _scale;
+  late Animation<double> _scaleAnim;
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 120));
-    _scale = Tween<double>(begin: 1.0, end: 0.94)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+        vsync: this, duration: const Duration(milliseconds: 150));
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.93).animate(
+        CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -3406,106 +3146,83 @@ class _WbwWordChipState extends State<_WbwWordChip>
 
   @override
   Widget build(BuildContext context) {
-    final cardBg   = widget.darkMode
-        ? const Color(0xFF2C2C2E)
-        : Colors.white;
-    final borderClr = widget.darkMode
-        ? Colors.white.withValues(alpha: 0.10)
-        : const Color(0xFFE0E0E0);
+    final goldUnderline = widget.accentColor.withValues(alpha: 0.75);
     final highlightBg = widget.accentColor.withValues(alpha: 0.10);
-    final goldClr  = widget.accentColor;
 
     return GestureDetector(
-      onTapDown:  (_) { setState(() => _pressed = true);  _ctrl.forward(); },
-      onTapUp:    (_) { setState(() => _pressed = false); _ctrl.reverse(); },
-      onTapCancel: () { setState(() => _pressed = false); _ctrl.reverse(); },
+      onTapDown: (_) {
+        setState(() => _highlighted = true);
+        _ctrl.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _highlighted = false);
+        _ctrl.reverse();
+      },
+      onTapCancel: () {
+        setState(() => _highlighted = false);
+        _ctrl.reverse();
+      },
       child: ScaleTransition(
-        scale: _scale,
+        scale: _scaleAnim,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          padding: const EdgeInsets.fromLTRB(8, 6, 8, 5),
           decoration: BoxDecoration(
-            color: _pressed ? highlightBg : cardBg,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: _pressed
-                  ? goldClr.withValues(alpha: 0.45)
-                  : borderClr,
-              width: _pressed ? 1.5 : 1.0,
-            ),
-            boxShadow: _pressed
-                ? []
-                : [BoxShadow(
-                    color: Colors.black.withValues(alpha: widget.darkMode ? 0.25 : 0.05),
-                    blurRadius: 4, offset: const Offset(0, 1))],
+            color: _highlighted ? highlightBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: _highlighted
+                ? Border.all(color: widget.accentColor.withValues(alpha: 0.3))
+                : null,
           ),
-          padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Arabic word — FittedBox auto-shrinks tall diacritics to fit card width
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
+          child: IntrinsicWidth(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Arabic word ΓÇö naturally sized
+                Text(
                   widget.arabic,
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.center,
-                  style: _kArabicFonts[widget.arabicFontIdx].style(
-                    widget.arabicFontSize,
-                    widget.txtColor,
-                    1.8,  // generous height so diacritics have room
-                    FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 5),
-              // Gold divider
-              Container(
-                height: 1.2,
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    goldClr.withValues(alpha: 0.0),
-                    goldClr.withValues(alpha: 0.6),
-                    goldClr.withValues(alpha: 0.0),
-                  ]),
-                ),
-              ),
-              const SizedBox(height: 4),
-              // Transliteration (italic, gold-tinted) — only if non-empty
-              if (widget.transliteration.isNotEmpty) ...[
-                Text(
-                  widget.transliteration,
-                  textAlign: TextAlign.center,
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.lora(
-                    fontSize: 9.5,
-                    fontStyle: FontStyle.italic,
-                    color: goldClr.withValues(alpha: 0.85),
-                    height: 1.3,
+                  overflow: TextOverflow.visible,
+                  style: _kArabicFonts[widget.arabicFontIdx].style(
+                    widget.arabicFontSize * 0.80,
+                    widget.txtColor,
+                    1.5,
+                    FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 3),
-              ],
-              // English translation
-              Text(
-                widget.translation,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w500,
-                  color: widget.subColor,
-                  height: 1.3,
+                // Gold underline ΓÇö stretches to match the column's intrinsic width
+                Container(
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    color: goldUnderline,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 3),
+                // English translation ΓÇö centered, same width as Arabic
+                Text(
+                  widget.translation,
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: widget.subColor,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-
-
