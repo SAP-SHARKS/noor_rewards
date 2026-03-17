@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -86,50 +85,22 @@ const List<_TransDef> _translations = [
 ];
 
 
-typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double? height, FontWeight weight) style});
+typedef _QuranScript = ({String name, String apiSlug, String arabicPreview, TextStyle Function(double size, Color color, double? height, FontWeight weight) style});
 
-final List<_ArabicFont> _kArabicFonts = [
+final List<_QuranScript> _kQuranScripts = [
   (
-    name: 'Amiri',
+    name: 'Uthmani (Madinah)',
+    apiSlug: 'uthmani',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.amiri(fontSize: size, color: color, height: height, fontWeight: weight),
+        GoogleFonts.amiri(fontSize: size + 4, color: color, height: height, fontWeight: weight),
   ),
   (
-    name: 'Scheherazade',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Lateef',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.lateef(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Noto Naskh',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    name: 'IndoPak',
+    apiSlug: 'indopak',
+    arabicPreview: 'بِسۡمِ اللهِ',
     style: (size, color, height, weight) =>
         GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Reem Kufi',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.reemKufi(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Cairo',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.cairo(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Harmattan Naskh',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.harmattan(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
 ];
 
@@ -165,7 +136,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   double _arabicFontSize    = 28.0;    // 20-44
   double _mushafFontSize    = 32.0;    // 16-48 (for full page mode)
   double _translationFontSize = 15.0;  // 12-22
-  int    _arabicFontIdx     = 0;       // index into _kArabicFonts
+  int    _quranScriptIdx     = 0;       // index into _kQuranScripts
   bool   _showTranslation   = false;   // show/hide translation block
   bool   _showProgressCard  = true;    // show/hide daily progress card
   bool   _showPointsBanner  = true;    // show/hide +points banner
@@ -448,7 +419,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   Future<void> _fetchAyah(int surah, int ayah) async {
     if (mounted) setState(() => _loading = true);
     final recEdition = _reciters[_reciterIdx].$1;
-    final cacheKey   = '$surah:$ayah:$_translationEdition:$recEdition';
+    final scriptSlug = _kQuranScripts[_quranScriptIdx].apiSlug;
+    final cacheKey   = '$surah:$ayah:$_translationEdition:$recEdition:$scriptSlug';
 
     // ── 1. Hive cache hit (7-day TTL) — skip entry if translation is empty ──
     final cached = _cache.get(cacheKey);
@@ -479,14 +451,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       int startVerseId = 1;
       for (int i = 1; i < surah; i++) { startVerseId += _surahLengths[i]; }
 
-      // Arabic text always from Supabase quran_verses (fully populated)
-      final arabicList = await _sb.from('quran_verses')
-          .select('ayah, text_uthmani')
-          .eq('surah', surah);
-      final arabicMap = {
-        for (var item in arabicList)
-          item['ayah'] as int: item['text_uthmani'] as String
-      };
+      // Fetch Arabic Script (Uthmani, Indopak, etc.) from Quran.com API
+      final arabicMap = await QuranApiService.instance.surahScript(surah: surah, scriptSlug: scriptSlug);
 
       // Translation: Supabase DB is primary for en.sahih (fastest).
       // All other editions go through QuranApiService, which tries the
@@ -516,13 +482,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         transMap.addAll(fetched);
       }
 
-      // Pre-cache every ayah in the surah so navigation is instant
       final sName  = _surahNames[surah];
       final nowStr = DateTime.now().toIso8601String();
       final recBitrate = _reciters[_reciterIdx].$4;
       for (int a = 1; a <= _surahLengths[surah]; a++) {
         final vId  = startVerseId + a - 1;
-        final cKey = '$surah:$a:$_translationEdition:$recEdition';
+        final cKey = '$surah:$a:$_translationEdition:$recEdition:$scriptSlug';
         await _cache.put(cKey, {
           'arabic'   : arabicMap[a] ?? '',
           'trans'    : transMap[vId] ?? '',
@@ -1157,70 +1122,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
 
-  // ── Translation block helpers ─────────────────────────────────────────────────
-  /// Returns widgets for the language label pill + author sub-label (for LTR/RTL header row)
-  List<Widget> _buildTranslationHeaderLeft(
-      String langLabel, String authorLabel, Color accent, bool darkMode) {
-    return [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: darkMode ? 0.25 : 0.12),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              langLabel,
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: accent,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            authorLabel,
-            style: GoogleFonts.outfit(
-              fontSize: 10,
-              color: darkMode
-                  ? Colors.white.withValues(alpha: 0.4)
-                  : const Color(0xFF8E8E93),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    ];
-  }
 
-  /// Small circular icon button used inside the translation card header
-  Widget _buildTransActionBtn({
-    required IconData icon,
-    required String tooltip,
-    required Color accent,
-    required bool darkMode,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Tooltip(
-        message: tooltip,
-        child: Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: accent.withValues(alpha: darkMode ? 0.2 : 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, size: 14, color: accent),
-        ),
-      ),
-    );
-  }
 
   bool get _isBookmarked  => _bookmarks.contains('$_surah:_ayah');
   bool get _isFavourited  => _favourites.contains('$_surah:_ayah');
@@ -1623,8 +1525,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       ),
                     ),
 
-                    // ═ ARABIC FONT STYLE
-                    sHead('ARABIC FONT STYLE', Icons.font_download_rounded),
+                    // ═ QURAN SCRIPT
+                    sHead('QURAN SCRIPT', Icons.draw_rounded),
                     Padding(padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -1642,27 +1544,28 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 decoration: BoxDecoration(
                                     color: _accent.withValues(alpha: 0.12),
                                     borderRadius: BorderRadius.circular(10)),
-                                child: Icon(Icons.text_format_rounded,
+                                child: Icon(Icons.draw_rounded,
                                     size: 20, color: _accent),
                               ),
                               const SizedBox(width: 12),
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text('Arabic Font Style',
+                                Text('Quran Script',
                                     style: GoogleFonts.outfit(
                                         fontSize: 14, fontWeight: FontWeight.w700, color: lblC)),
-                                Text(_kArabicFonts[_arabicFontIdx].name,
+                                Text(_kQuranScripts[_quranScriptIdx].name,
                                     style: GoogleFonts.outfit(
                                         fontSize: 11, color: const Color(0xFF8E8E93))),
                               ]),
                             ]),
                             const SizedBox(height: 16),
-                            ...List.generate(_kArabicFonts.length, (i) {
-                              final font = _kArabicFonts[i];
-                              final sel  = i == _arabicFontIdx;
+                            ...List.generate(_kQuranScripts.length, (i) {
+                              final scriptObj = _kQuranScripts[i];
+                              final sel  = i == _quranScriptIdx;
                               return GestureDetector(
                                 onTap: () {
-                                  setSt(() => _arabicFontIdx = i);
-                                  setState(() => _arabicFontIdx = i);
+                                  setSt(() => _quranScriptIdx = i);
+                                  setState(() => _quranScriptIdx = i);
+                                  _fetchAyah(_surah, _ayah); // Refetch to get new script
                                 },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 150),
@@ -1686,15 +1589,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(font.name,
+                                          Text(scriptObj.name,
                                               style: GoogleFonts.outfit(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700,
                                                   color: sel ? _accent : const Color(0xFF8E8E93))),
                                           const SizedBox(height: 4),
-                                          Text(font.arabicPreview,
+                                          Text(scriptObj.arabicPreview,
                                               textDirection: TextDirection.rtl,
-                                              style: font.style(22, lblC, 1.6, FontWeight.w700)),
+                                              style: scriptObj.style(22, lblC, 1.6, FontWeight.w700)),
                                         ],
                                       ),
                                     ),
@@ -2424,7 +2327,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             ? _QuranScreenState._stripBismillahPrefix(_arabic)
                             : _arabic,
                         textAlign: TextAlign.right,
-                        style: _kArabicFonts[_arabicFontIdx].style(
+                        style: _kQuranScripts[_quranScriptIdx].style(
                             _arabicFontSize, txt, 2.2, FontWeight.w700),
                       ),
                     ),
@@ -2670,7 +2573,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             transliteration: w['transliteration'] as String? ?? '',
             translation: w['translation'] as String? ?? '',
             arabicFontSize: _arabicFontSize * 0.70,
-            arabicFontIdx: _arabicFontIdx,
+            quranScriptIdx: _quranScriptIdx,
             accentColor: _accent,
             txtColor: txt,
             subColor: sub,
@@ -3085,11 +2988,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     const opt = r'[\u064B-\u065F\u0670\u06DF-\u06E8\u0600-\u060F\u0610-\u061A\u0640]*';
     const sp = r'[\s]*'; 
     final basmalaRegex = RegExp(
-        '^' +
-        'ب' + opt + 'س' + opt + 'م' + opt + sp +
-        '[اٱإ]' + opt + 'ل' + opt + 'ل' + opt + 'ه' + opt + sp +
-        '[اٱإ]' + opt + 'ل' + opt + 'ر' + opt + 'ح' + opt + 'م' + opt + 'ن' + opt + sp +
-        '[اٱإ]' + opt + 'ل' + opt + 'ر' + opt + 'ح' + opt + '[يی]' + opt + 'م' + opt + sp
+        '^'
+        'ب${opt}س${opt}م$opt$sp'
+        '[اٱإ]${opt}ل${opt}ل${opt}ه$opt$sp'
+        '[اٱإ]${opt}ل${opt}ر${opt}ح${opt}م${opt}ن$opt$sp'
+        '[اٱإ]${opt}ل${opt}ر${opt}ح$opt[يی]${opt}م$opt$sp'
     );
 
     final match = basmalaRegex.firstMatch(text);
@@ -3513,7 +3416,7 @@ class _WbwWordChip extends StatefulWidget {
   final String transliteration;
   final String translation;
   final double arabicFontSize;
-  final int    arabicFontIdx;
+  final int    quranScriptIdx;
   final Color accentColor;
   final Color txtColor;
   final Color subColor;
@@ -3524,7 +3427,7 @@ class _WbwWordChip extends StatefulWidget {
     required this.transliteration,
     required this.translation,
     required this.arabicFontSize,
-    required this.arabicFontIdx,
+    required this.quranScriptIdx,
     required this.accentColor,
     required this.txtColor,
     required this.subColor,
@@ -3601,7 +3504,7 @@ class _WbwWordChipState extends State<_WbwWordChip>
                   widget.arabic,
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.center,
-                  style: _kArabicFonts[widget.arabicFontIdx].style(
+                  style: _kQuranScripts[widget.quranScriptIdx].style(
                     widget.arabicFontSize,
                     widget.txtColor,
                     1.8,  // generous height so diacritics have room

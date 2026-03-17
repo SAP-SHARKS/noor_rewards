@@ -144,6 +144,32 @@ class QuranApiService {
         .toList();
   }
 
+  /// Full surah text in the given script slug (e.g. 'uthmani', 'indopak', 'imlaei').
+  Future<Map<int, String>> surahScript({
+    required int surah,
+    required String scriptSlug,
+  }) async {
+    final url = Uri.parse(
+      '${QuranApiConfig.apiBase}/quran/verses/$scriptSlug'
+      '?chapter_number=$surah'
+    );
+    try {
+      final res = await http.get(url, headers: await _headers()).timeout(const Duration(seconds: 15));
+      if (res.statusCode == 401) invalidateToken();
+      if (res.statusCode == 200) {
+        final verses = jsonDecode(res.body)['verses'] as List? ?? [];
+        final map = <int, String>{};
+        for (final v in verses) {
+          final vk = (v['verse_key'] as String).split(':');
+          final ayah = int.tryParse(vk.length > 1 ? vk[1] : '0') ?? 0;
+          map[ayah] = v['text_$scriptSlug'] as String? ?? '';
+        }
+        if (map.isNotEmpty) return map;
+      }
+    } catch (_) {}
+    return {};
+  }
+
   /// Full surah translation in the given edition identifier.
   ///
   /// The Quran.com v4 API supports these edition identifiers for translations:
