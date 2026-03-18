@@ -2992,10 +2992,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     const sp = r'[\s]*'; 
     final basmalaRegex = RegExp(
         '^'
-        'ب${opt}س${opt}م$opt$sp'
-        '[اٱإ]${opt}ل${opt}ل${opt}ه$opt$sp'
-        '[اٱإ]${opt}ل${opt}ر${opt}ح${opt}م${opt}ن$opt$sp'
-        '[اٱإ]${opt}ل${opt}ر${opt}ح$opt[يی]${opt}م$opt$sp'
+        'ب$optس$optم$opt$sp'
+        '[اٱإ]$optل$optل$optه$opt$sp'
+        '[اٱإ]$optل$optر$optح$optم$optن$opt$sp'
+        '[اٱإ]$optل$optر$optح$opt[يی]$optم$opt$sp'
     );
 
     final match = basmalaRegex.firstMatch(text);
@@ -3464,12 +3464,6 @@ class _WbwWordChipState extends State<_WbwWordChip>
 
   @override
   Widget build(BuildContext context) {
-    final cardBg   = widget.darkMode
-        ? const Color(0xFF2C2C2E)
-        : Colors.white;
-    final borderClr = widget.darkMode
-        ? Colors.white.withValues(alpha: 0.10)
-        : const Color(0xFFE0E0E0);
     final highlightBg = widget.accentColor.withValues(alpha: 0.10);
     final goldClr  = widget.accentColor;
 
@@ -3482,19 +3476,8 @@ class _WbwWordChipState extends State<_WbwWordChip>
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           decoration: BoxDecoration(
-            color: _pressed ? highlightBg : cardBg,
+            color: _pressed ? highlightBg : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: _pressed
-                  ? goldClr.withValues(alpha: 0.45)
-                  : borderClr,
-              width: _pressed ? 1.5 : 1.0,
-            ),
-            boxShadow: _pressed
-                ? []
-                : [BoxShadow(
-                    color: Colors.black.withValues(alpha: widget.darkMode ? 0.25 : 0.05),
-                    blurRadius: 4, offset: const Offset(0, 1))],
           ),
           padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
           child: Column(

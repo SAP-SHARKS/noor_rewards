@@ -17,46 +17,22 @@ typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(do
 
 final List<_ArabicFont> _kArabicFonts = [
   (
-    name: 'Amiri',
+    name: 'Uthmani',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style: (size, color, height, weight) =>
         GoogleFonts.amiri(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
-    name: 'Scheherazade',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Lateef',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.lateef(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Noto Naskh',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
+    name: 'Indo pak',
+    arabicPreview: 'بِسۡمِ اللهِ',
     style: (size, color, height, weight) =>
         GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
-    name: 'Reem Kufi',
+    name: 'Madina',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.reemKufi(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Cairo',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.cairo(fontSize: size, color: color, height: height, fontWeight: weight),
-  ),
-  (
-    name: 'Harmattan Naskh',
-    arabicPreview: 'بِسْمِ ٱللَّهِ',
-    style: (size, color, height, weight) =>
-        GoogleFonts.harmattan(fontSize: size, color: color, height: height, fontWeight: weight),
+        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
 ];
 
@@ -177,7 +153,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.arabicFontSize = prefs.getDouble('dhikr_ar_size') ?? 32.0;
       _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 14.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
-      _settings.arabicFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
+      int loadFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
+      if (loadFontIdx >= _kArabicFonts.length) loadFontIdx = 0;
+      _settings.arabicFontIdx = loadFontIdx;
       _isFirstTime = prefs.getBool('dhikr_first_time') ?? true;
       _favorites = prefs.getStringList('dhikr_favorites') ?? [];
     });
