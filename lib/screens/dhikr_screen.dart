@@ -1072,9 +1072,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE8F0FE),
+                          color: Colors.transparent,
                           shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                          border: Border.all(color: const Color(0xFF1A73E8), width: 1.5),
                         ),
                         child: IconButton(
                           onPressed: () {
@@ -1091,9 +1091,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       const SizedBox(height: 12),
                       Container(
                         decoration: BoxDecoration(
-                          color: widget.favorites.contains(azkar.id) ? const Color(0xFFE11D48) : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFFCE8E6)),
+                          color: widget.favorites.contains(azkar.id) ? const Color(0xFFE11D48) : Colors.transparent,
                           shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                          border: Border.all(color: const Color(0xFFE11D48), width: 1.5),
                         ),
                         child: IconButton(
                           onPressed: () {
@@ -1113,9 +1113,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       const SizedBox(height: 12),
                       Container(
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFFEF7E0),
+                          color: Colors.transparent,
                           shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                          border: Border.all(color: const Color(0xFFD97706), width: 1.5),
                         ),
                         child: IconButton(
                           onPressed: () => widget.parentState._shareAzkar(azkar),
@@ -1128,9 +1128,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       const SizedBox(height: 12),
                       Container(
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEAF6F0),
+                          color: Colors.transparent,
                           shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                          border: Border.all(color: const Color(0xFF0D9488), width: 1.5),
                         ),
                         child: IconButton(
                           onPressed: () {
