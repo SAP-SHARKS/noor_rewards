@@ -1317,13 +1317,10 @@ class _AzkarCard extends StatelessWidget {
               pointsToday: pointsToday,
             ),
 
-            // No top bar needed anymore 
-            const SizedBox(height: 32), 
-
             // ── Context / Chapter Subtitle ──
             if (rawRef.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -1521,7 +1518,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
     return AnimatedBuilder(
       animation: Listenable.merge([_swayCtrl, _growCtrl, _starCtrl, _pCtrl, _pulseCtrl]),
       builder: (_, __) => SizedBox(
-        height: 150,
+        height: 190,
         child: CustomPaint(
           painter: _NoorTreePainter(
             progress: _grow.value,
