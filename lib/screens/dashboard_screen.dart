@@ -125,21 +125,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     // Animation takes 300ms delay + 1400ms roll + 500ms breathing room = 2200ms.
     // The very first popup waits for the counter to finish before showing.
-    _startupPopupTimer = Timer(const Duration(milliseconds: 2200), _doShowPopup);
+    _startupPopupTimer = Timer(const Duration(milliseconds: 2200), () {
+      if (mounted) {
+        setState(() => _counterAnimating = false);
+        _doShowPopup();
+      }
+    });
   }
 
   // Arms the NEXT single popup timer — called only after current popup closes.
   void _scheduleNextPopup() {
     if (!mounted || _sessionDnd || _popupVisible) return;
     _repeatingPopupTimer?.cancel();
-    final delay = 160 + math.Random().nextInt(41); // 160–200 s ≈ 2.5–3 min
+    final delay = 30 + math.Random().nextInt(16); // 30–45 s
     _repeatingPopupTimer = Timer(Duration(seconds: delay), _doShowPopup);
   }
 
-  // Shows one popup; when it closes (any action), schedules the next timer.
   void _doShowPopup() {
-    // Block if: DND, focus screen, another popup visible, OR counter still rolling
-    if (!mounted || _sessionDnd || _isInFocusScreen || _popupVisible || _counterAnimating) return;
+    // Block completely if the user chose Do Not Disturb or a popup is already active.
+    if (!mounted || _sessionDnd || _popupVisible) return;
+
+    // Wait if temporarily blocked by a focus screen or rolling counter
+    if (_isInFocusScreen || _counterAnimating) {
+      _scheduleNextPopup();
+      return;
+    }
+
     _popupVisible = true;
     showMotivationalPopup(
       context,

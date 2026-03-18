@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
@@ -887,6 +888,9 @@ class _DhikrDetailScreen extends StatefulWidget {
 class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   late PageController _pageController;
 
+  bool _showToolbar = false;
+  Timer? _hideTimer;
+
   // ── Session tracking for smart notification logic ────────────────────
   late DateTime _sessionStart;
   // Number of azkar pages completed in THIS session visit
@@ -896,11 +900,79 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   // Min time (seconds) before we show mid-session popup
   static const int _kMinSecondsForImmediatePopup = 60;
 
+  int _currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
     _sessionStart = DateTime.now();
+    _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  void _toggleToolbar() {
+    setState(() {
+      _showToolbar = !_showToolbar;
+    });
+    _hideTimer?.cancel();
+    if (_showToolbar) {
+      _hideTimer = Timer(const Duration(seconds: 4), () {
+        if (mounted) setState(() { _showToolbar = false; });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _hideTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _tryComplete(_Azkar azkar, int tapTarget, {bool isSwipe = false}) {
+    final current = widget.parentState._counts[azkar.id] ?? 0;
+    if (current >= tapTarget) return;
+
+    final justCompleted = widget.parentState._tap(azkar.id, tapTarget);
+    if (mounted) setState(() {});
+
+    if (justCompleted) {
+      _pagesCompletedInSession++;
+      widget.parentState._completeDhikr(azkar.id, tapTarget);
+
+      final secondsElapsed = DateTime.now().difference(_sessionStart).inSeconds;
+      final enoughTime = secondsElapsed >= _kMinSecondsForImmediatePopup;
+      final enoughPages = _pagesCompletedInSession >= _kMinPagesForImmediatePopup;
+
+      if (enoughTime && enoughPages) {
+        Future.delayed(const Duration(milliseconds: 250), () {
+          if (!mounted) return;
+          widget.parentState._showCompleteDialog(
+              azkar.id, tapTarget,
+              pagesCount: _pagesCompletedInSession);
+          _pagesCompletedInSession = 0;
+          _sessionStart = DateTime.now();
+        });
+      } else {
+        widget.parentState._pendingCompletions
+            .add((id: azkar.id, target: tapTarget));
+      }
+
+      if (!isSwipe) {
+        final currentGlobalIndex = widget.azkars.indexOf(azkar);
+        final nextIndex = currentGlobalIndex + 1;
+        if (nextIndex > 0 && nextIndex < widget.azkars.length) {
+          Future.delayed(const Duration(milliseconds: 700), () {
+            if (!mounted) return;
+            _pageController.animateToPage(
+              nextIndex,
+              duration: const Duration(milliseconds: 450),
+              curve: Curves.easeInOut,
+            );
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -943,19 +1015,19 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             }
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.settings_rounded, color: kText),
-              onPressed: () {
-                widget.parentState._showSettingsSheet(context, () {
-                  if (mounted) setState(() {});
-                });
-              },
-            )
-          ],
         ),
-        body: PageView.builder(
-          controller: _pageController,
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => _toggleToolbar(),
+          child: PageView.builder(
+            controller: _pageController,
+          onPageChanged: (nextIndex) {
+            final prevAzkar = widget.azkars[_currentIndex];
+            if (prevAzkar.recommendedCount == 1) {
+              _tryComplete(prevAzkar, prevAzkar.recommendedCount, isSwipe: true);
+            }
+            if (mounted) setState(() { _currentIndex = nextIndex; });
+          },
           itemCount: widget.azkars.length,
           itemBuilder: (context, index) {
             final azkar = widget.azkars[index];
@@ -967,7 +1039,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               children: [
                 Positioned.fill(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 6, bottom: 120),
+                    padding: const EdgeInsets.only(top: 0, bottom: 120),
                     child: _AzkarCard(
                       azkar: azkar,
                       currentCount: count,
@@ -988,75 +1060,119 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   ),
                 ),
                 Positioned(
-                  left: 20,
-                  right: 20,
-                  bottom: 24,
-                  child: GestureDetector(
-                    onTap: isComplete ? null : () {
-                        final justCompleted = widget.parentState._tap(azkar.id, tapTarget);
-                        setState((){});
-
-                        if (justCompleted) {
-                          _pagesCompletedInSession++;
-                          // Run XP + streak logic silently (no dialog here)
-                          widget.parentState._completeDhikr(azkar.id, tapTarget);
-
-                          final secondsElapsed =
-                              DateTime.now().difference(_sessionStart).inSeconds;
-                          final enoughTime =
-                              secondsElapsed >= _kMinSecondsForImmediatePopup;
-                          final enoughPages =
-                              _pagesCompletedInSession >= _kMinPagesForImmediatePopup;
-
-                          if (enoughTime && enoughPages) {
-                            // ✅ Show the aggregate popup immediately
-                            Future.delayed(const Duration(milliseconds: 250), () {
-                              if (!mounted) return;
-                              widget.parentState._showCompleteDialog(
-                                  azkar.id, tapTarget,
-                                  pagesCount: _pagesCompletedInSession);
-                              // Reset session counters after showing
-                              _pagesCompletedInSession = 0;
-                              _sessionStart = DateTime.now();
+                  right: 16,
+                  bottom: 96,
+                  child: AnimatedOpacity(
+                    opacity: _showToolbar ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: IgnorePointer(
+                      ignoring: !_showToolbar,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE8F0FE),
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            widget.parentState._showSettingsSheet(context, () {
+                              if (mounted) setState(() {});
                             });
-                          } else {
-                            // ⏳ Queue for after exit
-                            widget.parentState._pendingCompletions
-                                .add((id: azkar.id, target: tapTarget));
-                          }
-
-                          // ── Auto-swipe to next Zikar ──────────────────────
-                          // Wait briefly so user sees "Completed ✓" before the swipe
-                          final nextIndex = index + 1;
-                          if (nextIndex < widget.azkars.length) {
-                            Future.delayed(const Duration(milliseconds: 700), () {
-                              if (!mounted) return;
-                              _pageController.animateToPage(
-                                nextIndex,
-                                duration: const Duration(milliseconds: 450),
-                                curve: Curves.easeInOut,
-                              );
-                            });
-                          }
-                        }
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 18),
-                      decoration: BoxDecoration(
-                        color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFF0D9488),
-                        borderRadius: BorderRadius.circular(32),
-                        boxShadow: isComplete ? [] : [
-                          BoxShadow(
-                            color: const Color(0xFF0D9488).withValues(alpha: 0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 6),
-                          )
-                        ],
+                          },
+                          icon: Icon(Icons.settings_rounded, size: 20, color: const Color(0xFF1A73E8)),
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          splashRadius: 22,
+                          padding: EdgeInsets.zero,
+                        ),
                       ),
-                      child: Center(
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: widget.favorites.contains(azkar.id) ? const Color(0xFFE11D48) : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFFCE8E6)),
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            widget.parentState._toggleFavorite(azkar.id);
+                            setState((){});
+                          },
+                          icon: Icon(
+                            widget.favorites.contains(azkar.id) ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                            size: 20, 
+                            color: widget.favorites.contains(azkar.id) ? Colors.white : const Color(0xFFE11D48),
+                          ),
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          splashRadius: 22,
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFFEF7E0),
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                        ),
+                        child: IconButton(
+                          onPressed: () => widget.parentState._shareAzkar(azkar),
+                          icon: Icon(Icons.ios_share_rounded, size: 20, color: const Color(0xFFD97706)),
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          splashRadius: 22,
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEAF6F0),
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            widget.parentState._reset(azkar.id);
+                            setState((){});
+                          },
+                          icon: Icon(Icons.refresh_rounded, size: 20, color: const Color(0xFF0D9488)),
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          splashRadius: 22,
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
+                  ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 24,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: isComplete ? null : () => _tryComplete(azkar, tapTarget, isSwipe: false),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                        constraints: const BoxConstraints(minWidth: 120),
+                        decoration: BoxDecoration(
+                          color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFF0D9488),
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: isComplete ? [] : [
+                            BoxShadow(
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            )
+                          ],
+                        ),
                         child: Text(
                           isComplete ? 'Completed ✓' : '$count / $tapTarget',
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.outfit(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -1071,6 +1187,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               ],
             );
           },
+        ),
         ),
       ));
       if (isDark) return inner;
@@ -1132,10 +1249,8 @@ class _AzkarCard extends StatelessWidget {
     final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
     final kPrimary  = const Color(0xFF0D9488);
-    final kPrimaryL = isDark ? const Color(0xFF3B2A30) : const Color(0xFFF9D5D8);
-    final kGold  = const Color(0xFFD4AF37);
-    final kBeneBg = isDark ? const Color(0xFF2A2416) : const Color(0xFFFBF8F1);
-    final kBeneTxt = isDark ? const Color(0xFFEADBBE) : const Color(0xFF5A4D2E);
+    final kBeneBg = isDark ? const Color(0xFF2A2416) : const Color(0xFFEAF6F0);
+    final kBeneTxt = isDark ? const Color(0xFFEADBBE) : const Color(0xFF1E4031);
 
     String rawRef = azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim();
     String bottomRef = '';
@@ -1177,7 +1292,7 @@ class _AzkarCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: kCardBg,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
@@ -1187,7 +1302,7 @@ class _AzkarCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -1202,62 +1317,13 @@ class _AzkarCard extends StatelessWidget {
               pointsToday: pointsToday,
             ),
 
-            // ── Top Bar (Count Goal & Header) ──
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isComplete ? (isDark ? const Color(0xFF1E4031) : const Color(0xFFE8F8F0)) : kPrimaryL.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      isComplete ? 'Completed' : 'Target: ${azkar.recommendedCount}',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12, 
-                        fontWeight: FontWeight.w700, 
-                        color: isComplete ? const Color(0xFF2BAE7C) : kPrimary,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  // Favorite
-                  IconButton(
-                    onPressed: onFavorite,
-                    icon: Icon(isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded, 
-                               size: 20, color: isFavorite ? const Color(0xFF0D9488) : Colors.grey.shade400),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                    splashRadius: 20,
-                  ),
-                  
-                  // Share
-                  IconButton(
-                    onPressed: onShare,
-                    icon: Icon(Icons.ios_share_rounded, size: 20, color: Colors.grey.shade400),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                    splashRadius: 20,
-                  ),
-                  
-                  // Refresh/Reset
-                  IconButton(
-                    onPressed: onReset,
-                    icon: Icon(Icons.refresh_rounded, size: 20, color: Colors.grey.shade400),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                    splashRadius: 20,
-                  ),
-                ],
-              ),
-            ),
+            // No top bar needed anymore 
+            const SizedBox(height: 32), 
 
             // ── Context / Chapter Subtitle ──
             if (rawRef.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -1324,7 +1390,7 @@ class _AzkarCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: kBeneBg, 
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: kGold.withValues(alpha: 0.2)),
+                  border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1335,7 +1401,7 @@ class _AzkarCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Hadith & Virtue', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kGold)),
+                          Text('Hadith & Virtue', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kPrimary)),
                           const SizedBox(height: 4),
                           Text(cleanReward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, height: 1.5)),
                         ],
