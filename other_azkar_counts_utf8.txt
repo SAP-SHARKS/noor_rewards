@@ -1,0 +1,76 @@
+subhanallah | Count: 33 | Ref: Sahih Muslim 2691 | Reward: Whoever says SubhanAllah 100 times, his sins are wiped even if like the foam of the sea.
+alhamdulillah | Count: 33 | Ref: Sahih Muslim 223 | Reward: Alhamdulillah fills the scales of good deeds.
+allahu_akbar | Count: 34 | Ref: Sahih Muslim 597 | Reward: SubhanAllah, Alhamdulillah, Allahu Akbar — more beloved than all that is under the sun.
+la_ilaha_illallah | Count: 100 | Ref: Sahih Bukhari 3293 | Reward: Whoever says it 100 times: reward of freeing 10 slaves, 100 good deeds written, 100 sins erased, protected from Shaytan.
+la_hawla | Count: 10 | Ref: Sahih Bukhari 4205 | Reward: It is a treasure from the treasures of Paradise.
+subhanallahi_wabihamdih | Count: 100 | Ref: Sahih Bukhari 6405 | Reward: Whoever says it 100 times morning and evening — comes on Judgment Day with nothing better except one who said more.
+subhanallahi_al_azeem | Count: 100 | Ref: Sahih Bukhari 6682 | Reward: Two phrases light on the tongue, heavy on the scales, beloved to the Most Merciful.
+astaghfirullah | Count: 100 | Ref: Abu Dawud 1518 | Reward: The Prophet used to seek forgiveness 70+ times daily. Whoever does Istighfar, Allah relieves his distress and provides from where he cannot imagine.
+istighfar_extended | Count: 70 | Ref: Sahih Bukhari 6307 | Reward: The Prophet said: I seek forgiveness 70 times daily.
+sayyid_istighfar | Count: 1 | Ref: Sahih Bukhari 6306 | Reward: The master of all prayers for forgiveness. Whoever says it with firm belief in the morning and dies that day will be among the people of Paradise.
+sleeping_ayat_kursi | Count: 1 | Ref: Sahih Bukhari 2311 | Reward: Recite Ayat al-Kursi before sleep — a guardian from Allah will protect you, Shaytan will not come near until morning.
+sleeping_tasbih_1 | Count: 33 | Ref: Sahih Bukhari 3113 | Reward: Before sleeping: 33 SubhanAllah, 33 Alhamdulillah, 34 Allahu Akbar — this is better for you than a servant.
+sleeping_tasbih_2 | Count: 33 | Ref: Sahih Bukhari 3113 | Reward: Part of the bedtime tasbih prescribed by the Prophet to Fatimah and Ali.
+sleeping_tasbih_3 | Count: 34 | Ref: Sahih Bukhari 3113 | Reward: Part of the bedtime tasbih — better for you than having a servant.
+sleeping_bismillah | Count: 1 | Ref: Sahih Bukhari 6312 | Reward: The Prophet used to say this every night before sleeping.
+sleeping_mulk | Count: 1 | Ref: Tirmidhi 2891 | Reward: Surah Al-Mulk intercedes for its reciter and protects from the punishment of the grave.
+sleeping_ikhlas | Count: 3 | Ref: Sahih Bukhari 5017 | Reward: Reciting Al-Ikhlas 3x before sleeping equals reciting the entire Quran.
+post_prayer_subhanallah | Count: 33 | Ref: Sahih Muslim 597 | Reward: After every obligatory prayer: 33 SubhanAllah, 33 Alhamdulillah, 33 Allahu Akbar — sins forgiven even if like the foam of the sea.
+post_prayer_alhamdulillah | Count: 33 | Ref: Sahih Muslim 223 | Reward: Said 33 times after every obligatory prayer. Fills the scales on the Day of Judgment.
+post_prayer_allahu_akbar | Count: 33 | Ref: Sahih Bukhari & Muslim | Reward: Said 33 times after every obligatory prayer. Together with the tasbihat completes 100 remembrances.
+post_prayer_ayat_kursi | Count: 1 | Ref: Nasai, authenticated by Ibn Hibban | Reward: Whoever recites Ayat al-Kursi after every obligatory prayer is guaranteed Paradise when they die.
+post_prayer_la_ilaha | Count: 1 | Ref: Sahih Muslim 591 | Reward: Whoever says this after every obligatory prayer — his sins are forgiven even if they are like the foam of the sea.
+post_prayer_istighfar | Count: 3 | Ref: Sahih Muslim 591 | Reward: The Prophet used to say Astaghfirullah 3 times after every prayer.
+salawat_ibrahimiyya | Count: 10 | Ref: Sahih Muslim 408 | Reward: Whoever sends one blessing upon the Prophet, Allah sends ten upon him.
+salawat_simple | Count: 100 | Ref: Sahih Muslim 408 | Reward: Allah sends ten blessings upon anyone who sends one upon the Prophet.
+salawat_friday | Count: 1000 | Ref: Abu Dawud 1047 | Reward: The Prophet commanded us to increase prayers upon him on Friday — they are presented to him on that day.
+tahajjud_opening | Count: 1 | Ref: Sahih Bukhari 1120 | Reward: The Prophet used to begin Tahajjud with this powerful du'a.
+tahajjud_witr | Count: 3 | Ref: Abu Dawud 1430 | Reward: Recited 3 times in Witr prayer, raising the voice on the third.
+tahajjud_qunut | Count: 1 | Ref: Abu Dawud 1425 | Reward: Dua al-Qunut recited in Witr prayer.
+sunnah_mirror | Count: 1 | Ref: Ibn Hibban, Ahmad | Reward: Dua when looking in the mirror.
+sunnah_anger | Count: 1 | Ref: Sahih Bukhari 3282 | Reward: The Prophet said: If you are angry, seek refuge in Allah from Shaytan — anger will leave.
+sunnah_sneeze | Count: 1 | Ref: Sahih Bukhari 6224 | Reward: When you sneeze, say Alhamdulillah. Those who hear say Yarhamukallah.
+sunnah_entering_home | Count: 1 | Ref: Abu Dawud 5096 | Reward: Du'a when entering the house.
+quranic_rabbana_atina | Count: 7 | Ref: Quran 2:201, Bukhari 6389 | Reward: The most comprehensive du'a — the Prophet used to say it often.
+quranic_yunus_dua | Count: 40 | Ref: Tirmidhi 3505 | Reward: The du'a of Prophet Yunus. No Muslim calls upon Allah with it except that Allah responds.
+quranic_hasbi_allah | Count: 7 | Ref: Abu Dawud 5081 | Reward: Whoever says this 7 times morning and evening, Allah suffices him.
+quranic_rabbana_ghafar | Count: 3 | Ref: Quran 7:23 | Reward: The du'a of Prophet Adam and Hawwa — said when seeking forgiveness.
+ummah_steadfastness | Count: 3 | Ref: Quran 3:8 | Reward: Dua for steadfastness in faith — essential for the Ummah.
+ummah_victory | Count: 7 | Ref: Quran 2:250 | Reward: Dua of the believers before battle — for the victory of the Ummah.
+ummah_oppressed | Count: 3 | Ref: General Sunnah | Reward: Dua for the oppressed Muslims globally — make it a daily habit.
+nightmares_1 | Count: 1 | Ref: Sahih Muslim 2261 | Reward: Said upon waking from a bad dream — then spit to the left 3 times and the dream will not harm you.
+nightmares_2 | Count: 3 | Ref: Sahih Bukhari 6984 | Reward: When you see a bad dream: spit to your left 3 times, say this 3 times, and change your side.
+waking_up_1 | Count: 1 | Ref: Sahih Bukhari 6312 | Reward: The first words of the Prophet upon waking from sleep.
+waking_up_2 | Count: 10 | Ref: Musnad Ahmad | Reward: Whoever says this 10 times upon waking has 10 good deeds written and 10 sins erased.
+clothes_dua | Count: 1 | Ref: Abu Dawud 4023 | Reward: Whoever says this when putting on a garment has his past sins forgiven.
+wudu_bismillah | Count: 1 | Ref: Abu Dawud 101 | Reward: There is no wudu for the one who does not begin with the name of Allah.
+wudu_shahada | Count: 1 | Ref: Sahih Muslim 234 | Reward: Whoever says this after wudu — the eight gates of Paradise open for him.
+food_bismillah | Count: 1 | Ref: Abu Dawud 3767 | Reward: When you eat, say Bismillah. If you forget at the start, say Bismillah in its beginning and end.
+food_after | Count: 1 | Ref: Abu Dawud 3850 | Reward: Dua after eating.
+home_entering | Count: 1 | Ref: Abu Dawud 5096 | Reward: Say this when entering the home — Shaytan is turned away and cannot spend the night.
+home_protection | Count: 3 | Ref: Sahih Muslim 2708 | Reward: Whoever says this when arriving at a place — nothing will harm him until he leaves.
+istikharah_dua | Count: 1 | Ref: Sahih Bukhari 1166 | Reward: Prayed after 2 rak'ahs when making a decision. Allah then facilitates what is best.
+masjid_entering | Count: 1 | Ref: Sahih Muslim 713 | Reward: Said when entering the mosque.
+masjid_exiting | Count: 1 | Ref: Sahih Muslim 713 | Reward: Said when leaving the mosque.
+masjid_adhan | Count: 1 | Ref: Sahih Bukhari 614 | Reward: Whoever says this after the adhan will have the Prophet's intercession on Judgment Day.
+difficulty_hasbunallah | Count: 7 | Ref: Quran 3:173 | Reward: Said by Ibrahim when thrown in the fire. Said by the Prophet when told people had gathered against him.
+difficulty_innalillah | Count: 3 | Ref: Sahih Muslim 918 | Reward: Said in times of calamity — Allah's blessings and mercy descend upon the one who says it.
+difficulty_la_ilaha_anta | Count: 40 | Ref: Tirmidhi 3505 | Reward: No Muslim calls upon Allah with it except that Allah responds.
+iman_refuge | Count: 3 | Ref: Abu Dawud 775 | Reward: Said when feeling waswas or doubts in the heart.
+iman_falaq_nas | Count: 3 | Ref: Abu Dawud 5082 | Reward: Recite Al-Falaq and An-Nas 3 times morning and evening — they suffice against all harm.
+iman_tawakkul | Count: 1 | Ref: Abu Dawud 5095 | Reward: Whoever says this when leaving his house: it is said to him — you are guided, defended and protected.
+travel_dua | Count: 1 | Ref: Abu Dawud 2602 | Reward: Said when mounting a vehicle or beginning a journey.
+travel_return | Count: 1 | Ref: Sahih Bukhari 1797 | Reward: Said after completing a journey — the Prophet would say this upon returning.
+shopping_dua | Count: 1 | Ref: Ibn Majah 2235 | Reward: Whoever says this entering the marketplace — 1 million good deeds written, 1 million sins erased.
+family_dua_spouse | Count: 3 | Ref: Quran 8:63 | Reward: Du'a for harmony in family and marriage.
+family_new_marriage | Count: 1 | Ref: Abu Dawud 2130 | Reward: The Sunnah congratulation for a newlywed couple.
+social_greeting | Count: 1 | Ref: Tirmidhi 2689 | Reward: Spreading salaam is a means of entering Paradise. The full greeting earns 30 hasanat.
+social_gathering_close | Count: 1 | Ref: Tirmidhi 3433 | Reward: Kaffarat al-majlis — expiation for any gathering. Said at the end of every sitting.
+nature_rain | Count: 1 | Ref: Sahih Bukhari 1032 | Reward: The Prophet would expose himself to rain saying this.
+nature_thunder | Count: 1 | Ref: Muwatta Malik | Reward: Said when thunder is heard.
+death_janazah | Count: 1 | Ref: Sahih Muslim 963 | Reward: Janazah prayer dua — pray fervently for the deceased.
+death_condolence | Count: 1 | Ref: Quran 2:156 | Reward: Said upon the death of someone — reminds us all belongs to Allah.
+gatherings_opening | Count: 1 | Ref: Abu Dawud 4857 | Reward: Opening supplication of gatherings.
+gatherings_closing | Count: 1 | Ref: Tirmidhi 3433 | Reward: Expiation of the gathering — seals the session and forgives what was said.
+hajj_talbiyah | Count: 1 | Ref: Tirmidhi 828 | Reward: The Talbiyah of Hajj and Umrah — said continuously from Ihram until Tawaf. Every stone and tree joins in.
+hajj_tawaf | Count: 7 | Ref: Sahih Muslim 2137 | Reward: Said during tawaf around the Ka'bah — the four phrases most beloved to Allah.
