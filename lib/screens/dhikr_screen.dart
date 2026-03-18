@@ -1316,11 +1316,13 @@ class _AzkarCard extends StatelessWidget {
               tapCount: currentCount,
               pointsToday: pointsToday,
             ),
+            
+            const SizedBox(height: 32),
 
             // ── Context / Chapter Subtitle ──
             if (rawRef.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
