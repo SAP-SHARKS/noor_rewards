@@ -1060,126 +1060,97 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   ),
                 ),
                 Positioned(
-                  right: 16,
-                  bottom: 96,
-                  child: AnimatedOpacity(
-                    opacity: _showToolbar ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 200),
-                    child: IgnorePointer(
-                      ignoring: !_showToolbar,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF1A73E8), width: 1.5),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            widget.parentState._showSettingsSheet(context, () {
-                              if (mounted) setState(() {});
-                            });
-                          },
-                          icon: Icon(Icons.settings_rounded, size: 20, color: const Color(0xFF1A73E8)),
-                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                          splashRadius: 22,
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: widget.favorites.contains(azkar.id) ? const Color(0xFFE11D48) : Colors.transparent,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFE11D48), width: 1.5),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            widget.parentState._toggleFavorite(azkar.id);
-                            setState((){});
-                          },
-                          icon: Icon(
-                            widget.favorites.contains(azkar.id) ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-                            size: 20, 
-                            color: widget.favorites.contains(azkar.id) ? Colors.white : const Color(0xFFE11D48),
+                  right: 14,
+                  bottom: 90,
+                  child: AnimatedSlide(
+                    offset: _showToolbar ? Offset.zero : const Offset(0.6, 0),
+                    duration: const Duration(milliseconds: 280),
+                    curve: Curves.easeOutCubic,
+                    child: AnimatedOpacity(
+                      opacity: _showToolbar ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 220),
+                      child: IgnorePointer(
+                        ignoring: !_showToolbar,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF1E1E1E).withValues(alpha: 0.92)
+                                : Colors.white.withValues(alpha: 0.92),
+                            borderRadius: BorderRadius.circular(28),
+                            border: Border.all(
+                              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.10),
+                                blurRadius: 20,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
                           ),
-                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                          splashRadius: 22,
-                          padding: EdgeInsets.zero,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _ToolbarBtn(
+                                icon: Icons.tune_rounded,
+                                color: isDark ? const Color(0xFF7EB8F0) : const Color(0xFF4A90D9),
+                                isDark: isDark,
+                                onTap: () {
+                                  widget.parentState._showSettingsSheet(context, () {
+                                    if (mounted) setState(() {});
+                                  });
+                                },
+                              ),
+                              _toolbarDivider(isDark),
+                              _ToolbarBtn(
+                                icon: widget.favorites.contains(azkar.id)
+                                    ? Icons.favorite_rounded
+                                    : Icons.favorite_outline_rounded,
+                                color: const Color(0xFFE11D48),
+                                filled: widget.favorites.contains(azkar.id),
+                                isDark: isDark,
+                                onTap: () {
+                                  widget.parentState._toggleFavorite(azkar.id);
+                                  setState(() {});
+                                },
+                              ),
+                              _toolbarDivider(isDark),
+                              _ToolbarBtn(
+                                icon: Icons.share_rounded,
+                                color: isDark ? const Color(0xFFE8B74A) : const Color(0xFFD4960A),
+                                isDark: isDark,
+                                onTap: () => widget.parentState._shareAzkar(azkar),
+                              ),
+                              _toolbarDivider(isDark),
+                              _ToolbarBtn(
+                                icon: Icons.refresh_rounded,
+                                color: const Color(0xFF0D9488),
+                                isDark: isDark,
+                                onTap: () {
+                                  widget.parentState._reset(azkar.id);
+                                  setState(() {});
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFD97706), width: 1.5),
-                        ),
-                        child: IconButton(
-                          onPressed: () => widget.parentState._shareAzkar(azkar),
-                          icon: Icon(Icons.ios_share_rounded, size: 20, color: const Color(0xFFD97706)),
-                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                          splashRadius: 22,
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF0D9488), width: 1.5),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            widget.parentState._reset(azkar.id);
-                            setState((){});
-                          },
-                          icon: Icon(Icons.refresh_rounded, size: 20, color: const Color(0xFF0D9488)),
-                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                          splashRadius: 22,
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
-                  ),
-                  ),
+                    ),
                   ),
                 ),
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 24,
+                  bottom: 20,
                   child: Center(
                     child: GestureDetector(
                       onTap: isComplete ? null : () => _tryComplete(azkar, tapTarget, isSwipe: false),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                        constraints: const BoxConstraints(minWidth: 120),
-                        decoration: BoxDecoration(
-                          color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFF0D9488),
-                          borderRadius: BorderRadius.circular(32),
-                          boxShadow: isComplete ? [] : [
-                            BoxShadow(
-                              color: const Color(0xFF0D9488).withValues(alpha: 0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 6),
-                            )
-                          ],
-                        ),
-                        child: Text(
-                          isComplete ? 'Completed ✓' : '$count / $tapTarget',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.outfit(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
+                      child: _DhikrCounterButton(
+                        count: count,
+                        target: tapTarget,
+                        isComplete: isComplete,
+                        isDark: isDark,
                       ),
                     ),
                   ),
@@ -1462,7 +1433,20 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
   late AnimationController _pulseCtrl;
   late Animation<double> _pulse;
 
-  final List<_Particle> _particles = List.generate(12, (i) => _Particle(seed: i));
+  // Tap-punch: quick scale bump on each tap
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+
+  // Shockwave ring that expands outward on tap
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+
+  // Shooting star streaks on tap
+  late AnimationController _shootCtrl;
+  late Animation<double> _shootAnim;
+
+  final List<_Particle> _particles = List.generate(20, (i) => _Particle(seed: i));
+  final List<_ShootingStar> _shootingStars = List.generate(3, (i) => _ShootingStar(seed: i));
 
   @override
   void initState() {
@@ -1481,7 +1465,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
     _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))
       ..repeat(reverse: true);
 
-    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 950));
+    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
     _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
     _prevTap = widget.tapCount;
 
@@ -1489,6 +1473,19 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
       ..repeat(reverse: true);
     _pulse = Tween<double>(begin: 0.87, end: 1.13)
         .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.12).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.12, end: 0.95).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.95, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _shootCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _shootAnim = CurvedAnimation(parent: _shootCtrl, curve: Curves.easeOut);
   }
 
   @override
@@ -1502,6 +1499,10 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
       _prevTap = widget.tapCount;
       for (final p in _particles) { p.reset(); }
       _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+      for (final s in _shootingStars) { s.reset(); }
+      _shootCtrl.forward(from: 0);
     }
   }
 
@@ -1512,13 +1513,16 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
     _starCtrl.dispose();
     _pCtrl.dispose();
     _pulseCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _shootCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_swayCtrl, _growCtrl, _starCtrl, _pCtrl, _pulseCtrl]),
+      animation: Listenable.merge([_swayCtrl, _growCtrl, _starCtrl, _pCtrl, _pulseCtrl, _punchCtrl, _shockCtrl, _shootCtrl]),
       builder: (_, __) => SizedBox(
         height: 190,
         child: CustomPaint(
@@ -1531,6 +1535,10 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
             isComplete: widget.isComplete,
             pulse: _pulse.value,
             pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            shootPhase: _shootAnim.value,
+            shootingStars: _shootingStars,
           ),
         ),
       ),
@@ -1544,18 +1552,42 @@ class _Particle {
   late double size;
   late double speed;
   late Color color;
+  late double drift; // horizontal wave amplitude
   static final _rng = math.Random();
+
+  // Golden vs teal palette for richer variety
+  static const _palette = [
+    Color(0xFF1BDE9A), Color(0xFF2EC4A9), Color(0xFF26C97A),
+    Color(0xFF3ACF58), Color(0xFFD4AF37), Color(0xFFFFD97D),
+    Color(0xFF00FFCC), Color(0xFFF5C842),
+  ];
 
   _Particle({required int seed}) { reset(seed: seed); }
 
   void reset({int? seed}) {
     final r = seed != null ? math.Random(seed * 1337) : _rng;
-    x = (r.nextDouble() - 0.5) * 1.6;
-    startY = 0.55 + r.nextDouble() * 0.25;
-    size = 2.5 + r.nextDouble() * 3.5;
-    speed = 0.4 + r.nextDouble() * 0.6;
-    final hue = 80.0 + r.nextDouble() * 60;
-    color = HSVColor.fromAHSV(0.9, hue, 0.7, 0.95).toColor();
+    x = (r.nextDouble() - 0.5) * 1.8;
+    startY = 0.50 + r.nextDouble() * 0.30;
+    size = 2.0 + r.nextDouble() * 4.0;
+    speed = 0.35 + r.nextDouble() * 0.65;
+    drift = 8.0 + r.nextDouble() * 14.0;
+    color = _palette[r.nextInt(_palette.length)];
+  }
+}
+
+class _ShootingStar {
+  late double startX, startY, angle, length, speed;
+  static final _rng = math.Random();
+
+  _ShootingStar({required int seed}) { reset(seed: seed); }
+
+  void reset({int? seed}) {
+    final r = seed != null ? math.Random(seed * 7919) : _rng;
+    startX = 0.1 + r.nextDouble() * 0.8;
+    startY = 0.02 + r.nextDouble() * 0.18;
+    angle = 0.3 + r.nextDouble() * 0.5; // downward-right angle
+    length = 0.08 + r.nextDouble() * 0.12;
+    speed = 0.6 + r.nextDouble() * 0.4;
   }
 }
 
@@ -1568,6 +1600,10 @@ class _NoorTreePainter extends CustomPainter {
   final bool isComplete;
   final double pulse;
   final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double shootPhase;
+  final List<_ShootingStar> shootingStars;
 
   const _NoorTreePainter({
     required this.progress,
@@ -1578,6 +1614,10 @@ class _NoorTreePainter extends CustomPainter {
     required this.isComplete,
     required this.pulse,
     this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.shootPhase = 1.0,
+    this.shootingStars = const [],
   });
 
   @override
@@ -1612,6 +1652,35 @@ class _NoorTreePainter extends CustomPainter {
         Offset(starPos[i].$1 * w, starPos[i].$2 * h), 1.1 + tw * 1.2, sp);
     }
 
+    // 2b. Shooting stars on tap
+    if (shootPhase > 0 && shootPhase < 1) {
+      for (final s in shootingStars) {
+        final t = (shootPhase / s.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final sx = s.startX * w + t * s.length * w * math.cos(s.angle);
+        final sy = s.startY * h + t * s.length * h * math.sin(s.angle);
+        final tailLen = s.length * w * 0.5 * (1.0 - t);
+        final tailX = sx - tailLen * math.cos(s.angle);
+        final tailY = sy - tailLen * math.sin(s.angle);
+        final sa = (1.0 - t) * 0.9;
+        canvas.drawLine(
+          Offset(tailX, tailY), Offset(sx, sy),
+          Paint()
+            ..shader = LinearGradient(
+              colors: [
+                Colors.transparent,
+                const Color(0xFFD4AF37).withValues(alpha: sa),
+              ],
+            ).createShader(Rect.fromPoints(Offset(tailX, tailY), Offset(sx, sy)))
+            ..strokeWidth = 1.8
+            ..strokeCap = StrokeCap.round,
+        );
+        // Head glow
+        canvas.drawCircle(Offset(sx, sy), 2.5,
+          Paint()..color = Colors.white.withValues(alpha: sa * 0.8));
+      }
+    }
+
     // 3. Crescent moon (fades in with progress)
     final moonA = progress.clamp(0.05, 1.0);
     const moonX = 0.83;
@@ -1629,16 +1698,24 @@ class _NoorTreePainter extends CustomPainter {
         ..color = const Color(0xFFD4AF37).withValues(alpha: moonA * 0.10)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
 
-    // 4. Ground shadow glow
+    // 4. Ground shadow glow — intensifies on punch
     final groundY = h * 0.82;
+    final groundGlow = 0.07 + (punchScale > 1.0 ? (punchScale - 1.0) * 1.5 : 0.0);
     canvas.drawOval(
       Rect.fromCenter(center: Offset(cx, groundY + 14), width: w * 0.7, height: 20),
       Paint()
-        ..color = const Color(0xFF1BDE9A).withValues(alpha: 0.07)
+        ..color = Color.fromRGBO(27, 222, 154, groundGlow.clamp(0.0, 0.35))
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
     canvas.drawLine(
       Offset(cx - w * 0.28, groundY), Offset(cx + w * 0.28, groundY),
       Paint()..color = const Color(0xFF1BDE9A).withValues(alpha: 0.18)..strokeWidth = 0.7);
+
+    // Apply punch scale transform for the tree (trunk + leaves)
+    canvas.save();
+    final treeCenterY = groundY - (groundY - h * 0.28) * progress * 0.5;
+    canvas.translate(cx, treeCenterY);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -treeCenterY);
 
     // 5. Trunk
     if (progress > 0.02) {
@@ -1701,24 +1778,80 @@ class _NoorTreePainter extends CustomPainter {
           leafR * 0.20,
           Paint()..color = Colors.white.withValues(alpha: leafA * 0.55));
       }
+
+      // 6b. Golden crown glow on completion
+      if (isComplete) {
+        final crownY = treeTop.dy - 8;
+        canvas.drawCircle(
+          Offset(cx + sway * 2, crownY), 32 * pulse,
+          Paint()
+            ..color = const Color(0xFFD4AF37).withValues(alpha: 0.12 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18));
+        canvas.drawCircle(
+          Offset(cx + sway * 2, crownY), 18 * pulse,
+          Paint()
+            ..color = const Color(0xFFFFD97D).withValues(alpha: 0.18 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+      }
     }
 
-    // 7. Floating noor particles
+    canvas.restore(); // end punch scale
+
+    // 7. Shockwave ring on tap — expands from tree center
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.42;
+      final ringR = maxR * shockPhase;
+      final ringA = (1.0 - shockPhase) * 0.45;
+      canvas.drawCircle(
+        Offset(cx, treeCenterY), ringR,
+        Paint()
+          ..color = const Color(0xFF1BDE9A).withValues(alpha: ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase));
+      // Inner softer ring
+      canvas.drawCircle(
+        Offset(cx, treeCenterY), ringR * 0.7,
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: ringA * 0.5)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5 * (1.0 - shockPhase));
+    }
+
+    // 8. Floating noor particles — with trails
     if (particlePhase > 0 && particlePhase < 1) {
       for (final p in particles) {
         final t = (particlePhase / p.speed).clamp(0.0, 1.0);
         if (t <= 0) continue;
-        final py = p.startY * h - t * h * 0.52;
-        final px = cx + p.x * w * 0.34 + math.sin(t * math.pi * 3) * 11;
+        final py = p.startY * h - t * h * 0.55;
+        final px = cx + p.x * w * 0.36 + math.sin(t * math.pi * 3) * p.drift;
         final a = (1.0 - t) * 0.9;
-        canvas.drawCircle(Offset(px, py), p.size * (1.0 - t * 0.5),
+        final pSize = p.size * (1.0 - t * 0.4);
+
+        // Trail (3 fading dots behind)
+        for (int trail = 1; trail <= 3; trail++) {
+          final tOff = trail * 0.04;
+          final tT = (t - tOff).clamp(0.0, 1.0);
+          if (tT <= 0) continue;
+          final tpy = p.startY * h - tT * h * 0.55;
+          final tpx = cx + p.x * w * 0.36 + math.sin(tT * math.pi * 3) * p.drift;
+          canvas.drawCircle(Offset(tpx, tpy), pSize * (0.6 - trail * 0.12),
+            Paint()..color = p.color.withValues(alpha: a * (0.3 - trail * 0.08)));
+        }
+
+        // Main particle with glow
+        canvas.drawCircle(Offset(px, py), pSize + 3,
+          Paint()
+            ..color = p.color.withValues(alpha: a * 0.15)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+        canvas.drawCircle(Offset(px, py), pSize,
           Paint()..color = p.color.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py + p.size * 1.4), p.size * 0.38,
-          Paint()..color = p.color.withValues(alpha: a * 0.4));
+        // Bright core
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+          Paint()..color = Colors.white.withValues(alpha: a * 0.7));
       }
     }
 
-    // 8. Progress label
+    // 9. Progress label
     final pct = (progress * 100).round();
     final label = isComplete ? 'ماشاء الله' : '$pct%';
     final tp2 = TextPainter(
@@ -1734,14 +1867,14 @@ class _NoorTreePainter extends CustomPainter {
     )..layout();
     tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
 
-    // 9. Noor points badge — right next to the progress label
+    // 10. Noor points badge
     if (pointsToday > 0) {
       final badgeLabel = '+$pointsToday pts';
       final tp3 = TextPainter(
         text: TextSpan(
           text: badgeLabel,
           style: const TextStyle(
-            color: Color(0xFF00FFCC),   // neon cyan gaming colour
+            color: Color(0xFF00FFCC),
             fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.5,
@@ -1754,7 +1887,6 @@ class _NoorTreePainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
 
-      // Background pill
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
@@ -1816,5 +1948,175 @@ class _NoorTreePainter extends CustomPainter {
   bool shouldRepaint(_NoorTreePainter o) =>
     o.progress != progress || o.sway != sway || o.starPhase != starPhase ||
     o.particlePhase != particlePhase || o.isComplete != isComplete ||
-    o.pulse != pulse || o.pointsToday != pointsToday;
+    o.pulse != pulse || o.pointsToday != pointsToday ||
+    o.punchScale != punchScale || o.shockPhase != shockPhase ||
+    o.shootPhase != shootPhase;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Toolbar button & divider for the floating action bar
+// ─────────────────────────────────────────────────────────────────────────────
+Widget _toolbarDivider(bool isDark) => Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 8),
+  child: Container(
+    height: 1,
+    width: 28,
+    color: isDark ? Colors.white.withValues(alpha: 0.07) : Colors.black.withValues(alpha: 0.06),
+  ),
+);
+
+class _ToolbarBtn extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final bool filled;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _ToolbarBtn({
+    required this.icon,
+    required this.color,
+    this.filled = false,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: filled ? color.withValues(alpha: 0.14) : Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(icon, size: 21, color: color),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dhikr Counter Button — circular progress ring with count display
+// ─────────────────────────────────────────────────────────────────────────────
+class _DhikrCounterButton extends StatelessWidget {
+  final int count;
+  final int target;
+  final bool isComplete;
+  final bool isDark;
+
+  const _DhikrCounterButton({
+    required this.count,
+    required this.target,
+    required this.isComplete,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
+    const size = 82.0;
+    const stroke = 4.5;
+    const teal = Color(0xFF0D9488);
+    const green = Color(0xFF2BAE7C);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+      width: isComplete ? 160 : size,
+      height: isComplete ? 52 : size,
+      decoration: BoxDecoration(
+        color: isComplete
+            ? green
+            : (isDark ? const Color(0xFF1A1A1A) : Colors.white),
+        borderRadius: BorderRadius.circular(isComplete ? 28 : size / 2),
+        border: isComplete
+            ? null
+            : Border.all(
+                color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+              ),
+        boxShadow: [
+          BoxShadow(
+            color: (isComplete ? green : teal).withValues(alpha: 0.25),
+            blurRadius: isComplete ? 16 : 20,
+            offset: const Offset(0, 6),
+          ),
+          if (!isComplete)
+            BoxShadow(
+              color: teal.withValues(alpha: 0.08),
+              blurRadius: 40,
+              spreadRadius: 4,
+            ),
+        ],
+      ),
+      child: isComplete
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
+                const SizedBox(width: 8),
+                Text(
+                  'Completed',
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            )
+          : Stack(
+              alignment: Alignment.center,
+              children: [
+                // Progress ring
+                SizedBox(
+                  width: size - 12,
+                  height: size - 12,
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: stroke,
+                    strokeCap: StrokeCap.round,
+                    backgroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.07)
+                        : teal.withValues(alpha: 0.12),
+                    valueColor: const AlwaysStoppedAnimation<Color>(teal),
+                  ),
+                ),
+                // Count text
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '$count',
+                      style: GoogleFonts.outfit(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? Colors.white : teal,
+                        height: 1.1,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 1),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: teal.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'of $target',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+    );
+  }
 }
