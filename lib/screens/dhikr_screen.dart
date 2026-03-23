@@ -1676,6 +1676,16 @@ Widget _buildIllustration({
       pointsToday: pointsToday,
     );
   }
+  // Sayyid al-Istighfar — gates of Jannah
+  if (id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar') ||
+      id == 'morning_lwa_3' || id == 'evening_lwa_3') {
+    return _GatesOfJannah(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
   // Default: Noor Tree
   return _NoorTree(
     progress: progress,
@@ -3444,6 +3454,600 @@ class _ThreeQulsPainter extends CustomPainter {
       o.punchScale != punchScale ||
       o.shockPhase != shockPhase ||
       o.shimmerPhase != shimmerPhase;
+}
+
+// =============================================================================
+// 🚪 Gates of Jannah (أبواب الجنة) — Sayyid al-Istighfar illustration
+// =============================================================================
+class _GatesOfJannah extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _GatesOfJannah({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_GatesOfJannah> createState() => _GatesOfJannahState();
+}
+
+class _GatesOfJannahState extends State<_GatesOfJannah>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _rayCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(18, (i) => _Particle(seed: i + 300));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _rayCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 4000))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_GatesOfJannah old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _rayCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _rayCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 190,
+        child: CustomPaint(
+          painter: _GatesOfJannahPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            rayPhase: _rayCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GatesOfJannahPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double rayPhase;
+
+  const _GatesOfJannahPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.rayPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+
+    // 1. Background — warm dark gradient (paradise hues)
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF1A0E2E), Color(0xFF1F1435), Color(0xFF251A3A)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.09, 0.07), (0.20, 0.16), (0.35, 0.05), (0.50, 0.11),
+      (0.65, 0.06), (0.80, 0.14), (0.91, 0.08), (0.40, 0.21),
+      (0.58, 0.25), (0.26, 0.23), (0.73, 0.20), (0.14, 0.29),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      sp.color = Colors.white.withValues(alpha: 0.15 + 0.45 * tw);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.9 + tw * 0.9, sp);
+    }
+
+    // Ground line
+    final groundY = h * 0.80;
+    canvas.drawLine(
+      Offset(cx - w * 0.35, groundY),
+      Offset(cx + w * 0.35, groundY),
+      Paint()
+        ..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)
+        ..strokeWidth = 0.7,
+    );
+
+    // Apply punch scale
+    canvas.save();
+    final gateCy = groundY - 50;
+    canvas.translate(cx, gateCy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -gateCy);
+
+    // 3. Light behind gates (grows with progress)
+    _drawInnerLight(canvas, cx, groundY, w, h);
+
+    // 4. Gate structure
+    _drawGates(canvas, cx, groundY, w);
+
+    // 5. Arch above gates
+    _drawArch(canvas, cx, groundY, w);
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.42;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(
+        Offset(cx, gateCy), r,
+        Paint()
+          ..color = Color.fromRGBO(212, 175, 55, ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+      canvas.drawCircle(
+        Offset(cx, gateCy), r * 0.7,
+        Paint()
+          ..color = Color.fromRGBO(255, 255, 255, ringA * 0.3)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 7. Floating particles — rise upward through the gate opening
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final px = cx + p.x * w * 0.15 + math.sin(t * math.pi * 2) * 6;
+        final py = groundY - t * h * 0.65;
+        final a = (1.0 - t) * 0.80;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = const Color(0xFFD4AF37).withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.65));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'غُفر لك بإذن الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? const Color(0xFFD4AF37)
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: Color(0xFFD4AF37),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: Color(0xFFD4AF37), blurRadius: 6),
+              Shadow(color: Color(0xFFD4AF37), blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Warm paradise light that shines through the gap between the gates
+  void _drawInnerLight(Canvas canvas, double cx, double groundY, double w, double h) {
+    if (progress <= 0.05) return;
+
+    // Gap width grows with progress (gates opening)
+    final gapWidth = w * 0.22 * progress;
+    final lightAlpha = progress * (isComplete ? 0.40 : 0.20) * pulse;
+
+    // Vertical light beam through gap
+    final beamRect = Rect.fromCenter(
+      center: Offset(cx, groundY - 45),
+      width: gapWidth,
+      height: 80,
+    );
+    canvas.drawRect(
+      beamRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO(255, 248, 220, lightAlpha * 1.2),
+            Color.fromRGBO(212, 175, 55, lightAlpha),
+            Colors.transparent,
+          ],
+        ).createShader(beamRect),
+    );
+
+    // Radial glow at center
+    canvas.drawCircle(
+      Offset(cx, groundY - 45), gapWidth * 1.5,
+      Paint()
+        ..color = Color.fromRGBO(255, 248, 220, lightAlpha * 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+
+    // Light rays fanning upward from the gap (on completion)
+    if (progress > 0.5) {
+      final rayAlpha = ((progress - 0.5) / 0.5) * (isComplete ? 0.25 : 0.10) * pulse;
+      for (int i = 0; i < 7; i++) {
+        final angle = -math.pi / 2 + (i - 3) * 0.15 + math.sin(rayPhase * math.pi * 2 + i) * 0.03;
+        final rayLen = 50 + (isComplete ? 25.0 : 0.0);
+        final startX = cx;
+        final startY = groundY - 65;
+        final endX = startX + math.cos(angle) * rayLen;
+        final endY = startY + math.sin(angle) * rayLen;
+        canvas.drawLine(
+          Offset(startX, startY), Offset(endX, endY),
+          Paint()
+            ..shader = LinearGradient(
+              colors: [
+                Color.fromRGBO(255, 248, 220, rayAlpha),
+                Colors.transparent,
+              ],
+            ).createShader(Rect.fromPoints(
+                Offset(startX, startY), Offset(endX, endY)))
+            ..strokeWidth = 1.8
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+  }
+
+  /// Two gate doors that open outward with progress
+  void _drawGates(Canvas canvas, double cx, double groundY, double w) {
+    final gateH = 65.0;
+    final gateW = 22.0;
+    final gateTop = groundY - gateH;
+
+    // Opening angle: 0 (closed) → progress-based swing outward
+    final openAmount = progress * gateW * 0.9;
+
+    final gateColor = isComplete
+        ? const Color(0xFFD4AF37).withValues(alpha: 0.70)
+        : const Color(0xFF8B7355).withValues(alpha: 0.55 + progress * 0.20);
+    final gateEdge = isComplete
+        ? const Color(0xFFFFD97D).withValues(alpha: 0.50)
+        : const Color(0xFFB8976A).withValues(alpha: 0.35);
+    final decorColor = isComplete
+        ? const Color(0xFFFFE8A0).withValues(alpha: 0.45)
+        : const Color(0xFFB8976A).withValues(alpha: 0.25);
+
+    // Left gate door
+    final leftX = cx - 2 - openAmount;
+    final leftRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(leftX - gateW, gateTop, gateW, gateH),
+      const Radius.circular(2),
+    );
+    canvas.drawRRect(leftRect, Paint()..color = gateColor);
+    canvas.drawRRect(leftRect, Paint()
+      ..color = gateEdge
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2);
+
+    // Left door decorative panels (2 rectangles)
+    for (int i = 0; i < 2; i++) {
+      final panelY = gateTop + 8 + i * (gateH * 0.44);
+      final panelRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(leftX - gateW + 4, panelY, gateW - 8, gateH * 0.34),
+        const Radius.circular(1.5),
+      );
+      canvas.drawRRect(panelRect, Paint()
+        ..color = decorColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8);
+    }
+
+    // Left door handle
+    canvas.drawCircle(
+      Offset(leftX - 4, groundY - gateH * 0.45),
+      2.0, Paint()..color = decorColor);
+
+    // Right gate door (mirror)
+    final rightX = cx + 2 + openAmount;
+    final rightRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(rightX, gateTop, gateW, gateH),
+      const Radius.circular(2),
+    );
+    canvas.drawRRect(rightRect, Paint()..color = gateColor);
+    canvas.drawRRect(rightRect, Paint()
+      ..color = gateEdge
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2);
+
+    // Right door decorative panels
+    for (int i = 0; i < 2; i++) {
+      final panelY = gateTop + 8 + i * (gateH * 0.44);
+      final panelRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(rightX + 4, panelY, gateW - 8, gateH * 0.34),
+        const Radius.circular(1.5),
+      );
+      canvas.drawRRect(panelRect, Paint()
+        ..color = decorColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8);
+    }
+
+    // Right door handle
+    canvas.drawCircle(
+      Offset(rightX + 4, groundY - gateH * 0.45),
+      2.0, Paint()..color = decorColor);
+
+    // Gate pillars (fixed, don't move)
+    final pillarColor = isComplete
+        ? const Color(0xFFD4AF37).withValues(alpha: 0.55)
+        : const Color(0xFF6B5B45).withValues(alpha: 0.50);
+    // Left pillar
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(cx - gateW - openAmount - 6, gateTop - 4, 5, gateH + 4),
+        const Radius.circular(1.5),
+      ),
+      Paint()..color = pillarColor,
+    );
+    // Right pillar
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(cx + gateW + openAmount + 1, gateTop - 4, 5, gateH + 4),
+        const Radius.circular(1.5),
+      ),
+      Paint()..color = pillarColor,
+    );
+
+    // Pillar caps (small decorative tops)
+    final capColor = isComplete
+        ? const Color(0xFFFFD97D).withValues(alpha: 0.50)
+        : const Color(0xFF8B7355).withValues(alpha: 0.40);
+    canvas.drawCircle(
+      Offset(cx - gateW - openAmount - 3.5, gateTop - 6), 3.5,
+      Paint()..color = capColor);
+    canvas.drawCircle(
+      Offset(cx + gateW + openAmount + 3.5, gateTop - 6), 3.5,
+      Paint()..color = capColor);
+  }
+
+  /// Pointed arch above the gates
+  void _drawArch(Canvas canvas, double cx, double groundY, double w) {
+    if (progress < 0.15) return;
+
+    final archAlpha = ((progress - 0.15) / 0.85).clamp(0.0, 1.0);
+    final gateH = 65.0;
+    final gateW = 22.0;
+    final openAmount = progress * gateW * 0.9;
+    final archTop = groundY - gateH - 22;
+    final archLeft = cx - gateW - openAmount - 8;
+    final archRight = cx + gateW + openAmount + 8;
+    final archMidY = groundY - gateH - 4;
+
+    final archColor = isComplete
+        ? Color.fromRGBO(212, 175, 55, archAlpha * 0.60)
+        : Color.fromRGBO(139, 115, 85, archAlpha * 0.45);
+
+    // Pointed Islamic arch shape
+    final archPath = Path()
+      ..moveTo(archLeft, archMidY)
+      ..quadraticBezierTo(archLeft, archTop + 8, cx, archTop)
+      ..quadraticBezierTo(archRight, archTop + 8, archRight, archMidY);
+
+    canvas.drawPath(archPath, Paint()
+      ..color = archColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round);
+
+    // Inner arch (smaller, more subtle)
+    if (progress > 0.4) {
+      final innerAlpha = ((progress - 0.4) / 0.6).clamp(0.0, 1.0) * 0.30;
+      final inset = 5.0;
+      final innerPath = Path()
+        ..moveTo(archLeft + inset, archMidY)
+        ..quadraticBezierTo(archLeft + inset, archTop + 12, cx, archTop + 6)
+        ..quadraticBezierTo(archRight - inset, archTop + 12, archRight - inset, archMidY);
+
+      canvas.drawPath(innerPath, Paint()
+        ..color = isComplete
+            ? Color.fromRGBO(255, 217, 125, innerAlpha)
+            : Color.fromRGBO(184, 151, 106, innerAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2);
+    }
+
+    // Keystone at arch peak
+    if (progress > 0.6) {
+      final kAlpha = ((progress - 0.6) / 0.4).clamp(0.0, 1.0);
+      final kColor = isComplete
+          ? Color.fromRGBO(212, 175, 55, kAlpha * 0.65 * pulse)
+          : Color.fromRGBO(184, 151, 106, kAlpha * 0.40);
+
+      // Diamond keystone
+      final kPath = Path()
+        ..moveTo(cx, archTop - 3)
+        ..lineTo(cx + 5, archTop + 3)
+        ..lineTo(cx, archTop + 9)
+        ..lineTo(cx - 5, archTop + 3)
+        ..close();
+      canvas.drawPath(kPath, Paint()..color = kColor);
+
+      // Glow around keystone on completion
+      if (isComplete) {
+        canvas.drawCircle(
+          Offset(cx, archTop + 3), 10 * pulse,
+          Paint()
+            ..color = const Color(0xFFD4AF37).withValues(alpha: 0.10 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GatesOfJannahPainter o) =>
+      o.progress != progress ||
+      o.pulse != pulse ||
+      o.starPhase != starPhase ||
+      o.particlePhase != particlePhase ||
+      o.isComplete != isComplete ||
+      o.pointsToday != pointsToday ||
+      o.punchScale != punchScale ||
+      o.shockPhase != shockPhase ||
+      o.rayPhase != rayPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
