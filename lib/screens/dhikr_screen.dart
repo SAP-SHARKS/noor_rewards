@@ -1686,6 +1686,16 @@ Widget _buildIllustration({
       pointsToday: pointsToday,
     );
   }
+  // Morning #4 — Protection from anxiety, laziness, debt etc (breaking chains)
+  if (id == 'morning_lwa_4' || id == 'evening_lwa_4' ||
+      id.contains('anxiety') || id.contains('hamm_hazan')) {
+    return _BreakingChains(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
   // Default: Noor Tree
   return _NoorTree(
     progress: progress,
@@ -4048,6 +4058,529 @@ class _GatesOfJannahPainter extends CustomPainter {
       o.punchScale != punchScale ||
       o.shockPhase != shockPhase ||
       o.rayPhase != rayPhase;
+}
+
+// =============================================================================
+// ⛓️ Breaking Chains (كسر القيود) — Protection from anxiety/laziness/debt
+// =============================================================================
+class _BreakingChains extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _BreakingChains({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_BreakingChains> createState() => _BreakingChainsState();
+}
+
+class _BreakingChainsState extends State<_BreakingChains>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _floatCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 400));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _floatCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3500))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_BreakingChains old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _floatCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _floatCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 190,
+        child: CustomPaint(
+          painter: _BreakingChainsPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            floatPhase: _floatCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BreakingChainsPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double floatPhase;
+
+  // 4 pairs: anxiety/grief, inability/laziness, cowardice/miserliness, debt/oppression
+  static const _chainColors = [
+    Color(0xFF6B7280), // steel grey
+    Color(0xFF78716C), // warm grey
+    Color(0xFF71717A), // zinc
+    Color(0xFF64748B), // slate
+  ];
+
+  const _BreakingChainsPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.floatPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.44;
+
+    // 1. Background — dark steel/charcoal (oppressive → freeing)
+    final bgBrightness = progress * 0.15;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((10 + bgBrightness * 40).round(), (12 + bgBrightness * 35).round(), (18 + bgBrightness * 30).round(), 1.0),
+            Color.fromRGBO((15 + bgBrightness * 50).round(), (18 + bgBrightness * 45).round(), (25 + bgBrightness * 40).round(), 1.0),
+            Color.fromRGBO((18 + bgBrightness * 60).round(), (22 + bgBrightness * 55).round(), (30 + bgBrightness * 50).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars (more visible as chains break)
+    const starPos = [
+      (0.10, 0.08), (0.22, 0.16), (0.38, 0.06), (0.52, 0.12),
+      (0.68, 0.07), (0.82, 0.15), (0.90, 0.09), (0.42, 0.22),
+      (0.58, 0.26), (0.28, 0.24), (0.75, 0.21),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final starAlpha = (0.08 + progress * 0.35 + 0.45 * tw * progress);
+      sp.color = Colors.white.withValues(alpha: starAlpha.clamp(0.0, 0.8));
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.8 + tw * 1.0, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Central light (person freed — grows as chains break)
+    _drawFreedomLight(canvas, cx, cy, w);
+
+    // 4. Four chains arranged around center
+    _drawChains(canvas, cx, cy, w, h);
+
+    canvas.restore();
+
+    // 5. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.40;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = Color.fromRGBO(16, 185, 129, ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 6. Floating sparks on tap
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.30;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
+        final a = (1.0 - t) * 0.75;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        // Spark color — bright teal/green (freedom)
+        final sparkColor = isComplete
+            ? const Color(0xFFD4AF37)
+            : const Color(0xFF10B981);
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = sparkColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 7. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'حُررت بإذن الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? const Color(0xFF10B981)
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 8. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: Color(0xFF10B981),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: Color(0xFF10B981), blurRadius: 6),
+              Shadow(color: Color(0xFF10B981), blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFF10B981).withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFF10B981).withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Central light that grows as chains break — representing freedom
+  void _drawFreedomLight(Canvas canvas, double cx, double cy, double w) {
+    if (progress < 0.05) return;
+
+    final lightR = 12 + progress * 25;
+    final alpha = progress * (isComplete ? 0.30 : 0.15) * pulse;
+
+    // Outer glow
+    canvas.drawCircle(
+      Offset(cx, cy), lightR + 15,
+      Paint()
+        ..color = Color.fromRGBO(16, 185, 129, alpha * 0.4)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+    );
+
+    // Inner glow
+    canvas.drawCircle(
+      Offset(cx, cy), lightR,
+      Paint()
+        ..shader = RadialGradient(colors: [
+          Color.fromRGBO(255, 255, 255, alpha * 0.8),
+          Color.fromRGBO(16, 185, 129, alpha * 0.6),
+          Colors.transparent,
+        ], stops: const [0.0, 0.5, 1.0])
+        .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: lightR)),
+    );
+
+    // On completion: golden core
+    if (isComplete) {
+      canvas.drawCircle(
+        Offset(cx, cy), 8 * pulse,
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: 0.35 * pulse)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+      );
+      canvas.drawCircle(
+        Offset(cx, cy), 4,
+        Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.50),
+      );
+    }
+  }
+
+  /// Four chains arranged around the center — each breaks at its progress threshold
+  void _drawChains(Canvas canvas, double cx, double cy, double w, double h) {
+    // 4 chains positioned at top, right, bottom, left
+    final positions = [
+      (cx, cy - 50, 0.0, -1.0),   // top — vertical up
+      (cx + 55, cy, 1.0, 0.0),    // right — horizontal
+      (cx, cy + 45, 0.0, 1.0),    // bottom — vertical down
+      (cx - 55, cy, -1.0, 0.0),   // left — horizontal
+    ];
+
+    for (int i = 0; i < 4; i++) {
+      final (startX, startY, dirX, dirY) = positions[i];
+      final breakThreshold = (i + 1) * 0.25; // breaks at 25%, 50%, 75%, 100%
+      final isBroken = progress >= breakThreshold;
+      final chainProgress = ((progress - i * 0.25) / 0.25).clamp(0.0, 1.0);
+
+      _drawSingleChain(
+        canvas,
+        startX, startY,
+        dirX, dirY,
+        i, isBroken, chainProgress,
+        cx, cy,
+      );
+    }
+  }
+
+  void _drawSingleChain(
+    Canvas canvas,
+    double startX, double startY,
+    double dirX, double dirY,
+    int index, bool isBroken, double chainProgress,
+    double cx, double cy,
+  ) {
+    final color = _chainColors[index];
+    final linkCount = 4;
+    final linkLen = 8.0;
+    final linkW = 5.0;
+
+    if (isBroken) {
+      // Chain is broken — links fall away
+      final fallT = chainProgress.clamp(0.0, 1.0);
+
+      for (int j = 0; j < linkCount; j++) {
+        final dist = j * (linkLen + 2);
+        // Each link falls with slight delay
+        final linkFall = ((fallT - j * 0.08)).clamp(0.0, 1.0);
+
+        // Falling offset — drops down and outward
+        final fallX = startX + dirX * dist + dirX * linkFall * 12 + math.sin(floatPhase * math.pi * 2 + j) * linkFall * 3;
+        final fallY = startY + dirY * dist + linkFall * 25 + linkFall * linkFall * 15;
+        final fallAlpha = (1.0 - linkFall) * 0.50;
+
+        if (fallAlpha < 0.02) continue;
+
+        // Rotation of falling link
+        final rot = linkFall * (0.5 + j * 0.3);
+
+        canvas.save();
+        canvas.translate(fallX, fallY);
+        canvas.rotate(rot);
+
+        // Chain link — rounded rectangle outline
+        final linkRect = RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset.zero, width: linkW, height: linkLen),
+          const Radius.circular(2.5),
+        );
+        canvas.drawRRect(linkRect, Paint()
+          ..color = color.withValues(alpha: fallAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5);
+
+        canvas.restore();
+      }
+
+      // Break spark at the connection point
+      if (chainProgress < 0.6) {
+        final sparkA = (1.0 - chainProgress / 0.6) * 0.60;
+        canvas.drawCircle(
+          Offset(startX, startY), 5 * (1.0 - chainProgress * 0.5),
+          Paint()
+            ..color = const Color(0xFF10B981).withValues(alpha: sparkA)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+        );
+        canvas.drawCircle(
+          Offset(startX, startY), 2.5,
+          Paint()..color = Colors.white.withValues(alpha: sparkA * 0.8),
+        );
+      }
+    } else {
+      // Chain is intact — draw taut links connecting to center
+      final chainAlpha = 0.55 - progress * 0.15; // fade slightly as overall progress grows
+
+      for (int j = 0; j < linkCount; j++) {
+        final dist = j * (linkLen + 2);
+        final lx = startX + dirX * dist;
+        final ly = startY + dirY * dist;
+
+        // Subtle strain vibration as progress approaches break point
+        final strainProg = ((progress - index * 0.25) / 0.25).clamp(0.0, 1.0);
+        final shake = strainProg > 0.5
+            ? math.sin(floatPhase * math.pi * 8 + j * 2) * strainProg * 2
+            : 0.0;
+
+        final shakeX = dirY != 0 ? shake : 0.0; // shake perpendicular to chain
+        final shakeY = dirX != 0 ? shake : 0.0;
+
+        // Chain link
+        canvas.save();
+        canvas.translate(lx + shakeX, ly + shakeY);
+
+        // Rotate links to align with chain direction
+        if (dirX != 0) {
+          canvas.rotate(math.pi / 2);
+        }
+
+        final linkRect = RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset.zero, width: linkW, height: linkLen),
+          const Radius.circular(2.5),
+        );
+        canvas.drawRRect(linkRect, Paint()
+          ..color = color.withValues(alpha: chainAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.8);
+
+        canvas.restore();
+      }
+
+      // Connection dot to center
+      canvas.drawCircle(
+        Offset(startX, startY), 2.5,
+        Paint()..color = color.withValues(alpha: chainAlpha * 0.8),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_BreakingChainsPainter o) =>
+      o.progress != progress ||
+      o.pulse != pulse ||
+      o.starPhase != starPhase ||
+      o.particlePhase != particlePhase ||
+      o.isComplete != isComplete ||
+      o.pointsToday != pointsToday ||
+      o.punchScale != punchScale ||
+      o.shockPhase != shockPhase ||
+      o.floatPhase != floatPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
