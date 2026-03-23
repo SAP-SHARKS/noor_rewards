@@ -1233,6 +1233,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     child: _AzkarCard(
                       azkar: azkar,
                       currentCount: count,
+                      targetCount: tapTarget,
                       isComplete: isComplete,
                       isFavorite: widget.favorites.contains(azkar.id),
                       settings: widget.settings,
