@@ -1627,6 +1627,16 @@ Widget _buildIllustration({
       pointsToday: pointsToday,
     );
   }
+  // 3 Quls — three layered barriers
+  if (id.contains('three_quls') || id.contains('3_quls') ||
+      id == 'morning_lwa_2' || id == 'evening_lwa_2') {
+    return _ThreeQuls(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
   // Default: Noor Tree
   return _NoorTree(
     progress: progress,
@@ -2861,6 +2871,540 @@ class _ProtectionShieldPainter extends CustomPainter {
       o.punchScale != punchScale ||
       o.shockPhase != shockPhase ||
       o.rotatePhase != rotatePhase;
+}
+
+// =============================================================================
+// 🛡️🛡️🛡️ Three Quls (المعوذات) — 3 layered barriers illustration
+// =============================================================================
+class _ThreeQuls extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _ThreeQuls({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_ThreeQuls> createState() => _ThreeQulsState();
+}
+
+class _ThreeQulsState extends State<_ThreeQuls> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _shimmerCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(18, (i) => _Particle(seed: i + 200));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1600))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _shimmerCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3000))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_ThreeQuls old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _shimmerCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _shimmerCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 190,
+        child: CustomPaint(
+          painter: _ThreeQulsPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            shimmerPhase: _shimmerCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThreeQulsPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double shimmerPhase;
+
+  // Three barrier colors — each represents a Surah
+  // Ikhlas (inner, white-gold) → Falaq (middle, teal) → Nas (outer, violet)
+  static const _layerColors = [
+    Color(0xFFD4AF37), // Ikhlas — golden sincerity
+    Color(0xFF2EC4A9), // Falaq — teal dawn light
+    Color(0xFF8B5CF6), // Nas — violet divine refuge
+  ];
+
+  const _ThreeQulsPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.shimmerPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.45;
+
+    // 1. Deep night-sky background (purple-tinted for Quls theme)
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF0D0A1F), Color(0xFF15102E), Color(0xFF1A1340)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.10, 0.07), (0.22, 0.15), (0.38, 0.05), (0.52, 0.10),
+      (0.68, 0.06), (0.82, 0.14), (0.90, 0.08), (0.42, 0.20),
+      (0.60, 0.24), (0.28, 0.22), (0.75, 0.19), (0.15, 0.28),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      sp.color = Colors.white.withValues(alpha: 0.18 + 0.50 * tw);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.9 + tw * 1.0, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Central book/Quran symbol
+    _drawQuranSymbol(canvas, cx, cy);
+
+    // 4. Three concentric barrier layers
+    _drawBarrierLayers(canvas, cx, cy, w);
+
+    canvas.restore();
+
+    // 5. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.44;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      // Triple-colored shockwave
+      for (int i = 0; i < 3; i++) {
+        final delay = i * 0.08;
+        final t = (shockPhase - delay).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final r = maxR * t;
+        canvas.drawCircle(
+          Offset(cx, cy), r,
+          Paint()
+            ..color = _layerColors[i].withValues(alpha: ringA * (1.0 - i * 0.2))
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.0 * (1.0 - t),
+        );
+      }
+    }
+
+    // 6. Floating particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 20 + t * w * 0.28;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.6 - t * 20;
+        final a = (1.0 - t) * 0.80;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        // Pick layer color based on particle index
+        final layerIdx = (p.x.abs() * 3).floor().clamp(0, 2);
+        final pColor = _layerColors[layerIdx];
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = pColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 7. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'كُفيت بإذن الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? const Color(0xFFD4AF37)
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: isComplete ? 12 : 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 8. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: Color(0xFF8B5CF6),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: Color(0xFF8B5CF6), blurRadius: 6),
+              Shadow(color: Color(0xFF8B5CF6), blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFF8B5CF6).withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFF8B5CF6).withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Central Quran/book icon
+  void _drawQuranSymbol(Canvas canvas, double cx, double cy) {
+    final bookAlpha = isComplete ? 0.70 : 0.45;
+    final bookColor = isComplete
+        ? Color.fromRGBO(212, 175, 55, bookAlpha)
+        : Color.fromRGBO(200, 200, 220, bookAlpha);
+    final glowAlpha = isComplete ? 0.15 : 0.08;
+
+    // Glow behind book
+    canvas.drawCircle(
+      Offset(cx, cy), 22,
+      Paint()
+        ..color = (isComplete ? const Color(0xFFD4AF37) : const Color(0xFF8B5CF6))
+            .withValues(alpha: glowAlpha)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    );
+
+    // Open book shape — two pages
+    final bookPaint = Paint()
+      ..color = bookColor
+      ..style = PaintingStyle.fill;
+
+    // Left page
+    final leftPage = Path()
+      ..moveTo(cx - 1, cy - 10)
+      ..quadraticBezierTo(cx - 14, cy - 12, cx - 16, cy - 6)
+      ..lineTo(cx - 15, cy + 8)
+      ..quadraticBezierTo(cx - 13, cy + 10, cx - 1, cy + 9)
+      ..close();
+    canvas.drawPath(leftPage, bookPaint);
+
+    // Right page
+    final rightPage = Path()
+      ..moveTo(cx + 1, cy - 10)
+      ..quadraticBezierTo(cx + 14, cy - 12, cx + 16, cy - 6)
+      ..lineTo(cx + 15, cy + 8)
+      ..quadraticBezierTo(cx + 13, cy + 10, cx + 1, cy + 9)
+      ..close();
+    canvas.drawPath(rightPage, bookPaint);
+
+    // Spine
+    canvas.drawLine(
+      Offset(cx, cy - 11), Offset(cx, cy + 10),
+      Paint()
+        ..color = bookColor
+        ..strokeWidth = 1.5
+        ..strokeCap = StrokeCap.round,
+    );
+
+    // Page lines (subtle text lines)
+    final linePaint = Paint()
+      ..color = Colors.white.withValues(alpha: bookAlpha * 0.35)
+      ..strokeWidth = 0.5;
+    for (int i = 0; i < 4; i++) {
+      final ly = cy - 5 + i * 3.5;
+      canvas.drawLine(Offset(cx - 12, ly), Offset(cx - 3, ly), linePaint);
+      canvas.drawLine(Offset(cx + 3, ly), Offset(cx + 12, ly), linePaint);
+    }
+
+    // Small highlight on top-left corner of book
+    canvas.drawCircle(
+      Offset(cx - 8, cy - 8), 2.5,
+      Paint()..color = Colors.white.withValues(alpha: bookAlpha * 0.25),
+    );
+  }
+
+  /// Three concentric barrier rings
+  void _drawBarrierLayers(Canvas canvas, double cx, double cy, double w) {
+    // Each layer appears at a different progress threshold
+    // Layer 0 (Ikhlas/inner): 0% → 33%
+    // Layer 1 (Falaq/middle): 33% → 66%
+    // Layer 2 (Nas/outer): 66% → 100%
+    const layerRadii = [38.0, 56.0, 74.0];
+    const layerThresholds = [0.0, 0.33, 0.66];
+
+    for (int i = 0; i < 3; i++) {
+      final threshold = layerThresholds[i];
+      if (progress <= threshold) continue;
+
+      final layerProgress = ((progress - threshold) / 0.33).clamp(0.0, 1.0);
+      final color = _layerColors[i];
+      final radius = layerRadii[i] * (0.6 + layerProgress * 0.4);
+
+      // How much of the ring to draw (sweeps from 0 to full circle)
+      final sweep = math.pi * 2 * layerProgress;
+
+      // Outer glow
+      final glowA = layerProgress * (isComplete ? 0.14 : 0.08) * pulse;
+      canvas.drawCircle(
+        Offset(cx, cy), radius + 8,
+        Paint()
+          ..color = color.withValues(alpha: glowA)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+      );
+
+      // Main arc — starts from top, sweeps clockwise
+      final startAngle = -math.pi / 2 + (shimmerPhase * math.pi * 0.3 * (i % 2 == 0 ? 1 : -1));
+      final arcAlpha = layerProgress * (isComplete ? 0.65 : 0.45);
+
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(cx, cy), radius: radius),
+        startAngle,
+        sweep,
+        false,
+        Paint()
+          ..color = color.withValues(alpha: arcAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = isComplete ? 2.8 : 2.0
+          ..strokeCap = StrokeCap.round,
+      );
+
+      // Dashed secondary arc (slightly inside, gives depth)
+      if (layerProgress > 0.4) {
+        final innerR = radius - 4;
+        final dashAlpha = (layerProgress - 0.4) / 0.6 * 0.25;
+        final dashCount = (layerProgress * 8).ceil();
+        final dashSweep = sweep / (dashCount * 2);
+        for (int d = 0; d < dashCount; d++) {
+          final dAngle = startAngle + d * dashSweep * 2;
+          canvas.drawArc(
+            Rect.fromCircle(center: Offset(cx, cy), radius: innerR),
+            dAngle,
+            dashSweep,
+            false,
+            Paint()
+              ..color = color.withValues(alpha: dashAlpha)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.0
+              ..strokeCap = StrokeCap.round,
+          );
+        }
+      }
+
+      // Leading bright dot at the sweep tip
+      if (layerProgress < 1.0 && layerProgress > 0.05) {
+        final tipAngle = startAngle + sweep;
+        final tipX = cx + math.cos(tipAngle) * radius;
+        final tipY = cy + math.sin(tipAngle) * radius;
+        canvas.drawCircle(
+          Offset(tipX, tipY), 3.5,
+          Paint()
+            ..color = color.withValues(alpha: 0.20)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+        );
+        canvas.drawCircle(
+          Offset(tipX, tipY), 2.0,
+          Paint()..color = color.withValues(alpha: arcAlpha * 1.2),
+        );
+      }
+
+      // Completion: small Surah label dots at 3 positions
+      if (isComplete) {
+        final dotAngle = -math.pi / 2 + i * (math.pi * 2 / 3);
+        final dx = cx + math.cos(dotAngle) * radius;
+        final dy = cy + math.sin(dotAngle) * radius;
+        canvas.drawCircle(Offset(dx, dy), 4.0 * pulse,
+          Paint()
+            ..color = color.withValues(alpha: 0.30)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+        canvas.drawCircle(Offset(dx, dy), 2.5,
+          Paint()..color = color.withValues(alpha: 0.70));
+      }
+    }
+
+    // Completion: connecting radial lines between layers
+    if (isComplete) {
+      for (int i = 0; i < 6; i++) {
+        final angle = i * math.pi / 3 + shimmerPhase * math.pi * 0.2;
+        final innerX = cx + math.cos(angle) * layerRadii[0] * 0.9;
+        final innerY = cy + math.sin(angle) * layerRadii[0] * 0.9;
+        final outerX = cx + math.cos(angle) * layerRadii[2] * 1.05;
+        final outerY = cy + math.sin(angle) * layerRadii[2] * 1.05;
+        canvas.drawLine(
+          Offset(innerX, innerY), Offset(outerX, outerY),
+          Paint()
+            ..shader = LinearGradient(
+              colors: [
+                const Color(0xFFD4AF37).withValues(alpha: 0.08 * pulse),
+                const Color(0xFF8B5CF6).withValues(alpha: 0.15 * pulse),
+                Colors.transparent,
+              ],
+            ).createShader(Rect.fromPoints(
+                Offset(innerX, innerY), Offset(outerX, outerY)))
+            ..strokeWidth = 1.0
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ThreeQulsPainter o) =>
+      o.progress != progress ||
+      o.pulse != pulse ||
+      o.starPhase != starPhase ||
+      o.particlePhase != particlePhase ||
+      o.isComplete != isComplete ||
+      o.pointsToday != pointsToday ||
+      o.punchScale != punchScale ||
+      o.shockPhase != shockPhase ||
+      o.shimmerPhase != shimmerPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
