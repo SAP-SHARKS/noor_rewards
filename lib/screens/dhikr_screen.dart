@@ -1168,8 +1168,6 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   @override
   Widget build(BuildContext context) {
       final isDark = widget.settings.darkMode;
-      final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
-      final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
       // Same rich amber-gold → sage green gradient for reading consistency
       const bgGradient = LinearGradient(
@@ -1187,11 +1185,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: kWhite,
+          backgroundColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_rounded, color: kText, size: 20),
+            icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white.withValues(alpha: 0.90), size: 20),
             onPressed: () => Navigator.pop(context),
           ),
           title: AnimatedBuilder(
@@ -1201,7 +1201,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final catId = widget.azkars[currentIndex].category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
-              return Text(catLabel, style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: kText));
+              return Text(catLabel, style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white.withValues(alpha: 0.90)));
             }
           ),
           centerTitle: true,
@@ -1504,36 +1504,42 @@ class _AzkarCard extends StatelessWidget {
       if (bottomRef.isEmpty) bottomRef = ref;
     });
 
-    return Container(
-      decoration: BoxDecoration(
-        color: kCardBg,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-            blurRadius: 20, 
-            offset: const Offset(0, 8),
-          )
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // ── Illustration section (bleeds behind app bar) ──
+        Container(
+          color: _illustrationTopColor(azkar.id, isDark),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + kToolbarHeight),
+          child: _buildIllustration(
+                azkarId: azkar.id,
+                progress: targetCount == 0
+                    ? 0.0
+                    : (currentCount / targetCount).clamp(0.0, 1.0),
+                isComplete: isComplete,
+                tapCount: currentCount,
+                pointsToday: pointsToday,
+              ),
+        ),
 
-            // ── Illustration Animation (per-azkar or default tree) ──
-            _buildIllustration(
-              azkarId: azkar.id,
-              progress: targetCount == 0
-                  ? 0.0
-                  : (currentCount / targetCount).clamp(0.0, 1.0),
-              isComplete: isComplete,
-              tapCount: currentCount,
-              pointsToday: pointsToday,
-            ),
-            
-            const SizedBox(height: 32),
+        // ── Card section with smooth top transition ──
+        Container(
+          decoration: BoxDecoration(
+            color: kCardBg,
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+
+            const SizedBox(height: 20),
 
             // ── Context / Chapter Subtitle ──
             if (rawRef.isNotEmpty)
@@ -1637,11 +1643,37 @@ class _AzkarCard extends StatelessWidget {
               ),
 
             const SizedBox(height: 24),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
+}
+
+/// Returns the top gradient color of each illustration to fill behind the app bar.
+Color _illustrationTopColor(String azkarId, bool isDark) {
+  if (isDark) return const Color(0xFF121212);
+  final id = azkarId.toLowerCase();
+  // Match the top color of each illustration's background gradient
+  if (id.contains('ayat_kursi') || id.contains('ayat-kursi') ||
+      id.contains('ayatul_kursi') || id.contains('ayatul-kursi') ||
+      id == 'morning_lwa_1' || id == 'evening_lwa_1') {
+    return const Color(0xFF0A1628); // Protection Shield
+  }
+  if (id.contains('three_quls') || id.contains('3_quls') ||
+      id == 'morning_lwa_2' || id == 'evening_lwa_2') {
+    return const Color(0xFF0D0A1F); // Three Quls
+  }
+  if (id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar') ||
+      id == 'morning_lwa_3' || id == 'evening_lwa_3') {
+    return const Color(0xFF1A0E2E); // Gates of Jannah
+  }
+  if (id == 'morning_lwa_4' || id == 'evening_lwa_4' ||
+      id.contains('anxiety') || id.contains('hamm_hazan')) {
+    return const Color(0xFF0A0C12); // Breaking Chains
+  }
+  return const Color(0xFF081623); // Default Noor Tree
 }
 
 // =============================================================================
