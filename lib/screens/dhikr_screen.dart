@@ -2361,44 +2361,143 @@ class _ProtectionShieldPainter extends CustomPainter {
 
   /// Praying person silhouette
   void _drawPerson(Canvas canvas, double cx, double groundY) {
+    final baseAlpha = isComplete ? 0.70 : 0.50;
     final personColor = isComplete
-        ? const Color(0xFFD4AF37).withValues(alpha: 0.65)
-        : const Color(0xFF8BB8E8).withValues(alpha: 0.45);
+        ? Color.fromRGBO(212, 175, 55, baseAlpha)
+        : Color.fromRGBO(139, 184, 232, baseAlpha);
     final glowColor = isComplete
-        ? const Color(0xFFD4AF37).withValues(alpha: 0.10)
-        : const Color(0xFF4A90D9).withValues(alpha: 0.06);
+        ? const Color(0xFFD4AF37).withValues(alpha: 0.12)
+        : const Color(0xFF4A90D9).withValues(alpha: 0.08);
+    final highlightColor = isComplete
+        ? const Color(0xFFFFD97D).withValues(alpha: 0.30)
+        : const Color(0xFFB8D4F0).withValues(alpha: 0.20);
 
-    // Head
-    final headY = groundY - 52;
-    canvas.drawCircle(
-      Offset(cx, headY),
-      7.5,
-      Paint()..color = glowColor..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    final fill = Paint()..color = personColor;
+    final glowPaint = Paint()
+      ..color = glowColor
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+
+    // Scale reference — person is ~55px tall
+    final baseY = groundY - 3; // feet
+    final headCy = baseY - 52;
+    const headR = 5.5;
+
+    // ── Full-body glow behind person ──
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, baseY - 26), width: 36, height: 58),
+      glowPaint,
     );
-    canvas.drawCircle(Offset(cx, headY), 5.0, Paint()..color = personColor);
 
-    // Body
-    final bodyPaint = Paint()
+    // ── Head with subtle highlight ──
+    canvas.drawCircle(Offset(cx, headCy), headR + 4, Paint()
+      ..color = glowColor
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7));
+    canvas.drawCircle(Offset(cx, headCy), headR, fill);
+    canvas.drawCircle(
+      Offset(cx - 1.5, headCy - 1.5), headR * 0.30,
+      Paint()..color = highlightColor);
+
+    // ── Neck ──
+    final neckTop = headCy + headR - 0.5;
+    final neckBot = neckTop + 4;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(cx, (neckTop + neckBot) / 2), width: 4.5, height: neckBot - neckTop),
+        const Radius.circular(2),
+      ),
+      fill,
+    );
+
+    // ── Shoulders & torso (thobe/robe shape) ──
+    final shoulderY = neckBot;
+    final waistY = baseY - 18;
+    final hemY = baseY - 2;
+
+    final robePath = Path()
+      // Left shoulder out
+      ..moveTo(cx - 12, shoulderY + 2)
+      // Up to shoulder curve
+      ..quadraticBezierTo(cx - 8, shoulderY - 1, cx - 3, shoulderY)
+      // Across neckline
+      ..lineTo(cx + 3, shoulderY)
+      ..quadraticBezierTo(cx + 8, shoulderY - 1, cx + 12, shoulderY + 2)
+      // Right side down to waist (slight taper)
+      ..quadraticBezierTo(cx + 11, waistY - 4, cx + 10, waistY)
+      // Robe flares out to hem
+      ..quadraticBezierTo(cx + 11, (waistY + hemY) / 2, cx + 13, hemY)
+      // Across bottom
+      ..lineTo(cx - 13, hemY)
+      // Left side up
+      ..quadraticBezierTo(cx - 11, (waistY + hemY) / 2, cx - 10, waistY)
+      ..quadraticBezierTo(cx - 11, waistY - 4, cx - 12, shoulderY + 2)
+      ..close();
+
+    canvas.drawPath(robePath, fill);
+    // Subtle center fold line
+    canvas.drawLine(
+      Offset(cx, shoulderY + 3), Offset(cx, hemY - 2),
+      Paint()
+        ..color = highlightColor
+        ..strokeWidth = 0.6,
+    );
+
+    // ── Arms raised in du'a ──
+    final armPaint = Paint()
       ..color = personColor
-      ..strokeWidth = 3.0
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(Offset(cx, headY + 5), Offset(cx, groundY - 18), bodyPaint);
+      ..strokeWidth = 3.2
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
 
-    // Arms (raised in du'a pose)
-    canvas.drawLine(
-        Offset(cx, headY + 14), Offset(cx - 14, headY + 4), bodyPaint);
-    canvas.drawLine(
-        Offset(cx, headY + 14), Offset(cx + 14, headY + 4), bodyPaint);
+    // Left arm — shoulder → elbow → raised hand
+    final lShoulderX = cx - 11;
+    final lElbowX = cx - 18;
+    final lElbowY = shoulderY + 10;
+    final lHandX = cx - 15;
+    final lHandY = headCy - 2;
 
-    // Legs
-    final legPaint = Paint()
-      ..color = personColor
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-        Offset(cx, groundY - 18), Offset(cx - 8, groundY - 2), legPaint);
-    canvas.drawLine(
-        Offset(cx, groundY - 18), Offset(cx + 8, groundY - 2), legPaint);
+    final leftArm = Path()
+      ..moveTo(lShoulderX, shoulderY + 2)
+      ..quadraticBezierTo(lElbowX - 2, lElbowY, lElbowX, lElbowY)
+      ..quadraticBezierTo(lElbowX - 3, (lElbowY + lHandY) / 2, lHandX, lHandY);
+    canvas.drawPath(leftArm, armPaint);
+
+    // Right arm (mirror)
+    final rShoulderX = cx + 11;
+    final rElbowX = cx + 18;
+    final rElbowY = shoulderY + 10;
+    final rHandX = cx + 15;
+    final rHandY = headCy - 2;
+
+    final rightArm = Path()
+      ..moveTo(rShoulderX, shoulderY + 2)
+      ..quadraticBezierTo(rElbowX + 2, rElbowY, rElbowX, rElbowY)
+      ..quadraticBezierTo(rElbowX + 3, (rElbowY + rHandY) / 2, rHandX, rHandY);
+    canvas.drawPath(rightArm, armPaint);
+
+    // ── Hands (small open palms facing up) ──
+    final handFill = Paint()..color = personColor;
+    // Left palm
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(lHandX, lHandY), width: 5.5, height: 4),
+      handFill,
+    );
+    // Right palm
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(rHandX, rHandY), width: 5.5, height: 4),
+      handFill,
+    );
+
+    // ── Small light between hands (du'a noor) ──
+    if (progress > 0.2) {
+      final noorAlpha = ((progress - 0.2) / 0.8).clamp(0.0, 1.0) * 0.35;
+      canvas.drawCircle(
+        Offset(cx, lHandY - 1),
+        3.0 + (isComplete ? pulse * 1.5 : 0),
+        Paint()
+          ..color = Color.fromRGBO(212, 175, 55, noorAlpha)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+    }
   }
 
   /// Glowing protective dome that builds with progress
