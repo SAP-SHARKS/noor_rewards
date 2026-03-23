@@ -2161,6 +2161,83 @@ class _NoorTreePainter extends CustomPainter {
       }
     }
 
+    // 6c. Small colorful plants growing beside the tree
+    if (progress > 0.08) {
+      // (xOffset from center, height, bloom radius, minProgress, stemColor, bloomColor)
+      const plants = [
+        // Left side
+        (-0.30, 18.0, 4.5, 0.08, Color(0xFF4ADE80), Color(0xFFF472B6)),  // green stem, pink bloom
+        (-0.22, 12.0, 3.5, 0.20, Color(0xFF34D399), Color(0xFFFBBF24)),  // emerald stem, amber bloom
+        (-0.38, 15.0, 4.0, 0.35, Color(0xFF2DD4BF), Color(0xFF818CF8)),  // teal stem, indigo bloom
+        (-0.18, 10.0, 3.0, 0.55, Color(0xFF4ADE80), Color(0xFFFF6B6B)),  // green stem, coral bloom
+        (-0.34, 8.0,  2.5, 0.72, Color(0xFF34D399), Color(0xFFFCD34D)),  // emerald stem, yellow bloom
+        // Right side
+        (0.28,  16.0, 4.2, 0.12, Color(0xFF34D399), Color(0xFFFBBF24)),  // emerald stem, amber bloom
+        (0.20,  11.0, 3.3, 0.28, Color(0xFF4ADE80), Color(0xFFA78BFA)),  // green stem, violet bloom
+        (0.36,  14.0, 3.8, 0.42, Color(0xFF2DD4BF), Color(0xFFF472B6)),  // teal stem, pink bloom
+        (0.16,  9.0,  2.8, 0.62, Color(0xFF34D399), Color(0xFF38BDF8)),  // emerald stem, sky bloom
+        (0.32,  7.0,  2.3, 0.78, Color(0xFF4ADE80), Color(0xFFFF9F43)),  // green stem, orange bloom
+      ];
+
+      for (final (xOff, maxH, bloomR, minP, stemCol, bloomCol) in plants) {
+        if (progress < minP) continue;
+        final plantProg = ((progress - minP) / 0.18).clamp(0.0, 1.0);
+        final px = cx + xOff * w;
+        final plantH = maxH * plantProg;
+        final stemTop = groundY - plantH;
+
+        // Stem — thin curved line
+        final stemPath = Path()
+          ..moveTo(px, groundY)
+          ..quadraticBezierTo(
+            px + sway * 0.5 + xOff * 3, groundY - plantH * 0.6,
+            px + sway * 0.8, stemTop);
+        canvas.drawPath(stemPath, Paint()
+          ..color = stemCol.withValues(alpha: plantProg * 0.70)
+          ..strokeWidth = 1.3
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round);
+
+        // Small leaf on stem (appears at 40% of plant's growth)
+        if (plantProg > 0.4) {
+          final leafProg = ((plantProg - 0.4) / 0.3).clamp(0.0, 1.0);
+          final leafY = groundY - plantH * 0.5;
+          final leafX = px + sway * 0.3;
+          final leafSize = 3.0 * leafProg;
+          final leafPath = Path()
+            ..moveTo(leafX, leafY)
+            ..quadraticBezierTo(leafX + leafSize * (xOff > 0 ? 1.5 : -1.5), leafY - leafSize, leafX + leafSize * (xOff > 0 ? 0.5 : -0.5), leafY + leafSize * 0.3);
+          canvas.drawPath(leafPath, Paint()
+            ..color = stemCol.withValues(alpha: leafProg * 0.55)
+            ..style = PaintingStyle.fill);
+        }
+
+        // Bloom/flower at top (appears at 60% of plant's growth)
+        if (plantProg > 0.6) {
+          final bloomProg = ((plantProg - 0.6) / 0.4).clamp(0.0, 1.0);
+          final bx = px + sway * 0.8;
+          final by = stemTop;
+          final br = bloomR * bloomProg * (isComplete ? pulse : 1.0);
+
+          // Glow
+          canvas.drawCircle(Offset(bx, by), br + 4,
+            Paint()
+              ..color = bloomCol.withValues(alpha: bloomProg * 0.10)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+          // Bloom
+          canvas.drawCircle(Offset(bx, by), br,
+            Paint()
+              ..shader = RadialGradient(colors: [
+                Colors.white.withValues(alpha: bloomProg * 0.50),
+                bloomCol.withValues(alpha: bloomProg * 0.80),
+              ]).createShader(Rect.fromCircle(center: Offset(bx, by), radius: br)));
+          // Bright center
+          canvas.drawCircle(Offset(bx, by), br * 0.30,
+            Paint()..color = Colors.white.withValues(alpha: bloomProg * 0.45));
+        }
+      }
+    }
+
     canvas.restore(); // end punch scale
 
     // 7. Shockwave ring on tap — expands from tree center
