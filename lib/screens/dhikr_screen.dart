@@ -1391,12 +1391,50 @@ String _cleanArabic(String s) {
   return s.replaceAll(RegExp(r'  +'), ' ').trim();
 }
 
+/// Patterns that should be highlighted in a distinct color (Bismillah & Isti'adhah).
+final _kHighlightPatterns = RegExp(
+  r'أَعُوْذُ بِاللّٰهِ مِنَ الشَّيْطَانِ الرَّجِيْمِ[.۝]*'
+  r'|أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ[.۝]*'
+  r'|أَعُوذُ بِاللَّهِ السَّمِيعِ الْعَلِيمِ مِنَ الشَّيْطَانِ الرَّجِيمِ[.۝]*'
+  r'|بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ[.۝]*'
+  r'|بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ[.۝]*'
+  r'|بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ[.۝]*',
+);
+
+/// Builds a RichText widget with Bismillah/Isti'adhah in a distinct color.
+Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor) {
+  final cleaned = _cleanArabic(raw);
+  final spans = <TextSpan>[];
+  int lastEnd = 0;
+
+  for (final m in _kHighlightPatterns.allMatches(cleaned)) {
+    if (m.start > lastEnd) {
+      spans.add(TextSpan(text: cleaned.substring(lastEnd, m.start)));
+    }
+    spans.add(TextSpan(
+      text: m.group(0),
+      style: baseStyle.copyWith(color: highlightColor),
+    ));
+    lastEnd = m.end;
+  }
+  if (lastEnd < cleaned.length) {
+    spans.add(TextSpan(text: cleaned.substring(lastEnd)));
+  }
+
+  return Text.rich(
+    TextSpan(style: baseStyle, children: spans),
+    textAlign: TextAlign.center,
+    textDirection: TextDirection.rtl,
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Beautiful Display Card for Azkaar
 // ─────────────────────────────────────────────────────────────────────────────
 class _AzkarCard extends StatelessWidget {
   final _Azkar azkar;
   final int currentCount;
+  final int targetCount;
   final bool isComplete;
   final bool isFavorite;
   final _DhikrSettings settings;
@@ -1408,6 +1446,7 @@ class _AzkarCard extends StatelessWidget {
   const _AzkarCard({
     required this.azkar,
     required this.currentCount,
+    required this.targetCount,
     required this.isComplete,
     required this.isFavorite,
     required this.settings,
@@ -1485,9 +1524,9 @@ class _AzkarCard extends StatelessWidget {
             // ── Illustration Animation (per-azkar or default tree) ──
             _buildIllustration(
               azkarId: azkar.id,
-              progress: azkar.recommendedCount == 0
+              progress: targetCount == 0
                   ? 0.0
-                  : (currentCount / azkar.recommendedCount).clamp(0.0, 1.0),
+                  : (currentCount / targetCount).clamp(0.0, 1.0),
               isComplete: isComplete,
               tapCount: currentCount,
               pointsToday: pointsToday,
@@ -1524,12 +1563,11 @@ class _AzkarCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: [
-                  Text(
-                    _cleanArabic(azkar.arabic),
-                    textAlign: TextAlign.center,
-                    textDirection: TextDirection.rtl,
-                    style: _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)]
+                  _buildStyledArabic(
+                    azkar.arabic,
+                    _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)]
                         .style(settings.arabicFontSize, kText, 1.8, FontWeight.w700),
+                    isDark ? const Color(0xFF5EADDB) : const Color(0xFF1A7A5C),
                   ),
                   const SizedBox(height: 14),
                   Text(
