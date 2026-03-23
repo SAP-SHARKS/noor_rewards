@@ -107,6 +107,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   late String _selectedCat;
   
   final Map<String, int> _counts = {};
+  final Map<String, int> _customTargets = {};
   List<String> _favorites = [];
   int _pointsToday = 0;
   int _setsCompleted = 0;
@@ -159,6 +160,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.arabicFontIdx = loadFontIdx;
       _isFirstTime = prefs.getBool('dhikr_first_time') ?? true;
       _favorites = prefs.getStringList('dhikr_favorites') ?? [];
+      // Load custom targets
+      final targetKeys = prefs.getStringList('dhikr_custom_target_keys') ?? [];
+      for (final key in targetKeys) {
+        final val = prefs.getInt('dhikr_target_$key');
+        if (val != null) _customTargets[key] = val;
+      }
     });
     if (_isFirstTime) {
       await prefs.setBool('dhikr_first_time', false);
@@ -171,6 +178,189 @@ class _DhikrScreenState extends State<DhikrScreen> {
     await prefs.setDouble('dhikr_tr_size', _settings.translationFontSize);
     await prefs.setBool('dhikr_dark_mode', _settings.darkMode);
     await prefs.setInt('dhikr_ar_font', _settings.arabicFontIdx);
+  }
+
+  /// Returns custom target if set, otherwise the recommended count.
+  int _getTarget(String id, int recommendedCount) {
+    return _customTargets[id] ?? recommendedCount;
+  }
+
+  Future<void> _saveCustomTarget(String id, int target) async {
+    setState(() { _customTargets[id] = target; });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('dhikr_custom_target_keys', _customTargets.keys.toList());
+    await prefs.setInt('dhikr_target_$id', target);
+  }
+
+  Future<void> _clearCustomTarget(String id) async {
+    setState(() { _customTargets.remove(id); });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('dhikr_custom_target_keys', _customTargets.keys.toList());
+    await prefs.remove('dhikr_target_$id');
+  }
+
+  void _showTargetPicker(BuildContext context, String azkarId, int recommendedCount) {
+    final isDark = _settings.darkMode;
+    final currentTarget = _getTarget(azkarId, recommendedCount);
+    final controller = TextEditingController(text: currentTarget.toString());
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle bar
+                Container(
+                  width: 36, height: 4,
+                  decoration: BoxDecoration(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Set Your Target',
+                  style: GoogleFonts.outfit(
+                    fontSize: 18, fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Default: $recommendedCount',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    color: isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Quick presets
+                Wrap(
+                  spacing: 8, runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: () {
+                    final presets = <int>{recommendedCount, 3, 7, 10, 33, 100}.toList()..sort();
+                    return presets.map<Widget>((v) {
+                      final isSelected = controller.text == v.toString();
+                      return GestureDetector(
+                        onTap: () {
+                          controller.text = v.toString();
+                          (ctx as Element).markNeedsBuild();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF0D9488).withValues(alpha: 0.15)
+                                : (isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF2F2F7)),
+                            borderRadius: BorderRadius.circular(10),
+                            border: isSelected
+                                ? Border.all(color: const Color(0xFF0D9488), width: 1.5)
+                                : null,
+                          ),
+                          child: Text(
+                            '$v×',
+                            style: GoogleFonts.outfit(
+                              fontSize: 14, fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? const Color(0xFF0D9488)
+                                  : (isDark ? Colors.white70 : const Color(0xFF1C1C1E)),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList();
+                  }(),
+                ),
+                const SizedBox(height: 16),
+                // Custom input
+                TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 22, fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Enter custom count',
+                    hintStyle: GoogleFonts.outfit(
+                      fontSize: 15, color: isDark ? Colors.grey.shade600 : const Color(0xFFAEAEB2),
+                    ),
+                    filled: true,
+                    fillColor: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF2F2F7),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Buttons row
+                Row(
+                  children: [
+                    // Reset to default
+                    if (_customTargets.containsKey(azkarId))
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            _clearCustomTarget(azkarId);
+                            Navigator.pop(ctx);
+                          },
+                          child: Text(
+                            'Reset to default',
+                            style: GoogleFonts.outfit(
+                              fontSize: 14, fontWeight: FontWeight.w600,
+                              color: const Color(0xFFE11D48),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (_customTargets.containsKey(azkarId)) const SizedBox(width: 8),
+                    // Save
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final val = int.tryParse(controller.text);
+                          if (val != null && val > 0) {
+                            if (val == recommendedCount) {
+                              _clearCustomTarget(azkarId);
+                            } else {
+                              _saveCustomTarget(azkarId, val);
+                            }
+                          }
+                          Navigator.pop(ctx);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D9488),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text('Save', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // ── Load Supabase Data ─────────────────────────────────────────────────────
@@ -756,11 +946,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
             itemBuilder: (context, index) {
               final azkar = _filtered[index];
               final count = _counts[azkar.id] ?? 0;
-              final tapTarget = azkar.recommendedCount;
+              final tapTarget = _getTarget(azkar.id, azkar.recommendedCount);
               final isComplete = count >= tapTarget;
 
-              String titleText = (azkar.transliteration.isNotEmpty && azkar.transliteration.trim() != '') 
-                  ? azkar.transliteration 
+              String titleText = (azkar.transliteration.isNotEmpty && azkar.transliteration.trim() != '')
+                  ? azkar.transliteration
                   : azkar.translation;
               titleText = titleText.replaceAll('\n', ' ').trim();
 
@@ -1032,7 +1222,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           itemBuilder: (context, index) {
             final azkar = widget.azkars[index];
             final count = widget.counts[azkar.id] ?? 0;
-            final tapTarget = azkar.recommendedCount;
+            final tapTarget = widget.parentState._getTarget(azkar.id, azkar.recommendedCount);
             final isComplete = count >= tapTarget;
 
             return Stack(
@@ -1121,6 +1311,20 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                 color: isDark ? const Color(0xFFE8B74A) : const Color(0xFFD4960A),
                                 isDark: isDark,
                                 onTap: () => widget.parentState._shareAzkar(azkar),
+                              ),
+                              _toolbarDivider(isDark),
+                              _ToolbarBtn(
+                                icon: widget.parentState._customTargets.containsKey(azkar.id)
+                                    ? Icons.flag_rounded
+                                    : Icons.flag_outlined,
+                                color: const Color(0xFF7C3AED),
+                                filled: widget.parentState._customTargets.containsKey(azkar.id),
+                                isDark: isDark,
+                                onTap: () {
+                                  widget.parentState._showTargetPicker(
+                                    context, azkar.id, azkar.recommendedCount,
+                                  );
+                                },
                               ),
                               _toolbarDivider(isDark),
                               _ToolbarBtn(
