@@ -1278,8 +1278,9 @@ class _AzkarCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
 
-            // ── Noor Tree Animation ──
-            _NoorTree(
+            // ── Illustration Animation (per-azkar or default tree) ──
+            _buildIllustration(
+              azkarId: azkar.id,
               progress: azkar.recommendedCount == 0
                   ? 0.0
                   : (currentCount / azkar.recommendedCount).clamp(0.0, 1.0),
@@ -1398,6 +1399,37 @@ class _AzkarCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// =============================================================================
+// Illustration picker — returns the right visual for each Azkar
+// =============================================================================
+Widget _buildIllustration({
+  required String azkarId,
+  required double progress,
+  required bool isComplete,
+  required int tapCount,
+  int pointsToday = 0,
+}) {
+  final id = azkarId.toLowerCase();
+  // Ayat al-Kursi — protection shield (all variants)
+  if (id.contains('ayat_kursi') || id.contains('ayat-kursi') ||
+      id.contains('ayatul_kursi') || id.contains('ayatul-kursi') ||
+      id == 'morning_lwa_1' || id == 'evening_lwa_1') {
+    return _ProtectionShield(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Default: Noor Tree
+  return _NoorTree(
+    progress: progress,
+    isComplete: isComplete,
+    tapCount: tapCount,
+    pointsToday: pointsToday,
+  );
 }
 
 // =============================================================================
@@ -1951,6 +1983,581 @@ class _NoorTreePainter extends CustomPainter {
     o.pulse != pulse || o.pointsToday != pointsToday ||
     o.punchScale != punchScale || o.shockPhase != shockPhase ||
     o.shootPhase != shootPhase;
+}
+
+// =============================================================================
+// 🛡️ Protection Shield (درع الحماية) — Ayat al-Kursi illustration
+// =============================================================================
+class _ProtectionShield extends StatefulWidget {
+  final double progress;   // 0.0 → 1.0
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _ProtectionShield({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_ProtectionShield> createState() => _ProtectionShieldState();
+}
+
+class _ProtectionShieldState extends State<_ProtectionShield>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _rotateCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(20, (i) => _Particle(seed: i + 100));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _rotateCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 12000))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_ProtectionShield old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _rotateCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _rotateCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 190,
+        child: CustomPaint(
+          painter: _ProtectionShieldPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            rotatePhase: _rotateCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProtectionShieldPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double rotatePhase;
+
+  const _ProtectionShieldPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.rotatePhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.48;
+
+    // 1. Night-sky gradient background (deeper blue-purple for protection theme)
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF0A1628), Color(0xFF0F2744), Color(0xFF132D46)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.08, 0.06), (0.18, 0.14), (0.32, 0.04), (0.55, 0.09),
+      (0.71, 0.05), (0.84, 0.15), (0.92, 0.07), (0.45, 0.18),
+      (0.63, 0.22), (0.25, 0.20), (0.77, 0.18), (0.12, 0.27),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      sp.color = Colors.white.withValues(alpha: 0.20 + 0.55 * tw);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 1.0 + tw * 1.0, sp);
+    }
+
+    // 3. Ground line
+    final groundY = h * 0.82;
+    canvas.drawLine(
+      Offset(cx - w * 0.30, groundY),
+      Offset(cx + w * 0.30, groundY),
+      Paint()
+        ..color = const Color(0xFF4A90D9).withValues(alpha: 0.15)
+        ..strokeWidth = 0.7,
+    );
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 4. Person silhouette (praying figure)
+    _drawPerson(canvas, cx, groundY);
+
+    // 5. Shield dome — builds from bottom arcs upward
+    if (progress > 0.02) {
+      _drawShieldDome(canvas, cx, cy, w, h, groundY);
+    }
+
+    // 6. Orbiting runes / ayah markers around shield
+    if (progress > 0.3) {
+      _drawOrbitingMarkers(canvas, cx, cy, w);
+    }
+
+    canvas.restore(); // end punch scale
+
+    // 7. Shockwave ring on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.44;
+      final ringR = maxR * shockPhase;
+      final ringA = (1.0 - shockPhase) * 0.40;
+      canvas.drawCircle(
+        Offset(cx, cy),
+        ringR,
+        Paint()
+          ..color = Color.fromRGBO(74, 144, 217, ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+      canvas.drawCircle(
+        Offset(cx, cy),
+        ringR * 0.7,
+        Paint()
+          ..color = Color.fromRGBO(212, 175, 55, ringA * 0.5)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 8. Floating particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        // Particles rise outward from shield center
+        final angle = p.x * math.pi;
+        final dist = w * 0.15 + t * w * 0.25;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy - t * h * 0.35 + math.sin(t * math.pi * 2) * 8;
+        final a = (1.0 - t) * 0.85;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        // Trail
+        for (int trail = 1; trail <= 2; trail++) {
+          final tOff = trail * 0.05;
+          final tT = (t - tOff).clamp(0.0, 1.0);
+          if (tT <= 0) continue;
+          final tDist = w * 0.15 + tT * w * 0.25;
+          final tpx = cx + math.cos(angle) * tDist;
+          final tpy = cy - tT * h * 0.35 + math.sin(tT * math.pi * 2) * 8;
+          canvas.drawCircle(
+            Offset(tpx, tpy),
+            pSize * (0.5 - trail * 0.12),
+            Paint()
+              ..color = const Color(0xFF4A90D9)
+                  .withValues(alpha: a * (0.25 - trail * 0.08)),
+          );
+        }
+
+        // Main particle with glow
+        canvas.drawCircle(
+          Offset(px, py),
+          pSize + 3,
+          Paint()
+            ..color = const Color(0xFF4A90D9).withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+        );
+        canvas.drawCircle(
+          Offset(px, py),
+          pSize,
+          Paint()..color = const Color(0xFF4A90D9).withValues(alpha: a),
+        );
+        canvas.drawCircle(
+          Offset(px, py),
+          pSize * 0.35,
+          Paint()..color = Colors.white.withValues(alpha: a * 0.7),
+        );
+      }
+    }
+
+    // 9. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'محفوظ بإذن الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? const Color(0xFFD4AF37)
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: isComplete ? 12 : 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 10. Noor points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: Color(0xFF4A90D9),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: Color(0xFF4A90D9), blurRadius: 6),
+              Shadow(color: Color(0xFF4A90D9), blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..color = const Color(0xFF4A90D9).withValues(alpha: 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..color = const Color(0xFF4A90D9).withValues(alpha: 0.18)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.7,
+      );
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Praying person silhouette
+  void _drawPerson(Canvas canvas, double cx, double groundY) {
+    final personColor = isComplete
+        ? const Color(0xFFD4AF37).withValues(alpha: 0.65)
+        : const Color(0xFF8BB8E8).withValues(alpha: 0.45);
+    final glowColor = isComplete
+        ? const Color(0xFFD4AF37).withValues(alpha: 0.10)
+        : const Color(0xFF4A90D9).withValues(alpha: 0.06);
+
+    // Head
+    final headY = groundY - 52;
+    canvas.drawCircle(
+      Offset(cx, headY),
+      7.5,
+      Paint()..color = glowColor..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+    canvas.drawCircle(Offset(cx, headY), 5.0, Paint()..color = personColor);
+
+    // Body
+    final bodyPaint = Paint()
+      ..color = personColor
+      ..strokeWidth = 3.0
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(cx, headY + 5), Offset(cx, groundY - 18), bodyPaint);
+
+    // Arms (raised in du'a pose)
+    canvas.drawLine(
+        Offset(cx, headY + 14), Offset(cx - 14, headY + 4), bodyPaint);
+    canvas.drawLine(
+        Offset(cx, headY + 14), Offset(cx + 14, headY + 4), bodyPaint);
+
+    // Legs
+    final legPaint = Paint()
+      ..color = personColor
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+        Offset(cx, groundY - 18), Offset(cx - 8, groundY - 2), legPaint);
+    canvas.drawLine(
+        Offset(cx, groundY - 18), Offset(cx + 8, groundY - 2), legPaint);
+  }
+
+  /// Glowing protective dome that builds with progress
+  void _drawShieldDome(
+      Canvas canvas, double cx, double cy, double w, double h, double groundY) {
+    final shieldR = w * 0.28 * progress.clamp(0.0, 1.0);
+    final shieldCy = groundY - 30;
+
+    // Number of arc segments that appear with progress (8 total)
+    final segCount = (progress * 8).ceil().clamp(0, 8);
+
+    // Outer glow
+    final glowAlpha = progress * (isComplete ? 0.18 : 0.10) * pulse;
+    canvas.drawCircle(
+      Offset(cx, shieldCy),
+      shieldR + 20,
+      Paint()
+        ..color = Color.fromRGBO(74, 144, 217, glowAlpha)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22),
+    );
+
+    // Shield arc segments — each is a portion of the dome
+    final segAngle = math.pi / 8; // each segment covers π/8 radians
+    for (int i = 0; i < segCount; i++) {
+      // Segments build from bottom-left and bottom-right, meeting at top
+      final leftAngle = math.pi + i * segAngle;
+      final rightAngle = 2 * math.pi - (i + 1) * segAngle;
+      final segAlpha =
+          ((progress - i / 8.0) * 8).clamp(0.0, 1.0) * (isComplete ? 0.75 : 0.50);
+
+      final arcPaint = Paint()
+        ..color = isComplete
+            ? Color.fromRGBO(212, 175, 55, segAlpha)
+            : Color.fromRGBO(74, 144, 217, segAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = isComplete ? 3.0 : 2.2
+        ..strokeCap = StrokeCap.round;
+
+      // Left arc segment
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(cx, shieldCy), radius: shieldR),
+        leftAngle,
+        segAngle,
+        false,
+        arcPaint,
+      );
+      // Right arc segment (mirrors)
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(cx, shieldCy), radius: shieldR),
+        rightAngle,
+        segAngle,
+        false,
+        arcPaint,
+      );
+    }
+
+    // Inner secondary dome (slightly smaller, softer)
+    if (progress > 0.3) {
+      final innerR = shieldR * 0.78;
+      final innerAlpha = ((progress - 0.3) / 0.7).clamp(0.0, 1.0) * 0.25;
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(cx, shieldCy), radius: innerR),
+        math.pi,
+        math.pi * progress.clamp(0.0, 1.0),
+        false,
+        Paint()
+          ..color = isComplete
+              ? Color.fromRGBO(255, 217, 125, innerAlpha)
+              : Color.fromRGBO(139, 184, 232, innerAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5,
+      );
+    }
+
+    // Completion: full filled dome with radial gradient
+    if (isComplete) {
+      final fillAlpha = 0.08 * pulse;
+      canvas.drawCircle(
+        Offset(cx, shieldCy),
+        shieldR,
+        Paint()
+          ..shader = RadialGradient(colors: [
+            Color.fromRGBO(212, 175, 55, fillAlpha * 2),
+            Color.fromRGBO(74, 144, 217, fillAlpha),
+            Colors.transparent,
+          ], stops: const [
+            0.0,
+            0.6,
+            1.0
+          ]).createShader(
+              Rect.fromCircle(center: Offset(cx, shieldCy), radius: shieldR)),
+      );
+
+      // Light rays from top of dome
+      for (int i = 0; i < 5; i++) {
+        final rayAngle = math.pi * 1.15 + (i * math.pi * 0.7 / 4);
+        final rayLen = shieldR * (0.6 + 0.4 * pulse);
+        final startX = cx + math.cos(rayAngle) * shieldR * 0.9;
+        final startY = shieldCy + math.sin(rayAngle) * shieldR * 0.9;
+        final endX = cx + math.cos(rayAngle) * (shieldR + rayLen);
+        final endY = shieldCy + math.sin(rayAngle) * (shieldR + rayLen);
+        canvas.drawLine(
+          Offset(startX, startY),
+          Offset(endX, endY),
+          Paint()
+            ..shader = LinearGradient(
+              colors: [
+                const Color(0xFFD4AF37).withValues(alpha: 0.30 * pulse),
+                Colors.transparent,
+              ],
+            ).createShader(Rect.fromPoints(
+                Offset(startX, startY), Offset(endX, endY)))
+            ..strokeWidth = 1.5
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+  }
+
+  /// Small orbiting dot markers around the shield
+  void _drawOrbitingMarkers(Canvas canvas, double cx, double cy, double w) {
+    final orbitR = w * 0.33;
+    final shieldCy = cy + (190 * 0.82 - 30 - cy);
+    final markerCount = ((progress - 0.3) / 0.7 * 6).ceil().clamp(0, 6);
+
+    for (int i = 0; i < markerCount; i++) {
+      final baseAngle = rotatePhase * math.pi * 2 + i * (math.pi * 2 / 6);
+      final mx = cx + math.cos(baseAngle) * orbitR;
+      final my = shieldCy + math.sin(baseAngle) * orbitR * 0.45;
+      final mAlpha = isComplete ? 0.60 : 0.35;
+
+      // Glow
+      canvas.drawCircle(
+        Offset(mx, my),
+        5.0,
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: mAlpha * 0.25)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+      // Dot
+      canvas.drawCircle(
+        Offset(mx, my),
+        2.5,
+        Paint()..color = const Color(0xFFD4AF37).withValues(alpha: mAlpha),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ProtectionShieldPainter o) =>
+      o.progress != progress ||
+      o.pulse != pulse ||
+      o.starPhase != starPhase ||
+      o.particlePhase != particlePhase ||
+      o.isComplete != isComplete ||
+      o.pointsToday != pointsToday ||
+      o.punchScale != punchScale ||
+      o.shockPhase != shockPhase ||
+      o.rotatePhase != rotatePhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
