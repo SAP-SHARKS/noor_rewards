@@ -1931,14 +1931,19 @@ class _NoorTreePainter extends CustomPainter {
     final h = size.height;
     final cx = w / 2;
 
-    // 1. Night-sky gradient background
+    // 1. Rich night-sky gradient — warms as tree grows
+    final warmth = progress * 0.3;
     canvas.drawRect(
       Rect.fromLTWH(0, 0, w, h),
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF051F1C), Color(0xFF093630), Color(0xFF0E4A3C)],
+          colors: [
+            Color.fromRGBO((8 + warmth * 20).round(), (22 + warmth * 15).round(), (35 + warmth * 10).round(), 1.0),
+            Color.fromRGBO((12 + warmth * 25).round(), (38 + warmth * 20).round(), (48 + warmth * 15).round(), 1.0),
+            Color.fromRGBO((16 + warmth * 30).round(), (52 + warmth * 25).round(), (42 + warmth * 20).round(), 1.0),
+          ],
         ).createShader(Rect.fromLTWH(0, 0, w, h)),
     );
 
@@ -1996,24 +2001,31 @@ class _NoorTreePainter extends CustomPainter {
       Paint()..color = const Color(0xFFD4AF37).withValues(alpha: moonA * 0.85));
     canvas.drawCircle(
       Offset(moonX * w + moonR * 0.55, moonY * h - moonR * 0.1), moonR * 0.9,
-      Paint()..color = const Color(0xFF051F1C).withValues(alpha: moonA * 0.92));
+      Paint()..color = Color.fromRGBO((8 + warmth * 20).round(), (22 + warmth * 15).round(), (35 + warmth * 10).round(), moonA * 0.92));
     canvas.drawCircle(
       Offset(moonX * w, moonY * h), moonR + 6,
       Paint()
         ..color = const Color(0xFFD4AF37).withValues(alpha: moonA * 0.10)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
 
-    // 4. Ground shadow glow — intensifies on punch
+    // 4. Ground — soft grass-like glow
     final groundY = h * 0.82;
-    final groundGlow = 0.07 + (punchScale > 1.0 ? (punchScale - 1.0) * 1.5 : 0.0);
+    final groundGlow = 0.10 + progress * 0.08 + (punchScale > 1.0 ? (punchScale - 1.0) * 1.5 : 0.0);
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, groundY + 14), width: w * 0.7, height: 20),
+      Rect.fromCenter(center: Offset(cx, groundY + 10), width: w * 0.75, height: 24),
       Paint()
-        ..color = Color.fromRGBO(27, 222, 154, groundGlow.clamp(0.0, 0.35))
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
+        ..color = Color.fromRGBO(52, 211, 153, groundGlow.clamp(0.0, 0.30))
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+    // Ground line
     canvas.drawLine(
-      Offset(cx - w * 0.28, groundY), Offset(cx + w * 0.28, groundY),
-      Paint()..color = const Color(0xFF1BDE9A).withValues(alpha: 0.18)..strokeWidth = 0.7);
+      Offset(cx - w * 0.32, groundY), Offset(cx + w * 0.32, groundY),
+      Paint()
+        ..shader = LinearGradient(colors: [
+          Colors.transparent,
+          const Color(0xFF34D399).withValues(alpha: 0.25),
+          Colors.transparent,
+        ]).createShader(Rect.fromLTWH(cx - w * 0.32, groundY, w * 0.64, 1))
+        ..strokeWidth = 0.8);
 
     // Apply punch scale transform for the tree (trunk + leaves)
     canvas.save();
@@ -2022,81 +2034,130 @@ class _NoorTreePainter extends CustomPainter {
     canvas.scale(punchScale, punchScale);
     canvas.translate(-cx, -treeCenterY);
 
-    // 5. Trunk
+    // 5. Trunk — tapered with gradient
     if (progress > 0.02) {
       final trunkH = (groundY - h * 0.28) * progress.clamp(0.0, 1.0);
       final trunkTop = Offset(cx + sway * 2, groundY - trunkH);
       final trunkBot = Offset(cx, groundY);
-      final tp = Paint()
-        ..color = const Color(0xFF7A4F2A)
-        ..strokeWidth = 7.5 * (0.5 + progress * 0.5)
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(trunkBot, trunkTop, tp);
-      if (progress > 0.2) _drawBranches(canvas, trunkBot, trunkTop, sway, progress, tp);
+      final trunkW = 7.5 * (0.5 + progress * 0.5);
+
+      // Tapered trunk path (wider at base, thinner at top)
+      final trunkPath = Path()
+        ..moveTo(trunkBot.dx - trunkW * 0.5, trunkBot.dy)
+        ..quadraticBezierTo(
+          cx - trunkW * 0.3 + sway, groundY - trunkH * 0.5,
+          trunkTop.dx - trunkW * 0.18, trunkTop.dy)
+        ..lineTo(trunkTop.dx + trunkW * 0.18, trunkTop.dy)
+        ..quadraticBezierTo(
+          cx + trunkW * 0.3 + sway, groundY - trunkH * 0.5,
+          trunkBot.dx + trunkW * 0.5, trunkBot.dy)
+        ..close();
+      canvas.drawPath(trunkPath, Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [const Color(0xFF5C3A1E), const Color(0xFF8B6341)],
+        ).createShader(Rect.fromLTWH(trunkBot.dx - trunkW, trunkTop.dy, trunkW * 2, trunkH)));
+
+      // Bark texture lines
+      if (progress > 0.15) {
+        final barkPaint = Paint()
+          ..color = const Color(0xFF4A2E14).withValues(alpha: 0.25)
+          ..strokeWidth = 0.6;
+        for (int i = 0; i < 4; i++) {
+          final by = groundY - trunkH * (0.15 + i * 0.22);
+          canvas.drawLine(
+            Offset(cx - trunkW * 0.15 + sway * (by / groundY), by),
+            Offset(cx + trunkW * 0.05 + sway * (by / groundY), by - trunkH * 0.06),
+            barkPaint);
+        }
+      }
+
+      // Branches that reach toward leaf positions
+      if (progress > 0.15) {
+        _drawBranches(canvas, trunkBot, trunkTop, sway, progress,
+          Paint()..color = const Color(0xFF6B4A2A)..strokeWidth = trunkW * 0.35..strokeCap = StrokeCap.round);
+      }
     }
 
-    // 6. Leaf orbs
+    // 6. Leaf orbs — vibrant and diverse
     if (progress > 0.05) {
       final trunkH = (groundY - h * 0.28) * progress;
       final treeTop = Offset(cx + sway * 2, groundY - trunkH);
+
+      // (rx, ry, radius, minProgress, color)
+      // Positioned to align with branch endpoints
       const leafDefs = [
-        (0.0,   0.0,  28.0, 0.10, Color(0xFF2EC4A9)),
-        (-0.5,  0.18, 22.0, 0.20, Color(0xFF1BDE9A)),
-        (0.5,   0.22, 22.0, 0.25, Color(0xFF26C97A)),
-        (-0.7,  0.38, 18.0, 0.36, Color(0xFF3ACF58)),
-        (0.75,  0.40, 18.0, 0.42, Color(0xFFD4AF37)),
-        (0.0,   0.48, 16.0, 0.50, Color(0xFF2EC4A9)),
-        (-0.35, 0.10, 16.0, 0.60, Color(0xFF26C97A)),
-        (0.40,  0.12, 15.0, 0.66, Color(0xFFD4AF37)),
-        (-0.8,  0.28, 14.0, 0.72, Color(0xFF1BDE9A)),
-        (0.85,  0.32, 13.0, 0.78, Color(0xFF3ACF58)),
-        (0.0,  -0.08, 20.0, 0.85, Color(0xFFFFD97D)),
-        (-0.2,  0.55, 12.0, 0.92, Color(0xFF2EC4A9)),
-        (0.25,  0.56, 12.0, 0.96, Color(0xFF26C97A)),
+        // Crown top cluster
+        (0.0,  -0.05, 24.0, 0.10, Color(0xFF34D399)),  // emerald
+        (-0.15, 0.06, 18.0, 0.15, Color(0xFF6EE7B7)),  // mint
+        (0.18,  0.04, 17.0, 0.18, Color(0xFFFBBF24)),  // amber
+        // Left branch cluster
+        (-0.45, 0.16, 20.0, 0.22, Color(0xFF818CF8)),  // indigo
+        (-0.62, 0.28, 16.0, 0.30, Color(0xFFA78BFA)),  // violet
+        (-0.38, 0.32, 14.0, 0.35, Color(0xFF2DD4BF)),  // teal
+        // Right branch cluster
+        (0.48,  0.18, 19.0, 0.25, Color(0xFFF472B6)),  // pink
+        (0.65,  0.30, 15.0, 0.32, Color(0xFFFB923C)),  // orange
+        (0.42,  0.34, 13.0, 0.38, Color(0xFF34D399)),  // emerald
+        // Lower left sub-branch
+        (-0.72, 0.42, 14.0, 0.45, Color(0xFF38BDF8)),  // sky blue
+        (-0.50, 0.48, 12.0, 0.52, Color(0xFFA78BFA)),  // violet
+        // Lower right sub-branch
+        (0.75,  0.44, 13.0, 0.50, Color(0xFFFBBF24)),  // amber
+        (0.55,  0.50, 11.0, 0.55, Color(0xFFF472B6)),  // pink
+        // Mid fills
+        (0.0,   0.30, 15.0, 0.60, Color(0xFF6EE7B7)),  // mint
+        (-0.22, 0.20, 13.0, 0.65, Color(0xFF34D399)),  // emerald
+        (0.25,  0.22, 12.0, 0.70, Color(0xFF38BDF8)),  // sky blue
+        // Top crown extras
+        (0.0,  -0.12, 16.0, 0.80, Color(0xFFFFD97D)),  // gold
+        (-0.10, 0.50, 10.0, 0.88, Color(0xFF2DD4BF)),  // teal
+        (0.12,  0.52, 10.0, 0.94, Color(0xFFFB923C)),  // orange
       ];
-      final halfW = w * 0.27;
+      final halfW = w * 0.28;
       for (final (rx, ry, r, minP, col) in leafDefs) {
         if (progress < minP) continue;
-        final leafA = ((progress - minP) / 0.08).clamp(0.0, 1.0);
+        final leafA = ((progress - minP) / 0.10).clamp(0.0, 1.0);
         final leafPos = Offset(
           treeTop.dx + rx * halfW,
           treeTop.dy + ry * trunkH * 0.55,
         );
-        final leafR = r * (0.7 + progress * 0.3) * (isComplete ? pulse : 1.0);
-        // Glow
-        canvas.drawCircle(leafPos, leafR + 8,
+        final leafR = r * (0.65 + progress * 0.35) * (isComplete ? pulse : 1.0);
+        // Soft glow
+        canvas.drawCircle(leafPos, leafR + 10,
           Paint()
-            ..color = col.withValues(alpha: leafA * 0.14)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9));
-        // Orb fill
+            ..color = col.withValues(alpha: leafA * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+        // Orb fill with vibrant gradient
         canvas.drawCircle(leafPos, leafR,
           Paint()
             ..shader = RadialGradient(colors: [
-              Colors.white.withValues(alpha: leafA * 0.45),
-              col.withValues(alpha: leafA * 0.88),
-              col.withValues(alpha: leafA * 0.38),
-            ], stops: const [0.0, 0.42, 1.0])
+              Colors.white.withValues(alpha: leafA * 0.50),
+              col.withValues(alpha: leafA * 0.92),
+              col.withValues(alpha: leafA * 0.30),
+            ], stops: const [0.0, 0.45, 1.0])
             .createShader(Rect.fromCircle(center: leafPos, radius: leafR)));
-        // Highlight
+        // Highlight dot
         canvas.drawCircle(
-          Offset(leafPos.dx - leafR * 0.28, leafPos.dy - leafR * 0.28),
-          leafR * 0.20,
-          Paint()..color = Colors.white.withValues(alpha: leafA * 0.55));
+          Offset(leafPos.dx - leafR * 0.25, leafPos.dy - leafR * 0.25),
+          leafR * 0.22,
+          Paint()..color = Colors.white.withValues(alpha: leafA * 0.60));
       }
 
       // 6b. Golden crown glow on completion
       if (isComplete) {
-        final crownY = treeTop.dy - 8;
+        final crownY = treeTop.dy - 10;
         canvas.drawCircle(
-          Offset(cx + sway * 2, crownY), 32 * pulse,
+          Offset(cx + sway * 2, crownY), 36 * pulse,
           Paint()
-            ..color = const Color(0xFFD4AF37).withValues(alpha: 0.12 * pulse)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18));
+            ..color = const Color(0xFFD4AF37).withValues(alpha: 0.14 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
         canvas.drawCircle(
-          Offset(cx + sway * 2, crownY), 18 * pulse,
+          Offset(cx + sway * 2, crownY), 20 * pulse,
           Paint()
-            ..color = const Color(0xFFFFD97D).withValues(alpha: 0.18 * pulse)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+            ..color = const Color(0xFFFFD97D).withValues(alpha: 0.22 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12));
       }
     }
 
@@ -2219,33 +2280,49 @@ class _NoorTreePainter extends CustomPainter {
 
   void _drawBranches(Canvas canvas, Offset bot, Offset top,
       double sway, double progress, Paint basePaint) {
-    final vec = top - bot;
-    final len = vec.distance;
-    final nx = -vec.dy / len;
-    final ny = vec.dx / len;
-    final anchor = bot + vec * 0.60;
-    final bLen = len * 0.34 * progress;
-    final bp = Paint()
-      ..color = const Color(0xFF7A4F2A)
-      ..strokeWidth = basePaint.strokeWidth * 0.52
-      ..strokeCap = StrokeCap.round;
+    final trunkH = bot.dy - top.dy;
+    final cx = bot.dx;
 
-    canvas.drawLine(anchor,
-      anchor + Offset(-nx * bLen + vec.dx / len * bLen * 0.42 + sway * 2.5,
-                      -ny * bLen + vec.dy / len * bLen * 0.42), bp);
-    canvas.drawLine(anchor,
-      anchor + Offset(nx * bLen + vec.dx / len * bLen * 0.42 + sway * 2.5,
-                      ny * bLen + vec.dy / len * bLen * 0.42), bp);
+    // Branch definitions: (trunkFraction, leftReach, upReach, minProgress, thickness)
+    // Each branch reaches toward where the leaf clusters are
+    const branches = [
+      // Main left branch (toward left leaf cluster at rx=-0.45...-0.62)
+      (0.55, -0.55, 0.30, 0.20, 0.50),
+      // Main right branch (toward right cluster at rx=0.48...0.65)
+      (0.55, 0.58, 0.28, 0.22, 0.48),
+      // Lower left sub-branch (toward rx=-0.72)
+      (0.38, -0.70, 0.18, 0.40, 0.35),
+      // Lower right sub-branch (toward rx=0.75)
+      (0.38, 0.72, 0.16, 0.42, 0.33),
+      // Upper left twig
+      (0.72, -0.32, 0.22, 0.55, 0.25),
+      // Upper right twig
+      (0.72, 0.35, 0.20, 0.58, 0.24),
+    ];
 
-    if (progress > 0.60) {
-      final ta = bot + vec * 0.82;
-      final sl = bLen * 0.52;
-      final sp2 = Paint()
-        ..color = const Color(0xFF7A4F2A)
-        ..strokeWidth = bp.strokeWidth * 0.58
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(ta, ta + Offset(-sl * 0.7 + sway * 2, -sl * 0.7), sp2);
-      canvas.drawLine(ta, ta + Offset( sl * 0.7 + sway * 2, -sl * 0.7), sp2);
+    final halfW = (bot.dx - top.dx).abs() + basePaint.strokeWidth * 8;
+
+    for (final (frac, reach, upR, minP, thick) in branches) {
+      if (progress < minP) continue;
+      final branchAlpha = ((progress - minP) / 0.15).clamp(0.0, 1.0);
+      final anchorY = bot.dy - trunkH * frac;
+      final anchorX = cx + sway * (1.0 - frac) * 2;
+      final endX = anchorX + reach * halfW + sway * 1.5;
+      final endY = anchorY - upR * trunkH;
+
+      // Curved branch using quadratic bezier
+      final ctrlX = anchorX + reach * halfW * 0.4;
+      final ctrlY = anchorY - upR * trunkH * 0.2;
+
+      final branchPath = Path()
+        ..moveTo(anchorX, anchorY)
+        ..quadraticBezierTo(ctrlX, ctrlY, endX, endY);
+
+      canvas.drawPath(branchPath, Paint()
+        ..color = Color.fromRGBO(107, 74, 42, branchAlpha * 0.75)
+        ..strokeWidth = basePaint.strokeWidth * thick
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke);
     }
   }
 
