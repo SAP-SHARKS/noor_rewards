@@ -5936,89 +5936,110 @@ class _CradledHeartPainter extends CustomPainter {
   }
 
   /// Two cupping hands of light that close around the heart
+  /// Two crescents of light that cup around the heart — abstract divine mercy
   void _drawHands(Canvas canvas, double cx, double cy, double w) {
     if (progress < 0.05) return;
 
-    final handAlpha = progress * (isComplete ? 0.50 : 0.30);
-    final handColor = isComplete
-        ? Color.fromRGBO(212, 175, 55, handAlpha)
-        : Color.fromRGBO(232, 121, 249, handAlpha);
-    final glowColor = isComplete
-        ? Color.fromRGBO(212, 175, 55, handAlpha * 0.25)
-        : Color.fromRGBO(232, 121, 249, handAlpha * 0.20);
+    final alpha = progress * (isComplete ? 0.55 : 0.35);
+    final color = isComplete
+        ? const Color(0xFFD4AF37)
+        : const Color(0xFFE879F9);
 
-    // Hands close inward with progress (start wide, end cupped)
-    final openness = (1.0 - progress) * 30;
+    // Crescents close inward with progress
+    final openness = (1.0 - progress) * 28;
+    final arcR = 38.0 + openness * 0.3;
 
-    // Left hand — curved palm shape
-    final lx = cx - 28 - openness;
-    final ly = cy + 5;
+    // ── Left crescent ──
+    final lcx = cx - 22 - openness;
 
-    // Left hand glow
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(lx + 8, ly), width: 40, height: 50),
-      Paint()..color = glowColor..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    // Outer glow arc
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(lcx, cy), radius: arcR + 8),
+      math.pi * 0.65, math.pi * 0.7, false,
+      Paint()
+        ..color = color.withValues(alpha: alpha * 0.10)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 12
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 
-    // Left palm curve
-    final leftHand = Path()
-      ..moveTo(lx - 5, ly - 20)
-      ..quadraticBezierTo(lx - 12, ly, lx - 5, ly + 22)
-      ..quadraticBezierTo(lx + 5, ly + 28, lx + 18, ly + 18)
-      ..quadraticBezierTo(lx + 22, ly + 5, lx + 18, ly - 10)
-      ..quadraticBezierTo(lx + 10, ly - 22, lx - 5, ly - 20);
-
-    canvas.drawPath(leftHand, Paint()
-      ..color = handColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round);
-
-    // Left fingers (3 curved lines)
-    for (int f = 0; f < 3; f++) {
-      final fy = ly - 14 + f * 10;
-      final fingerPath = Path()
-        ..moveTo(lx - 7, fy)
-        ..quadraticBezierTo(lx - 14, fy + 3, lx - 10, fy + 8);
-      canvas.drawPath(fingerPath, Paint()
-        ..color = handColor.withValues(alpha: handAlpha * 0.6)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2
-        ..strokeCap = StrokeCap.round);
+    // Main arc (3 layered strokes for depth)
+    for (int layer = 0; layer < 3; layer++) {
+      final lr = arcR - layer * 5;
+      final la = alpha * (0.55 - layer * 0.15);
+      final lw = (2.8 - layer * 0.7) * (isComplete ? 1.1 : 1.0);
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(lcx, cy), radius: lr),
+        math.pi * 0.65, math.pi * 0.7, false,
+        Paint()
+          ..color = color.withValues(alpha: la)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = lw
+          ..strokeCap = StrokeCap.round,
+      );
     }
 
-    // Right hand (mirror)
-    final rx = cx + 28 + openness;
-    final ry = cy + 5;
+    // Tip dots at arc endpoints (top and bottom)
+    for (final endAngle in [math.pi * 0.65, math.pi * 1.35]) {
+      final tx = lcx + math.cos(endAngle) * arcR;
+      final ty = cy + math.sin(endAngle) * arcR;
+      canvas.drawCircle(Offset(tx, ty), 2.5, Paint()
+        ..color = color.withValues(alpha: alpha * 0.50));
+      canvas.drawCircle(Offset(tx, ty), 1.2, Paint()
+        ..color = Colors.white.withValues(alpha: alpha * 0.40));
+    }
 
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(rx - 8, ry), width: 40, height: 50),
-      Paint()..color = glowColor..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    // ── Right crescent (mirrored) ──
+    final rcx = cx + 22 + openness;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(rcx, cy), radius: arcR + 8),
+      -math.pi * 0.35, -math.pi * 0.7, false,
+      Paint()
+        ..color = color.withValues(alpha: alpha * 0.10)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 12
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 
-    final rightHand = Path()
-      ..moveTo(rx + 5, ry - 20)
-      ..quadraticBezierTo(rx + 12, ry, rx + 5, ry + 22)
-      ..quadraticBezierTo(rx - 5, ry + 28, rx - 18, ry + 18)
-      ..quadraticBezierTo(rx - 22, ry + 5, rx - 18, ry - 10)
-      ..quadraticBezierTo(rx - 10, ry - 22, rx + 5, ry - 20);
+    for (int layer = 0; layer < 3; layer++) {
+      final lr = arcR - layer * 5;
+      final la = alpha * (0.55 - layer * 0.15);
+      final lw = (2.8 - layer * 0.7) * (isComplete ? 1.1 : 1.0);
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(rcx, cy), radius: lr),
+        -math.pi * 0.35, -math.pi * 0.7, false,
+        Paint()
+          ..color = color.withValues(alpha: la)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = lw
+          ..strokeCap = StrokeCap.round,
+      );
+    }
 
-    canvas.drawPath(rightHand, Paint()
-      ..color = handColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round);
+    for (final endAngle in [-math.pi * 0.35, -math.pi * 1.05]) {
+      final tx = rcx + math.cos(endAngle) * arcR;
+      final ty = cy + math.sin(endAngle) * arcR;
+      canvas.drawCircle(Offset(tx, ty), 2.5, Paint()
+        ..color = color.withValues(alpha: alpha * 0.50));
+      canvas.drawCircle(Offset(tx, ty), 1.2, Paint()
+        ..color = Colors.white.withValues(alpha: alpha * 0.40));
+    }
 
-    for (int f = 0; f < 3; f++) {
-      final fy = ry - 14 + f * 10;
-      final fingerPath = Path()
-        ..moveTo(rx + 7, fy)
-        ..quadraticBezierTo(rx + 14, fy + 3, rx + 10, fy + 8);
-      canvas.drawPath(fingerPath, Paint()
-        ..color = handColor.withValues(alpha: handAlpha * 0.6)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2
-        ..strokeCap = StrokeCap.round);
+    // ── Connecting glow between crescents at bottom (cupping effect) ──
+    if (progress > 0.4) {
+      final connAlpha = ((progress - 0.4) / 0.6).clamp(0.0, 1.0) * alpha * 0.35;
+      canvas.drawArc(
+        Rect.fromCenter(center: Offset(cx, cy + 8), width: (lcx - rcx).abs() + arcR, height: 30),
+        0, math.pi, false,
+        Paint()
+          ..color = color.withValues(alpha: connAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5
+          ..strokeCap = StrokeCap.round,
+      );
     }
   }
 
