@@ -41,7 +41,7 @@ class SettingsService extends ChangeNotifier {
     await _sb.from('app_config').update({
       'value':      value,
       'updated_at': DateTime.now().toIso8601String(),
-      'updated_by': ?adminEmail,
+      if (adminEmail != null) 'updated_by': adminEmail,
     }).eq('key', key);
     // Realtime will broadcast the official change back; we stay in sync.
   }
@@ -57,7 +57,7 @@ class SettingsService extends ChangeNotifier {
       await _sb.from('app_config').update({
         'value':      entry.value,
         'updated_at': DateTime.now().toIso8601String(),
-        'updated_by': ?adminEmail,
+        if (adminEmail != null) 'updated_by': adminEmail,
       }).eq('key', entry.key);
     }
   }
