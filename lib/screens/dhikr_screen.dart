@@ -1861,7 +1861,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
     return AnimatedBuilder(
       animation: Listenable.merge([_swayCtrl, _growCtrl, _starCtrl, _pCtrl, _pulseCtrl, _punchCtrl, _shockCtrl, _shootCtrl]),
       builder: (_, __) => SizedBox(
-        height: 220,
+        height: 260,
         child: CustomPaint(
           painter: _NoorTreePainter(
             progress: _grow.value,
@@ -2573,7 +2573,7 @@ class _ProtectionShieldState extends State<_ProtectionShield>
         _punchCtrl, _shockCtrl, _rotateCtrl,
       ]),
       builder: (_, __) => SizedBox(
-        height: 220,
+        height: 260,
         child: CustomPaint(
           painter: _ProtectionShieldPainter(
             progress: _grow.value,
@@ -3246,7 +3246,7 @@ class _ThreeQulsState extends State<_ThreeQuls> with TickerProviderStateMixin {
         _punchCtrl, _shockCtrl, _shimmerCtrl,
       ]),
       builder: (_, __) => SizedBox(
-        height: 220,
+        height: 260,
         child: CustomPaint(
           painter: _ThreeQulsPainter(
             progress: _grow.value,
@@ -3781,7 +3781,7 @@ class _GatesOfJannahState extends State<_GatesOfJannah>
         _punchCtrl, _shockCtrl, _rayCtrl,
       ]),
       builder: (_, __) => SizedBox(
-        height: 220,
+        height: 260,
         child: CustomPaint(
           painter: _GatesOfJannahPainter(
             progress: _grow.value,
@@ -4375,7 +4375,7 @@ class _BreakingChainsState extends State<_BreakingChains>
         _punchCtrl, _shockCtrl, _floatCtrl,
       ]),
       builder: (_, __) => SizedBox(
-        height: 220,
+        height: 260,
         child: CustomPaint(
           painter: _BreakingChainsPainter(
             progress: _grow.value,
