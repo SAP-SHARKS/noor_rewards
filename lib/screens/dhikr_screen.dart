@@ -1185,9 +1185,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
-        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: _illustrationTopColor(
+            widget.azkars[_currentIndex].id, isDark),
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
@@ -1507,11 +1507,8 @@ class _AzkarCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Illustration section (bleeds behind app bar) ──
-        Container(
-          color: _illustrationTopColor(azkar.id, isDark),
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + kToolbarHeight),
-          child: _buildIllustration(
+        // ── Illustration section ──
+        _buildIllustration(
                 azkarId: azkar.id,
                 progress: targetCount == 0
                     ? 0.0
@@ -1520,7 +1517,6 @@ class _AzkarCard extends StatelessWidget {
                 tapCount: currentCount,
                 pointsToday: pointsToday,
               ),
-        ),
 
         // ── Card section with smooth top transition ──
         Container(
@@ -4867,18 +4863,23 @@ class _DhikrCounterButton extends StatelessWidget {
             ),
         ],
       ),
+      clipBehavior: Clip.hardEdge,
       child: isComplete
           ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
                 const SizedBox(width: 8),
-                Text(
-                  'Completed',
-                  style: GoogleFonts.outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                Flexible(
+                  child: Text(
+                    'Completed',
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
