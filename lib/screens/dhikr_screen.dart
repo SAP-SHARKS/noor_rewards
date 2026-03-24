@@ -1681,6 +1681,10 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('entrust') || id.contains('ya_hayyu')) {
     return const Color(0xFF120818); // Cradled Heart
   }
+  if (id == 'morning_lwa_8' || id == 'evening_lwa_8' ||
+      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) {
+    return const Color(0xFF0E1608); // Overflowing Vessel
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1760,6 +1764,16 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_7' || id == 'evening_lwa_7' ||
       id.contains('entrust') || id.contains('ya_hayyu')) {
     return _CradledHeart(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #8 — Thank Allah / gratitude (overflowing vessel)
+  if (id == 'morning_lwa_8' || id == 'evening_lwa_8' ||
+      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) {
+    return _OverflowingVessel(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -6124,6 +6138,436 @@ class _CradledHeartPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.floatPhase != floatPhase;
+}
+
+// =============================================================================
+// 🏺 Overflowing Vessel (إناء الشكر) — Gratitude / blessings from Allah
+// =============================================================================
+class _OverflowingVessel extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _OverflowingVessel({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_OverflowingVessel> createState() => _OverflowingVesselState();
+}
+
+class _OverflowingVesselState extends State<_OverflowingVessel>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _flowCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(18, (i) => _Particle(seed: i + 800));
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))..repeat(reverse: true);
+    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _flowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_OverflowingVessel old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _flowCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _flowCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _OverflowingVesselPainter(
+            progress: _grow.value, pulse: _pulse.value, starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value, particles: _particles, isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday, punchScale: _punch.value,
+            shockPhase: _shock.value, flowPhase: _flowCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OverflowingVesselPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double flowPhase;
+
+  // Blessing orb colors (diverse ni'mah)
+  static const _blessingColors = [
+    Color(0xFFD4AF37), // gold
+    Color(0xFF34D399), // emerald
+    Color(0xFF38BDF8), // sky
+    Color(0xFFFBBF24), // amber
+    Color(0xFFA78BFA), // violet
+    Color(0xFFF472B6), // pink
+    Color(0xFF2DD4BF), // teal
+    Color(0xFFFF9F43), // orange
+  ];
+
+  const _OverflowingVesselPainter({
+    required this.progress, required this.pulse, required this.starPhase,
+    required this.particlePhase, required this.particles, required this.isComplete,
+    this.pointsToday = 0, this.punchScale = 1.0, this.shockPhase = 1.0, this.flowPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final vesselCy = h * 0.52;
+
+    // 1. Background — deep earthy green-gold (gratitude/growth)
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF0E1608), Color(0xFF162210), Color(0xFF1C2E14)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.10, 0.06), (0.23, 0.14), (0.38, 0.04), (0.54, 0.10),
+      (0.68, 0.06), (0.83, 0.13), (0.92, 0.08), (0.45, 0.20),
+      (0.62, 0.23), (0.28, 0.21), (0.76, 0.18),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      sp.color = Colors.white.withValues(alpha: 0.18 + 0.48 * tw);
+      canvas.drawCircle(Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.9 + tw * 1.0, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, vesselCy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -vesselCy);
+
+    // 3. Vessel shape
+    _drawVessel(canvas, cx, vesselCy, w);
+
+    // 4. Blessing fill level inside vessel
+    _drawFillLevel(canvas, cx, vesselCy, w);
+
+    // 5. Overflowing orbs (blessings spilling out when near full)
+    _drawOverflow(canvas, cx, vesselCy, w);
+
+    // 6. Light beam from above (Allah's blessings descending)
+    _drawDescendingLight(canvas, cx, vesselCy, w, h);
+
+    canvas.restore();
+
+    // 7. Shockwave
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.40;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      canvas.drawCircle(Offset(cx, vesselCy), maxR * shockPhase, Paint()
+        ..color = Color.fromRGBO(212, 175, 55, ringA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5 * (1.0 - shockPhase));
+    }
+
+    // 8. Tap particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.25;
+        final px = cx + math.cos(angle) * dist;
+        final py = vesselCy - 10 - t * h * 0.30;
+        final a = (1.0 - t) * 0.75;
+        final pSize = p.size * (1.0 - t * 0.3);
+        final ci = ((p.x.abs() * 8).floor()).clamp(0, 7);
+        final pColor = _blessingColors[ci];
+
+        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 9. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'الحمد لله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(text: label, style: TextStyle(
+        color: isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82),
+        fontSize: 12, fontWeight: FontWeight.w700)),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 10. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(text: badgeLabel, style: const TextStyle(
+          color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800,
+          letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Ornate vessel / bowl shape
+  void _drawVessel(Canvas canvas, double cx, double cy, double w) {
+    final vesselW = 52.0;
+    final vesselH = 38.0;
+    final rimY = cy - vesselH * 0.35;
+    final baseY = cy + vesselH * 0.65;
+
+    final vesselColor = isComplete
+        ? const Color(0xFFD4AF37).withValues(alpha: 0.55)
+        : const Color(0xFF8B7355).withValues(alpha: 0.45);
+    final rimColor = isComplete
+        ? const Color(0xFFFFD97D).withValues(alpha: 0.60)
+        : const Color(0xFFB8976A).withValues(alpha: 0.40);
+
+    // Vessel body — curved trapezoid
+    final vesselPath = Path()
+      ..moveTo(cx - vesselW * 0.5, rimY)
+      ..quadraticBezierTo(cx - vesselW * 0.55, cy + vesselH * 0.2, cx - vesselW * 0.25, baseY)
+      ..lineTo(cx + vesselW * 0.25, baseY)
+      ..quadraticBezierTo(cx + vesselW * 0.55, cy + vesselH * 0.2, cx + vesselW * 0.5, rimY)
+      ..close();
+
+    canvas.drawPath(vesselPath, Paint()..color = vesselColor);
+    canvas.drawPath(vesselPath, Paint()
+      ..color = rimColor..style = PaintingStyle.stroke..strokeWidth = 1.5);
+
+    // Rim — wider ellipse at top
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, rimY), width: vesselW + 6, height: 8),
+      Paint()..color = rimColor);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, rimY), width: vesselW + 6, height: 8),
+      Paint()..color = rimColor.withValues(alpha: 0.3)..style = PaintingStyle.stroke..strokeWidth = 1.0);
+
+    // Base pedestal
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, baseY + 2), width: vesselW * 0.45, height: 5),
+      Paint()..color = vesselColor);
+
+    // Decorative band on vessel
+    final bandY = cy + 4;
+    canvas.drawLine(
+      Offset(cx - vesselW * 0.40, bandY),
+      Offset(cx + vesselW * 0.40, bandY),
+      Paint()..color = rimColor.withValues(alpha: 0.30)..strokeWidth = 0.8);
+  }
+
+  /// Fill level inside the vessel — rises with progress
+  void _drawFillLevel(Canvas canvas, double cx, double cy, double w) {
+    if (progress < 0.03) return;
+
+    final vesselW = 52.0;
+    final vesselH = 38.0;
+    final rimY = cy - vesselH * 0.35;
+    final baseY = cy + vesselH * 0.65;
+    final fillHeight = (baseY - rimY) * progress;
+    final fillTop = baseY - fillHeight;
+
+    // Width at fill level (narrower at bottom, wider at top)
+    final fillWidthFrac = 0.25 + (progress * 0.25);
+    final fillHalfW = vesselW * fillWidthFrac;
+
+    // Animated wave on surface
+    final waveAmp = 2.0 * (isComplete ? pulse : 1.0);
+    final wavePath = Path()..moveTo(cx - fillHalfW, fillTop);
+    for (double x = -fillHalfW; x <= fillHalfW; x += 2) {
+      final wy = fillTop + math.sin((x / fillHalfW) * math.pi * 2 + flowPhase * math.pi * 2) * waveAmp;
+      wavePath.lineTo(cx + x, wy);
+    }
+    wavePath
+      ..lineTo(cx + fillHalfW, baseY)
+      ..lineTo(cx - fillHalfW, baseY)
+      ..close();
+
+    // Golden liquid fill
+    final fillAlpha = (0.20 + progress * 0.40).clamp(0.0, 0.60);
+    canvas.drawPath(wavePath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color.fromRGBO(255, 217, 125, fillAlpha * 0.8),
+          Color.fromRGBO(212, 175, 55, fillAlpha),
+          Color.fromRGBO(180, 140, 30, fillAlpha * 0.7),
+        ],
+      ).createShader(Rect.fromLTWH(cx - fillHalfW, fillTop, fillHalfW * 2, fillHeight)));
+
+    // Surface shimmer
+    canvas.drawLine(
+      Offset(cx - fillHalfW * 0.6, fillTop + waveAmp * 0.5),
+      Offset(cx + fillHalfW * 0.3, fillTop - waveAmp * 0.3),
+      Paint()..color = Colors.white.withValues(alpha: fillAlpha * 0.30)..strokeWidth = 0.8);
+
+    // Small blessing orbs floating in the liquid
+    final orbCount = (progress * 5).ceil().clamp(0, 5);
+    for (int i = 0; i < orbCount; i++) {
+      final orbPhase = (flowPhase + i * 0.2) % 1.0;
+      final ox = cx + math.sin(orbPhase * math.pi * 2 + i * 1.3) * fillHalfW * 0.5;
+      final oy = fillTop + (baseY - fillTop) * (0.2 + i * 0.15);
+      final oc = _blessingColors[i % _blessingColors.length];
+
+      canvas.drawCircle(Offset(ox, oy), 3.0, Paint()..color = oc.withValues(alpha: 0.30));
+      canvas.drawCircle(Offset(ox, oy), 1.5, Paint()..color = oc.withValues(alpha: 0.55));
+    }
+  }
+
+  /// Blessing orbs overflowing from the vessel rim (when progress > 70%)
+  void _drawOverflow(Canvas canvas, double cx, double cy, double w) {
+    if (progress < 0.7) return;
+
+    final overflowProg = ((progress - 0.7) / 0.3).clamp(0.0, 1.0);
+    final vesselH = 38.0;
+    final rimY = cy - vesselH * 0.35;
+
+    // Orbs rising from the rim
+    final orbCount = (overflowProg * 6).ceil().clamp(0, 6);
+    for (int i = 0; i < orbCount; i++) {
+      final t = ((flowPhase + i * 0.16) % 1.0);
+      final spreadX = math.sin(t * math.pi * 2 + i * 1.1) * 30;
+      final riseY = rimY - t * 40 * overflowProg;
+      final orbAlpha = (1.0 - t) * overflowProg * 0.65;
+      final orbR = 3.5 * (1.0 - t * 0.4) * (isComplete ? pulse : 1.0);
+      final oc = _blessingColors[i % _blessingColors.length];
+
+      // Glow
+      canvas.drawCircle(Offset(cx + spreadX, riseY), orbR + 4, Paint()
+        ..color = oc.withValues(alpha: orbAlpha * 0.15)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+      // Orb
+      canvas.drawCircle(Offset(cx + spreadX, riseY), orbR, Paint()
+        ..shader = RadialGradient(colors: [
+          Colors.white.withValues(alpha: orbAlpha * 0.6),
+          oc.withValues(alpha: orbAlpha),
+        ]).createShader(Rect.fromCircle(center: Offset(cx + spreadX, riseY), radius: orbR)));
+    }
+  }
+
+  /// Soft descending light from above into the vessel
+  void _drawDescendingLight(Canvas canvas, double cx, double cy, double w, double h) {
+    if (progress < 0.1) return;
+
+    final lightAlpha = progress * (isComplete ? 0.18 : 0.08) * pulse;
+    final vesselH = 38.0;
+    final rimY = cy - vesselH * 0.35;
+
+    // Cone of light narrowing toward the vessel
+    final beamPath = Path()
+      ..moveTo(cx - 35, h * 0.05)
+      ..lineTo(cx + 35, h * 0.05)
+      ..lineTo(cx + 15, rimY)
+      ..lineTo(cx - 15, rimY)
+      ..close();
+
+    canvas.drawPath(beamPath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color.fromRGBO(255, 248, 220, lightAlpha * 0.6),
+          Color.fromRGBO(212, 175, 55, lightAlpha),
+          Color.fromRGBO(212, 175, 55, lightAlpha * 1.5),
+        ],
+      ).createShader(Rect.fromLTWH(cx - 35, h * 0.05, 70, rimY - h * 0.05)));
+
+    // Descending blessing dots within the beam
+    if (progress > 0.3) {
+      final dotCount = ((progress - 0.3) / 0.7 * 4).ceil().clamp(0, 4);
+      for (int i = 0; i < dotCount; i++) {
+        final t = (flowPhase + i * 0.25) % 1.0;
+        final dy = h * 0.08 + t * (rimY - h * 0.08);
+        final dx = cx + math.sin(t * math.pi * 4 + i) * (15 * (1 - t) + 5);
+        final dotA = (0.5 - (t - 0.5).abs()) * 0.80;
+        final dc = _blessingColors[(i * 2) % _blessingColors.length];
+
+        canvas.drawCircle(Offset(dx, dy), 2.5, Paint()..color = dc.withValues(alpha: dotA));
+        canvas.drawCircle(Offset(dx, dy), 1.2, Paint()..color = Colors.white.withValues(alpha: dotA * 0.5));
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_OverflowingVesselPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.flowPhase != flowPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
