@@ -1677,6 +1677,10 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('four_evils') || id.contains('4_evils')) {
     return const Color(0xFF0F0A14); // Repelling Light
   }
+  if (id == 'morning_lwa_7' || id == 'evening_lwa_7' ||
+      id.contains('entrust') || id.contains('ya_hayyu')) {
+    return const Color(0xFF120818); // Cradled Heart
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1746,6 +1750,16 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_6' || id == 'evening_lwa_6' ||
       id.contains('four_evils') || id.contains('4_evils')) {
     return _RepellingLight(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #7 — Entrust all matters to Allah (cradled heart)
+  if (id == 'morning_lwa_7' || id == 'evening_lwa_7' ||
+      id.contains('entrust') || id.contains('ya_hayyu')) {
+    return _CradledHeart(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -5639,6 +5653,477 @@ class _RepellingLightPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.driftPhase != driftPhase;
+}
+
+// =============================================================================
+// 💜 Cradled Heart (القلب المطمئن) — Entrust all matters to Allah
+// =============================================================================
+class _CradledHeart extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _CradledHeart({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_CradledHeart> createState() => _CradledHeartState();
+}
+
+class _CradledHeartState extends State<_CradledHeart>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _floatCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 700));
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1600))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _floatCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3600))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_CradledHeart old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose();
+    _floatCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _floatCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _CradledHeartPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            floatPhase: _floatCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CradledHeartPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double floatPhase;
+
+  const _CradledHeartPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.floatPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.42;
+
+    // 1. Background — deep warm purple (mercy/trust theme)
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF120818), Color(0xFF1A1028), Color(0xFF201435)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.10, 0.07), (0.22, 0.15), (0.37, 0.05), (0.53, 0.10),
+      (0.67, 0.06), (0.82, 0.14), (0.92, 0.08), (0.44, 0.21),
+      (0.61, 0.25), (0.28, 0.23), (0.76, 0.19),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      sp.color = Colors.white.withValues(alpha: 0.18 + 0.50 * tw);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.9 + tw * 1.0, sp);
+    }
+
+    // Gentle float offset for the heart
+    final floatY = math.sin(floatPhase * math.pi) * 4;
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy + floatY);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -(cy + floatY));
+
+    // 3. Cupping hands of light (appear from sides)
+    _drawHands(canvas, cx, cy + floatY, w);
+
+    // 4. Heart at center
+    _drawHeart(canvas, cx, cy + floatY);
+
+    // 5. Mercy glow surrounding
+    _drawMercyGlow(canvas, cx, cy + floatY, w);
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.40;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(Offset(cx, cy + floatY), r, Paint()
+        ..color = Color.fromRGBO(232, 121, 249, ringA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5 * (1.0 - shockPhase));
+    }
+
+    // 7. Particles — gentle upward sparkles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final px = cx + p.x * w * 0.25 + math.sin(t * math.pi * 2) * 8;
+        final py = cy - t * h * 0.40;
+        final a = (1.0 - t) * 0.75;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        final pColor = Color.lerp(const Color(0xFFE879F9), const Color(0xFFD4AF37), t)!;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()
+          ..color = pColor.withValues(alpha: a * 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'توكلت على الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(text: label, style: TextStyle(
+        color: isComplete ? const Color(0xFFE879F9) : Colors.white.withValues(alpha: 0.82),
+        fontSize: 12, fontWeight: FontWeight.w700)),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(text: badgeLabel, style: const TextStyle(
+          color: Color(0xFFE879F9), fontSize: 10, fontWeight: FontWeight.w800,
+          letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFE879F9), blurRadius: 6)])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFE879F9).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFE879F9).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Two cupping hands of light that close around the heart
+  void _drawHands(Canvas canvas, double cx, double cy, double w) {
+    if (progress < 0.05) return;
+
+    final handAlpha = progress * (isComplete ? 0.50 : 0.30);
+    final handColor = isComplete
+        ? Color.fromRGBO(212, 175, 55, handAlpha)
+        : Color.fromRGBO(232, 121, 249, handAlpha);
+    final glowColor = isComplete
+        ? Color.fromRGBO(212, 175, 55, handAlpha * 0.25)
+        : Color.fromRGBO(232, 121, 249, handAlpha * 0.20);
+
+    // Hands close inward with progress (start wide, end cupped)
+    final openness = (1.0 - progress) * 30;
+
+    // Left hand — curved palm shape
+    final lx = cx - 28 - openness;
+    final ly = cy + 5;
+
+    // Left hand glow
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(lx + 8, ly), width: 40, height: 50),
+      Paint()..color = glowColor..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    );
+
+    // Left palm curve
+    final leftHand = Path()
+      ..moveTo(lx - 5, ly - 20)
+      ..quadraticBezierTo(lx - 12, ly, lx - 5, ly + 22)
+      ..quadraticBezierTo(lx + 5, ly + 28, lx + 18, ly + 18)
+      ..quadraticBezierTo(lx + 22, ly + 5, lx + 18, ly - 10)
+      ..quadraticBezierTo(lx + 10, ly - 22, lx - 5, ly - 20);
+
+    canvas.drawPath(leftHand, Paint()
+      ..color = handColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round);
+
+    // Left fingers (3 curved lines)
+    for (int f = 0; f < 3; f++) {
+      final fy = ly - 14 + f * 10;
+      final fingerPath = Path()
+        ..moveTo(lx - 7, fy)
+        ..quadraticBezierTo(lx - 14, fy + 3, lx - 10, fy + 8);
+      canvas.drawPath(fingerPath, Paint()
+        ..color = handColor.withValues(alpha: handAlpha * 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round);
+    }
+
+    // Right hand (mirror)
+    final rx = cx + 28 + openness;
+    final ry = cy + 5;
+
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(rx - 8, ry), width: 40, height: 50),
+      Paint()..color = glowColor..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    );
+
+    final rightHand = Path()
+      ..moveTo(rx + 5, ry - 20)
+      ..quadraticBezierTo(rx + 12, ry, rx + 5, ry + 22)
+      ..quadraticBezierTo(rx - 5, ry + 28, rx - 18, ry + 18)
+      ..quadraticBezierTo(rx - 22, ry + 5, rx - 18, ry - 10)
+      ..quadraticBezierTo(rx - 10, ry - 22, rx + 5, ry - 20);
+
+    canvas.drawPath(rightHand, Paint()
+      ..color = handColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round);
+
+    for (int f = 0; f < 3; f++) {
+      final fy = ry - 14 + f * 10;
+      final fingerPath = Path()
+        ..moveTo(rx + 7, fy)
+        ..quadraticBezierTo(rx + 14, fy + 3, rx + 10, fy + 8);
+      canvas.drawPath(fingerPath, Paint()
+        ..color = handColor.withValues(alpha: handAlpha * 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round);
+    }
+  }
+
+  /// Heart shape at center that grows with progress
+  void _drawHeart(Canvas canvas, double cx, double cy) {
+    final heartScale = (0.4 + progress * 0.6) * (isComplete ? pulse : 1.0);
+    final heartAlpha = (0.2 + progress * 0.6).clamp(0.0, 0.80);
+
+    // Heart glow
+    canvas.drawCircle(Offset(cx, cy), 22 * heartScale, Paint()
+      ..color = isComplete
+          ? Color.fromRGBO(212, 175, 55, heartAlpha * 0.15)
+          : Color.fromRGBO(232, 121, 249, heartAlpha * 0.12)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14));
+
+    // Heart shape path
+    canvas.save();
+    canvas.translate(cx, cy - 2 * heartScale);
+
+    final s = 12.0 * heartScale;
+    final heartPath = Path()
+      ..moveTo(0, s * 0.9)
+      ..cubicTo(-s * 0.7, s * 0.4, -s * 1.3, -s * 0.2, -s * 0.7, -s * 0.7)
+      ..cubicTo(-s * 0.3, -s * 1.0, 0, -s * 0.7, 0, -s * 0.3)
+      ..cubicTo(0, -s * 0.7, s * 0.3, -s * 1.0, s * 0.7, -s * 0.7)
+      ..cubicTo(s * 1.3, -s * 0.2, s * 0.7, s * 0.4, 0, s * 0.9)
+      ..close();
+
+    // Filled heart with gradient
+    canvas.drawPath(heartPath, Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(0, -0.3),
+        colors: [
+          Colors.white.withValues(alpha: heartAlpha * 0.50),
+          isComplete
+              ? Color.fromRGBO(212, 175, 55, heartAlpha)
+              : Color.fromRGBO(232, 121, 249, heartAlpha),
+          isComplete
+              ? Color.fromRGBO(180, 140, 30, heartAlpha * 0.6)
+              : Color.fromRGBO(192, 80, 210, heartAlpha * 0.6),
+        ],
+        stops: const [0.0, 0.45, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset.zero, radius: s * 1.2)));
+
+    // Heart outline (subtle)
+    canvas.drawPath(heartPath, Paint()
+      ..color = Colors.white.withValues(alpha: heartAlpha * 0.25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8);
+
+    // Highlight on top-left of heart
+    canvas.drawCircle(Offset(-s * 0.4, -s * 0.4), s * 0.2, Paint()
+      ..color = Colors.white.withValues(alpha: heartAlpha * 0.35));
+
+    canvas.restore();
+  }
+
+  /// Soft mercy aura around the whole scene
+  void _drawMercyGlow(Canvas canvas, double cx, double cy, double w) {
+    if (progress < 0.2) return;
+
+    final auraProgress = ((progress - 0.2) / 0.8).clamp(0.0, 1.0);
+    final auraR = 45 + auraProgress * 25;
+    final auraAlpha = auraProgress * (isComplete ? 0.12 : 0.06) * pulse;
+
+    // Soft circular aura
+    canvas.drawCircle(Offset(cx, cy), auraR, Paint()
+      ..shader = RadialGradient(colors: [
+        isComplete
+            ? Color.fromRGBO(212, 175, 55, auraAlpha * 1.5)
+            : Color.fromRGBO(232, 121, 249, auraAlpha * 1.2),
+        Colors.transparent,
+      ]).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: auraR)));
+
+    // Orbiting mercy dots
+    if (progress > 0.5) {
+      final dotCount = ((progress - 0.5) / 0.5 * 5).ceil().clamp(0, 5);
+      for (int i = 0; i < dotCount; i++) {
+        final angle = floatPhase * math.pi * 2 + i * (math.pi * 2 / 5);
+        final orbitR = auraR * 0.75;
+        final dx = cx + math.cos(angle) * orbitR;
+        final dy = cy + math.sin(angle) * orbitR * 0.5;
+        final dotAlpha = isComplete ? 0.40 : 0.25;
+
+        canvas.drawCircle(Offset(dx, dy), 3.5, Paint()
+          ..color = const Color(0xFFE879F9).withValues(alpha: dotAlpha * 0.20)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+        canvas.drawCircle(Offset(dx, dy), 2.0, Paint()
+          ..color = const Color(0xFFE879F9).withValues(alpha: dotAlpha));
+      }
+    }
+
+    // Completion: gentle light rays upward from heart
+    if (isComplete) {
+      for (int i = 0; i < 6; i++) {
+        final angle = -math.pi / 2 + (i - 2.5) * 0.25;
+        final rayLen = 35.0 * pulse;
+        final sx = cx + math.cos(angle) * 15;
+        final sy = cy + math.sin(angle) * 15;
+        final ex = cx + math.cos(angle) * (15 + rayLen);
+        final ey = cy + math.sin(angle) * (15 + rayLen);
+        canvas.drawLine(Offset(sx, sy), Offset(ex, ey), Paint()
+          ..shader = LinearGradient(colors: [
+            Color.fromRGBO(232, 121, 249, 0.20 * pulse),
+            Colors.transparent,
+          ]).createShader(Rect.fromPoints(Offset(sx, sy), Offset(ex, ey)))
+          ..strokeWidth = 1.2
+          ..strokeCap = StrokeCap.round);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CradledHeartPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.floatPhase != floatPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
