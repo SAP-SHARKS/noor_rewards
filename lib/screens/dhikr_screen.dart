@@ -1693,6 +1693,10 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('praise_morning') || id.contains('uthni')) {
     return const Color(0xFF08101E); // Praise Ripples
   }
+  if (id == 'morning_lwa_11' || id == 'evening_lwa_11' ||
+      id.contains('good_day') || id.contains('khayr_yawm')) {
+    return const Color(0xFF0A0E18); // Glowing Path
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1802,6 +1806,16 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_10' || id == 'evening_lwa_10' ||
       id.contains('praise_morning') || id.contains('uthni')) {
     return _PraiseRipples(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #11 — Ask for a good day (glowing path)
+  if (id == 'morning_lwa_11' || id == 'evening_lwa_11' ||
+      id.contains('good_day') || id.contains('khayr_yawm')) {
+    return _GlowingPath(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -7279,6 +7293,427 @@ class _PraiseRipplesPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.ripplePhase != ripplePhase;
+}
+
+// =============================================================================
+// 🛤️ Glowing Path (طريق النور) — Ask Allah for a good day
+// =============================================================================
+class _GlowingPath extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _GlowingPath({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_GlowingPath> createState() => _GlowingPathState();
+}
+
+class _GlowingPathState extends State<_GlowingPath> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _walkCtrl;
+  late Animation<double> _pulse, _grow, _pAnim, _punch, _shock;
+  double _prevProgress = 0.0;
+  int _prevTap = 0;
+  final List<_Particle> _particles = List.generate(16, (i) => _Particle(seed: i + 1100));
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))..repeat(reverse: true);
+    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _walkCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_GlowingPath old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _walkCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _walkCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _GlowingPathPainter(
+            progress: _grow.value, pulse: _pulse.value, starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value, particles: _particles, isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday, punchScale: _punch.value,
+            shockPhase: _shock.value, walkPhase: _walkCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlowingPathPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double walkPhase;
+
+  const _GlowingPathPainter({
+    required this.progress, required this.pulse, required this.starPhase,
+    required this.particlePhase, required this.particles, required this.isComplete,
+    this.pointsToday = 0, this.punchScale = 1.0, this.shockPhase = 1.0, this.walkPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+
+    // 1. Background — dark to warm gradient (journey forward)
+    final warmth = progress * 0.25;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((10 + warmth * 30).round(), (14 + warmth * 20).round(), (24 + warmth * 15).round(), 1.0),
+            Color.fromRGBO((12 + warmth * 40).round(), (18 + warmth * 28).round(), (30 + warmth * 20).round(), 1.0),
+            Color.fromRGBO((15 + warmth * 50).round(), (22 + warmth * 35).round(), (28 + warmth * 25).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.09, 0.06), (0.22, 0.14), (0.37, 0.04), (0.54, 0.10),
+      (0.68, 0.06), (0.83, 0.13), (0.92, 0.07), (0.45, 0.19),
+      (0.62, 0.23), (0.28, 0.21), (0.76, 0.17),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      sp.color = Colors.white.withValues(alpha: 0.18 + 0.45 * tw);
+      canvas.drawCircle(Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.9 + tw * 1.0, sp);
+    }
+
+    // Apply punch
+    canvas.save();
+    final pathCy = h * 0.50;
+    canvas.translate(cx, pathCy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -pathCy);
+
+    // 3. Perspective path receding into distance
+    _drawPath(canvas, cx, w, h);
+
+    // 4. Destination light at vanishing point
+    _drawDestinationLight(canvas, cx, h);
+
+    // 5. Milestone markers along the path
+    _drawMilestones(canvas, cx, w, h);
+
+    // 6. Walking figure
+    _drawWalker(canvas, cx, w, h);
+
+    canvas.restore();
+
+    // 7. Shockwave
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.38;
+      final ringA = (1.0 - shockPhase) * 0.32;
+      canvas.drawCircle(Offset(cx, h * 0.65), maxR * shockPhase, Paint()
+        ..color = Color.fromRGBO(212, 175, 55, ringA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5 * (1.0 - shockPhase));
+    }
+
+    // 8. Particles — trail sparkles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final px = cx + p.x * w * 0.20;
+        final py = h * 0.65 - t * h * 0.40;
+        final a = (1.0 - t) * 0.70;
+        final pSize = p.size * (1.0 - t * 0.3);
+        final pColor = Color.lerp(const Color(0xFFD4AF37), const Color(0xFF34D399), t)!;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
+      }
+    }
+
+    // 9. Label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'بارك الله يومك' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(text: label, style: TextStyle(
+        color: isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82),
+        fontSize: 12, fontWeight: FontWeight.w700)),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(text: badgeLabel, style: const TextStyle(
+          color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800,
+          letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Perspective path with edges converging toward vanishing point
+  void _drawPath(Canvas canvas, double cx, double w, double h) {
+    final vanishY = h * 0.22;
+    final baseY = h * 0.78;
+    final pathLit = progress; // how much of the path is illuminated
+
+    // Path edges (converging lines)
+    final baseHalfW = w * 0.30;
+    final topHalfW = w * 0.03;
+
+    // Left edge
+    final leftPath = Path()
+      ..moveTo(cx - baseHalfW, baseY)
+      ..lineTo(cx - topHalfW, vanishY);
+    // Right edge
+    final rightPath = Path()
+      ..moveTo(cx + baseHalfW, baseY)
+      ..lineTo(cx + topHalfW, vanishY);
+
+    final edgeAlpha = 0.15 + progress * 0.20;
+    final edgePaint = Paint()
+      ..color = const Color(0xFFD4AF37).withValues(alpha: edgeAlpha)
+      ..strokeWidth = 1.2
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    canvas.drawPath(leftPath, edgePaint);
+    canvas.drawPath(rightPath, edgePaint);
+
+    // Illuminated path surface (fills from bottom toward vanishing point)
+    final litY = baseY - (baseY - vanishY) * pathLit;
+    final litHalfW = baseHalfW - (baseHalfW - topHalfW) * pathLit;
+
+    final surfacePath = Path()
+      ..moveTo(cx - baseHalfW, baseY)
+      ..lineTo(cx - litHalfW, litY)
+      ..lineTo(cx + litHalfW, litY)
+      ..lineTo(cx + baseHalfW, baseY)
+      ..close();
+
+    final surfaceAlpha = (0.04 + progress * 0.10).clamp(0.0, 0.14);
+    canvas.drawPath(surfacePath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+        colors: [
+          Color.fromRGBO(212, 175, 55, surfaceAlpha),
+          Color.fromRGBO(52, 211, 153, surfaceAlpha * 0.6),
+          Colors.transparent,
+        ],
+      ).createShader(Rect.fromLTWH(cx - baseHalfW, vanishY, baseHalfW * 2, baseY - vanishY)));
+
+    // Center dashed line
+    final dashCount = (progress * 8).ceil().clamp(0, 8);
+    for (int i = 0; i < dashCount; i++) {
+      final t = i / 8.0;
+      final dy = baseY - (baseY - vanishY) * t;
+      final nextT = (i + 0.4) / 8.0;
+      final nextDy = baseY - (baseY - vanishY) * nextT;
+      final dashAlpha = (1.0 - t) * (0.15 + progress * 0.20);
+
+      canvas.drawLine(
+        Offset(cx, dy), Offset(cx, nextDy),
+        Paint()
+          ..color = Color.fromRGBO(255, 255, 255, dashAlpha)
+          ..strokeWidth = 1.5 * (1.0 - t * 0.6)
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+  }
+
+  /// Bright light at the vanishing point — the goodness of the day
+  void _drawDestinationLight(Canvas canvas, double cx, double h) {
+    if (progress < 0.1) return;
+
+    final vanishY = h * 0.22;
+    final lightAlpha = ((progress - 0.1) / 0.9) * (isComplete ? 0.45 : 0.22) * pulse;
+    final lightR = 15 + progress * 20;
+
+    // Outer glow
+    canvas.drawCircle(Offset(cx, vanishY), lightR + 20, Paint()
+      ..color = Color.fromRGBO(212, 175, 55, lightAlpha * 0.30)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
+
+    // Mid glow
+    canvas.drawCircle(Offset(cx, vanishY), lightR, Paint()
+      ..shader = RadialGradient(colors: [
+        Color.fromRGBO(255, 255, 240, lightAlpha * 1.2),
+        Color.fromRGBO(212, 175, 55, lightAlpha * 0.8),
+        Colors.transparent,
+      ], stops: const [0.0, 0.45, 1.0])
+      .createShader(Rect.fromCircle(center: Offset(cx, vanishY), radius: lightR)));
+
+    // Core
+    canvas.drawCircle(Offset(cx, vanishY), 4 * pulse, Paint()
+      ..color = Colors.white.withValues(alpha: lightAlpha * 1.5));
+
+    // Upward rays on completion
+    if (isComplete) {
+      for (int i = 0; i < 5; i++) {
+        final angle = -math.pi / 2 + (i - 2) * 0.25;
+        final rayLen = 30.0 * pulse;
+        final sx = cx + math.cos(angle) * 10;
+        final sy = vanishY + math.sin(angle) * 10;
+        final ex = cx + math.cos(angle) * (10 + rayLen);
+        final ey = vanishY + math.sin(angle) * (10 + rayLen);
+        canvas.drawLine(Offset(sx, sy), Offset(ex, ey), Paint()
+          ..shader = LinearGradient(colors: [
+            Color.fromRGBO(255, 220, 100, 0.25 * pulse),
+            Colors.transparent,
+          ]).createShader(Rect.fromPoints(Offset(sx, sy), Offset(ex, ey)))
+          ..strokeWidth = 1.5..strokeCap = StrokeCap.round);
+      }
+    }
+  }
+
+  /// Small glowing milestone dots along the path
+  void _drawMilestones(Canvas canvas, double cx, double w, double h) {
+    final vanishY = h * 0.22;
+    final baseY = h * 0.78;
+    // 5 milestones: victory, help, light, barakah, guidance
+    const milestoneColors = [
+      Color(0xFFD4AF37), // victory (fath)
+      Color(0xFF34D399), // help (nasr)
+      Color(0xFF38BDF8), // light (noor)
+      Color(0xFFFBBF24), // barakah
+      Color(0xFFA78BFA), // guidance (huda)
+    ];
+
+    for (int i = 0; i < 5; i++) {
+      final threshold = (i + 1) * 0.20;
+      if (progress < threshold - 0.15) continue;
+
+      final mProgress = ((progress - (threshold - 0.15)) / 0.15).clamp(0.0, 1.0);
+      final t = (i + 1) / 6.0; // position along path (0=bottom, 1=vanish)
+      final my = baseY - (baseY - vanishY) * t;
+      // Alternate left and right of center line
+      final side = i.isEven ? -1.0 : 1.0;
+      final pathHalfW = (w * 0.30) - ((w * 0.30) - (w * 0.03)) * t;
+      final mx = cx + side * pathHalfW * 0.5;
+      final mColor = milestoneColors[i];
+      final mR = 4.0 * mProgress * (isComplete ? pulse : 1.0);
+
+      // Glow
+      canvas.drawCircle(Offset(mx, my), mR + 5, Paint()
+        ..color = mColor.withValues(alpha: mProgress * 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+      // Dot
+      canvas.drawCircle(Offset(mx, my), mR, Paint()
+        ..shader = RadialGradient(colors: [
+          Colors.white.withValues(alpha: mProgress * 0.50),
+          mColor.withValues(alpha: mProgress * 0.70),
+        ]).createShader(Rect.fromCircle(center: Offset(mx, my), radius: mR)));
+    }
+  }
+
+  /// Small figure walking along the path
+  void _drawWalker(Canvas canvas, double cx, double w, double h) {
+    final vanishY = h * 0.22;
+    final baseY = h * 0.78;
+
+    // Walker position along the path follows progress
+    final walkerT = progress * 0.65; // doesn't reach vanishing point
+    final walkerY = baseY - (baseY - vanishY) * walkerT;
+    final perspScale = 1.0 - walkerT * 0.6; // shrink with perspective
+
+    final walkerAlpha = (0.30 + progress * 0.35).clamp(0.0, 0.65);
+    final walkerColor = isComplete
+        ? Color.fromRGBO(212, 175, 55, walkerAlpha)
+        : Color.fromRGBO(200, 200, 220, walkerAlpha);
+
+    // Subtle bob
+    final bob = math.sin(walkPhase * math.pi * 2) * 1.5 * perspScale;
+
+    // Head
+    canvas.drawCircle(Offset(cx, walkerY - 12 * perspScale + bob), 3.5 * perspScale, Paint()..color = walkerColor);
+    // Body
+    canvas.drawLine(
+      Offset(cx, walkerY - 8 * perspScale + bob),
+      Offset(cx, walkerY + 5 * perspScale + bob),
+      Paint()..color = walkerColor..strokeWidth = 2.0 * perspScale..strokeCap = StrokeCap.round);
+    // Legs (walking motion)
+    final legSwing = math.sin(walkPhase * math.pi * 4) * 4 * perspScale;
+    canvas.drawLine(
+      Offset(cx, walkerY + 5 * perspScale + bob),
+      Offset(cx - legSwing, walkerY + 14 * perspScale + bob),
+      Paint()..color = walkerColor..strokeWidth = 1.5 * perspScale..strokeCap = StrokeCap.round);
+    canvas.drawLine(
+      Offset(cx, walkerY + 5 * perspScale + bob),
+      Offset(cx + legSwing, walkerY + 14 * perspScale + bob),
+      Paint()..color = walkerColor..strokeWidth = 1.5 * perspScale..strokeCap = StrokeCap.round);
+
+    // Walker glow underneath
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, walkerY + 16 * perspScale + bob), width: 12 * perspScale, height: 4 * perspScale),
+      Paint()
+        ..color = const Color(0xFFD4AF37).withValues(alpha: walkerAlpha * 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+  }
+
+  @override
+  bool shouldRepaint(_GlowingPathPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.walkPhase != walkPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
