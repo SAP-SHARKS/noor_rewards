@@ -1669,6 +1669,10 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('anxiety') || id.contains('hamm_hazan')) {
     return const Color(0xFF0A0C12); // Breaking Chains
   }
+  if (id == 'morning_lwa_5' || id == 'evening_lwa_5' ||
+      id.contains('dua_afiyah') || id.contains('wellbeing')) {
+    return const Color(0xFF0A1A18); // Six Wards
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1718,6 +1722,16 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_4' || id == 'evening_lwa_4' ||
       id.contains('anxiety') || id.contains('hamm_hazan')) {
     return _BreakingChains(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #5 — Well-being / protection from 6 directions (fortress ward)
+  if (id == 'morning_lwa_5' || id == 'evening_lwa_5' ||
+      id.contains('dua_afiyah') || id.contains('wellbeing')) {
+    return _SixWards(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -4763,6 +4777,435 @@ class _BreakingChainsPainter extends CustomPainter {
       o.punchScale != punchScale ||
       o.shockPhase != shockPhase ||
       o.floatPhase != floatPhase;
+}
+
+// =============================================================================
+// 🏰 Six Wards (حصن العافية) — Protection from 6 directions
+// =============================================================================
+class _SixWards extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _SixWards({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_SixWards> createState() => _SixWardsState();
+}
+
+class _SixWardsState extends State<_SixWards> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _glowCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(18, (i) => _Particle(seed: i + 500));
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _glowCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3200))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_SixWards old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose();
+    _glowCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _glowCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _SixWardsPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            glowPhase: _glowCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SixWardsPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double glowPhase;
+
+  // 6 directions this dua covers: front, behind, right, left, above, below
+  // Each ward gets a distinct color
+  static const _wardColors = [
+    Color(0xFF2EC4A9), // front — teal
+    Color(0xFF4A90D9), // behind — blue
+    Color(0xFFF59E0B), // right — amber
+    Color(0xFF8B5CF6), // left — violet
+    Color(0xFFD4AF37), // above — gold
+    Color(0xFF10B981), // below — emerald
+  ];
+
+  static const _wardLabels = ['أمام', 'خلف', 'يمين', 'شمال', 'فوق', 'تحت'];
+
+  const _SixWardsPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.glowPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.42;
+
+    // 1. Background — deep teal-dark (wellbeing/healing theme)
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF0A1A18), Color(0xFF0E2A25), Color(0xFF12362E)],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.09, 0.06), (0.21, 0.15), (0.36, 0.05), (0.53, 0.10),
+      (0.67, 0.06), (0.81, 0.14), (0.91, 0.08), (0.43, 0.20),
+      (0.60, 0.24), (0.27, 0.22), (0.74, 0.19),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      sp.color = Colors.white.withValues(alpha: 0.18 + 0.50 * tw);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.9 + tw * 1.0, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Central person silhouette (small, subtle)
+    _drawPerson(canvas, cx, cy);
+
+    // 4. Six directional ward panels (hexagonal arrangement)
+    _drawWards(canvas, cx, cy, w);
+
+    // 5. Connecting lines from center to each ward
+    if (progress > 0.1) {
+      _drawConnections(canvas, cx, cy, w);
+    }
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.42;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(Offset(cx, cy), r, Paint()
+        ..color = Color.fromRGBO(46, 196, 169, ringA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5 * (1.0 - shockPhase));
+    }
+
+    // 7. Particles — rise outward in 6 directions
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final dirIdx = (p.x.abs() * 6).floor().clamp(0, 5);
+        final angle = dirIdx * math.pi / 3 + math.pi / 6;
+        final dist = 15 + t * w * 0.28;
+        final px = cx + math.cos(angle) * dist + math.sin(t * math.pi * 2) * 4;
+        final py = cy + math.sin(angle) * dist * 0.6 - t * 10;
+        final a = (1.0 - t) * 0.75;
+        final pSize = p.size * (1.0 - t * 0.3);
+        final pColor = _wardColors[dirIdx];
+
+        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()
+          ..color = pColor.withValues(alpha: a * 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'عافاك الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(text: label, style: TextStyle(
+        color: isComplete ? const Color(0xFF2EC4A9) : Colors.white.withValues(alpha: 0.82),
+        fontSize: 12, fontWeight: FontWeight.w700)),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(text: badgeLabel, style: const TextStyle(
+          color: Color(0xFF2EC4A9), fontSize: 10, fontWeight: FontWeight.w800,
+          letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFF2EC4A9), blurRadius: 6)])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFF2EC4A9).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFF2EC4A9).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  void _drawPerson(Canvas canvas, double cx, double cy) {
+    final alpha = isComplete ? 0.55 : 0.35;
+    final color = isComplete
+        ? Color.fromRGBO(212, 175, 55, alpha)
+        : Color.fromRGBO(46, 196, 169, alpha);
+
+    // Glow
+    canvas.drawCircle(Offset(cx, cy), 16, Paint()
+      ..color = color.withValues(alpha: 0.08)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+
+    // Head
+    canvas.drawCircle(Offset(cx, cy - 10), 4.5, Paint()..color = color);
+    // Body
+    canvas.drawLine(Offset(cx, cy - 6), Offset(cx, cy + 8), Paint()..color = color..strokeWidth = 2.5..strokeCap = StrokeCap.round);
+    // Arms out (receiving protection)
+    canvas.drawLine(Offset(cx, cy - 2), Offset(cx - 10, cy + 2), Paint()..color = color..strokeWidth = 2.0..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(cx, cy - 2), Offset(cx + 10, cy + 2), Paint()..color = color..strokeWidth = 2.0..strokeCap = StrokeCap.round);
+  }
+
+  void _drawWards(Canvas canvas, double cx, double cy, double w) {
+    final wardR = w * 0.30; // distance from center to ward
+
+    for (int i = 0; i < 6; i++) {
+      final threshold = (i + 1) / 6.0;
+      if (progress < threshold - 1.0 / 6.0) continue;
+
+      final wardProgress = ((progress - (i / 6.0)) * 6.0).clamp(0.0, 1.0);
+      final angle = i * math.pi / 3 - math.pi / 2; // start from top
+      final wx = cx + math.cos(angle) * wardR;
+      final wy = cy + math.sin(angle) * wardR * 0.55; // flatten vertically
+      final color = _wardColors[i];
+
+      // Ward panel — small hexagonal shield
+      final panelSize = 14.0 * wardProgress * (isComplete ? pulse : 1.0);
+
+      // Outer glow
+      final glowA = wardProgress * (isComplete ? 0.20 : 0.10);
+      canvas.drawCircle(Offset(wx, wy), panelSize + 10, Paint()
+        ..color = color.withValues(alpha: glowA)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+
+      // Hexagonal ward shape
+      final hexPath = Path();
+      for (int v = 0; v < 6; v++) {
+        final ha = v * math.pi / 3 - math.pi / 6 + glowPhase * math.pi * 0.1;
+        final hx = wx + math.cos(ha) * panelSize;
+        final hy = wy + math.sin(ha) * panelSize;
+        if (v == 0) {
+          hexPath.moveTo(hx, hy);
+        } else {
+          hexPath.lineTo(hx, hy);
+        }
+      }
+      hexPath.close();
+
+      // Fill
+      final fillA = wardProgress * (isComplete ? 0.30 : 0.15);
+      canvas.drawPath(hexPath, Paint()
+        ..color = color.withValues(alpha: fillA));
+
+      // Border
+      final borderA = wardProgress * (isComplete ? 0.65 : 0.45);
+      canvas.drawPath(hexPath, Paint()
+        ..color = color.withValues(alpha: borderA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = isComplete ? 2.0 : 1.5
+        ..strokeJoin = StrokeJoin.round);
+
+      // Inner bright dot
+      canvas.drawCircle(Offset(wx, wy), 2.5 * wardProgress, Paint()
+        ..color = color.withValues(alpha: wardProgress * 0.60));
+      canvas.drawCircle(Offset(wx, wy), 1.2 * wardProgress, Paint()
+        ..color = Colors.white.withValues(alpha: wardProgress * 0.45));
+
+      // Direction label (small Arabic text) on completion
+      if (isComplete && wardProgress > 0.8) {
+        final tp = TextPainter(
+          text: TextSpan(text: _wardLabels[i], style: TextStyle(
+            color: color.withValues(alpha: 0.55),
+            fontSize: 8, fontWeight: FontWeight.w700)),
+          textDirection: TextDirection.rtl,
+        )..layout();
+        tp.paint(canvas, Offset(wx - tp.width / 2, wy + panelSize + 3));
+      }
+    }
+  }
+
+  void _drawConnections(Canvas canvas, double cx, double cy, double w) {
+    final wardR = w * 0.30;
+
+    for (int i = 0; i < 6; i++) {
+      final threshold = (i + 1) / 6.0;
+      if (progress < threshold - 1.0 / 6.0 + 0.05) continue;
+
+      final connProgress = ((progress - (i / 6.0) - 0.05) * 6.0).clamp(0.0, 1.0);
+      final angle = i * math.pi / 3 - math.pi / 2;
+      final wx = cx + math.cos(angle) * wardR * connProgress;
+      final wy = cy + math.sin(angle) * wardR * 0.55 * connProgress;
+      final color = _wardColors[i];
+
+      final lineAlpha = connProgress * (isComplete ? 0.30 : 0.18);
+      canvas.drawLine(
+        Offset(cx, cy), Offset(wx, wy),
+        Paint()
+          ..shader = LinearGradient(colors: [
+            Colors.white.withValues(alpha: lineAlpha * 0.5),
+            color.withValues(alpha: lineAlpha),
+          ]).createShader(Rect.fromPoints(Offset(cx, cy), Offset(wx, wy)))
+          ..strokeWidth = 1.2
+          ..strokeCap = StrokeCap.round,
+      );
+
+      // Traveling dot along the connection line
+      if (connProgress > 0.3 && connProgress < 1.0) {
+        final dotT = ((glowPhase * 2 + i * 0.15) % 1.0);
+        final dx = cx + (wx - cx) * dotT;
+        final dy = cy + (wy - cy) * dotT;
+        canvas.drawCircle(Offset(dx, dy), 1.8, Paint()
+          ..color = color.withValues(alpha: 0.50));
+      }
+    }
+
+    // On completion: connecting hex ring between all wards
+    if (isComplete) {
+      for (int i = 0; i < 6; i++) {
+        final a1 = i * math.pi / 3 - math.pi / 2;
+        final a2 = ((i + 1) % 6) * math.pi / 3 - math.pi / 2;
+        final x1 = cx + math.cos(a1) * wardR;
+        final y1 = cy + math.sin(a1) * wardR * 0.55;
+        final x2 = cx + math.cos(a2) * wardR;
+        final y2 = cy + math.sin(a2) * wardR * 0.55;
+
+        canvas.drawLine(Offset(x1, y1), Offset(x2, y2), Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: 0.15 * pulse)
+          ..strokeWidth = 1.0
+          ..strokeCap = StrokeCap.round);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SixWardsPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.glowPhase != glowPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
