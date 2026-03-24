@@ -1673,6 +1673,10 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('dua_afiyah') || id.contains('wellbeing')) {
     return const Color(0xFF0A1A18); // Six Wards
   }
+  if (id == 'morning_lwa_6' || id == 'evening_lwa_6' ||
+      id.contains('four_evils') || id.contains('4_evils')) {
+    return const Color(0xFF0F0A14); // Repelling Light
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1732,6 +1736,16 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_5' || id == 'evening_lwa_5' ||
       id.contains('dua_afiyah') || id.contains('wellbeing')) {
     return _SixWards(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #6 — Protect from 4 evils (repelling shadows)
+  if (id == 'morning_lwa_6' || id == 'evening_lwa_6' ||
+      id.contains('four_evils') || id.contains('4_evils')) {
+    return _RepellingLight(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -5206,6 +5220,425 @@ class _SixWardsPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.glowPhase != glowPhase;
+}
+
+// =============================================================================
+// 💡 Repelling Light (نور الحماية) — Protection from 4 evils
+// =============================================================================
+class _RepellingLight extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _RepellingLight({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_RepellingLight> createState() => _RepellingLightState();
+}
+
+class _RepellingLightState extends State<_RepellingLight>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _driftCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 600));
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _driftCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 4000))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_RepellingLight old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose();
+    _driftCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _driftCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _RepellingLightPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            driftPhase: _driftCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RepellingLightPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double driftPhase;
+
+  // 4 evils: self, shaytan, shirk, harming others
+  static const _shadowColors = [
+    Color(0xFF6B21A8), // self — dark purple
+    Color(0xFF991B1B), // shaytan — dark red
+    Color(0xFF4A4A4A), // shirk — grey
+    Color(0xFF1E3A5F), // harming others — dark blue
+  ];
+
+  const _RepellingLightPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.driftPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.43;
+
+    // 1. Background — very dark purple/black (ominous → purified)
+    final purify = progress * 0.20;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((15 + purify * 15).round(), (10 + purify * 20).round(), (20 + purify * 25).round(), 1.0),
+            Color.fromRGBO((18 + purify * 20).round(), (14 + purify * 25).round(), (28 + purify * 30).round(), 1.0),
+            Color.fromRGBO((22 + purify * 25).round(), (18 + purify * 30).round(), (35 + purify * 35).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars — more visible as evils are repelled
+    const starPos = [
+      (0.10, 0.07), (0.23, 0.16), (0.37, 0.05), (0.54, 0.11),
+      (0.68, 0.07), (0.82, 0.15), (0.92, 0.09), (0.44, 0.21),
+      (0.61, 0.25), (0.29, 0.23), (0.76, 0.20),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final starA = (0.06 + progress * 0.40 + 0.40 * tw * progress);
+      sp.color = Colors.white.withValues(alpha: starA.clamp(0.0, 0.75));
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.8 + tw * 1.0, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Four shadow entities being pushed back
+    _drawShadows(canvas, cx, cy, w, h);
+
+    // 4. Central divine light (grows as shadows retreat)
+    _drawCentralLight(canvas, cx, cy, w);
+
+    canvas.restore();
+
+    // 5. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.42;
+      final ringA = (1.0 - shockPhase) * 0.40;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(Offset(cx, cy), r, Paint()
+        ..color = Color.fromRGBO(255, 255, 255, ringA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5 * (1.0 - shockPhase));
+      canvas.drawCircle(Offset(cx, cy), r * 0.75, Paint()
+        ..color = Color.fromRGBO(212, 175, 55, ringA * 0.4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5 * (1.0 - shockPhase));
+    }
+
+    // 6. Particles — light sparks pushing outward
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 20 + t * w * 0.30;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.6 - t * 10;
+        final a = (1.0 - t) * 0.80;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()
+          ..color = const Color(0xFFFFD97D).withValues(alpha: a * 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(Offset(px, py), pSize, Paint()
+          ..color = const Color(0xFFFFD97D).withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()
+          ..color = Colors.white.withValues(alpha: a * 0.65));
+      }
+    }
+
+    // 7. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'أعاذك الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(text: label, style: TextStyle(
+        color: isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82),
+        fontSize: 12, fontWeight: FontWeight.w700)),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 8. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(text: badgeLabel, style: const TextStyle(
+          color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800,
+          letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// 4 shadow forms at the corners, pushed further back as progress grows
+  void _drawShadows(Canvas canvas, double cx, double cy, double w, double h) {
+    // Shadow positions: 4 corners approaching center
+    // As progress grows, they retreat further out and fade
+    final basePositions = [
+      (cx - w * 0.32, cy - 40.0), // top-left — evil of self
+      (cx + w * 0.32, cy - 35.0), // top-right — shaytan
+      (cx - w * 0.30, cy + 35.0), // bottom-left — shirk
+      (cx + w * 0.30, cy + 30.0), // bottom-right — harming others
+    ];
+
+    for (int i = 0; i < 4; i++) {
+      final (baseX, baseY) = basePositions[i];
+
+      // Shadow retreats: starts close to center, moves outward with progress
+      final retreatFactor = progress * 0.6;
+      final dirX = (baseX - cx).sign;
+      final dirY = (baseY - cy).sign;
+      final sx = baseX + dirX * retreatFactor * w * 0.15;
+      final sy = baseY + dirY * retreatFactor * 30;
+
+      // Fade out as pushed away
+      final shadowAlpha = (1.0 - progress * 0.9).clamp(0.05, 0.55);
+      final color = _shadowColors[i];
+
+      // Subtle drift animation
+      final drift = math.sin(driftPhase * math.pi * 2 + i * 1.5) * 4;
+
+      // Shadow blob — amorphous dark shape
+      final blobR = 18.0 * (1.0 - progress * 0.4);
+
+      // Outer smoky haze
+      canvas.drawCircle(
+        Offset(sx + drift, sy + drift * 0.5), blobR + 14,
+        Paint()
+          ..color = color.withValues(alpha: shadowAlpha * 0.15)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+      );
+
+      // Inner dark mass
+      canvas.drawCircle(
+        Offset(sx + drift, sy + drift * 0.5), blobR,
+        Paint()
+          ..color = color.withValues(alpha: shadowAlpha * 0.40)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+      );
+
+      // Core — darkest point
+      canvas.drawCircle(
+        Offset(sx + drift, sy + drift * 0.5), blobR * 0.4,
+        Paint()
+          ..color = color.withValues(alpha: shadowAlpha * 0.55)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+
+      // Two glowing "eyes" for menacing feel (fade as retreating)
+      if (shadowAlpha > 0.15) {
+        final eyeA = (shadowAlpha - 0.15) * 1.2;
+        final eyeSpacing = 4.0;
+        final eyeY = sy + drift * 0.5 - 1;
+        canvas.drawCircle(
+          Offset(sx + drift - eyeSpacing, eyeY), 1.5,
+          Paint()..color = Color.fromRGBO(255, 80, 80, eyeA.clamp(0.0, 0.50)));
+        canvas.drawCircle(
+          Offset(sx + drift + eyeSpacing, eyeY), 1.5,
+          Paint()..color = Color.fromRGBO(255, 80, 80, eyeA.clamp(0.0, 0.50)));
+      }
+
+      // Repelling light beam from center toward shadow
+      if (progress > 0.1) {
+        final beamA = progress * 0.12;
+        canvas.drawLine(
+          Offset(cx, cy),
+          Offset(sx + drift, sy + drift * 0.5),
+          Paint()
+            ..shader = LinearGradient(colors: [
+              const Color(0xFFFFD97D).withValues(alpha: beamA),
+              Colors.transparent,
+            ]).createShader(Rect.fromPoints(
+                Offset(cx, cy), Offset(sx + drift, sy + drift * 0.5)))
+            ..strokeWidth = 1.5
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+  }
+
+  /// Central divine light that grows as shadows retreat
+  void _drawCentralLight(Canvas canvas, double cx, double cy, double w) {
+    final lightR = 10 + progress * 30;
+    final alpha = progress * (isComplete ? 0.35 : 0.18) * pulse;
+
+    // Outer warm glow
+    canvas.drawCircle(Offset(cx, cy), lightR + 20, Paint()
+      ..color = Color.fromRGBO(255, 217, 125, alpha * 0.35)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
+
+    // Mid glow
+    canvas.drawCircle(Offset(cx, cy), lightR, Paint()
+      ..shader = RadialGradient(colors: [
+        Color.fromRGBO(255, 255, 255, alpha * 0.90),
+        Color.fromRGBO(212, 175, 55, alpha * 0.60),
+        Colors.transparent,
+      ], stops: const [0.0, 0.5, 1.0])
+      .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: lightR)));
+
+    // Bright core
+    canvas.drawCircle(Offset(cx, cy), 5 * pulse, Paint()
+      ..color = Colors.white.withValues(alpha: alpha * 1.2));
+
+    // Light rays radiating outward on completion
+    if (isComplete) {
+      for (int i = 0; i < 8; i++) {
+        final angle = i * math.pi / 4 + driftPhase * math.pi * 0.08;
+        final rayLen = lightR + 20 * pulse;
+        final sx = cx + math.cos(angle) * 8;
+        final sy = cy + math.sin(angle) * 8;
+        final ex = cx + math.cos(angle) * rayLen;
+        final ey = cy + math.sin(angle) * rayLen;
+        canvas.drawLine(Offset(sx, sy), Offset(ex, ey), Paint()
+          ..shader = LinearGradient(colors: [
+            Color.fromRGBO(255, 217, 125, 0.25 * pulse),
+            Colors.transparent,
+          ]).createShader(Rect.fromPoints(Offset(sx, sy), Offset(ex, ey)))
+          ..strokeWidth = 1.5
+          ..strokeCap = StrokeCap.round);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RepellingLightPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.driftPhase != driftPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
