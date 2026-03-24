@@ -4,63 +4,132 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Noor Rewards is a Flutter mobile app that gamifies Islamic worship activities (Quran reading, dhikr, tafsir) with an XP/coins economy, streaks, levels, and community impact tracking. Backend is Supabase (auth, database, Realtime). The app targets Android, iOS, web, and desktop.
+Noor Rewards is a Flutter mobile app that gamifies Islamic worship (Quran reading, dhikr/azkar, tafsir) with XP economy, streaks, levels, badges, community donations, and custom illustrations. Backend is Supabase (auth, Postgres, Realtime). Primary target is Android, with iOS/web/desktop scaffolded.
 
 ## Build & Dev Commands
 
 ```bash
 flutter pub get              # Install dependencies
-flutter analyze              # Run static analysis (uses flutter_lints)
-flutter run                  # Run on connected device/emulator
-flutter build apk --debug    # Build debug Android APK
-flutter build apk --release  # Build release Android APK
-flutter test                 # Run tests (test/ directory exists but is currently empty)
+flutter analyze              # Static analysis (flutter_lints)
+flutter run                  # Run on device/emulator
+flutter build apk --debug    # Debug APK
+flutter build apk --release  # Release APK
+flutter analyze lib/screens/dhikr_screen.dart  # Analyze single file (fast iteration)
 ```
 
-**CI**: Push to `qa` branch triggers GitHub Actions debug APK build. iOS TestFlight workflow exists for `ios-testflight.yml`.
+**CI**: Push to `qa` branch → GitHub Actions builds debug APK. iOS TestFlight workflow in `.github/workflows/ios-testflight.yml`.
 
-**Environment**: Requires `.env` file in project root with Quran Foundation API credentials. Loaded at runtime via `flutter_dotenv` and parsed by `lib/services/quran_api_config.dart`.
+**Environment**: Requires `.env` in project root with Quran Foundation API credentials (`QURAN_API_CLIENT_ID`, `QURAN_API_CLIENT_SECRET`). Loaded by `flutter_dotenv`, parsed by `lib/services/quran_api_config.dart`.
 
-**SDK**: Dart SDK `>=3.7.0 <4.0.0`, Flutter stable channel.
+**SDK**: Dart `>=3.7.0 <4.0.0`, Flutter stable. Android uses Java 17 with desugaring.
 
 ## Architecture
 
-### Startup Flow (`lib/main.dart`)
-1. Hive local storage init
-2. Supabase init (hardcoded project URL + anon key)
-3. Load `.env` (Quran API creds)
-4. `SettingsService` fetches remote config from `app_config` Supabase table + subscribes to Realtime
-5. `AssetHelper.loadAssets()` pre-loads asset registry
-6. `NoorLiveNotificationService` init
-7. `AuthGate` widget manages auth state → Onboarding → Profile Setup → Welcome → Dashboard
+### Startup Sequence (`lib/main.dart`)
 
-### Key Patterns
+1. `Hive.initFlutter()` → local storage
+2. `Supabase.initialize()` → hardcoded project URL + anon key
+3. `QuranApiConfig.load()` → .env credentials
+4. `SettingsService.instance.initialize()` → fetch remote config + Realtime subscription
+5. `AssetHelper.loadAssets()` → pre-load asset registry
+6. `NoorLiveNotificationService.init()` → persistent notification
+7. `runApp()` with `ChangeNotifierProvider<SettingsService>`
 
-- **SettingsService** (`lib/services/settings_service.dart`): Singleton `ChangeNotifier` exposed via Provider. Fetches key-value pairs from Supabase `app_config` table, subscribes to Realtime for live updates. The admin panel can change theme colors, economy values, and feature flags that take effect instantly across all clients.
+### Auth Flow (AuthGate state machine)
 
-- **AppConfig** (`lib/models/app_config.dart`): Strongly-typed wrapper over the raw config map. All economy values (coins per ayah, XP per dhikr, daily caps) and theme colors are driven from here with sensible defaults.
+```
+No session → OnboardingScreen → StartJourneyScreen (Google sign-in)
+Session exists → ProfileSetupScreen (if not done) → WelcomeGateScreen → DashboardScreen
+```
 
-- **XP System** (`lib/services/xp_service.dart`): Central XP/level/badge service. Each dhikr type has a weighted XP value in `XpReward._dhikrXpMap`. All XP-earning events must go through this service.
+Auth state flags stored in `auth.currentUser.userMetadata`. No named routes — direct widget swaps.
 
-- **Admin access**: Client-side email whitelist in `DashboardScreen` (`_kAdminEmails`) gates access to `AdminDashboard`.
+### State Management
+
+- **SettingsService**: Singleton `ChangeNotifier` via Provider. Watches Supabase `app_config` table with Realtime. Admin changes (theme, economy values, feature flags) propagate instantly to all clients.
+- **Screens**: `StatefulWidget` + direct Supabase queries in `initState()`. No separate state providers per screen.
+- **Services**: Pure singleton business logic (no ChangeNotifier). Access via `ServiceName.instance`.
+
+### Service Singletons
+
+| Service | File | Responsibility |
+|---------|------|----------------|
+| `XpService` | `xp_service.dart` | XP economy, levels, badges, challenges. Weighted dhikr XP in `XpReward._dhikrXpMap`. All XP-earning **must** go through this. |
+| `StreakService` | `streak_service.dart` | 3-type streaks (login, dhikr, quran). Idempotent — safe to call multiple times/day. Milestone bonuses at 3, 7, 14, 30, 60, 100 days. |
+| `SettingsService` | `settings_service.dart` | Remote config via `app_config` table. `updateKey()` = optimistic UI + DB sync. |
+| `TrackingService` | `tracking_service.dart` | Privacy-first analytics. Country via ip-api.com, no IP stored. |
+| `DonationService` | `donation_service.dart` | Community project donations via RPC. |
+| `QuranApiService` | `quran_api_service.dart` | OAuth2 client-credentials to Quran Foundation API. Token caching + auto-refresh. Falls back to alquran.cloud for unsupported editions. |
+| `NoorLiveNotificationService` | `live_notification_service.dart` | Android persistent notification with daily Quran/Dhikr count. SharedPreferences auto-reset at midnight. |
+
+### Supabase Tables
+
+Core: `profiles`, `app_config`, `badges`, `user_badges`, `user_activities`, `streak_history`, `user_challenge_progress`, `challenges`, `xp_levels`, `leaderboard_global`, `user_donations`, `donation_projects`, `user_analytics`, `quran_bookmarks`, `quran_favorites`, `azkar_categories`, `azkar_items`.
+
+Key RPCs: `earn_xp()`, `award_badge()`, `record_streak_activity()`, `get_streak_history()`, `donate_to_project()`.
+
+### Dhikr Screen Architecture (`lib/screens/dhikr_screen.dart`)
+
+This is the largest and most complex file. Key internal structure:
+
+- **`_Azkar`** model: id, arabic, transliteration, translation, recommendedCount, category, reward, reference
+- **`DhikrScreen`** (list view): categories, filtering, counts, favorites, custom targets (`_customTargets` map persisted in SharedPreferences)
+- **`_DhikrDetailScreen`**: PageView-based swipe through azkar. Floating toolbar (settings, favorite, share, target, reset). Counter button at bottom.
+- **`_AzkarCard`**: Display card with illustration + Arabic text + transliteration + translation + reward box
+- **`_buildIllustration()`**: Router that picks the right CustomPaint widget per azkar ID
+- **`_getTarget()`**: Returns custom target if set, otherwise recommendedCount
+
+### Per-Azkar Illustrations System
+
+Each illustration is a `StatefulWidget` with `TickerProviderStateMixin` containing animation controllers, wrapping a `CustomPainter`. They share a common interface: `progress`, `isComplete`, `tapCount`, `pointsToday`.
+
+| Widget | Azkar | Visual |
+|--------|-------|--------|
+| `_NoorTree` | Default (all others) | Growing tree with colorful leaf orbs, small garden plants |
+| `_ProtectionShield` | Ayat al-Kursi | Shield dome building around praying figure |
+| `_ThreeQuls` | 3 Quls | 3 concentric barrier rings around Quran |
+| `_GatesOfJannah` | Sayyid al-Istighfar | Two gates swinging open with paradise light |
+| `_BreakingChains` | Anxiety/Laziness dua | 4 chains breaking progressively |
+
+**ID matching** in `_buildIllustration()` uses `azkarId.toLowerCase()` with both Supabase IDs (e.g., `morning_ayat_kursi`) and local fallback IDs (e.g., `morning_lwa_1`).
+
+**`_illustrationTopColor()`** returns the matching background color for the app bar to blend seamlessly.
+
+### Arabic Text Styling
+
+`_buildStyledArabic()` renders Arabic text with Bismillah/Isti'adhah phrases in a distinct highlight color (teal in light mode, blue in dark mode). Pattern matching via `_kHighlightPatterns` regex.
+
+`_cleanArabic()` strips footnote markers, bracket chars, waqf/tajweed marks.
 
 ### Directory Layout
 
-- `lib/auth/` — Auth screen (Supabase auth)
-- `lib/screens/` — All app screens (dashboard, quran, dhikr, tafsir, streak, levels, impact, profile, onboarding)
-- `lib/screens/admin/` — Admin dashboard and analytics
-- `lib/services/` — Business logic singletons (XP, streaks, tracking, donations, settings, notifications, Quran API)
-- `lib/models/` — Data models (AppConfig)
-- `lib/widgets/` — Reusable widgets (icons, offline banner, animations, popups)
-- `lib/utils/` — Helpers (asset loading)
-- `assets/data/` — JSON data files (azkar)
-- `assets/images/`, `assets/lottie/` — Visual assets
+```
+lib/
+├── auth/           Auth screen (Supabase email/password + Google)
+├── screens/        All app screens
+│   └── admin/      Admin dashboard + sponsor analytics
+├── services/       Business logic singletons
+├── models/         Data models (AppConfig)
+├── widgets/        Reusable widgets (NoorIcon, offline banner, popups)
+├── utils/          Helpers (AssetHelper)
+└── main.dart       Init + AuthGate
+assets/
+├── data/           azkar.json (dhikr library with ~70+ items)
+├── images/         Category illustrations (18 PNGs)
+├── lottie/         Lottie animations
+└── fonts/          Custom Arabic font (KFGQPC Hafs)
+```
 
-### State Management
-Provider with `ChangeNotifier` (SettingsService). Most screens manage their own state via `StatefulWidget` + direct Supabase queries.
+### Coding Patterns
 
-### External Services
-- **Supabase**: Auth (Google sign-in), database (profiles, XP, streaks, donations, app_config), Realtime subscriptions
-- **Quran Foundation API**: Quran text and tafsir data, configured via `.env` credentials
-- **Hive**: Local key-value storage
-- **SharedPreferences**: Simple local persistence for UI state
+- **Error handling**: Silent try/catch with fallback data. Never crash UI. `debugPrint()` for logs.
+- **Mounted checks**: Always `if (mounted) setState(...)` after async operations.
+- **Supabase access**: `final _sb = Supabase.instance.client;` at top of State class.
+- **Color constants**: File-level `const _kBg`, `_kText`, etc. Dark mode uses ternary throughout.
+- **Typography**: `GoogleFonts.outfit()` for UI, `_kArabicFonts` list for Arabic (Amiri, Noto Naskh, Scheherazade).
+- **CustomPaint animations**: AnimatedBuilder + Listenable.merge for multi-controller repaints.
+- **Admin gating**: Client-side email whitelist `_kAdminEmails` in DashboardScreen.
+
+### Key Dependencies
+
+Core: `supabase_flutter`, `provider`, `google_fonts`, `hive_flutter`, `flutter_dotenv`, `just_audio`, `lottie`, `confetti`, `shared_preferences`, `share_plus`, `fl_chart`, `flutter_local_notifications`, `device_info_plus`.
