@@ -1697,6 +1697,11 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('good_day') || id.contains('khayr_yawm')) {
     return const Color(0xFF0A0E18); // Glowing Path
   }
+  if (id == 'morning_lwa_12' || id == 'evening_lwa_12' ||
+      id.contains('bless_day') || id.contains('bless_evening') ||
+      id.contains('fath') || id.contains('barakah_yawm')) {
+    return const Color(0xFF0C0818); // Five Blessings
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1816,6 +1821,17 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_11' || id == 'evening_lwa_11' ||
       id.contains('good_day') || id.contains('khayr_yawm')) {
     return _GlowingPath(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #12 — Ask Allah to bless your day (five blessings descending)
+  if (id == 'morning_lwa_12' || id == 'evening_lwa_12' ||
+      id.contains('bless_day') || id.contains('bless_evening') ||
+      id.contains('fath') || id.contains('barakah_yawm')) {
+    return _FiveBlessings(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -7293,6 +7309,364 @@ class _PraiseRipplesPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.ripplePhase != ripplePhase;
+}
+
+// =============================================================================
+// ✨ Five Blessings (خمس بركات) — Ask Allah to bless your day
+// Dua asks for: فتح (victory), نصر (help), نور (light), بركة (barakah), هدى (guidance)
+// =============================================================================
+class _FiveBlessings extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _FiveBlessings({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_FiveBlessings> createState() => _FiveBlessingsState();
+}
+
+class _FiveBlessingsState extends State<_FiveBlessings> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _flowCtrl;
+  late Animation<double> _pulse, _grow, _pAnim, _punch, _shock;
+  double _prevProgress = 0.0;
+  int _prevTap = 0;
+  final List<_Particle> _particles = List.generate(18, (i) => _Particle(seed: i + 1200));
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.92, end: 1.08).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat(reverse: true);
+    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_punchCtrl);
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _flowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_FiveBlessings old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) { p.reset(); }
+      _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _flowCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _flowCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _FiveBlessingsPainter(
+            progress: _grow.value, pulse: _pulse.value, starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value, particles: _particles, isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday, punchScale: _punch.value,
+            shockPhase: _shock.value, flowPhase: _flowCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FiveBlessingsPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double flowPhase;
+
+  const _FiveBlessingsPainter({
+    required this.progress, required this.pulse, required this.starPhase,
+    required this.particlePhase, required this.particles, required this.isComplete,
+    this.pointsToday = 0, this.punchScale = 1.0, this.shockPhase = 1.0, this.flowPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+
+    // 1. Background — deep celestial gradient
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO(12, 8, 24, 1.0),
+            Color.fromRGBO(14, 12, 28, 1.0),
+            Color.fromRGBO(10, 16, 24, 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.08, 0.05), (0.20, 0.12), (0.35, 0.03), (0.52, 0.08),
+      (0.67, 0.05), (0.80, 0.11), (0.93, 0.06), (0.42, 0.16),
+      (0.15, 0.20), (0.72, 0.18), (0.88, 0.15),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      sp.color = Colors.white.withValues(alpha: 0.15 + 0.40 * tw);
+      canvas.drawCircle(Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.8 + tw * 0.9, sp);
+    }
+
+    // Apply punch
+    canvas.save();
+    canvas.translate(cx, h * 0.50);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -h * 0.50);
+
+    // The five blessings: فتح نصر نور بركة هدى
+    // Positioned as descending streams from heaven to a receiving vessel/cupped hands
+    const blessingColors = [
+      Color(0xFFD4AF37), // فتح — victory (gold)
+      Color(0xFF34D399), // نصر — help (emerald)
+      Color(0xFF38BDF8), // نور — light (sky blue)
+      Color(0xFFFBBF24), // بركة — barakah (warm amber)
+      Color(0xFFA78BFA), // هدى — guidance (violet)
+    ];
+    const blessingLabels = ['فتح', 'نصر', 'نور', 'بركة', 'هدى'];
+
+    // 3. Source: celestial opening at top center
+    final sourceY = h * 0.06;
+    final sourceAlpha = (progress * 1.5).clamp(0.0, 0.6);
+
+    // Celestial opening glow
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, sourceY), width: w * 0.5 * pulse, height: 14 * pulse),
+      Paint()
+        ..color = Colors.white.withValues(alpha: sourceAlpha * 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, sourceY), width: w * 0.3, height: 6),
+      Paint()
+        ..shader = LinearGradient(colors: [
+          Colors.transparent,
+          Colors.white.withValues(alpha: sourceAlpha * 0.3),
+          Colors.white.withValues(alpha: sourceAlpha * 0.5),
+          Colors.white.withValues(alpha: sourceAlpha * 0.3),
+          Colors.transparent,
+        ]).createShader(Rect.fromCenter(center: Offset(cx, sourceY), width: w * 0.3, height: 6)),
+    );
+
+    // 4. Receiving area — cupped hands / vessel at bottom
+    final receiveY = h * 0.72;
+    final receiveAlpha = (progress * 0.8).clamp(0.0, 0.35);
+
+    // Cupped shape (two arcs forming a vessel)
+    final vesselPath = Path();
+    final vesselHalfW = w * 0.22;
+    vesselPath.moveTo(cx - vesselHalfW, receiveY - 8);
+    vesselPath.quadraticBezierTo(cx - vesselHalfW - 5, receiveY + 12, cx, receiveY + 20);
+    vesselPath.quadraticBezierTo(cx + vesselHalfW + 5, receiveY + 12, cx + vesselHalfW, receiveY - 8);
+
+    canvas.drawPath(vesselPath, Paint()
+      ..color = Colors.white.withValues(alpha: receiveAlpha * 0.25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round);
+
+    // Warm glow inside vessel
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, receiveY + 8), width: vesselHalfW * 1.6, height: 20),
+      Paint()
+        ..color = const Color(0xFFD4AF37).withValues(alpha: receiveAlpha * 0.08 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
+
+    // 5. Five blessing streams descending from source to vessel
+    for (int i = 0; i < 5; i++) {
+      final threshold = (i + 1) * 0.18;
+      if (progress < threshold - 0.12) continue;
+
+      final blessingProgress = ((progress - (threshold - 0.12)) / 0.25).clamp(0.0, 1.0);
+      final color = blessingColors[i];
+
+      // Each stream has a slightly different horizontal position (fan out from source)
+      final xSpread = (i - 2) * w * 0.08; // -2, -1, 0, 1, 2 spread
+      final streamTopX = cx + xSpread * 0.3;
+      final streamBotX = cx + xSpread;
+
+      // Flowing animation offset
+      final flowOffset = (flowPhase + i * 0.2) % 1.0;
+
+      // Draw the stream as a series of dots flowing downward
+      final streamLen = (receiveY - sourceY) * blessingProgress;
+      for (int d = 0; d < 12; d++) {
+        final dt = (d / 12.0 + flowOffset) % 1.0;
+        final dy = sourceY + dt * streamLen;
+        if (dy > receiveY) continue;
+        final t = dt; // position along stream 0=top, 1=bottom
+        final dx = streamTopX + (streamBotX - streamTopX) * t;
+        final dotAlpha = blessingProgress * (0.15 + 0.35 * math.sin(dt * math.pi)) * (isComplete ? pulse : 1.0);
+        final dotR = (1.2 + t * 1.5) * (isComplete ? pulse * 0.9 + 0.1 : 1.0);
+
+        // Glow
+        canvas.drawCircle(Offset(dx, dy), dotR + 3, Paint()
+          ..color = color.withValues(alpha: dotAlpha * 0.15)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+        // Dot
+        canvas.drawCircle(Offset(dx, dy), dotR, Paint()
+          ..color = color.withValues(alpha: dotAlpha));
+      }
+
+      // Blessing orb — main orb that descends and settles
+      final orbY = sourceY + streamLen * 0.85;
+      final orbX = streamTopX + (streamBotX - streamTopX) * 0.85;
+      final orbR = (5 + blessingProgress * 4) * (isComplete ? pulse : 1.0);
+      final orbAlpha = blessingProgress * (isComplete ? 0.7 : 0.5);
+
+      // Orb outer glow
+      canvas.drawCircle(Offset(orbX, orbY), orbR + 8, Paint()
+        ..color = color.withValues(alpha: orbAlpha * 0.10)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+
+      // Orb body
+      canvas.drawCircle(Offset(orbX, orbY), orbR, Paint()
+        ..shader = RadialGradient(colors: [
+          Colors.white.withValues(alpha: orbAlpha * 0.7),
+          color.withValues(alpha: orbAlpha * 0.8),
+          color.withValues(alpha: orbAlpha * 0.3),
+          Colors.transparent,
+        ], stops: const [0.0, 0.3, 0.7, 1.0])
+        .createShader(Rect.fromCircle(center: Offset(orbX, orbY), radius: orbR)));
+
+      // Label below orb when blessing is fully revealed
+      if (blessingProgress > 0.7) {
+        final labelAlpha = ((blessingProgress - 0.7) / 0.3) * (isComplete ? 0.8 : 0.55);
+        final tp = TextPainter(
+          text: TextSpan(text: blessingLabels[i], style: TextStyle(
+            color: color.withValues(alpha: labelAlpha),
+            fontSize: 9, fontWeight: FontWeight.w700,
+            shadows: [Shadow(color: color.withValues(alpha: labelAlpha * 0.4), blurRadius: 4)],
+          )),
+          textDirection: TextDirection.rtl,
+        )..layout();
+        tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 4));
+      }
+    }
+
+    // 6. Connection rays from source when complete
+    if (isComplete) {
+      for (int i = 0; i < 7; i++) {
+        final angle = -math.pi / 2 + (i - 3) * 0.22;
+        final rayLen = 22.0 * pulse;
+        final sx = cx + math.cos(angle) * 8;
+        final sy = sourceY + math.sin(angle) * 4 + 4;
+        final ex = cx + math.cos(angle) * (8 + rayLen);
+        final ey = sourceY + math.sin(angle) * (4 + rayLen * 0.3) + 4;
+        canvas.drawLine(Offset(sx, sy), Offset(ex, ey), Paint()
+          ..shader = LinearGradient(colors: [
+            Color.fromRGBO(255, 220, 120, 0.20 * pulse),
+            Colors.transparent,
+          ]).createShader(Rect.fromPoints(Offset(sx, sy), Offset(ex, ey)))
+          ..strokeWidth = 1.2..strokeCap = StrokeCap.round);
+      }
+    }
+
+    canvas.restore();
+
+    // 7. Shockwave
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.35;
+      final ringA = (1.0 - shockPhase) * 0.30;
+      canvas.drawCircle(Offset(cx, h * 0.45), maxR * shockPhase, Paint()
+        ..color = Color.fromRGBO(212, 175, 55, ringA)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5 * (1.0 - shockPhase));
+    }
+
+    // 8. Particles — blessing sparkles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final px = cx + p.x * w * 0.25;
+        final py = h * 0.45 - t * h * 0.30;
+        final a = (1.0 - t) * 0.65;
+        final pSize = p.size * (1.0 - t * 0.3);
+        final pColor = Color.lerp(const Color(0xFFD4AF37), const Color(0xFFA78BFA), t)!;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
+      }
+    }
+
+    // 9. Label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'بارك الله لك' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(text: label, style: TextStyle(
+        color: isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82),
+        fontSize: 12, fontWeight: FontWeight.w700)),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(text: badgeLabel, style: const TextStyle(
+          color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800,
+          letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.88 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  @override
+  bool shouldRepaint(_FiveBlessingsPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.flowPhase != flowPhase;
 }
 
 // =============================================================================
