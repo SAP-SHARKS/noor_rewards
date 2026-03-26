@@ -7663,7 +7663,7 @@ class _GlowingPathPainter extends CustomPainter {
     }
   }
 
-  /// Small figure walking along the path
+  /// Luminous traveler silhouette walking along the path
   void _drawWalker(Canvas canvas, double cx, double w, double h) {
     final vanishY = h * 0.22;
     final baseY = h * 0.78;
@@ -7673,38 +7673,132 @@ class _GlowingPathPainter extends CustomPainter {
     final walkerY = baseY - (baseY - vanishY) * walkerT;
     final perspScale = 1.0 - walkerT * 0.6; // shrink with perspective
 
-    final walkerAlpha = (0.30 + progress * 0.35).clamp(0.0, 0.65);
-    final walkerColor = isComplete
-        ? Color.fromRGBO(212, 175, 55, walkerAlpha)
-        : Color.fromRGBO(200, 200, 220, walkerAlpha);
+    final walkerAlpha = (0.30 + progress * 0.45).clamp(0.0, 0.75);
+    final baseColor = isComplete
+        ? const Color(0xFFD4AF37)
+        : const Color(0xFFCDD5E0);
+    final glowColor = isComplete
+        ? const Color(0xFFD4AF37)
+        : const Color(0xFF38BDF8);
 
-    // Subtle bob
-    final bob = math.sin(walkPhase * math.pi * 2) * 1.5 * perspScale;
+    // Subtle bob — smooth gentle rise/fall
+    final bob = math.sin(walkPhase * math.pi * 2) * 1.0 * perspScale;
+    // Slight body sway for natural motion
+    final sway = math.sin(walkPhase * math.pi * 2) * 0.8 * perspScale;
 
-    // Head
-    canvas.drawCircle(Offset(cx, walkerY - 12 * perspScale + bob), 3.5 * perspScale, Paint()..color = walkerColor);
-    // Body
-    canvas.drawLine(
-      Offset(cx, walkerY - 8 * perspScale + bob),
-      Offset(cx, walkerY + 5 * perspScale + bob),
-      Paint()..color = walkerColor..strokeWidth = 2.0 * perspScale..strokeCap = StrokeCap.round);
-    // Legs (walking motion)
-    final legSwing = math.sin(walkPhase * math.pi * 4) * 4 * perspScale;
-    canvas.drawLine(
-      Offset(cx, walkerY + 5 * perspScale + bob),
-      Offset(cx - legSwing, walkerY + 14 * perspScale + bob),
-      Paint()..color = walkerColor..strokeWidth = 1.5 * perspScale..strokeCap = StrokeCap.round);
-    canvas.drawLine(
-      Offset(cx, walkerY + 5 * perspScale + bob),
-      Offset(cx + legSwing, walkerY + 14 * perspScale + bob),
-      Paint()..color = walkerColor..strokeWidth = 1.5 * perspScale..strokeCap = StrokeCap.round);
+    final s = perspScale; // shorthand
 
-    // Walker glow underneath
+    // -- Outer aura glow around entire figure --
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, walkerY + 16 * perspScale + bob), width: 12 * perspScale, height: 4 * perspScale),
+      Rect.fromCenter(
+        center: Offset(cx, walkerY - 2 * s + bob),
+        width: 22 * s,
+        height: 32 * s,
+      ),
       Paint()
-        ..color = const Color(0xFFD4AF37).withValues(alpha: walkerAlpha * 0.12)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+        ..color = glowColor.withValues(alpha: walkerAlpha * 0.08)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 12 * s),
+    );
+
+    // -- Body silhouette: a tapered oval shape (like a person in a flowing garment) --
+    final bodyPath = Path();
+    final topY = walkerY - 14 * s + bob;     // top of head area
+    final shoulderY = walkerY - 6 * s + bob;  // shoulder level
+    final waistY = walkerY + 2 * s + bob;     // waist
+    final bottomY = walkerY + 12 * s + bob;   // bottom of garment
+
+    // Draw a smooth silhouette shape — narrow at top (head), wider at shoulders,
+    // tapers at waist, flows out slightly at bottom like a robe
+    bodyPath.moveTo(cx + sway, topY); // top center
+    // Right side
+    bodyPath.cubicTo(
+      cx + 4.5 * s + sway, topY + 2 * s,        // head curves out
+      cx + 6.5 * s + sway, shoulderY,             // shoulder width
+      cx + 5.5 * s + sway, waistY,                // tapers at waist
+    );
+    bodyPath.cubicTo(
+      cx + 6 * s + sway, waistY + 4 * s,          // flows out
+      cx + 7 * s + sway, bottomY - 2 * s,         // garment bottom
+      cx + 4 * s + sway, bottomY,                  // bottom right
+    );
+    // Bottom curve
+    bodyPath.quadraticBezierTo(cx + sway, bottomY + 1.5 * s, cx - 4 * s + sway, bottomY);
+    // Left side (mirror)
+    bodyPath.cubicTo(
+      cx - 7 * s + sway, bottomY - 2 * s,
+      cx - 6 * s + sway, waistY + 4 * s,
+      cx - 5.5 * s + sway, waistY,
+    );
+    bodyPath.cubicTo(
+      cx - 6.5 * s + sway, shoulderY,
+      cx - 4.5 * s + sway, topY + 2 * s,
+      cx + sway, topY,
+    );
+    bodyPath.close();
+
+    // Fill with gradient — lit from above like noor is coming from the path ahead
+    canvas.drawPath(bodyPath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          baseColor.withValues(alpha: walkerAlpha * 0.9),
+          baseColor.withValues(alpha: walkerAlpha * 0.5),
+          baseColor.withValues(alpha: walkerAlpha * 0.25),
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromLTRB(cx - 8 * s, topY, cx + 8 * s, bottomY)));
+
+    // -- Inner light core (a soft glow at chest level) --
+    canvas.drawCircle(
+      Offset(cx + sway, shoulderY + 3 * s),
+      4 * s * pulse,
+      Paint()
+        ..color = glowColor.withValues(alpha: walkerAlpha * 0.15)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, (6 * s).toDouble()),
+    );
+
+    // -- Head: soft luminous circle --
+    canvas.drawCircle(
+      Offset(cx + sway, topY + 1.5 * s),
+      3.8 * s,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            Colors.white.withValues(alpha: walkerAlpha * 0.6),
+            baseColor.withValues(alpha: walkerAlpha * 0.3),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.6, 1.0],
+        ).createShader(Rect.fromCircle(center: Offset(cx + sway, topY + 1.5 * s), radius: 3.8 * s)),
+    );
+
+    // -- Ground glow underneath feet --
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(cx + sway, bottomY + 2 * s),
+        width: 14 * s,
+        height: 4 * s,
+      ),
+      Paint()
+        ..color = glowColor.withValues(alpha: walkerAlpha * 0.15)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, (5 * s).toDouble()),
+    );
+
+    // -- Faint trailing light particles behind the walker --
+    if (progress > 0.05) {
+      for (int i = 0; i < 3; i++) {
+        final trailT = (walkPhase + i * 0.33) % 1.0;
+        final trailAlpha = (1.0 - trailT) * walkerAlpha * 0.25;
+        final trailY = bottomY + trailT * 10 * s;
+        final trailX = cx + sway + math.sin(trailT * math.pi * 3 + i) * 3 * s;
+        canvas.drawCircle(
+          Offset(trailX, trailY),
+          (1.5 - trailT * 0.8) * s,
+          Paint()..color = glowColor.withValues(alpha: trailAlpha),
+        );
+      }
+    }
   }
 
   @override
