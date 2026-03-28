@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:just_audio/just_audio.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
@@ -47,11 +48,13 @@ class _Azkar {
   final String category;
   final String reward;
   final String reference;
+  final String? audioUrl; // For online MP3 playback
 
   const _Azkar({
     required this.id, required this.arabic, required this.transliteration,
     required this.translation, required this.recommendedCount,
     required this.category, required this.reward, required this.reference,
+    this.audioUrl,
   });
 
   factory _Azkar.fromJson(Map<String, dynamic> j) => _Azkar(
@@ -63,6 +66,7 @@ class _Azkar {
     category:         j['category_id'] as String? ?? j['category']?.toString() ?? 'general',
     reward:           j['reward'] as String? ?? '',
     reference:        j['reference'] as String? ?? '',
+    audioUrl:         j['audio_url'] as String?,
   );
 }
 
@@ -1077,6 +1081,8 @@ class _DhikrDetailScreen extends StatefulWidget {
 
 class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   late PageController _pageController;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  String? _currentlyLoadedAudio;
 
   bool _showToolbar = false;
   Timer? _hideTimer;
@@ -1098,6 +1104,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _sessionStart = DateTime.now();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
+    _audioPlayer.playerStateStream.listen((state) {
+      if (mounted) setState(() {});
+    });
   }
 
   void _toggleToolbar() {
@@ -1114,9 +1123,26 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
   @override
   void dispose() {
+    _audioPlayer.dispose();
     _hideTimer?.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _toggleAudio(String url) async {
+    try {
+      if (_currentlyLoadedAudio != url) {
+        _currentlyLoadedAudio = url;
+        await _audioPlayer.setUrl(url);
+      }
+      if (_audioPlayer.playing) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.play();
+      }
+    } catch (e) {
+      debugPrint("Audio Error: $e");
+    }
   }
 
   void _tryComplete(_Azkar azkar, int tapTarget, {bool isSwipe = false}) {
@@ -1216,6 +1242,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             if (prevAzkar.recommendedCount == 1) {
               _tryComplete(prevAzkar, prevAzkar.recommendedCount, isSwipe: true);
             }
+            if (_audioPlayer.playing) {
+              _audioPlayer.stop();
+            }
             if (mounted) setState(() { _currentIndex = nextIndex; });
           },
           itemCount: widget.azkars.length,
@@ -1294,6 +1323,17 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                 },
                               ),
                               _toolbarDivider(isDark),
+                              if (azkar.audioUrl != null && azkar.audioUrl!.isNotEmpty) ...[
+                                _ToolbarBtn(
+                                  icon: _audioPlayer.playing && _currentlyLoadedAudio == azkar.audioUrl
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  color: const Color(0xFF10B981),
+                                  isDark: isDark,
+                                  onTap: () => _toggleAudio(azkar.audioUrl!),
+                                ),
+                                _toolbarDivider(isDark),
+                              ],
                               _ToolbarBtn(
                                 icon: widget.favorites.contains(azkar.id)
                                     ? Icons.favorite_rounded

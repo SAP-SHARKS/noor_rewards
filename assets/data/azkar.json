@@ -767,7 +767,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Ayat al-Kursi: The Greatest Protection",
-    "reference": "Ḥākim 2064"
+    "reference": "Ḥākim 2064",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3"
   },
   {
     "id": "morning_lwa_2",
@@ -777,7 +778,8 @@
     "recommended_count": 3,
     "category": "morning",
     "reward": "3 Quls: Be Sufficed in All Your Matters",
-    "reference": "Tirmidhī 3575"
+    "reference": "Tirmidhī 3575",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3"
   },
   {
     "id": "morning_lwa_3",
@@ -787,7 +789,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Sayyid al-Istighfar: The Best Way of Seeking Forgiveness",
-    "reference": "Bukhārī 6306"
+    "reference": "Bukhārī 6306",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/3.mp3"
   },
   {
     "id": "morning_lwa_4",
@@ -797,7 +800,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Protect Yourself From Anxiety, Laziness, Debt etc",
-    "reference": "Abū Dāwūd 1555"
+    "reference": "Abū Dāwūd 1555",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/4.mp3"
   },
   {
     "id": "morning_lwa_5",
@@ -807,7 +811,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Well-being in this World and the Hereafter",
-    "reference": "Abū Dāwūd 5074"
+    "reference": "Abū Dāwūd 5074",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/5.mp3"
   },
   {
     "id": "morning_lwa_6",
@@ -817,7 +822,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Protect Yourself From the 4 Evils",
-    "reference": "Tirmidhī 3392, 3529"
+    "reference": "Tirmidhī 3392, 3529",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/6.mp3"
   },
   {
     "id": "morning_lwa_7",
@@ -827,7 +833,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Entrust All Your Matters to Allah",
-    "reference": "Nasā'ī in ʿAmal al-Yawm wa-l-Laylah 570"
+    "reference": "Nasā'ī in ʿAmal al-Yawm wa-l-Laylah 570",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/7.mp3"
   },
   {
     "id": "morning_lwa_8",
@@ -837,7 +844,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Fulfil Your Obligation to Thank Allah",
-    "reference": "Abū Dāwūd 5073"
+    "reference": "Abū Dāwūd 5073",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/8.mp3"
   },
   {
     "id": "morning_lwa_9",
@@ -847,7 +855,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Start Your Day by Renewing Tawhid",
-    "reference": "Aḥmad 15360"
+    "reference": "Aḥmad 15360",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/9.mp3"
   },
   {
     "id": "morning_lwa_10",
@@ -857,7 +866,8 @@
     "recommended_count": 3,
     "category": "morning",
     "reward": "Start the Morning by Praising Allah",
-    "reference": "Nasā'ī in Sunan al-Kubrā 10331"
+    "reference": "Nasā'ī in Sunan al-Kubrā 10331",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/10.mp3"
   },
   {
     "id": "morning_lwa_11",
@@ -867,7 +877,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Ask Allah for a Good Day",
-    "reference": "Muslim 2723"
+    "reference": "Muslim 2723",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/11.mp3"
   },
   {
     "id": "morning_lwa_12",
@@ -877,7 +888,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Ask Allah to Bless Your Day",
-    "reference": "Abū Dāwūd 5084"
+    "reference": "Abū Dāwūd 5084",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/13.mp3"
   },
   {
     "id": "morning_lwa_13",
@@ -887,7 +899,8 @@
     "recommended_count": 4,
     "category": "morning",
     "reward": "Get Yourself Freed from the Hell-fire",
-    "reference": "Abū Dāwūd 5069, 5078"
+    "reference": "Abū Dāwūd 5069, 5078",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/13.mp3"
   },
   {
     "id": "morning_lwa_14",
@@ -897,7 +910,8 @@
     "recommended_count": 1,
     "category": "morning",
     "reward": "Upon Entering the Morning",
-    "reference": "Al-Adab al-Mufrad 1199"
+    "reference": "Al-Adab al-Mufrad 1199",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/14.mp3"
   },
   {
     "id": "morning_lwa_15",
@@ -907,7 +921,8 @@
     "recommended_count": 3,
     "category": "morning",
     "reward": "Ask Allah For Good Health and Protection",
-    "reference": "Abū Dāwūd 5090, Aḥmad 20430"
+    "reference": "Abū Dāwūd 5090, Aḥmad 20430",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/15.mp3"
   },
   {
     "id": "morning_lwa_16",
@@ -917,7 +932,8 @@
     "recommended_count": 7,
     "category": "morning",
     "reward": "Allah Will Suffice You in Everything",
-    "reference": "Ibn al-Sunnī 71"
+    "reference": "Ibn al-Sunnī 71",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/16.mp3"
   },
   {
     "id": "morning_lwa_17",
@@ -927,7 +943,8 @@
     "recommended_count": 3,
     "category": "morning",
     "reward": "Have the Prophet ﷺ Hold Your Hand and Admit You to Paradise",
-    "reference": "Aḥmad 18927, Ṭabarānī 838"
+    "reference": "Aḥmad 18927, Ṭabarānī 838",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/17.mp3"
   },
   {
     "id": "morning_lwa_18",
@@ -937,7 +954,8 @@
     "recommended_count": 3,
     "category": "morning",
     "reward": "Protect Yourself From All Harm",
-    "reference": "Tirmidhī 3388, Abū Dāwūd 5088"
+    "reference": "Tirmidhī 3388, Abū Dāwūd 5088",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/18.mp3"
   },
   {
     "id": "morning_lwa_19",
@@ -947,7 +965,8 @@
     "recommended_count": 100,
     "category": "morning",
     "reward": "Get Your Sins Forgiven",
-    "reference": "Muslim 2692, Bukhārī 6405, Tirmidhī 3464"
+    "reference": "Muslim 2692, Bukhārī 6405, Tirmidhī 3464",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/19.mp3"
   },
   {
     "id": "morning_lwa_20",
@@ -957,7 +976,8 @@
     "recommended_count": 100,
     "category": "morning",
     "reward": "An Unparalleled Reward",
-    "reference": "Bukhārī 3293, Nasā'ī al-Sunan al-Kubrā 10410"
+    "reference": "Bukhārī 3293, Nasā'ī al-Sunan al-Kubrā 10410",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/20.mp3"
   },
   {
     "id": "morning_lwa_21",
@@ -977,7 +997,8 @@
     "recommended_count": 10,
     "category": "morning",
     "reward": "Receive the Intercession of the Prophet ﷺ",
-    "reference": "Ṭabarānī al-Muʿjam al-Kabīr 6357"
+    "reference": "Ṭabarānī al-Muʿjam al-Kabīr 6357",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/22.mp3"
   },
   {
     "id": "morning_lwa_23",
@@ -987,7 +1008,8 @@
     "recommended_count": 100,
     "category": "morning",
     "reward": "Seek Forgiveness and Repent",
-    "reference": "Ṭabarānī al-Muʿjam al-Awsaṭ 3879"
+    "reference": "Ṭabarānī al-Muʿjam al-Awsaṭ 3879",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/23.mp3"
   },
   {
     "id": "morning_lwa_24",
@@ -997,7 +1019,8 @@
     "recommended_count": 3,
     "category": "morning",
     "reward": "4 Phrases That Outweigh All Other Dhikr",
-    "reference": "Muslim 2140, Abū Dāwūd 1503"
+    "reference": "Muslim 2140, Abū Dāwūd 1503",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/24.mp3"
   },
   {
     "id": "evening_fixed_1",
