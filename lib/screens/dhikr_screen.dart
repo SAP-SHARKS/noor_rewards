@@ -524,49 +524,202 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
   void _showCompleteDialog(String dhikrId, int target, {int pagesCount = 1}) {
     final xpEarned = XpReward.dhikrXp(dhikrId);
-    final isDark = _settings.darkMode;
-    final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
-    final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-    final kBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    _showCelebrationDialog(
+      context: context,
+      isDark: _settings.darkMode,
+      setsCount: pagesCount,
+      noorPoints: pagesCount * 20,
+      xp: xpEarned * pagesCount,
+      countsLabel: pagesCount == 1 ? '$target counts' : null,
+    );
+  }
 
-    final String bodyText = pagesCount > 1
-        ? 'You completed $pagesCount Azkar sets\n+${pagesCount * 20} Noor Points • +${xpEarned * pagesCount} XP'
-        : '$target counts complete • +20 Noor Points • +$xpEarned XP';
+  /// Premium celebration dialog shared by all completion flows
+  static void _showCelebrationDialog({
+    required BuildContext context,
+    required bool isDark,
+    required int setsCount,
+    required int noorPoints,
+    required int xp,
+    String? countsLabel,
+  }) {
+    final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kBg   = isDark ? const Color(0xFF1A1A1E) : Colors.white;
+    const kTeal  = Color(0xFF0D9488);
+    const kGold  = Color(0xFFD4AF37);
 
     showDialog(
       context: context,
+      barrierColor: Colors.black54,
       builder: (_) => Dialog(
-        backgroundColor: kBg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            NoorIcon.party(size: 56),
-            const SizedBox(height: 16),
-            Text('Masha\'Allah!',
-                style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: kText)),
-            const SizedBox(height: 8),
-            Text(bodyText,
-                style: GoogleFonts.outfit(fontSize: 14, color: kSub),
-                textAlign: TextAlign.center),
-            const SizedBox(height: 24),
-            SizedBox(width: double.infinity, child: ElevatedButton(
-              // Rewards already claimed — just dismiss
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0D9488),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                elevation: 0,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+        child: Container(
+          decoration: BoxDecoration(
+            color: kBg,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: kTeal.withValues(alpha: isDark ? 0.15 : 0.10),
+                blurRadius: 40,
+                spreadRadius: 2,
               ),
-              child: Text('Alhamdulillah ♥',
-                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-            )),
+            ],
+          ),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            // ── Top accent bar ──
+            Container(
+              height: 4,
+              margin: const EdgeInsets.symmetric(horizontal: 60),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [kTeal, kGold, kTeal],
+                ),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 28, 28, 24),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                // ── Icon cluster ──
+                SizedBox(
+                  height: 64,
+                  child: Stack(alignment: Alignment.center, children: [
+                    // Soft glow behind
+                    Container(
+                      width: 56, height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [kTeal.withValues(alpha: 0.12), Colors.transparent],
+                        ),
+                      ),
+                    ),
+                    NoorIcon.party(size: 48),
+                  ]),
+                ),
+
+                const SizedBox(height: 14),
+
+                // ── Title ──
+                Text(
+                  'مَاشَاءَ الله',
+                  style: GoogleFonts.amiri(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: kText,
+                    height: 1.3,
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                // ── Stats row ──
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : const Color(0xFFF7F7F8),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Sets / counts
+                      _statChip(
+                        icon: Icons.check_circle_rounded,
+                        value: countsLabel ?? '$setsCount ${setsCount == 1 ? "set" : "sets"}',
+                        color: kTeal,
+                        isDark: isDark,
+                      ),
+                      Container(width: 1, height: 28, color: isDark ? Colors.white12 : const Color(0xFFE5E7EB)),
+                      // Noor Points
+                      _statChip(
+                        icon: Icons.auto_awesome_rounded,
+                        value: '+$noorPoints',
+                        label: 'Noor',
+                        color: kGold,
+                        isDark: isDark,
+                      ),
+                      Container(width: 1, height: 28, color: isDark ? Colors.white12 : const Color(0xFFE5E7EB)),
+                      // XP
+                      _statChip(
+                        icon: Icons.bolt_rounded,
+                        value: '+$xp',
+                        label: 'XP',
+                        color: const Color(0xFF8B5CF6),
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 22),
+
+                // ── CTA Button ──
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kTeal,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'الحَمْدُ لله',
+                      style: GoogleFonts.amiri(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+            ),
           ]),
         ),
       ),
-
     );
+  }
+
+  static Widget _statChip({
+    required IconData icon,
+    required String value,
+    String? label,
+    required Color color,
+    required bool isDark,
+  }) {
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      Icon(icon, size: 18, color: color),
+      const SizedBox(height: 4),
+      Text(
+        value,
+        style: GoogleFonts.outfit(
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+          color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+        ),
+      ),
+      if (label != null)
+        Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.grey.shade500 : const Color(0xFF9CA3AF),
+          ),
+        ),
+    ]);
   }
 
   void _showSettingsSheet([BuildContext? sheetContext, VoidCallback? onUpdate]) {
