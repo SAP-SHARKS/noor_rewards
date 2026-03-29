@@ -1448,18 +1448,39 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor)
   final spans = <TextSpan>[];
   int lastEnd = 0;
 
-  for (final m in _kHighlightPatterns.allMatches(cleaned)) {
+  final matches = _kHighlightPatterns.allMatches(cleaned).toList();
+  
+  for (int i = 0; i < matches.length; i++) {
+    final m = matches[i];
+    
     if (m.start > lastEnd) {
-      spans.add(TextSpan(text: cleaned.substring(lastEnd, m.start)));
+      String beforeText = cleaned.substring(lastEnd, m.start).trimRight();
+      if (beforeText.isNotEmpty) {
+        spans.add(TextSpan(text: '$beforeText\n'));
+      }
     }
+    
+    String highlightedText = m.group(0)!.trim();
+    bool hasTextAfter = cleaned.substring(m.end).trimLeft().isNotEmpty;
+    String suffix = hasTextAfter ? '\n' : '';
+    
     spans.add(TextSpan(
-      text: m.group(0),
+      text: '$highlightedText$suffix',
       style: baseStyle.copyWith(color: highlightColor),
     ));
     lastEnd = m.end;
   }
+  
   if (lastEnd < cleaned.length) {
-    spans.add(TextSpan(text: cleaned.substring(lastEnd)));
+    String remainder = cleaned.substring(lastEnd).trimLeft();
+    if (remainder.isNotEmpty) {
+      spans.add(TextSpan(text: remainder));
+    }
+  }
+
+  // If no matches were found, just use the raw text
+  if (spans.isEmpty) {
+    spans.add(TextSpan(text: cleaned));
   }
 
   return Text.rich(
