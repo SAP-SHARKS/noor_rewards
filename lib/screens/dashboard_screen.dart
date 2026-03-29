@@ -563,7 +563,7 @@ class _HomeTabState extends State<_HomeTab> {
         // ── Noor Counter (tasbih drum display) ────────────────────────────────
         const SizedBox(height: 22),
         Center(child: _NoorCounter(
-          value: widget.todayPoints > 0 ? widget.todayPoints : widget.noorPoints,
+          value: widget.noorPoints,
           visitCount: widget.homeVisitCount,
         )),
 
