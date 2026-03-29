@@ -1435,23 +1435,34 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         stops: [0.0, 0.55, 1.0],
       );
 
+      // Safe index — clamp to valid range
+      final safeIndex = _currentIndex.clamp(0, widget.azkars.length - 1);
+      final appBarColor = _illustrationTopColor(widget.azkars[safeIndex].id, isDark);
+
       final inner = PopScope(
         onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
         appBar: AppBar(
-          backgroundColor: _illustrationTopColor(
-            widget.azkars[_currentIndex].id, isDark),
+          backgroundColor: appBarColor,
           elevation: 0,
           scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          foregroundColor: Colors.white,
+          flexibleSpace: Container(color: appBarColor),
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white.withValues(alpha: 0.90), size: 20),
             onPressed: () => Navigator.pop(context),
           ),
-          title: AnimatedBuilder(
-            animation: _pageController,
-            builder: (context, _) {
-              int ci = _pageController.positions.isNotEmpty ? _pageController.page?.round() ?? widget.initialIndex : widget.initialIndex;
+          title: Builder(
+            builder: (context) {
+              int ci = safeIndex;
+              try {
+                if (_pageController.hasClients && _pageController.page != null) {
+                  ci = _pageController.page!.round().clamp(0, widget.azkars.length - 1);
+                }
+              } catch (_) {}
               final catId = widget.azkars[ci].category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
@@ -1466,11 +1477,14 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(3),
-            child: _AzkarProgressLine(
-              azkars: widget.azkars,
-              counts: widget.counts,
-              currentIndex: _currentIndex,
-              parentState: widget.parentState,
+            child: Container(
+              color: appBarColor,
+              child: _AzkarProgressLine(
+                azkars: widget.azkars,
+                counts: widget.counts,
+                currentIndex: safeIndex,
+                parentState: widget.parentState,
+              ),
             ),
           ),
         ),
@@ -1811,16 +1825,18 @@ class _AzkarCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Illustration section ──
-        _buildIllustration(
-                azkarId: azkar.id,
-                progress: targetCount == 0
-                    ? 0.0
-                    : (currentCount / targetCount).clamp(0.0, 1.0),
-                isComplete: isComplete,
-                tapCount: currentCount,
-                pointsToday: pointsToday,
-              ),
+        // ── Illustration section (clipped to prevent overflow) ──
+        ClipRect(
+          child: _buildIllustration(
+                  azkarId: azkar.id,
+                  progress: targetCount == 0
+                      ? 0.0
+                      : (currentCount / targetCount).clamp(0.0, 1.0),
+                  isComplete: isComplete,
+                  tapCount: currentCount,
+                  pointsToday: pointsToday,
+                ),
+        ),
 
         // ── Card section with smooth top transition ──
         Container(
@@ -12907,12 +12923,12 @@ class _SunriseGloryPainter extends CustomPainter {
 
     canvas.save(); canvas.translate(cx, cy); canvas.scale(punchScale, punchScale); canvas.translate(-cx, -cy);
 
-    // Sun — grows and brightens with progress
-    final sunR = 15 + progress * 25;
-    final sunY = cy - 5 - progress * 15; // rises above horizon
+    // Sun — grows and brightens with progress (stays in safe zone)
+    final sunR = 14 + progress * 18;
+    final sunY = cy + 2 - progress * 8; // gentle rise, stays well within bounds
 
     // Sun glow
-    canvas.drawCircle(Offset(cx, sunY), sunR + 20, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: 0.08 * pulse)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18));
+    canvas.drawCircle(Offset(cx, sunY), sunR + 15, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: 0.08 * pulse)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14));
 
     // Sun body
     canvas.drawCircle(Offset(cx, sunY), sunR, Paint()
@@ -12923,7 +12939,7 @@ class _SunriseGloryPainter extends CustomPainter {
     for (int i = 0; i < 3; i++) {
       final ringProgress = ((progress - i / 3.0) * 3.0).clamp(0.0, 1.0);
       if (ringProgress < 0.01) continue;
-      final ringR = (sunR + 15 + i * 18) * ringProgress;
+      final ringR = (sunR + 10 + i * 14) * ringProgress; // tighter rings
       final ringAlpha = (0.15 + ringProgress * 0.25) * pulse;
       final color = _ringColors[i];
 
@@ -12932,14 +12948,19 @@ class _SunriseGloryPainter extends CustomPainter {
       // Orbiting dot
       final dotAngle = rayPhase * math.pi * 2 + i * 2.1;
       canvas.drawCircle(Offset(cx + math.cos(dotAngle) * ringR, sunY + math.sin(dotAngle) * ringR), 2, Paint()..color = color.withValues(alpha: ringAlpha * 2));
+    }
 
-      // Label
-      if (ringProgress > 0.5) {
+    // Labels — positioned below the rings in a horizontal row, not on the rings
+    if (progress > 0.3) {
+      final labelY = sunY + (sunR + 10 + 2 * 14) + 12; // below outermost ring
+      for (int i = 0; i < 3; i++) {
+        final ringProgress = ((progress - i / 3.0) * 3.0).clamp(0.0, 1.0);
+        if (ringProgress < 0.5) continue;
         final labelAlpha = ((ringProgress - 0.5) * 2).clamp(0.0, 0.6);
+        final color = _ringColors[i];
         final tp = TextPainter(text: TextSpan(text: _ringLabels[i], style: _illusTag(11, color.withValues(alpha: labelAlpha))), textDirection: TextDirection.rtl)..layout();
-        final labelAngle = math.pi * 1.5 + (i - 1) * 0.6; // spread wider above
-        final labelR = ringR + 14;
-        tp.paint(canvas, Offset(cx + math.cos(labelAngle) * labelR - tp.width / 2, sunY + math.sin(labelAngle) * labelR - tp.height / 2));
+        final labelX = cx + (i - 1) * (w * 0.28); // spread evenly: left, center, right
+        tp.paint(canvas, Offset(labelX - tp.width / 2, labelY.clamp(0.0, h - 30)));
       }
     }
 
