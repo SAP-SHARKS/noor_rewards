@@ -82,6 +82,7 @@ class _DhikrSettings {
   double translationFontSize = 14.0;
   bool darkMode = false;
   int arabicFontIdx = 0;  // index into _kArabicFonts
+  bool showTranslation = true;
 }
 
 IconData _parseIcon(String name) {
@@ -160,6 +161,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.arabicFontSize = prefs.getDouble('dhikr_ar_size') ?? 32.0;
       _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 14.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
+      _settings.showTranslation = prefs.getBool('dhikr_show_translation') ?? true;
       int loadFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
       if (loadFontIdx >= _kArabicFonts.length) loadFontIdx = 0;
       _settings.arabicFontIdx = loadFontIdx;
@@ -182,6 +184,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     await prefs.setDouble('dhikr_ar_size', _settings.arabicFontSize);
     await prefs.setDouble('dhikr_tr_size', _settings.translationFontSize);
     await prefs.setBool('dhikr_dark_mode', _settings.darkMode);
+    await prefs.setBool('dhikr_show_translation', _settings.showTranslation);
     await prefs.setInt('dhikr_ar_font', _settings.arabicFontIdx);
   }
 
@@ -799,6 +802,19 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             _savePrefs();
                           },
                         ),
+                        SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text('Show Translation',
+                              style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
+                          activeTrackColor: const Color(0xFF0D9488),
+                          value: _settings.showTranslation,
+                          onChanged: (val) {
+                            setModalState(() => _settings.showTranslation = val);
+                            setState(() => _settings.showTranslation = val);
+                            onUpdate?.call();
+                            _savePrefs();
+                          },
+                        ),
                         const Divider(),
 
                         // Text Sizes
@@ -1406,12 +1422,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         final currentGlobalIndex = widget.azkars.indexOf(azkar);
         final nextIndex = currentGlobalIndex + 1;
         if (nextIndex > 0 && nextIndex < widget.azkars.length) {
-          Future.delayed(const Duration(milliseconds: 700), () {
+          // Let the user enjoy the completed illustration before auto-swiping
+          Future.delayed(const Duration(milliseconds: 1500), () {
             if (!mounted) return;
             _pageController.animateToPage(
               nextIndex,
-              duration: const Duration(milliseconds: 450),
-              curve: Curves.easeInOut,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOutCubic,
             );
           });
         }
@@ -1423,26 +1440,14 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   Widget build(BuildContext context) {
       final isDark = widget.settings.darkMode;
 
-      // Same rich amber-gold → sage green gradient for reading consistency
-      const bgGradient = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xFFFFEAB0), // rich warm golden-amber
-          Color(0xFFD4EDDA), // soft sage green
-          Color(0xFFEAF6F0), // pale mint-white
-        ],
-        stops: [0.0, 0.55, 1.0],
-      );
-
       // Safe index — clamp to valid range
       final safeIndex = _currentIndex.clamp(0, widget.azkars.length - 1);
       final appBarColor = _illustrationTopColor(widget.azkars[safeIndex].id, isDark);
 
-      final inner = PopScope(
+      return PopScope(
         onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         appBar: AppBar(
           backgroundColor: appBarColor,
           elevation: 0,
@@ -1663,11 +1668,6 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         ),
         ),
       ));
-      if (isDark) return inner;
-      return DecoratedBox(
-        decoration: const BoxDecoration(gradient: bgGradient),
-        child: inner,
-      );
   }
 }
 
@@ -1842,14 +1842,6 @@ class _AzkarCard extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: kCardBg,
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              )
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1857,29 +1849,6 @@ class _AzkarCard extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // ── Context / Chapter Subtitle ──
-            if (rawRef.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      rawRef,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kSub,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
 
             // ── Main Text Content ──
             Padding(
@@ -1892,26 +1861,28 @@ class _AzkarCard extends StatelessWidget {
                         .style(settings.arabicFontSize, kText, 1.8, FontWeight.w700),
                     isDark ? const Color(0xFF5EADDB) : const Color(0xFF1A7A5C),
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    azkar.transliteration,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.outfit(
-                      fontSize: settings.translationFontSize, 
-                      fontWeight: FontWeight.w600, 
-                      color: kPrimary, 
-                      fontStyle: FontStyle.italic
+                  if (settings.showTranslation) ...[
+                    const SizedBox(height: 14),
+                    Text(
+                      azkar.transliteration,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: settings.translationFontSize, 
+                        fontWeight: FontWeight.w600, 
+                        color: kPrimary, 
+                        fontStyle: FontStyle.italic
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    azkar.translation,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.outfit(
-                      fontSize: settings.translationFontSize, 
-                      color: kSub
+                    const SizedBox(height: 6),
+                    Text(
+                      azkar.translation,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: settings.translationFontSize, 
+                        color: kSub
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -1944,6 +1915,30 @@ class _AzkarCard extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+
+            // ── Context / Chapter Subtitle (Moved below Hadith & Virtue) ──
+            if (rawRef.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      rawRef,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: kSub,
+                      ),
+                    ),
+                  ),
                 ),
               ),
 
@@ -2968,7 +2963,7 @@ class _NoorTreePainter extends CustomPainter {
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 10. Noor points badge
     if (pointsToday > 0) {
@@ -2993,7 +2988,7 @@ class _NoorTreePainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -3395,7 +3390,7 @@ class _ProtectionShieldPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 10. Noor points badge
     if (pointsToday > 0) {
@@ -3420,7 +3415,7 @@ class _ProtectionShieldPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -4028,7 +4023,7 @@ class _ThreeQulsPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 8. Points badge
     if (pointsToday > 0) {
@@ -4053,7 +4048,7 @@ class _ThreeQulsPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -4559,7 +4554,7 @@ class _GatesOfJannahPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -4584,7 +4579,7 @@ class _GatesOfJannahPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -5150,7 +5145,7 @@ class _BreakingChainsPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 8. Points badge
     if (pointsToday > 0) {
@@ -5175,7 +5170,7 @@ class _BreakingChainsPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -5636,7 +5631,7 @@ class _SixWardsPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFF2EC4A9) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -5650,7 +5645,7 @@ class _SixWardsPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFF2EC4A9).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFF2EC4A9).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -6062,7 +6057,7 @@ class _RepellingLightPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 8. Points badge
     if (pointsToday > 0) {
@@ -6076,7 +6071,7 @@ class _RepellingLightPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -6465,7 +6460,7 @@ class _CradledHeartPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFE879F9) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -6479,7 +6474,7 @@ class _CradledHeartPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFE879F9).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFE879F9).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -6932,7 +6927,7 @@ class _OverflowingVesselPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 10. Points badge
     if (pointsToday > 0) {
@@ -6944,7 +6939,7 @@ class _OverflowingVesselPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -7362,7 +7357,7 @@ class _RisingDawnPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFFFD97D) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 10. Points badge
     if (pointsToday > 0) {
@@ -7374,7 +7369,7 @@ class _RisingDawnPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFFFD97D).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFFFD97D).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -7675,7 +7670,7 @@ class _PraiseRipplesPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     if (pointsToday > 0) {
       final badgeLabel = '+$pointsToday pts';
@@ -7686,7 +7681,7 @@ class _PraiseRipplesPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -8125,7 +8120,7 @@ class _FiveBlessingsPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     if (pointsToday > 0) {
       final badgeLabel = '+$pointsToday pts';
@@ -8136,7 +8131,7 @@ class _FiveBlessingsPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -8345,7 +8340,7 @@ class _GlowingPathPainter extends CustomPainter {
       text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     if (pointsToday > 0) {
       final badgeLabel = '+$pointsToday pts';
@@ -8356,7 +8351,7 @@ class _GlowingPathPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final badgeW = tp3.width + 10; final badgeH = tp3.height + 6;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeX = cx - badgeW / 2; final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(6));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rrect, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -8972,7 +8967,7 @@ class _FreedomFlamePainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 8. Points badge
     if (pointsToday > 0) {
@@ -8997,7 +8992,7 @@ class _FreedomFlamePainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -9544,7 +9539,7 @@ class _CycleOfReturnPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -9569,7 +9564,7 @@ class _CycleOfReturnPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -10065,7 +10060,7 @@ class _ThreeVesselsPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 8. Points badge
     if (pointsToday > 0) {
@@ -10090,7 +10085,7 @@ class _ThreeVesselsPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -10578,7 +10573,7 @@ class _SevenPillarsPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -10603,7 +10598,7 @@ class _SevenPillarsPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -11086,7 +11081,7 @@ class _GuidingHandPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -11111,7 +11106,7 @@ class _GuidingHandPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -11650,7 +11645,7 @@ class _InvincibleNamePainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -11675,7 +11670,7 @@ class _InvincibleNamePainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -12140,7 +12135,7 @@ class _OceanOfForgivenessPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 9. Points badge
     if (pointsToday > 0) {
@@ -12165,7 +12160,7 @@ class _OceanOfForgivenessPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -12604,7 +12599,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
       ),
       textDirection: TextDirection.rtl,
     )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     // 8. Points badge
     if (pointsToday > 0) {
@@ -12629,7 +12624,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
       final badgeW = tp3.width + 10;
       final badgeH = tp3.height + 6;
       final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.88 + tp2.height + 6;
+      final badgeY = h * 0.80 + tp2.height + 6;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(6),
@@ -12998,11 +12993,11 @@ class _SunriseGloryPainter extends CustomPainter {
     // Label
     final label = isComplete ? 'خَيْرٌ مِمَّا طَلَعَتْ عَلَيْهِ الشَّمْس' : '${(progress * 100).round()}%';
     final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFF59E0B) : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
     if (pointsToday > 0) {
       final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFF59E0B), blurRadius: 6)])), textDirection: TextDirection.ltr)..layout();
-      final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6;
+      final bx = cx - (tp3.width + 10) / 2, by = h * 0.80 + tp2.height + 6;
       final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6));
       canvas.drawRRect(rr, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
       canvas.drawRRect(rr, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7);
@@ -13142,9 +13137,9 @@ class _TenSalawatPainter extends CustomPainter {
     // Label
     final label = isComplete ? 'صَلَّى اللهُ عَلَيْهِ وَسَلَّم' : '${(progress * 100).round()}%';
     final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? _crescentColor : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
-    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: _crescentColor, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: _crescentColor, blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = _crescentColor.withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = _crescentColor.withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
+    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: _crescentColor, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: _crescentColor, blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.80 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = _crescentColor.withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = _crescentColor.withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
   }
 
   @override bool shouldRepaint(_TenSalawatPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.orbitPhase != orbitPhase;
@@ -13295,9 +13290,9 @@ class _DoorsOfMercyPainter extends CustomPainter {
     // Label
     final label = isComplete ? 'أَسْتَغْفِرُ الله وَأَتُوبُ إِلَيْه' : '${(progress * 100).round()}%';
     final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? _mercyColor : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
-    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: _mercyColor, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: _mercyColor, blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = _mercyColor.withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = _mercyColor.withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
+    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: _mercyColor, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: _mercyColor, blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.80 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = _mercyColor.withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = _mercyColor.withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
   }
 
   @override bool shouldRepaint(_DoorsOfMercyPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.glowPhase != glowPhase;
@@ -13470,9 +13465,9 @@ class _CosmicWeightPainter extends CustomPainter {
     // Label
     final label = isComplete ? 'سُبْحَانَ اللهِ وَبِحَمْدِه' : '${(progress * 100).round()}%';
     final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.80));
 
-    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
+    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.80 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
   }
 
   @override bool shouldRepaint(_CosmicWeightPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.cosmicPhase != cosmicPhase;
