@@ -480,50 +480,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
     // Small delay so the navigation animation completes first
     Future.delayed(const Duration(milliseconds: 350), () {
       if (!mounted) return;
-      final isDark = _settings.darkMode;
-      final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
-      final kSub  = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-      final kBg   = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-      showDialog(
+      _showCelebrationDialog(
         context: context,
-        builder: (_) => Dialog(
-          backgroundColor: kBg,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              NoorIcon.party(size: 56),
-              const SizedBox(height: 16),
-              Text('Masha\'Allah!',
-                  style: GoogleFonts.outfit(
-                      fontSize: 26, fontWeight: FontWeight.w800, color: kText)),
-              const SizedBox(height: 8),
-              Text(
-                count == 1
-                    ? 'You completed 1 Azkar set\n+20 Noor Points • +$totalXp XP'
-                    : 'You completed $count Azkar sets\n+${count * 20} Noor Points • +$totalXp XP',
-                style: GoogleFonts.outfit(fontSize: 14, color: kSub),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              SizedBox(width: double.infinity, child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0D9488),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  elevation: 0,
-                ),
-                child: Text('Alhamdulillah ♥',
-                    style: GoogleFonts.outfit(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white)),
-              )),
-            ]),
-          ),
-        ),
+        isDark: _settings.darkMode,
+        setsCount: count,
+        noorPoints: count * 20,
+        xp: totalXp,
       );
     });
   }
