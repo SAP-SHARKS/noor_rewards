@@ -1875,6 +1875,10 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('la_yadurru') || id.contains('bismillah_protect')) {
     return const Color(0xFF08101A); // Invincible Name
   }
+  if (id == 'morning_lwa_19' || id == 'evening_lwa_19' ||
+      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) {
+    return const Color(0xFF061218); // Ocean of Forgiveness
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -2065,6 +2069,16 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_18' || id == 'evening_lwa_18' ||
       id.contains('la_yadurru') || id.contains('bismillah_protect')) {
     return _InvincibleName(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #19 — Sins forgiven like foam of the sea (ocean of forgiveness)
+  if (id == 'morning_lwa_19' || id == 'evening_lwa_19' ||
+      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) {
+    return _OceanOfForgiveness(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -11648,6 +11662,477 @@ class _InvincibleNamePainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.fieldPhase != fieldPhase;
+}
+
+// =============================================================================
+// 🌊 Ocean of Forgiveness (بحر المغفرة) — Sins forgiven like foam of the sea
+// =============================================================================
+class _OceanOfForgiveness extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _OceanOfForgiveness({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_OceanOfForgiveness> createState() => _OceanOfForgivenessState();
+}
+
+class _OceanOfForgivenessState extends State<_OceanOfForgiveness>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _waveCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(18, (i) => _Particle(seed: i + 1900));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2000))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _waveCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3500))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_OceanOfForgiveness old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _waveCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _waveCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _OceanOfForgivenessPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            wavePhase: _waveCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OceanOfForgivenessPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double wavePhase;
+
+  static const _oceanColor = Color(0xFF0EA5E9);  // sky blue — ocean
+  static const _foamColor = Color(0xFFE5E7EB);   // pale grey — foam (sins)
+  static const _clearColor = Color(0xFF06B6D4);   // cyan — purified water
+
+  const _OceanOfForgivenessPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.wavePhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.44;
+
+    // 1. Background — deep ocean dark
+    final depth = progress * 0.10;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((6 + depth * 15).round(), (18 + depth * 30).round(), (24 + depth * 20).round(), 1.0),
+            Color.fromRGBO((4 + depth * 10).round(), (14 + depth * 25).round(), (22 + depth * 18).round(), 1.0),
+            Color.fromRGBO((3 + depth * 8).round(), (10 + depth * 20).round(), (18 + depth * 15).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars (above ocean horizon)
+    const starPos = [
+      (0.10, 0.06), (0.25, 0.10), (0.42, 0.04), (0.58, 0.08),
+      (0.74, 0.05), (0.88, 0.11), (0.34, 0.14), (0.66, 0.12),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final starAlpha = (0.15 + 0.35 * tw).clamp(0.0, 0.5);
+      sp.color = Colors.white.withValues(alpha: starAlpha);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.8, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Ocean waves
+    _drawOcean(canvas, cx, cy, w, h);
+
+    // 4. Foam particles (sins) dissolving into light
+    _drawFoam(canvas, cx, cy, w, h);
+
+    // 5. Central radiance (SubhanAllah core)
+    _drawCore(canvas, cx, cy - 15);
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.38;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = _oceanColor.withValues(alpha: ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 7. Tap particles — rising from ocean
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.28;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.5 - t * 25;
+        final a = (1.0 - t) * 0.70;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        final sparkColor = isComplete ? _clearColor : _oceanColor;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = sparkColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'غُفِرَت بإذن الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? _clearColor
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: _clearColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: _clearColor, blurRadius: 6),
+              Shadow(color: _clearColor, blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = _clearColor.withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = _clearColor.withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Ocean waves — multiple sine layers with depth
+  void _drawOcean(Canvas canvas, double cx, double cy, double w, double h) {
+    final horizonY = cy + 10;
+
+    // 3 wave layers at different depths
+    for (int layer = 0; layer < 3; layer++) {
+      final layerY = horizonY + layer * 18;
+      final amplitude = 5.0 + layer * 2;
+      final frequency = 2.0 + layer * 0.5;
+      final phaseShift = wavePhase * math.pi * 2 + layer * 1.2;
+      final layerAlpha = (0.12 + layer * 0.06) * (1.0 + progress * 0.3);
+
+      // Water color transitions from murky to crystal clear with progress
+      final waterColor = Color.lerp(
+        _oceanColor.withValues(alpha: layerAlpha),
+        _clearColor.withValues(alpha: layerAlpha * 1.3),
+        progress,
+      )!;
+
+      final wavePath = Path()..moveTo(0, layerY);
+      for (double x = 0; x <= w; x += 3) {
+        final y = layerY + math.sin(x / w * math.pi * frequency + phaseShift) * amplitude;
+        wavePath.lineTo(x, y);
+      }
+      wavePath.lineTo(w, h);
+      wavePath.lineTo(0, h);
+      wavePath.close();
+
+      canvas.drawPath(wavePath, Paint()..color = waterColor);
+    }
+
+    // Wave crest highlights
+    for (int c = 0; c < 5; c++) {
+      final crestX = (wavePhase + c * 0.2) % 1.0 * w;
+      final crestY = horizonY + math.sin(wavePhase * math.pi * 2 + c * 1.8) * 5;
+      final crestAlpha = 0.15 * pulse;
+      canvas.drawCircle(
+        Offset(crestX, crestY), 2,
+        Paint()
+          ..color = Colors.white.withValues(alpha: crestAlpha)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+    }
+  }
+
+  /// Foam particles representing sins — dissolve as progress increases
+  void _drawFoam(Canvas canvas, double cx, double cy, double w, double h) {
+    final horizonY = cy + 10;
+    final foamCount = 20;
+    final remainingFoam = ((1.0 - progress) * foamCount).round();
+
+    for (int i = 0; i < foamCount; i++) {
+      // Deterministic positioning based on index
+      final rng = math.Random(i * 997);
+      final fx = rng.nextDouble() * w;
+      final baseY = horizonY + rng.nextDouble() * 40 + 5;
+
+      if (i >= remainingFoam) {
+        // This foam particle has been "forgiven" — show rising light
+        final riseT = ((progress - i / foamCount) * foamCount).clamp(0.0, 1.0);
+        if (riseT < 0.01 || riseT > 0.95) continue;
+
+        final riseY = baseY - riseT * 50;
+        final riseAlpha = (1.0 - riseT) * 0.40;
+        canvas.drawCircle(
+          Offset(fx, riseY), 2.5 * (1.0 - riseT),
+          Paint()
+            ..color = _clearColor.withValues(alpha: riseAlpha)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+        );
+      } else {
+        // Foam still present — bobbing on waves
+        final bobY = baseY + math.sin(wavePhase * math.pi * 2 + i * 0.8) * 3;
+        final foamAlpha = 0.20 + math.sin(wavePhase * math.pi * 2 + i * 1.3) * 0.05;
+
+        canvas.drawCircle(
+          Offset(fx, bobY), 2.5,
+          Paint()..color = _foamColor.withValues(alpha: foamAlpha),
+        );
+        canvas.drawCircle(
+          Offset(fx, bobY), 4,
+          Paint()
+            ..color = _foamColor.withValues(alpha: foamAlpha * 0.3)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+        );
+      }
+    }
+  }
+
+  /// Central SubhanAllah radiance above the ocean
+  void _drawCore(Canvas canvas, double cx, double cy) {
+    final coreAlpha = 0.15 + progress * 0.45;
+
+    // Reflection on water below
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, cy + 50), width: 30 + progress * 20, height: 6),
+      Paint()
+        ..color = _clearColor.withValues(alpha: coreAlpha * 0.10 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+
+    // Outer glow
+    canvas.drawCircle(
+      Offset(cx, cy), 18,
+      Paint()
+        ..color = _clearColor.withValues(alpha: coreAlpha * 0.12 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    );
+
+    // Inner core
+    canvas.drawCircle(
+      Offset(cx, cy), 8,
+      Paint()
+        ..shader = RadialGradient(colors: [
+          Colors.white.withValues(alpha: coreAlpha * 0.7),
+          _clearColor.withValues(alpha: coreAlpha * 0.4),
+          Colors.transparent,
+        ], stops: const [0.0, 0.5, 1.0])
+        .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: 8)),
+    );
+
+    // On completion — expanded purity aura
+    if (isComplete) {
+      for (int i = 0; i < 3; i++) {
+        final auraR = 15.0 + i * 12;
+        final auraA = (0.08 - i * 0.02) * pulse;
+        canvas.drawCircle(
+          Offset(cx, cy), auraR,
+          Paint()
+            ..color = _clearColor.withValues(alpha: auraA)
+            ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6.0 + i * 4),
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_OceanOfForgivenessPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.wavePhase != wavePhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
