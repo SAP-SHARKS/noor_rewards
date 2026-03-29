@@ -854,6 +854,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
+  @override
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
@@ -865,27 +866,46 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final isDark = _settings.darkMode;
     final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
     final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F8F9); // Lighter background
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-    final kPrimary  = const Color(0xFF0D9488);
+    
+    // UI Constants
+    final bannerBg = isDark ? const Color(0xFF1F4130) : const Color(0xFF285E46);
+    final bannerBtn = isDark ? const Color(0xFFE5B955) : const Color(0xFFFFD579);
+    final bannerTxt = isDark ? const Color(0xFF2B2005) : const Color(0xFF3F2A00);
+    
+    final chipActiveBg = isDark ? const Color(0xFF2A5940) : const Color(0xFF194D33);
+    final chipInactiveBg = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEEEEEE);
+    final chipInactiveTxt = isDark ? Colors.white70 : const Color(0xFF4A4A4A);
 
-    // ── Gradient background: rich amber-gold → warm sage green (diagonal)
-    // Richer, deeper version — warm and spiritual feel for Dua & Azkaar
-    const bgGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Color(0xFFFFEAB0), // rich warm golden-amber
-        Color(0xFFD4EDDA), // soft sage green
-        Color(0xFFEAF6F0), // pale mint-white
-      ],
-      stops: [0.0, 0.55, 1.0],
-    );
+    // Banner Text Setup
+    String bannerTitle = "Daily Remembrance\nbrings peace to the soul.";
+    String catLabel = "DAILY REMEMBRANCE";
+    IconData waterMark = Icons.spa_rounded;
+    
+    if (_selectedCat == 'morning') {
+      catLabel = "DAILY REMEMBRANCE";
+      bannerTitle = "Morning Adhkar\nbrings peace to the soul and light to the path.";
+      waterMark = Icons.wb_sunny_rounded;
+    } else if (_selectedCat == 'evening') {
+      catLabel = "NIGHTLY REMEMBRANCE";
+      bannerTitle = "Evening Adhkar\nbrings tranquility and protection for the night.";
+      waterMark = Icons.nights_stay_rounded;
+    } else if (_selectedCat == 'favorites') {
+      catLabel = "YOUR SELECTION";
+      bannerTitle = "Your beloved words\nof remembrance to keep close to your heart.";
+      waterMark = Icons.favorite_rounded;
+    } else {
+      catLabel = "CONTINUOUS REMEMBRANCE";
+      bannerTitle = "Remember Allah\nmuch, that you may be successful.";
+      waterMark = Icons.grid_view_rounded;
+    }
 
     final scaffold = Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : Colors.transparent,
+      backgroundColor: kBg,
       appBar: AppBar(
-        backgroundColor: kWhite,
-        surfaceTintColor: kWhite,
+        backgroundColor: kBg,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_rounded, color: kText, size: 20),
@@ -898,10 +918,65 @@ class _DhikrScreenState extends State<DhikrScreen> {
       body: Stack(children: [
         SafeArea(child: Column(children: [
 
-        // Points banner removed — shown inside the meter
+        // ── Top Banner ──────────────────────────────────────────────────────
+        Container(
+          margin: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: bannerBg,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              if (!isDark) BoxShadow(color: bannerBg.withValues(alpha: 0.25), blurRadius: 20, offset: const Offset(0, 8))
+            ]
+          ),
+          child: Stack(
+            children: [
+              // Watermark icon
+              Positioned(
+                right: -30,
+                bottom: -20,
+                child: Icon(waterMark, size: 120, color: Colors.white.withValues(alpha: 0.10)),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(catLabel, style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 2.0, color: Colors.white.withValues(alpha: 0.7))),
+                  const SizedBox(height: 8),
+                  Text(bannerTitle, style: GoogleFonts.lora(fontSize: 18, height: 1.4, color: Colors.white, fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 18),
+                  ElevatedButton(
+                     onPressed: () {
+                       if (_filtered.isNotEmpty) {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => _DhikrDetailScreen(
+                            azkars: _filtered,
+                            initialIndex: 0,
+                            counts: _counts,
+                            favorites: _favorites,
+                            settings: _settings,
+                            parentState: this,
+                          ))).then((_) {
+                             _showPendingCompletions();
+                             setState((){});
+                          });
+                       }
+                     },
+                     style: ElevatedButton.styleFrom(
+                       backgroundColor: bannerBtn,
+                       foregroundColor: bannerTxt,
+                       elevation: 0,
+                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                       minimumSize: const Size(0, 36),
+                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                     ),
+                     child: Text('Start Now', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 13)),
+                  )
+                ]
+              ),
+            ]
+          ),
+        ),
 
         // ── Category tabs ───────────────────────────────────────────────────
-        const SizedBox(height: 14),
         SizedBox(
           height: 38,
           child: ListView.separated(
@@ -919,20 +994,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
                 }),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 0),
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: sel ? kPrimary : (isDark ? const Color(0xFF2C2C2E) : Colors.white),
+                    color: sel ? chipActiveBg : chipInactiveBg,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: sel ? kPrimary : (isDark ? const Color(0xFF3A3A3C) : Colors.grey.shade200)),
                   ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(cat.icon, size: 13, color: sel ? Colors.white : kSub),
-                    const SizedBox(width: 5),
-                    Text(cat.label,
-                        style: GoogleFonts.outfit(
-                            fontSize: 12, fontWeight: FontWeight.w700,
-                            color: sel ? Colors.white : kSub)),
-                  ]),
+                  child: Text(cat.label,
+                    style: GoogleFonts.outfit(
+                      fontSize: 14, fontWeight: sel ? FontWeight.w600 : FontWeight.w500,
+                      color: sel ? Colors.white : chipInactiveTxt)),
                 ),
               );
             },
@@ -968,66 +1039,87 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     settings: _settings,
                     parentState: this,
                   )));
-                  // After returning from the detail screen, show any
-                  // completions that were queued during the session.
                   _showPendingCompletions();
-                  setState((){}); // Refresh counts on the index list when they return
+                  setState((){});
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(bottom: 14), // Margin replaces separator padding
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+                    color: kWhite,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: isDark ? Colors.white10 : Colors.transparent),
                     boxShadow: [
-                       BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
-                    ],
+                      if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
+                    ]
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Index Circle
                       Container(
-                        width: 44,
-                        height: 44,
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
-                          color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFFF59E0B),
+                          color: isComplete ? const Color(0xFF2BAE7C) : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF0F5F1)),
                           shape: BoxShape.circle,
                         ),
                         alignment: Alignment.center,
                         child: isComplete 
-                            ? const Icon(Icons.check_rounded, color: Colors.white, size: 24)
-                            : Text('${index + 1}', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
+                            ? const Icon(Icons.check_rounded, color: Colors.white, size: 22)
+                            : Text('${index + 1}', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF1B4E3B), fontSize: 16)),
                       ),
                       const SizedBox(width: 16),
+                      
+                      // Text/Content
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(titleText, 
+                            Text(
+                              titleText, 
+                              maxLines: 2, 
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.lora(fontWeight: FontWeight.w700, fontSize: 16, height: 1.3, color: kText)
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim(), 
                               maxLines: 1, 
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 16, color: kText)
+                              style: GoogleFonts.outfit(fontSize: 12, color: kSub)
                             ),
-                            const SizedBox(height: 4),
-                            Text(azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim(), 
-                              maxLines: 1, 
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(fontSize: 13, color: kSub)
-                            ),
+                            const SizedBox(height: 12),
+                            
+                            // Bottom tag (e.g. MORNING ADHKAR)
+                            Row(
+                              children: [
+                                const Icon(Icons.auto_awesome_rounded, size: 12, color: Color(0xFF927237)),
+                                const SizedBox(width: 4),
+                                Text(
+                                  (azkar.category.toUpperCase() + " ADHKAR").replaceAll("FAVORITES", "FAVORITE"), 
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 10, 
+                                    fontWeight: FontWeight.w800, 
+                                    letterSpacing: 0.8, 
+                                    color: const Color(0xFF927237)
+                                  )
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
+                      
+                      // Count/Target
                       const SizedBox(width: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: isComplete ? const Color(0xFFE8F8F0) : const Color(0xFFFFF7E6),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
                         child: Text('${azkar.recommendedCount}x', 
                           style: GoogleFonts.outfit(
                             fontWeight: FontWeight.w800, 
-                            color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFFD97706)
+                            fontSize: 14,
+                            color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFF1B4E3B)
                           )
                         ),
                       ),
@@ -1049,12 +1141,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
         ),
       ),
     ]));
-    // ── Navigator.pop returns _pointsToday so parent can refresh ──
-    if (isDark) return scaffold;
-    return DecoratedBox(
-      decoration: const BoxDecoration(gradient: bgGradient),
-      child: scaffold,
-    );
+    
+    return scaffold;
   }
 }
 
@@ -1771,6 +1859,22 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
       id.contains('bika_asbahna') || id.contains('nushur')) {
     return const Color(0xFF0A0E1A); // Cycle of Return
   }
+  if (id == 'morning_lwa_15' || id == 'evening_lwa_15' ||
+      id.contains('afini_badani') || id.contains('good_health')) {
+    return const Color(0xFF081218); // Three Vessels
+  }
+  if (id == 'morning_lwa_16' || id == 'evening_lwa_16' ||
+      id.contains('hasbiyallah') || id.contains('arsh_azeem')) {
+    return const Color(0xFF0A0814); // Seven Pillars
+  }
+  if (id == 'morning_lwa_17' || id == 'evening_lwa_17' ||
+      id.contains('raditu_billah') || id.contains('pleased_allah')) {
+    return const Color(0xFF0C1008); // Guiding Hand
+  }
+  if (id == 'morning_lwa_18' || id == 'evening_lwa_18' ||
+      id.contains('la_yadurru') || id.contains('bismillah_protect')) {
+    return const Color(0xFF08101A); // Invincible Name
+  }
   return const Color(0xFF081623); // Default Noor Tree
 }
 
@@ -1921,6 +2025,46 @@ Widget _buildIllustration({
   if (id == 'morning_lwa_14' || id == 'evening_lwa_14' ||
       id.contains('bika_asbahna') || id.contains('nushur')) {
     return _CycleOfReturn(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #15 — Good health in body, hearing, sight (three vessels)
+  if (id == 'morning_lwa_15' || id == 'evening_lwa_15' ||
+      id.contains('afini_badani') || id.contains('good_health')) {
+    return _ThreeVessels(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #16 — Allah will suffice you (seven pillars)
+  if (id == 'morning_lwa_16' || id == 'evening_lwa_16' ||
+      id.contains('hasbiyallah') || id.contains('arsh_azeem')) {
+    return _SevenPillars(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #17 — Prophet holds your hand into Jannah (guiding hand)
+  if (id == 'morning_lwa_17' || id == 'evening_lwa_17' ||
+      id.contains('raditu_billah') || id.contains('pleased_allah')) {
+    return _GuidingHand(
+      progress: progress,
+      isComplete: isComplete,
+      tapCount: tapCount,
+      pointsToday: pointsToday,
+    );
+  }
+  // Morning #18 — Protect from all harm by Bismillah (invincible name)
+  if (id == 'morning_lwa_18' || id == 'evening_lwa_18' ||
+      id.contains('la_yadurru') || id.contains('bismillah_protect')) {
+    return _InvincibleName(
       progress: progress,
       isComplete: isComplete,
       tapCount: tapCount,
@@ -9398,6 +9542,2112 @@ class _CycleOfReturnPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.orbitPhase != orbitPhase;
+}
+
+// =============================================================================
+// 🫁 Three Vessels (أوعية العافية) — Health in body, hearing, sight
+// =============================================================================
+class _ThreeVessels extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _ThreeVessels({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_ThreeVessels> createState() => _ThreeVesselsState();
+}
+
+class _ThreeVesselsState extends State<_ThreeVessels>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _flowCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 1500));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2000))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _flowCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3200))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_ThreeVessels old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _flowCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _flowCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _ThreeVesselsPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            flowPhase: _flowCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThreeVesselsPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double flowPhase;
+
+  // 3 vessels: body, hearing, sight — each fills at 33% intervals (3 reps)
+  static const _vesselColors = [
+    Color(0xFF10B981), // body — emerald vitality
+    Color(0xFF3B82F6), // hearing — blue clarity
+    Color(0xFF8B5CF6), // sight — violet perception
+  ];
+
+  static const _vesselLabels = ['بَدَن', 'سَمْع', 'بَصَر'];
+  // Shield color for kufr/poverty/grave protection
+  static const _shieldColor = Color(0xFFD4AF37);
+
+  const _ThreeVesselsPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.flowPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.42;
+
+    // 1. Background — deep healing tones
+    final warmth = progress * 0.15;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((8 + warmth * 20).round(), (18 + warmth * 30).round(), (24 + warmth * 15).round(), 1.0),
+            Color.fromRGBO((10 + warmth * 25).round(), (20 + warmth * 35).round(), (28 + warmth * 20).round(), 1.0),
+            Color.fromRGBO((6 + warmth * 15).round(), (14 + warmth * 25).round(), (20 + warmth * 15).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.10, 0.07), (0.24, 0.15), (0.42, 0.06), (0.56, 0.13),
+      (0.72, 0.08), (0.88, 0.16), (0.94, 0.06), (0.30, 0.22),
+      (0.64, 0.20), (0.16, 0.24),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final starAlpha = (0.10 + progress * 0.25 + 0.30 * tw * progress).clamp(0.0, 0.6);
+      sp.color = Colors.white.withValues(alpha: starAlpha);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.8, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Three vessels arranged horizontally
+    _drawVessels(canvas, cx, cy, w, h);
+
+    // 4. Protection shield below vessels (kufr, poverty, grave)
+    _drawShield(canvas, cx, cy + 55, w);
+
+    canvas.restore();
+
+    // 5. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.38;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      final ringColor = Color.lerp(
+        const Color(0xFF10B981), const Color(0xFF8B5CF6), progress)!;
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = ringColor.withValues(alpha: ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 6. Tap particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.28;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
+        final a = (1.0 - t) * 0.70;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        final sparkColor = isComplete
+            ? _shieldColor
+            : _vesselColors[(progress * 2).floor().clamp(0, 2)];
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = sparkColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 7. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'عَافَاك الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? const Color(0xFF10B981)
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 8. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: Color(0xFF10B981),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: Color(0xFF10B981), blurRadius: 6),
+              Shadow(color: Color(0xFF10B981), blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFF10B981).withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = const Color(0xFF10B981).withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Three vessels — body, hearing, sight — each fills at 33% progress steps
+  void _drawVessels(Canvas canvas, double cx, double cy, double w, double h) {
+    final spacing = w * 0.25;
+    final positions = [
+      cx - spacing, // body (left)
+      cx,           // hearing (center)
+      cx + spacing, // sight (right)
+    ];
+
+    for (int i = 0; i < 3; i++) {
+      final vx = positions[i];
+      final vy = cy - 10;
+      final fillThreshold = (i + 1) / 3.0;
+      final isFilled = progress >= fillThreshold;
+      final fillLevel = ((progress - i / 3.0) * 3.0).clamp(0.0, 1.0);
+      final color = _vesselColors[i];
+
+      // Vessel outline — cup/chalice shape
+      final vesselW = 28.0;
+      final vesselH = 36.0;
+      final vesselPath = Path()
+        ..moveTo(vx - vesselW / 2, vy - vesselH / 2)
+        ..quadraticBezierTo(vx - vesselW / 2 - 4, vy + vesselH * 0.3,
+                            vx - vesselW / 4, vy + vesselH / 2)
+        ..lineTo(vx + vesselW / 4, vy + vesselH / 2)
+        ..quadraticBezierTo(vx + vesselW / 2 + 4, vy + vesselH * 0.3,
+                            vx + vesselW / 2, vy - vesselH / 2)
+        ..close();
+
+      // Vessel outline
+      final outlineAlpha = 0.15 + fillLevel * 0.25;
+      canvas.drawPath(vesselPath, Paint()
+        ..color = color.withValues(alpha: outlineAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5);
+
+      // Fill level — noor rising inside the vessel
+      if (fillLevel > 0.01) {
+        final fillTop = vy + vesselH / 2 - vesselH * fillLevel;
+        final fillRect = Rect.fromLTRB(
+          vx - vesselW / 3, fillTop,
+          vx + vesselW / 3, vy + vesselH / 2 - 2,
+        );
+
+        // Animated wave surface
+        final waveY = fillTop + math.sin(flowPhase * math.pi * 2 + i * 1.5) * 2;
+
+        final fillPath = Path()
+          ..moveTo(fillRect.left, waveY)
+          ..quadraticBezierTo(vx, waveY - 3 * math.sin(flowPhase * math.pi * 2 + i),
+                              fillRect.right, waveY)
+          ..lineTo(fillRect.right, fillRect.bottom)
+          ..lineTo(fillRect.left, fillRect.bottom)
+          ..close();
+
+        canvas.save();
+        canvas.clipPath(vesselPath);
+        canvas.drawPath(fillPath, Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              color.withValues(alpha: 0.25),
+              color.withValues(alpha: 0.50),
+            ],
+          ).createShader(fillRect));
+        canvas.restore();
+
+        // Inner glow when filled
+        if (isFilled) {
+          canvas.drawCircle(
+            Offset(vx, vy), 18,
+            Paint()
+              ..color = color.withValues(alpha: 0.12 * pulse)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+          );
+        }
+      }
+
+      // Organ icon above vessel — simple symbolic shapes
+      final iconY = vy - vesselH / 2 - 14;
+      final iconAlpha = 0.25 + fillLevel * 0.50;
+
+      if (i == 0) {
+        // Body — simple figure silhouette
+        canvas.drawCircle(Offset(vx, iconY - 4), 4,
+          Paint()..color = color.withValues(alpha: iconAlpha));
+        canvas.drawLine(Offset(vx, iconY), Offset(vx, iconY + 8),
+          Paint()..color = color.withValues(alpha: iconAlpha)..strokeWidth = 1.5..strokeCap = StrokeCap.round);
+      } else if (i == 1) {
+        // Hearing — ear-like curve
+        final earPath = Path()
+          ..moveTo(vx + 3, iconY - 5)
+          ..quadraticBezierTo(vx + 7, iconY, vx + 3, iconY + 5)
+          ..quadraticBezierTo(vx, iconY + 2, vx + 1, iconY - 2);
+        canvas.drawPath(earPath, Paint()
+          ..color = color.withValues(alpha: iconAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5
+          ..strokeCap = StrokeCap.round);
+      } else {
+        // Sight — eye shape
+        final eyePath = Path()
+          ..moveTo(vx - 6, iconY)
+          ..quadraticBezierTo(vx, iconY - 5, vx + 6, iconY)
+          ..quadraticBezierTo(vx, iconY + 5, vx - 6, iconY);
+        canvas.drawPath(eyePath, Paint()
+          ..color = color.withValues(alpha: iconAlpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.3);
+        canvas.drawCircle(Offset(vx, iconY), 2,
+          Paint()..color = color.withValues(alpha: iconAlpha));
+      }
+
+      // Label below vessel
+      if (fillLevel > 0.3) {
+        final labelAlpha = ((fillLevel - 0.3) / 0.7).clamp(0.0, 0.7);
+        final tp = TextPainter(
+          text: TextSpan(
+            text: _vesselLabels[i],
+            style: TextStyle(
+              color: color.withValues(alpha: labelAlpha),
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          textDirection: TextDirection.rtl,
+        )..layout();
+        tp.paint(canvas, Offset(vx - tp.width / 2, vy + vesselH / 2 + 6));
+      }
+    }
+  }
+
+  /// Protection shield below — represents protection from kufr, poverty, grave
+  void _drawShield(Canvas canvas, double cx, double cy, double w) {
+    // Shield only appears as progress grows
+    if (progress < 0.15) return;
+
+    final shieldAlpha = ((progress - 0.15) / 0.85).clamp(0.0, 1.0);
+    final shieldR = 12 + shieldAlpha * 8;
+
+    // Shield shape — pointed bottom, rounded top
+    final shieldPath = Path()
+      ..moveTo(cx, cy + shieldR + 4)  // bottom point
+      ..quadraticBezierTo(cx - shieldR - 6, cy + 2, cx - shieldR, cy - shieldR * 0.3)
+      ..quadraticBezierTo(cx - shieldR, cy - shieldR, cx, cy - shieldR - 2)
+      ..quadraticBezierTo(cx + shieldR, cy - shieldR, cx + shieldR, cy - shieldR * 0.3)
+      ..quadraticBezierTo(cx + shieldR + 6, cy + 2, cx, cy + shieldR + 4)
+      ..close();
+
+    // Shield glow
+    canvas.drawCircle(
+      Offset(cx, cy), shieldR + 8,
+      Paint()
+        ..color = _shieldColor.withValues(alpha: shieldAlpha * 0.08 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
+
+    // Shield fill
+    canvas.drawPath(shieldPath, Paint()
+      ..color = _shieldColor.withValues(alpha: shieldAlpha * 0.12));
+
+    // Shield border
+    canvas.drawPath(shieldPath, Paint()
+      ..color = _shieldColor.withValues(alpha: shieldAlpha * 0.35)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2);
+
+    // On completion: inner emblem
+    if (isComplete) {
+      canvas.drawCircle(
+        Offset(cx, cy - 2), 4 * pulse,
+        Paint()
+          ..color = _shieldColor.withValues(alpha: 0.30 * pulse)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+      canvas.drawCircle(
+        Offset(cx, cy - 2), 2,
+        Paint()..color = _shieldColor.withValues(alpha: 0.50),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ThreeVesselsPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.flowPhase != flowPhase;
+}
+
+// =============================================================================
+// 🏛️ Seven Pillars (سبع أعمدة) — Allah will suffice you in everything
+// =============================================================================
+class _SevenPillars extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _SevenPillars({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_SevenPillars> createState() => _SevenPillarsState();
+}
+
+class _SevenPillarsState extends State<_SevenPillars>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _shimmerCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 1600));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2100))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _shimmerCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3500))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_SevenPillars old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _shimmerCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _shimmerCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _SevenPillarsPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            shimmerPhase: _shimmerCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SevenPillarsPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double shimmerPhase;
+
+  static const _pillarColor = Color(0xFF8B5CF6); // violet/purple — majesty
+  static const _throneColor = Color(0xFFD4AF37); // golden — العرش العظيم
+  static const _domeColor = Color(0xFF6366F1);   // indigo — dome of sufficiency
+
+  const _SevenPillarsPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.shimmerPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.44;
+
+    // 1. Background — deep royal night
+    final depth = progress * 0.12;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((10 + depth * 30).round(), (8 + depth * 15).round(), (20 + depth * 25).round(), 1.0),
+            Color.fromRGBO((14 + depth * 35).round(), (10 + depth * 20).round(), (26 + depth * 30).round(), 1.0),
+            Color.fromRGBO((8 + depth * 20).round(), (6 + depth * 12).round(), (18 + depth * 22).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.08, 0.06), (0.22, 0.14), (0.38, 0.04), (0.54, 0.12),
+      (0.68, 0.07), (0.84, 0.15), (0.92, 0.05), (0.30, 0.20),
+      (0.60, 0.22), (0.14, 0.18), (0.76, 0.19),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      final starAlpha = (0.10 + progress * 0.30 + 0.30 * tw * progress).clamp(0.0, 0.65);
+      sp.color = Colors.white.withValues(alpha: starAlpha);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.9, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Throne silhouette at center top
+    _drawThrone(canvas, cx, cy - 30, w);
+
+    // 4. Seven pillars arranged in semicircle below throne
+    _drawPillars(canvas, cx, cy, w, h);
+
+    // 5. Dome of sufficiency — appears on completion
+    if (progress > 0.7) {
+      _drawDome(canvas, cx, cy, w);
+    }
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.38;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = _pillarColor.withValues(alpha: ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 7. Tap particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.28;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
+        final a = (1.0 - t) * 0.70;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        final sparkColor = isComplete ? _throneColor : _pillarColor;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = sparkColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'حَسْبِيَ الله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? _throneColor
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: _throneColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: _throneColor, blurRadius: 6),
+              Shadow(color: _throneColor, blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = _throneColor.withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = _throneColor.withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Throne silhouette — العرش العظيم
+  void _drawThrone(Canvas canvas, double cx, double cy, double w) {
+    final throneAlpha = 0.08 + progress * 0.30;
+
+    // Throne base — wide arc
+    final throneW = 50.0;
+    final throneH = 20.0;
+    final thronePath = Path()
+      ..moveTo(cx - throneW / 2, cy + throneH / 2)
+      ..quadraticBezierTo(cx - throneW / 2 - 5, cy - throneH, cx - 8, cy - throneH - 5)
+      ..quadraticBezierTo(cx, cy - throneH - 12 * pulse, cx + 8, cy - throneH - 5)
+      ..quadraticBezierTo(cx + throneW / 2 + 5, cy - throneH, cx + throneW / 2, cy + throneH / 2)
+      ..close();
+
+    // Throne glow
+    canvas.drawCircle(
+      Offset(cx, cy - 5), 25,
+      Paint()
+        ..color = _throneColor.withValues(alpha: throneAlpha * 0.15 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15),
+    );
+
+    // Throne fill
+    canvas.drawPath(thronePath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          _throneColor.withValues(alpha: throneAlpha * 0.5),
+          _throneColor.withValues(alpha: throneAlpha * 0.15),
+        ],
+      ).createShader(Rect.fromCenter(center: Offset(cx, cy), width: throneW, height: throneH * 2)));
+
+    // Throne outline
+    canvas.drawPath(thronePath, Paint()
+      ..color = _throneColor.withValues(alpha: throneAlpha * 0.4)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0);
+  }
+
+  /// Seven pillars of light — each rises at 1/7 progress intervals
+  void _drawPillars(Canvas canvas, double cx, double cy, double w, double h) {
+    final arcR = w * 0.32;
+    final baseY = cy + 35; // pillars stand on this baseline
+
+    for (int i = 0; i < 7; i++) {
+      // Spread 7 pillars in a semicircle below the throne
+      final angle = math.pi + (i / 6) * math.pi; // pi to 2pi (bottom semicircle)
+      final px = cx + math.cos(angle) * arcR * 0.85;
+
+      final riseThreshold = (i + 1) / 7.0;
+      final isErected = progress >= riseThreshold;
+      final pillarProgress = ((progress - i / 7.0) * 7.0).clamp(0.0, 1.0);
+
+      // Pillar height — grows from 0 to full
+      final maxH = 55.0;
+      final pillarH = maxH * pillarProgress;
+      final pillarW = 5.0;
+
+      if (pillarProgress < 0.01) continue;
+
+      final pillarTop = baseY - pillarH;
+      final pillarAlpha = 0.20 + pillarProgress * 0.45;
+
+      // Shimmer effect — light travels up the pillar
+      final shimmerY = baseY - pillarH * ((shimmerPhase + i * 0.14) % 1.0);
+
+      // Pillar glow
+      canvas.drawRect(
+        Rect.fromLTRB(px - pillarW, pillarTop, px + pillarW, baseY),
+        Paint()
+          ..color = _pillarColor.withValues(alpha: pillarAlpha * 0.08)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
+
+      // Pillar body — gradient from bottom to top
+      canvas.drawRect(
+        Rect.fromLTRB(px - pillarW / 2, pillarTop, px + pillarW / 2, baseY),
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              (isErected ? Colors.white : _pillarColor).withValues(alpha: pillarAlpha * 0.7),
+              _pillarColor.withValues(alpha: pillarAlpha * 0.3),
+            ],
+          ).createShader(Rect.fromLTRB(px - pillarW / 2, pillarTop, px + pillarW / 2, baseY)),
+      );
+
+      // Shimmer dot travelling up
+      if (isErected) {
+        canvas.drawCircle(
+          Offset(px, shimmerY), 3,
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.30 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+        );
+      }
+
+      // Pillar cap — bright tip
+      canvas.drawCircle(
+        Offset(px, pillarTop), 3.0 * (isErected ? pulse : 0.7),
+        Paint()
+          ..color = (isErected ? Colors.white : _pillarColor)
+              .withValues(alpha: pillarAlpha * 0.6),
+      );
+      if (isErected) {
+        canvas.drawCircle(
+          Offset(px, pillarTop), 6,
+          Paint()
+            ..color = _pillarColor.withValues(alpha: 0.12 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+        );
+      }
+
+      // Pillar base
+      canvas.drawCircle(
+        Offset(px, baseY), 2.5,
+        Paint()..color = _pillarColor.withValues(alpha: pillarAlpha * 0.3),
+      );
+    }
+  }
+
+  /// Dome of sufficiency — كفاية — appears when most pillars are up
+  void _drawDome(Canvas canvas, double cx, double cy, double w) {
+    final domeProgress = ((progress - 0.7) / 0.3).clamp(0.0, 1.0);
+    final domeAlpha = domeProgress * 0.25 * pulse;
+    final arcR = w * 0.32;
+    final baseY = cy + 35;
+    final domeTop = cy - 55;
+
+    // Dome arc — connects all pillar tips
+    final domePath = Path()
+      ..moveTo(cx - arcR * 0.85, baseY)
+      ..quadraticBezierTo(cx, domeTop * domeProgress + baseY * (1 - domeProgress),
+                          cx + arcR * 0.85, baseY);
+
+    canvas.drawPath(domePath, Paint()
+      ..color = _domeColor.withValues(alpha: domeAlpha)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round);
+
+    // Fill beneath dome — protective canopy
+    final fillPath = Path()
+      ..moveTo(cx - arcR * 0.85, baseY)
+      ..quadraticBezierTo(cx, domeTop * domeProgress + baseY * (1 - domeProgress),
+                          cx + arcR * 0.85, baseY)
+      ..close();
+
+    canvas.drawPath(fillPath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          _domeColor.withValues(alpha: domeAlpha * 0.4),
+          Colors.transparent,
+        ],
+      ).createShader(Rect.fromLTRB(cx - arcR, domeTop, cx + arcR, baseY)));
+
+    // On completion — golden crown at dome apex
+    if (isComplete) {
+      final apexY = domeTop;
+      canvas.drawCircle(
+        Offset(cx, apexY), 5 * pulse,
+        Paint()
+          ..color = _throneColor.withValues(alpha: 0.30 * pulse)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+      );
+      canvas.drawCircle(
+        Offset(cx, apexY), 2.5,
+        Paint()..color = _throneColor.withValues(alpha: 0.55),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SevenPillarsPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.shimmerPhase != shimmerPhase;
+}
+
+// =============================================================================
+// 🤝 Guiding Hand (يد الشفاعة) — Prophet holds your hand into Jannah
+// =============================================================================
+class _GuidingHand extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _GuidingHand({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_GuidingHand> createState() => _GuidingHandState();
+}
+
+class _GuidingHandState extends State<_GuidingHand>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _glowCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 1700));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1600))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2000))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _glowCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3000))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_GuidingHand old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _glowCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _glowCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _GuidingHandPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            glowPhase: _glowCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GuidingHandPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double glowPhase;
+
+  static const _handColor = Color(0xFF10B981);   // emerald — prophetic noor
+  static const _pathColor = Color(0xFF34D399);    // light emerald — path of light
+  static const _gateColor = Color(0xFFD4AF37);    // golden — gates of Jannah
+
+  const _GuidingHandPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.glowPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.44;
+
+    // 1. Background — warm garden-like tones
+    final warmth = progress * 0.15;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((12 + warmth * 25).round(), (16 + warmth * 35).round(), (8 + warmth * 15).round(), 1.0),
+            Color.fromRGBO((14 + warmth * 30).round(), (20 + warmth * 40).round(), (10 + warmth * 20).round(), 1.0),
+            Color.fromRGBO((10 + warmth * 20).round(), (14 + warmth * 30).round(), (8 + warmth * 12).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.10, 0.06), (0.22, 0.15), (0.40, 0.05), (0.55, 0.11),
+      (0.70, 0.07), (0.85, 0.14), (0.93, 0.06), (0.32, 0.21),
+      (0.65, 0.20), (0.18, 0.22),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.9);
+      final starAlpha = (0.08 + progress * 0.30 + 0.30 * tw * progress).clamp(0.0, 0.6);
+      sp.color = Colors.white.withValues(alpha: starAlpha);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.8, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Jannah gates at the bottom
+    _drawGates(canvas, cx, cy + 45, w);
+
+    // 4. Path of light from hand to gates
+    _drawPath(canvas, cx, cy, w, h);
+
+    // 5. Guiding hand reaching down from above
+    _drawHand(canvas, cx, cy - 30, w);
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.38;
+      final ringA = (1.0 - shockPhase) * 0.35;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = _handColor.withValues(alpha: ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 7. Tap particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.28;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
+        final a = (1.0 - t) * 0.70;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        final sparkColor = isComplete ? _gateColor : _handColor;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = sparkColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'رَضِيتُ بِالله' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? _gateColor
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: _handColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: _handColor, blurRadius: 6),
+              Shadow(color: _handColor, blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = _handColor.withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = _handColor.withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// Luminous hand reaching down — prophetic guidance
+  void _drawHand(Canvas canvas, double cx, double cy, double w) {
+    // Hand descends as progress grows (comes closer)
+    final handY = cy - 30 + progress * 25;
+    final handAlpha = 0.15 + progress * 0.50;
+
+    // Beam of light from above to hand
+    final beamPath = Path()
+      ..moveTo(cx - 8, 0)
+      ..lineTo(cx + 8, 0)
+      ..lineTo(cx + 3, handY - 5)
+      ..lineTo(cx - 3, handY - 5)
+      ..close();
+
+    canvas.drawPath(beamPath, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          _handColor.withValues(alpha: handAlpha * 0.05),
+          _handColor.withValues(alpha: handAlpha * 0.20),
+        ],
+      ).createShader(Rect.fromLTRB(cx - 8, 0, cx + 8, handY)));
+
+    // Hand glow
+    canvas.drawCircle(
+      Offset(cx, handY), 18,
+      Paint()
+        ..color = _handColor.withValues(alpha: handAlpha * 0.15 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+    );
+
+    // Palm — open hand shape
+    final palmW = 14.0 * pulse;
+    final palmH = 10.0;
+
+    // Palm body
+    final palmPath = Path()
+      ..moveTo(cx - palmW / 2, handY)
+      ..quadraticBezierTo(cx - palmW / 2, handY - palmH, cx, handY - palmH - 2)
+      ..quadraticBezierTo(cx + palmW / 2, handY - palmH, cx + palmW / 2, handY)
+      ..quadraticBezierTo(cx, handY + 4, cx - palmW / 2, handY)
+      ..close();
+
+    canvas.drawPath(palmPath, Paint()
+      ..color = _handColor.withValues(alpha: handAlpha * 0.5));
+    canvas.drawPath(palmPath, Paint()
+      ..color = Colors.white.withValues(alpha: handAlpha * 0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+
+    // Fingers — 5 short lines extending upward
+    for (int f = 0; f < 5; f++) {
+      final fx = cx + (f - 2) * (palmW / 5);
+      final fingerLen = 6.0 + (f == 2 ? 3 : (f == 1 || f == 3 ? 2 : 0));
+      canvas.drawLine(
+        Offset(fx, handY - palmH + 1),
+        Offset(fx + (f - 2) * 0.8, handY - palmH - fingerLen),
+        Paint()
+          ..color = _handColor.withValues(alpha: handAlpha * 0.45)
+          ..strokeWidth = 1.8
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+
+    // Noor emanating from palm
+    if (progress > 0.3) {
+      final noorAlpha = ((progress - 0.3) / 0.7).clamp(0.0, 1.0) * 0.20 * pulse;
+      canvas.drawCircle(
+        Offset(cx, handY - 2), 8,
+        Paint()
+          ..color = Colors.white.withValues(alpha: noorAlpha)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+    }
+  }
+
+  /// Path of light connecting hand to gates
+  void _drawPath(Canvas canvas, double cx, double cy, double w, double h) {
+    if (progress < 0.05) return;
+
+    final handY = cy - 30 - 30 + progress * 25; // match hand position
+    final gateY = cy + 45;
+
+    // Flowing dots along the path
+    final pathLen = gateY - handY;
+    final dotCount = 12;
+    for (int i = 0; i < dotCount; i++) {
+      final baseT = i / dotCount;
+      // Only show dots up to current progress
+      if (baseT > progress) break;
+
+      // Animate flow — dots drift downward
+      final flowOffset = (glowPhase + i * 0.08) % 1.0;
+      final dotT = (baseT + flowOffset * 0.08).clamp(0.0, 1.0);
+      final dotY = handY + dotT * pathLen;
+      final dotX = cx + math.sin(dotT * math.pi * 3 + glowPhase * math.pi * 2) * 3;
+
+      final dotAlpha = (0.15 + progress * 0.30) * (1.0 - (dotT - 0.5).abs() * 1.2).clamp(0.2, 1.0);
+
+      canvas.drawCircle(
+        Offset(dotX, dotY), 1.8,
+        Paint()..color = _pathColor.withValues(alpha: dotAlpha),
+      );
+      canvas.drawCircle(
+        Offset(dotX, dotY), 4,
+        Paint()
+          ..color = _pathColor.withValues(alpha: dotAlpha * 0.15)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+    }
+
+    // Central beam connecting hand to gates
+    final beamAlpha = progress * 0.08;
+    canvas.drawLine(
+      Offset(cx, handY + 15),
+      Offset(cx, gateY - 10),
+      Paint()
+        ..color = _pathColor.withValues(alpha: beamAlpha)
+        ..strokeWidth = 1.5
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+    );
+  }
+
+  /// Jannah gates — ornate double doors
+  void _drawGates(Canvas canvas, double cx, double cy, double w) {
+    final gateW = 35.0;
+    final gateH = 45.0;
+    final gateAlpha = 0.10 + progress * 0.45;
+
+    // Gate opening — doors part as progress grows
+    final openAmount = progress * 8;
+
+    // Left door
+    final leftDoor = RRect.fromRectAndRadius(
+      Rect.fromLTWH(cx - gateW / 2 - openAmount, cy - gateH / 2, gateW / 2 - 1, gateH),
+      const Radius.circular(2),
+    );
+    // Right door
+    final rightDoor = RRect.fromRectAndRadius(
+      Rect.fromLTWH(cx + 1 + openAmount, cy - gateH / 2, gateW / 2 - 1, gateH),
+      const Radius.circular(2),
+    );
+
+    // Gate glow — warm golden light behind (visible as doors open)
+    if (progress > 0.2) {
+      final glowAlpha = ((progress - 0.2) / 0.8).clamp(0.0, 1.0) * 0.20 * pulse;
+      canvas.drawRect(
+        Rect.fromCenter(center: Offset(cx, cy), width: openAmount * 2 + 4, height: gateH - 4),
+        Paint()
+          ..color = _gateColor.withValues(alpha: glowAlpha)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
+    }
+
+    // Door fill
+    canvas.drawRRect(leftDoor, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [
+          _gateColor.withValues(alpha: gateAlpha * 0.20),
+          _gateColor.withValues(alpha: gateAlpha * 0.35),
+        ],
+      ).createShader(leftDoor.outerRect));
+    canvas.drawRRect(rightDoor, Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [
+          _gateColor.withValues(alpha: gateAlpha * 0.35),
+          _gateColor.withValues(alpha: gateAlpha * 0.20),
+        ],
+      ).createShader(rightDoor.outerRect));
+
+    // Door outlines
+    canvas.drawRRect(leftDoor, Paint()
+      ..color = _gateColor.withValues(alpha: gateAlpha * 0.45)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0);
+    canvas.drawRRect(rightDoor, Paint()
+      ..color = _gateColor.withValues(alpha: gateAlpha * 0.45)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0);
+
+    // Arch above gates
+    final archPath = Path()
+      ..moveTo(cx - gateW / 2 - openAmount - 2, cy - gateH / 2)
+      ..quadraticBezierTo(cx, cy - gateH / 2 - 15 * pulse, cx + gateW / 2 + openAmount + 2, cy - gateH / 2);
+
+    canvas.drawPath(archPath, Paint()
+      ..color = _gateColor.withValues(alpha: gateAlpha * 0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round);
+
+    // Door handles — small circles
+    canvas.drawCircle(
+      Offset(cx - 2 - openAmount, cy), 1.5,
+      Paint()..color = _gateColor.withValues(alpha: gateAlpha * 0.6));
+    canvas.drawCircle(
+      Offset(cx + 2 + openAmount, cy), 1.5,
+      Paint()..color = _gateColor.withValues(alpha: gateAlpha * 0.6));
+
+    // Garden light flooding through on completion
+    if (isComplete) {
+      final floodAlpha = 0.15 * pulse;
+      canvas.drawRect(
+        Rect.fromCenter(center: Offset(cx, cy), width: openAmount * 2 + 8, height: gateH),
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              _gateColor.withValues(alpha: floodAlpha),
+              _handColor.withValues(alpha: floodAlpha * 0.5),
+              Colors.transparent,
+            ],
+          ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: gateH * 0.6)),
+      );
+
+      // جنة label
+      final tp = TextPainter(
+        text: TextSpan(
+          text: 'جَنَّة',
+          style: TextStyle(
+            color: _gateColor.withValues(alpha: 0.55 * pulse),
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        textDirection: TextDirection.rtl,
+      )..layout();
+      tp.paint(canvas, Offset(cx - tp.width / 2, cy - 3));
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GuidingHandPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.glowPhase != glowPhase;
+}
+
+// =============================================================================
+// 🛡️ Invincible Name (الاسم الحصين) — Nothing can harm by Allah's Name
+// =============================================================================
+class _InvincibleName extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _InvincibleName({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_InvincibleName> createState() => _InvincibleNameState();
+}
+
+class _InvincibleNameState extends State<_InvincibleName>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
+  late Animation<double> _pAnim;
+  int _prevTap = 0;
+  late AnimationController _punchCtrl;
+  late Animation<double> _punch;
+  late AnimationController _shockCtrl;
+  late Animation<double> _shock;
+  late AnimationController _fieldCtrl;
+
+  final List<_Particle> _particles =
+      List.generate(16, (i) => _Particle(seed: i + 1800));
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2100))
+      ..repeat(reverse: true);
+
+    _pCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100));
+    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
+    _prevTap = widget.tapCount;
+
+    _punchCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    _punch = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 1.0, end: 1.10)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40),
+      TweenSequenceItem(
+          tween: Tween(begin: 1.10, end: 0.96)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 30),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.96, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 30),
+    ]).animate(_punchCtrl);
+
+    _shockCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+
+    _fieldCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 4000))
+      ..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_InvincibleName old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _prevTap) {
+      _prevTap = widget.tapCount;
+      for (final p in _particles) {
+        p.reset();
+      }
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _growCtrl.dispose();
+    _starCtrl.dispose();
+    _pCtrl.dispose();
+    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    _fieldCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
+        _punchCtrl, _shockCtrl, _fieldCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _InvincibleNamePainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            fieldPhase: _fieldCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InvincibleNamePainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double fieldPhase;
+
+  static const _domeColor = Color(0xFF3B82F6);   // blue — divine protection
+  static const _coreColor = Color(0xFFD4AF37);    // golden — Bismillah radiance
+  static const _harmColor = Color(0xFF6B7280);    // grey — dissolving threats
+
+  const _InvincibleNamePainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.fieldPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.44;
+
+    // 1. Background — deep celestial blue
+    final depth = progress * 0.12;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO((8 + depth * 20).round(), (16 + depth * 25).round(), (26 + depth * 30).round(), 1.0),
+            Color.fromRGBO((10 + depth * 25).round(), (18 + depth * 30).round(), (30 + depth * 35).round(), 1.0),
+            Color.fromRGBO((6 + depth * 15).round(), (12 + depth * 20).round(), (22 + depth * 25).round(), 1.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // 2. Stars
+    const starPos = [
+      (0.08, 0.07), (0.24, 0.16), (0.40, 0.05), (0.56, 0.13),
+      (0.70, 0.08), (0.86, 0.15), (0.94, 0.06), (0.32, 0.22),
+      (0.62, 0.20), (0.16, 0.24), (0.78, 0.21),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
+      final starAlpha = (0.10 + progress * 0.25 + 0.30 * tw * progress).clamp(0.0, 0.65);
+      sp.color = Colors.white.withValues(alpha: starAlpha);
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.9, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    canvas.translate(cx, cy);
+    canvas.scale(punchScale, punchScale);
+    canvas.translate(-cx, -cy);
+
+    // 3. Approaching threats that dissolve on the dome
+    _drawThreats(canvas, cx, cy, w);
+
+    // 4. Protection dome — 3 layers building with progress (3 reps)
+    _drawDome(canvas, cx, cy, w);
+
+    // 5. Central Bismillah core
+    _drawCore(canvas, cx, cy);
+
+    canvas.restore();
+
+    // 6. Shockwave on tap
+    if (shockPhase > 0 && shockPhase < 1) {
+      final maxR = w * 0.40;
+      final ringA = (1.0 - shockPhase) * 0.40;
+      final r = maxR * shockPhase;
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = _domeColor.withValues(alpha: ringA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1.0 - shockPhase),
+      );
+    }
+
+    // 7. Tap particles
+    if (particlePhase > 0 && particlePhase < 1) {
+      for (final p in particles) {
+        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
+        if (t <= 0) continue;
+        final angle = p.x * math.pi * 2;
+        final dist = 15 + t * w * 0.30;
+        final px = cx + math.cos(angle) * dist;
+        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
+        final a = (1.0 - t) * 0.70;
+        final pSize = p.size * (1.0 - t * 0.3);
+
+        final sparkColor = isComplete ? _coreColor : _domeColor;
+
+        canvas.drawCircle(Offset(px, py), pSize + 2,
+          Paint()
+            ..color = sparkColor.withValues(alpha: a * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+        canvas.drawCircle(
+            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
+        canvas.drawCircle(Offset(px, py), pSize * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
+      }
+    }
+
+    // 8. Progress label
+    final pct = (progress * 100).round();
+    final label = isComplete ? 'لَا يَضُرُّ مَعَ اسْمِهِ شَيْء' : '$pct%';
+    final tp2 = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: isComplete
+              ? _domeColor
+              : Colors.white.withValues(alpha: 0.82),
+          fontSize: isComplete ? 10 : 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.86));
+
+    // 9. Points badge
+    if (pointsToday > 0) {
+      final badgeLabel = '+$pointsToday pts';
+      final tp3 = TextPainter(
+        text: TextSpan(
+          text: badgeLabel,
+          style: const TextStyle(
+            color: _domeColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(color: _domeColor, blurRadius: 6),
+              Shadow(color: _domeColor, blurRadius: 14),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final badgeW = tp3.width + 10;
+      final badgeH = tp3.height + 6;
+      final badgeX = cx - badgeW / 2;
+      final badgeY = h * 0.86 + tp2.height + 4;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(rrect, Paint()
+        ..color = _domeColor.withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      canvas.drawRRect(rrect, Paint()
+        ..color = _domeColor.withValues(alpha: 0.18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7);
+      tp3.paint(canvas, Offset(badgeX + 5, badgeY + 3));
+    }
+  }
+
+  /// 3 concentric dome layers — each at 33% progress (3 reps)
+  void _drawDome(Canvas canvas, double cx, double cy, double w) {
+    for (int i = 0; i < 3; i++) {
+      final layerThreshold = (i + 1) / 3.0;
+      final layerProgress = ((progress - i / 3.0) * 3.0).clamp(0.0, 1.0);
+      if (layerProgress < 0.01) continue;
+
+      final baseR = 30.0 + i * 22;
+      final r = baseR * layerProgress;
+      final alpha = (0.08 + layerProgress * 0.12) * pulse;
+      final isActive = progress >= layerThreshold;
+
+      // Dome ring
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = _domeColor.withValues(alpha: alpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = isActive ? 2.0 : 1.2,
+      );
+
+      // Dome fill — very subtle
+      canvas.drawCircle(
+        Offset(cx, cy), r,
+        Paint()
+          ..color = _domeColor.withValues(alpha: alpha * 0.15),
+      );
+
+      // Rotating energy dots along each ring
+      if (isActive) {
+        final dotCount = 4 + i * 2;
+        for (int d = 0; d < dotCount; d++) {
+          final dotAngle = fieldPhase * math.pi * 2 + (d / dotCount) * math.pi * 2 + i * 0.5;
+          final dx = cx + math.cos(dotAngle) * r;
+          final dy = cy + math.sin(dotAngle) * r;
+          canvas.drawCircle(
+            Offset(dx, dy), 1.5,
+            Paint()..color = _domeColor.withValues(alpha: alpha * 2.5),
+          );
+        }
+      }
+    }
+  }
+
+  /// Threats approaching and dissolving on the dome surface
+  void _drawThreats(Canvas canvas, double cx, double cy, double w) {
+    // 6 threats from different directions — arrows/shadows
+    const threatAngles = [0.3, 1.1, 2.0, 3.3, 4.2, 5.4];
+
+    for (int i = 0; i < threatAngles.length; i++) {
+      final angle = threatAngles[i] + fieldPhase * 0.3;
+      final outerR = w * 0.48;
+
+      // Threat travels inward but dissolves at the dome boundary
+      final domeR = 30.0 + (progress.clamp(0.0, 1.0) * 2).floor() * 22;
+      final actualDomeR = domeR * progress.clamp(0.0, 1.0);
+
+      // Threat position — orbiting and approaching
+      final approachPhase = (fieldPhase + i * 0.16) % 1.0;
+      final threatDist = outerR - (outerR - actualDomeR - 5) * approachPhase;
+      final tx = cx + math.cos(angle) * threatDist;
+      final ty = cy + math.sin(angle) * threatDist;
+
+      // Dissolve when reaching dome
+      final nearDome = (threatDist - actualDomeR).clamp(0.0, 30.0) / 30.0;
+      final threatAlpha = nearDome * 0.25 * (1.0 - progress * 0.3);
+
+      if (threatAlpha < 0.02) continue;
+
+      // Threat shape — dark arrow/shard
+      final shardLen = 6.0 * nearDome;
+      final shardAngle = angle + math.pi; // points toward center
+      final endX = tx + math.cos(shardAngle) * shardLen;
+      final endY = ty + math.sin(shardAngle) * shardLen;
+
+      canvas.drawLine(
+        Offset(tx, ty), Offset(endX, endY),
+        Paint()
+          ..color = _harmColor.withValues(alpha: threatAlpha)
+          ..strokeWidth = 2.0
+          ..strokeCap = StrokeCap.round,
+      );
+
+      // Dissolution spark when threat hits dome
+      if (nearDome < 0.3 && progress > 0.1) {
+        final sparkA = (1.0 - nearDome / 0.3) * 0.30 * progress;
+        canvas.drawCircle(
+          Offset(tx, ty), 3,
+          Paint()
+            ..color = _domeColor.withValues(alpha: sparkA)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+        );
+      }
+    }
+  }
+
+  /// Central Bismillah radiance — golden core
+  void _drawCore(Canvas canvas, double cx, double cy) {
+    final coreAlpha = 0.15 + progress * 0.50;
+
+    // Outer radiance
+    canvas.drawCircle(
+      Offset(cx, cy), 18,
+      Paint()
+        ..color = _coreColor.withValues(alpha: coreAlpha * 0.12 * pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+    );
+
+    // Inner glow
+    canvas.drawCircle(
+      Offset(cx, cy), 10,
+      Paint()
+        ..shader = RadialGradient(colors: [
+          Colors.white.withValues(alpha: coreAlpha * 0.6),
+          _coreColor.withValues(alpha: coreAlpha * 0.4),
+          Colors.transparent,
+        ], stops: const [0.0, 0.5, 1.0])
+        .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: 10)),
+    );
+
+    // Core dot
+    canvas.drawCircle(
+      Offset(cx, cy), 4 * pulse,
+      Paint()..color = _coreColor.withValues(alpha: coreAlpha * 0.5),
+    );
+
+    // Radiating lines — 8 rays from center
+    if (progress > 0.2) {
+      final rayAlpha = ((progress - 0.2) / 0.8).clamp(0.0, 1.0) * 0.20 * pulse;
+      for (int r = 0; r < 8; r++) {
+        final rayAngle = r * math.pi / 4 + fieldPhase * 0.5;
+        final innerR = 12.0;
+        final outerR = 20.0 + progress * 8;
+        canvas.drawLine(
+          Offset(cx + math.cos(rayAngle) * innerR, cy + math.sin(rayAngle) * innerR),
+          Offset(cx + math.cos(rayAngle) * outerR, cy + math.sin(rayAngle) * outerR),
+          Paint()
+            ..color = _coreColor.withValues(alpha: rayAlpha)
+            ..strokeWidth = 1.0
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+
+    // On completion — pulsing invincibility aura
+    if (isComplete) {
+      for (int i = 0; i < 2; i++) {
+        final auraR = 22.0 + i * 10;
+        final auraA = (0.08 - i * 0.03) * pulse;
+        canvas.drawCircle(
+          Offset(cx, cy), auraR,
+          Paint()
+            ..color = _coreColor.withValues(alpha: auraA)
+            ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6.0 + i * 4),
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_InvincibleNamePainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.fieldPhase != fieldPhase;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
