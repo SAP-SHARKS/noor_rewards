@@ -979,9 +979,32 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final bannerBtn = isDark ? const Color(0xFFE5B955) : const Color(0xFFFFD579);
     final bannerTxt = isDark ? const Color(0xFF2B2005) : const Color(0xFF3F2A00);
     
-    final chipActiveBg = isDark ? const Color(0xFF2A5940) : const Color(0xFF194D33);
     final chipInactiveBg = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEEEEEE);
     final chipInactiveTxt = isDark ? Colors.white70 : const Color(0xFF4A4A4A);
+
+    // Category color map — each category gets a distinct accent
+    Color _catColor(String catId) => switch (catId) {
+      'all'          => const Color(0xFF6366F1), // indigo
+      'favorites'    => const Color(0xFFEF4444), // red
+      'general'      => const Color(0xFF10B981), // emerald
+      'morning'      => const Color(0xFFF59E0B), // amber
+      'evening'      => const Color(0xFF6366F1), // indigo
+      'sleeping'     => const Color(0xFF8B5CF6), // violet
+      'waking_up'    => const Color(0xFFF97316), // orange
+      'post_prayer'  => const Color(0xFF0EA5E9), // sky blue
+      'salawat'      => const Color(0xFF10B981), // emerald
+      'istighfar'    => const Color(0xFF8B5CF6), // violet
+      'tahajjud'     => const Color(0xFF3B82F6), // blue
+      'sunnah'       => const Color(0xFF14B8A6), // teal
+      'quranic'      => const Color(0xFFD4AF37), // gold
+      'ummah'        => const Color(0xFFEC4899), // pink
+      'nightmares'   => const Color(0xFF6366F1), // indigo
+      'clothes'      => const Color(0xFF14B8A6), // teal
+      'wudu'         => const Color(0xFF0EA5E9), // sky blue
+      'food_drink'   => const Color(0xFFF97316), // orange
+      'home'         => const Color(0xFF10B981), // emerald
+      _              => const Color(0xFF0D9488), // default teal
+    };
 
     // Banner Text Setup
     String bannerTitle = "Daily Remembrance\nbrings peace to the soul.";
@@ -1092,6 +1115,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
             itemBuilder: (_, i) {
               final cat = _categories[i];
               final sel = cat.id == _selectedCat;
+              final catAccent = _catColor(cat.id);
               return GestureDetector(
                 onTap: () => setState(() {
                   _selectedCat = cat.id;
@@ -1102,13 +1126,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 0),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: sel ? chipActiveBg : chipInactiveBg,
+                    color: sel
+                        ? (isDark ? catAccent.withValues(alpha: 0.25) : catAccent)
+                        : chipInactiveBg,
                     borderRadius: BorderRadius.circular(20),
+                    border: sel ? Border.all(color: catAccent.withValues(alpha: isDark ? 0.5 : 0.0), width: 1) : null,
                   ),
                   child: Text(cat.label,
                     style: GoogleFonts.outfit(
                       fontSize: 14, fontWeight: sel ? FontWeight.w600 : FontWeight.w500,
-                      color: sel ? Colors.white : chipInactiveTxt)),
+                      color: sel ? (isDark ? catAccent : Colors.white) : chipInactiveTxt)),
                 ),
               );
             },
@@ -1161,19 +1188,42 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Index Circle
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: isComplete ? const Color(0xFF2BAE7C) : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF0F5F1)),
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: isComplete 
-                            ? const Icon(Icons.check_rounded, color: Colors.white, size: 22)
-                            : Text('${index + 1}', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF1B4E3B), fontSize: 16)),
-                      ),
+                      // Index Circle — colored by category
+                      Builder(builder: (_) {
+                        final accent = _catColor(azkar.category);
+                        return Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: isComplete
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [const Color(0xFF2BAE7C), const Color(0xFF0D9488)],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: isDark
+                                        ? [accent.withValues(alpha: 0.25), accent.withValues(alpha: 0.12)]
+                                        : [accent.withValues(alpha: 0.15), accent.withValues(alpha: 0.08)],
+                                  ),
+                            border: Border.all(
+                              color: isComplete
+                                  ? Colors.transparent
+                                  : accent.withValues(alpha: isDark ? 0.35 : 0.25),
+                              width: 1.5,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: isComplete
+                              ? const Icon(Icons.check_rounded, color: Colors.white, size: 22)
+                              : Text('${index + 1}', style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.w800, fontSize: 15,
+                                  color: isDark ? accent : accent.withValues(alpha: 0.85))),
+                        );
+                      }),
                       const SizedBox(width: 16),
                       
                       // Text/Content
