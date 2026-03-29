@@ -112,6 +112,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   
   final Map<String, int> _counts = {};
   final Map<String, int> _customTargets = {};
+  final Set<String> _completedIds = {};   // persists across count resets
   List<String> _favorites = [];
   int _pointsToday = 0;
   int _setsCompleted = 0;
@@ -515,6 +516,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         _pointsToday += 20;
         if (isDailyGoal) _pointsToday += 50;
         _setsCompleted += 1;
+        _completedIds.add(dhikrId);
         _counts[dhikrId] = 0;
       });
     } catch (_) {
@@ -1154,7 +1156,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
               final azkar = _filtered[index];
               final count = _counts[azkar.id] ?? 0;
               final tapTarget = _getTarget(azkar.id, azkar.recommendedCount);
-              final isComplete = count >= tapTarget;
+              final isComplete = count >= tapTarget || _completedIds.contains(azkar.id);
 
               String titleText = (azkar.transliteration.isNotEmpty && azkar.transliteration.trim() != '')
                   ? azkar.transliteration
@@ -1188,42 +1190,25 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Index Circle — colored by category
-                      Builder(builder: (_) {
-                        final accent = _catColor(azkar.category);
-                        return Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: isComplete
-                                ? LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [const Color(0xFF2BAE7C), const Color(0xFF0D9488)],
-                                  )
-                                : LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: isDark
-                                        ? [accent.withValues(alpha: 0.25), accent.withValues(alpha: 0.12)]
-                                        : [accent.withValues(alpha: 0.15), accent.withValues(alpha: 0.08)],
-                                  ),
-                            border: Border.all(
-                              color: isComplete
-                                  ? Colors.transparent
-                                  : accent.withValues(alpha: isDark ? 0.35 : 0.25),
-                              width: 1.5,
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: isComplete
-                              ? const Icon(Icons.check_rounded, color: Colors.white, size: 22)
-                              : Text('${index + 1}', style: GoogleFonts.outfit(
-                                  fontWeight: FontWeight.w800, fontSize: 15,
-                                  color: isDark ? accent : accent.withValues(alpha: 0.85))),
-                        );
-                      }),
+                      // Index badge
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: isComplete
+                              ? _catColor(azkar.category)
+                              : _catColor(azkar.category).withValues(alpha: isDark ? 0.15 : 0.10),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        alignment: Alignment.center,
+                        child: isComplete
+                            ? const Icon(Icons.check_rounded, color: Colors.white, size: 20)
+                            : Text('${index + 1}', style: GoogleFonts.outfit(
+                                fontWeight: FontWeight.w800, fontSize: 15,
+                                color: isComplete
+                                    ? Colors.white
+                                    : _catColor(azkar.category).withValues(alpha: isDark ? 0.90 : 0.80))),
+                      ),
                       const SizedBox(width: 16),
                       
                       // Text/Content
@@ -1466,14 +1451,28 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           title: AnimatedBuilder(
             animation: _pageController,
             builder: (context, _) {
-              int currentIndex = _pageController.positions.isNotEmpty ? _pageController.page?.round() ?? widget.initialIndex : widget.initialIndex;
-              final catId = widget.azkars[currentIndex].category;
+              int ci = _pageController.positions.isNotEmpty ? _pageController.page?.round() ?? widget.initialIndex : widget.initialIndex;
+              final catId = widget.azkars[ci].category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
-              return Text(catLabel, style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white.withValues(alpha: 0.90)));
+              return Column(mainAxisSize: MainAxisSize.min, children: [
+                Text(catLabel, style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white.withValues(alpha: 0.90))),
+                const SizedBox(height: 2),
+                Text('${ci + 1} of ${widget.azkars.length}',
+                  style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.50))),
+              ]);
             }
           ),
           centerTitle: true,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(3),
+            child: _AzkarProgressLine(
+              azkars: widget.azkars,
+              counts: widget.counts,
+              currentIndex: _currentIndex,
+              parentState: widget.parentState,
+            ),
+          ),
         ),
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -1522,6 +1521,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     ),
                   ),
                 ),
+                // (progress shown in AppBar bottom line)
                 Positioned(
                   right: 14,
                   bottom: 90,
@@ -13499,6 +13499,126 @@ class _ToolbarBtn extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Azkar Progress Line — slim segmented bar in AppBar bottom
+// ─────────────────────────────────────────────────────────────────────────────
+class _AzkarProgressLine extends StatelessWidget {
+  final List<_Azkar> azkars;
+  final Map<String, int> counts;
+  final int currentIndex;
+  final _DhikrScreenState parentState;
+
+  const _AzkarProgressLine({
+    required this.azkars,
+    required this.counts,
+    required this.currentIndex,
+    required this.parentState,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 3,
+      child: CustomPaint(
+        size: Size(MediaQuery.of(context).size.width, 3),
+        painter: _ProgressLinePainter(
+          total: azkars.length,
+          currentIndex: currentIndex,
+          completedFlags: List.generate(azkars.length, (i) {
+            final a = azkars[i];
+            // Check both: currently at target OR previously completed (count resets after completion)
+            final c = counts[a.id] ?? 0;
+            final t = parentState._getTarget(a.id, a.recommendedCount);
+            return c >= t || parentState._completedIds.contains(a.id);
+          }),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressLinePainter extends CustomPainter {
+  final int total;
+  final int currentIndex;
+  final List<bool> completedFlags;
+
+  const _ProgressLinePainter({
+    required this.total,
+    required this.currentIndex,
+    required this.completedFlags,
+  });
+
+  // Vibrant palette for completed segments — bright enough on dark AppBar
+  static const _doneColors = [
+    Color(0xFF34D399), // emerald
+    Color(0xFFFBBF24), // amber
+    Color(0xFFF87171), // coral red
+    Color(0xFF60A5FA), // sky blue
+    Color(0xFFA78BFA), // violet
+    Color(0xFF2DD4BF), // teal
+    Color(0xFFFB923C), // orange
+    Color(0xFFF472B6), // pink
+    Color(0xFF4ADE80), // green
+    Color(0xFF38BDF8), // light blue
+    Color(0xFFE879F9), // fuchsia
+    Color(0xFFFCD34D), // yellow
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (total == 0) return;
+    final w = size.width;
+    final h = size.height;
+    final segW = w / total;
+    const gap = 1.5;
+
+    for (int i = 0; i < total; i++) {
+      final x = i * segW + gap / 2;
+      final sW = segW - gap;
+      if (sW <= 0) continue;
+
+      final done = completedFlags[i];
+      final isCurrent = i == currentIndex;
+      final segColor = _doneColors[i % _doneColors.length];
+
+      final rect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(x, 0, sW, h),
+        const Radius.circular(1.5),
+      );
+
+      if (done || isCurrent) {
+        // Completed or active — show its vibrant color
+        canvas.drawRRect(rect, Paint()..color = segColor);
+        // Current segment gets a soft glow to stand out
+        if (isCurrent && !done) {
+          canvas.drawRRect(
+            rect.inflate(1.5),
+            Paint()
+              ..color = segColor.withValues(alpha: 0.35)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+          );
+        }
+      } else {
+        // Pending — dim
+        canvas.drawRRect(rect, Paint()..color = Colors.white.withValues(alpha: 0.15));
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ProgressLinePainter o) =>
+      o.total != total || o.currentIndex != currentIndex ||
+      !_listEquals(o.completedFlags, completedFlags);
+
+  static bool _listEquals(List<bool> a, List<bool> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 }
 
