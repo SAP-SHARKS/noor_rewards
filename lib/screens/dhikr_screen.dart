@@ -3208,7 +3208,7 @@ class _ProtectionShieldPainter extends CustomPainter {
     final tp2 = TextPainter(
       text: TextSpan(
         text: label,
-        style: _illusArabic(isComplete ? 12 : 12, isComplete
+        style: _illusArabic(12, isComplete
               ? const Color(0xFFD4AF37)
               : Colors.white.withValues(alpha: 0.82)),
       ),
@@ -3841,7 +3841,7 @@ class _ThreeQulsPainter extends CustomPainter {
     final tp2 = TextPainter(
       text: TextSpan(
         text: label,
-        style: _illusArabic(isComplete ? 12 : 12, isComplete
+        style: _illusArabic(12, isComplete
               ? const Color(0xFFD4AF37)
               : Colors.white.withValues(alpha: 0.82)),
       ),
@@ -5555,10 +5555,10 @@ class _SixWardsPainter extends CustomPainter {
       // Direction label (small Arabic text) on completion
       if (isComplete && wardProgress > 0.8) {
         final tp = TextPainter(
-          text: TextSpan(text: _wardLabels[i], style: _illusTag(8, color.withValues(alpha: 0.55))),
+          text: TextSpan(text: _wardLabels[i], style: _illusTag(11, color.withValues(alpha: 0.55))),
           textDirection: TextDirection.rtl,
         )..layout();
-        tp.paint(canvas, Offset(wx - tp.width / 2, wy + panelSize + 3));
+        tp.paint(canvas, Offset(wx - tp.width / 2, wy + panelSize + 6));
       }
     }
   }
@@ -7882,12 +7882,12 @@ class _FiveBlessingsPainter extends CustomPainter {
       if (blessingProgress > 0.7) {
         final labelAlpha = ((blessingProgress - 0.7) / 0.3) * (isComplete ? 0.8 : 0.55);
         final tp = TextPainter(
-          text: TextSpan(text: blessingLabels[i], style: _illusTag(9, color.withValues(alpha: labelAlpha)).copyWith(
+          text: TextSpan(text: blessingLabels[i], style: _illusTag(11, color.withValues(alpha: labelAlpha)).copyWith(
             shadows: [Shadow(color: color.withValues(alpha: labelAlpha * 0.4), blurRadius: 4)],
           )),
           textDirection: TextDirection.rtl,
         )..layout();
-        tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 4));
+        tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 8));
       }
     }
 
@@ -8968,11 +8968,11 @@ class _FreedomFlamePainter extends CustomPainter {
       final tp = TextPainter(
         text: TextSpan(
           text: labels[index],
-          style: _illusTag(9, coolColor.withValues(alpha: labelAlpha)),
+          style: _illusTag(11, coolColor.withValues(alpha: labelAlpha)),
         ),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 4));
+      tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 8));
     }
   }
 
@@ -9466,12 +9466,12 @@ class _CycleOfReturnPainter extends CustomPainter {
         final tp = TextPainter(
           text: TextSpan(
             text: _phaseLabels[i],
-            style: _illusTag(8.5, markerColor.withValues(alpha: labelAlpha.clamp(0.0, 0.7))),
+            style: _illusTag(11, markerColor.withValues(alpha: labelAlpha.clamp(0.0, 0.7))),
           ),
           textDirection: TextDirection.rtl,
         )..layout();
         // Position label outside the arc
-        final labelDist = arcR + 16;
+        final labelDist = arcR + 20;
         final lx = cx + math.cos(angle) * labelDist - tp.width / 2;
         final ly = cy + math.sin(angle) * labelDist - tp.height / 2;
         tp.paint(canvas, Offset(lx, ly));
@@ -10045,7 +10045,7 @@ class _ThreeVesselsPainter extends CustomPainter {
         final tp = TextPainter(
           text: TextSpan(
             text: _vesselLabels[i],
-            style: _illusTag(9, color.withValues(alpha: labelAlpha)),
+            style: _illusTag(11, color.withValues(alpha: labelAlpha)),
           ),
           textDirection: TextDirection.rtl,
         )..layout();
@@ -11168,7 +11168,7 @@ class _GuidingHandPainter extends CustomPainter {
       final tp = TextPainter(
         text: TextSpan(
           text: 'جَنَّة',
-          style: _illusTag(9, _gateColor.withValues(alpha: 0.55 * pulse)).copyWith(
+          style: _illusTag(11, _gateColor.withValues(alpha: 0.55 * pulse)).copyWith(
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -11463,7 +11463,7 @@ class _InvincibleNamePainter extends CustomPainter {
     final tp2 = TextPainter(
       text: TextSpan(
         text: label,
-        style: _illusArabic(isComplete ? 10 : 12, isComplete
+        style: _illusArabic(12, isComplete
               ? _domeColor
               : Colors.white.withValues(alpha: 0.82)),
       ),
@@ -12567,12 +12567,14 @@ class _UnparalleledScalesPainter extends CustomPainter {
 
   /// Four reward indicators: freed slaves, hasanat, sins erased, shaytan shield
   void _drawRewards(Canvas canvas, double cx, double cy, double w) {
-    // Position 4 rewards around the scale
+    // Position 4 rewards evenly spread below the scale
+    final rewardY = cy + 48;
+    final spacing = w * 0.20;
     final rewards = [
-      (cx - w * 0.30, cy + 35, _chainColor, 'عِتْق', 0.25),     // freed slaves
-      (cx - w * 0.10, cy + 50, _goldColor, 'حَسَنَات', 0.50),   // 100 hasanat
-      (cx + w * 0.10, cy + 50, const Color(0xFFEF4444), 'مَحْو', 0.75), // sins erased
-      (cx + w * 0.30, cy + 35, _shieldColor, 'حِصْن', 1.0),     // shaytan shield
+      (cx - spacing * 1.5, rewardY, _chainColor, 'عِتْق', 0.25),       // freed slaves
+      (cx - spacing * 0.5, rewardY, _goldColor, 'حَسَنَات', 0.50),     // 100 hasanat
+      (cx + spacing * 0.5, rewardY, const Color(0xFFEF4444), 'مَحْو', 0.75), // sins erased
+      (cx + spacing * 1.5, rewardY, _shieldColor, 'حِصْن', 1.0),       // shaytan shield
     ];
 
     for (int i = 0; i < rewards.length; i++) {
@@ -12586,29 +12588,29 @@ class _UnparalleledScalesPainter extends CustomPainter {
 
       // Reward orb
       canvas.drawCircle(
-        Offset(rx, ry), reached ? 6.0 * pulse : 4.0,
+        Offset(rx, ry), reached ? 7.0 * pulse : 4.5,
         Paint()..color = color.withValues(alpha: rewardAlpha),
       );
       if (reached) {
         canvas.drawCircle(
-          Offset(rx, ry), 10,
+          Offset(rx, ry), 12,
           Paint()
             ..color = color.withValues(alpha: rewardAlpha * 0.15)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
         );
       }
 
-      // Label
+      // Label — positioned below orb with good spacing
       if (progress > threshold * 0.5) {
-        final labelAlpha = ((progress - threshold * 0.5) / (threshold * 0.5)).clamp(0.0, 0.65);
+        final labelAlpha = ((progress - threshold * 0.5) / (threshold * 0.5)).clamp(0.0, 0.70);
         final tp = TextPainter(
           text: TextSpan(
             text: label,
-            style: _illusTag(8, color.withValues(alpha: labelAlpha)),
+            style: _illusTag(11, color.withValues(alpha: labelAlpha)),
           ),
           textDirection: TextDirection.rtl,
         )..layout();
-        tp.paint(canvas, Offset(rx - tp.width / 2, ry + 10));
+        tp.paint(canvas, Offset(rx - tp.width / 2, ry + 14));
       }
     }
 
@@ -12769,9 +12771,9 @@ class _SunriseGloryPainter extends CustomPainter {
       // Label
       if (ringProgress > 0.5) {
         final labelAlpha = ((ringProgress - 0.5) * 2).clamp(0.0, 0.6);
-        final tp = TextPainter(text: TextSpan(text: _ringLabels[i], style: _illusTag(8, color.withValues(alpha: labelAlpha))), textDirection: TextDirection.rtl)..layout();
-        final labelAngle = math.pi * 1.5 + i * 0.4 - 0.4; // spread above
-        final labelR = ringR + 10;
+        final tp = TextPainter(text: TextSpan(text: _ringLabels[i], style: _illusTag(11, color.withValues(alpha: labelAlpha))), textDirection: TextDirection.rtl)..layout();
+        final labelAngle = math.pi * 1.5 + (i - 1) * 0.6; // spread wider above
+        final labelR = ringR + 14;
         tp.paint(canvas, Offset(cx + math.cos(labelAngle) * labelR - tp.width / 2, sunY + math.sin(labelAngle) * labelR - tp.height / 2));
       }
     }
@@ -12809,7 +12811,7 @@ class _SunriseGloryPainter extends CustomPainter {
 
     // Label
     final label = isComplete ? 'خَيْرٌ مِمَّا طَلَعَتْ عَلَيْهِ الشَّمْس' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(isComplete ? 9 : 12, isComplete ? const Color(0xFFF59E0B) : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
+    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFF59E0B) : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
     tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
 
     if (pointsToday > 0) {
@@ -12953,7 +12955,7 @@ class _TenSalawatPainter extends CustomPainter {
 
     // Label
     final label = isComplete ? 'صَلَّى اللهُ عَلَيْهِ وَسَلَّم' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(isComplete ? 10 : 12, isComplete ? _crescentColor : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
+    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? _crescentColor : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
     tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
 
     if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: _crescentColor, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: _crescentColor, blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = _crescentColor.withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = _crescentColor.withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
@@ -13106,7 +13108,7 @@ class _DoorsOfMercyPainter extends CustomPainter {
 
     // Label
     final label = isComplete ? 'أَسْتَغْفِرُ الله وَأَتُوبُ إِلَيْه' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(isComplete ? 10 : 12, isComplete ? _mercyColor : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
+    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? _mercyColor : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
     tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
 
     if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: _mercyColor, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: _mercyColor, blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = _mercyColor.withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = _mercyColor.withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
@@ -13220,9 +13222,10 @@ class _CosmicWeightPainter extends CustomPainter {
       if (phraseProgress < 0.01) continue;
 
       final color = _phraseColors[i];
-      final ox = leftX + (i - 1.5) * 14;
-      final oy = leftY + 8 + i * 3;
-      final orbR = 4.0 + phraseProgress * 3;
+      // Spread orbs across the bottom half — evenly spaced
+      final ox = cx + (i - 1.5) * (w * 0.18);
+      final oy = leftY + 10;
+      final orbR = 5.0 + phraseProgress * 3;
 
       // Orb glow
       if (reached) {
@@ -13235,8 +13238,8 @@ class _CosmicWeightPainter extends CustomPainter {
 
       // Label
       if (reached) {
-        final tp = TextPainter(text: TextSpan(text: _phraseLabels[i], style: _illusTag(7, color.withValues(alpha: 0.55 * pulse))), textDirection: TextDirection.rtl)..layout();
-        tp.paint(canvas, Offset(ox - tp.width / 2, oy + orbR + 4));
+        final tp = TextPainter(text: TextSpan(text: _phraseLabels[i], style: _illusTag(11, color.withValues(alpha: 0.55 * pulse))), textDirection: TextDirection.rtl)..layout();
+        tp.paint(canvas, Offset(ox - tp.width / 2, oy + orbR + 8));
       }
     }
 
@@ -13280,7 +13283,7 @@ class _CosmicWeightPainter extends CustomPainter {
 
     // Label
     final label = isComplete ? 'سُبْحَانَ اللهِ وَبِحَمْدِه' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(isComplete ? 10 : 12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
+    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(12, isComplete ? const Color(0xFFD4AF37) : Colors.white.withValues(alpha: 0.82))), textDirection: TextDirection.rtl)..layout();
     tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.88));
 
     if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, shadows: [Shadow(color: Color(0xFFD4AF37), blurRadius: 6)])), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 10) / 2, by = h * 0.88 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 10, tp3.height + 6), const Radius.circular(6)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)..style = PaintingStyle.stroke..strokeWidth = 0.7); tp3.paint(canvas, Offset(bx + 5, by + 3)); }
