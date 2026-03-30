@@ -513,7 +513,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       } else {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
       }
-    } catch (_) {
+    } catch (e, stack) {
+      print('=== ERROR IN _loadAyah === \n$e\n$stack\n==================');
       if (mounted) setState(() { _loading = false; _arabic = 'No connection. Cached data may be available.'; });
     }
   }
@@ -1321,7 +1322,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               crossAxisAlignment:
                                   CrossAxisAlignment.start,
                               children: [
-                              Text('Arabic Font Size',
+                              Text('Text Size',
                                   style: GoogleFonts.outfit(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
@@ -1340,8 +1341,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             inactiveColor:
                                 _accent.withValues(alpha: 0.2),
                             onChanged: (v) {
-                              setSt(
-                                  () => _arabicFontSize = v);
+                              setSt(() {
+                                _arabicFontSize = v;
+                                _translationFontSize = 12.0 + (v - 20.0) * (10.0 / 24.0);
+                              });
                               setState(() {});
                             },
                           ),
@@ -1363,79 +1366,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         ]),
                       ),
                     ),
-                    // Translation font slider
-                    Padding(padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                            color: _darkMode
-                                ? const Color(0xFF2C2C2E)
-                                : const Color(0xFFF7F3EE),
-                            borderRadius:
-                                BorderRadius.circular(16)),
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
-                          Row(children: [
-                            Container(width: 38, height: 38,
-                              decoration: BoxDecoration(
-                                  color: _accent.withValues(alpha: 0.12),
-                                  borderRadius:
-                                      BorderRadius.circular(10)),
-                              child: Icon(
-                                  Icons.format_size_rounded,
-                                  size: 20, color: _accent),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-                              Text('Translation Font Size',
-                                  style: GoogleFonts.outfit(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: lblC)),
-                              Text(
-                                  '${_translationFontSize.toInt()} pt',
-                                  style: GoogleFonts.outfit(
-                                      fontSize: 11,
-                                      color:
-                                          const Color(0xFF8E8E93))),
-                            ]),
-                          ]),
-                          Slider(
-                            value: _translationFontSize,
-                            min: 12, max: 22, divisions: 10,
-                            activeColor: _accent,
-                            inactiveColor:
-                                _accent.withValues(alpha: 0.2),
-                            onChanged: (v) {
-                              setSt(() =>
-                                  _translationFontSize = v);
-                              setState(() {});
-                            },
-                          ),
-                          Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                            children: [
-                            Text('Small',
-                                style: GoogleFonts.outfit(
-                                    fontSize: 10,
-                                    color:
-                                        const Color(0xFF8E8E93))),
-                            Text('Large',
-                                style: GoogleFonts.outfit(
-                                    fontSize: 10,
-                                    color:
-                                        const Color(0xFF8E8E93))),
-                          ]),
-                        ]),
-                      ),
-                    ),
+
                     // Theme colour picker
                     Padding(padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
@@ -2929,7 +2860,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   ///   U+06E7–U+06E8  small high Meem / Noon (ۧ ۨ)
   ///   U+06EA–U+06ED  combining stop marks (۪ ۫ ۬ ۭ)
   static String _stripQuranicAnnotations(String s) =>
-      s.replaceAll(RegExp(r'[\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]'), '');
+      s.replaceAll(RegExp(r'[\u0615-\u061A\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED\u08D4-\u08FE\u200B\uE000-\uF8FF]'), '');
 
 
 

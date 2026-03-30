@@ -1682,7 +1682,7 @@ String _cleanArabic(String s) {
   // Remove leftover bracket characters (so things like ((text)) keep the text)
   s = s.replaceAll(RegExp(r'[\[\]\(\)\{\}«»﴿﴾]'), '');
   // Remove Quranic waqf/tajweed marks (same ranges as Quran screen stripper)
-  s = s.replaceAll(RegExp(r'[\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]'), '');
+  s = s.replaceAll(RegExp(r'[\u0615-\u061A\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED\u08D4-\u08FE\u200B\uE000-\uF8FF]'), '');
   // Remove Arabic end-of-ayah ornament ۝ if it crept in
   s = s.replaceAll('\u06DD', '');
   // Collapse extra whitespace
