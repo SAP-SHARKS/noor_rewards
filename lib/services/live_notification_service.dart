@@ -34,7 +34,7 @@ class NoorLiveNotificationService {
     if (_initialized) return;
     if (kIsWeb) return;
 
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInit = AndroidInitializationSettings('@mipmap/launcher_icon');
     // v21 uses named parameter 'settings'
     await _plugin.initialize(
       settings: const InitializationSettings(android: androidInit),

@@ -15,32 +15,52 @@ import 'services/quran_api_config.dart';       // Quran Foundation credentials
 import 'utils/asset_helper.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  await Supabase.initialize(
-    url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
-  );
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Hive.initFlutter();
+    await Supabase.initialize(
+      url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
+    );
 
-  // Load .env — Quran Foundation API credentials (Pre-live or Production)
-  await QuranApiConfig.load();
+    // Load .env — Quran Foundation API credentials (Pre-live or Production)
+    await QuranApiConfig.load();
 
-  // Pre-load remote config (waits for first fetch, then subscribes to Realtime)
-  await SettingsService.instance.initialize();
-  
-  // Pre-load all available asset registry to automatically populate custom image cards
-  await AssetHelper.loadAssets();
+    // Pre-load remote config (waits for first fetch, then subscribes to Realtime)
+    await SettingsService.instance.initialize();
+    
+    // Pre-load all available asset registry to automatically populate custom image cards
+    await AssetHelper.loadAssets();
 
-  // Init the live "Noor Today" notification (like Sweatcoin's step counter)
-  await NoorLiveNotificationService.instance.init();
+    // Init the live "Noor Today" notification (like Sweatcoin's step counter)
+    await NoorLiveNotificationService.instance.init();
 
-  runApp(
-    ChangeNotifierProvider<SettingsService>.value(
-      value: SettingsService.instance,
-      child: const MyApp(),
-    ),
-  );
+    runApp(
+      ChangeNotifierProvider<SettingsService>.value(
+        value: SettingsService.instance,
+        child: const MyApp(),
+      ),
+    );
+  } catch (e, stack) {
+    runApp(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Initialization Error:\n$e\n\n$stack',
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
