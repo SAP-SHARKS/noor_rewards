@@ -118,6 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // • _popupVisible gate prevents a new show if one is already on screen.
   // ────────────────────────────────────────────────────────────────────────
   Future<void> _scheduleMotivationalPopup() async {
+    return; // DISABLED per user request (temporarily hidden)
     try {
       final prefs = await SharedPreferences.getInstance();
       if (prefs.getBool(_kDndKey) == true) return; // permanent block
@@ -135,6 +136,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Arms the NEXT single popup timer — called only after current popup closes.
   void _scheduleNextPopup() {
+    return; // DISABLED per user request (temporarily hidden)
     if (!mounted || _sessionDnd || _popupVisible) return;
     _repeatingPopupTimer?.cancel();
     final delay = 30 + math.Random().nextInt(16); // 30–45 s
