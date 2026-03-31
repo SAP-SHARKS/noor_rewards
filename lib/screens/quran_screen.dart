@@ -482,7 +482,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         transMap.addAll(fetched);
       }
 
-      final sName  = _surahNames[surah];
+      final sName  = _surahNames[surah - 1];
       final nowStr = DateTime.now().toIso8601String();
       final recBitrate = _reciters[_reciterIdx].$4;
       for (int a = 1; a <= _surahLengths[surah]; a++) {
@@ -514,7 +514,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
       }
     } catch (e, stack) {
-      print('=== ERROR IN _loadAyah === \n$e\n$stack\n==================');
       if (mounted) setState(() { _loading = false; _arabic = 'No connection. Cached data may be available.'; });
     }
   }

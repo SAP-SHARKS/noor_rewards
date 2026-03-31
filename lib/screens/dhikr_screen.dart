@@ -48,12 +48,14 @@ class _Azkar {
   final String category;
   final String reward;
   final String reference;
+  final String hadithFull;
   final String? audioUrl; // For online MP3 playback
 
   const _Azkar({
     required this.id, required this.arabic, required this.transliteration,
     required this.translation, required this.recommendedCount,
     required this.category, required this.reward, required this.reference,
+    this.hadithFull = '',
     this.audioUrl,
   });
 
@@ -66,6 +68,7 @@ class _Azkar {
     category:         j['category_id'] as String? ?? j['category']?.toString() ?? 'general',
     reward:           j['reward'] as String? ?? '',
     reference:        j['reference'] as String? ?? '',
+    hadithFull:       j['hadith_full'] as String? ?? '',
     audioUrl:         j['audio_url'] as String?,
   );
 }
@@ -1001,7 +1004,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final chipInactiveTxt = isDark ? Colors.white70 : const Color(0xFF4A4A4A);
 
     // Category color map — each category gets a distinct accent
-    Color _catColor(String catId) => switch (catId) {
+    Color catColor(String catId) => switch (catId) {
       'all'          => const Color(0xFF6366F1), // indigo
       'favorites'    => const Color(0xFFEF4444), // red
       'general'      => const Color(0xFF10B981), // emerald
@@ -1133,7 +1136,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
             itemBuilder: (_, i) {
               final cat = _categories[i];
               final sel = cat.id == _selectedCat;
-              final catAccent = _catColor(cat.id);
+              final catAccent = catColor(cat.id);
               return GestureDetector(
                 onTap: () => setState(() {
                   _selectedCat = cat.id;
@@ -1212,8 +1215,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         height: 38,
                         decoration: BoxDecoration(
                           color: isComplete
-                              ? _catColor(azkar.category)
-                              : _catColor(azkar.category).withValues(alpha: isDark ? 0.15 : 0.10),
+                              ? catColor(azkar.category)
+                              : catColor(azkar.category).withValues(alpha: isDark ? 0.15 : 0.10),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         alignment: Alignment.center,
@@ -1223,7 +1226,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 fontWeight: FontWeight.w800, fontSize: 15,
                                 color: isComplete
                                     ? Colors.white
-                                    : _catColor(azkar.category).withValues(alpha: isDark ? 0.90 : 0.80))),
+                                    : catColor(azkar.category).withValues(alpha: isDark ? 0.90 : 0.80))),
                       ),
                       const SizedBox(width: 16),
                       
@@ -1253,7 +1256,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 const Icon(Icons.auto_awesome_rounded, size: 12, color: Color(0xFF927237)),
                                 const SizedBox(width: 4),
                                 Text(
-                                  (azkar.category.toUpperCase() + " ADHKAR").replaceAll("FAVORITES", "FAVORITE"), 
+                                  '${azkar.category.toUpperCase()} ADHKAR'.replaceAll("FAVORITES", "FAVORITE"),
                                   style: GoogleFonts.outfit(
                                     fontSize: 10, 
                                     fontWeight: FontWeight.w800, 
@@ -1543,7 +1546,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 // (progress shown in AppBar bottom line)
                 Positioned(
                   right: 14,
-                  bottom: 90,
+                  bottom: 90 + MediaQuery.of(context).padding.bottom,
                   child: AnimatedSlide(
                     offset: _showToolbar ? Offset.zero : const Offset(0.6, 0),
                     duration: const Duration(milliseconds: 280),
@@ -1649,7 +1652,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 20,
+                  bottom: 20 + MediaQuery.of(context).padding.bottom,
                   child: Center(
                     child: GestureDetector(
                       onTap: isComplete ? null : () => _tryComplete(azkar, tapTarget, isSwipe: false),
@@ -1895,25 +1898,49 @@ class _AzkarCard extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: kBeneBg, 
+                  color: kBeneBg,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
                 ),
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    NoorIcon.sparkles(size: 16),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Hadith & Virtue', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kPrimary)),
-                          const SizedBox(height: 4),
-                          Text(cleanReward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, height: 1.5)),
-                        ],
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NoorIcon.sparkles(size: 16),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Hadith & Virtue', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kPrimary)),
+                              const SizedBox(height: 4),
+                              Text(cleanReward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, fontWeight: FontWeight.w600, height: 1.5)),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+                    if (azkar.hadithFull.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.7),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          azkar.hadithFull,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13.5,
+                            color: kBeneTxt,
+                            height: 1.65,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -12859,7 +12886,7 @@ class _SunriseGloryState extends State<_SunriseGlory> with TickerProviderStateMi
   void didUpdateWidget(_SunriseGlory old) {
     super.didUpdateWidget(old);
     if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
-    if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) p.reset(); _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); }
+    if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) { p.reset(); } _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); }
   }
 
   @override
@@ -13046,7 +13073,7 @@ class _TenSalawatState extends State<_TenSalawat> with TickerProviderStateMixin 
     _orbitCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 6000))..repeat();
   }
 
-  @override void didUpdateWidget(_TenSalawat old) { super.didUpdateWidget(old); if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; } if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) p.reset(); _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); } }
+  @override void didUpdateWidget(_TenSalawat old) { super.didUpdateWidget(old); if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; } if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) { p.reset(); } _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); } }
   @override void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose(); _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _orbitCtrl.dispose(); super.dispose(); }
 
   @override
@@ -13182,7 +13209,7 @@ class _DoorsOfMercyState extends State<_DoorsOfMercy> with TickerProviderStateMi
     _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat(reverse: true);
   }
 
-  @override void didUpdateWidget(_DoorsOfMercy old) { super.didUpdateWidget(old); if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; } if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) p.reset(); _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); } }
+  @override void didUpdateWidget(_DoorsOfMercy old) { super.didUpdateWidget(old); if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; } if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) { p.reset(); } _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); } }
   @override void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose(); _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _glowCtrl.dispose(); super.dispose(); }
 
   @override
@@ -13335,7 +13362,7 @@ class _CosmicWeightState extends State<_CosmicWeight> with TickerProviderStateMi
     _cosmicCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 5000))..repeat();
   }
 
-  @override void didUpdateWidget(_CosmicWeight old) { super.didUpdateWidget(old); if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; } if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) p.reset(); _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); } }
+  @override void didUpdateWidget(_CosmicWeight old) { super.didUpdateWidget(old); if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; } if (widget.tapCount != _prevTap) { _prevTap = widget.tapCount; for (final p in _particles) { p.reset(); } _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0); } }
   @override void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose(); _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _cosmicCtrl.dispose(); super.dispose(); }
 
   @override

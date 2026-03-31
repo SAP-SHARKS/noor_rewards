@@ -3711,12 +3711,14 @@ class _BottomNav extends StatelessWidget {
       (Icons.mosque_rounded,              Icons.mosque_outlined,              'Akhirah', _C.navImpact),
       (Icons.person_rounded,              Icons.person_outline_rounded,       'Profile', _C.navProfile),
     ];
+    final bottomPad = MediaQuery.of(context).padding.bottom;
     return Container(
-      height: 72,
+      height: 72 + bottomPad,
+      padding: EdgeInsets.only(bottom: bottomPad),
       decoration: BoxDecoration(color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey.shade200)),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))]),
-      child: SafeArea(top: false, child: Row(children: List.generate(items.length, (i) {
+      child: Row(children: List.generate(items.length, (i) {
         final (filled, outline, label, color) = items[i];
         final sel = i == tab;
         return Expanded(child: GestureDetector(
@@ -3730,8 +3732,9 @@ class _BottomNav extends StatelessWidget {
                 color: sel ? color : const Color(0xFFBBBBBB))),
           ]),
         ));
-      }))),
+      })),
     );
+
   }
 }
 
