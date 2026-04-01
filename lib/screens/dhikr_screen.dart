@@ -28,13 +28,13 @@ final List<_ArabicFont> _kArabicFonts = [
     name: 'Indo pak',
     arabicPreview: 'بِسۡمِ اللهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
+        TextStyle(fontFamily: 'AlQalamQuran', fontSize: size + 6, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Madina',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
+        GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
 ];
 

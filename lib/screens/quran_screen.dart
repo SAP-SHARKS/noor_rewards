@@ -100,7 +100,7 @@ final List<_QuranScript> _kQuranScripts = [
     apiSlug: 'indopak',
     arabicPreview: 'بِسۡمِ اللهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.notoNaskhArabic(fontSize: size, color: color, height: height, fontWeight: weight),
+        TextStyle(fontFamily: 'AlQalamQuran', fontSize: size + 6, color: color, height: height, fontWeight: weight),
   ),
 ];
 
@@ -351,6 +351,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    // Persist position locally (instant) + remotely (fire-and-forget)
+    _cache.put('pref_mushaf_page', _currentPage);
+    _cache.put('pref_mushaf_surah', _surah);
+    _cache.put('pref_mushaf_ayah', _ayah);
+    _savePagePosition();
     WidgetsBinding.instance.removeObserver(this);
     _hintTimer?.cancel();
     _hintOverlay?.remove();
@@ -363,10 +368,35 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   Future<void> _init() async {
     _cache = await Hive.openBox('quran_cache');
+    // Restore persisted reading mode
+    _fullPageMode = _cache.get('pref_mushaf_mode', defaultValue: false) as bool;
+    _wordByWord   = _cache.get('pref_wbw_mode', defaultValue: false) as bool;
     await Future.wait([_loadProgress(), _loadBookmarks(), _loadFavourites()]);
     await _fetchAyah(_surah, _ayah);
+    // If user was in Mushaf mode last time, re-enter at the exact saved page
+    if (_fullPageMode) {
+      // Restore from local Hive cache (instant, no network dependency)
+      final savedPage  = _cache.get('pref_mushaf_page', defaultValue: _currentPage) as int;
+      final savedSurah = _cache.get('pref_mushaf_surah', defaultValue: _surah) as int;
+      final savedAyah  = _cache.get('pref_mushaf_ayah', defaultValue: _ayah) as int;
+      final page = savedPage.clamp(1, 604);
+      setState(() {
+        _currentPage = page;
+        _surah = savedSurah;
+        _ayah = savedAyah;
+        _showMushafControls = true;
+      });
+      _enterFullPageScrollMode(page);
+      _startPageTimer();
+      _controlsHideTimer?.cancel();
+      _controlsHideTimer = Timer(const Duration(seconds: 4), () {
+        if (mounted) setState(() => _showMushafControls = false);
+      });
+    }
     // Prefetch entire surah's word-by-word data in background so WBW toggle is instant
     _prefetchSurahWbw(_surah);
+    // If WBW was active, fetch words for current ayah
+    if (_wordByWord) _fetchWordByWord(_surah, _ayah);
   }
 
   // ── Load last read position + today's stats ───────────────────────────────────
@@ -516,7 +546,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       } else {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
       }
-    } catch (e, stack) {
+    } catch (_) {
       if (mounted) setState(() { _loading = false; _arabic = 'No connection. Cached data may be available.'; });
     }
   }
@@ -795,30 +825,40 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
   // ── Enter Mushaf in Continuous Feed mode ──────
-  void _enterFullPageScrollMode(int startPage) {
+  Future<void> _enterFullPageScrollMode(int startPage) async {
     _fullPageScrollController?.dispose();
     _loadedPages.clear();
     _loadingPages.clear();
-    
+
     _currentPage = startPage;
     _feedJumpPage = startPage;
     _feedCenterKey = UniqueKey(); // Resets CustomScrollView to center on this newly opened page
-    
+
     _fullPageScrollController = ScrollController();
     _fullPageScrollController!.addListener(_onMushafScroll);
 
-    // Pre-load this page and neighbors for instant display
-    _loadPageForScroll(startPage);
+    // Pre-load this page FIRST (await so it's ready before build), then neighbors
+    await _loadPageForScroll(startPage);
     _loadPageForScroll(startPage + 1);
     if (startPage > 1) _loadPageForScroll(startPage - 1);
-    
+
     if (_timerShouldRun) _startPageTimer();
   }
 
-  // Scroll listener - tracks scroll activity to keep the XP timer alive, 
+  // Scroll listener - tracks scroll activity to keep the XP timer alive,
   // and allows fetching further pages as they lazily build.
+  DateTime _lastMushafSave = DateTime(2000);
   void _onMushafScroll() {
-    _savePagePosition(); // Persist last known state occasionally
+    // Save locally (instant) on every scroll
+    _cache.put('pref_mushaf_page', _currentPage);
+    _cache.put('pref_mushaf_surah', _surah);
+    _cache.put('pref_mushaf_ayah', _ayah);
+    // Throttle Supabase save to once per 3 seconds
+    final now = DateTime.now();
+    if (now.difference(_lastMushafSave).inSeconds >= 3) {
+      _lastMushafSave = now;
+      _savePagePosition();
+    }
   }
 
 
@@ -2204,6 +2244,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           _currentPage     = page;
                           _showMushafControls = true;
                         });
+                        _cache.put('pref_mushaf_mode', true);
+                        _cache.put('pref_wbw_mode', false);
+                        _cache.put('pref_mushaf_page', page);
+                        _cache.put('pref_mushaf_surah', _surah);
+                        _cache.put('pref_mushaf_ayah', _ayah);
                         _enterFullPageScrollMode(page);
                         _startPageTimer();
                         // Auto-hide overlay after 4 s
@@ -2229,6 +2274,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               _stopPageTimer();
                             }
                           });
+                          _cache.put('pref_wbw_mode', _wordByWord);
+                          _cache.put('pref_mushaf_mode', false);
                           if (_wordByWord && _wbwWords.isEmpty) {
                             _fetchWordByWord(_surah, _ayah);
                           }
@@ -2272,7 +2319,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   ] else ...[ 
                     // ── Full Verse Mode ──────────────────────────────────────
                     if (_ayah == 1 && _surah > 1 && _surah != 9) ...[
-                      _buildMushafBismillah(txt, _accent),
+                      _buildMushafBismillah(txt, _accent, _quranScriptIdx == 1),
                       const SizedBox(height: 16),
                     ],
                     Directionality(
@@ -2549,20 +2596,24 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       for (int i = 0; i < _wbwWords.length; i += cols) {
         final rowWords = _wbwWords.sublist(i, (i + cols).clamp(0, _wbwWords.length));
         // RTL: words go right→left, so reverse the row
-        final rowWidgets = rowWords.reversed.map((w) => SizedBox(
-          width: cardW,
-          child: _WbwWordChip(
-            arabic: _QuranScreenState._stripQuranicAnnotations(w['arabic'] as String? ?? ''),
-            transliteration: w['transliteration'] as String? ?? '',
-            translation: w['translation'] as String? ?? '',
-            arabicFontSize: _arabicFontSize * 0.95,
-            quranScriptIdx: _quranScriptIdx,
-            accentColor: _accent,
+        final rowWidgets = rowWords.reversed.map((w) {
+          final isIndopak = _kQuranScripts[_quranScriptIdx].apiSlug == 'indopak';
+          final arStr = isIndopak ? (w['arabic_indopak'] ?? w['arabic']) : w['arabic'];
+          return SizedBox(
+            width: cardW,
+            child: _WbwWordChip(
+              arabic: _QuranScreenState._stripQuranicAnnotations(arStr?.toString() ?? ''),
+              transliteration: w['transliteration'] as String? ?? '',
+              translation: w['translation'] as String? ?? '',
+              arabicFontSize: _arabicFontSize * 0.95,
+              quranScriptIdx: _quranScriptIdx,
+              accentColor: _accent,
             txtColor: txt,
             subColor: sub,
             darkMode: _darkMode,
           ),
-        )).toList();
+        );
+        }).toList();
 
         // Pad last row if not full
         while (rowWidgets.length < cols) {
@@ -2648,6 +2699,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       _ayah      = 1;                         // start of that surah (safe default)
       _surahName = _surahNames[syncedSurah - 1];
     });
+    _cache.put('pref_mushaf_mode', false);
     _fetchAyah(syncedSurah, 1);              // re-fetch for normal ayah card
     _savePagePosition();                     // persist page + surah + ayah
   }
@@ -2774,6 +2826,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               color: goldClr.withValues(alpha: 0.5), strokeWidth: 1.8)));
     }
 
+    final isIndoPak = _kQuranScripts[_quranScriptIdx].apiSlug == 'indopak';
+
     // ── Group consecutive ayahs by surah ─────────────────────────────────────
     final List<Widget> blocks = [];
     String? lastSurah;
@@ -2782,7 +2836,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
     void flushGroup() {
       if (currentGroup.isEmpty) return;
-      blocks.add(_buildMushafTextBlock(currentGroup, textClr, goldClr));
+      blocks.add(_buildMushafTextBlock(currentGroup, textClr, goldClr, isIndoPak));
       currentGroup.clear();
     }
 
@@ -2795,25 +2849,27 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         lastSurah = surahKey;
         if (ayahNum == 1 && surahNum >= 1) {
           if (surahNum > 1) blocks.add(const SizedBox(height: 10));
-          blocks.add(_buildMushafSurahBanner(surahNum, goldClr, textClr));
+          blocks.add(_buildMushafSurahBanner(surahNum, goldClr, textClr, isIndoPak));
           if (surahNum == 1) {
-            blocks.add(_buildMushafBismillah(textClr, goldClr));
+            blocks.add(_buildMushafBismillah(textClr, goldClr, isIndoPak));
             bismillahAction[surahNum] = 'skip';
           } else if (surahNum != 9) {
-            blocks.add(_buildMushafBismillah(textClr, goldClr));
+            blocks.add(_buildMushafBismillah(textClr, goldClr, isIndoPak));
             bismillahAction[surahNum] = 'strip';
           }
           blocks.add(const SizedBox(height: 4));
         }
       }
       final action = bismillahAction[surahNum];
+      final rawText = (isIndoPak ? (ayah['arabic_indopak'] ?? ayah['arabic']) : ayah['arabic']) as String? ?? '';
+      
       if (ayahNum == 1 && action == 'skip') {
         continue;
       } else if (ayahNum == 1 && action == 'strip') {
-        final stripped = _stripBismillahPrefix(ayah['arabic'] as String? ?? '');
-        currentGroup.add({...ayah, 'arabic': stripped});
+        final stripped = _stripBismillahPrefix(rawText);
+        currentGroup.add({...ayah, 'arabic_display': stripped});
       } else {
-        currentGroup.add(ayah);
+        currentGroup.add({...ayah, 'arabic_display': rawText});
       }
     }
     flushGroup();
@@ -2842,7 +2898,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   /// Uses a fixed generous font size — the FittedBox parent will scale
   /// the entire page down to fit, so we don't need to calculate per-block.
   Widget _buildMushafTextBlock(
-      List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr) {
+      List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr, bool isIndoPak) {
     // Tunable base font size to fit ~15 lines beautifully into the logical width
     final double fontSize = _mushafFontSize;
     const double lh       = 1.95;   // Safe line height for Scheherazade New (avoids cropping glyphs)
@@ -2851,7 +2907,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final spans = <InlineSpan>[];
     for (int i = 0; i < ayahs.length; i++) {
       final a = ayahs[i];
-      final text = _stripQuranicAnnotations(a['arabic'] as String? ?? '');
+      final text = _stripQuranicAnnotations(a['arabic_display'] as String? ?? '');
       final ayahNum = a['ayah'] as int? ?? (i + 1);
       // Convert to Arabic digits so the U+06DD character natively encloses them
       final numStr = ayahNum.toString().split('').map((e) => '٠١٢٣٤٥٦٧٨٩'[int.parse(e)]).join('');
@@ -2864,18 +2920,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Text('\u06DD', style: GoogleFonts.scheherazadeNew(
-              fontSize: fontSize * 1.5,
-              color: goldClr.withValues(alpha: 0.75),
-              height: 1.0,
-            )),
+            Text('\u06DD', style: _kQuranScripts[_quranScriptIdx].style(fontSize * 1.5, goldClr.withValues(alpha: 0.75), 1.0, FontWeight.w400)),
             Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text(numStr, style: GoogleFonts.scheherazadeNew(
-                fontSize: fontSize * 0.55,
-                color: textClr,
-                height: 1.0,
-              )),
+              child: Text(numStr, style: _kQuranScripts[_quranScriptIdx].style(fontSize * 0.55, textClr, 1.0, FontWeight.w400)),
             ),
           ],
         ),
@@ -2883,12 +2931,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       spans.add(const TextSpan(text: ' '));
     }
 
-    final textStyle = GoogleFonts.scheherazadeNew(
-      fontSize: fontSize,
-      height: lh,
-      color: textClr,
-      fontWeight: FontWeight.w400,
-    );
+    final textStyle = _kQuranScripts[_quranScriptIdx].style(fontSize, textClr, lh, FontWeight.w400);
 
     return Text.rich(
       TextSpan(style: textStyle, children: spans),
@@ -2913,7 +2956,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
 
 
-  Widget _buildMushafSurahBanner(int surahNum, Color goldClr, Color textClr) {
+  Widget _buildMushafSurahBanner(int surahNum, Color goldClr, Color textClr, bool isIndoPak) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -2937,9 +2980,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             'سُورَةُ ${_surahNamesArabic[surahNum - 1]}',
             textAlign: TextAlign.center,
             textDirection: TextDirection.rtl,
-            style: GoogleFonts.scheherazadeNew(
-                fontSize: 18, fontWeight: FontWeight.w700,
-                color: goldClr, letterSpacing: 1.5),
+            style: _kQuranScripts[_quranScriptIdx].style(18.0, goldClr, null, FontWeight.w700).copyWith(letterSpacing: 1.5),
           ),
         ),
       ]),
@@ -2986,7 +3027,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return text;
   }
 
-  Widget _buildMushafBismillah(Color textClr, Color goldClr) {
+  Widget _buildMushafBismillah(Color textClr, Color goldClr, bool isIndoPak) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
@@ -3003,28 +3044,25 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           fit: BoxFit.scaleDown,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           // Left ornament
-          Text('﴾', style: TextStyle(
-              fontFamily: 'ScheherazadeNew',
-              fontSize: _arabicFontSize * 0.8,
-              color: goldClr.withValues(alpha: 0.6))),
+          Text('﴾', style: _kQuranScripts[_quranScriptIdx].style(
+              _arabicFontSize * 0.8,
+              goldClr.withValues(alpha: 0.6), null, FontWeight.normal)),
           const SizedBox(width: 10),
           // Bismillah text — centered, gold, slightly larger than body
           Text(
-            'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+            isIndoPak ? 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ' : 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
             textAlign: TextAlign.center,
             textDirection: TextDirection.rtl,
-            style: GoogleFonts.scheherazadeNew(
-                fontSize: _arabicFontSize * 0.96,
-                color: goldClr,
-                fontWeight: FontWeight.w700,
-                height: 1.8),
+            style: _kQuranScripts[_quranScriptIdx].style(
+                _arabicFontSize * 0.96,
+                goldClr,
+                1.8, FontWeight.w700),
           ),
           const SizedBox(width: 10),
           // Right ornament
-          Text('﴿', style: TextStyle(
-              fontFamily: 'ScheherazadeNew',
-              fontSize: _arabicFontSize * 0.8,
-              color: goldClr.withValues(alpha: 0.6))),
+          Text('﴿', style: _kQuranScripts[_quranScriptIdx].style(
+              _arabicFontSize * 0.8,
+              goldClr.withValues(alpha: 0.6), null, FontWeight.normal)),
         ]),
         ),
       ),

@@ -32,6 +32,8 @@ dependencies:
   confetti: ^0.8.0
   flutter_local_notifications: ^21.0.0
   flutter_dotenv: ^6.0.0          # load .env credentials at runtime
+  flutter_appauth: ^12.0.0
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:
@@ -50,3 +52,7 @@ flutter:
     - assets/lottie/
     - assets/data/
     - .env                         # Quran Foundation API credentials
+  fonts:
+    - family: AlQalamQuran
+      fonts:
+        - asset: assets/fonts/Al_Qalam_Quran_Majeed_2.ttf

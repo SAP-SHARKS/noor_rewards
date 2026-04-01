@@ -101,7 +101,7 @@ class QuranApiService {
   Future<List<Map<String, dynamic>>> versesByPage(int page) async {
     final url = Uri.parse(
       '${QuranApiConfig.apiBase}/verses/by_page/$page'
-      '?words=false&fields=text_uthmani,verse_key,page_number&per_page=50',
+      '?words=false&fields=text_uthmani,text_indopak,verse_key,page_number&per_page=50',
     );
     final res = await http
         .get(url, headers: await _headers())
@@ -115,6 +115,7 @@ class QuranApiService {
         'surah':  int.tryParse(key[0]) ?? 1,
         'ayah':   int.tryParse(key[1]) ?? 1,
         'arabic': v['text_uthmani'] ?? '',
+        'arabic_indopak': v['text_indopak'] ?? v['text_uthmani'] ?? '',
       };
     }).toList();
   }
@@ -138,6 +139,7 @@ class QuranApiService {
         .where((w) => w['char_type_name'] != 'end')
         .map<Map<String, dynamic>>((w) => {
               'arabic':          w['text_uthmani'] ?? w['text'] ?? '',
+              'arabic_indopak':  w['text_indopak'] ?? w['text_uthmani'] ?? '',
               'transliteration': w['transliteration']?['text'] ?? '',
               'translation':     w['translation']?['text'] ?? '',
             })
@@ -173,6 +175,7 @@ class QuranApiService {
             .where((w) => w['char_type_name'] != 'end')
             .map<Map<String, dynamic>>((w) => {
                   'arabic':          w['text_uthmani'] ?? w['text'] ?? '',
+                  'arabic_indopak':  w['text_indopak'] ?? w['text_uthmani'] ?? '',
                   'transliteration': w['transliteration']?['text'] ?? '',
                   'translation':     w['translation']?['text'] ?? '',
                 })
