@@ -1522,7 +1522,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               children: [
                 Positioned.fill(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 0, bottom: 120),
+                    padding: EdgeInsets.only(top: 0, bottom: 140 + MediaQuery.of(context).padding.bottom),
                     child: _AzkarCard(
                       azkar: azkar,
                       currentCount: count,
@@ -13684,16 +13684,23 @@ class _DhikrCounterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
-    const size = 82.0;
-    const stroke = 4.5;
     const teal = Color(0xFF0D9488);
     const green = Color(0xFF2BAE7C);
+
+    // Responsive sizing based on screen width
+    final sw = MediaQuery.of(context).size.width;
+    final size = sw < 360 ? 90.0 : sw < 400 ? 100.0 : 110.0;
+    final stroke = sw < 360 ? 4.5 : 5.5;
+    final countFontSize = sw < 360 ? 28.0 : sw < 400 ? 32.0 : 36.0;
+    final labelFontSize = sw < 360 ? 11.0 : 12.5;
+    final completedWidth = sw < 360 ? 160.0 : 180.0;
+    final completedHeight = sw < 360 ? 52.0 : 58.0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
-      width: isComplete ? 160 : size,
-      height: isComplete ? 52 : size,
+      width: isComplete ? completedWidth : size,
+      height: isComplete ? completedHeight : size,
       decoration: BoxDecoration(
         color: isComplete
             ? green
@@ -13724,7 +13731,7 @@ class _DhikrCounterButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
+                Icon(Icons.check_circle_rounded, color: Colors.white, size: completedHeight * 0.38),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
@@ -13744,8 +13751,8 @@ class _DhikrCounterButton extends StatelessWidget {
               children: [
                 // Progress ring
                 SizedBox(
-                  width: size - 12,
-                  height: size - 12,
+                  width: size - 14,
+                  height: size - 14,
                   child: CircularProgressIndicator(
                     value: progress,
                     strokeWidth: stroke,
@@ -13763,23 +13770,23 @@ class _DhikrCounterButton extends StatelessWidget {
                     Text(
                       '$count',
                       style: GoogleFonts.outfit(
-                        fontSize: 24,
+                        fontSize: countFontSize,
                         fontWeight: FontWeight.w800,
                         color: isDark ? Colors.white : teal,
                         height: 1.1,
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 1),
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                      margin: const EdgeInsets.only(top: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: teal.withValues(alpha: 0.10),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         'of $target',
                         style: GoogleFonts.outfit(
-                          fontSize: 10,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93),
                         ),

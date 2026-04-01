@@ -144,6 +144,47 @@ class QuranApiService {
         .toList();
   }
 
+  /// Bulk word-by-word for an entire surah. Returns Map<ayahNumber, List<word>>.
+  Future<Map<int, List<Map<String, dynamic>>>> wordsBySurah(int surah) async {
+    final result = <int, List<Map<String, dynamic>>>{};
+    // Quran.com API supports per_page up to 50 verses; paginate for long surahs
+    int page = 1;
+    while (true) {
+      final url = Uri.parse(
+        '${QuranApiConfig.apiBase}/verses/by_chapter/$surah'
+        '?words=true'
+        '&word_fields=text_uthmani,text_indopak,transliteration'
+        '&word_translation_language=en'
+        '&per_page=50'
+        '&page=$page',
+      );
+      final res = await http
+          .get(url, headers: await _headers())
+          .timeout(const Duration(seconds: 20));
+      if (res.statusCode == 401) { invalidateToken(); break; }
+      if (res.statusCode != 200) break;
+      final body = jsonDecode(res.body);
+      final verses = body['verses'] as List? ?? [];
+      if (verses.isEmpty) break;
+      for (final v in verses) {
+        final ayahNum = v['verse_number'] as int? ?? 0;
+        final rawWords = (v['words'] as List? ?? []);
+        result[ayahNum] = rawWords
+            .where((w) => w['char_type_name'] != 'end')
+            .map<Map<String, dynamic>>((w) => {
+                  'arabic':          w['text_uthmani'] ?? w['text'] ?? '',
+                  'transliteration': w['transliteration']?['text'] ?? '',
+                  'translation':     w['translation']?['text'] ?? '',
+                })
+            .toList();
+      }
+      final totalPages = body['pagination']?['total_pages'] as int? ?? 1;
+      if (page >= totalPages) break;
+      page++;
+    }
+    return result;
+  }
+
   /// Full surah text in the given script slug (e.g. 'uthmani', 'indopak', 'imlaei').
   Future<Map<int, String>> surahScript({
     required int surah,
