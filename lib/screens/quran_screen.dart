@@ -146,6 +146,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _wordByWord        = false;   // word-by-word mode
   List<Map<String, dynamic>> _wbwWords = [];  // [{arabic, translation}]
   bool   _wbwLoading        = false;
+  int?   _wbwPrefetchedSurah;              // surah whose bulk WBW is cached
   // Full-page Mushaf — PageView-based (one Quran page per PageView page)
   bool   _fullPageMode      = false;
   int    _currentPage       = 1;         // current Quran page (1–604)
@@ -364,6 +365,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _cache = await Hive.openBox('quran_cache');
     await Future.wait([_loadProgress(), _loadBookmarks(), _loadFavourites()]);
     await _fetchAyah(_surah, _ayah);
+    // Prefetch entire surah's word-by-word data in background so WBW toggle is instant
+    _prefetchSurahWbw(_surah);
   }
 
   // ── Load last read position + today's stats ───────────────────────────────────
@@ -440,7 +443,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           _surahName   = cached['surahName'] ?? '';
           _loading     = false;
         });
-        if (_wordByWord) _fetchWordByWord(surah, ayah);
+        _fetchWordByWord(surah, ayah);
         return;
       }
     }
@@ -509,7 +512,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             _loading     = false;
           });
         }
-        if (_wordByWord) _fetchWordByWord(surah, ayah);
+        _fetchWordByWord(surah, ayah);
       } else {
         if (mounted) setState(() { _loading = false; _arabic = 'Could not load ayah. Please retry.'; });
       }
@@ -528,9 +531,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
     bool earnRewards = !fromAutoPlay && !_autoAdvance && !_repeatAyah;
 
+    final surahChanged = nextSurah != _surah;
     setState(() {
       // Sync _currentPage when crossing a surah boundary so Mushaf stays aligned
-      if (nextSurah != _surah) {
+      if (surahChanged) {
         _currentPage = _kSurahStartPage[nextSurah.clamp(1, 114)];
       }
       _surah = nextSurah; _ayah = nextAyah; _wbwWords = [];
@@ -538,6 +542,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         _ayahsToday++; _pointsToday += XpReward.ayahRead;
       }
     });
+    // Prefetch new surah's WBW data when crossing surah boundary
+    if (surahChanged) _prefetchSurahWbw(nextSurah);
 
     // Run XP and progress saving in background (don't block UI)
     _saveReadingProgress(nextSurah, nextAyah, earnRewards: earnRewards);
@@ -607,7 +613,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Fetch word-by-word data ───────────────────────────────────────────────────
   Future<void> _fetchWordByWord(int surah, int ayah) async {
-    setState(() { _wbwLoading = true; _wbwWords = []; });
+    if (_wordByWord) setState(() { _wbwLoading = true; _wbwWords = []; });
+
+    // 1. Check per-ayah cache first (instant)
     final wbwCacheKey = 'wbw_${surah}_$ayah';
     final cachedWbw = _cache.get(wbwCacheKey);
     if (cachedWbw != null) {
@@ -617,11 +625,37 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             .map((w) => Map<String, dynamic>.from(w as Map))
             .toList();
         if (mounted) setState(() { _wbwWords = words; _wbwLoading = false; });
+        // Trigger bulk prefetch in background if not done for this surah
+        if (_wbwPrefetchedSurah != surah) _prefetchSurahWbw(surah);
         return;
       }
     }
+
+    // 2. Bulk-fetch entire surah (caches every ayah at once)
+    if (_wbwPrefetchedSurah != surah) {
+      try {
+        final allWords = await QuranApiService.instance.wordsBySurah(surah);
+        if (allWords.isNotEmpty) {
+          final ts = DateTime.now().toIso8601String();
+          for (final entry in allWords.entries) {
+            await _cache.put('wbw_${surah}_${entry.key}', {
+              'words': entry.value,
+              'ts': ts,
+            });
+          }
+          _wbwPrefetchedSurah = surah;
+          if (allWords.containsKey(ayah) && mounted) {
+            setState(() { _wbwWords = allWords[ayah]!; _wbwLoading = false; });
+            return;
+          }
+        }
+      } catch (_) {
+        // Fall through to single-ayah fetch
+      }
+    }
+
+    // 3. Fallback: single-ayah fetch
     try {
-      // Authenticated Quran Foundation API (token from .env)
       final words = await QuranApiService.instance.wordsByKey('$surah:$ayah');
       if (words.isNotEmpty) {
         await _cache.put(wbwCacheKey, {
@@ -635,6 +669,22 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {
       if (mounted) setState(() => _wbwLoading = false);
     }
+  }
+
+  /// Background bulk prefetch — caches all ayahs for the surah silently
+  Future<void> _prefetchSurahWbw(int surah) async {
+    try {
+      final allWords = await QuranApiService.instance.wordsBySurah(surah);
+      if (allWords.isEmpty) return;
+      final ts = DateTime.now().toIso8601String();
+      for (final entry in allWords.entries) {
+        await _cache.put('wbw_${surah}_${entry.key}', {
+          'words': entry.value,
+          'ts': ts,
+        });
+      }
+      _wbwPrefetchedSurah = surah;
+    } catch (_) {}
   }
 
   // ── Surah → first page lookup (Hafs Uthmani) — offline fallback ──────────────
@@ -2505,7 +2555,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             arabic: _QuranScreenState._stripQuranicAnnotations(w['arabic'] as String? ?? ''),
             transliteration: w['transliteration'] as String? ?? '',
             translation: w['translation'] as String? ?? '',
-            arabicFontSize: _arabicFontSize * 0.70,
+            arabicFontSize: _arabicFontSize * 0.95,
             quranScriptIdx: _quranScriptIdx,
             accentColor: _accent,
             txtColor: txt,
@@ -3450,7 +3500,7 @@ class _WbwWordChipState extends State<_WbwWordChip>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.lora(
-                    fontSize: 9.5,
+                    fontSize: 11.5,
                     fontStyle: FontStyle.italic,
                     color: goldClr.withValues(alpha: 0.85),
                     height: 1.3,
@@ -3465,7 +3515,7 @@ class _WbwWordChipState extends State<_WbwWordChip>
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.outfit(
-                  fontSize: 10.5,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.w500,
                   color: widget.subColor,
                   height: 1.3,
