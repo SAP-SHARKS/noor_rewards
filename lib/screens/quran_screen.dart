@@ -2809,14 +2809,25 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Return purely responsive box mapping. Scroll dimensions are now infinitely controlled by the outer CustomScrollView.
     return Builder(
       builder: (ctx) {
-        // Approximate header update as pages lazily scroll into the render buffer
+        // Update _currentPage only when this page is actually visible on screen
+        // (not just pre-rendered in the buffer), using its position relative to viewport
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _currentPage != pageNum) {
-            setState(() {
-              _currentPage = pageNum;
-              final surahForPage = _resolveSurahForPage(pageNum);
-              _surahName = _surahNames[surahForPage - 1];
-            });
+          if (!mounted) return;
+          final ro = ctx.findRenderObject() as RenderBox?;
+          if (ro == null || !ro.hasSize) return;
+          final viewport = _fullPageScrollController;
+          if (viewport == null || !viewport.hasClients) return;
+          final offset = ro.localToGlobal(Offset.zero).dy;
+          final screenH = MediaQuery.of(context).size.height;
+          // Consider this page "visible" if its top half is within the screen
+          if (offset < screenH * 0.5 && offset + ro.size.height > screenH * 0.3) {
+            if (_currentPage != pageNum) {
+              setState(() {
+                _currentPage = pageNum;
+                final surahForPage = _resolveSurahForPage(pageNum);
+                _surahName = _surahNames[surahForPage - 1];
+              });
+            }
           }
         });
 
