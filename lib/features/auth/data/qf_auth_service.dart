@@ -11,7 +11,7 @@ class QfAuthService {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final _supabase = Supabase.instance.client;
 
-  static const String _redirectUri = 'com.example.noor_rewards://oauth2/callback';
+  static const String _redirectUri = 'noorrewards://oauth2/callback';
   static const String _accessTokenKey = 'qf_access_token';
   static const String _refreshTokenKey = 'qf_refresh_token';
 

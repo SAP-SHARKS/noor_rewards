@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../features/auth/data/qf_auth_service.dart';
 
 class StartJourneyScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -265,6 +266,59 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               const _GoogleLogo(size: 22),
                               const SizedBox(width: 12),
                               const Text('Continue with Google'),
+                            ],
+                          ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // QF Sign-In Button
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : () async {
+                      setState(() => _isLoading = true);
+                      try {
+                        // Assuming QfAuthService is defined globally or we can just import it
+                        await QfAuthService.instance.signIn();
+                        if (mounted) {
+                           // Navigate to dashboard or handle success
+                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully authenticated with Quran.com!')));
+                        }
+                      } catch (e) {
+                         if (mounted) {
+                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                         }
+                      } finally {
+                        if (mounted) setState(() => _isLoading = false);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1A4A2E),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 17),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      elevation: 0,
+                      textStyle: GoogleFonts.outfit(
+                        fontSize: 16, // Use same size
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.book_rounded, size: 22, color: Color(0xFF00C875)),
+                              SizedBox(width: 12),
+                              Text('Continue with Quran.com'),
                             ],
                           ),
                   ),
