@@ -14,10 +14,16 @@ import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart';       // Quran Foundation credentials
 import 'utils/asset_helper.dart';
 
+import 'core/env/env.dart';
+
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
+    
+    // Initialize QF environment variables
+    await Env.init();
+    
     await Supabase.initialize(
       url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
       anonKey:

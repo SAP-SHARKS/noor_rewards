@@ -352,9 +352,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     // Persist position locally (instant) + remotely (fire-and-forget)
-    _cache.put('pref_mushaf_page', _currentPage);
-    _cache.put('pref_mushaf_surah', _surah);
-    _cache.put('pref_mushaf_ayah', _ayah);
+    _syncReadingPosition();
     _savePagePosition();
     WidgetsBinding.instance.removeObserver(this);
     _hintTimer?.cancel();
@@ -575,6 +573,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Prefetch new surah's WBW data when crossing surah boundary
     if (surahChanged) _prefetchSurahWbw(nextSurah);
 
+    // Keep all modes in sync
+    _syncReadingPosition();
+
     // Run XP and progress saving in background (don't block UI)
     _saveReadingProgress(nextSurah, nextAyah, earnRewards: earnRewards);
 
@@ -609,6 +610,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
+  /// Sync all reading position caches so Mushaf, Verse, and WBW modes stay aligned.
+  void _syncReadingPosition() {
+    _cache.put('pref_mushaf_surah', _surah);
+    _cache.put('pref_mushaf_ayah', _ayah);
+    _cache.put('pref_mushaf_page', _currentPage);
+  }
+
   // Lightweight save: page + surah + ayah position (no XP/streaks) — called on mushaf nav
   Future<void> _savePagePosition() async {
     final uid = _sb.auth.currentUser?.id;
@@ -638,6 +646,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
       _surah = prevSurah; _ayah = prevAyah; _wbwWords = [];
     });
+    _syncReadingPosition();
     _fetchAyah(prevSurah, prevAyah);
   }
 
@@ -754,12 +763,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // 2. Fetches from api.quran.com
   // 3. Falls back to surah start-page table
   Future<int> _resolvePageForCurrentAyah() async {
-    final cacheKey = 'pagenum_${_surah}__ayah';
+    final cacheKey = 'pagenum_${_surah}_$_ayah';
     final cached = _cache.get(cacheKey);
     if (cached is int) return cached;
 
     try {
-      final url = 'https://api.quran.com/api/v4/verses/by_key/_surah:_ayah'
+      final url = 'https://api.quran.com/api/v4/verses/by_key/$_surah:$_ayah'
           '?fields=page_number';
       final res = await http
           .get(Uri.parse(url), headers: {'Accept': 'application/json'})
@@ -849,10 +858,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // and allows fetching further pages as they lazily build.
   DateTime _lastMushafSave = DateTime(2000);
   void _onMushafScroll() {
-    // Save locally (instant) on every scroll
-    _cache.put('pref_mushaf_page', _currentPage);
-    _cache.put('pref_mushaf_surah', _surah);
-    _cache.put('pref_mushaf_ayah', _ayah);
+    _syncReadingPosition();
     // Throttle Supabase save to once per 3 seconds
     final now = DateTime.now();
     if (now.difference(_lastMushafSave).inSeconds >= 3) {
@@ -931,7 +937,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   _fetchAyah(n, 1);
                   // Sync _currentPage so Mushaf opens at the correct page
                   _currentPage = _kSurahStartPage[n.clamp(1, 114)];
-                  // Also persist so DB stays in sync
+                  _syncReadingPosition();
                   _savePagePosition();
                 },
                 leading: Container(width: 36, height: 36,
@@ -2246,9 +2252,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         });
                         _cache.put('pref_mushaf_mode', true);
                         _cache.put('pref_wbw_mode', false);
-                        _cache.put('pref_mushaf_page', page);
-                        _cache.put('pref_mushaf_surah', _surah);
-                        _cache.put('pref_mushaf_ayah', _ayah);
+                        _syncReadingPosition();
                         _enterFullPageScrollMode(page);
                         _startPageTimer();
                         // Auto-hide overlay after 4 s
@@ -2686,22 +2690,33 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _controlsHideTimer?.cancel();
     _timerShouldRun = false;
     _stopPageTimer();
+
+    // ── Sync position back to normal-mode state ─────────────────────────────
+    // Derive exact surah + ayah from loaded page data so verse mode resumes
+    // at the precise ayah the user was reading, not just the start of surah.
+    int syncedSurah = _resolveSurahForPage(_currentPage);
+    int syncedAyah = 1;
+    final pageAyahs = _loadedPages[_currentPage];
+    if (pageAyahs != null && pageAyahs.isNotEmpty) {
+      // Use the first ayah on the visible page
+      syncedSurah = pageAyahs.first['surah'] as int? ?? syncedSurah;
+      syncedAyah  = pageAyahs.first['ayah'] as int? ?? 1;
+    }
+
     _fullPageScrollController?.dispose();
     _fullPageScrollController = null;
 
-    // ── Sync position back to normal-mode state ─────────────────────────────
-    // Derive surah from current page so normal-mode resumes at the same spot.
-    final syncedSurah = _resolveSurahForPage(_currentPage);
     setState(() {
       _fullPageMode = false;
       _loadedPages.clear();
       _surah     = syncedSurah;
-      _ayah      = 1;                         // start of that surah (safe default)
+      _ayah      = syncedAyah;
       _surahName = _surahNames[syncedSurah - 1];
     });
     _cache.put('pref_mushaf_mode', false);
-    _fetchAyah(syncedSurah, 1);              // re-fetch for normal ayah card
-    _savePagePosition();                     // persist page + surah + ayah
+    _syncReadingPosition();
+    _fetchAyah(syncedSurah, syncedAyah);     // re-fetch for normal ayah card
+    _savePagePosition();
   }
 
 
