@@ -100,7 +100,15 @@ final List<_QuranScript> _kQuranScripts = [
     apiSlug: 'indopak',
     arabicPreview: 'بِسۡمِ اللهِ',
     style: (size, color, height, weight) =>
-        TextStyle(fontFamily: 'AlQalamQuran', fontSize: size + 6, color: color, height: height, fontWeight: weight),
+        TextStyle(
+          fontFamily: 'AlQalamQuran', 
+          fontSize: size + 6, 
+          color: color, 
+          height: height == null ? null : height * 0.75, 
+          // Al Qalam is natively thick. Passing w700 applies a synthetic blur/bold that bloats the script.
+          fontWeight: FontWeight.normal,
+          wordSpacing: -3.5, // Brings words together closely to match Quranly style
+        ),
   ),
 ];
 

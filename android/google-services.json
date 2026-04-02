@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933672581282",
+    "project_id": "noor-rewards-b02ae",
+    "storage_bucket": "noor-rewards-b02ae.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933672581282:android:3848a2d34e0a05a40f3ffb",
+        "android_client_info": {
+          "package_name": "com.example.noor_rewards"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGX97aB3-3QfXehOxWs21Flsj8F7xFdr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
