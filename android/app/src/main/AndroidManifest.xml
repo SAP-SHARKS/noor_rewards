@@ -42,6 +42,7 @@
         
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="true"
             tools:node="replace">
             <intent-filter>
@@ -51,7 +52,6 @@
                 <data android:scheme="noorrewards" android:host="oauth2" android:pathPrefix="/callback"/>
             </intent-filter>
         </activity>
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
