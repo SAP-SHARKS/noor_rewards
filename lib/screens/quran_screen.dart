@@ -96,8 +96,9 @@ final List<_QuranScript> _kQuranScripts = [
         GoogleFonts.scheherazadeNew(
           fontSize: size,
           color: color,
-          height: height == null ? null : height * 0.82,
+          height: height,
           fontWeight: weight == FontWeight.w700 ? FontWeight.w600 : weight,
+          wordSpacing: 4.0,
         ),
   ),
   (
@@ -2302,6 +2303,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           });
                           _cache.put('pref_wbw_mode', _wordByWord);
                           _cache.put('pref_mushaf_mode', false);
+                          _syncReadingPosition();
                           if (_wordByWord && _wbwWords.isEmpty) {
                             _fetchWordByWord(_surah, _ayah);
                           }
@@ -2358,7 +2360,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   ? '${_QuranScreenState._stripBismillahPrefix(_arabic)} '
                                   : '$_arabic ',
                               style: _kQuranScripts[_quranScriptIdx].style(
-                                  _arabicFontSize, txt, 2.2, FontWeight.w700),
+                                  _arabicFontSize, txt, 1.85, FontWeight.w700),
                             ),
                             WidgetSpan(
                               alignment: PlaceholderAlignment.middle,
@@ -2385,6 +2387,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           ],
                         ),
                         textAlign: TextAlign.right,
+                        strutStyle: StrutStyle(
+                          fontSize: _arabicFontSize,
+                          height: 2.4,
+                          forceStrutHeight: true,
+                        ),
                       ),
                     ),
                     if (_showTranslation) ...[
@@ -2968,10 +2975,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Text('\u06DD', style: _kQuranScripts[_quranScriptIdx].style(fontSize * 1.5, goldClr.withValues(alpha: 0.75), 1.0, FontWeight.w400)),
+            Text('\u06DD', style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 1.5, color: goldClr.withValues(alpha: 0.75), height: 1.0, fontWeight: FontWeight.w400)),
             Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text(numStr, style: _kQuranScripts[_quranScriptIdx].style(fontSize * 0.55, textClr, 1.0, FontWeight.w400)),
+              child: Text(numStr, style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 0.55, color: textClr, height: 1.0, fontWeight: FontWeight.w400)),
             ),
           ],
         ),
@@ -2979,12 +2986,24 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       spans.add(const TextSpan(text: ' '));
     }
 
-    final textStyle = _kQuranScripts[_quranScriptIdx].style(fontSize, textClr, lh, FontWeight.w400);
+    // Mushaf-specific style: use consistent word spacing with justify
+    final baseStyle = _kQuranScripts[_quranScriptIdx].style(fontSize, textClr, lh, FontWeight.w400);
+    // Reset any per-font wordSpacing so justify distributes space evenly,
+    // and add slight letter spacing to help fill lines more uniformly.
+    final textStyle = baseStyle.copyWith(
+      wordSpacing: 1.0,
+      letterSpacing: 0.3,
+    );
 
     return Text.rich(
       TextSpan(style: textStyle, children: spans),
       textDirection: TextDirection.rtl,
       textAlign: TextAlign.justify,
+      strutStyle: StrutStyle(
+        fontSize: fontSize,
+        height: lh,
+        forceStrutHeight: true,
+      ),
     );
   }
 
