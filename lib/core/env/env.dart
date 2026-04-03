@@ -5,13 +5,18 @@ class Env {
     await dotenv.load(fileName: '.env');
   }
 
-  static String get qfEnv => dotenv.env['QF_ENV'] ?? 'prelive';
-  static String get qfClientId => dotenv.env['QF_CLIENT_ID'] ?? '';
+  static bool get isDev => (dotenv.env['IS_DEV']?.toLowerCase() ?? 'true') == 'true';
+
+  static String get qfEnv => isDev ? 'prelive' : 'production';
+
+  static String get qfClientId => isDev 
+      ? (dotenv.env['QURAN_PRELIVE_CLIENT_ID'] ?? '') 
+      : (dotenv.env['QURAN_PROD_CLIENT_ID'] ?? '');
 
   static String get qfAuthBase {
-    return qfEnv == 'production'
-        ? 'https://oauth2.quran.foundation'
-        : 'https://prelive-oauth2.quran.foundation';
+    return isDev
+        ? 'https://prelive-oauth2.quran.foundation'
+        : 'https://oauth2.quran.foundation';
   }
 
   static String get qfApiBase {
