@@ -284,8 +284,8 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully authenticated with Quran.com!')));
                         }
                       } catch (e) {
-                         if (mounted) {
-                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                         if (mounted && !e.toString().contains('cancelled')) {
+                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception:', '').trim()), backgroundColor: Colors.red));
                          }
                       } finally {
                         if (mounted) setState(() => _isLoading = false);

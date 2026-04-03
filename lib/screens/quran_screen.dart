@@ -93,7 +93,12 @@ final List<_QuranScript> _kQuranScripts = [
     apiSlug: 'uthmani',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.amiri(fontSize: size + 4, color: color, height: height, fontWeight: weight),
+        GoogleFonts.scheherazadeNew(
+          fontSize: size,
+          color: color,
+          height: height == null ? null : height * 0.82,
+          fontWeight: weight == FontWeight.w700 ? FontWeight.w600 : weight,
+        ),
   ),
   (
     name: 'IndoPak',

@@ -25,7 +25,8 @@ class QfAuthService {
           Env.qfClientId,
           _redirectUri,
           discoveryUrl: '${Env.qfAuthBase}/.well-known/openid-configuration',
-          scopes: ['openid', 'profile', 'email'], 
+          scopes: ['openid', 'offline_access'], 
+          promptValues: const ['login'], 
         ),
       );
 
@@ -56,7 +57,12 @@ class QfAuthService {
          throw Exception('Authorization failed or was canceled.');
       }
     } catch (e) {
-      throw Exception('Sign in failed: $e');
+      final errorString = e.toString();
+      if (errorString.contains('User cancelled flow')) {
+        throw Exception('Sign in was cancelled.');
+      } else {
+        throw Exception('Sign in failed: $e');
+      }
     }
   }
 
