@@ -148,7 +148,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _showTranslation   = false;   // show/hide translation block
   bool   _showProgressCard  = true;    // show/hide daily progress card
   bool   _showPointsBanner  = true;    // show/hide +points banner
-  bool   _showSurahBanner   = false;   // show/hide surah header banner
+  bool   _showSurahBanner   = true;    // show/hide surah header banner
   bool   _fullScreenMode    = false;   // hide appbar+nav for focus
   // Reading aids
   bool   _wordByWord        = false;   // word-by-word mode
@@ -2116,7 +2116,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   child: Row(children: [
                     const Text('🌟', style: TextStyle(fontSize: 16)),
                     const SizedBox(width: 8),
-                    Text('+_pointsToday Noor Points earned today!',
+                    Text('+$_pointsToday Noor Points earned today!',
                         style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -2125,74 +2125,83 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 ),
                 const SizedBox(height: 16),
               ],
-              // Surah banner
+              // ── Surah header — compact Quranly-inspired bar ──
               if (_showSurahBanner) ...[
                 GestureDetector(
                   onTap: _showSurahPicker,
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [
-                            _accent.withValues(alpha: 0.85),
-                            _accent
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight),
-                      borderRadius: BorderRadius.circular(20),
+                      color: cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: _accent.withValues(alpha: 0.15)),
                       boxShadow: [
                         BoxShadow(
-                            color: _accent.withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6))
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
                       ],
                     ),
                     child: Row(children: [
-                      Expanded(child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        Text('$_surahName • Surah _surah',
-                            style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white)),
-                        const SizedBox(height: 2),
-                        Text(
-                            'Ayah _ayah of '
-                            '${_surahLengths[_surah]}  •  Tap to change',
-                            style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.white
-                                    .withValues(alpha: 0.8))),
-                      ])),
+                      // Surah number badge
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 7),
+                        width: 36, height: 36,
                         decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Row(mainAxisSize: MainAxisSize.min,
-                            children: [
-                          const Icon(Icons.menu_book_rounded,
-                              color: Colors.white, size: 16),
-                          const SizedBox(width: 5),
-                          Text('Browse',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white)),
+                          color: _accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text('$_surah',
+                            style: GoogleFonts.outfit(
+                              fontSize: 14, fontWeight: FontWeight.w800,
+                              color: _accent,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Surah name + ayah counter
+                      Expanded(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_surahName,
+                            style: GoogleFonts.outfit(
+                              fontSize: 16, fontWeight: FontWeight.w700,
+                              color: txt,
+                            ),
+                          ),
+                          Text('$_ayah / ${_surahLengths[_surah]}',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12, fontWeight: FontWeight.w500,
+                              color: sub,
+                            ),
+                          ),
+                        ],
+                      )),
+                      // Browse chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: _accent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.list_rounded, color: Colors.white, size: 15),
                           const SizedBox(width: 4),
-                          const Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              color: Colors.white, size: 18),
+                          Text('Browse',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12, fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                         ]),
                       ),
                     ]),
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
               ],
               // Ayah card
               Container(

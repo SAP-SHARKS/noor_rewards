@@ -1,0 +1,858 @@
+--------- beginning of main
+04-02 20:58:07.429 31499 20108 D OplusCCodec: videoBoost activity name: .Conversation
+04-02 20:58:07.429 31499 20108 I OplusWhiteListCache: Failed to get value from property[debug.codec.ux]
+04-02 20:58:07.429 31499 20108 I OplusWhiteListCache: Failed to get value from property[debug.cpu.boost]
+04-02 20:58:07.429 31499 20108 D OplusWhiteListCache: Mediaserver boost scenario, isVideo[0]
+04-02 20:58:07.429 31499 20108 D OplusWhiteListCache: Media server boost info is valid
+04-02 20:58:07.429 31499 20108 I OplusWhiteListCache: Get proc name[com.whatsapp] by pid[31251]
+04-02 20:58:07.429 31499 20108 D OplusWhiteListCache: Precheck, need to boost[audio]
+04-02 20:58:07.429 31499 20108 D OplusWhiteListCache: Find boost[#99] info[sched=4,isEncoder=0,isVideo=0]
+04-02 20:58:07.429 31499 20108 D OplusWhiteListCache: Precheck, need to boost[audio]
+04-02 20:58:07.429 31499 20108 D OplusWhiteListCache: Precheck, need to boost[audio]
+04-02 20:58:07.429 31499 20108 D OplusCCodec: uxInfo.needVendorBoost: 0
+04-02 20:58:07.429 31499 20108 D OplusCCodec: App: pid: 31499, tid: 20107, sched: 4
+04-02 20:58:07.429 31499 20108 D OplusCCodec: App: pid: 31499, tid: 20108, sched: 4
+04-02 20:58:07.429 31499 20040 D MediaCodec: [0xe9bed800] setState: 7
+04-02 20:58:07.429 31499 20108 D OplusCCodec: Boost instance[0xea9de8a8]
+04-02 20:58:07.429 31499 20040 D OplusCCodec: signalFlush [1399]: (0xe6a8e180)
+04-02 20:58:07.429 31499 20040 I OplusFeedbackInfo: [signalFlush:L1324]
+04-02 20:58:07.429 31499 20108 D CCodec  : [c2.android.aac.decoder] buffers are bound to CCodec for this session
+04-02 20:58:07.429 31499 20108 D CCodecConfig: no c2 equivalents for durationUs
+04-02 20:58:07.429 31499 20108 D CCodecConfig: no c2 equivalents for track-id
+04-02 20:58:07.429 31499 20108 D CCodecConfig: no c2 equivalents for language
+04-02 20:58:07.430 31499 20108 D CCodecConfig: no c2 equivalents for encoder-delay
+04-02 20:58:07.430 31499 20108 D CCodecConfig: no c2 equivalents for encoder-padding
+04-02 20:58:07.430 31499 20040 D MediaCodec: [0xe9bed800] setState: 8
+04-02 20:58:07.430 31499 20035 I NuPlayer: audioFlush latency : 5.74 ms
+04-02 20:58:07.431 31499 20039 D MediaCodec: [0xe9bed800] [c2.android.aac.decoder] release
+04-02 20:58:07.431 31499 20108 D CCodecConfig: no c2 equivalents for dataSourceType
+04-02 20:58:07.431 31499 20040 D MediaCodec: [0xe9bed800] setState: 10
+04-02 20:58:07.431 31499 20108 D CCodecConfig: no c2 equivalents for feedbackKey
+04-02 20:58:07.431 31499 20040 D OplusCCodec: initiateShutdown [1295]: (0xe6a8e180) keepComponentAllocated=0
+04-02 20:58:07.431 31499 20108 D CCodecConfig: no c2 equivalents for calling-uid
+04-02 20:58:07.431 31499 20108 D CCodecConfig: no c2 equivalents for calling-pid
+04-02 20:58:07.431 31499 20040 D OplusVideoBoost: disableVideoBoost, handle: [0xea9dcb98], flags: 0x30
+04-02 20:58:07.431 31499 20108 D CCodecConfig: no c2 equivalents for tp-ux-tid
+04-02 20:58:07.431 31499 20108 D CCodecConfig: no c2 equivalents for flags
+04-02 20:58:07.431 31499 20040 D OplusVideoBoostUtils: Set (sched: 0, pid: 31499, tid: 20039 isEnable: 0) successfully.
+04-02 20:58:07.432 31499 20040 D OplusVideoBoostUtils: Set (sched: 0, pid: 31499, tid: 20040 isEnable: 0) successfully.
+04-02 20:58:07.432 31499 20108 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 128000
+04-02 20:58:07.435 31499 20108 W Codec2Client: query -- param skipped: index = 1107298332.
+04-02 20:58:07.435 31499 20108 D CCodec  : client requested max input size 225, which is smaller than what component recommended (8192); overriding with component recommendation.
+04-02 20:58:07.435 31499 20108 W CCodec  : This behavior is subject to change. It is recommended that app developers double check whether the requested max input size is in reasonable range.
+04-02 20:58:07.435 31499 20108 D CCodec  : encoding statistics level = 0
+04-02 20:58:07.435 31499 20108 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-album-mode = 0
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-boost-level = 127
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-cut-level = 127
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-effect-type = 3
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-encoded-target-level = -1
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-max-output-channel_count = 8
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-target-ref-level = 64
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t bitrate = 128000
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t channel-count = 1
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t channel-mask = 0
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t level = 0
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t max-input-size = 8192
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t max-output-channel-count = 8
+04-02 20:58:07.435 31499 20108 D CCodec  :   string mime = "audio/mp4a-latm"
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t profile = 2
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t sample-rate = 44100
+04-02 20:58:07.435 31499 20108 D CCodec  : }
+04-02 20:58:07.435 31499 20040 D MediaCodec: [0xe9bed800] [c2.android.aac.decoder] kWhatReleaseCompleted
+04-02 20:58:07.435 31499 20108 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-album-mode = 0
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-boost-level = 127
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-cut-level = 127
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-effect-type = 3
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-drc-output-loudness = -1
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-encoded-target-level = -1
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-max-output-channel_count = 8
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t aac-target-ref-level = 64
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t channel-count = 1
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t channel-mask = 0
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t max-output-channel-count = 8
+04-02 20:58:07.435 31499 20108 D CCodec  :   string mime = "audio/raw"
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t sample-rate = 44100
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t encoder-delay = 2112
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t encoder-padding = 198
+04-02 20:58:07.435 31499 20108 D CCodec  :   int32_t android._config-pcm-encoding = 2
+04-02 20:58:07.435 31499 20108 D CCodec  : }
+04-02 20:58:07.435 31499 20040 D MediaCodec: [0xe9bed800] setState: 0
+04-02 20:58:07.436 31499 20039 D MediaCodec: [0xe9bed800] ~MediaCodec
+04-02 20:58:07.436 31499 20039 D MediaCodec: flushMediametrics
+04-02 20:58:07.436 31499 20108 I CCodecConfig: query failed after returning 20 values (BAD_INDEX)
+04-02 20:58:07.436 31499 20108 D MediaCodec: [0xeb3f8800] setState: 4
+04-02 20:58:07.437 31499 20108 I MediaCodec: MediaCodec will operate in async mode
+04-02 20:58:07.437 31499 20107 D MediaCodec: keep callback message for reclaim
+04-02 20:58:07.437 31499 20108 D MediaCodec: [0xeb3f8800] setState: 5
+04-02 20:58:07.439 31499 20108 W Codec2Client: query -- param skipped: index = 1342179345.
+04-02 20:58:07.439 31499 20108 W Codec2Client: query -- param skipped: index = 2415921170.
+04-02 20:58:07.439 31499 20108 W Codec2Client: query -- param skipped: index = 1610614798.
+04-02 20:58:07.440 31499 20110 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+04-02 20:58:07.440 31499 20110 D OplusCCodec: ~OplusCCodec [303]: (0xe6a8e180)
+04-02 20:58:07.440 31499 20108 D BufferPoolAccessor2.0: bufferpool2 0xea9ecf58 : 4(131072 size) total buffers - 4(131072 size) used buffers - 12/20 (recycle/alloc) - 8/34 (fetch/transfer)
+04-02 20:58:07.441 31499 20108 D CCodecBufferChannel: [c2.android.aac.decoder#867] Created input block pool with allocatorID 16 => poolID 1106 - OK (0)
+04-02 20:58:07.441 31499 20035 D NuPlayerDriver: notifyResetComplete(0xebc67d60)
+04-02 20:58:07.441 31503 31394 D BufferPoolAccessor2.0: Destruction - bufferpool2 0xb400007041ade828 cached: 0/0M, 0/0% in use; allocs: 4, 25% recycled; transfers: 4, 25% unfetched
+04-02 20:58:07.442 31499 10998 D AudioSink: setIsReset, 1
+04-02 20:58:07.442 31499 10998 D NuPlayerDriver: reset(0xebc67d60) at state 0
+04-02 20:58:07.442 31499 10998 D NuPlayerDriver: ~NuPlayerDriver(0xebc67d60)
+04-02 20:58:07.442 31499 10998 D AtlasEventUploadUtils: setEvent event:atlas_event_video_mediaplayer_state
+04-02 20:58:07.443 31503  1196 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+04-02 20:58:07.443  2578 27540 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_mediaplayer_state info:STATE,-1,31251
+04-02 20:58:07.443 31499 10998 W AMessage: failed to post message as target looper for handler 0 is gone.
+04-02 20:58:07.443 31251 31451 V MediaPlayer: resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+04-02 20:58:07.443 31251 31451 V MediaPlayer: cleanDrmObj: mDrmObj=null mDrmSessionId=null
+04-02 20:58:07.443 31499 20108 I CCodecBufferChannel: [c2.android.aac.decoder#867] Created output block pool with allocatorID 16 => poolID 2784 - OK
+04-02 20:58:07.443 31251 31451 V MediaPlayer: resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+04-02 20:58:07.443 31251 31451 V MediaPlayer: cleanDrmObj: mDrmObj=null mDrmSessionId=null
+04-02 20:58:07.443 31251 31451 D MediaPlayer: _release native called
+04-02 20:58:07.443 31499 20110 D OplusFeedbackInfo: ~OplusAnalysisFPS
+04-02 20:58:07.443 31251 31451 D MediaPlayer: _release native finished
+04-02 20:58:07.444 31499 20108 D CCodecBufferChannel: [c2.android.aac.decoder#867] Configured output block pool ids 2784 => OK
+04-02 20:58:07.444 31499 20108 D CCodecBufferChannel: [0xeaeaf610] [c2.android.aac.decoder#867] start: output->outputDelay 2, output->numSlots 6
+04-02 20:58:07.444 31499  8995 D AudioTrack: stop(3762): prior state:STATE_FLUSHED output 13 stream 3 session 10675481
+04-02 20:58:07.444 31499  8995 I AudioTrack: stopAndJoinCallbacks(3762) done
+04-02 20:58:07.444 31499  8995 D AudioTrack: ~AudioTrack(3762), releasing mStatus =0 session id 10675481 from 31499 on behalf of 31251
+04-02 20:58:07.444 31503 32667 E Codec2-ComponentInterface: We have a failed config
+04-02 20:58:07.444 31499  8995 D AudioTrack: stop(3762): prior state:STATE_FLUSHED output 13 stream 3 session 10675481
+04-02 20:58:07.444 31499  8995 I AudioTrack: stopAndJoinCallbacks(3762) done
+04-02 20:58:07.444 31503  1196 D BufferPoolAccessor2.0: Destruction - bufferpool2 0xb400007048b56e28 cached: 0/0M, 0/0% in use; allocs: 0, 0% recycled; transfers: 0, 0% unfetched
+04-02 20:58:07.444 31499 20108 D CCodecBuffers: [c2.android.aac.decoder#867:1D-Output.Impl[N]] converted 0 buffers to array mode of 6
+04-02 20:58:07.444 31499 20108 D CCodecBufferChannel: [c2.android.aac.decoder#867] start: updating output delay 2
+04-02 20:58:07.444 31499  8995 D ListServiceUtils: checkInListByUid module:audio-boost-blacklist uid:10152 cost 143us return 0
+04-02 20:58:07.444 31499  8995 D AudioTrackExtImpl: doSchedBoost, set mediaserver task boost, pid=31499, tid=20038, enable=0, ret=0
+04-02 20:58:07.444  2578  3644 D OplusAtlasVideo: callback success event:atlas_event_video_mediaplayer_state eventInfo:STATE,-1,31251
+04-02 20:58:07.453 31503 20109 D SimpleC2Component: Using output block pool with poolID 2784 => got 2784 - 0
+04-02 20:58:07.454   812 24178 I android.system.suspend-service: mSuspendCounter++ = 4
+04-02 20:58:07.455 31496 31530 E AudioPolicyIntefaceImpl: checkSessionHasActiveClient mSessionLatestHandleList has no port for session = 10675481
+04-02 20:58:07.455 31496 31530 D AudioPolicyEffects: releaseOutputSessionEffects: no output processing was attached to this stream
+04-02 20:58:07.455 31499 20108 D OplusCCodec: OplusCCodec::startMediaBoost start
+04-02 20:58:07.455 31499 20108 D OplusVideoBoost: enableVideoBoost, handle: [0xea9de8a8]
+04-02 20:58:07.455   812 24178 I android.system.suspend-service: --mSuspendCounter = 3
+04-02 20:58:07.455 31499 20108 D OplusVideoBoostUtils: Set (sched: 132, pid: 31499, tid: 20107 isEnable: 1) successfully.
+04-02 20:58:07.456 31499 20108 D OplusVideoBoostUtils: Set (sched: 132, pid: 31499, tid: 20108 isEnable: 1) successfully.
+04-02 20:58:07.456 31499 20108 D OplusVideoBoost: enableVideoBoost, handle: [0xea9de8a8], end
+04-02 20:58:07.456 31499 20108 D OplusCCodec: OplusCCodec::startMediaBoost end
+04-02 20:58:07.456 31499 20108 D MediaCodec: [0xeb3f8800] setState: 6
+04-02 20:58:07.456 31499 20107 I NuPlayerDecoderBase: audioStart latency : 65.84 ms
+04-02 20:58:07.456 31496 22945 D audioserver: FGS Logger Transaction failed
+04-02 20:58:07.456 31496 22945 D audioserver: -129
+04-02 20:58:07.457 31684  1110 I IPCThreadState: oneway function results for code 10007 on binder at 0xb400007aca641bc0 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-02 20:58:07.460 31503 20109 I C2SoftAacDec: Reconfiguring decoder: 0->44100 Hz, 0->1 channels
+04-02 20:58:07.462 31499 20108 D CCodecBufferChannel: [c2.android.aac.decoder#867] input EOS
+04-02 20:58:07.462 31499 20108 I OplusFeedbackInfo: 0xeb3c8540 setInputMetEos true
+04-02 20:58:07.464 31499 20108 D CCodecConfig: c2 config diff is   c2::u32 raw.channel-mask.value = 4
+04-02 20:58:07.465 31499 20108 D CCodecBuffers: [c2.android.aac.decoder#867:Output[N]] popFromStashAndRegister: at 0us, output format changed to AMessage(what = 0x00000000) = {
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-drc-album-mode = 0
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-drc-boost-level = 127
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-drc-cut-level = 127
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-drc-effect-type = 3
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-drc-output-loudness = -1
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-encoded-target-level = -1
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-max-output-channel_count = 8
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t aac-target-ref-level = 64
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t channel-count = 1
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t channel-mask = 4
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t max-output-channel-count = 8
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   string mime = "audio/raw"
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t sample-rate = 44100
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t encoder-delay = 2112
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t encoder-padding = 198
+04-02 20:58:07.465 31499 20108 D CCodecBuffers:   int32_t android._config-pcm-encoding = 2
+04-02 20:58:07.465 31499 20108 D CCodecBuffers: }
+04-02 20:58:07.466 31499 20107 I ExtendedNuUtils: Both src and dst missing for bit-width
+04-02 20:58:07.466 31499 20107 I ExtendedNuUtils: Overriding durationUs: with 64 bit src value 92879
+04-02 20:58:07.468 31499 20106 D AudioTrackExtImpl: AudioTrackExtImpl init
+04-02 20:58:07.468 31499 20106 D AudioTrack: set(): streamType 5, sampleRate 44100, format 0x1, channelMask 0x1, frameCount 22050, flags #2, notificationFrames 0, sessionId 10675489, transferType 0, uid 10152, pid 31251
+04-02 20:58:07.470 31496 16920 D AudioFlingerExtImpl: addAudioSessionMap, add 10675489, uid 10152, map size 3
+04-02 20:58:07.472 31496 16920 D APM_AudioPolicyManager: getOutputForDevices: Mute haptic when in notification
+04-02 20:58:07.472 31494 32053 D audio_hw_primary: adev_get_parameters: enter: vr_audio_mode_on
+04-02 20:58:07.472 31494 32053 I audio_hw_primary: getting vr mode to 0
+04-02 20:58:07.472 31494 32053 D audio_hw_primary: adev_get_parameters: exit: returns - vr_audio_mode_on=false
+04-02 20:58:07.473 31494 18181 E BinauralRecordAudioHw: adev_binaural_get_parameters: enter in nullptr
+04-02 20:58:07.473 31496 16920 D APM_AudioPolicyManager: mSpatializerOutput is null, canBeSpatializedInt=0, forceSpatialized:0
+04-02 20:58:07.474 31496 16920 D AudioBoost: audioSchedBoost, pid=31496, tid=16920, enable=1, ret=0
+04-02 20:58:07.474 31496 16920 D AudioFlinger: createTrack_l output(13) original frameCount 22050  mNormalFrameCount 960 mFrameCount(hal) 192 minFrameCount 1772 notificationsPerBuffer 0 mSampleRate 48000 halLatencyMs 48
+04-02 20:58:07.475 31496 16920 D ListServiceUtils: checkInListByUid module:short-sound-frame-change uid:10152 cost 395us return 0
+04-02 20:58:07.475 31496 16920 D AudioFlinger: Client defaulted notificationFrames to 11025 for frameCount 22050
+04-02 20:58:07.475 31496 16920 D AudioFlinger: createTrack_l output(13) final frameCount 22050 for track session 10675489 , mFrameCount 192, mNormalFrameCount 960, notificationFrameCount 11025
+04-02 20:58:07.476 31496 16920 I AF::Track: Track, track(0xb400007517cb6c00): mFastIndex -1, mStreamType 5, mId 2916, mPortId 3763, mFrameCount 22050, mSampleRate 44100, mFormat 1, mChannelCount 1,thread 0xb4000075493a9a00, sessionId 10675489, AudioOut_D, primary-6
+04-02 20:58:07.479  1931  1931 D MMListService: getListValueByUid module:audio-turbo-boost, uid:10152
+04-02 20:58:07.480 31496 16920 D AudioBoost: audioSchedBoost, pid=31496, tid=16920, enable=0, ret=0
+04-02 20:58:07.483 31499 20106 I AudioTrack: createTrack_l(3763) on outputId(13) : 0xea9b9c00, mCblk = 0xf002f000,  mLatency = 548, mAfLatency = 48, frameCount = 22050, mSampleRate = 44100, mFlags = 0x2, mReqFrameCount = 22050, mNotificationFramesAct = 11025
+04-02 20:58:07.483 31499 20106 D ListServiceUtils: checkInListByUid module:audio-boost-blacklist uid:10152 cost 147us return 0
+04-02 20:58:07.484 31499 20106 D AudioTrackExtImpl: doSchedBoost, set mediaserver task boost, pid=31499, tid=20106, enable=1, ret=0
+04-02 20:58:07.484 31499 20106 D AudioTrack: setVolume(3763) left 1.000 right 1.000 , callingPid 31499
+04-02 20:58:07.485 31496 32050 D AudioFlinger: updateWakeLockUids_l AudioOut_15 uids:
+04-02 20:58:07.485 31494  2952 W audio_hw_primary: out_write: underrun(11180) frames_by_time(1618) > out->last_fifo_frames_remaining(384)
+04-02 20:58:07.486 31496 32068 E AudioFlinger: negative wakelock count
+04-02 20:58:07.486 31499 20106 D AudioTrack: setVolume(3763) left 1.000 right 1.000 , callingPid 31499
+04-02 20:58:07.486 31499 20106 D AudioTrack: start(3763): prior state:STATE_STOPPED output 13 stream 3 session 10675489
+04-02 20:58:07.486 31496 32063 D AudioFlinger: updateWakeLockUids_l AudioOut_35 uids:
+04-02 20:58:07.486 31496 31507 D AF::Track: start(2916): calling pid 31499 portId 3763 session 10675489 thresholdFrames 22050 mFrameCount 22050
+04-02 20:58:07.486 31496 32068 D AudioFlinger: updateWakeLockUids_l AudioOut_45 uids:
+04-02 20:58:07.486 31496 31507 D AudioFlingerExtImpl: AudioFlingerExtImpl oplusSetParameters: keyvalue RingTrack=1
+04-02 20:58:07.487 31494 20574 D audio_hw_primary: adev_set_parameters: enter: RingTrack=1
+04-02 20:58:07.487 31494 20574 D VIBRATOR_RING_SYNC: VIBRATE
+04-02 20:58:07.488 31494 20574 E VIBRATOR_RING_SYNC: WROTE
+04-02 20:58:07.488 31494 20574 D VIBRATOR_RING_SYNC: VIBRATE done!.
+04-02 20:58:07.488 31494 20574 D audio_hw_hfp: hfp_set_parameters: enter
+04-02 20:58:07.488 31494 20574 D audio_hw_primary: adev_set_parameters: set dual headphone enable: 0x0
+04-02 20:58:07.489 31494 20574 D audio_hw_extn: audio_extn_fm_set_parameters: Enter
+04-02 20:58:07.489 31494 20574 D audio_hw_primary: adev_set_parameters: exit with code(0)
+04-02 20:58:07.490 31496 31507 D AudioBoost: audioSchedBoost, pid=31496, tid=31507, enable=1, ret=0
+04-02 20:58:07.513   812  4795 I android.system.suspend-service: mSuspendCounter++ = 4
+04-02 20:58:07.514 31496 31530 D AudioPolicyEffects: addOutputSessionEffects(): no output processing needed for this stream
+04-02 20:58:07.514 31496 31530 D APM_AudioPolicyManager: startOutput() output 13, stream 5, portId 3763, session 10675489
+04-02 20:58:07.515 31496 31530 D APM_AudioPolicyManager: setOutputDevice() output 13 device {AUDIO_DEVICE_OUT_SPEAKER, @:} force 0 delayMs 0
+04-02 20:58:07.515 31496 31530 D APM_AudioPolicyManager: setOutputDevices:filteredDevices isempty 0,getEncodedFormat 0x0,getName = primary output
+04-02 20:58:07.516 31496 31530 D AudioPolicyIntefaceImpl: mSessionLatestHandleList add Item on session 10675489, port = 3763
+04-02 20:58:07.516   812  4795 I android.system.suspend-service: --mSuspendCounter = 3
+04-02 20:58:07.517  1931  1931 D MMListService: getListValueByUid module:audio-boost-apps, uid:10152
+04-02 20:58:07.517 31496 31507 E ListServiceUtils: getListValueByUid module:audio-boost-apps uid:10152 cost 1137us return 0
+04-02 20:58:07.517  1931  1931 D MMListService: getListValueByUid module:audio-boost-cross-apps, uid:10152
+04-02 20:58:07.518 31496 31507 D AudioBoost: updateAudioActive hasActiveAudio => 1 
+04-02 20:58:07.518 31496 31507 D ListServiceUtils: checkInListByUid module:audio-boost-uclamp-apps uid:10152 cost 270us return 0
+04-02 20:58:07.518 31496 31507 D AudioFlinger_PlaybackThreadExtImpl: notifyAudioTrackCreate event:atlas_event_audio_track_create info:pid:31251,sessionId:10675489,streamType:5,sampleRate:44100,format:1,channelcount:1,flags:6,deviceTypes:2,hasFastMixer:1,isOffloadThread:0,isSpatialized:0,id:13,effectChains:0,metaAudioScene:0,metaAudioPos:[0.0|0.0|0.0]
+04-02 20:58:07.518 31496 31507 D AtlasEventUploadUtils: setEvent event:atlas_event_audio_track_create
+04-02 20:58:07.519 31496 31507 D audioserver: FGS Logger Transaction failed
+04-02 20:58:07.519 31496 31507 D audioserver: -129
+04-02 20:58:07.519  2578 27540 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_audio_track_create info:pid:31251,sessionId:10675489,streamType:5,sampleRate:44100,format:1,channelcount:1,flags:6,deviceTypes:2,hasFastMixer:1,isOffloadThread:0,isSpatialized:0,id:13,effectChains:0,metaAudioScene:0,metaAudioPos:[0.0|0.0|0.0]
+04-02 20:58:07.519 31496 31507 D AudioTrackServerProxyExtImpl: AudioTrackServerProxyExtImpl init
+04-02 20:58:07.519 31496 31507 D AudioTrackServerProxyExtImpl: audioTrackServerProxyTest
+04-02 20:58:07.519 31496 31507 D AudioTrackServerProxyExtImpl: audioTrackServerProxy, initialize
+04-02 20:58:07.519 31496 31507 D AudioTrackServerProxyExtImpl: initSupportAudioRamp ,  mIsSupport = 0.
+04-02 20:58:07.519 31496 31507 D AudioBoost: audioSchedBoost, pid=31496, tid=31507, enable=0, ret=0
+04-02 20:58:07.520 31496 31660 D AudioFlinger: updateWakeLockUids_l AudioOut_D uids:10152 
+04-02 20:58:07.520  2578  3655 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 arg1=31251 arg2=5 obj=com.oplus.atlas.OplusAtlasEvent@b3098dc target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-02 20:58:07.521 31499 20106 D ListServiceUtils: checkInListByUid module:audio-boost-blacklist uid:10152 cost 290us return 0
+04-02 20:58:07.521 31684  1238 I IPCThreadState: oneway function results for code 10006 on binder at 0xb400007aca641bc0 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-02 20:58:07.522 31494  2952 W audio_hw_primary: out_write: underrun(11181) frames_by_time(545) > out->last_fifo_frames_remaining(384)
+04-02 20:58:07.522 31499 20106 D AudioTrack: getTimestamp_l(3763): device stall time corrected using current time 1538175168680470
+04-02 20:58:07.522 31499 20106 D AudioTrack: stop(3763): prior state:STATE_ACTIVE output 13 stream 3 session 10675489
+04-02 20:58:07.522 31499 20106 D AudioTrack: stop(3763): called with 1786 frames delivered
+04-02 20:58:07.522  2578  3681 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-3ms what=1 arg1=31251 arg2=5 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-02 20:58:07.522  2578  3681 D OplusAtlasService: myHandleMessage: Msg { when=-3ms what=1 arg1=31251 arg2=5 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-02 20:58:07.523  1923  1937 D EventTest: handleEvent atlas_event_audio_track_create pid:31251,sessionId:10675489,streamType:5,flags:6,deviceTypes:2,hasFastMixer:1
+04-02 20:58:07.523 31499 20106 I AudioTrack: stop(3763): 0xea9b9c00 stop done
+04-02 20:58:07.524 31496 31660 D AFExtImpl: checkTrackBuffer1() track 0xb400007517cb6c00 get INFO from NEW, channelCount 1, pid 31251
+04-02 20:58:07.524 31496 31660 D AFExtImpl: initFromProperty() 0xb40000752d86c780, sAdSwitch 1, typeCheck 0, logdumpEnable 0, pcmdumpEnable 0, trackPid 31251
+04-02 20:58:07.527 31496 31507 W AidlConversionCppNdk: legacy2aidl_audio_channel_mask_t_AudioChannelLayout: no AudioChannelLayout found for legacy output audio_channel_mask_t value 0x10
+04-02 20:58:07.528 31251 31251 W AidlConversionCppNdk: aidl2legacy_AudioChannelLayout_audio_channel_mask_t: no legacy output audio_channel_mask_t found for AudioChannelLayout{layoutMask: 16}
+04-02 20:58:07.532 31499  8995 D AudioTrack: getTimestamp_l(3763): retun WOULD_BLOCK(-11): Invalid state
+04-02 20:58:07.565 31499 20106 D AudioTrack: pause(3763): prior state:STATE_STOPPED output 13 stream 3 session 10675489
+04-02 20:58:07.566 31496 31660 E AudioFlingerExtImpl: updateAudioDetectState pid : 31251, get null buffer
+04-02 20:58:07.566 31496 31660 D AudioResamplerDyn: AudioResamplerDyn reset
+04-02 20:58:07.570 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:07.649 31496 31660 D audioserver: FGS Logger Transaction failed
+04-02 20:58:07.649 31496 31660 D audioserver: -129
+04-02 20:58:07.649 31496 31660 D AudioBoost: updateAudioActive hasActiveAudio => 0 
+04-02 20:58:07.649 31496 31660 D AudioFlinger_PlaybackThreadExtImpl: notifyAudioTrackRemove event:atlas_event_audio_track_distroy info:pid:31251,sessionId:10675489,streamType:5,sampleRate:44100,flags:6,isOffloadThread:0,deviceTypes:2,hasFastMixer:1,isSpatialized:0,metaAudioScene:0
+04-02 20:58:07.649 31496 31660 D AtlasEventUploadUtils: setEvent event:atlas_event_audio_track_distroy
+04-02 20:58:07.649 31684  1110 I IPCThreadState: oneway function results for code 10007 on binder at 0xb400007aca641bc0 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-02 20:58:07.650 31496 31660 D AudioFlingerExtImpl: removeAudioSessionUidMap, remove 10675489, map size 2
+04-02 20:58:07.650 31496 31660 D AFExtImpl: ~TrackInfo() 0xb40000752d86c780
+04-02 20:58:07.650 31496 31660 D AFExtImpl: clearDumpBuffer() 0xb40000752d86c780, mDumpBufferCount 0
+04-02 20:58:07.650  2578 27540 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_audio_track_distroy info:pid:31251,sessionId:10675489,streamType:5,sampleRate:44100,flags:6,isOffloadThread:0,deviceTypes:2,hasFastMixer:1,isSpatialized:0,metaAudioScene:0
+04-02 20:58:07.650   812 24178 I android.system.suspend-service: mSuspendCounter++ = 4
+04-02 20:58:07.651 31496 31660 D AudioFlinger: updateWakeLockUids_l AudioOut_D uids:
+04-02 20:58:07.651 31496 31530 D AudioPolicyEffects: releaseOutputSessionEffects: no output processing was attached to this stream
+04-02 20:58:07.651 31496 31530 D AudioPolicyIntefaceImpl: mSessionLatestHandleList removeItem on session 10675489, port = 3763
+04-02 20:58:07.651 31496 31530 D APM_AudioPolicyManager: stopOutput portId 3763
+04-02 20:58:07.651 31496 31530 D APM_AudioPolicyManager: stopOutput() output 13, stream 5, session 10675489
+04-02 20:58:07.652 31496 31530 D APM_AudioPolicyManager: setOutputDevice() output 13 device AUDIO_DEVICE_NONE force 0 delayMs 96
+04-02 20:58:07.655  2578  3655 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-1ms what=2 arg1=31251 arg2=5 obj=com.oplus.atlas.OplusAtlasEvent@86c4de5 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-02 20:58:07.656   812 24178 I android.system.suspend-service: --mSuspendCounter = 3
+04-02 20:58:07.656  2578  3681 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-1ms what=2 arg1=31251 arg2=5 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-02 20:58:07.656  2578  3681 D OplusAtlasService: myHandleMessage: Msg { when=-2ms what=2 arg1=31251 arg2=5 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-02 20:58:07.669  4343  4343 V DeepThinker: BroadcastReceiverWrapper: onReceive, start dispatch android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED
+04-02 20:58:07.670  4343  4343 V DeepThinker: BroadcastReceiverWrapper: onReceive, finish dispatch android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED  Time consuming : 1 ms
+04-02 20:58:07.670  4343  4343 V DeepThinker: BroadcastReceiverWrapper: onReceive, start dispatch android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED
+--------- beginning of system
+04-02 20:58:07.671 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:25.0 luxQueue=[25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0]
+04-02 20:58:07.671  4343  4343 V DeepThinker: BroadcastReceiverWrapper: onReceive, finish dispatch android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED  Time consuming : 1 ms
+04-02 20:58:07.715   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=40, uplink_packets=3, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=2, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=510, uplink_udp_rate=0, downlink_tcp_rate=217, downlink_udp_rate=0}
+04-02 20:58:07.715   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:07.715   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:07.715   368  1385 D CommonScenarios-158-10152: scenarios low package
+04-02 20:58:07.715   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:07.887 31684   386 I OplusHansManager : uid=10244, pkg=com.daraz.android F enter(), M stay=3
+04-02 20:58:07.902 31684   386 I OplusHansManager : freeze uid: 10244 com.daraz.android pids: [27533, 28083] scene: LcdOn
+04-02 20:58:07.903  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10244, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.914 31684   386 I OplusHansManager : uid=10452, pkg=com.lemon.lvoverseas F enter(), M stay=3
+04-02 20:58:07.928 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 35.64, bitrate 1242526
+04-02 20:58:07.929 31684   386 I OplusHansManager : freeze uid: 10452 com.lemon.lvoverseas pids: [3968, 2533, 3502] IsolatedUid: [99020] scene: LcdOn
+04-02 20:58:07.930  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10452, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.932 31684   386 I OplusHansManager : uid=10207, pkg=com.openai.chatgpt F enter(), M stay=3
+04-02 20:58:07.937 31684   386 I OplusHansManager : freeze uid: 10207 com.openai.chatgpt pids: [25646] scene: LcdOn
+04-02 20:58:07.938  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10207, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.939 31684   386 I OplusHansManager : uid=10367, pkg=com.whatsapp.w4b F enter(), M stay=3
+04-02 20:58:07.943 31684   386 I OplusHansManager : freeze uid: 10367 com.whatsapp.w4b pids: [15847] scene: LcdOn
+04-02 20:58:07.944  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10367, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.945 31684   386 I OplusHansManager : uid=10241, pkg=com.intsig.camscanner F enter(), M stay=3
+04-02 20:58:07.951 31684   386 I OplusHansManager : freeze uid: 10241 com.intsig.camscanner pids: [32014] scene: LcdOn
+04-02 20:58:07.952  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10241, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.953 31684   386 I OplusHansManager : uid=10289, pkg=com.brave.browser F enter(), M stay=3
+04-02 20:58:07.959 31684   386 I OplusHansManager : freeze uid: 10289 com.brave.browser pids: [31841, 31902, 31683, 31925] IsolatedUid: [90000] scene: LcdOn
+04-02 20:58:07.960  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10289, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.961 31684   386 I OplusHansManager : uid=10365, pkg=com.zong.customercare F enter(), M stay=3
+04-02 20:58:07.966 31684   386 I OplusHansManager : freeze uid: 10365 com.zong.customercare pids: [14904, 15034] IsolatedUid: [99096] scene: LcdOn
+04-02 20:58:07.966  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10365, pkgCmd = ADD_ONE_UID
+04-02 20:58:07.972  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10241, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.002 32276 20097 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:08.002 32276 20097 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:08.019 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:08.683 31494  2952 W audio_hw_primary: out_write: underrun(11182) frames_by_time(48198) > out->last_fifo_frames_remaining(384)
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=38, uplink_packets=7, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=6, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=721, uplink_udp_rate=0, downlink_tcp_rate=669, downlink_udp_rate=0}
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: scenarios 5 mdnsScore=0
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: totalScore:100
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score 100 scenariosscenarios 5
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: notifyScoreChange 100
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: needNotify lastScore=100 score=100
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: score diff < 5
+04-02 20:58:08.739   368  1385 D CommonScenarios-158-10152: not need notify score change, return
+04-02 20:58:08.905  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10244, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.930 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.98, bitrate 227339
+04-02 20:58:08.932  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10452, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.938  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10207, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.944  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10367, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.961  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10289, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.966  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10365, pkgCmd = PKG_CMD_MAX
+04-02 20:58:08.991 31251 31267 D MediaPlayer: finalize() native_finalize called
+04-02 20:58:08.991 31251 31267 D MediaPlayer: finalize() native_finalize finished
+04-02 20:58:09.024 32276 20111 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:09.024 32276 20111 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:09.038 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:09.178  2339  2372 D QmiVsClient: setAolScenario - enter
+04-02 20:58:09.217  2339  2731 D QmiClient: QmiErrorToRadioApiError qmiError 94, radio result 2
+04-02 20:58:09.217  2339  2372 D VsProxy : handleMessage msg is 4001
+04-02 20:58:09.217  2339  2372 D RadioProxy: setAolScenario : response cb for instance 0
+04-02 20:58:09.219   831 30302 D RadioProxyJ: [PHONE0][7191]< setAolScenarioResponse 
+04-02 20:58:09.248  1257 23928 E sensors-hal: ssc_conn_event_cb:661, event[0] msg_id=1025, ts=49913378539601 sensor_type = device_orient  Wakeup
+04-02 20:58:09.249  1257 23928 E sensors-hal: handle_sns_client_event:58, ro.build.flavor defined by oplus
+04-02 20:58:09.249  1257 23928 E sensors-hal: handle_sns_client_event:116, device_orient_event:oplus ts=2599650545749606, type=0, count=26129
+04-02 20:58:09.249   812   812 I android.system.suspend-service: mSuspendCounter++ = 4
+04-02 20:58:09.251   812  4795 I android.system.suspend-service: mSuspendCounter++ = 5
+04-02 20:58:09.254   812   812 I android.system.suspend-service: --mSuspendCounter = 4
+04-02 20:58:09.258   812  4795 I android.system.suspend-service: --mSuspendCounter = 3
+04-02 20:58:09.470  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:09.528  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:09.635 31684  1238 W Settings: Setting notification_bubbles has moved from android.provider.Settings.Global to android.provider.Settings.Secure, returning read-only value.
+04-02 20:58:09.636 31684  1238 W Settings: Setting apply_ramping_ringer has moved from android.provider.Settings.Global to android.provider.Settings.System, returning read-only value.
+04-02 20:58:09.646 31684  1238 W SettingsStatsUtil: Can not parse value to float: gps,network
+04-02 20:58:09.657 31684  1238 W SettingsStatsUtil: Can not parse value to float: +network
+04-02 20:58:09.725 31494  2952 W audio_hw_primary: out_write: underrun(11183) frames_by_time(48173) > out->last_fifo_frames_remaining(384)
+04-02 20:58:09.763   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=38, uplink_packets=2, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=2, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=215, uplink_udp_rate=0, downlink_tcp_rate=222, downlink_udp_rate=0}
+04-02 20:58:09.763   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:09.763   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:09.763   368  1385 D CommonScenarios-158-10152: scenarios low package
+04-02 20:58:09.763   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:10.011 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.17, bitrate 207404
+04-02 20:58:10.043 32276 20112 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:10.043 32276 20112 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:10.054 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:10.499 31496 32050 E AudioFlinger: negative wakelock count
+04-02 20:58:10.592 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:10.767 31496 31660 D AFExtImpl: removeThread() 0xb4000075493a9a00, id=13
+04-02 20:58:10.767 31496 31660 D AFExtImpl: removeThread() 0xb4000075493a9a00, id=13, release info
+04-02 20:58:10.767 31496 31660 D AFExtImpl: ThreadInfo() 0xb40000751d2d1000
+04-02 20:58:10.767 31496 31660 D AFExtImpl: clearDumpBuffer() 0xb40000751d2d1000, mDumpBufferCount 0
+04-02 20:58:10.768 31494 20574 D audio_hw_primary: out_standby: enter: stream (0xec578800) usecase(1: low-latency-playback)
+04-02 20:58:10.787   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:10.788   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:10.788   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:10.788   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:10.788   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:10.794 31494 20574 D audio_hw_primary: stop_output_stream: enter: usecase(1: low-latency-playback)
+04-02 20:58:10.795 31494 20574 D audio_hw_primary: disable_audio_route: reset and update mixer path: low-latency-playback speaker
+04-02 20:58:10.798 31494 20574 E soundtrigger: audio_extn_sound_trigger_update_stream_status: invalid input device 0x0, for event 2
+04-02 20:58:10.798 31494 20574 D soundtrigger: audio_extn_sound_trigger_update_stream_status: uc_info->id 1 of type 0 for Event 2, with Raise=0
+04-02 20:58:10.798 31494 20574 D msm8974_platform: platform_split_snd_device: snd_device(2) num devices(0) new_snd_devices(0)
+04-02 20:58:10.799 31494 20574 I msm8974_platform: platform_get_custom_mtmx_params: no matching param with id 0 ip_ch 2 op_ch 2 uc_id 1 snd_dev 2
+04-02 20:58:10.799 31494 20574 D hardware_info: hw_info_append_hw_type : device_name = speaker
+04-02 20:58:10.799 31494 20574 D audio_hw_primary: disable_snd_device: snd_device(2: speaker), snd_dev_ref_cnt 0
+04-02 20:58:10.799 31494 20574 D audio_hw_primary: disable_snd_device: snd_device(2: speaker)
+04-02 20:58:10.799 31494 20574 D msm8974_platform: platform_check_backend_tag_match: be_tag1 = speaker, be_tag2 = speaker, match 1
+04-02 20:58:10.799 31494 20574 D oplus_spk_protection: oplus_extn_spkr_prot_stop_processing: Entry
+04-02 20:58:10.810 31494 20574 D hardware_info: hw_info_append_hw_type : device_name = vi-feedback
+04-02 20:58:10.810 31494 20574 D audio_hw_primary: disable_snd_device: snd_device(247: vi-feedback), snd_dev_ref_cnt 0
+04-02 20:58:10.810 31494 20574 D audio_hw_primary: disable_snd_device: snd_device(247: vi-feedback)
+04-02 20:58:10.810 31494 20574 E msm8974_platform: platform_check_backend_tag_match: Invalid snd_device = vi-feedback
+04-02 20:58:10.810 31494 20574 D msm8974_platform: platform_split_snd_device: snd_device(247) num devices(0) new_snd_devices(0)
+04-02 20:58:10.810 31494 20574 I soundtrigger: audio_extn_sound_trigger_update_device_status: device 0xf7 of type 1 for Event 0, with Raise=0
+04-02 20:58:10.810 31494 20574 D audio_hw_primary: disable_audio_route: reset and update mixer path: spkr-vi-record
+04-02 20:58:10.812 31494 20574 D soundtrigger: audio_extn_sound_trigger_update_stream_status: uc_info->id 53 of type 1 for Event 2, with Raise=0
+04-02 20:58:10.812 31494 20574 D oplus_spk_protection: oplus_extn_spkr_prot_stop_processing: Exit
+04-02 20:58:10.813 31494 20574 D msm8974_platform: platform_split_snd_device: snd_device(2) num devices(0) new_snd_devices(0)
+04-02 20:58:10.813 31494 20574 I soundtrigger: audio_extn_sound_trigger_update_device_status: device 0x2 of type 0 for Event 0, with Raise=0
+04-02 20:58:10.813 31494 20574 D audio_hw_primary: stop_output_stream: exit: status(0)
+04-02 20:58:10.813 31494 20574 D audio_hw_primary: out_standby: exit
+04-02 20:58:10.814 31496 31660 E AudioFlinger: negative wakelock count
+04-02 20:58:10.931  1514  1724 D VRR [OTI]: handleIdle from 0 to 1
+04-02 20:58:10.932  1514  1724 D VRR [OTI-HW]: isStateReady 0
+04-02 20:58:10.932  1514  1724 D VRR [OTI-HW]: rate range: min {id=0, hwcId=0, resolution=1080x2400, refreshRate=60.00 Hz, dpi=391.89x403.71, group=0} cur {id=0, hwcId=0, resolution=1080x2400, refreshRate=60.00 Hz, dpi=391.89x403.71, group=0} max {id=0, hwcId=0, resolution=1080x2400, refreshRate=60.00 Hz, dpi=391.89x403.71, group=0}
+04-02 20:58:10.932  1514  1724 D VRR [OTI-HW]: keep rate.
+04-02 20:58:11.018 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.92, bitrate 218170
+04-02 20:58:11.058 32276 20113 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:11.058 32276 20113 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:11.074 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:11.469  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:11.529  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:11.811   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=40, uplink_packets=2, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=2, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=217, uplink_udp_rate=0, downlink_tcp_rate=224, downlink_udp_rate=0}
+04-02 20:58:11.811   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:11.811   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:11.811   368  1385 D CommonScenarios-158-10152: scenarios low package
+04-02 20:58:11.811   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:11.838 31684 31748 I OplusSmartBrightnessController: deltaLux = 13.609214, scale = 4.3888607
+04-02 20:58:11.839 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:21.899147 luxQueue=[10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 24.0]
+04-02 20:58:11.976  1257 23928 E sensors-hal: ssc_conn_event_cb:661, event[0] msg_id=1025, ts=49913430920672 sensor_type = device_orient  Wakeup
+04-02 20:58:11.977  1257 23928 E sensors-hal: handle_sns_client_event:58, ro.build.flavor defined by oplus
+04-02 20:58:11.977  1257 23928 E sensors-hal: handle_sns_client_event:116, device_orient_event:oplus ts=2599653273930388, type=4, count=26130
+04-02 20:58:11.978   812   812 I android.system.suspend-service: mSuspendCounter++ = 4
+04-02 20:58:11.980   812  2525 I android.system.suspend-service: mSuspendCounter++ = 5
+04-02 20:58:11.984 31684 31704 V WindowOrientationListener: onSensorChanged mDesiredRotation = 4
+04-02 20:58:11.985   812  2525 I android.system.suspend-service: --mSuspendCounter = 4
+04-02 20:58:11.986   812   812 I android.system.suspend-service: --mSuspendCounter = 3
+04-02 20:58:12.025 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.93, bitrate 194844
+04-02 20:58:12.052 21226 21344 E msgr.msys: E[N mns:DGWClient]_OnDiskCacheGetData(1079)=>Start post callback cache refresh DNS resolution
+04-02 20:58:12.056  1368  1459 D vendor.oplus.hardware.charger-V3-service: read content:,331,-2740,3859,3854,176,2000,1100,52,52,0,0,-1,0,52,1,0,1,1,0,0,4435,0,0,0,2,0,0,0,-2740,0,3,1,0,0,0,0,0,0x18,0x2c,0x16,0x73,0x2e,0x16,0x00,0x00,0x00
+04-02 20:58:12.056  1368  1459 D vendor.oplus.hardware.charger-V3-service: , ret_value:151
+04-02 20:58:12.059  1368  1459 D vendor.oplus.hardware.charger-V3-service: gmtime: 2026-04-02-20-58-12
+04-02 20:58:12.079 32276 20115 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:12.079 32276 20115 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:12.084 21226 21344 E msgr.msys: E[N mns:DGWClient]_LogError(263)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+04-02 20:58:12.084 21226 21344 E msgr.msys: E[N mns:DGWClient]_OnDiskCacheGetData(1079)=>Start post callback cache refresh DNS resolution
+04-02 20:58:12.091 21226 21344 E msgr.msys: E[N mns:DGWClient]_LogError(263)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+04-02 20:58:12.094 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:12.633 31503 32590 D BufferPoolAccessor2.0: bufferpool2 0xb400007041a0e828 : 3(6144 size) total buffers - 0(0 size) used buffers - 1/4 (recycle/alloc) - 3/4 (fetch/transfer)
+04-02 20:58:12.633 31499 10452 D BufferPoolAccessor2.0: bufferpool2 0xe8f59958 : 0(0 size) total buffers - 0(0 size) used buffers - 49/57 (recycle/alloc) - 8/53 (fetch/transfer)
+04-02 20:58:12.633 31503 32590 D BufferPoolAccessor2.0: bufferpool2 0xb400007048b3cc28 : 0(0 size) total buffers - 0(0 size) used buffers - 47/51 (recycle/alloc) - 5/51 (fetch/transfer)
+04-02 20:58:12.634 31503 32590 D BufferPoolAccessor2.0: bufferpool2 0xb400007041adee28 : 0(0 size) total buffers - 0(0 size) used buffers - 0/0 (recycle/alloc) - 0/0 (fetch/transfer)
+04-02 20:58:12.634 31503 32590 D BufferPoolAccessor2.0: evictor expired: 5, evicted: 3
+04-02 20:58:12.634 31499 10452 D BufferPoolAccessor2.0: bufferpool2 0xe8f5a498 : 5(40960 size) total buffers - 4(32768 size) used buffers - 2/7 (recycle/alloc) - 5/6 (fetch/transfer)
+04-02 20:58:12.634 31499 10452 D BufferPoolAccessor2.0: evictor expired: 3, evicted: 2
+04-02 20:58:12.670 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:24.0 luxQueue=[24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0]
+04-02 20:58:12.835   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:12.838   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:12.838   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:12.838   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:12.838   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:13.045 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.77, bitrate 235331
+04-02 20:58:13.099 32276 20119 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:13.099 32276 20119 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:13.115 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:13.620 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:13.859   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:13.859   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:13.860   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:13.860   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:13.860   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:14.056 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.89, bitrate 192057
+04-02 20:58:14.120 32276 20120 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:14.121 32276 20120 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:14.138 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:14.671 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:24.0 luxQueue=[24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0]
+04-02 20:58:14.883   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:14.883   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:14.883   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:14.883   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:14.883   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:15.142 32276 20121 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:15.142 32276 20121 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:15.154 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:15.166 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.81, bitrate 212769
+04-02 20:58:15.907   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:15.908   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:15.908   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:15.908   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:15.908   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:16.160 32276 20122 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:16.160 32276 20122 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:16.178 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.86, bitrate 223032
+04-02 20:58:16.178 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:16.647 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:16.670  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:16.873 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:24.0 luxQueue=[24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0]
+04-02 20:58:16.908 31684   386 I OplusHansManager : uid=10464, pkg=in.sweatco.app cannot transition from R to M, importance=fg-service
+04-02 20:58:16.931   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:16.931   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:16.931   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:16.931   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:16.931   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:17.060  1368  1459 D vendor.oplus.hardware.charger-V3-service: read content:,331,-2740,3861,3858,146,2000,1100,52,52,0,0,-1,0,52,1,0,1,1,0,0,4435,0,0,0,2,0,0,0,-2740,0,3,1,0,0,0,0,0,0x18,0x2c,0x16,0x73,0x2e,0x16,0x00,0x00,0x00
+04-02 20:58:17.060  1368  1459 D vendor.oplus.hardware.charger-V3-service: , ret_value:151
+04-02 20:58:17.060  1368  1459 D vendor.oplus.hardware.charger-V3-service: gmtime: 2026-04-02-20-58-17
+04-02 20:58:17.184 32276 20123 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:17.184 32276 20123 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:17.203 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:17.278 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.91, bitrate 205673
+04-02 20:58:17.426 31499  8995 D AudioSink: setIsReset, 1
+04-02 20:58:17.427 31499  8995 D NuPlayerDriver: reset(0xebc67900) at state 6
+04-02 20:58:17.429 31499 20103 D OplusNuPlayer: initializeOplusMedia [177]: 
+04-02 20:58:17.429 31499 20103 D OplusNuPlayer: [initializeOplusMedia:L193]diable oplus avenhancements decoders...
+04-02 20:58:17.430 31499 20106 D AudioTrack: pause(3763): prior state:STATE_STOPPED output 13 stream 3 session 10675489
+04-02 20:58:17.431 31499 20106 D AudioTrack: flush(3763): prior state:STATE_STOPPED
+04-02 20:58:17.431 31496 31660 E AudioFlinger: negative wakelock count
+04-02 20:58:17.433 31499 20106 D AudioTrack: stop(3763): prior state:STATE_FLUSHED output 13 stream 3 session 10675489
+04-02 20:58:17.433 31496 31660 D AudioFlinger: updateWakeLockUids_l AudioOut_D uids:
+04-02 20:58:17.434 31499 20108 D MediaCodec: [0xeb3f8800] setState: 7
+04-02 20:58:17.434 31499 20108 D OplusCCodec: signalFlush [1399]: (0xeb3fda80)
+04-02 20:58:17.434 31499 20108 I OplusFeedbackInfo: [signalFlush:L1324]
+04-02 20:58:17.435 31499 20108 D MediaCodec: [0xeb3f8800] setState: 8
+04-02 20:58:17.436 31499 20103 I NuPlayer: audioFlush latency : 6.15 ms
+04-02 20:58:17.436 31499 20107 D MediaCodec: [0xeb3f8800] [c2.android.aac.decoder] release
+04-02 20:58:17.437 31499 20108 D MediaCodec: [0xeb3f8800] setState: 10
+04-02 20:58:17.437 31499 20108 D OplusCCodec: initiateShutdown [1295]: (0xeb3fda80) keepComponentAllocated=0
+04-02 20:58:17.437 31499 20108 D OplusVideoBoost: disableVideoBoost, handle: [0xea9de8a8], flags: 0x30
+04-02 20:58:17.438 31499 20108 D OplusVideoBoostUtils: Set (sched: 0, pid: 31499, tid: 20107 isEnable: 0) successfully.
+04-02 20:58:17.439 31499 20108 D OplusVideoBoostUtils: Set (sched: 0, pid: 31499, tid: 20108 isEnable: 0) successfully.
+04-02 20:58:17.442 31499 20108 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+04-02 20:58:17.442 31503  1196 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+04-02 20:58:17.443 31499 20108 D MediaCodec: [0xeb3f8800] [c2.android.aac.decoder] kWhatReleaseCompleted
+04-02 20:58:17.444 31499 20108 D MediaCodec: [0xeb3f8800] setState: 0
+04-02 20:58:17.444 31503  1196 D BufferPoolAccessor2.0: Destruction - bufferpool2 0xb400007041adee28 cached: 0/0M, 0/0% in use; allocs: 0, 0% recycled; transfers: 0, 0% unfetched
+04-02 20:58:17.444 31499 20107 D MediaCodec: [0xeb3f8800] ~MediaCodec
+04-02 20:58:17.444 31499 20107 D MediaCodec: flushMediametrics
+04-02 20:58:17.445 31499 20107 D OplusCCodec: ~OplusCCodec [303]: (0xeb3fda80)
+04-02 20:58:17.447 31499 20107 D OplusFeedbackInfo: ~OplusAnalysisFPS
+04-02 20:58:17.453 31499 20103 D NuPlayerDriver: notifyResetComplete(0xebc67900)
+04-02 20:58:17.455 31499 10998 D AudioSink: setIsReset, 1
+04-02 20:58:17.456 31499 10998 D NuPlayerDriver: reset(0xebc67900) at state 0
+04-02 20:58:17.456 31499 10998 D NuPlayerDriver: ~NuPlayerDriver(0xebc67900)
+04-02 20:58:17.456 31499 10998 D AtlasEventUploadUtils: setEvent event:atlas_event_video_mediaplayer_state
+04-02 20:58:17.458 31499 10998 W AMessage: failed to post message as target looper for handler 0 is gone.
+04-02 20:58:17.458  2578 27540 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_mediaplayer_state info:STATE,-1,31251
+04-02 20:58:17.459  2578  3644 D OplusAtlasVideo: callback success event:atlas_event_video_mediaplayer_state eventInfo:STATE,-1,31251
+04-02 20:58:17.459 31251 31451 V MediaPlayer: resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+04-02 20:58:17.459 31251 31451 V MediaPlayer: cleanDrmObj: mDrmObj=null mDrmSessionId=null
+04-02 20:58:17.459 31251 31451 V MediaPlayer: resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+04-02 20:58:17.459 31251 31451 V MediaPlayer: cleanDrmObj: mDrmObj=null mDrmSessionId=null
+04-02 20:58:17.459 31251 31451 D MediaPlayer: _release native called
+04-02 20:58:17.460 31499  8995 D AudioTrack: stop(3763): prior state:STATE_FLUSHED output 13 stream 3 session 10675489
+04-02 20:58:17.460 31499  8995 I AudioTrack: stopAndJoinCallbacks(3763) done
+04-02 20:58:17.460 31499  8995 D AudioTrack: ~AudioTrack(3763), releasing mStatus =0 session id 10675489 from 31499 on behalf of 31251
+04-02 20:58:17.460 31499  8995 D AudioTrack: stop(3763): prior state:STATE_FLUSHED output 13 stream 3 session 10675489
+04-02 20:58:17.461 31499  8995 I AudioTrack: stopAndJoinCallbacks(3763) done
+04-02 20:58:17.462 31499  8995 D ListServiceUtils: checkInListByUid module:audio-boost-blacklist uid:10152 cost 356us return 0
+04-02 20:58:17.462 31499  8995 D AudioTrackExtImpl: doSchedBoost, set mediaserver task boost, pid=31499, tid=20106, enable=0, ret=0
+04-02 20:58:17.463   812  4795 I android.system.suspend-service: mSuspendCounter++ = 4
+04-02 20:58:17.464 31251 31451 D MediaPlayer: _release native finished
+04-02 20:58:17.465 31496 31530 E AudioPolicyIntefaceImpl: checkSessionHasActiveClient mSessionLatestHandleList has no port for session = 10675489
+04-02 20:58:17.465 31496 31530 D AudioPolicyEffects: releaseOutputSessionEffects: no output processing was attached to this stream
+04-02 20:58:17.466   812  4795 I android.system.suspend-service: --mSuspendCounter = 3
+04-02 20:58:17.469 31684  1238 I IPCThreadState: oneway function results for code 10007 on binder at 0xb400007aca641bc0 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-02 20:58:17.469 31496 16920 D audioserver: FGS Logger Transaction failed
+04-02 20:58:17.469 31496 16920 D audioserver: -129
+04-02 20:58:17.955   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:17.956   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:17.956   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:17.956   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:17.956   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:18.208 32276 20124 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:18.209 32276 20124 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:18.222 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:18.356 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.14, bitrate 207455
+04-02 20:58:18.980   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=38, uplink_packets=3, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=3, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=287, uplink_udp_rate=0, downlink_tcp_rate=346, downlink_udp_rate=0}
+04-02 20:58:18.980   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:18.980   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:18.980   368  1385 D CommonScenarios-158-10152: scenarios low package
+04-02 20:58:18.980   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:19.038 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:24.0 luxQueue=[24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0]
+04-02 20:58:19.227 32276 20126 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:19.228 32276 20126 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:19.246 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:19.259 31684 32715 W BatteryExternalStatsWorker: error reading Bluetooth stats: 11
+04-02 20:58:19.261 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:19.270 31500 31500 E TetherController: property_get sys.radio.data.modem_share_flag return 0, 1!
+04-02 20:58:19.381 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.73, bitrate 218234
+04-02 20:58:19.637 31684 32715 W Settings: Setting notification_bubbles has moved from android.provider.Settings.Global to android.provider.Settings.Secure, returning read-only value.
+04-02 20:58:19.637 31684 32715 W Settings: Setting apply_ramping_ringer has moved from android.provider.Settings.Global to android.provider.Settings.System, returning read-only value.
+04-02 20:58:19.648 31684 32715 W SettingsStatsUtil: Can not parse value to float: gps,network
+04-02 20:58:19.663 31684 32715 W SettingsStatsUtil: Can not parse value to float: +network
+04-02 20:58:19.667 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:19.680 31684 32715 W ProcessStats: Tracking association SourceState{cdd9d2a system/1000 BFgs #1098425} whose proc state 4 is better than process ProcessState{8bae71b com.google.android.inputmethod.latin/10159 pkg=com.google.android.inputmethod.latin} proc state 6 (172 skipped)
+04-02 20:58:20.004   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:20.004   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:20.004   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:20.004   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:20.004   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:20.253 32276 20127 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:20.253 32276 20127 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:20.270 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:20.432 31251 31251 W TextView: onProvideContentCaptureStructure(): calling assumeLayout()
+04-02 20:58:20.450 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.22, bitrate 225199
+04-02 20:58:20.456 31684 31721 W NotificationHistory: Attempted to remove conversation for locked/gone/disabled user 0
+04-02 20:58:20.460 31684  1238 E ShortcutService: Invalid icon type in shortcut 66627928334487@lid. Bitmaps are not allowed in long-lived shortcuts. Use Resource icons, or Uri-based icons instead.
+04-02 20:58:20.558  3025  3617 I AiAiPeople: [0] fragments remain to process, dispatched event [32]
+04-02 20:58:20.710  4467  6553 D ShellSubscriberWorkerThread: the first 8 bytes empty, and RestData length > 8 
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=38, uplink_packets=6, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=4, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=802, uplink_udp_rate=0, downlink_tcp_rate=526, downlink_udp_rate=0}
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: scenarios 5 mdnsScore=0
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: totalScore:100
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score 100 scenariosscenarios 5
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: notifyScoreChange 100
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: needNotify lastScore=100 score=100
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: score diff < 5
+04-02 20:58:21.027   368  1385 D CommonScenarios-158-10152: not need notify score change, return
+04-02 20:58:21.199 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:24.0 luxQueue=[24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0]
+04-02 20:58:21.276 32276 20129 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:21.276 32276 20129 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:21.294 31684 32049 D SensorService: 0xb400007a9c5e6b80 addFd fd=974
+04-02 20:58:21.296 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:21.493 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 16.30, bitrate 322602
+04-02 20:58:21.670  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:22.050   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:22.050   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:22.050   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:22.050   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:22.050   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:22.058 19047 19047 D BoundBrokerSvc: onUnbind: Intent { act=com.google.firebase.dynamiclinks.service.START pkg=com.google.android.gms mCallingUid=10159 }
+04-02 20:58:22.061  1368  1459 D vendor.oplus.hardware.charger-V3-service: read content:,331,-2740,3861,3858,146,2000,1100,52,52,0,0,-1,0,52,1,0,1,1,0,0,4435,0,0,0,2,0,0,0,-2740,0,3,1,0,0,0,0,0,0x18,0x2c,0x16,0x73,0x2e,0x16,0x00,0x00,0x00
+04-02 20:58:22.061  1368  1459 D vendor.oplus.hardware.charger-V3-service: , ret_value:151
+04-02 20:58:22.061  1368  1459 D vendor.oplus.hardware.charger-V3-service: gmtime: 2026-04-02-20-58-22
+04-02 20:58:22.301 32276 20133 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:22.301 32276 20133 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:22.318 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:22.445 31499 10452 D BufferPoolAccessor2.0: bufferpool2 0xe8f5a498 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/6 (fetch/transfer)
+04-02 20:58:22.445 31499 10452 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 1
+04-02 20:58:22.447 31503 32590 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 0
+04-02 20:58:22.472 21226 21344 E msgr.msys: E[N mns:DGWClient]_OnDiskCacheGetData(1079)=>Start post callback cache refresh DNS resolution
+04-02 20:58:22.503 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.88, bitrate 204201
+04-02 20:58:22.513 21226 21344 E msgr.msys: E[N mns:DGWClient]_LogError(263)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+04-02 20:58:22.514 21226 21344 E msgr.msys: E[N mns:DGWClient]_OnDiskCacheGetData(1079)=>Start post callback cache refresh DNS resolution
+04-02 20:58:22.519 21226 21344 E msgr.msys: E[N mns:DGWClient]_LogError(263)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+04-02 20:58:22.707 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:23.075   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:23.075   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:23.075   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:23.075   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:23.076   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:23.326 32276 20134 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:23.326 32276 20134 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:23.345 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:23.448 31503 32590 D BufferPoolAccessor2.0: bufferpool2 0xb400007041a0e828 : 0(0 size) total buffers - 0(0 size) used buffers - 1/4 (recycle/alloc) - 3/4 (fetch/transfer)
+04-02 20:58:23.448 31503 32590 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 1
+04-02 20:58:23.505 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.99, bitrate 192413
+04-02 20:58:23.629 31684   386 I OplusHansManager : uid=10492, pkg=com.example.noor_rewards cannot transition from R to M, importance=visibleActivity
+04-02 20:58:23.958 31684 31748 I OplusSmartBrightnessController: deltaLux = 1.0, scale = 1.0
+04-02 20:58:23.959 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:23.0 luxQueue=[23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0]
+04-02 20:58:24.099   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:24.099   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:24.099   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:24.099   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:24.099   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:24.350 32276 20137 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:24.350 32276 20137 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:24.372 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:24.591 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.05, bitrate 211862
+04-02 20:58:25.123   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:25.123   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:25.123   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:25.123   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:25.124   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:25.377 32276 20138 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:25.378 32276 20138 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:25.394 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:25.608 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.80, bitrate 225686
+04-02 20:58:25.730 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:25.903 31684 32102 I OplusHansManager : unfreeze uid: 10246 com.dawateislami.namaz pids: [31336] reason: Alarm scene: LcdOn
+04-02 20:58:25.905 31684   386 I OplusHansManager : uid=10246, pkg=com.dawateislami.namaz F exit(), F stay=54, reason=Alarm
+04-02 20:58:25.906 31684 32102 V AlarmManager: sending alarm Alarm{b2ae5f4 type 0 origWhen 1775145480397 whenElapsed 2599641696 com.dawateislami.namaz} uid 10246 whenElapsed 2599641696 windowLength 25499 maxWhenElapsed 2599667195 repeatInterval 0 action com.dawateislami.namaz.widget.PrayerAppWidget.NAMAZ_WIDGET_UPDATE component ComponentInfo{com.dawateislami.namaz/com.dawateislami.namaz.receivers.PrayerWidgetReceiver} flags 0x8 procName com.dawateislami.namaz
+04-02 20:58:25.931  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 0,port = 86870,caller_pid = 31684,caller_uid = 1000,target_pid = 3968,target_uid = 10452,pkg_cmd = -1,rpc = android.app.IApplicationThread/42
+04-02 20:58:25.950 31684 32048 D SensorService: wrote all events from cache size=94 
+04-02 20:58:25.950 31684 32048 D SensorService: removeFd fd=974
+04-02 20:58:25.965 31684   388 I OplusHansManager : unfreeze uid: 10452 com.lemon.lvoverseas pids: [3968, 2533, 3502] reason: AsyncBinder scene: LcdOn
+04-02 20:58:25.967 31684   386 I OplusHansManager : uid=10452, pkg=com.lemon.lvoverseas F exit(), F stay=18, reason=AsyncBinder
+04-02 20:58:26.002  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 0,port = 86870,caller_pid = 31497,caller_uid = 1047,target_pid = 27533,target_uid = 10244,pkg_cmd = -1,rpc = android.hardware.ICameraServiceListener/5
+04-02 20:58:26.003  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 0,port = 86870,caller_pid = 31497,caller_uid = 1047,target_pid = 31683,target_uid = 10289,pkg_cmd = -1,rpc = android.hardware.ICameraServiceListener/5
+04-02 20:58:26.003  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 0,port = 86870,caller_pid = 31497,caller_uid = 1047,target_pid = 14904,target_uid = 10365,pkg_cmd = -1,rpc = android.hardware.ICameraServiceListener/5
+04-02 20:58:26.009 31684   388 I OplusHansManager : unfreeze uid: 10244 com.daraz.android pids: [27533, 28083] reason: AsyncBinder scene: LcdOn
+04-02 20:58:26.009 27533 28626 E u4native: [InfoLevelMessage] [INFO:not_a_file.cc(0)] RenderIOThread heartbeat, pid/tid: 27533/28626, interval/index: 30s/4336
+04-02 20:58:26.010 27533 28626 E u4native: [InfoLevelMessage] [INFO:not_a_file.cc(0)] BrowserIOThread heartbeat, pid/tid: 27533/28626, interval/index: 30s/4337, ucCoreSoImplVersion: 5.18.6.0_250506205509
+04-02 20:58:26.014 27533 28633 E u4native: [InfoLevelMessage] [INFO:not_a_file.cc(0)] NetworkServiceThread heartbeat, pid/tid: 27533/28633, interval/index: 30s/4337
+04-02 20:58:26.014  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 0,port = 86870,caller_pid = 31497,caller_uid = 1047,target_pid = 31683,target_uid = 10289,pkg_cmd = -1,rpc = android.hardware.ICameraServiceListener/5
+04-02 20:58:26.014  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 0,port = 86870,caller_pid = 31497,caller_uid = 1047,target_pid = 14904,target_uid = 10365,pkg_cmd = -1,rpc = android.hardware.ICameraServiceListener/5
+04-02 20:58:26.019 31684   386 I OplusHansManager : uid=10244, pkg=com.daraz.android F exit(), F stay=18, reason=AsyncBinder
+04-02 20:58:26.023 31684   388 I OplusHansManager : unfreeze uid: 10289 com.brave.browser pids: [31841, 31902, 31683, 31925] reason: AsyncBinder scene: LcdOn
+04-02 20:58:26.025 31684   386 I OplusHansManager : uid=10289, pkg=com.brave.browser F exit(), F stay=18, reason=AsyncBinder
+04-02 20:58:26.026 31684   388 I OplusHansManager : unfreeze uid: 10365 com.zong.customercare pids: [14904, 15034] reason: AsyncBinder scene: LcdOn
+04-02 20:58:26.026 31684   386 I OplusHansManager : uid=10365, pkg=com.zong.customercare F exit(), F stay=18, reason=AsyncBinder
+04-02 20:58:26.038 32383   657 I SystemUi--Statusbar: PrivacyDotViewController-->scheduleUpdate: 
+04-02 20:58:26.056 27533 28877 E u4native: [InfoLevelMessage] [INFO:not_a_file.cc(0)] RenderMainThread heartbeat, pid/tid: 27533/28877, interval/index: 30s/4335, ucCoreSoImplVersion: 5.18.6.0_250506205509
+04-02 20:58:26.068 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:23.0 luxQueue=[23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0]
+04-02 20:58:26.099 31336 31336 E NAMAZ_WIDGET_UPDATE: onAlarm 2026-04-02 20:59:00
+04-02 20:58:26.108 31336 31336 E NAMAZ_WIDGET_UPDATE: onAlarm 2026-04-02 20:59:00
+04-02 20:58:26.108 31336 31336 E NAMAZ_WIDGET_UPDATE: onReceive
+04-02 20:58:26.112 31336 31336 E NAMAZ_WIDGET_UPDATE: onAlarm 2026-04-02 20:59:00
+04-02 20:58:26.112 31336 31336 E NAMAZ_WIDGET_UPDATE: onReceive
+04-02 20:58:26.140 32383   657 I SystemUi--Statusbar: PrivacyDotViewController-->processNextViewState: 
+04-02 20:58:26.140 32383   657 I SystemUi--Statusbar: PrivacyDotViewController-->resolveState ViewState(viewInitialized=true, systemPrivacyEventIsActive=false, shadeExpanded=false, qsExpanded=false, portraitRect=Rect(165, 0 - 1080, 103), landscapeRect=Rect(103, 0 - 2400, 103), upsideDownRect=Rect(0, 0 - 1080, 103), seascapeRect=Rect(0, 0 - 2285, 103), layoutRtl=false, rotation=0, paddingTop=34, paddingBottom=0, cornerIndex=1, designatedCorner=android.widget.FrameLayout{3cf523d I.E...... .......D 1018,0-1080,103 #7f0a085f app:id/privacy_dot_top_right_container viewInfo = }, contentDescription=Applications are using your camera., dotMargin=76)
+04-02 20:58:26.148   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:26.148   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:26.148   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:26.148   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:26.148   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:26.297 31684  3113 D UsageStatsService: User[0] type=0 b=1775145250380 e=1775145506295 cb=1775114768405 ce=1775145506002 disk=0 all=15
+04-02 20:58:26.400 32276 20139 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:26.400 32276 20139 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:26.403  2574  2585 E IHansComunication: HANS printMessageBody: RCV message: type = 4,port = 86870,caller_pid = -1,caller_uid = -1,target_pid = -1,target_uid = 10241,pkg_cmd = -1,rpc = PKG/-1
+04-02 20:58:26.408 31684   388 I OplusHansManager : unfreeze uid: 10241 com.intsig.camscanner pids: [32014] reason: Packet scene: LcdOn
+04-02 20:58:26.409 31684   386 I OplusHansManager : uid=10241, pkg=com.intsig.camscanner F exit(), F stay=18, reason=Packet
+04-02 20:58:26.426 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:26.575 19047 19067 W OplusExSystemServiceHelper: checkOplusExSystemService intent getComponent is null
+04-02 20:58:26.576  9367  9472 I BtGatt.ScanManager: msg.what = 6
+04-02 20:58:26.577  9367  9367 I OplusCustomScanStrategy: msg.what = 6
+04-02 20:58:26.579 19047 19047 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.measurement.START pkg=com.google.android.gms mCallingUid=10464 }
+04-02 20:58:26.579 19047 19047 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.measurement.START pkg=com.google.android.gms mCallingUid=10464 }
+04-02 20:58:26.600 19047 20150 D AdvertisingIdClient: AdvertisingIdClient already created.
+04-02 20:58:26.600 19047 20150 D AdvertisingIdClient: AdvertisingIdClient is not bounded. Starting to bind it...
+04-02 20:58:26.607 19047 19067 W OplusExSystemServiceHelper: checkOplusExSystemService intent getComponent is null
+04-02 20:58:26.615 19047 20150 D AdvertisingIdClient: AdvertisingIdClient is bounded
+04-02 20:58:26.621 19047 20150 I AdvertisingIdClient: shouldSendLog 2598688774
+04-02 20:58:26.621 19047 20150 I AdvertisingIdClient: GetInfoInternal elapse 20ms
+04-02 20:58:26.641 20827 20827 D BoundBrokerSvc: onRebind: Intent { act=com.google.android.gms.presencemanager.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService mCallingUid=10143 }
+04-02 20:58:26.650 20827 20827 D BoundBrokerSvc: onRebind: Intent { act=com.google.android.gms.presencemanager.service.INTERNAL_IDENTITY dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService mCallingUid=10143 }
+04-02 20:58:26.685 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.28, bitrate 193997
+04-02 20:58:26.870  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:27.063  1368  1459 D vendor.oplus.hardware.charger-V3-service: read content:,331,-2740,3862,3860,147,2000,1100,52,52,0,0,-1,0,52,1,0,1,1,0,0,4435,0,0,0,2,0,0,0,-2740,0,3,1,0,0,0,0,0,0x18,0x2c,0x16,0x73,0x2e,0x16,0x00,0x00,0x00
+04-02 20:58:27.063  1368  1459 D vendor.oplus.hardware.charger-V3-service: , ret_value:151
+04-02 20:58:27.064  1368  1459 D vendor.oplus.hardware.charger-V3-service: gmtime: 2026-04-02-20-58-27
+04-02 20:58:27.171   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:27.171   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:27.171   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:27.171   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:27.171   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:27.429 32276 20141 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:27.429 32276 20141 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:27.446 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:27.473 31684   386 I OplusHansManager : uid=10452, pkg=com.lemon.lvoverseas can not transition from M to F. reason: AsyncBinder
+04-02 20:58:27.522 31684   386 I OplusHansManager : uid=10244, pkg=com.daraz.android can not transition from M to F. reason: AsyncBinder
+04-02 20:58:27.531 31684   386 I OplusHansManager : uid=10289, pkg=com.brave.browser can not transition from M to F. reason: AsyncBinder
+04-02 20:58:27.537 31684   386 I OplusHansManager : uid=10365, pkg=com.zong.customercare can not transition from M to F. reason: AsyncBinder
+04-02 20:58:27.704 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 12.75, bitrate 248899
+04-02 20:58:28.069 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:23.0 luxQueue=[23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0]
+04-02 20:58:28.195   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=38, uplink_packets=1, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=1, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=72, uplink_udp_rate=0, downlink_tcp_rate=109, downlink_udp_rate=0}
+04-02 20:58:28.195   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:28.195   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:28.195   368  1385 D CommonScenarios-158-10152: scenarios low package
+04-02 20:58:28.195   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:28.452 32276 20160 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:28.452 32276 20160 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:28.467 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:28.726 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.79, bitrate 186314
+04-02 20:58:28.753 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:28.987 31684   386 I OplusHansManager : uid=10452, pkg=com.lemon.lvoverseas F enter(), M stay=3
+04-02 20:58:29.013 31684   386 I OplusHansManager : freeze uid: 10452 com.lemon.lvoverseas pids: [3968, 2533, 3502] IsolatedUid: [99020] scene: LcdOn
+04-02 20:58:29.015  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10452, pkgCmd = ADD_ONE_UID
+04-02 20:58:29.039 31684   386 I OplusHansManager : uid=10244, pkg=com.daraz.android F enter(), M stay=3
+04-02 20:58:29.059 31684   386 I OplusHansManager : freeze uid: 10244 com.daraz.android pids: [27533, 28083] scene: LcdOn
+04-02 20:58:29.059  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10244, pkgCmd = ADD_ONE_UID
+04-02 20:58:29.061 31684   386 I OplusHansManager : uid=10289, pkg=com.brave.browser F enter(), M stay=3
+04-02 20:58:29.068 31684   386 I OplusHansManager : freeze uid: 10289 com.brave.browser pids: [31841, 31902, 31683, 31925] IsolatedUid: [90000] scene: LcdOn
+04-02 20:58:29.069  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10289, pkgCmd = ADD_ONE_UID
+04-02 20:58:29.072 31684   386 I OplusHansManager : uid=10365, pkg=com.zong.customercare F enter(), M stay=3
+04-02 20:58:29.077 31684   386 I OplusHansManager : freeze uid: 10365 com.zong.customercare pids: [14904, 15034] IsolatedUid: [99096] scene: LcdOn
+04-02 20:58:29.079  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10365, pkgCmd = ADD_ONE_UID
+04-02 20:58:29.088 31684 32255 D OplusNetKit: in getLpByInterface name from LP: [wlan0]
+04-02 20:58:29.102 31684 32255 D OplusNetRttKit: getIcmpEchoRtt each addr:192.168.18.1 Rtt: 5
+04-02 20:58:29.105 31684 32255 D OplusNetRttKit: getIcmpEchoRtt each addr:192.168.18.1 Rtt: 3
+04-02 20:58:29.107 31684 32255 D OplusNetRttKit: getIcmpEchoRtt each addr:192.168.18.1 Rtt: 3
+04-02 20:58:29.107 31684 32255 D OplusNetRttKit: getIcmpEchoRtt addr:192.168.18.1 avgRtt: 3
+04-02 20:58:29.220   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:29.221   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:29.221   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:29.221   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:29.221   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:29.475 32276 20161 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:29.475 32276 20161 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:29.486 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:29.821 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 10.95, bitrate 207234
+04-02 20:58:30.016  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10452, pkgCmd = PKG_CMD_MAX
+04-02 20:58:30.060  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10244, pkgCmd = PKG_CMD_MAX
+04-02 20:58:30.069  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10289, pkgCmd = PKG_CMD_MAX
+04-02 20:58:30.078  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10365, pkgCmd = PKG_CMD_MAX
+04-02 20:58:30.243   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:30.244   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:30.244   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:30.244   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:30.244   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:30.259 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:23.0 luxQueue=[23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0]
+04-02 20:58:30.494 32276 20162 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:30.494 32276 20162 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:30.506 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:30.710  4467  6553 D ShellSubscriberWorkerThread: the first 8 bytes empty, and RestData length > 8 
+04-02 20:58:30.835 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.83, bitrate 225013
+04-02 20:58:30.914 31684   386 I OplusHansManager : uid=10246, pkg=com.dawateislami.namaz F enter(), M stay=5
+04-02 20:58:30.919 31684   386 I OplusHansManager : freeze uid: 10246 com.dawateislami.namaz pids: [31336] scene: LcdOn
+04-02 20:58:30.920  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10246, pkgCmd = ADD_ONE_UID
+04-02 20:58:31.267   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:31.268   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:31.268   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:31.268   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:31.268   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:31.414 31684   386 I OplusHansManager : uid=10241, pkg=com.intsig.camscanner F enter(), M stay=5
+04-02 20:58:31.423 31684   386 I OplusHansManager : freeze uid: 10241 com.intsig.camscanner pids: [32014] scene: LcdOn
+04-02 20:58:31.425  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = PKG, targetUid = 10241, pkgCmd = ADD_ONE_UID
+04-02 20:58:31.444  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10241, pkgCmd = PKG_CMD_MAX
+04-02 20:58:31.512 32276 20165 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:31.512 32276 20165 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:31.530 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:31.781 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:31.847 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.88, bitrate 185743
+04-02 20:58:31.922  2574  5710 D IHansComunication: HANS sendMessageToKernel: threadId = 507670150320, netLinkSetup = 1, type = FROZEN_TRANS, targetUid = 10246, pkgCmd = PKG_CMD_MAX
+04-02 20:58:32.066  1368  1459 D vendor.oplus.hardware.charger-V3-service: read content:,331,-2740,3862,3860,147,2000,1100,52,52,0,0,-1,0,52,1,0,1,1,0,0,4435,0,0,0,2,0,0,0,-2740,0,3,1,0,0,0,0,0,0x18,0x2c,0x16,0x73,0x2e,0x16,0x00,0x00,0x00
+04-02 20:58:32.066  1368  1459 D vendor.oplus.hardware.charger-V3-service: , ret_value:151
+04-02 20:58:32.067  1368  1459 D vendor.oplus.hardware.charger-V3-service: gmtime: 2026-04-02-20-58-32
+04-02 20:58:32.069  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:32.133  1514  5060 D SurfaceFlinger: captureDisplay from pid 1514 uid -1 display 4630946950956839809
+04-02 20:58:32.291   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:32.292   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:32.292   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:32.292   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:32.292   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:32.419 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:23.0 luxQueue=[23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0]
+04-02 20:58:32.536 32276 20166 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:32.536 32276 20166 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:32.556 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:32.890  4467  9862 D ScreenStatusProducer: Current queue status: isIdle = true, isPolling = true
+04-02 20:58:32.901 21226 21344 E msgr.msys: E[N mns:DGWClient]_OnDiskCacheGetData(1079)=>Start post callback cache refresh DNS resolution
+04-02 20:58:32.925 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.13, bitrate 211114
+04-02 20:58:32.941 21226 21344 E msgr.msys: E[N mns:DGWClient]_LogError(263)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+04-02 20:58:32.942 21226 21344 E msgr.msys: E[N mns:DGWClient]_OnDiskCacheGetData(1079)=>Start post callback cache refresh DNS resolution
+04-02 20:58:32.945 21226 21344 E msgr.msys: E[N mns:DGWClient]_LogError(263)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+04-02 20:58:33.315   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:33.315   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:33.315   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:33.315   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:33.315   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:33.562 32276 20167 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:33.562 32276 20167 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:33.574 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:33.935 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 9.90, bitrate 186553
+04-02 20:58:34.111 28273 28566 I bigo-awake: PullOthersAwakeStrategy >>  time duration:false, now:1775145514110, ts:1775134743727
+04-02 20:58:34.111 28273 28566 I bigo-awake: PullOthersAwakeStrategy >>  check awake time duration < 4h.
+04-02 20:58:34.339   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=0, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=0, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:34.340   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:34.340   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:34.340   368  1385 D CommonScenarios-158-10152: transport layer data is invalid
+04-02 20:58:34.340   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:34.471 31684 31750 D OplusSmartBrightnessController: handleMessage MSG_LUX_CHANGED, mLux:23.0 luxQueue=[23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0]
+04-02 20:58:34.580 32276 20170 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:34.580 32276 20170 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:34.598 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+04-02 20:58:34.735 31684  1110 W ProcessStats: Tracking association SourceState{cdd9d2a system/1000 BFgs #1098456} whose proc state 4 is better than process ProcessState{8bae71b com.google.android.inputmethod.latin/10159 pkg=com.google.android.inputmethod.latin} proc state 6 (223 skipped)
+04-02 20:58:34.808 31684 32145 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+04-02 20:58:34.952 20657 19382 I OMX-VENC: venc_dev: stats: avg. fps 11.80, bitrate 223996
+04-02 20:58:35.363   368  1385 D CommonScenarios-158-10152: transportLayerQosChange TransportLayerData{link_index=27, uid=10152, uplink_srtt=0, uplink_packets=2, uplink_retrans_packets=0, uplink_retrans_rate=0, downlink_srtt=0, downlink_packets=0, downlink_retrans_packets=0, downlink_retrans_rate=0, downlink_rate=0, uplink_udp_packets=0, downlink_udp_packets=0, uplink_tcp_rate=168, uplink_udp_rate=0, downlink_tcp_rate=0, downlink_udp_rate=0}
+04-02 20:58:35.363   368  1385 D CommonScenarios-158-10152: ActiveState process message 2
+04-02 20:58:35.363   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE
+04-02 20:58:35.363   368  1385 D CommonScenarios-158-10152: scenarios low package
+04-02 20:58:35.363   368  1385 D CommonScenarios-158-10152: ActiveState EVENT_NETWORK_KPI_CHANGE score is invalid
+04-02 20:58:35.602 32276 20172 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+04-02 20:58:35.603 32276 20172 I adbd    : UsbFfs: connection terminated: monitor thread finished
+04-02 20:58:35.623 32276 32286 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
