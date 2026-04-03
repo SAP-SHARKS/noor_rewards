@@ -2967,33 +2967,31 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       // Convert to Arabic digits so the U+06DD character natively encloses them
       final numStr = ayahNum.toString().split('').map((e) => '٠١٢٣٤٥٦٧٨٩'[int.parse(e)]).join('');
 
-      spans.add(TextSpan(text: text));
-      // Use a WidgetSpan with a Stack to forcefully center the digits inside the ornament.
-      spans.add(const TextSpan(text: ' '));
+      // Append ayah text followed by inline ayah marker (no extra spaces —
+      // let justify distribute space only at real word boundaries)
+      spans.add(TextSpan(text: '$text '));
       spans.add(WidgetSpan(
         alignment: PlaceholderAlignment.middle,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Text('\u06DD', style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 1.5, color: goldClr.withValues(alpha: 0.75), height: 1.0, fontWeight: FontWeight.w400)),
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(numStr, style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 0.55, color: textClr, height: 1.0, fontWeight: FontWeight.w400)),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 1),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text('\u06DD', style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 1.4, color: goldClr.withValues(alpha: 0.75), height: 1.0, fontWeight: FontWeight.w400)),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(numStr, style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 0.5, color: textClr, height: 1.0, fontWeight: FontWeight.w400)),
+              ),
+            ],
+          ),
         ),
       ));
-      spans.add(const TextSpan(text: ' '));
+      // Only add space if more ayahs follow (don't add trailing space on last ayah)
+      if (i < ayahs.length - 1) spans.add(const TextSpan(text: ' '));
     }
 
-    // Mushaf-specific style: use consistent word spacing with justify
     final baseStyle = _kQuranScripts[_quranScriptIdx].style(fontSize, textClr, lh, FontWeight.w400);
-    // Reset any per-font wordSpacing so justify distributes space evenly,
-    // and add slight letter spacing to help fill lines more uniformly.
-    final textStyle = baseStyle.copyWith(
-      wordSpacing: 1.0,
-      letterSpacing: 0.3,
-    );
+    final textStyle = baseStyle.copyWith(wordSpacing: 0.0, letterSpacing: 0.0);
 
     return Text.rich(
       TextSpan(style: textStyle, children: spans),
