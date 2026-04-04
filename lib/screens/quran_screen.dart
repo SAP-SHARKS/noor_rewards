@@ -172,6 +172,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _timerShouldRun    = false;
   // Cache: page# → list of ayahs  (fetched once per page, held in memory)
   final Map<int, List<Map<String, dynamic>>> _loadedPages    = {};
+  // Mushaf split-translation mode
+  bool _mushafSplitTranslation = false;
+  // Cache: 'surah:ayah' → translation text (for Mushaf split view)
+  final Map<String, String> _mushafTransCache = {};
+  // Mushaf page-flip mode (true = PageView swipe, false = infinite scroll)
+  bool _mushafPageFlip = false;
+  PageController? _mushafPageController;
   final Set<int>                              _loadingPages   = {};
   // Keep scroll controller for backward compat (unused in PageView path)
   ScrollController? _fullPageScrollController;
@@ -374,6 +381,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _pageTimer?.cancel();
     _controlsHideTimer?.cancel();
     _fullPageScrollController?.dispose();
+    _mushafPageController?.dispose();
     _player.dispose();
     super.dispose();
   }
@@ -624,6 +632,49 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {}
   }
 
+  // ── Fetch translations for a list of ayahs (used by Mushaf split view) ────────
+  Future<void> _fetchMushafTranslations(List<Map<String, dynamic>> ayahs) async {
+    // Find surahs we need translations for
+    final surahsNeeded = <int>{};
+    for (final a in ayahs) {
+      final s = a['surah'] as int;
+      final key = '$s:${a['ayah']}';
+      if (!_mushafTransCache.containsKey(key)) surahsNeeded.add(s);
+    }
+    if (surahsNeeded.isEmpty) return;
+
+    for (final surah in surahsNeeded) {
+      int startVerseId = 1;
+      for (int i = 1; i < surah; i++) { startVerseId += _surahLengths[i]; }
+
+      Map<int, String> transMap = {};
+      try {
+        if (_translationEdition == 'en.sahih') {
+          final transList = await _sb.from('quran_translations')
+              .select('verse_id, text')
+              .gte('verse_id', startVerseId)
+              .lte('verse_id', startVerseId + _surahLengths[surah] - 1)
+              .eq('edition', 'en.sahih');
+          for (final item in transList) {
+            transMap[item['verse_id'] as int] = item['text'] as String? ?? '';
+          }
+        } else {
+          transMap = await QuranApiService.instance.surahTranslation(
+            surah: surah, edition: _translationEdition,
+            surahLength: _surahLengths[surah], startVerseId: startVerseId,
+          );
+        }
+      } catch (_) {}
+
+      // Cache by surah:ayah key
+      for (int a = 1; a <= _surahLengths[surah]; a++) {
+        final vId = startVerseId + a - 1;
+        _mushafTransCache['$surah:$a'] = transMap[vId] ?? '';
+      }
+    }
+    if (mounted) setState(() {});
+  }
+
   /// Sync all reading position caches so Mushaf, Verse, and WBW modes stay aligned.
   void _syncReadingPosition() {
     _cache.put('pref_mushaf_surah', _surah);
@@ -833,6 +884,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final ayahs = await _fetchPageAyahs(page);
     _loadingPages.remove(page);
     if (mounted) setState(() => _loadedPages[page] = ayahs);
+    // Fetch translations in background if split mode is active
+    if (_mushafSplitTranslation && ayahs.isNotEmpty) {
+      _fetchMushafTranslations(ayahs);
+    }
   }
 
   // ── Fetch a single page (used by timer-bar prev/next arrows) ──
@@ -2734,6 +2789,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
     _fullPageScrollController?.dispose();
     _fullPageScrollController = null;
+    _mushafPageController?.dispose();
+    _mushafPageController = null;
+    _mushafPageFlip = false;
 
     setState(() {
       _fullPageMode = false;
@@ -2767,37 +2825,39 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         behavior: HitTestBehavior.opaque,
         onTap: _toggleMushafControls,
         child: Stack(children: [
-          // ── Continuous Feed (like Quran Majeed) ──
-          // Beautiful native infinite scroll feed using CustomScrollView
-          // This allows users to read with ANY font size without breaking page flow or needing nested scroll hacks
-          CustomScrollView(
-            center: _feedCenterKey,
-            controller: _fullPageScrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              // Scroll UP: previous pages
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final pageNum = _feedJumpPage - 1 - index;
-                    if (pageNum < 1) return null; // We reached page 1
-                    return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
-                  },
+          // ── Choose between page-flip and infinite scroll ──
+          if (_mushafPageFlip)
+            _buildMushafPageFlipView(textClr, goldClr, pageBg)
+          else
+            // ── Continuous Feed (like Quran Majeed) ──
+            CustomScrollView(
+              center: _feedCenterKey,
+              controller: _fullPageScrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // Scroll UP: previous pages
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final pageNum = _feedJumpPage - 1 - index;
+                      if (pageNum < 1) return null;
+                      return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
+                    },
+                  ),
                 ),
-              ),
-              // Scroll DOWN: current and next pages
-              SliverList(
-                key: _feedCenterKey,
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final pageNum = _feedJumpPage + index;
-                    if (pageNum > 604) return null; // Max Quran pages 604
-                    return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
-                  },
+                // Scroll DOWN: current and next pages
+                SliverList(
+                  key: _feedCenterKey,
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final pageNum = _feedJumpPage + index;
+                      if (pageNum > 604) return null;
+                      return _buildMushafPageView(pageNum, textClr, goldClr, pageBg);
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           // ── Overlay: fades in/out on tap ──────────────────────────────────
           AnimatedOpacity(
             opacity: _showMushafControls ? 1.0 : 0.0,
@@ -2809,6 +2869,72 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           ),
         ]),
       ),
+    );
+  }
+
+  // ── Page-flip Mushaf: swipe left/right like a real book ────────────────────
+  Widget _buildMushafPageFlipView(Color textClr, Color goldClr, Color pageBg) {
+    return PageView.builder(
+      controller: _mushafPageController,
+      reverse: true, // RTL: swipe right = next page (like a real Arabic book)
+      itemCount: 604,
+      onPageChanged: (index) {
+        final pageNum = index + 1;
+        setState(() {
+          _currentPage = pageNum;
+          final surahForPage = _resolveSurahForPage(pageNum);
+          _surahName = _surahNames[surahForPage - 1];
+          _surah = surahForPage;
+        });
+        _syncReadingPosition();
+        // Throttled remote save
+        final now = DateTime.now();
+        if (now.difference(_lastMushafSave).inSeconds >= 3) {
+          _lastMushafSave = now;
+          _savePagePosition();
+        }
+      },
+      itemBuilder: (context, index) {
+        final pageNum = index + 1;
+        // Lazy-load page data
+        if (!_loadedPages.containsKey(pageNum) && !_loadingPages.contains(pageNum)) {
+          _loadPageForScroll(pageNum);
+        }
+        // Pre-load neighbors
+        if (!_loadedPages.containsKey(pageNum + 1)) _loadPageForScroll(pageNum + 1);
+        if (pageNum > 1 && !_loadedPages.containsKey(pageNum - 1)) _loadPageForScroll(pageNum - 1);
+
+        final ayahs = _loadedPages[pageNum];
+
+        if (ayahs == null) {
+          return ColoredBox(
+            color: pageBg,
+            child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+              SizedBox(width: 28, height: 28,
+                  child: CircularProgressIndicator(color: goldClr, strokeWidth: 1.8)),
+              const SizedBox(height: 14),
+              Text('Page $pageNum',
+                  style: GoogleFonts.lora(fontSize: 12,
+                      color: textClr.withValues(alpha: 0.45))),
+            ])),
+          );
+        }
+
+        return ColoredBox(
+          color: pageBg,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildMushafPageBlock(pageNum, ayahs, textClr, goldClr, pageBg),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2954,21 +3080,23 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   /// the entire page down to fit, so we don't need to calculate per-block.
   Widget _buildMushafTextBlock(
       List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr, bool isIndoPak) {
-    // Tunable base font size to fit ~15 lines beautifully into the logical width
-    final double fontSize = _mushafFontSize;
-    const double lh       = 1.95;   // Safe line height for Scheherazade New (avoids cropping glyphs)
 
-    // Build one large span: each ayah separated by the end-of-ayah circle ۝
+    // ── Split translation mode: Arabic right, Translation left ──────────────
+    if (_mushafSplitTranslation) {
+      return _buildMushafSplitView(ayahs, textClr, goldClr, isIndoPak);
+    }
+
+    // ── Normal Mushaf mode (unchanged) ──────────────────────────────────────
+    final double fontSize = _mushafFontSize;
+    const double lh       = 1.95;
+
     final spans = <InlineSpan>[];
     for (int i = 0; i < ayahs.length; i++) {
       final a = ayahs[i];
       final text = _stripQuranicAnnotations(a['arabic_display'] as String? ?? '');
       final ayahNum = a['ayah'] as int? ?? (i + 1);
-      // Convert to Arabic digits so the U+06DD character natively encloses them
       final numStr = ayahNum.toString().split('').map((e) => '٠١٢٣٤٥٦٧٨٩'[int.parse(e)]).join('');
 
-      // Append ayah text followed by inline ayah marker (no extra spaces —
-      // let justify distribute space only at real word boundaries)
       spans.add(TextSpan(text: '$text '));
       spans.add(WidgetSpan(
         alignment: PlaceholderAlignment.middle,
@@ -2986,7 +3114,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           ),
         ),
       ));
-      // Only add space if more ayahs follow (don't add trailing space on last ayah)
       if (i < ayahs.length - 1) spans.add(const TextSpan(text: ' '));
     }
 
@@ -3002,6 +3129,105 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         height: lh,
         forceStrutHeight: true,
       ),
+    );
+  }
+
+  // ── Mushaf Split View: Translation on left, Arabic on right ───────────────
+  Widget _buildMushafSplitView(
+      List<Map<String, dynamic>> ayahs, Color textClr, Color goldClr, bool isIndoPak) {
+    final isDark = _darkMode;
+    final double arabicSize = _mushafFontSize * 0.85;
+    final double transSize  = (_mushafFontSize * 0.45).clamp(12.0, 22.0);
+    const double lh = 1.85;
+
+    final transDef = _translations.firstWhere(
+      (t) => t.id == _translationEdition,
+      orElse: () => _translations.first,
+    );
+    final isTransRtl = transDef.rtl;
+    final dividerColor = goldClr.withValues(alpha: 0.2);
+    final ayahNumColor = goldClr.withValues(alpha: 0.7);
+    final transBg = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
+
+    return Column(
+      children: ayahs.map((a) {
+        final surah = a['surah'] as int;
+        final ayahNum = a['ayah'] as int? ?? 1;
+        final arabicText = _stripQuranicAnnotations(a['arabic_display'] as String? ?? '');
+        final transKey = '$surah:$ayahNum';
+        final transText = _mushafTransCache[transKey] ?? '';
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: dividerColor, width: 0.5)),
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Left: Translation ──
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    color: transBg,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: isTransRtl
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        // Ayah number
+                        Text('$ayahNum.',
+                          style: GoogleFonts.outfit(
+                            fontSize: 11, fontWeight: FontWeight.w700,
+                            color: ayahNumColor,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        // Translation text
+                        transText.isEmpty
+                            ? Text('...',
+                                style: GoogleFonts.outfit(
+                                    fontSize: transSize,
+                                    color: textClr.withValues(alpha: 0.3)))
+                            : Text(transText,
+                                textDirection: isTransRtl
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                                style: GoogleFonts.outfit(
+                                  fontSize: transSize,
+                                  height: 1.5,
+                                  color: textClr.withValues(alpha: 0.75),
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
+                // ── Divider ──
+                Container(width: 1, color: dividerColor),
+                // ── Right: Arabic ──
+                Expanded(
+                  flex: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    child: Text(
+                      arabicText,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                      style: _kQuranScripts[_quranScriptIdx].style(
+                          arabicSize, textClr, lh, FontWeight.w400)
+                          .copyWith(wordSpacing: 0.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -3249,82 +3475,215 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
   void _openMushafSettings() {
+    final txtClr = _darkMode ? Colors.white : Colors.black;
+    final subClr = _darkMode ? Colors.grey.shade400 : Colors.grey.shade600;
+    final bgClr = _darkMode ? const Color(0xFF1C1C1E) : Colors.white;
+    final chipBg = _darkMode ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade100;
+    final chipActiveBg = _accent.withValues(alpha: 0.15);
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+      backgroundColor: bgClr,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            Widget sectionLabel(String text) => Padding(
+              padding: const EdgeInsets.only(top: 18, bottom: 8),
+              child: Text(text, style: GoogleFonts.outfit(
+                  fontSize: 12, fontWeight: FontWeight.w600,
+                  color: subClr, letterSpacing: 0.5)),
+            );
+
+            Widget optionChip(String label, IconData icon, bool active, VoidCallback onTap) {
+              return GestureDetector(
+                onTap: onTap,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: active ? chipActiveBg : chipBg,
+                    borderRadius: BorderRadius.circular(12),
+                    border: active ? Border.all(color: _accent.withValues(alpha: 0.4)) : null,
+                  ),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(icon, size: 18, color: active ? _accent : subClr),
+                    const SizedBox(width: 8),
+                    Text(label, style: GoogleFonts.outfit(
+                        fontSize: 13, fontWeight: FontWeight.w600,
+                        color: active ? _accent : txtClr)),
+                  ]),
+                ),
+              );
+            }
+
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Mushaf Settings', 
-                      style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: _darkMode ? Colors.white : Colors.black)),
-                    const SizedBox(height: 20),
-                    ListTile(
-                      leading: Icon(Icons.bookmark_border_rounded, color: _accent),
-                      title: Text('Bookmark Page', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Page bookmarked!')));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.share_rounded, color: _accent),
-                      title: Text('Share Page', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sharing coming soon...')));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.format_size_rounded, color: _accent),
-                      title: Text('Font Size', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.remove_circle_outline, color: _accent),
-                            onPressed: () {
-                              setModalState(() {
-                                _mushafFontSize = (_mushafFontSize - 2).clamp(16.0, 48.0);
-                              });
-                              setState(() {}); 
-                            },
+                    // Handle
+                    Center(child: Container(
+                      width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                          color: subClr.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(2)),
+                    )),
+                    Center(child: Text('Mushaf Settings',
+                        style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: txtClr))),
+
+                    // ── Reading Mode ──
+                    sectionLabel('READING MODE'),
+                    Row(children: [
+                      Expanded(child: optionChip(
+                        'Scroll', Icons.view_day_rounded, !_mushafPageFlip,
+                        () {
+                          setModalState(() {});
+                          setState(() {
+                            _mushafPageFlip = false;
+                            _mushafPageController?.dispose();
+                            _mushafPageController = null;
+                            _enterFullPageScrollMode(_currentPage);
+                          });
+                        },
+                      )),
+                      const SizedBox(width: 10),
+                      Expanded(child: optionChip(
+                        'Page Flip', Icons.auto_stories_rounded, _mushafPageFlip,
+                        () {
+                          setModalState(() {});
+                          setState(() {
+                            _mushafPageFlip = true;
+                            _mushafPageController = PageController(initialPage: _currentPage - 1);
+                          });
+                        },
+                      )),
+                    ]),
+
+                    // ── Translation ──
+                    sectionLabel('TRANSLATION'),
+                    Row(children: [
+                      Expanded(child: optionChip(
+                        'Off', Icons.visibility_off_rounded, !_mushafSplitTranslation,
+                        () {
+                          setModalState(() {});
+                          setState(() => _mushafSplitTranslation = false);
+                        },
+                      )),
+                      const SizedBox(width: 10),
+                      Expanded(child: optionChip(
+                        'Split View', Icons.vertical_split_rounded, _mushafSplitTranslation,
+                        () {
+                          setModalState(() {});
+                          setState(() => _mushafSplitTranslation = true);
+                          for (final entry in _loadedPages.entries) {
+                            _fetchMushafTranslations(entry.value);
+                          }
+                        },
+                      )),
+                    ]),
+
+                    // ── Script ──
+                    sectionLabel('SCRIPT'),
+                    Row(children: List.generate(_kQuranScripts.length, (i) {
+                      final script = _kQuranScripts[i];
+                      final active = i == _quranScriptIdx;
+                      return Expanded(child: Padding(
+                        padding: EdgeInsets.only(right: i < _kQuranScripts.length - 1 ? 10 : 0),
+                        child: GestureDetector(
+                          onTap: () {
+                            setModalState(() => _quranScriptIdx = i);
+                            setState(() => _quranScriptIdx = i);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: active ? chipActiveBg : chipBg,
+                              borderRadius: BorderRadius.circular(12),
+                              border: active ? Border.all(color: _accent.withValues(alpha: 0.4)) : null,
+                            ),
+                            child: Column(children: [
+                              Text(script.arabicPreview,
+                                  textDirection: TextDirection.rtl,
+                                  style: script.style(18, active ? _accent : txtClr, null, FontWeight.w400)),
+                              const SizedBox(height: 4),
+                              Text(script.name,
+                                  style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600,
+                                      color: active ? _accent : subClr)),
+                            ]),
                           ),
-                          Text('${_mushafFontSize.toInt()}', style: GoogleFonts.outfit(fontSize: 16, color: _darkMode ? Colors.white : Colors.black)),
-                          IconButton(
-                            icon: Icon(Icons.add_circle_outline, color: _accent),
-                            onPressed: () {
-                              setModalState(() {
-                                _mushafFontSize = (_mushafFontSize + 2).clamp(16.0, 48.0);
-                              });
-                              setState(() {}); 
-                            },
-                          ),
-                        ],
+                        ),
+                      ));
+                    })),
+
+                    // ── Font Size ──
+                    sectionLabel('FONT SIZE'),
+                    Row(children: [
+                      IconButton(
+                        icon: Icon(Icons.remove_circle_outline, color: _accent),
+                        onPressed: () {
+                          setModalState(() => _mushafFontSize = (_mushafFontSize - 2).clamp(16.0, 48.0));
+                          setState(() {});
+                        },
                       ),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.palette_outlined, color: _accent),
-                      title: Text('Customise', style: GoogleFonts.outfit(color: _darkMode ? Colors.white : Colors.black)),
-                      subtitle: Text('Save custom page settings', style: GoogleFonts.outfit(color: Colors.grey, fontSize: 13)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Customise settings coming soon!')));
-                      },
-                    ),
+                      Expanded(child: SliderTheme(
+                        data: SliderThemeData(
+                          activeTrackColor: _accent,
+                          inactiveTrackColor: chipBg,
+                          thumbColor: _accent,
+                          overlayColor: _accent.withValues(alpha: 0.1),
+                          trackHeight: 3,
+                        ),
+                        child: Slider(
+                          value: _mushafFontSize,
+                          min: 16, max: 48,
+                          onChanged: (v) {
+                            setModalState(() => _mushafFontSize = v);
+                            setState(() {});
+                          },
+                        ),
+                      )),
+                      IconButton(
+                        icon: Icon(Icons.add_circle_outline, color: _accent),
+                        onPressed: () {
+                          setModalState(() => _mushafFontSize = (_mushafFontSize + 2).clamp(16.0, 48.0));
+                          setState(() {});
+                        },
+                      ),
+                      Text('${_mushafFontSize.toInt()}',
+                          style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: txtClr)),
+                    ]),
+
+                    // ── Quick Actions ──
+                    sectionLabel('ACTIONS'),
+                    Row(children: [
+                      Expanded(child: optionChip(
+                        'Bookmark', Icons.bookmark_border_rounded, false,
+                        () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(this.context).showSnackBar(
+                              const SnackBar(content: Text('Page bookmarked!')));
+                        },
+                      )),
+                      const SizedBox(width: 10),
+                      Expanded(child: optionChip(
+                        'Dark Mode', Icons.dark_mode_rounded, _darkMode,
+                        () {
+                          setModalState(() => _darkMode = !_darkMode);
+                          setState(() {});
+                        },
+                      )),
+                    ]),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
             );
-          }
+          },
         );
       },
     );
