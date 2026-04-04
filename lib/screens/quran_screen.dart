@@ -3363,113 +3363,147 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   Widget _buildMushafOverlay(Color overlayBg, Color goldClr, Color textClr) {
     final pad = MediaQuery.of(context).padding;
+    final isDark = _darkMode;
+
+    // Green palette — prominent, appealing, theme-aware
+    const greenDark  = Color(0xFF0B6B5C);  // deep emerald
+    const greenLight = Color(0xFF2BAE99);  // soft teal
+    const greenGlow  = Color(0xFF34D399);  // bright mint accent
+
+    final barBg = isDark ? greenDark : greenLight;
+    final barBgDarker = isDark ? const Color(0xFF064A40) : greenDark;
+
+    BoxDecoration pillDecor() => BoxDecoration(
+      color: isDark ? greenDark.withValues(alpha: 0.95) : greenLight.withValues(alpha: 0.95),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: greenGlow.withValues(alpha: 0.25)),
+      boxShadow: [BoxShadow(color: greenDark.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 3))],
+    );
+
     return Column(children: [
-      // ── Top bar: gradient fade — Exit · Surah · Juz · XP ─────────────────
+      // ── Top bar ──────────────────────────────────────────────────────────
       Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [overlayBg, overlayBg.withValues(alpha: 0)],
+            colors: [barBg.withValues(alpha: 0.95), barBg.withValues(alpha: 0)],
           ),
         ),
-        padding: EdgeInsets.fromLTRB(14, pad.top + 4, 14, 30),
+        padding: EdgeInsets.fromLTRB(14, pad.top + 6, 14, 28),
         child: Row(children: [
-          // Exit button
+          // Exit pill
           GestureDetector(
             onTap: _exitMushafMode,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: goldClr.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: goldClr.withValues(alpha: 0.35)),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+              decoration: pillDecor(),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.arrow_back_ios_rounded, color: goldClr, size: 13),
-                const SizedBox(width: 4),
-                Text('Exit', style: GoogleFonts.lora(
-                    fontSize: 13, fontWeight: FontWeight.w600, color: goldClr)),
+                const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 14),
+                const SizedBox(width: 5),
+                Text('Exit', style: GoogleFonts.outfit(
+                    fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
               ]),
             ),
           ),
           const Spacer(),
-          // Centred surah + juz label
-          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(_surahName,
-                style: GoogleFonts.lora(fontSize: 16, fontWeight: FontWeight.w700,
-                    color: textClr)),
-            const SizedBox(height: 1),
-            Text('Page $_currentPage  ·  Juz ${_juzForPage(_currentPage)}',
-                style: GoogleFonts.lora(fontSize: 12,
-                    color: goldClr)),
-          ]),
-          // XP badge + Settings button
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (_pageXpEarned > 0)
-                Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: goldClr.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text('+$_pageXpEarned XP',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(fontSize: 11,
-                            fontWeight: FontWeight.w700, color: goldClr))),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: _openMushafSettings,
-                child: Container(
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                    color: goldClr.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: goldClr.withValues(alpha: 0.35)),
-                  ),
-                  child: Icon(Icons.tune_rounded, color: goldClr, size: 16),
-                ),
-              ),
-            ],
+          // Surah + page pill (centred)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: pillDecor(),
+            child: Column(children: [
+              Text(_surahName,
+                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700,
+                      color: Colors.white)),
+              const SizedBox(height: 1),
+              Text('Page $_currentPage  ·  Juz ${_juzForPage(_currentPage)}',
+                  style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500,
+                      color: greenGlow)),
+            ]),
           ),
+          const Spacer(),
+          // Right: XP + Settings
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            if (_pageXpEarned > 0) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                decoration: BoxDecoration(
+                  color: greenGlow.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: greenGlow.withValues(alpha: 0.4)),
+                ),
+                child: Text('+$_pageXpEarned',
+                    style: GoogleFonts.outfit(fontSize: 12,
+                        fontWeight: FontWeight.w800, color: greenGlow)),
+              ),
+              const SizedBox(width: 8),
+            ],
+            GestureDetector(
+              onTap: _openMushafSettings,
+              child: Container(
+                padding: const EdgeInsets.all(9),
+                decoration: pillDecor(),
+                child: const Icon(Icons.tune_rounded, color: Colors.white, size: 18),
+              ),
+            ),
+          ]),
         ]),
       ),
-      // Simple spacer — navigation is swipe-only (no tap buttons)
-      const Spacer()
-,
-      // ── Bottom bar: progress + page counter + timer ───────────────────────
+
+      const Spacer(),
+
+      // ── Bottom bar ───────────────────────────────────────────────────────
       Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter, end: Alignment.topCenter,
-            colors: [overlayBg, overlayBg.withValues(alpha: 0)],
+            colors: [barBg.withValues(alpha: 0.95), barBg.withValues(alpha: 0)],
           ),
         ),
-        padding: EdgeInsets.fromLTRB(20, 30, 20, pad.bottom + 8),
-        child: Column(children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(
-              value: (_currentPage / 604).clamp(0.0, 1.0),
-              minHeight: 3,
-              backgroundColor: goldClr.withValues(alpha: 0.12),
-              valueColor: AlwaysStoppedAnimation(goldClr.withValues(alpha: 0.70)),
-            ),
+        padding: EdgeInsets.fromLTRB(16, 28, 16, pad.bottom + 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: barBgDarker,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: greenGlow.withValues(alpha: 0.15)),
+            boxShadow: [BoxShadow(color: greenDark.withValues(alpha: 0.5), blurRadius: 16, offset: const Offset(0, 4))],
           ),
-          const SizedBox(height: 7),
-          Row(children: [
-            Text('$_currentPage / 604',
-                style: GoogleFonts.lora(fontSize: 12,
-                    fontWeight: FontWeight.w600, color: textClr)),
-            const Spacer(),
-            Icon(Icons.timer_outlined, color: goldClr, size: 14),
-            const SizedBox(width: 4),
-            Text(_pageTimerLabel,
-                style: GoogleFonts.lora(fontSize: 12,
-                    fontWeight: FontWeight.w600, color: textClr)),
+          child: Column(children: [
+            // Progress bar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: (_currentPage / 604).clamp(0.0, 1.0),
+                minHeight: 4,
+                backgroundColor: Colors.white.withValues(alpha: 0.12),
+                valueColor: AlwaysStoppedAnimation(greenGlow),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(children: [
+              // Page counter
+              Text('$_currentPage / 604',
+                  style: GoogleFonts.outfit(fontSize: 13,
+                      fontWeight: FontWeight.w700, color: Colors.white)),
+              const Spacer(),
+              // Timer
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: greenGlow.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.timer_outlined, color: greenGlow, size: 14),
+                  const SizedBox(width: 5),
+                  Text(_pageTimerLabel,
+                      style: GoogleFonts.outfit(fontSize: 13,
+                          fontWeight: FontWeight.w700, color: greenGlow)),
+                ]),
+              ),
+            ]),
           ]),
-        ]),
+        ),
       ),
     ]);
   }
