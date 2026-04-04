@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "com.example.noor_rewards"
     // Use fixed versions for stability in Release builds if flutter.sdk is fluctuating
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -28,6 +28,7 @@ android {
     defaultConfig {
         applicationId = "com.example.noor_rewards"
         // Ensure minSdk is at least 21 for modern plugins
+
         minSdk = flutter.minSdkVersion
         targetSdk = 34
         versionCode = flutter.versionCode
