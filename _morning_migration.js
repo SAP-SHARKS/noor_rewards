@@ -141,12 +141,12 @@ const morning = [
   },
   {
     id: 'morning_17', sort_order: 17, recommended_count: 1,
-    reward: 'A Comprehensive Dua: Beneficial Knowledge',
-    reference: 'Ibn Majah, Ahmad',
-    arabic: `اَللّٰهُمَّ إِنِّيْ أَسْأَلُكَ عِلْمًا نَافِعًا ، وَرِزْقًا طَيِّبًا ، وَعَمَلًا مُتَقَبَّلًا`,
-    transliteration: `Allahumma inni as'aluka 'ilman nafi'a, wa rizqan tayyiba, wa 'amalan mutaqabbala.`,
-    translation: `O Allah, I ask You for beneficial knowledge, good provision, and accepted deeds.`,
-    hadith_full: `Umm Salamah (رضي الله عنها) reported: The Prophet (ﷺ) used to say after the Fajr prayer: "Allahumma inni as'aluka 'ilman nafi'a, wa rizqan tayyiba, wa 'amalan mutaqabbala."`,
+    reward: 'Praise Befitting Divine Greatness',
+    reference: 'Ibn Majah 3801',
+    arabic: `يَا رَبِّ لَكَ الْحَمْدُ كَمَا يَنْبَغِيْ لِجَلَالِ وَجْهِكَ وَعَظِيْمِ سُلْطَانِكَ`,
+    transliteration: `Ya Rabbi lakal-hamdu kama yanbaghi li jalali wajhika wa 'azimi sultanik.`,
+    translation: `O my Lord, all praise is due to You as befits the Glory of Your Countenance and the Greatness of Your Authority.`,
+    hadith_full: `Abdullah ibn Umar (رضي الله عنه) reported: The Prophet (ﷺ) said, "A servant said: 'Ya Rabbi lakal-hamdu kama yanbaghi li jalali wajhika wa 'azimi sultanik.' The two angels did not know how to record it, so they ascended to the heavens and said: 'Our Lord, Your servant has said something and we do not know how to record it.' Allah — while knowing best what His servant said — asked: 'What did My servant say?' They replied: 'He said: Ya Rabbi lakal-hamdu kama yanbaghi li jalali wajhika wa 'azimi sultanik.' Allah said to them: 'Record it as My servant said it, until he meets Me and I shall reward him for it.'"`,
   },
   {
     id: 'morning_18', sort_order: 18, recommended_count: 3,
