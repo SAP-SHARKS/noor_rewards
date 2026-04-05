@@ -1784,6 +1784,21 @@ final _kHighlightPatterns = RegExp(
   r'|بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ[.۝]*',
 );
 
+/// Returns a contextual section label based on the azkar content.
+String _sectionLabel(_Azkar azkar) {
+  final h = azkar.hadithFull.toLowerCase();
+  final ref = azkar.reference.toLowerCase();
+  final isQuran = ref.contains('quran') || ref.startsWith('q ') ||
+      _kQuranAyahInfo.containsKey(azkar.id);
+  final isHadith = h.contains('prophet') || h.contains('messenger') ||
+      h.contains('reported') || h.contains('ﷺ') || h.contains('said');
+  if (isQuran && isHadith) return 'Quranic Verse & Hadith';
+  if (isQuran) return 'Quranic Verse';
+  if (isHadith) return 'Hadith & Virtue';
+  if (azkar.hadithFull.isEmpty) return 'Virtue';
+  return 'Benefit & Virtue';
+}
+
 /// Builds a RichText widget with Bismillah/Isti'adhah in a distinct color.
 Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor, {String azkarId = ''}) {
   final cleaned = _cleanArabic(raw, azkarId: azkarId);

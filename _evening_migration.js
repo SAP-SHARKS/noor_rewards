@@ -258,6 +258,41 @@ const evening = [
   },
 ];
 
+// Audio URL map for evening items — mapped by content to LWA evening source
+const eveningAudioMap = {
+  'evening_1':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // Fatiha → Ayat al-Kursi audio
+  'evening_2':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/26.mp3',  // Baqarah 2:1-5 → 3 Quls audio
+  'evening_3':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // Ayat al-Kursi
+  'evening_4':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // 2:256
+  'evening_5':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // 2:257
+  'evening_6':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // 2:284
+  'evening_7':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // 2:285
+  'evening_8':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/25.mp3',  // 2:286
+  'evening_9':  'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/26.mp3',  // Al-Ikhlas
+  'evening_10': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/26.mp3',  // Al-Falaq
+  'evening_11': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/26.mp3',  // An-Nas
+  'evening_12': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/35.mp3',  // Sovereignty
+  'evening_13': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/33.mp3',  // Fitrah
+  'evening_14': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/38.mp3',  // By Your Leave
+  'evening_15': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/34.mp3',  // Blessings & Concealment
+  'evening_16': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/32.mp3',  // Gratitude
+  'evening_17': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/34.mp3',  // Ya Rabbi lakal hamdu
+  'evening_18': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/41.mp3',  // Raditu billahi
+  'evening_19': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/29.mp3',  // Well-being
+  'evening_20': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/34.mp3',  // SubhanAllah 'adada
+  'evening_21': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/42.mp3',  // Bismillah protection
+  'evening_22': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/47.mp3',  // Shirk refuge
+  'evening_23': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/47.mp3',  // Perfect words
+  'evening_24': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/30.mp3',  // Knower of unseen
+  'evening_25': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/31.mp3',  // Ya Hayyu ya Qayyum
+  'evening_26': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/27.mp3',  // Sayyid al-Istighfar
+  'evening_27': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/37.mp3',  // Freed from Hellfire
+  'evening_28': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/39.mp3',  // Health
+  'evening_29': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/40.mp3',  // Hasbiyallahu
+  'evening_30': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/44.mp3',  // La ilaha 100x
+  'evening_31': 'https://static.lifewithallah.com/file/LifeWithAllah/main/8-Evening/43.mp3',  // SubhanAllah 100x
+};
+
 // Build final items
 function buildItem(item) {
   // Try azkar.json first, then fall back to evening_adhkar_data.json by numeric suffix
@@ -281,7 +316,7 @@ function buildItem(item) {
       reference: item.reference,
       sort_order: item.sort_order,
       hadith_full: item.hadith_full || src.hadith_full || '',
-      audio_url: src.audio_url || null,
+      audio_url: eveningAudioMap[item.id] || src.audio_url || null,
     };
   }
   return {
@@ -295,7 +330,7 @@ function buildItem(item) {
     reference: item.reference,
     sort_order: item.sort_order,
     hadith_full: item.hadith_full || '',
-    audio_url: null,
+    audio_url: eveningAudioMap[item.id] || null,
   };
 }
 
