@@ -1209,15 +1209,15 @@
   },
   {
     "id": "morning_9",
-    "arabic": "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ. قُلْ هُوَ اللّٰهُ أَحَدٌ ، اَللّٰهُ الصَّمَدُ ، لَمْ يَلِدْ وَلَمْ يُوْلَدْ ، وَلَمْ يَكُنْ لَّهُ كُفُوًا أَحَدٌ. بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ. قُلْ أَعُوْذُ بِرَبِّ الْفَلَقِ ، مِنْ شَرِّ مَا خَلَقَ ، وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ، وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ، وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ. بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ. قُلْ أَعُوْذُ بِرَبِّ النَّاسِ ، مَلِكِ النَّاسِ ، إِلٰهِ النَّاسِ ، مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ، اَلَّذِيْ يُوَسْوِسُ فِيْ صُدُوْرِ النَّاسِ ، مِنَ الْجِنَّةِ وَالنَّاسِ.",
-    "transliteration": "Bismi-llāhi-r-Raḥmāni-r-Raḥīm. Qul Huwa-llāhu Aḥad. Allāhu-ṣ-Ṣamad. Lam yalid wa lam yūlad. Wa lam yakul-lahū kufuwan aḥad. Bismi-llāhi-r-Raḥmāni-r-Raḥīm. Qul aʿūdhu bi-Rabbi-l-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharri-n-naffāthāti fi-l-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad. Bismi-llāhi-r-Raḥmāni-r-Raḥīm. Qul aʿūdhu bi-Rabbi-n-nās. Maliki-n-nās. Ilāh-hin-nās. Min sharri-l-waswāsi-l-khannās. Al-ladhī yuwaswisu fī ṣudūri-n-nās. Mina-l-jinnati wa-n-nās.",
-    "translation": "In the name of Allah, the All-Merciful, the Very Merciful. Say, He is Allah, the One, the Self-Sufficient Master, Who has not given birth and was not born, and to Whom no one is equal. (112) In the name of Allah, the All-Merciful, the Very Merciful. Say, I seek protection of the Lord of the daybreak, from the evil of what He has created, and from the evil of the darkening night when it settles, and from the evil of the blowers in knots, and from the evil of the envier when he envies. (113) In the name of Allah, the All-Merciful, the Very Merciful. Say, I seek protection of the Lord of mankind, the King of mankind, the God of mankind, from the evil of the whisperer who withdraws, who whispers in the hearts of mankind, whether they be Jinn or people. (114)",
+    "arabic": "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ\n\nقُلْ هُوَ اللّٰهُ أَحَدٌ ، اَللّٰهُ الصَّمَدُ ، لَمْ يَلِدْ وَلَمْ يُوْلَدْ ، وَلَمْ يَكُنْ لَّهُ كُفُوًا أَحَدٌ",
+    "transliteration": "Bismillahir-Rahmanir-Rahim. Qul Huwallahu Ahad. Allahus-Samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad.",
+    "translation": "In the name of Allah, the Most Gracious, the Most Merciful. Say, \"He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent.\"",
     "recommended_count": 3,
     "category": "morning",
-    "reward": "3 Quls: Be Sufficed in All Your Matters",
+    "reward": "Surah Al-Ikhlas: Sincerity",
     "reference": "Abu Dawud 5082, An-Nasa'i",
-    "hadith_full": "Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to me, \"Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn (Surah Al-Falaq and Surah An-Nas) three times in the morning and evening — they will suffice you against everything.\"",
-    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3"
+    "hadith_full": "Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to me, \"Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn (Al-Falaq and An-Nas) three times in the morning and evening — they will suffice you against everything.\"",
+    "audio_url": null
   },
   {
     "id": "morning_10",
@@ -1269,27 +1269,27 @@
   },
   {
     "id": "morning_14",
-    "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلّٰهِ رَبِّ الْعَالَمِيْنَ ، اَللّٰهُمَّ إِنِّيْ أَسْأَلُكَ خَيْرَ هٰذَا الْيَوْمِ ، فَتْحَهُ وَنَصْرَهُ وَنُوْرَهُ وَبَرَكَتَهُ وَهُدَاهُ ، وَأَعُوْذُ بِكَ مِنْ شَرِّ مَا فِيْهِ وَشَرِّ مَا بَعْدَهُ.",
-    "transliteration": "Aṣbaḥnā wa aṣbaḥa-l-mulku li-llāhi Rabbi-l-ʿālamīn, Allāhumma innī as'aluka khayra hādha-l-yawm, fatḥahū wa naṣrahū wa nūrahū wa barakatahū wa hudāh, wa aʿūdhu bika min sharri mā fīhi wa sharri mā baʿdah.",
-    "translation": "We have entered the morning and at this very time the whole kingdom belongs to Allah, Lord of the Worlds. O Allah, I ask You for the goodness of this day: its victory, its help, its light, and its blessings and guidance. I seek Your protection from the evil that is in it and from the evil that follows it.",
+    "arabic": "اَللّٰهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوْتُ وَإِلَيْكَ النُّشُوْرُ.",
+    "transliteration": "Allāhumma bika aṣbaḥnā wa bika amsaynā wa bika naḥyā wa bika namūtu wa ilayka-n-nushūr.",
+    "translation": "O Allah, by You we have entered the morning and by You we enter upon the evening. By You, we live and we die, and to You is the resurrection.",
     "recommended_count": 1,
     "category": "morning",
-    "reward": "Ask Allah to Bless Your Morning",
-    "reference": "Abu Dawud 5068, Tirmidhi",
-    "hadith_full": "Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) used to say in the morning: \"Allahumma bika asbahna wa bika amsayna, wa bika nahya wa bika namutu, wa ilaykan-nushur (O Allah, by You we enter the morning and by You we enter the evening. By You we live and by You we die, and to You is the resurrection).\"",
-    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/13.mp3"
+    "reward": "By Your Leave We Have Reached the Morning",
+    "reference": "Al-Adab al-Mufrad 1199",
+    "hadith_full": "Abu Huraira (رضي الله عنه) reported: The Prophet (ﷺ) said, \"Whoever says in the morning and evening: 'Radhitu billahi Rabba, wa bil-Islami dina, wa bi-Muhammadin nabiyya' — it is a right upon Allah to please him on the Day of Judgment.\"",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/14.mp3"
   },
   {
     "id": "morning_15",
-    "arabic": "أَصْبَحْتُ أُثْنِيْ عَلَيْكَ حَمْدًا ، وَأَشْهَدُ أَنْ لَّا إِلٰهَ إِلَّا اللّٰهُ.",
-    "transliteration": "Aṣbaḥtu uthnī ʿalayka ḥamdā, wa ash-hadu al-lā ilāha illāl-Allāh.",
-    "translation": "I have entered the morning praising You, and I bear witness that there is no god worthy of worship but Allah.",
+    "arabic": "اَللّٰهُمَّ إِنِّيْ أَصْبَحْتُ مِنْكَ فِيْ نِعْمَةٍ وَعَافِيَةٍ وَسِتْرٍ ، فَأَتِمَّ عَلَيَّ نِعْمَتَكَ وَعَافِيَتَكَ وَسِتْرَكَ فِي الدُّنْيَا وَالْآخِرَةِ",
+    "transliteration": "Allahumma inni asbahtu minka fi ni'matin wa 'afiyatin wa sitr, fa atimma 'alayya ni'mataka wa 'afiyataka wa sitraka fid-dunya wal-akhirah.",
+    "translation": "O Allah, I have entered the morning receiving from You blessings, well-being and concealment (of my faults). So complete Your blessings upon me, Your well-being, and Your concealment in this world and the Hereafter.",
     "recommended_count": 3,
     "category": "morning",
-    "reward": "Start the Morning by Praising Allah",
-    "reference": "Al-Uthaymeen, Kitab Al-Azkar",
-    "hadith_full": "Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, \"Whoever says SubhanAllahi wa bihamdihi one hundred times in the morning and evening — no one will come on the Day of Resurrection with anything better, except one who said the same or more.\"",
-    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/10.mp3"
+    "reward": "Blessings, Well-being and Concealment",
+    "reference": "Ibn al-Sunni 41",
+    "hadith_full": "Abdullah ibn Umar (رضي الله عنه) reported: The Messenger of Allah (ﷺ) never used to leave this supplication in the morning and evening, asking Allah to complete His blessings, well-being, and concealment of faults upon him in this world and the Hereafter.",
+    "audio_url": null
   },
   {
     "id": "morning_16",
@@ -1461,15 +1461,15 @@
   },
   {
     "id": "morning_30",
-    "arabic": "اَللّٰهُمَّ إِنِّيْ أَعُوْذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ ، وَأَعُوْذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوْذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ ، وَأَعُوْذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ.",
-    "transliteration": "Allāhumma innī aʿūdhu bika min-l-hammi wa-l-ḥazan, wa aʿūdhu bika min-l-ʿajzi wa-l-kasal, wa aʿūdhu bika min-l-jubni wa-l-bukhl, wa aʿūdhu bika min ghalabati-d-dayni wa qahri-r-rijāl.",
-    "translation": "O Allah, I seek Your protection from anxiety and grief. I seek Your protection from inability and laziness. I seek Your protection from cowardice and miserliness, and I seek Your protection from being overcome by debt and being overpowered by men.",
+    "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلّٰهِ رَبِّ الْعَالَمِيْنَ ، اَللّٰهُمَّ إِنِّيْ أَسْأَلُكَ خَيْرَ هٰذَا الْيَوْمِ ، فَتْحَهُ وَنَصْرَهُ وَنُوْرَهُ وَبَرَكَتَهُ وَهُدَاهُ ، وَأَعُوْذُ بِكَ مِنْ شَرِّ مَا فِيْهِ وَشَرِّ مَا بَعْدَهُ.",
+    "transliteration": "Aṣbaḥnā wa aṣbaḥa-l-mulku li-llāhi Rabbi-l-ʿālamīn, Allāhumma innī as'aluka khayra hādha-l-yawm, fatḥahū wa naṣrahū wa nūrahū wa barakatahū wa hudāh, wa aʿūdhu bika min sharri mā fīhi wa sharri mā baʿdah.",
+    "translation": "We have entered the morning and at this very time the whole kingdom belongs to Allah, Lord of the Worlds. O Allah, I ask You for the goodness of this day: its victory, its help, its light, and its blessings and guidance. I seek Your protection from the evil that is in it and from the evil that follows it.",
     "recommended_count": 1,
     "category": "morning",
-    "reward": "Protect Yourself From Anxiety and Debt",
+    "reward": "Ask Allah to Bless Your Day",
     "reference": "Abu Dawud 5084",
-    "hadith_full": "Anas ibn Malik (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to Fatimah (رضي الله عنها), \"What prevents you from listening to what I advise you? Say in the morning and evening: 'Ya Hayyu ya Qayyumu birahmatika astaghith, aslih li sha'ni kullahu, wa la takilni ila nafsi tarfata 'ayn (O Ever-Living, O Sustainer, in Your mercy I seek relief. Rectify all my affairs and do not leave me to myself even for the blink of an eye).'\"",
-    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/4.mp3"
+    "hadith_full": "Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) used to say in the morning: \"Allahumma bika asbahna wa bika amsayna, wa bika nahya wa bika namutu, wa ilaykan-nushur (O Allah, by You we enter the morning and by You we enter the evening. By You we live and by You we die, and to You is the resurrection).\"",
+    "audio_url": "https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/13.mp3"
   },
   {
     "id": "morning_31",
