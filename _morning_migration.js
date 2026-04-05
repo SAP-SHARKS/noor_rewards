@@ -81,9 +81,14 @@ const morning = [
   },
   {
     id: 'morning_9', sort_order: 9, recommended_count: 3,
-    reward: '3 Quls: Be Sufficed in All Your Matters',
+    reward: 'Surah Al-Ikhlas: Sincerity',
     reference: 'Abu Dawud 5082, An-Nasa\'i',
-    reuse: 'morning_lwa_2',
+    arabic: `بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
+
+قُلْ هُوَ اللّٰهُ أَحَدٌ ، اَللّٰهُ الصَّمَدُ ، لَمْ يَلِدْ وَلَمْ يُوْلَدْ ، وَلَمْ يَكُنْ لَّهُ كُفُوًا أَحَدٌ`,
+    transliteration: `Bismillahir-Rahmanir-Rahim. Qul Huwallahu Ahad. Allahus-Samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad.`,
+    translation: `In the name of Allah, the Most Gracious, the Most Merciful. Say, "He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent."`,
+    hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn (Al-Falaq and An-Nas) three times in the morning and evening — they will suffice you against everything."`,
   },
   {
     id: 'morning_10', sort_order: 10, recommended_count: 3,
@@ -123,15 +128,18 @@ const morning = [
   },
   {
     id: 'morning_14', sort_order: 14, recommended_count: 1,
-    reward: 'Ask Allah to Bless Your Morning',
-    reference: 'Abu Dawud 5068, Tirmidhi',
-    reuse: 'morning_lwa_12',
+    reward: 'By Your Leave We Have Reached the Morning',
+    reference: 'Al-Adab al-Mufrad 1199',
+    reuse: 'morning_lwa_14',
   },
   {
     id: 'morning_15', sort_order: 15, recommended_count: 3,
-    reward: 'Start the Morning by Praising Allah',
-    reference: 'Al-Uthaymeen, Kitab Al-Azkar',
-    reuse: 'morning_lwa_10',
+    reward: 'Blessings, Well-being and Concealment',
+    reference: 'Ibn al-Sunni 41',
+    arabic: `اَللّٰهُمَّ إِنِّيْ أَصْبَحْتُ مِنْكَ فِيْ نِعْمَةٍ وَعَافِيَةٍ وَسِتْرٍ ، فَأَتِمَّ عَلَيَّ نِعْمَتَكَ وَعَافِيَتَكَ وَسِتْرَكَ فِي الدُّنْيَا وَالْآخِرَةِ`,
+    transliteration: `Allahumma inni asbahtu minka fi ni'matin wa 'afiyatin wa sitr, fa atimma 'alayya ni'mataka wa 'afiyataka wa sitraka fid-dunya wal-akhirah.`,
+    translation: `O Allah, I have entered the morning receiving from You blessings, well-being and concealment (of my faults). So complete Your blessings upon me, Your well-being, and Your concealment in this world and the Hereafter.`,
+    hadith_full: `Abdullah ibn Umar (رضي الله عنه) reported: The Messenger of Allah (ﷺ) never used to leave this supplication in the morning and evening, asking Allah to complete His blessings, well-being, and concealment of faults upon him in this world and the Hereafter.`,
   },
   {
     id: 'morning_16', sort_order: 16, recommended_count: 1,
@@ -234,9 +242,9 @@ const morning = [
   },
   {
     id: 'morning_30', sort_order: 30, recommended_count: 1,
-    reward: 'Protect Yourself From Anxiety and Debt',
+    reward: 'Ask Allah to Bless Your Day',
     reference: 'Abu Dawud 5084',
-    reuse: 'morning_lwa_4',
+    reuse: 'morning_lwa_12',
   },
   {
     id: 'morning_31', sort_order: 31, recommended_count: 100,
