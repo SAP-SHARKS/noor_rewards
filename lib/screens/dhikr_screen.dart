@@ -22,13 +22,13 @@ final List<_ArabicFont> _kArabicFonts = [
     name: 'Uthmani',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style: (size, color, height, weight) =>
-        GoogleFonts.amiri(fontSize: size, color: color, height: height, fontWeight: weight),
+        GoogleFonts.scheherazadeNew(fontSize: size, color: color, height: height, fontWeight: weight),
   ),
   (
     name: 'Indo pak',
     arabicPreview: 'بِسۡمِ اللهِ',
     style: (size, color, height, weight) =>
-        TextStyle(fontFamily: 'AlQalamQuran', fontSize: size + 6, color: color, height: height, fontWeight: weight),
+        TextStyle(fontFamily: 'AlQalamQuran', fontFamilyFallback: const ['ScheherazadeNew', 'Noto Naskh Arabic'], fontSize: size + 6, color: color, height: height, fontWeight: FontWeight.normal),
   ),
   (
     name: 'Madina',
@@ -1682,16 +1682,94 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 // Arabic text cleaner — strips brackets, parentheses, and Quranic waqf/
 // annotation characters that sometimes appear in source data.
 // ─────────────────────────────────────────────────────────────────────────────
-String _cleanArabic(String s) {
+/// Ayah info for Quranic passages: start ayah number, total ayah count,
+/// and whether Bismillah counts as ayah 1 (only true for Al-Fatiha).
+typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
+const Map<String, _AyahInfo> _kQuranAyahInfo = {
+  // ── Al-Fatiha (Bismillah IS ayah 1) ──
+  'morning_1': (start: 1, count: 7, bismillahIsAyah: true),
+  'evening_1': (start: 1, count: 7, bismillahIsAyah: true),
+  // ── Al-Baqarah 2:1-5 ──
+  'morning_2': (start: 1, count: 5, bismillahIsAyah: false),
+  'evening_2': (start: 1, count: 5, bismillahIsAyah: false),
+  // ── Single ayahs (commas are clause separators, number at end only) ──
+  'morning_3': (start: 255, count: 1, bismillahIsAyah: false),
+  'evening_3': (start: 255, count: 1, bismillahIsAyah: false),
+  'morning_4': (start: 256, count: 1, bismillahIsAyah: false),
+  'evening_4': (start: 256, count: 1, bismillahIsAyah: false),
+  'morning_5': (start: 257, count: 1, bismillahIsAyah: false),
+  'evening_5': (start: 257, count: 1, bismillahIsAyah: false),
+  'morning_6': (start: 284, count: 1, bismillahIsAyah: false),
+  'evening_6': (start: 284, count: 1, bismillahIsAyah: false),
+  'morning_7': (start: 285, count: 1, bismillahIsAyah: false),
+  'evening_7': (start: 285, count: 1, bismillahIsAyah: false),
+  'morning_8': (start: 286, count: 1, bismillahIsAyah: false),
+  'evening_8': (start: 286, count: 1, bismillahIsAyah: false),
+  // ── Multi-ayah surahs (Bismillah is NOT numbered) ──
+  'morning_9':  (start: 1, count: 4, bismillahIsAyah: false), // Al-Ikhlas
+  'evening_9':  (start: 1, count: 4, bismillahIsAyah: false),
+  'morning_10': (start: 1, count: 5, bismillahIsAyah: false), // Al-Falaq
+  'evening_10': (start: 1, count: 5, bismillahIsAyah: false),
+  'morning_11': (start: 1, count: 6, bismillahIsAyah: false), // An-Nas
+  'evening_11': (start: 1, count: 6, bismillahIsAyah: false),
+};
+
+String _toArabicNum(int n) {
+  const digits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return n.toString().split('').map((d) => digits[int.parse(d)]).join();
+}
+
+String _cleanArabic(String s, {String azkarId = ''}) {
   // Remove footnote markers like [1], (2)
   s = s.replaceAll(RegExp(r'\[\d+\]'), '');
   s = s.replaceAll(RegExp(r'\(\d+\)'), '');
-  // Remove leftover bracket characters (so things like ((text)) keep the text)
-  s = s.replaceAll(RegExp(r'[\[\]\(\)\{\}«»﴿﴾]'), '');
-  // Remove Quranic waqf/tajweed marks (same ranges as Quran screen stripper)
-  s = s.replaceAll(RegExp(r'[\u0615-\u061A\u06D6-\u06DE\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED\u08D4-\u08FE\u200B\uE000-\uF8FF]'), '');
-  // Remove Arabic end-of-ayah ornament ۝ if it crept in
-  s = s.replaceAll('\u06DD', '');
+  // Remove leftover bracket characters
+  s = s.replaceAll(RegExp(r'[\[\]\(\)\{\}«»]'), '');
+  // Normalize any existing ﴿N﴾ markers back to commas (code will re-add correctly)
+  s = s.replaceAll(RegExp(r'﴿[٠-٩]+﴾'), '،');
+  // Remove Quranic waqf/tajweed marks
+  s = s.replaceAll(RegExp(r'[\u0615-\u061A\u06D6-\u06DC\u06DE-\u06E4\u06E7-\u06E8\u06EA-\u06ED\u08D4-\u08FE\u200B\uE000-\uF8FF]'), '');
+  // Normalize: convert any existing ۝ back to ، so comma-based logic works uniformly
+  s = s.replaceAll('\u06DD', '،');
+
+  final info = _kQuranAyahInfo[azkarId];
+  if (info != null && info.count > 1) {
+    // ── Multi-ayah Quranic passage: number each ayah ──
+    int ayahNum = info.start;
+
+    // Handle Bismillah line: keep on same line with its ayah number
+    final nlIdx = s.indexOf('\n');
+    if (nlIdx > 0 && info.bismillahIsAyah) {
+      // Al-Fatiha: Bismillah IS ayah 1 — marker on same line, then linebreak
+      final bismillah = s.substring(0, nlIdx).trim();
+      final rest = s.substring(nlIdx).replaceAll(RegExp(r'^\n+'), '');
+      s = '$bismillah ﴿${_toArabicNum(ayahNum)}﴾\n$rest';
+      ayahNum++;
+    } else if (nlIdx > 0) {
+      // Other surahs: Bismillah is NOT an ayah — collapse newlines
+      final bismillah = s.substring(0, nlIdx).trim();
+      final rest = s.substring(nlIdx).replaceAll(RegExp(r'^\n+'), '');
+      s = '$bismillah\n$rest';
+    }
+
+    // Each ، marks the END of an ayah — place ﴿N﴾ where the comma is
+    s = s.replaceAllMapped(RegExp(r'\s*،\s*'), (m) {
+      final marker = ' ﴿${_toArabicNum(ayahNum)}﴾ ';
+      ayahNum++;
+      return marker;
+    });
+    // Final ayah number at the very end
+    s = '${s.trim()} ﴿${_toArabicNum(ayahNum)}﴾';
+  } else if (info != null && info.count == 1) {
+    // ── Single Quranic ayah: remove commas entirely, ayah number at end ──
+    s = s.replaceAll(RegExp(r'\n+'), ' ');
+    s = s.replaceAll(RegExp(r'\s*،\s*'), ' ');
+    s = '${s.trim()} ﴿${_toArabicNum(info.start)}﴾';
+  } else {
+    // ── Dua / non-Quranic text: remove commas ──
+    s = s.replaceAll(RegExp(r'\s*،\s*'), ' ');
+  }
+
   // Collapse extra whitespace
   return s.replaceAll(RegExp(r'  +'), ' ').trim();
 }
@@ -1707,8 +1785,8 @@ final _kHighlightPatterns = RegExp(
 );
 
 /// Builds a RichText widget with Bismillah/Isti'adhah in a distinct color.
-Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor) {
-  final cleaned = _cleanArabic(raw);
+Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor, {String azkarId = ''}) {
+  final cleaned = _cleanArabic(raw, azkarId: azkarId);
   final spans = <TextSpan>[];
   int lastEnd = 0;
 
@@ -1725,9 +1803,12 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor)
     }
     
     String highlightedText = m.group(0)!.trim();
-    bool hasTextAfter = cleaned.substring(m.end).trimLeft().isNotEmpty;
-    String suffix = hasTextAfter ? '\n' : '';
-    
+    final afterMatch = cleaned.substring(m.end);
+    final afterTrimmed = afterMatch.trimLeft();
+    // Don't add \n if ﴿ follows (ayah marker should stay on same line)
+    final startsWithMarker = afterTrimmed.startsWith('﴿');
+    String suffix = (afterTrimmed.isNotEmpty && !startsWithMarker) ? '\n' : '';
+
     spans.add(TextSpan(
       text: '$highlightedText$suffix',
       style: baseStyle.copyWith(color: highlightColor),
@@ -1865,8 +1946,9 @@ class _AzkarCard extends StatelessWidget {
                   _buildStyledArabic(
                     azkar.arabic,
                     _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)]
-                        .style(settings.arabicFontSize, kText, 1.8, FontWeight.w700),
+                        .style(settings.arabicFontSize, kText, 2.2, FontWeight.w700),
                     isDark ? const Color(0xFF5EADDB) : const Color(0xFF1A7A5C),
+                    azkarId: azkar.id,
                   ),
                   if (settings.showTranslation) ...[
                     const SizedBox(height: 14),

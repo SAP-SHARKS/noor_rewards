@@ -5,10 +5,15 @@ const eveningLwa = JSON.parse(fs.readFileSync('evening_adhkar_data.json', 'utf-8
 const lwaById = {};
 eveningLwa.adhkar.forEach(c => lwaById[c.id] = c);
 
-// Also load the current evening_fixed items from azkar.json
+// Also load the current evening items from azkar.json (supports both evening_fixed_* and evening_* IDs)
 const allAzkar = JSON.parse(fs.readFileSync('assets/data/azkar.json', 'utf-8'));
 const fixedById = {};
-allAzkar.filter(i => (i.category_id || i.category) === 'evening').forEach(c => fixedById[c.id] = c);
+allAzkar.filter(i => (i.category_id || i.category) === 'evening').forEach(c => {
+  fixedById[c.id] = c;
+  // Map evening_N → evening_fixed_N and vice versa for compatibility
+  if (c.id.startsWith('evening_fixed_')) fixedById[c.id.replace('evening_fixed_', 'evening_')] = c;
+  if (c.id.startsWith('evening_') && !c.id.startsWith('evening_fixed_')) fixedById[c.id.replace('evening_', 'evening_fixed_')] = c;
+});
 
 // Exact 31-item sequence from Dua & Adhkar website (chapter-2-evening-azkar)
 const evening = [
@@ -255,8 +260,16 @@ const evening = [
 
 // Build final items
 function buildItem(item) {
-  if (item.reuse_fixed && fixedById[item.reuse_fixed]) {
-    const src = fixedById[item.reuse_fixed];
+  // Try azkar.json first, then fall back to evening_adhkar_data.json by numeric suffix
+  let src = null;
+  if (item.reuse_fixed) {
+    src = fixedById[item.reuse_fixed];
+    if (!src || !src.arabic || src.arabic.length < 10) {
+      const num = item.reuse_fixed.replace('evening_fixed_', '');
+      src = lwaById[parseInt(num)] || src;
+    }
+  }
+  if (src) {
     return {
       id: item.id,
       arabic: item.arabic || src.arabic,
