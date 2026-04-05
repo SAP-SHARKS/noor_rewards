@@ -50,6 +50,7 @@ class _Azkar {
   final String reference;
   final String hadithFull;
   final String? audioUrl; // For online MP3 playback
+  final int    sortOrder;
 
   const _Azkar({
     required this.id, required this.arabic, required this.transliteration,
@@ -57,6 +58,7 @@ class _Azkar {
     required this.category, required this.reward, required this.reference,
     this.hadithFull = '',
     this.audioUrl,
+    this.sortOrder = 0,
   });
 
   factory _Azkar.fromJson(Map<String, dynamic> j) => _Azkar(
@@ -70,6 +72,7 @@ class _Azkar {
     reference:        j['reference'] as String? ?? '',
     hadithFull:       j['hadith_full'] as String? ?? '',
     audioUrl:         j['audio_url'] as String?,
+    sortOrder:        j['sort_order'] as int? ?? 0,
   );
 }
 
@@ -432,6 +435,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       } else {
         _filtered = _allAzkar.where((a) => a.category == _selectedCat).toList();
       }
+      _filtered.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     });
   }
 
