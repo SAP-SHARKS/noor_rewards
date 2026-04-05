@@ -260,6 +260,26 @@ const morning = [
   },
 ];
 
+// Audio URL overrides for items without reuse (mapped by content to LWA source)
+const morningAudioMap = {
+  'morning_1':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // Fatiha — uses Ayat al-Kursi audio (recitation)
+  'morning_2':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // Baqarah 2:1-5 — uses 3 Quls audio
+  'morning_4':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:256
+  'morning_5':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:257
+  'morning_6':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:284
+  'morning_7':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:285
+  'morning_8':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:286
+  'morning_9':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // Al-Ikhlas
+  'morning_10': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // Al-Falaq
+  'morning_11': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // An-Nas
+  'morning_15': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/10.mp3',  // Blessings & Concealment
+  'morning_17': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/10.mp3',  // Ya Rabbi lakal hamdu
+  'morning_18': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/17.mp3',  // Raditu billahi
+  'morning_22': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/23.mp3',  // Shirk refuge
+  'morning_23': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/23.mp3',  // Perfect words
+  'morning_25': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/7.mp3',   // Ya Hayyu ya Qayyum
+};
+
 // Build final items
 function buildItem(item) {
   if (item.reuse && byId[item.reuse]) {
@@ -275,7 +295,7 @@ function buildItem(item) {
       reference: item.reference,
       sort_order: item.sort_order,
       hadith_full: item.hadith_full || src.hadith_full || '',
-      audio_url: src.audio_url || null,
+      audio_url: morningAudioMap[item.id] || src.audio_url || null,
     };
   }
   return {
@@ -289,7 +309,7 @@ function buildItem(item) {
     reference: item.reference,
     sort_order: item.sort_order,
     hadith_full: item.hadith_full || '',
-    audio_url: null,
+    audio_url: morningAudioMap[item.id] || null,
   };
 }
 
