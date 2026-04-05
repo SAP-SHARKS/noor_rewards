@@ -2000,7 +2000,7 @@ class _AzkarCard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Hadith & Virtue', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kPrimary)),
+                              Text(_sectionLabel(azkar), style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kPrimary)),
                               const SizedBox(height: 4),
                               Text(cleanReward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, fontWeight: FontWeight.w600, height: 1.5)),
                             ],
