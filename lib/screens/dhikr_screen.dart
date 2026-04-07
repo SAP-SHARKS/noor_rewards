@@ -1338,6 +1338,10 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   bool _showToolbar = false;
   Timer? _hideTimer;
 
+  // ── Draggable counter position ──
+  Offset? _counterOffset; // null = default bottom-center
+  bool _isDragging = false;
+
   // ── Session tracking for smart notification logic ────────────────────
   late DateTime _sessionStart;
   // Number of azkar pages completed in THIS session visit
@@ -1454,7 +1458,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
       return PopScope(
         onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF1A1A1A) : _scaffoldBgForCategory(widget.azkars[safeIndex].category),
         appBar: AppBar(
           backgroundColor: appBarColor,
           elevation: 0,
@@ -1462,7 +1466,37 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
           foregroundColor: Colors.white,
-          flexibleSpace: Container(color: appBarColor),
+          toolbarHeight: 56,
+          flexibleSpace: Builder(
+            builder: (context) {
+              int ci = safeIndex;
+              try {
+                if (_pageController.hasClients && _pageController.page != null) {
+                  ci = _pageController.page!.round().clamp(0, widget.azkars.length - 1);
+                }
+              } catch (_) {}
+              final catId = widget.azkars[ci].category;
+              final isMorning = catId == 'morning';
+              final isEvening = catId == 'evening';
+              final List<Color> gradColors = isMorning
+                ? [const Color(0xFF0C4A3E), const Color(0xFF0A6B52), const Color(0xFF0D9488)]
+                : isEvening
+                  ? [const Color(0xFF1E1B4B), const Color(0xFF312E81), const Color(0xFF4338CA)]
+                  : [appBarColor, appBarColor, appBarColor];
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: gradColors,
+                  ),
+                  boxShadow: [
+                    BoxShadow(color: gradColors.last.withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 4)),
+                  ],
+                ),
+              );
+            },
+          ),
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white.withValues(alpha: 0.90), size: 20),
             onPressed: () => Navigator.pop(context),
@@ -1478,11 +1512,56 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final catId = widget.azkars[ci].category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
+              final timing = _kTimingInfo[catId];
+              final isMorning = catId == 'morning';
               return Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(catLabel, style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white.withValues(alpha: 0.90))),
-                const SizedBox(height: 2),
-                Text('${ci + 1} of ${widget.azkars.length}',
-                  style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.50))),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(catLabel, style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white)),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text('${ci + 1} / ${widget.azkars.length}',
+                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.80))),
+                    ),
+                  ],
+                ),
+                if (timing != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 4, height: 4,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isMorning ? const Color(0xFFFFD700) : const Color(0xFF93C5FD),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(timing,
+                        style: GoogleFonts.outfit(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.55),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 4, height: 4,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isMorning ? const Color(0xFFFFD700) : const Color(0xFF93C5FD),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ]);
             }
           ),
@@ -1653,21 +1732,70 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     ),
                   ),
                 ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 20 + MediaQuery.of(context).padding.bottom,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: isComplete ? null : () => _tryComplete(azkar, tapTarget, isSwipe: false),
-                      child: _DhikrCounterButton(
-                        count: count,
-                        target: tapTarget,
-                        isComplete: isComplete,
-                        isDark: isDark,
-                      ),
-                    ),
-                  ),
+                // ── Draggable counter button ──
+                LayoutBuilder(
+                  builder: (ctx, constraints) {
+                    final screenW = constraints.maxWidth;
+                    final screenH = constraints.maxHeight;
+                    final safeBottom = MediaQuery.of(context).padding.bottom;
+                    final defaultX = screenW / 2 - 55; // center (half of ~110 width)
+                    final defaultY = screenH - 130 - safeBottom;
+                    final dx = _counterOffset?.dx ?? defaultX;
+                    final dy = _counterOffset?.dy ?? defaultY;
+
+                    return Stack(
+                      children: [
+                        Positioned(
+                          left: dx.clamp(0.0, screenW - 110),
+                          top: dy.clamp(60.0, screenH - 70),
+                          child: GestureDetector(
+                            onTap: isComplete ? null : () => _tryComplete(azkar, tapTarget, isSwipe: false),
+                            onPanStart: (_) => setState(() => _isDragging = true),
+                            onPanEnd: (_) => setState(() => _isDragging = false),
+                            onPanCancel: () => setState(() => _isDragging = false),
+                            onPanUpdate: (details) {
+                              setState(() {
+                                _isDragging = true;
+                                final cur = _counterOffset ?? Offset(defaultX, defaultY);
+                                _counterOffset = Offset(
+                                  (cur.dx + details.delta.dx).clamp(0.0, screenW - 110),
+                                  (cur.dy + details.delta.dy).clamp(60.0, screenH - 70),
+                                );
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: _isDragging ? [
+                                  BoxShadow(
+                                    color: const Color(0xFF0D9488).withValues(alpha: 0.6),
+                                    blurRadius: 28,
+                                    spreadRadius: 8,
+                                  ),
+                                  BoxShadow(
+                                    color: const Color(0xFF0D9488).withValues(alpha: 0.3),
+                                    blurRadius: 50,
+                                    spreadRadius: 14,
+                                  ),
+                                ] : [],
+                              ),
+                              child: AnimatedScale(
+                                scale: _isDragging ? 1.12 : 1.0,
+                                duration: const Duration(milliseconds: 200),
+                                child: _DhikrCounterButton(
+                                  count: count,
+                                  target: tapTarget,
+                                  isComplete: isComplete,
+                                  isDark: isDark,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             );
@@ -1685,6 +1813,19 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 /// Ayah info for Quranic passages: start ayah number, total ayah count,
 /// and whether Bismillah counts as ayah 1 (only true for Al-Fatiha).
 typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
+/// Scaffold bg color matching bottom gradient for each category
+Color _scaffoldBgForCategory(String cat) => switch (cat) {
+  'morning' => const Color(0xFF0C4A3E),
+  'evening' => const Color(0xFF1E1B4B),
+  _         => const Color(0xFF065F53),
+};
+
+/// Timing info shown at top of azkar detail screen
+const Map<String, String> _kTimingInfo = {
+  'morning': 'Between Subh-e-Sadiq to Sunrise',
+  'evening': 'Between Asr to Maghrib',
+};
+
 const Map<String, _AyahInfo> _kQuranAyahInfo = {
   // ── Al-Fatiha (Bismillah IS ayah 1) ──
   'morning_1': (start: 1, count: 7, bismillahIsAyah: true),
@@ -1950,8 +2091,7 @@ class _AzkarCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
 
-            const SizedBox(height: 20),
-
+            const SizedBox(height: 16),
 
             // ── Main Text Content ──
             Padding(
@@ -1992,218 +2132,240 @@ class _AzkarCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+            ],
+          ),
+        ),
 
-            // ── Highly Visible Benefit Box ──
-            if (cleanReward.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(16),
+        // ══════════════════════════════════════════════════════════════════
+        // Unified bottom section — Benefit, Hadith, Reference
+        // ══════════════════════════════════════════════════════════════════
+        if (cleanReward.isNotEmpty || azkar.hadithFull.isNotEmpty || rawRef.isNotEmpty || bottomRef.isNotEmpty)
+          Builder(
+            builder: (context) {
+              final isMorning = azkar.category == 'morning';
+              final isEvening = azkar.category == 'evening';
+              final List<Color> sectionGrad = isDark
+                ? [const Color(0xFF1A1A1A), const Color(0xFF1E1E1E)]
+                : isMorning
+                  ? [const Color(0xFF0A6B52), const Color(0xFF0C4A3E)]
+                  : isEvening
+                    ? [const Color(0xFF312E81), const Color(0xFF1E1B4B)]
+                    : [const Color(0xFF0D9488), const Color(0xFF065F53)];
+              final textColor = isDark ? Colors.white.withValues(alpha: 0.85) : Colors.white.withValues(alpha: 0.90);
+              final subColor = isDark ? Colors.white.withValues(alpha: 0.55) : Colors.white.withValues(alpha: 0.65);
+              final labelColor = isDark ? const Color(0xFF5EADDB) : Colors.white;
+              final dividerColor = Colors.white.withValues(alpha: isDark ? 0.08 : 0.12);
+
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
                 decoration: BoxDecoration(
-                  color: kBeneBg,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: sectionGrad,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ── Section label ──
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        NoorIcon.sparkles(size: 16),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(_sectionLabel(azkar), style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: kPrimary)),
-                              const SizedBox(height: 4),
-                              Text(cleanReward, style: GoogleFonts.outfit(fontSize: 13, color: kBeneTxt, fontWeight: FontWeight.w600, height: 1.5)),
-                            ],
-                          ),
-                        ),
+                        Icon(Icons.auto_awesome_rounded, size: 15, color: labelColor.withValues(alpha: 0.70)),
+                        const SizedBox(width: 8),
+                        Text(_sectionLabel(azkar),
+                          style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: labelColor, letterSpacing: 0.5)),
                       ],
                     ),
+
+                    // ── Virtue/Benefit title ──
+                    if (cleanReward.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Text(cleanReward,
+                        style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600, color: textColor, height: 1.5)),
+                    ],
+
+                    // ── Hadith text ──
                     if (azkar.hadithFull.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.7),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          azkar.hadithFull,
-                          style: GoogleFonts.outfit(
-                            fontSize: 13.5,
-                            color: kBeneTxt,
-                            height: 1.65,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        child: Container(height: 0.5, color: dividerColor),
+                      ),
+                      Text(azkar.hadithFull,
+                        style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, height: 1.7)),
+                    ],
+
+                    // ── Reference ──
+                    if (rawRef.isNotEmpty || bottomRef.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: isDark ? 0.08 : 0.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            rawRef.isNotEmpty ? rawRef : (bottomRef.isNotEmpty ? bottomRef : azkar.reference),
+                            style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: labelColor.withValues(alpha: 0.80)),
                           ),
                         ),
                       ),
                     ],
                   ],
                 ),
-              ),
-
-            // ── Context / Chapter Subtitle (Moved below Hadith & Virtue) ──
-            if (rawRef.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF3F4F6),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      rawRef,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kSub,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-            // ── Display Reference at the Bottom ──
-            if (bottomRef.isNotEmpty || (azkar.reference.isNotEmpty && rawRef.isEmpty))
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Text(
-                  bottomRef.isNotEmpty ? bottomRef : azkar.reference,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: kPrimary),
-                ),
-              ),
-
-            const SizedBox(height: 24),
-            ],
+              );
+            },
           ),
-        ),
       ],
     );
   }
 }
 
-/// Returns the top gradient color of each illustration to fill behind the app bar.
-Color _illustrationTopColor(String azkarId, bool isDark) {
-  if (isDark) return const Color(0xFF121212);
-  // Normalize evening_fixed_X → evening_lwa_X so both data sources match
-  final id = azkarId.toLowerCase().replaceFirst('evening_fixed_', 'evening_lwa_');
-  // Match the top color of each illustration's background gradient
-  if (id.contains('ayat_kursi') || id.contains('ayat-kursi') ||
-      id.contains('ayatul_kursi') || id.contains('ayatul-kursi') ||
-      id == 'morning_lwa_1' || id == 'evening_lwa_1') {
-    return const Color(0xFF0A1628); // Protection Shield
-  }
-  if (id.contains('three_quls') || id.contains('3_quls') ||
-      id == 'morning_lwa_2' || id == 'evening_lwa_2') {
-    return const Color(0xFF0D0A1F); // Three Quls
-  }
-  if (id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar') ||
-      id == 'morning_lwa_3' || id == 'evening_lwa_3') {
-    return const Color(0xFF1A0E2E); // Gates of Jannah
-  }
+/// Maps azkar ID → illustration name. Supports both new IDs (morning_1..33,
+/// evening_1..32) and old IDs (morning_lwa_*, evening_lwa_*, general, etc.).
+String _pickIllustration(String rawId) {
+  final id = rawId.toLowerCase()
+    .replaceFirst('evening_fixed_', 'evening_lwa_');
+
+  // ── New morning/evening IDs (by content) ──
+  // Ayat al-Kursi
+  if (id == 'morning_3' || id == 'evening_3') return 'shield';
+  // Ikhlas, Falaq, Nas
+  if (id == 'morning_9' || id == 'morning_10' || id == 'morning_11' ||
+      id == 'evening_9' || id == 'evening_10' || id == 'evening_11') return 'three_quls';
+  // Sovereignty — ask for good day/evening
+  if (id == 'morning_12' || id == 'evening_12') return 'path';
+  // Fitrah
+  if (id == 'morning_13' || id == 'evening_13') return 'dawn';
+  // By Your Leave
+  if (id == 'morning_14' || id == 'evening_14') return 'cycle';
+  // Gratitude
+  if (id == 'morning_16' || id == 'evening_16') return 'vessel';
+  // Raditu billahi — pleased with Allah
+  if (id == 'morning_18' || id == 'evening_18') return 'hand';
+  // Well-being / Afiyah — 6 direction protection
+  if (id == 'morning_19' || id == 'evening_19') return 'six_wards';
+  // SubhanAllah 'adada khalqihi — cosmic weight
+  if (id == 'morning_20' || id == 'evening_20') return 'cosmic';
+  // Bismillah protection — invincible name
+  if (id == 'morning_21' || id == 'evening_21') return 'invincible';
+  // Perfect words — invincible name
+  if (id == 'morning_23' || id == 'evening_23') return 'invincible';
+  // Knower of unseen — repelling light
+  if (id == 'morning_24' || id == 'evening_24') return 'repelling';
+  // Ya Hayyu Ya Qayyum — cradled heart
+  if (id == 'morning_25' || id == 'evening_25') return 'heart';
+  // Sayyid al-Istighfar — gates of Jannah
+  if (id == 'morning_26' || id == 'evening_26') return 'gates';
+  // Freed from Hellfire — freedom flame
+  if (id == 'morning_27' || id == 'evening_27') return 'flame';
+  // Health body/hearing/sight — three vessels
+  if (id == 'morning_28' || id == 'evening_28') return 'vessels';
+  // Hasbiyallahu — seven pillars
+  if (id == 'morning_29' || id == 'evening_29') return 'pillars';
+  // Bless your day (morning only #30)
+  if (id == 'morning_30') return 'blessings';
+  // La ilaha illallah 100x — unparalleled scales
+  if (id == 'morning_31' || id == 'evening_30') return 'scales';
+  // SubhanAllah wa bihamdihi 100x — ocean of forgiveness
+  if (id == 'morning_32' || id == 'evening_31') return 'ocean';
+  // Durood Ibrahim (evening #32) — ten salawat
+  if (id == 'evening_32' || id == 'morning_33') return 'salawat';
+
+  // ── Old IDs (morning_lwa_*, evening_lwa_*, general categories) ──
+  if (id == 'morning_lwa_1' || id == 'evening_lwa_1' ||
+      id.contains('ayat_kursi') || id.contains('ayat-kursi') ||
+      id.contains('ayatul_kursi') || id.contains('ayatul-kursi')) return 'shield';
+  if (id == 'morning_lwa_2' || id == 'evening_lwa_2' ||
+      id.contains('three_quls') || id.contains('3_quls')) return 'three_quls';
+  if (id == 'morning_lwa_3' || id == 'evening_lwa_3' ||
+      id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar')) return 'gates';
   if (id == 'morning_lwa_4' || id == 'evening_lwa_4' ||
-      id.contains('anxiety') || id.contains('hamm_hazan')) {
-    return const Color(0xFF0A0C12); // Breaking Chains
-  }
+      id.contains('anxiety') || id.contains('hamm_hazan')) return 'chains';
   if (id == 'morning_lwa_5' || id == 'evening_lwa_5' ||
-      id.contains('dua_afiyah') || id.contains('wellbeing')) {
-    return const Color(0xFF0A1A18); // Six Wards
-  }
+      id.contains('dua_afiyah') || id.contains('wellbeing')) return 'six_wards';
   if (id == 'morning_lwa_6' || id == 'evening_lwa_6' ||
-      id.contains('four_evils') || id.contains('4_evils')) {
-    return const Color(0xFF0F0A14); // Repelling Light
-  }
+      id.contains('four_evils') || id.contains('4_evils')) return 'repelling';
   if (id == 'morning_lwa_7' || id == 'evening_lwa_7' ||
-      id.contains('entrust') || id.contains('ya_hayyu')) {
-    return const Color(0xFF120818); // Cradled Heart
-  }
+      id.contains('entrust') || id.contains('ya_hayyu')) return 'heart';
   if (id == 'morning_lwa_8' || id == 'evening_lwa_8' ||
-      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) {
-    return const Color(0xFF0E1608); // Overflowing Vessel
-  }
+      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) return 'vessel';
   if (id == 'morning_lwa_9' || id == 'evening_lwa_9' ||
-      id.contains('fitrah') || id.contains('tawhid')) {
-    return const Color(0xFF0A0A1A); // Rising Dawn
-  }
+      id.contains('fitrah') || id.contains('tawhid')) return 'dawn';
   if (id == 'morning_lwa_10' || id == 'evening_lwa_10' ||
-      id.contains('praise_morning') || id.contains('uthni')) {
-    return const Color(0xFF08101E); // Praise Ripples
-  }
+      id.contains('praise_morning') || id.contains('uthni')) return 'ripples';
   if (id == 'morning_lwa_11' || id == 'evening_lwa_11' ||
-      id.contains('good_day') || id.contains('khayr_yawm')) {
-    return const Color(0xFF0A0E18); // Glowing Path
-  }
+      id.contains('good_day') || id.contains('khayr_yawm')) return 'path';
   if (id == 'morning_lwa_12' || id == 'evening_lwa_12' ||
       id.contains('bless_day') || id.contains('bless_evening') ||
-      id.contains('fath') || id.contains('barakah_yawm')) {
-    return const Color(0xFF0C0818); // Five Blessings
-  }
+      id.contains('fath') || id.contains('barakah_yawm')) return 'blessings';
   if (id == 'morning_lwa_13' || id == 'evening_lwa_13' ||
-      id.contains('freed_hellfire') || id.contains('ush_hidu')) {
-    return const Color(0xFF1A0A08); // Freedom Flame
-  }
+      id.contains('freed_hellfire') || id.contains('ush_hidu')) return 'flame';
   if (id == 'morning_lwa_14' || id == 'evening_lwa_14' ||
-      id.contains('bika_asbahna') || id.contains('nushur')) {
-    return const Color(0xFF0A0E1A); // Cycle of Return
-  }
+      id.contains('bika_asbahna') || id.contains('nushur')) return 'cycle';
   if (id == 'morning_lwa_15' || id == 'evening_lwa_15' ||
-      id.contains('afini_badani') || id.contains('good_health')) {
-    return const Color(0xFF081218); // Three Vessels
-  }
+      id.contains('afini_badani') || id.contains('good_health')) return 'vessels';
   if (id == 'morning_lwa_16' || id == 'evening_lwa_16' ||
-      id.contains('hasbiyallah') || id.contains('arsh_azeem')) {
-    return const Color(0xFF0A0814); // Seven Pillars
-  }
+      id.contains('hasbiyallah') || id.contains('arsh_azeem')) return 'pillars';
   if (id == 'morning_lwa_17' || id == 'evening_lwa_17' ||
-      id.contains('raditu_billah') || id.contains('pleased_allah')) {
-    return const Color(0xFF0C1008); // Guiding Hand
-  }
+      id.contains('raditu_billah') || id.contains('pleased_allah')) return 'hand';
   if (id == 'morning_lwa_18' || id == 'evening_lwa_18' ||
-      id.contains('la_yadurru') || id.contains('bismillah_protect')) {
-    return const Color(0xFF08101A); // Invincible Name
-  }
+      id.contains('la_yadurru') || id.contains('bismillah_protect')) return 'invincible';
   if (id == 'morning_lwa_19' || id == 'evening_lwa_19' ||
-      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) {
-    return const Color(0xFF061218); // Ocean of Forgiveness
-  }
+      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) return 'ocean';
   if (id == 'morning_lwa_20' || id == 'evening_lwa_20' ||
       id == 'la_ilaha_illallah' || id == 'post_prayer_la_ilaha' ||
-      id.contains('unparalleled_reward')) {
-    return const Color(0xFF0C0A14); // Unparalleled Scales
-  }
+      id.contains('unparalleled_reward')) return 'scales';
   if (id == 'morning_lwa_21' || id == 'evening_lwa_21' ||
       id == 'subhanallah' || id == 'alhamdulillah' || id == 'allahu_akbar' ||
       id == 'post_prayer_subhanallah' || id == 'post_prayer_alhamdulillah' ||
       id == 'post_prayer_allahu_akbar' ||
-      id.contains('sleeping_tasbih')) {
-    return const Color(0xFF14100A); // Sunrise Glory
-  }
+      id.contains('sleeping_tasbih')) return 'glory';
   if (id == 'morning_lwa_22' || id == 'evening_lwa_22' ||
       id == 'salawat_ibrahimiyya' || id == 'salawat_simple' ||
-      id == 'salawat_friday' || id.contains('salawat')) {
-    return const Color(0xFF0A1210); // Ten Salawat
-  }
-  if (id == 'evening_lwa_23' || id.contains('kalimat_taammat')) {
-    return const Color(0xFF08101A); // Invincible Name (evening protection)
-  }
+      id == 'salawat_friday' || id.contains('salawat')) return 'salawat';
+  if (id == 'evening_lwa_23' || id.contains('kalimat_taammat')) return 'invincible';
   if (id == 'morning_lwa_23' ||
       id == 'astaghfirullah' || id == 'istighfar_extended' ||
-      id.contains('astaghfiru')) {
-    return const Color(0xFF0E0A18); // Doors of Mercy
-  }
+      id.contains('astaghfiru')) return 'doors';
   if (id == 'morning_lwa_24' || id == 'evening_lwa_24' ||
-      id.contains('adada_khalqih') || id.contains('cosmic_weight')) {
-    return const Color(0xFF080A14); // Cosmic Weight
-  }
-  return const Color(0xFF081623); // Default Noor Tree
+      id.contains('adada_khalqih') || id.contains('cosmic_weight')) return 'cosmic';
+
+  return 'tree'; // Default
+}
+
+/// Returns the top gradient color of each illustration to fill behind the app bar.
+Color _illustrationTopColor(String azkarId, bool isDark) {
+  if (isDark) return const Color(0xFF121212);
+  const colors = {
+    'shield':     Color(0xFF0A1628),
+    'three_quls': Color(0xFF0D0A1F),
+    'gates':      Color(0xFF1A0E2E),
+    'chains':     Color(0xFF0A0C12),
+    'six_wards':  Color(0xFF0A1A18),
+    'repelling':  Color(0xFF0F0A14),
+    'heart':      Color(0xFF120818),
+    'vessel':     Color(0xFF0E1608),
+    'dawn':       Color(0xFF0A0A1A),
+    'ripples':    Color(0xFF08101E),
+    'path':       Color(0xFF0A0E18),
+    'blessings':  Color(0xFF0C0818),
+    'flame':      Color(0xFF1A0A08),
+    'cycle':      Color(0xFF0A0E1A),
+    'vessels':    Color(0xFF081218),
+    'pillars':    Color(0xFF0A0814),
+    'hand':       Color(0xFF0C1008),
+    'invincible': Color(0xFF08101A),
+    'ocean':      Color(0xFF061218),
+    'scales':     Color(0xFF0C0A14),
+    'glory':      Color(0xFF14100A),
+    'salawat':    Color(0xFF0A1210),
+    'doors':      Color(0xFF0E0A18),
+    'cosmic':     Color(0xFF080A14),
+  };
+  return colors[_pickIllustration(azkarId)] ?? const Color(0xFF081623);
 }
 
 // =============================================================================
@@ -2216,272 +2378,37 @@ Widget _buildIllustration({
   required int tapCount,
   int pointsToday = 0,
 }) {
-  // Normalize evening_fixed_X → evening_lwa_X so both data sources match
-  final id = azkarId.toLowerCase().replaceFirst('evening_fixed_', 'evening_lwa_');
-  // Ayat al-Kursi — protection shield (all variants)
-  if (id.contains('ayat_kursi') || id.contains('ayat-kursi') ||
-      id.contains('ayatul_kursi') || id.contains('ayatul-kursi') ||
-      id == 'morning_lwa_1' || id == 'evening_lwa_1') {
-    return _ProtectionShield(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // 3 Quls — three layered barriers
-  if (id.contains('three_quls') || id.contains('3_quls') ||
-      id == 'morning_lwa_2' || id == 'evening_lwa_2') {
-    return _ThreeQuls(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Sayyid al-Istighfar — gates of Jannah
-  if (id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar') ||
-      id == 'morning_lwa_3' || id == 'evening_lwa_3') {
-    return _GatesOfJannah(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #4 — Protection from anxiety, laziness, debt etc (breaking chains)
-  if (id == 'morning_lwa_4' || id == 'evening_lwa_4' ||
-      id.contains('anxiety') || id.contains('hamm_hazan')) {
-    return _BreakingChains(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #5 — Well-being / protection from 6 directions (fortress ward)
-  if (id == 'morning_lwa_5' || id == 'evening_lwa_5' ||
-      id.contains('dua_afiyah') || id.contains('wellbeing')) {
-    return _SixWards(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #6 — Protect from 4 evils (repelling shadows)
-  if (id == 'morning_lwa_6' || id == 'evening_lwa_6' ||
-      id.contains('four_evils') || id.contains('4_evils')) {
-    return _RepellingLight(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #7 — Entrust all matters to Allah (cradled heart)
-  if (id == 'morning_lwa_7' || id == 'evening_lwa_7' ||
-      id.contains('entrust') || id.contains('ya_hayyu')) {
-    return _CradledHeart(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #8 — Thank Allah / gratitude (overflowing vessel)
-  if (id == 'morning_lwa_8' || id == 'evening_lwa_8' ||
-      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) {
-    return _OverflowingVessel(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #9 — Renewing Tawhid (rising dawn)
-  if (id == 'morning_lwa_9' || id == 'evening_lwa_9' ||
-      id.contains('fitrah') || id.contains('tawhid')) {
-    return _RisingDawn(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #10 — Praising Allah (praise ripples)
-  if (id == 'morning_lwa_10' || id == 'evening_lwa_10' ||
-      id.contains('praise_morning') || id.contains('uthni')) {
-    return _PraiseRipples(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #11 — Ask for a good day (glowing path)
-  if (id == 'morning_lwa_11' || id == 'evening_lwa_11' ||
-      id.contains('good_day') || id.contains('khayr_yawm')) {
-    return _GlowingPath(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #12 — Ask Allah to bless your day (five blessings descending)
-  if (id == 'morning_lwa_12' || id == 'evening_lwa_12' ||
-      id.contains('bless_day') || id.contains('bless_evening') ||
-      id.contains('fath') || id.contains('barakah_yawm')) {
-    return _FiveBlessings(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #13 — Get freed from the Hellfire (freedom flame)
-  if (id == 'morning_lwa_13' || id == 'evening_lwa_13' ||
-      id.contains('freed_hellfire') || id.contains('ush_hidu')) {
-    return _FreedomFlame(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #14 — Upon entering the morning (cycle of return)
-  if (id == 'morning_lwa_14' || id == 'evening_lwa_14' ||
-      id.contains('bika_asbahna') || id.contains('nushur')) {
-    return _CycleOfReturn(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #15 — Good health in body, hearing, sight (three vessels)
-  if (id == 'morning_lwa_15' || id == 'evening_lwa_15' ||
-      id.contains('afini_badani') || id.contains('good_health')) {
-    return _ThreeVessels(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #16 — Allah will suffice you (seven pillars)
-  if (id == 'morning_lwa_16' || id == 'evening_lwa_16' ||
-      id.contains('hasbiyallah') || id.contains('arsh_azeem')) {
-    return _SevenPillars(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #17 — Prophet holds your hand into Jannah (guiding hand)
-  if (id == 'morning_lwa_17' || id == 'evening_lwa_17' ||
-      id.contains('raditu_billah') || id.contains('pleased_allah')) {
-    return _GuidingHand(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #18 — Protect from all harm by Bismillah (invincible name)
-  if (id == 'morning_lwa_18' || id == 'evening_lwa_18' ||
-      id.contains('la_yadurru') || id.contains('bismillah_protect')) {
-    return _InvincibleName(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #19 — Sins forgiven like foam of the sea (ocean of forgiveness)
-  if (id == 'morning_lwa_19' || id == 'evening_lwa_19' ||
-      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) {
-    return _OceanOfForgiveness(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #20 — Unparalleled reward: 10 slaves, 100 hasanat, protection
-  if (id == 'morning_lwa_20' || id == 'evening_lwa_20' ||
-      id == 'la_ilaha_illallah' || id == 'post_prayer_la_ilaha' ||
-      id.contains('unparalleled_reward')) {
-    return _UnparalleledScales(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #21 — Tasbih, Tahmid, Takbir (sunrise glory)
-  if (id == 'morning_lwa_21' || id == 'evening_lwa_21' ||
-      id == 'subhanallah' || id == 'alhamdulillah' || id == 'allahu_akbar' ||
-      id == 'post_prayer_subhanallah' || id == 'post_prayer_alhamdulillah' ||
-      id == 'post_prayer_allahu_akbar' ||
-      id.contains('sleeping_tasbih')) {
-    return _SunriseGlory(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #22 — Salawat upon the Prophet (ten salawat)
-  if (id == 'morning_lwa_22' || id == 'evening_lwa_22' ||
-      id == 'salawat_ibrahimiyya' || id == 'salawat_simple' ||
-      id == 'salawat_friday' || id.contains('salawat')) {
-    return _TenSalawat(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Evening #23 — Protection from all evil (evening only — perfect words shield)
-  if (id == 'evening_lwa_23' || id.contains('kalimat_taammat')) {
-    return _InvincibleName(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #23 — Seek forgiveness 100x (doors of mercy)
-  if (id == 'morning_lwa_23' ||
-      id == 'astaghfirullah' || id == 'istighfar_extended' ||
-      id.contains('astaghfiru')) {
-    return _DoorsOfMercy(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Morning #24 — 4 phrases that outweigh all dhikr (cosmic weight)
-  if (id == 'morning_lwa_24' || id == 'evening_lwa_24' ||
-      id.contains('adada_khalqih') || id.contains('cosmic_weight')) {
-    return _CosmicWeight(
-      progress: progress,
-      isComplete: isComplete,
-      tapCount: tapCount,
-      pointsToday: pointsToday,
-    );
-  }
-  // Default: Noor Tree
-  return _NoorTree(
-    progress: progress,
-    isComplete: isComplete,
-    tapCount: tapCount,
-    pointsToday: pointsToday,
-  );
+  final ill = _pickIllustration(azkarId);
+  Widget _w(Widget Function({required double progress, required bool isComplete, required int tapCount, required int pointsToday}) ctor) =>
+    ctor(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday);
+
+  return switch (ill) {
+    'shield'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ProtectionShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'three_quls' => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeQuls(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'gates'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GatesOfJannah(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'chains'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BreakingChains(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'six_wards'  => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixWards(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'repelling'  => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RepellingLight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'heart'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CradledHeart(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'vessel'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OverflowingVessel(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'dawn'       => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RisingDawn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'ripples'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _PraiseRipples(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'path'       => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GlowingPath(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'blessings'  => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _FiveBlessings(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'flame'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _FreedomFlame(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'cycle'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CycleOfReturn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'vessels'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeVessels(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'pillars'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SevenPillars(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'hand'       => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GuidingHand(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'invincible' => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _InvincibleName(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'ocean'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OceanOfForgiveness(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'scales'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _UnparalleledScales(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'glory'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SunriseGlory(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'salawat'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _TenSalawat(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'doors'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DoorsOfMercy(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'cosmic'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CosmicWeight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    _            => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+  };
 }
 
 /// Arabic text style for illustration labels — uses Amiri for elegant rendering.
@@ -3100,13 +3027,13 @@ class _NoorTreePainter extends CustomPainter {
         text: TextSpan(
           text: badgeLabel,
           style: const TextStyle(
-            color: Color(0xFF00FFCC),
+            color: Color(0xFFFFD700),
             fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.5,
             shadows: [
-              Shadow(color: Color(0xFF00FFCC), blurRadius: 6),
-              Shadow(color: Color(0xFF00FFCC), blurRadius: 14),
+              Shadow(color: Color(0xFFFFD700), blurRadius: 6),
+              Shadow(color: Color(0xFFFFAA00), blurRadius: 14),
             ],
           ),
         ),
@@ -13795,7 +13722,7 @@ class _DhikrCounterButton extends StatelessWidget {
     final countFontSize = sw < 360 ? 28.0 : sw < 400 ? 32.0 : 36.0;
     final labelFontSize = sw < 360 ? 11.0 : 12.5;
     final completedWidth = sw < 360 ? 160.0 : 180.0;
-    final completedHeight = sw < 360 ? 52.0 : 58.0;
+    final completedHeight = sw < 360 ? 54.0 : 60.0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),

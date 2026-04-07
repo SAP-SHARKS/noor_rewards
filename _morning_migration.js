@@ -260,24 +260,48 @@ const morning = [
   },
 ];
 
-// Audio URL overrides for items without reuse (mapped by content to LWA source)
+// Audio URL sources:
+// QDC  = download.quranicaudio.com (full surah - Alafasy murattal)
+// QV   = audio.qurancdn.com (per-ayah - Alafasy)
+// HM   = hisnmuslim.com/audio/ar (Hisnul Muslim dua recitations)
+// LWA  = lifewithallah.com (dua recitations)
+const _surah = (n) => `https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/${n}.mp3`;
+const _ayah  = (s, a) => `https://audio.qurancdn.com/Alafasy/mp3/${String(s).padStart(3,'0')}${String(a).padStart(3,'0')}.mp3`;
+const _hm    = (id) => `https://www.hisnmuslim.com/audio/ar/${id}.mp3`;
 const morningAudioMap = {
-  'morning_1':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // Fatiha — uses Ayat al-Kursi audio (recitation)
-  'morning_2':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // Baqarah 2:1-5 — uses 3 Quls audio
-  'morning_4':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:256
-  'morning_5':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:257
-  'morning_6':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:284
-  'morning_7':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:285
-  'morning_8':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/1.mp3',   // 2:286
-  'morning_9':  'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // Al-Ikhlas
-  'morning_10': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // Al-Falaq
-  'morning_11': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/2.mp3',   // An-Nas
-  'morning_15': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/10.mp3',  // Blessings & Concealment
-  'morning_17': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/10.mp3',  // Ya Rabbi lakal hamdu
-  'morning_18': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/17.mp3',  // Raditu billahi
-  'morning_22': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/23.mp3',  // Shirk refuge
-  'morning_23': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/23.mp3',  // Perfect words
-  'morning_25': 'https://static.lifewithallah.com/file/LifeWithAllah/main/7-Morning/7.mp3',   // Ya Hayyu ya Qayyum
+  // ── Quranic passages (Alafasy murattal) ──
+  'morning_1':  _surah(1),     // Fatiha — full surah
+  // morning_2: Baqarah 2:1-5 — no matching audio available
+  'morning_4':  _ayah(2, 256), // 2:256
+  'morning_5':  _ayah(2, 257), // 2:257
+  'morning_6':  _ayah(2, 284), // 2:284
+  'morning_7':  _ayah(2, 285), // 2:285
+  'morning_8':  _ayah(2, 286), // 2:286
+  'morning_9':  _surah(112),   // Al-Ikhlas — full surah
+  'morning_10': _surah(113),   // Al-Falaq — full surah
+  'morning_11': _surah(114),   // An-Nas — full surah
+  // ── Dua recitations (HM = Hisnul Muslim — all morning wording ✓) ──
+  'morning_12': _hm(77),       // Sovereignty "Asbahna wa asbahal-mulku lillah" = HM #77
+  'morning_13': _hm(90),       // Fitrah "Asbahna 'ala fitratil-islam" = HM #90
+  'morning_14': _hm(78),       // By Your Leave "Allahumma bika asbahna" = HM #78
+  // morning_15: Blessings & Concealment — not in HM collection
+  'morning_16': _hm(81),       // Gratitude "Allahumma ma asbaha bi min ni'mah" = HM #81
+  // morning_17: Ya Rabbi lakal hamdu — not in HM collection
+  'morning_18': _hm(87),       // Raditu billahi = HM #87
+  'morning_19': _hm(84),       // Well-being "Allahumma inni as'alukal-'afwa" = HM #84
+  'morning_20': _hm(94),       // SubhanAllah 'adada khalqihi = HM #94
+  'morning_21': _hm(86),       // Bismillah protection = HM #86
+  'morning_22': 'https://salafiaudio.files.wordpress.com/2015/07/hisn-al-muslim-audio-dua-203.mp3', // Shirk refuge
+  'morning_23': _hm(97),       // Perfect words = HM #97
+  'morning_24': _hm(85),       // Knower of unseen = HM #85
+  'morning_25': _hm(88),       // Ya Hayyu ya Qayyum = HM #88
+  'morning_26': _hm(79),       // Sayyid al-Istighfar = HM #79
+  'morning_27': _hm(80),       // Freed from Hellfire = HM #80
+  'morning_28': _hm(82),       // Health body/hearing/sight = HM #82
+  'morning_29': _hm(83),       // Hasbiyallahu = HM #83
+  'morning_30': _hm(89),       // Bless your day "Asbahna...Rabbil-'alamin" = HM #89
+  'morning_31': _hm(93),       // La ilaha illallah 100x = HM #93
+  'morning_32': _hm(91),       // SubhanAllah wa bihamdihi 100x = HM #91
 };
 
 // Build final items
