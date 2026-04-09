@@ -1,0 +1,136 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req: Request) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const { user_id, title, body, data } = await req.json();
+
+    if (!user_id || !title || !body) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required parameters: user_id, title, body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 1. Initialize Supabase Client with the Authorization header of the caller
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing Authorization header');
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // 2. Query FCM Token
+    const { data: tokenData, error: dbError } = await supabase
+      .from('fcm_tokens')
+      .select('token')
+      .eq('user_id', user_id)
+      .single();
+
+    if (dbError || !tokenData?.token) {
+      throw new Error(`Device token not found for user_id: ${user_id}. ${dbError?.message || ''}`);
+    }
+
+    const fcmToken = tokenData.token;
+
+    // 3. Reconstruct Google OAuth2 Token using Service Account Credentials
+    const projectId = Deno.env.get('FCM_PROJECT_ID');
+    const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
+    const privateKeyStr = Deno.env.get('FCM_PRIVATE_KEY');
+
+    if (!projectId || !clientEmail || !privateKeyStr) {
+      throw new Error('FCM secrets are not configured in Supabase (FCM_PROJECT_ID, FCM_CLIENT_EMAIL, FCM_PRIVATE_KEY)');
+    }
+
+    // Fix escaped newlines which happen when saving PEM keys as env secrets
+    const privateKey = privateKeyStr.replace(/\\n/g, '\n');
+
+    // Generate JWT via npm:jose
+    const privateKeyObj = await importPKCS8(privateKey, 'RS256');
+    const jwt = await new SignJWT({
+      iss: clientEmail,
+      scope: 'https://www.googleapis.com/auth/firebase.messaging',
+      aud: 'https://oauth2.googleapis.com/token',
+    })
+      .setProtectedHeader({ alg: 'RS256', typ: 'JWT' })
+      .setIssuedAt()
+      .setExpirationTime('1h') // Token validity
+      .sign(privateKeyObj);
+
+    // Request Access Token from Google OAuth2 Server
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+    });
+
+    const tokenDataRes = await tokenResponse.json();
+    if (!tokenResponse.ok) {
+      throw new Error(`Failed to generate Google access token: ${tokenDataRes.error_description || tokenDataRes.error}`);
+    }
+
+    const accessToken = tokenDataRes.access_token;
+
+    // 4. Send the Push Notification via Firebase HTTP v1 API
+    const fcmPayload = {
+      message: {
+        token: fcmToken,
+        notification: {
+          title: title,
+          body: body,
+        },
+        data: data || {}, // Optional data map
+        android: {
+          priority: 'high',
+          notification: {
+            sound: 'default'
+          }
+        }
+      }
+    };
+
+    const fcmResponse = await fetch(
+      `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fcmPayload),
+      }
+    );
+
+    const fcmResult = await fcmResponse.json();
+
+    if (!fcmResponse.ok) {
+      throw new Error(`FCM API Error: ${JSON.stringify(fcmResult)}`);
+    }
+
+    return new Response(
+      JSON.stringify({ success: true, result: fcmResult }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
+  } catch (error: any) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});

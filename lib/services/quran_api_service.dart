@@ -16,12 +16,20 @@
 //     continues to work during initial setup.
 
 import 'dart:convert';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'quran_api_config.dart';
 
 class QuranApiService {
   QuranApiService._();
   static final QuranApiService instance = QuranApiService._();
+
+  // ── Cache ───────────────────────────────────────────────────────────────────
+  Future<Box> get _cacheBox async {
+    const boxName = 'quran_api_cache';
+    if (!Hive.isBoxOpen(boxName)) return await Hive.openBox(boxName);
+    return Hive.box(boxName);
+  }
 
   // ── Token cache ─────────────────────────────────────────────────────────────
   String? _accessToken;
@@ -99,6 +107,14 @@ class QuranApiService {
   /// All verses on a Quran page (1–604).
   /// Returns [{surah, ayah, arabic}]
   Future<List<Map<String, dynamic>>> versesByPage(int page) async {
+    final box = await _cacheBox;
+    final cacheKey = 'versesByPage_$page';
+    if (box.containsKey(cacheKey)) {
+      return (jsonDecode(box.get(cacheKey)) as List)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+
     final url = Uri.parse(
       '${QuranApiConfig.apiBase}/verses/by_page/$page'
       '?words=false&fields=text_uthmani,text_indopak,verse_key,page_number&per_page=50',
@@ -109,7 +125,7 @@ class QuranApiService {
     if (res.statusCode == 401) { invalidateToken(); return []; }
     if (res.statusCode != 200) return [];
     final verses = (jsonDecode(res.body)['verses'] as List? ?? []);
-    return verses.map<Map<String, dynamic>>((v) {
+    final mapped = verses.map<Map<String, dynamic>>((v) {
       final key = (v['verse_key'] as String).split(':');
       return {
         'surah':  int.tryParse(key[0]) ?? 1,
@@ -118,11 +134,22 @@ class QuranApiService {
         'arabic_indopak': v['text_indopak'] ?? v['text_uthmani'] ?? '',
       };
     }).toList();
+    
+    box.put(cacheKey, jsonEncode(mapped));
+    return mapped;
   }
 
   /// Word-by-word data for a single verse key (e.g. "2:255").
   /// Returns [{arabic, transliteration, translation}]
   Future<List<Map<String, dynamic>>> wordsByKey(String verseKey) async {
+    final box = await _cacheBox;
+    final cacheKey = 'wordsByKey_$verseKey';
+    if (box.containsKey(cacheKey)) {
+      return (jsonDecode(box.get(cacheKey)) as List)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+
     final url = Uri.parse(
       '${QuranApiConfig.apiBase}/verses/by_key/$verseKey'
       '?words=true'
@@ -135,7 +162,7 @@ class QuranApiService {
     if (res.statusCode == 401) { invalidateToken(); return []; }
     if (res.statusCode != 200) return [];
     final rawWords = (jsonDecode(res.body)['verse']?['words'] as List? ?? []);
-    return rawWords
+    final mapped = rawWords
         .where((w) => w['char_type_name'] != 'end')
         .map<Map<String, dynamic>>((w) => {
               'arabic':          w['text_uthmani'] ?? w['text'] ?? '',
@@ -144,10 +171,23 @@ class QuranApiService {
               'translation':     w['translation']?['text'] ?? '',
             })
         .toList();
+        
+    box.put(cacheKey, jsonEncode(mapped));
+    return mapped;
   }
 
   /// Bulk word-by-word for an entire surah. Returns Map<ayahNumber, List<word>>.
   Future<Map<int, List<Map<String, dynamic>>>> wordsBySurah(int surah) async {
+    final box = await _cacheBox;
+    final cacheKey = 'wordsBySurah_$surah';
+    if (box.containsKey(cacheKey)) {
+      final cached = jsonDecode(box.get(cacheKey)) as Map<String, dynamic>;
+      return cached.map((k, v) => MapEntry(
+        int.parse(k),
+        (v as List).map((e) => Map<String, dynamic>.from(e)).toList(),
+      ));
+    }
+
     final result = <int, List<Map<String, dynamic>>>{};
     // Quran.com API supports per_page up to 50 verses; paginate for long surahs
     int page = 1;
@@ -185,6 +225,8 @@ class QuranApiService {
       if (page >= totalPages) break;
       page++;
     }
+    
+    box.put(cacheKey, jsonEncode(result.map((k, v) => MapEntry(k.toString(), v))));
     return result;
   }
 
@@ -193,6 +235,13 @@ class QuranApiService {
     required int surah,
     required String scriptSlug,
   }) async {
+    final box = await _cacheBox;
+    final cacheKey = 'surahScript_${surah}_$scriptSlug';
+    if (box.containsKey(cacheKey)) {
+      final cached = jsonDecode(box.get(cacheKey)) as Map<String, dynamic>;
+      return cached.map((k, v) => MapEntry(int.parse(k), v as String));
+    }
+
     final url = Uri.parse(
       '${QuranApiConfig.apiBase}/quran/verses/$scriptSlug'
       '?chapter_number=$surah'
@@ -208,7 +257,10 @@ class QuranApiService {
           final ayah = int.tryParse(vk.length > 1 ? vk[1] : '0') ?? 0;
           map[ayah] = v['text_$scriptSlug'] as String? ?? '';
         }
-        if (map.isNotEmpty) return map;
+        if (map.isNotEmpty) {
+          box.put(cacheKey, jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))));
+          return map;
+        }
       }
     } catch (_) {}
     return {};
@@ -228,6 +280,13 @@ class QuranApiService {
     required int surahLength,
     required int startVerseId,
   }) async {
+    final box = await _cacheBox;
+    final cacheKey = 'surahTranslation_${surah}_$edition';
+    if (box.containsKey(cacheKey)) {
+      final cached = jsonDecode(box.get(cacheKey)) as Map<String, dynamic>;
+      return cached.map((k, v) => MapEntry(int.parse(k), v as String));
+    }
+
     // Try Quran.com v4 translations endpoint
     try {
       final translationId = _quranComTranslationId(edition);
@@ -248,7 +307,10 @@ class QuranApiService {
             final an = int.tryParse(vk.length > 1 ? vk[1] : '0') ?? 0;
             map[startVerseId + an - 1] = _stripHtml(item['text'] as String? ?? '');
           }
-          if (map.isNotEmpty) return map;
+          if (map.isNotEmpty) {
+            box.put(cacheKey, jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))));
+            return map;
+          }
         }
       }
     } catch (_) {}
@@ -267,7 +329,10 @@ class QuranApiService {
           final num = a['numberInSurah'] as int? ?? 0;
           map[startVerseId + num - 1] = a['text'] as String? ?? '';
         }
-        return map;
+        if (map.isNotEmpty) {
+          box.put(cacheKey, jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))));
+          return map;
+        }
       }
     } catch (_) {}
 
