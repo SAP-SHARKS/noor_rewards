@@ -15,8 +15,8 @@ class NotificationService {
       provisional: false,
     );
 
-    // Optional: get token for testing
-    // final token = await messaging.getToken();
-    // print('FCM Token: $token');
+    // Get token for testing
+    final token = await messaging.getToken();
+    print('FCM_TOKEN: $token');
   }
 }

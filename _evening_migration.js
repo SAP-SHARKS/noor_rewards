@@ -258,7 +258,57 @@ VALUES ('${esc(item.id)}', '${esc(item.arabic)}', '${esc(item.transliteration)}'
 sql += `-- Verify
 SELECT id, sort_order, reward, recommended_count, LEFT(arabic, 40) as arabic_start FROM azkar_items WHERE category_id = 'evening' ORDER BY sort_order;\n`;
 
-fs.writeFileSync('_evening_migration.sql', sql, 'utf-8');
+// Apply hadith overrides — same full texts as morning, mapped to evening IDs
+const hadithOverrides = {
+  'evening_1':  { reward: 'Al Fateha | Sahih Muslim 395a', reference: 'Quran 1:1-7 | Sahih Muslim 395', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Allah the Almighty said: 'I have divided prayer between Myself and My servant into two halves, and My servant shall have what he has asked for. When the servant says Al-hamdu lillahi Rabbil-'alamin, Allah says: My servant has praised Me. When he says Ar-Rahmanir-Rahim, Allah says: My servant has extolled Me. When he says Maliki yawmid-din, Allah says: My servant has glorified Me. When he says Iyyaka na'budu wa iyyaka nasta'in, Allah says: This is between Me and My servant, and My servant shall have what he has asked for. When he says Ihdinas-siratal-mustaqim, Allah says: This is for My servant, and My servant shall have what he has asked for.'" (Sahih Muslim 395a)` },
+  'evening_2':  { reward: 'Alif Laam Meem | Ad-Darimi', reference: 'Quran 2:1-5 | Ad-Darimi', hadith_full: `Abdullah ibn Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever recites the first four verses of Surah Al-Baqarah, Ayat al-Kursi, and the last three verses of Surah Al-Baqarah — the Shaytan will not come near him or to his family, nor will he be touched by anything that he dislikes." (Ad-Darimi)` },
+  'evening_3':  { reward: 'Ayatul Kursi | Al-Bukhari 5010', reference: 'Quran 2:255 | Al-Bukhari 5010', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) entrusted me to guard the Zakat revenue of Ramadan. Someone came and began stealing from the food. He said, "When you go to your bed, recite Ayat al-Kursi, for then there will be a guard from Allah who will protect you all night long, and Satan will not be able to come near you till dawn." The Prophet (ﷺ) said, "He told you the truth, although he is a liar — that was the Shaytan." (Al-Bukhari 5010)` },
+  'evening_4':  { reward: 'La Ikraha fid-Deen | Ad-Darimi', reference: 'Quran 2:256 | Ad-Darimi', hadith_full: `This verse is part of the ten verses from Surah Al-Baqarah that the Prophet (ﷺ) recommended. Whoever recites them, the Shaytan will not enter his house that night. (Ad-Darimi)` },
+  'evening_5':  { reward: 'Allah is the Ally of the Believers | Ad-Darimi', reference: 'Quran 2:257 | Ad-Darimi', hadith_full: `This verse is part of the ten verses from Surah Al-Baqarah. Whoever recites them, the Shaytan will not enter his house that night. (Ad-Darimi)` },
+  'evening_6':  { reward: 'To Allah Belongs All | Al-Bukhari 4723', reference: 'Quran 2:284 | Al-Bukhari 4723', hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." (Al-Bukhari 4723)` },
+  'evening_7':  { reward: 'The Messenger Has Believed | Al-Bukhari 4723', reference: 'Quran 2:285 | Al-Bukhari 4723', hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." (Al-Bukhari 4723, Sahih Muslim 807)` },
+  'evening_8':  { reward: 'Allah Does Not Burden a Soul | Sahih Muslim 807', reference: 'Quran 2:286 | Sahih Muslim 807', hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." When this verse was revealed, after each supplication in it, Allah said: "I have done so." (Sahih Muslim 807)` },
+  'evening_9':  { reward: 'Surah Al-Ikhlas | Abu Dawud 5082', reference: 'Quran 112 | Abu Dawud 5082', hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)` },
+  'evening_10': { reward: 'Surah Al-Falaq | At-Tirmidhi 3575', reference: 'Quran 113 | At-Tirmidhi 3575', hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)` },
+  'evening_11': { reward: 'Surah An-Nas | At-Tirmidhi 3575', reference: 'Quran 114 | At-Tirmidhi 3575', hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)` },
+  'evening_12': { reward: 'Dominion Belongs to Allah | Sahih Muslim 2723', reference: 'Sahih Muslim 2723' },
+  'evening_13': { reward: 'Upon the Fitrah of Islam | Ahmad 15367', reference: 'Ahmad 15367' },
+  'evening_14': { reward: 'By Your Leave | At-Tirmidhi 3391', reference: 'At-Tirmidhi 3391' },
+  'evening_16': { reward: 'Fulfil Obligation of Gratitude | Abu Dawud 5073', reference: 'Abu Dawud 5073', hadith_full: `Abdullah ibn Ghannam (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says: 'Allahumma ma amsa bi min ni'matin...' — he has fulfilled his obligation of giving thanks for that night." (Abu Dawud 5073)` },
+  'evening_18': { reward: 'Pleased with Allah | Ahmad 18967', reference: 'Abu Dawud 5072 | Ahmad 18967', hadith_full: `Abu Sallam (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever says in the morning and evening: 'Raditu billahi Rabba, wa bil-Islami dina, wa bi-Muhammadin nabiyya' — Allah has promised that He will please him on the Day of Resurrection." (Abu Dawud 5072, Ahmad 18967)` },
+  'evening_19': { reward: 'Well-being in Both Worlds | Abu Dawud 5074', reference: 'Abu Dawud 5074', hadith_full: `Abdullah ibn Umar (رضي الله عنهما) reported: The Messenger of Allah (ﷺ) never failed to say these supplications in the morning and evening. (Abu Dawud 5074)` },
+  'evening_20': { reward: 'Outweigh All Other Dhikr | Sahih Muslim 2726', reference: 'Sahih Muslim 2726' },
+  'evening_21': { reward: 'Protect From All Harm | At-Tirmidhi 3388', reference: 'Abu Dawud 5088 | At-Tirmidhi 3388', hadith_full: `Uthman ibn Affan (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "No servant says this three times in the morning and evening, and anything will harm him." (At-Tirmidhi 3388)` },
+  'evening_22': { reward: 'Seek Refuge from Shirk | Sahih Al-Jaami 2876', reference: 'Ahmad 23119 | Sahih Al-Jaami 2876', hadith_full: `Ma'qil ibn Yasar (رضي الله عنه) reported: The Prophet (ﷺ) said, "Shirk among you is more subtle than the sound of footsteps of an ant on a rock. Shall I not teach you something which, if you say it, will rid you of both minor and major shirk? Say: 'Allahumma inni a'udhu bika an ushrika bika wa ana a'lam, wa astaghfiruka lima la a'lam.'" (Sahih Al-Jaami 2876)` },
+  'evening_23': { reward: 'Protection From All Evil | Sahih Muslim 2709', reference: 'Sahih Muslim 2709', hadith_full: `Khawlah bint Hakim (رضي الله عنها) reported: The Messenger of Allah (ﷺ) said, "If anyone lands at a place and says: 'A'udhu bi kalimatillahit-tammati min sharri ma khalaq' — nothing will harm him until he leaves that place." (Sahih Muslim 2709)` },
+  'evening_24': { reward: 'Knower of the Unseen | At-Tirmidhi 3392', reference: 'At-Tirmidhi 3392' },
+  'evening_25': { reward: 'Ya Hayyu Ya Qayyum | Mustadrak Al-Hakim', reference: 'Hakim 1/545' },
+  'evening_26': { reward: 'Sayyid al-Istighfar | Al-Bukhari 6306', reference: 'Al-Bukhari 6306', hadith_full: `Shaddad ibn Aws (رضي الله عنه) reported: The Prophet (ﷺ) said, "The most superior way of asking for forgiveness is Sayyidul-Istighfar. Whoever says it at night with firm belief in it, and dies before morning comes, he will be one of the people of Paradise." (Al-Bukhari 6306)` },
+  'evening_27': { reward: 'Freed from the Hellfire | Abu Dawud 5069', reference: 'Abu Dawud 5069', hadith_full: `The Prophet (ﷺ) said, "Whoever says this four times in the evening, Allah will free him from the Fire." (Abu Dawud 5069)` },
+  'evening_28': { reward: 'Good Health & Protection | Abu Dawud 5090', reference: 'Abu Dawud 5090' },
+  'evening_29': { reward: 'Allah Will Suffice You | Abu Dawud 5081', reference: 'Abu Dawud 5081', hadith_full: `Abu ad-Darda' (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever says this seven times in the morning and evening, Allah will suffice him against whatever concerns him." (Abu Dawud 5081)` },
+  'evening_30': { reward: 'An Unparalleled Reward | Al-Bukhari 6403', reference: 'Al-Bukhari 6403 | Sahih Muslim 2693', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says this one hundred times a day will get the same reward as given for manumitting ten slaves; one hundred good deeds will be written, one hundred sins deducted, and it will be a shield from Satan." (Al-Bukhari 6403)` },
+  'evening_31': { reward: 'Get Your Sins Forgiven | Al-Bukhari 6405', reference: 'Al-Bukhari 6405 | Sahih Muslim 2691', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says 'SubhanAllahi wa bihamdihi' one hundred times a day, his sins will be forgiven even if they were as much as the foam of the sea." (Al-Bukhari 6405)` },
+  'evening_32': { reward: 'Durood Ibrahim | Al-Bukhari 6357', reference: 'Al-Bukhari 6357', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever sends blessings upon me ten times in the morning and ten times in the evening, my intercession will reach him on the Day of Judgment." (At-Tabarani, Sahih Al-Jaami 6357)` },
+};
+
+// Apply hadith overrides before generating SQL
+for (const item of evening) {
+  const ov = hadithOverrides[item.id];
+  if (ov) {
+    if (ov.reward) item.reward = ov.reward;
+    if (ov.reference) item.reference = ov.reference;
+    if (ov.hadith_full) item.hadith_full = ov.hadith_full;
+  }
+}
+
+// Regenerate SQL with overridden data
+let sql2 = `-- Evening Azkar Migration: duaandazkar.com app exact 32-item sequence\n-- Generated: ${new Date().toISOString()}\n-- Run this in Supabase SQL Editor\n\n-- Step 1: Delete ALL old evening azkar\nDELETE FROM azkar_items WHERE category_id = 'evening';\nDELETE FROM azkar_items WHERE id LIKE 'evening_%';\nDELETE FROM azkar_items WHERE id LIKE 'evening_fixed_%';\nDELETE FROM azkar_items WHERE id LIKE 'evening_lwa_%';\n\n-- Step 2: Insert 32 evening azkar\n`;
+for (const item of evening) {
+  sql2 += `INSERT INTO azkar_items (id, arabic, transliteration, translation, recommended_count, category_id, reward, reference, sort_order, hadith_full${item.audio_url ? ', audio_url' : ''})\nVALUES ('${esc(item.id)}', '${esc(item.arabic)}', '${esc(item.transliteration)}', '${esc(item.translation)}', ${item.recommended_count}, 'evening', '${esc(item.reward)}', '${esc(item.reference)}', ${item.sort_order}, '${esc(item.hadith_full)}'${item.audio_url ? `, '${esc(item.audio_url)}'` : ''});\n\n`;
+}
+sql2 += `-- Verify\nSELECT id, sort_order, reward, recommended_count, LEFT(arabic, 40) as arabic_start FROM azkar_items WHERE category_id = 'evening' ORDER BY sort_order;\n`;
+fs.writeFileSync('_evening_migration.sql', sql2, 'utf-8');
 
 // Update local JSON
 const currentAll = JSON.parse(fs.readFileSync('assets/data/azkar.json', 'utf-8'));
