@@ -88,7 +88,7 @@ class _DhikrSettings {
   double translationFontSize = 14.0;
   bool darkMode = false;
   int arabicFontIdx = 0;  // index into _kArabicFonts
-  bool showTranslation = true;
+  bool showTranslation = false;
 }
 
 IconData _parseIcon(String name) {
@@ -167,7 +167,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.arabicFontSize = prefs.getDouble('dhikr_ar_size') ?? 32.0;
       _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 14.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
-      _settings.showTranslation = prefs.getBool('dhikr_show_translation') ?? true;
+      _settings.showTranslation = prefs.getBool('dhikr_show_translation_v2') ?? false;
       int loadFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
       if (loadFontIdx >= _kArabicFonts.length) loadFontIdx = 0;
       _settings.arabicFontIdx = loadFontIdx;
@@ -190,7 +190,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     await prefs.setDouble('dhikr_ar_size', _settings.arabicFontSize);
     await prefs.setDouble('dhikr_tr_size', _settings.translationFontSize);
     await prefs.setBool('dhikr_dark_mode', _settings.darkMode);
-    await prefs.setBool('dhikr_show_translation', _settings.showTranslation);
+    await prefs.setBool('dhikr_show_translation_v2', _settings.showTranslation);
     await prefs.setInt('dhikr_ar_font', _settings.arabicFontIdx);
   }
 
@@ -2471,7 +2471,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    _swayCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3400))
+    _swayCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 5000))
       ..repeat(reverse: true);
     _sway = Tween<double>(begin: -1.0, end: 1.0)
         .animate(CurvedAnimation(parent: _swayCtrl, curve: Curves.easeInOut));
@@ -2481,29 +2481,29 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
     _prevProgress = widget.progress;
     _growCtrl.value = widget.progress;
 
-    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))
+    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))
       ..repeat(reverse: true);
 
     _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
     _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
     _prevTap = widget.tapCount;
 
-    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1300))
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2500))
       ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.87, end: 1.13)
+    _pulse = Tween<double>(begin: 0.94, end: 1.06)
         .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
-    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     _punch = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.12).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
-      TweenSequenceItem(tween: Tween(begin: 1.12, end: 0.95).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: 0.95, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.05).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.05, end: 0.98).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.98, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
 
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
 
-    _shootCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _shootCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
     _shootAnim = CurvedAnimation(parent: _shootCtrl, curve: Curves.easeOut);
   }
 
@@ -2645,7 +2645,7 @@ class _NoorTreePainter extends CustomPainter {
     final h = size.height;
     final cx = w / 2;
 
-    // 1. Rich night-sky gradient — warms as tree grows
+    // 1. Softer gradient — lighter tones to reduce eye strain
     final warmth = progress * 0.3;
     canvas.drawRect(
       Rect.fromLTWH(0, 0, w, h),
@@ -2654,9 +2654,9 @@ class _NoorTreePainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromRGBO((8 + warmth * 20).round(), (22 + warmth * 15).round(), (35 + warmth * 10).round(), 1.0),
-            Color.fromRGBO((12 + warmth * 25).round(), (38 + warmth * 20).round(), (48 + warmth * 15).round(), 1.0),
-            Color.fromRGBO((16 + warmth * 30).round(), (52 + warmth * 25).round(), (42 + warmth * 20).round(), 1.0),
+            Color.fromRGBO((18 + warmth * 25).round(), (42 + warmth * 20).round(), (55 + warmth * 15).round(), 1.0),
+            Color.fromRGBO((22 + warmth * 30).round(), (58 + warmth * 25).round(), (68 + warmth * 20).round(), 1.0),
+            Color.fromRGBO((26 + warmth * 35).round(), (72 + warmth * 30).round(), (62 + warmth * 25).round(), 1.0),
           ],
         ).createShader(Rect.fromLTWH(0, 0, w, h)),
     );
@@ -2671,7 +2671,7 @@ class _NoorTreePainter extends CustomPainter {
     final sp = Paint();
     for (int i = 0; i < starPos.length; i++) {
       final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
-      sp.color = Colors.white.withValues(alpha: 0.25 + 0.65 * tw);
+      sp.color = Colors.white.withValues(alpha: 0.15 + 0.35 * tw);
       canvas.drawCircle(
         Offset(starPos[i].$1 * w, starPos[i].$2 * h), 1.1 + tw * 1.2, sp);
     }
@@ -6822,7 +6822,7 @@ class _OverflowingVesselState extends State<_OverflowingVessel>
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _flowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))..repeat();
   }
@@ -7234,7 +7234,7 @@ class _RisingDawnState extends State<_RisingDawn> with TickerProviderStateMixin 
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _rayCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 5000))..repeat();
   }
@@ -7584,7 +7584,7 @@ class _PraiseRipplesState extends State<_PraiseRipples> with TickerProviderState
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _rippleCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3000))..repeat();
   }
@@ -7893,7 +7893,7 @@ class _FiveBlessingsState extends State<_FiveBlessings> with TickerProviderState
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _flowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
   }
@@ -8246,7 +8246,7 @@ class _GlowingPathState extends State<_GlowingPath> with TickerProviderStateMixi
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _walkCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat();
   }
@@ -12905,7 +12905,7 @@ class _SunriseGloryState extends State<_SunriseGlory> with TickerProviderStateMi
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _rayCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
   }
@@ -13096,7 +13096,7 @@ class _TenSalawatState extends State<_TenSalawat> with TickerProviderStateMixin 
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _orbitCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 6000))..repeat();
   }
@@ -13232,7 +13232,7 @@ class _DoorsOfMercyState extends State<_DoorsOfMercy> with TickerProviderStateMi
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat(reverse: true);
   }
@@ -13385,7 +13385,7 @@ class _CosmicWeightState extends State<_CosmicWeight> with TickerProviderStateMi
       TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
       TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
     ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
     _cosmicCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 5000))..repeat();
   }

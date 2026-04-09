@@ -10,79 +10,80 @@ const morning = [
   // ── Quranic Passages (1-11) ──
   {
     id: 'morning_1', sort_order: 1, recommended_count: 1,
-    reward: 'Al Fateha: The Opening of the Quran',
-    reference: 'Quran 1:1-7',
+    reward: 'Al Fateha | Sahih Muslim 395a',
+    reference: 'Quran 1:1-7 | Sahih Muslim 395',
     arabic: `بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
 
 اَلْحَمْدُ لِلّٰهِ رَبِّ الْعَالَمِيْنَ ، الرَّحْمٰنِ الرَّحِيْمِ ، مَالِكِ يَوْمِ الدِّيْنِ ، إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِيْنُ ، اِهْدِنَا الصِّرَاطَ الْمُسْتَقِيْمَ ، صِرَاطَ الَّذِيْنَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوْبِ عَلَيْهِمْ وَلَا الضَّالِّيْنَ`,
     transliteration: `Bismillahir-Rahmanir-Rahim. Al-hamdu lillahi Rabbil-'alamin. Ar-Rahmanir-Rahim. Maliki yawmid-din. Iyyaka na'budu wa iyyaka nasta'in. Ihdinas-siratal-mustaqim. Siratal-ladhina an'amta 'alayhim, ghayril-maghdubi 'alayhim wa lad-dallin.`,
     translation: `In the name of Allah, the Most Gracious, the Most Merciful. All praise is due to Allah, Lord of the worlds. The Most Gracious, the Most Merciful. Master of the Day of Judgment. You alone we worship, and You alone we ask for help. Guide us to the straight path — the path of those upon whom You have bestowed favor, not of those who have evoked Your anger or of those who are astray.`,
-    hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Allah said: 'I have divided prayer between Myself and My servant into two halves, and My servant shall have what he has asked for.' When the servant says 'Al-hamdu lillahi Rabbil-'alamin,' Allah says: 'My servant has praised Me.'"`,
+    hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Allah the Almighty said: 'I have divided prayer between Myself and My servant into two halves, and My servant shall have what he has asked for. When the servant says Al-hamdu lillahi Rabbil-'alamin, Allah says: My servant has praised Me. When he says Ar-Rahmanir-Rahim, Allah says: My servant has extolled Me. When he says Maliki yawmid-din, Allah says: My servant has glorified Me. When he says Iyyaka na'budu wa iyyaka nasta'in, Allah says: This is between Me and My servant, and My servant shall have what he has asked for. When he says Ihdinas-siratal-mustaqim, siratal-ladhina an'amta 'alayhim, ghayril-maghdubi 'alayhim wa lad-dallin, Allah says: This is for My servant, and My servant shall have what he has asked for.'" (Sahih Muslim 395a)`,
   },
   {
     id: 'morning_2', sort_order: 2, recommended_count: 1,
-    reward: 'Alif Laam Meem: Opening of Al-Baqarah',
-    reference: 'Quran 2:1-5, Ad-Darimi',
+    reward: 'Alif Laam Meem | Ad-Darimi',
+    reference: 'Quran 2:1-5 | Ad-Darimi',
     arabic: `الٓمٓ ، ذٰلِكَ الْكِتَابُ لَا رَيْبَ فِيْهِ هُدًى لِّلْمُتَّقِيْنَ ، الَّذِيْنَ يُؤْمِنُوْنَ بِالْغَيْبِ وَيُقِيْمُوْنَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنْفِقُوْنَ ، وَالَّذِيْنَ يُؤْمِنُوْنَ بِمَا أُنْزِلَ إِلَيْكَ وَمَا أُنْزِلَ مِنْ قَبْلِكَ وَبِالْآخِرَةِ هُمْ يُوْقِنُوْنَ ، أُولٰئِكَ عَلَىٰ هُدًى مِنْ رَبِّهِمْ وَأُولٰئِكَ هُمُ الْمُفْلِحُوْنَ`,
     transliteration: `Alif-Lam-Mim. Dhalikal-kitabu la rayba fih, hudal-lil-muttaqin. Alladhina yu'minuna bil-ghaybi wa yuqimunas-salata wa mimma razaqnahum yunfiqun. Walladhina yu'minuna bima unzila ilayka wa ma unzila min qablik, wa bil-akhirati hum yuqinun. Ula'ika 'ala hudam-mir-Rabbihim wa ula'ika humul-muflihun.`,
     translation: `Alif, Lam, Mim. This is the Book about which there is no doubt, a guidance for those conscious of Allah — who believe in the unseen, establish prayer, and spend out of what We have provided for them, and who believe in what has been revealed to you and what was revealed before you, and of the Hereafter they are certain. Those are upon guidance from their Lord, and it is those who are the successful.`,
-    hadith_full: `It is reported that the Shaytan will not come near the one who recites the opening verses of Surah Al-Baqarah along with Ayat al-Kursi and the last verses of Al-Baqarah in the morning.`,
+    hadith_full: `Abdullah ibn Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever recites the first four verses of Surah Al-Baqarah, Ayat al-Kursi, and the last three verses of Surah Al-Baqarah — the Shaytan will not come near him or to his family, nor will he be touched by anything that he dislikes." (Ad-Darimi)`,
   },
   {
     id: 'morning_3', sort_order: 3, recommended_count: 1,
-    reward: 'Ayatul Kursi: The Greatest Protection',
-    reference: 'Quran 2:255, Hakim 1/562',
+    reward: 'Ayatul Kursi | Al-Bukhari 6/530',
+    reference: 'Quran 2:255 | Al-Bukhari 6/530',
     reuse: 'morning_lwa_1',
+    hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) entrusted me to guard the Zakat revenue of Ramadan. Someone came and began stealing from the food. I caught him and said, "I will take you to the Messenger of Allah." He said, "When you go to your bed, recite Ayat al-Kursi, for then there will be a guard from Allah who will protect you all night long, and Satan will not be able to come near you till dawn." The Prophet (ﷺ) said, "He told you the truth, although he is a liar — that was the Shaytan." (Al-Bukhari 6/530)`,
   },
   {
     id: 'morning_4', sort_order: 4, recommended_count: 1,
-    reward: 'La Ikraha fid-Deen: No Compulsion in Religion',
-    reference: 'Quran 2:256',
+    reward: 'La Ikraha fid-Deen | Ad-Darimi',
+    reference: 'Quran 2:256 | Ad-Darimi',
     arabic: `لَا إِكْرَاهَ فِي الدِّيْنِ ، قَدْ تَبَيَّنَ الرُّشْدُ مِنَ الْغَيِّ ، فَمَنْ يَّكْفُرْ بِالطَّاغُوْتِ وَيُؤْمِنْ بِاللّٰهِ فَقَدِ اسْتَمْسَكَ بِالْعُرْوَةِ الْوُثْقَىٰ لَا انْفِصَامَ لَهَا ، وَاللّٰهُ سَمِيْعٌ عَلِيْمٌ`,
     transliteration: `La ikraha fid-din, qad tabayyanar-rushdu minal-ghayy. Faman yakfur bit-taghuti wa yu'min billahi faqadis-tamsaka bil-'urwatil-wuthqa lanfisama laha. Wallahu Sami'un 'Alim.`,
     translation: `There shall be no compulsion in the religion. The right course has become clear from the wrong. So whoever disbelieves in false deities and believes in Allah has grasped the most trustworthy handhold with no break in it. And Allah is Hearing and Knowing.`,
-    hadith_full: `This verse establishes the principle that faith must come from sincere conviction. Reciting it in the morning affirms one's conscious choice of Islam and trust in Allah's guidance.`,
+    hadith_full: `Abdullah ibn Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever recites the first four verses of Surah Al-Baqarah, Ayat al-Kursi, the two verses after it (2:256-257), and the last three verses of Al-Baqarah — the Shaytan will not enter his house that night, and nothing he dislikes will come near him or his family." (Ad-Darimi)`,
   },
   {
     id: 'morning_5', sort_order: 5, recommended_count: 1,
-    reward: 'Allah is the Ally of the Believers',
-    reference: 'Quran 2:257',
+    reward: 'Allah is the Ally of the Believers | Ad-Darimi',
+    reference: 'Quran 2:257 | Ad-Darimi',
     arabic: `اَللّٰهُ وَلِيُّ الَّذِيْنَ آمَنُوْا يُخْرِجُهُمْ مِّنَ الظُّلُمَاتِ إِلَى النُّوْرِ ، وَالَّذِيْنَ كَفَرُوْا أَوْلِيَاؤُهُمُ الطَّاغُوْتُ يُخْرِجُوْنَهُمْ مِّنَ النُّوْرِ إِلَى الظُّلُمَاتِ ، أُولٰئِكَ أَصْحَابُ النَّارِ هُمْ فِيْهَا خَالِدُوْنَ`,
     transliteration: `Allahu waliyyul-ladhina amanu yukhrijuhum minaz-zulumati ilan-nur. Walladhina kafaru awliya'uhumut-taghut, yukhrijunahum minan-nuri ilaz-zulumat. Ula'ika as-habun-nar, hum fiha khalidun.`,
     translation: `Allah is the ally of those who believe. He brings them out from darknesses into the light. And those who disbelieve — their allies are false deities. They take them out of the light into darknesses. Those are the companions of the Fire; they will abide eternally therein.`,
-    hadith_full: `This verse affirms that Allah guides and protects the believers, bringing them from the darkness of ignorance into the light of faith. Reciting it in the morning places oneself under Allah's guardianship for the day.`,
+    hadith_full: `This verse is part of the ten verses from Surah Al-Baqarah that the Prophet (ﷺ) recommended for protection. Whoever recites them, the Shaytan will not enter his house that night. (Ad-Darimi)`,
   },
   {
     id: 'morning_6', sort_order: 6, recommended_count: 1,
-    reward: 'To Allah Belongs All That Is in the Heavens and Earth',
-    reference: 'Quran 2:284',
+    reward: 'To Allah Belongs All | Al-Bukhari 4723',
+    reference: 'Quran 2:284 | Al-Bukhari 4723',
     arabic: `لِلّٰهِ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ، وَإِنْ تُبْدُوْا مَا فِيْ أَنْفُسِكُمْ أَوْ تُخْفُوْهُ يُحَاسِبْكُمْ بِهِ اللّٰهُ ، فَيَغْفِرُ لِمَنْ يَّشَاءُ وَيُعَذِّبُ مَنْ يَّشَاءُ ، وَاللّٰهُ عَلَىٰ كُلِّ شَيْءٍ قَدِيْرٌ`,
     transliteration: `Lillahi ma fis-samawati wa ma fil-ard. Wa in tubdu ma fi anfusikum aw tukhfuhu yuhasibkum bihillah. Fayaghfiru limay-yasha'u wa yu'adhdhibu may-yasha'. Wallahu 'ala kulli shay'in qadir.`,
     translation: `To Allah belongs whatever is in the heavens and whatever is in the earth. Whether you show what is within yourselves or conceal it, Allah will bring you to account for it. Then He will forgive whom He wills and punish whom He wills, and Allah is over all things competent.`,
-    hadith_full: `This is one of the last three verses of Surah Al-Baqarah. The Prophet (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, they will suffice him." Scholars include 2:284 as part of this protective recitation.`,
+    hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." This verse (2:284) is included as part of the last three verses of Surah Al-Baqarah that serve as protection. (Al-Bukhari 4723)`,
   },
   {
     id: 'morning_7', sort_order: 7, recommended_count: 1,
-    reward: 'The Messenger Has Believed',
-    reference: 'Quran 2:285, Bukhari 5009',
+    reward: 'The Messenger Has Believed | Al-Bukhari 4723',
+    reference: 'Quran 2:285 | Al-Bukhari 4723',
     arabic: `آمَنَ الرَّسُوْلُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَّبِّهِ وَالْمُؤْمِنُوْنَ ، كُلٌّ آمَنَ بِاللّٰهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِّنْ رُسُلِهِ ، وَقَالُوْا سَمِعْنَا وَأَطَعْنَا غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيْرُ`,
     transliteration: `Amanar-Rasulu bima unzila ilayhi mir-Rabbihi wal-mu'minun. Kullun amana billahi wa mala'ikatihi wa kutubihi wa rusulih, la nufarriqu bayna ahadim-mir-rusulih. Wa qalu sami'na wa ata'na, ghufranaka Rabbana wa ilaykal-masir.`,
     translation: `The Messenger has believed in what was revealed to him from his Lord, and so have the believers. All of them have believed in Allah and His angels and His books and His messengers, saying, "We make no distinction between any of His messengers." And they say, "We hear and we obey. Grant us Your forgiveness, our Lord, and to You is the final destination."`,
-    hadith_full: `Abu Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, they will suffice him."`,
+    hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." i.e., they will suffice him as protection from every evil, or they will suffice him in place of qiyam al-layl (night prayer). (Al-Bukhari 4723, Sahih Muslim 807)`,
   },
   {
     id: 'morning_8', sort_order: 8, recommended_count: 1,
-    reward: 'Allah Does Not Burden a Soul Beyond Capacity',
-    reference: 'Quran 2:286, Bukhari 5009',
+    reward: 'Allah Does Not Burden a Soul | Sahih Muslim 807',
+    reference: 'Quran 2:286 | Sahih Muslim 807',
     arabic: `لَا يُكَلِّفُ اللّٰهُ نَفْسًا إِلَّا وُسْعَهَا ، لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ ، رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَسِيْنَا أَوْ أَخْطَأْنَا ، رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِيْنَ مِنْ قَبْلِنَا ، رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ ، وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا ، أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِيْنَ`,
     transliteration: `La yukallifullahu nafsan illa wus'aha. Laha ma kasabat wa 'alayha maktasabat. Rabbana la tu'akhidhna in nasina aw akhta'na. Rabbana wa la tahmil 'alayna isran kama hamaltahu 'alal-ladhina min qablina. Rabbana wa la tuhammilna ma la taqata lana bih. Wa'fu 'anna waghfir lana warhamna. Anta mawlana fansurna 'alal-qawmil-kafirin.`,
     translation: `Allah does not burden a soul beyond that it can bear. It will have the consequence of what good it has gained, and it will bear the consequence of what evil it has earned. "Our Lord, do not impose blame upon us if we have forgotten or erred. Our Lord, and lay not upon us a burden like that which You laid upon those before us. Our Lord, and burden us not with that which we have no ability to bear. And pardon us; and forgive us; and have mercy upon us. You are our protector, so give us victory over the disbelieving people."`,
-    hadith_full: `Abu Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, they will suffice him." Muslim reported that when this verse was revealed, Allah said after each supplication in it: "I have done so."`,
+    hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." It was reported in Sahih Muslim that when this verse was revealed, after each supplication in it, Allah said: "I have done so." (Sahih Muslim 807, Al-Bukhari 4723)`,
   },
   {
     id: 'morning_9', sort_order: 9, recommended_count: 3,
-    reward: 'Surah Al-Ikhlas: Sincerity',
-    reference: 'Abu Dawud 5082, An-Nasa\'i',
+    reward: 'Surah Al-Ikhlas | Abu Dawud 5082',
+    reference: 'Quran 112 | Abu Dawud 5082',
     arabic: `بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
 
 قُلْ هُوَ اللّٰهُ أَحَدٌ ، اَللّٰهُ الصَّمَدُ ، لَمْ يَلِدْ وَلَمْ يُوْلَدْ ، وَلَمْ يَكُنْ لَّهُ كُفُوًا أَحَدٌ`,
@@ -304,11 +305,49 @@ const morningAudioMap = {
   'morning_32': _hm(91),       // SubhanAllah wa bihamdihi 100x = HM #91
 };
 
+// Full hadith texts & references (matching Dua & Azkar app)
+const hadithOverrides = {
+  'morning_1':  { reward: 'Al Fateha | Sahih Muslim 395a', reference: 'Quran 1:1-7 | Sahih Muslim 395', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Allah the Almighty said: 'I have divided prayer between Myself and My servant into two halves, and My servant shall have what he has asked for. When the servant says Al-hamdu lillahi Rabbil-'alamin, Allah says: My servant has praised Me. When he says Ar-Rahmanir-Rahim, Allah says: My servant has extolled Me. When he says Maliki yawmid-din, Allah says: My servant has glorified Me. When he says Iyyaka na'budu wa iyyaka nasta'in, Allah says: This is between Me and My servant, and My servant shall have what he has asked for. When he says Ihdinas-siratal-mustaqim, Allah says: This is for My servant, and My servant shall have what he has asked for.'" (Sahih Muslim 395a)` },
+  'morning_2':  { reward: 'Alif Laam Meem | Ad-Darimi', reference: 'Quran 2:1-5 | Ad-Darimi', hadith_full: `Abdullah ibn Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever recites the first four verses of Surah Al-Baqarah, Ayat al-Kursi, and the last three verses of Surah Al-Baqarah — the Shaytan will not come near him or to his family, nor will he be touched by anything that he dislikes." (Ad-Darimi)` },
+  'morning_3':  { reward: 'Ayatul Kursi | Al-Bukhari 6/530', reference: 'Quran 2:255 | Al-Bukhari 5010', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) entrusted me to guard the Zakat revenue of Ramadan. Someone came and began stealing from the food. I caught him and said, "I will take you to the Messenger of Allah." He said, "When you go to your bed, recite Ayat al-Kursi, for then there will be a guard from Allah who will protect you all night long, and Satan will not be able to come near you till dawn." The Prophet (ﷺ) said, "He told you the truth, although he is a liar — that was the Shaytan." (Al-Bukhari 5010)` },
+  'morning_4':  { reward: 'La Ikraha fid-Deen | Ad-Darimi', reference: 'Quran 2:256 | Ad-Darimi', hadith_full: `This verse is part of the ten verses from Surah Al-Baqarah that the Prophet (ﷺ) recommended. Whoever recites them, the Shaytan will not enter his house that night, and nothing he dislikes will come near him or his family. (Ad-Darimi)` },
+  'morning_5':  { reward: 'Allah is the Ally of the Believers | Ad-Darimi', reference: 'Quran 2:257 | Ad-Darimi', hadith_full: `This verse is part of the ten verses from Surah Al-Baqarah. Whoever recites them, the Shaytan will not enter his house that night. (Ad-Darimi)` },
+  'morning_6':  { reward: 'To Allah Belongs All | Al-Bukhari 4723', reference: 'Quran 2:284 | Al-Bukhari 4723', hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." This verse is the first of the last three verses of Surah Al-Baqarah. (Al-Bukhari 4723)` },
+  'morning_7':  { reward: 'The Messenger Has Believed | Al-Bukhari 4723', reference: 'Quran 2:285 | Al-Bukhari 4723', hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." i.e., they will suffice him as protection from every evil. (Al-Bukhari 4723, Sahih Muslim 807)` },
+  'morning_8':  { reward: 'Allah Does Not Burden a Soul | Sahih Muslim 807', reference: 'Quran 2:286 | Sahih Muslim 807', hadith_full: `Abu Mas'ud al-Badri (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever recites the last two verses of Surah Al-Baqarah at night, it will suffice him." When this verse was revealed, after each supplication in it, Allah said: "I have done so." (Sahih Muslim 807)` },
+  'morning_9':  { reward: 'Surah Al-Ikhlas | Abu Dawud 5082', reference: 'Quran 112 | Abu Dawud 5082', hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn (Surah Al-Falaq and Surah An-Nas) three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)` },
+  'morning_10': { reward: 'Surah Al-Falaq | At-Tirmidhi 3575', reference: 'Quran 113 | At-Tirmidhi 3575', hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)` },
+  'morning_11': { reward: 'Surah An-Nas | At-Tirmidhi 3575', reference: 'Quran 114 | At-Tirmidhi 3575', hadith_full: `Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)` },
+  'morning_12': { reward: 'Dominion Belongs to Allah | Sahih Muslim 2723', reference: 'Sahih Muslim 2723', hadith_full: `Abdullah ibn Mas'ud (رضي الله عنه) reported: When it was evening, the Prophet (ﷺ) used to supplicate: "Asbahna wa asbahal-mulku lillah..." He never failed to say this supplication in the morning and evening. (Sahih Muslim 2723)` },
+  'morning_13': { reward: 'Upon the Fitrah of Islam | Ahmad 15360', reference: 'Ahmad 15360', hadith_full: `Abdullah ibn Mas'ud (رضي الله عنه) reported: The Prophet (ﷺ) used to teach his companions to say in the morning: "Asbahna 'ala fitratil-Islam..." This declaration affirms one's adherence to the natural religion of Islam and the way of Prophet Ibrahim. (Ahmad 15360)` },
+  'morning_14': { reward: 'By Your Leave | At-Tirmidhi 3391', reference: 'At-Tirmidhi 3391', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) taught his companions to recite this dua: "Allahumma bika asbahna wa bika amsaina..." in the morning and evening. (At-Tirmidhi 3391)` },
+  'morning_15': { reward: 'Blessings & Concealment | Ibn al-Sunni', reference: 'Ibn al-Sunni 41', hadith_full: `Abdullah ibn Umar (رضي الله عنه) reported: The Messenger of Allah (ﷺ) never used to leave this supplication in the morning and evening: "Allahumma inni asbahtu minka fi ni'matin wa 'afiyatin wa sitr..." — Whoever recites this dua three times in the morning and evening has fulfilled the obligation of gratitude. (Ibn al-Sunni)` },
+  'morning_16': { reward: 'Fulfil Obligation of Gratitude | Abu Dawud 5073', reference: 'Abu Dawud 5073', hadith_full: `Abdullah ibn Ghannam (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says in the morning: 'Allahumma ma asbaha bi min ni'matin aw bi-ahadin min khalqik, faminka wahdaka la sharika lak, falakal-hamdu wa lakash-shukr' — he has fulfilled his obligation of giving thanks for that day. And whoever says it in the evening has fulfilled his obligation for that night." (Abu Dawud 5073)` },
+  'morning_17': { reward: 'Praise Befitting Divine Greatness | Ibn Majah 3801', reference: 'Ibn Majah 3801', hadith_full: `Abdullah ibn Umar (رضي الله عنه) reported: The Prophet (ﷺ) said, "A servant of Allah said: 'Ya Rabbi lakal-hamdu kama yanbaghi li jalali wajhika wa 'azimi sultanik.' The two angels did not know how to record it, so they ascended to the heavens and said: 'Our Lord, Your servant has said something and we do not know how to record it.' Allah — while knowing best what His servant said — asked: 'What did My servant say?' They replied with the words. Allah said to them: 'Record it as My servant said it, until he meets Me and I shall reward him for it.'" (Ibn Majah 3801, Imam Ahmad)` },
+  'morning_18': { reward: 'Pleased with Allah | Ahmad 18967', reference: 'Abu Dawud 5072 | Ahmad 18967', hadith_full: `Abu Sallam (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever says in the morning and evening: 'Raditu billahi Rabba, wa bil-Islami dina, wa bi-Muhammadin nabiyya' — Allah has promised that He will please him on the Day of Resurrection." (Abu Dawud 5072, Ahmad 18967)` },
+  'morning_19': { reward: 'Well-being in Both Worlds | Abu Dawud 5074', reference: 'Abu Dawud 5074', hadith_full: `Abdullah ibn Umar (رضي الله عنهما) reported: The Messenger of Allah (ﷺ) never failed to say these supplications in the morning and evening: "Allahumma inni as'alukal-'afiyata fid-dunya wal-akhirah. Allahumma inni as'alukal-'afwa wal-'afiyata fi dini wa dunyaya wa ahli wa mali. Allahumma-stur 'awrati wa amin raw'ati..." (Abu Dawud 5074)` },
+  'morning_20': { reward: 'Outweigh All Other Dhikr | Sahih Muslim 2726', reference: 'Sahih Muslim 2726', hadith_full: `Juwairiyah (رضي الله عنها) reported: The Prophet (ﷺ) left her in the morning while she was praying. He came back at forenoon and she was still in her place. He said, "Are you still in the same state?" She said, "Yes." He said, "I said four phrases three times after leaving you, and if they were weighed against what you have said since morning, they would outweigh it: SubhanAllahi wa bihamdihi, 'adada khalqihi, wa rida nafsihi, wa zinata 'arshihi, wa midada kalimatih." (Sahih Muslim 2726)` },
+  'morning_21': { reward: 'Protect From All Harm | At-Tirmidhi 3388', reference: 'Abu Dawud 5088 | At-Tirmidhi 3388', hadith_full: `Uthman ibn Affan (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "No servant says in the morning and evening three times: 'Bismillahilladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama', wa Huwas-Sami'ul-'Alim' — and anything will harm him." (Abu Dawud 5088, At-Tirmidhi 3388)` },
+  'morning_22': { reward: 'Seek Refuge from Shirk | Sahih Al-Jaami 2876', reference: 'Ahmad 23119 | Sahih Al-Jaami 2876', hadith_full: `Ma'qil ibn Yasar (رضي الله عنه) reported: The Prophet (ﷺ) said, "Shirk among you is more subtle than the sound of footsteps of an ant on a rock. Shall I not teach you something which, if you say it, will rid you of both minor and major shirk? Say: 'Allahumma inni a'udhu bika an ushrika bika wa ana a'lam, wa astaghfiruka lima la a'lam.'" (Ahmad 23119, Sahih Al-Jaami 2876)` },
+  'morning_23': { reward: 'Protection From All Evil | Sahih Muslim 2709', reference: 'Sahih Muslim 2709', hadith_full: `Khawlah bint Hakim (رضي الله عنها) reported: The Messenger of Allah (ﷺ) said, "If anyone lands at a place and says: 'A'udhu bi kalimatillahit-tammati min sharri ma khalaq' — nothing will harm him until he leaves that place." Abu Huraira (رضي الله عنه) said, "A man came to the Prophet and said: 'A scorpion stung me last night.' The Prophet said, 'If you had said this dua when evening came, it would not have harmed you.'" (Sahih Muslim 2709)` },
+  'morning_24': { reward: 'Knower of the Unseen | At-Tirmidhi 3392', reference: 'At-Tirmidhi 3392', hadith_full: `Abu Huraira (رضي الله عنه) reported: Abu Bakr as-Siddiq (رضي الله عنه) said, "O Messenger of Allah, teach me something to say in the morning and evening." The Prophet (ﷺ) said, "Say: 'Allahumma 'alimal-ghaybi wash-shahadah, fatiris-samawati wal-ard...' — Say it in the morning, in the evening, and when you go to your bed." (At-Tirmidhi 3392)` },
+  'morning_25': { reward: 'Ya Hayyu Ya Qayyum | Mustadrak Al-Hakim', reference: 'Hakim 1/545', hadith_full: `Anas ibn Malik (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to Fatimah (رضي الله عنها), "What prevents you from listening to what I advise you? Say in the morning and evening: 'Ya Hayyu ya Qayyumu birahmatika astaghith, aslih li sha'ni kullahu, wa la takilni ila nafsi tarfata 'ayn.' — O Ever Living, O Sustainer, in Your mercy I seek relief. Rectify all my affairs and do not leave me to myself even for the blink of an eye." Whenever the Prophet (ﷺ) was afflicted with worry or concern, he used to recite this supplication. (Mustadrak Al-Hakim 1/545)` },
+  'morning_26': { reward: 'Sayyid al-Istighfar | Al-Bukhari 6306', reference: 'Al-Bukhari 6306', hadith_full: `Shaddad ibn Aws (رضي الله عنه) reported: The Prophet (ﷺ) said, "The most superior way of asking for forgiveness is Sayyidul-Istighfar. Whoever says it during the day with firm belief in it, and dies on that day before evening comes, he will be one of the people of Paradise. And whoever says it at night with firm belief in it, and dies before morning comes, he will be one of the people of Paradise." (Al-Bukhari 6306)` },
+  'morning_27': { reward: 'Freed from the Hellfire | Abu Dawud 5069', reference: 'Abu Dawud 5069', hadith_full: `Anas ibn Malik (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says in the morning or evening: 'Allahumma inni asbahtu ush-hiduka, wa ush-hidu hamalata 'arshika, wa mala'ikataka, wa jami'a khalqik, annaka Antallahu la ilaha illa Anta wahdaka la sharika lak, wa anna Muhammadan 'abduka wa rasuluk' — four times, Allah will free him from the Fire." (Abu Dawud 5069)` },
+  'morning_28': { reward: 'Good Health & Protection | Abu Dawud 5090', reference: 'Abu Dawud 5090', hadith_full: `Abu Bakrah (رضي الله عنه) reported: He used to recite this supplication thrice every morning and evening — as he heard the Prophet (ﷺ) reciting it: "Allahumma 'afini fi badani, Allahumma 'afini fi sam'i, Allahumma 'afini fi basari, la ilaha illa Ant. Allahumma inni a'udhu bika minal-kufri wal-faqr, wa a'udhu bika min 'adhabil-qabr, la ilaha illa Ant." (Abu Dawud 5090)` },
+  'morning_29': { reward: 'Allah Will Suffice You | Abu Dawud 5081', reference: 'Abu Dawud 5081', hadith_full: `Abu ad-Darda' (رضي الله عنه) reported: The Prophet (ﷺ) said, "Whoever says seven times in the morning and evening: 'Hasbiyallahu la ilaha illa Huwa, 'alayhi tawakkaltu, wa Huwa Rabbul-'Arshil-'Azim' — Allah will suffice him against whatever concerns him in the matters of this world and the Hereafter." (Abu Dawud 5081)` },
+  'morning_30': { reward: 'Ask Allah to Bless Your Day | Abu Dawud 5084', reference: 'Abu Dawud 5084', hadith_full: `The Prophet (ﷺ) used to say when morning came: "Asbahna wa asbahal-mulku lillahi Rabbil-'alamin. Allahumma inni as'aluka khayra hadhal-yawm: fathahu, wa nasrahu, wa nurahu, wa barakatahu, wa hudahu. Wa a'udhu bika min sharri ma fihi wa sharri ma ba'dah." — He would ask Allah for the goodness of the day: its victory, help, light, blessings, and guidance. (Abu Dawud 5084)` },
+  'morning_31': { reward: 'An Unparalleled Reward | Al-Bukhari 6403', reference: 'Al-Bukhari 6403 | Sahih Muslim 2693', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says 'La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, wa Huwa 'ala kulli shay'in Qadir' one hundred times a day will get the same reward as given for manumitting ten slaves; one hundred good deeds will be written in his accounts, one hundred sins will be deducted from his accounts, and it will be a shield for him from Satan on that day till night. Nobody will be able to do a better deed except the one who does more than he." (Al-Bukhari 6403, Sahih Muslim 2693)` },
+  'morning_32': { reward: 'Get Your Sins Forgiven | Al-Bukhari 6405', reference: 'Al-Bukhari 6405 | Sahih Muslim 2691', hadith_full: `Abu Huraira (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said, "Whoever says 'SubhanAllahi wa bihamdihi' one hundred times a day, his sins will be forgiven even if they were as much as the foam of the sea." And the Prophet (ﷺ) said, "Two words which are light on the tongue, heavy on the Scale, and beloved to the Most Gracious: SubhanAllahi wa bihamdihi, SubhanAllahil-'Azim." (Al-Bukhari 6405, Sahih Muslim 2691)` },
+};
+
 // Build final items
 function buildItem(item) {
+  const override = hadithOverrides[item.id] || {};
+  let result;
   if (item.reuse && byId[item.reuse]) {
     const src = byId[item.reuse];
-    return {
+    result = {
       id: item.id,
       arabic: item.arabic || src.arabic,
       transliteration: item.transliteration || src.transliteration,
@@ -321,20 +360,26 @@ function buildItem(item) {
       hadith_full: item.hadith_full || src.hadith_full || '',
       audio_url: morningAudioMap[item.id] || src.audio_url || null,
     };
+  } else {
+    result = {
+      id: item.id,
+      arabic: item.arabic || '',
+      transliteration: item.transliteration || '',
+      translation: item.translation || '',
+      recommended_count: item.recommended_count,
+      category_id: 'morning',
+      reward: item.reward,
+      reference: item.reference,
+      sort_order: item.sort_order,
+      hadith_full: item.hadith_full || '',
+      audio_url: morningAudioMap[item.id] || null,
+    };
   }
-  return {
-    id: item.id,
-    arabic: item.arabic || '',
-    transliteration: item.transliteration || '',
-    translation: item.translation || '',
-    recommended_count: item.recommended_count,
-    category_id: 'morning',
-    reward: item.reward,
-    reference: item.reference,
-    sort_order: item.sort_order,
-    hadith_full: item.hadith_full || '',
-    audio_url: morningAudioMap[item.id] || null,
-  };
+  // Apply hadith overrides (full texts from Dua & Azkar app)
+  if (override.reward) result.reward = override.reward;
+  if (override.reference) result.reference = override.reference;
+  if (override.hadith_full) result.hadith_full = override.hadith_full;
+  return result;
 }
 
 const finalItems = morning.map(item => buildItem(item));
