@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Noor Rewards — V4 Fresh & Bright</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --text2: #6E7191;
+    --text3: #A0A3BD;
+    --coral: #FF6B6B;
+    --coral-light: #FFF0F0;
+    --coral-deep: #E04E4E;
+    --sky: #4ECDC4;
+    --sky-light: #E8FAF8;
+    --sky-deep: #2BA89F;
+    --lime: #95E861;
+    --lime-light: #F0FCE8;
+    --lime-deep: #6BBF3A;
+    --gold: #FFB830;
+    --gold-light: #FFF6E0;
+    --purple: #7C5CFC;
+    --purple-light: #F0ECFF;
+    --blue: #5B8DEF;
+    --blue-light: #EBF1FF;
+    --pink: #FF6B9D;
+    --pink-light: #FFF0F5;
+    --border: #EDEDF0;
+    --shadow: 0 2px 12px rgba(26,26,46,0.06);
+    --shadow-lg: 0 8px 30px rgba(26,26,46,0.08);
+    --r: 16px;
+    --r-sm: 12px;
+    --r-xs: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #E0E0DC;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 36px;
+    flex-wrap: wrap;
+  }
+
+  .phone {
+    width: 393px;
+    height: 852px;
+    background: var(--bg);
+    border-radius: 48px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 30px 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .scroll {
+    overflow-y: auto;
+    height: calc(100% - 40px);
+    padding: 0 16px 110px;
+  }
+  .scroll::-webkit-scrollbar { display: none; }
+
+  /* ── HEADER ── */
+  .hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 2px 16px;
+  }
+  .hdr-left h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.4px;
+  }
+  .hdr-left p {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text3);
+  }
+  .hdr-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .notif-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    position: relative;
+    cursor: pointer;
+  }
+  .notif-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 7px;
+    height: 7px;
+    background: var(--coral);
+    border-radius: 50%;
+    border: 2px solid var(--card);
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--coral), var(--gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 3px 12px rgba(255,107,107,0.3);
+  }
+
+  /* ── HERO: Points + Streaks side by side ── */
+  .hero-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  /* Points card (left) */
+  .points-card {
+    flex: 1.1;
+    background: linear-gradient(145deg, var(--text) 0%, #2D2D4A 100%);
+    border-radius: var(--r);
+    padding: 16px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .points-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(255,107,107,0.2), transparent 70%);
+    border-radius: 50%;
+  }
+  .points-card::after {
+    content: '';
+    position: absolute;
+    bottom: -15px; left: 10px;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(78,205,196,0.15), transparent 70%);
+    border-radius: 50%;
+  }
+  .pc-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+  }
+  .pc-digits {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .pc-digit {
+    width: 34px;
+    height: 42px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    position: relative;
+  }
+  .pc-digit::after {
+    content: '';
+    position: absolute;
+    left: 2px; right: 2px; top: 50%;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+  }
+  .pc-today {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--lime);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+    z-index: 1;
+  }
+  .pc-today::before {
+    content: '▲';
+    font-size: 7px;
+  }
+
+  /* Streaks card (right) */
+  .streaks-card {
+    flex: 0.9;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sc-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .streak-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: var(--bg);
+  }
+  .sm-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .sm-icon.login { background: var(--gold-light); }
+  .sm-icon.dhikr { background: var(--sky-light); }
+  .sm-icon.quran { background: var(--purple-light); }
+  .sm-info { flex: 1; }
+  .sm-type {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text2);
+    line-height: 1;
+  }
+  .sm-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .sm-fire { font-size: 14px; }
+
+  /* ── DAILY GOAL BAR ── */
+  .daily-goal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .dg-ring {
+    width: 48px;
+    height: 48px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .dg-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .dg-ring-bg { fill: none; stroke: var(--border); stroke-width: 4; }
+  .dg-ring-fill {
+    fill: none;
+    stroke: var(--coral);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 126;
+    stroke-dashoffset: 35;
+    transition: stroke-dashoffset 1s;
+  }
+  .dg-ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--coral);
+  }
+  .dg-info { flex: 1; }
+  .dg-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .dg-sub {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 500;
+  }
+  .dg-bar-bg {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .dg-bar-fill {
+    height: 100%;
+    width: 72%;
+    background: linear-gradient(90deg, var(--coral), var(--gold));
+    border-radius: 3px;
+  }
+  .dg-xp {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    text-align: right;
+    line-height: 1;
+  }
+  .dg-xp span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ── SEAL THE DAY ── */
+  .seal {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-deep) 100%);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(78,205,196,0.3);
+  }
+  .seal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .seal-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .seal-text { flex: 1; color: #fff; }
+  .seal-title {
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .seal-sub {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+  .seal-arrow {
+    font-size: 20px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 700;
+  }
+
+  /* ── SECTION HEADER ── */
+  .sec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .sec h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .sec-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── ACTIVITY TILES (icon-heavy) ── */
+  .tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tile:active { transform: scale(0.97); }
+  .tile:hover { box-shadow: var(--shadow-lg); }
+  /* 3D-style icon container */
+  .tile-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  /* 3D shadow under icon */
+  .tile-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 4px;
+    right: 4px;
+    height: 8px;
+    border-radius: 50%;
+    filter: blur(4px);
+    opacity: 0.3;
+  }
+  .tile-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1px;
+  }
+  .tile-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+  }
+  .tile-xp {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+  /* Corner glow on tiles */
+  .tile::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    opacity: 0.07;
+  }
+
+  .tile.quran .tile-icon { background: linear-gradient(145deg, #7BB8F5, #4A8AF4); color: #fff; }
+  .tile.quran .tile-icon::after { background: #4A8AF4; }
+  .tile.quran .tile-xp { background: var(--blue-light); color: var(--blue); }
+  .tile.quran::before { background: var(--blue); }
+
+  .tile.dhikr .tile-icon { background: linear-gradient(145deg, #6EE7B7, #34D399); color: #fff; }
+  .tile.dhikr .tile-icon::after { background: #34D399; }
+  .tile.dhikr .tile-xp { background: var(--sky-light); color: var(--sky-deep); }
+  .tile.dhikr::before { background: var(--sky); }
+
+  .tile.tafsir .tile-icon { background: linear-gradient(145deg, #FDA4AF, #FB7185); color: #fff; }
+  .tile.tafsir .tile-icon::after { background: #FB7185; }
+  .tile.tafsir .tile-xp { background: var(--pink-light); color: var(--pink); }
+  .tile.tafsir::before { background: var(--pink); }
+
+  .tile.validate .tile-icon { background: linear-gradient(145deg, #A5B4FC, #818CF8); color: #fff; }
+  .tile.validate .tile-icon::after { background: #818CF8; }
+  .tile.validate .tile-xp { background: var(--purple-light); color: var(--purple); }
+  .tile.validate::before { background: var(--purple); }
+
+  /* ── MILESTONE BANNER ── */
+  .milestone {
+    background: linear-gradient(135deg, var(--gold-light), #FFF0C8);
+    border: 1px solid #F0D68A;
+    border-radius: var(--r);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+  .ms-icon {
+    font-size: 24px;
+  }
+  .ms-info { flex: 1; }
+  .ms-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .ms-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: #B8860B;
+  }
+  .ms-arrow {
+    font-size: 16px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* ── COMMUNITY ── */
+  .comm {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .comm-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .comm-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .comm-live {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--lime-deep);
+  }
+  .comm-live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--lime);
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .comm-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .comm-circle {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: conic-gradient(var(--sky) 0deg, var(--sky) 216deg, var(--border) 216deg, var(--border) 360deg);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .comm-circle-inner {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .comm-info { flex: 1; }
+  .comm-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .comm-donated {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 500;
+  }
+  .comm-donated b { color: var(--sky-deep); font-weight: 700; }
+  .comm-btn {
+    background: var(--sky-light);
+    color: var(--sky-deep);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  /* ── LEVEL BADGE ROW ── */
+  .level-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .level-card {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .lc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .lc-info {}
+  .lc-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .lc-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bnav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 6px 12px 28px;
+    z-index: 10;
+  }
+  .bnav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0;
+    cursor: pointer;
+    border-radius: 12px;
+  }
+  .bnav-icon {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--text3);
+    transition: all 0.15s;
+  }
+  .bnav-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+  }
+  .bnav-item.on .bnav-icon {
+    background: linear-gradient(135deg, var(--coral), var(--gold));
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(255,107,107,0.3);
+  }
+  .bnav-item.on .bnav-label { color: var(--coral); font-weight: 700; }
+
+  /* ── NOTES ── */
+  .notes {
+    max-width: 430px;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+  }
+  .notes h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .notes .sub {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 24px;
+  }
+  .n-card {
+    background: #333;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+  .n-card h4 {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .n-card p {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .n-card p strong { color: #ccc; }
+  .pal-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .pal { text-align: center; }
+  .pal-box {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    border: 2px solid #444;
+  }
+  .pal-name {
+    font-size: 9px;
+    font-weight: 600;
+    color: #666;
+    margin-top: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar">
+    <span>9:07</span>
+    <span style="font-size:12px">45%</span>
+  </div>
+
+  <div class="scroll">
+    <!-- Header -->
+    <div class="hdr">
+      <div class="hdr-left">
+        <h1>Assalamu Alaikum &#128075;</h1>
+        <p>Thursday, April 9</p>
+      </div>
+      <div class="hdr-right">
+        <div class="notif-btn">
+          &#128276;
+          <div class="notif-dot"></div>
+        </div>
+        <div class="avatar">Z</div>
+      </div>
+    </div>
+
+    <!-- HERO: Points (left) + Streaks (right) -->
+    <div class="hero-row">
+      <!-- Points flip counter -->
+      <div class="points-card">
+        <div class="pc-label">Noor Points</div>
+        <div class="pc-digits">
+          <div class="pc-digit">7</div>
+          <div class="pc-digit">1</div>
+          <div class="pc-digit">9</div>
+          <div class="pc-digit">0</div>
+        </div>
+        <div class="pc-today">320 today</div>
+      </div>
+
+      <!-- Streak mini cards -->
+      <div class="streaks-card">
+        <div class="sc-label">&#128293; Streaks</div>
+        <div class="streak-mini">
+          <div class="sm-icon login">&#128197;</div>
+          <div class="sm-info">
+            <div class="sm-type">Login</div>
+            <div class="sm-num">18d</div>
+          </div>
+          <div class="sm-fire">&#128293;</div>
+        </div>
+        <div class="streak-mini">
+          <div class="sm-icon dhikr">&#128340;</div>
+          <div class="sm-info">
+            <div class="sm-type">Dhikr</div>
+            <div class="sm-num">6d</div>
+          </div>
+          <div class="sm-fire">&#128293;</div>
+        </div>
+        <div class="streak-mini">
+          <div class="sm-icon quran">&#128214;</div>
+          <div class="sm-info">
+            <div class="sm-type">Quran</div>
+            <div class="sm-num">2d</div>
+          </div>
+          <div class="sm-fire">&#128293;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Goal -->
+    <div class="daily-goal">
+      <div class="dg-ring">
+        <svg viewBox="0 0 48 48">
+          <circle class="dg-ring-bg" cx="24" cy="24" r="20"/>
+          <circle class="dg-ring-fill" cx="24" cy="24" r="20"/>
+        </svg>
+        <div class="dg-ring-text">72%</div>
+      </div>
+      <div class="dg-info">
+        <div class="dg-title">Daily Goal</div>
+        <div class="dg-sub">130 XP remaining to hit your target</div>
+        <div class="dg-bar-bg">
+          <div class="dg-bar-fill"></div>
+        </div>
+      </div>
+      <div class="dg-xp">
+        320<br><span>/ 450</span>
+      </div>
+    </div>
+
+    <!-- Seal the Day -->
+    <div class="seal">
+      <div class="seal-icon">&#127769;</div>
+      <div class="seal-text">
+        <div class="seal-title">Seal the Day &#10024;</div>
+        <div class="seal-sub">Complete your evening reflection</div>
+      </div>
+      <div class="seal-arrow">&#8250;</div>
+    </div>
+
+    <!-- Activities -->
+    <div class="sec">
+      <h3>Activities</h3>
+      <span class="sec-badge" style="background:var(--coral-light);color:var(--coral);">4 available</span>
+    </div>
+    <div class="tiles">
+      <div class="tile quran">
+        <div class="tile-icon">&#128214;</div>
+        <div class="tile-name">Quran</div>
+        <div class="tile-sub">Al-Baqarah : 142</div>
+        <div class="tile-xp">&#9733; +15 XP/ayah</div>
+      </div>
+      <div class="tile dhikr">
+        <div class="tile-icon">&#9775;</div>
+        <div class="tile-name">Dhikr</div>
+        <div class="tile-sub">Morning Azkar</div>
+        <div class="tile-xp">&#9733; +10 XP/set</div>
+      </div>
+      <div class="tile tafsir">
+        <div class="tile-icon">&#128218;</div>
+        <div class="tile-name">Tafsir</div>
+        <div class="tile-sub">Understand deeper</div>
+        <div class="tile-xp">&#9733; +20 XP/min</div>
+      </div>
+      <div class="tile validate">
+        <div class="tile-icon">&#10003;</div>
+        <div class="tile-name">Validate</div>
+        <div class="tile-sub">Help the ummah</div>
+        <div class="tile-xp">&#9733; +25 XP</div>
+      </div>
+    </div>
+
+    <!-- Milestone -->
+    <div class="milestone">
+      <div class="ms-icon">&#127942;</div>
+      <div class="ms-info">
+        <div class="ms-title">Next Milestone: 30 Day Streak</div>
+        <div class="ms-sub">12 more days — earn 500 bonus NP!</div>
+      </div>
+      <div class="ms-arrow">&#8250;</div>
+    </div>
+
+    <!-- Level + Weekly -->
+    <div class="level-row">
+      <div class="level-card">
+        <div class="lc-icon" style="background:linear-gradient(135deg,var(--coral-light),#FFD4D4);">&#127775;</div>
+        <div class="lc-info">
+          <div class="lc-label">Level</div>
+          <div class="lc-val">11 — Seeker</div>
+        </div>
+      </div>
+      <div class="level-card">
+        <div class="lc-icon" style="background:linear-gradient(135deg,var(--lime-light),#D6F5C0);">&#128200;</div>
+        <div class="lc-info">
+          <div class="lc-label">This Week</div>
+          <div class="lc-val">1,840 XP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Community -->
+    <div class="sec">
+      <h3>Community</h3>
+      <span class="sec-badge" style="background:var(--sky-light);color:var(--sky-deep);">Explore</span>
+    </div>
+    <div class="comm">
+      <div class="comm-top">
+        <div class="comm-title">Masjid Al-Noor Fund</div>
+        <div class="comm-live"><div class="comm-live-dot"></div> Live</div>
+      </div>
+      <div class="comm-row">
+        <div class="comm-circle">
+          <div class="comm-circle-inner">&#127769;</div>
+        </div>
+        <div class="comm-info">
+          <div class="comm-name">Renovation Project</div>
+          <div class="comm-donated">You donated <b>450 NP</b> of 2,000</div>
+        </div>
+        <div class="comm-btn">Donate</div>
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bnav">
+    <div class="bnav-item on">
+      <div class="bnav-icon">&#9679;</div>
+      <span class="bnav-label">Home</span>
+    </div>
+    <div class="bnav-item">
+      <div class="bnav-icon">&#9651;</div>
+      <span class="bnav-label">Journey</span>
+    </div>
+    <div class="bnav-item">
+      <div class="bnav-icon">&#9826;</div>
+      <span class="bnav-label">Akhirah</span>
+    </div>
+    <div class="bnav-item">
+      <div class="bnav-icon">&#9898;</div>
+      <span class="bnav-label">Profile</span>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="notes">
+  <h2>V4 — Fresh & Bright</h2>
+  <p class="sub">Sweatcoin/Macadam energy meets Islamic rewards. Packed, fun, colorful.</p>
+
+  <div class="n-card">
+    <h4>&#127912; Coral + Sky + Lime Palette</h4>
+    <p>Energetic & tropical. <strong>Coral (#FF6B6B)</strong> as primary accent, <strong>Sky (#4ECDC4)</strong> for CTAs, <strong>Lime (#95E861)</strong> for positive indicators. Each activity has its own color (blue, green, pink, purple).</p>
+    <div class="pal-row">
+      <div class="pal"><div class="pal-box" style="background:#FF6B6B"></div><div class="pal-name">Coral</div></div>
+      <div class="pal"><div class="pal-box" style="background:#4ECDC4"></div><div class="pal-name">Sky</div></div>
+      <div class="pal"><div class="pal-box" style="background:#95E861"></div><div class="pal-name">Lime</div></div>
+      <div class="pal"><div class="pal-box" style="background:#FFB830"></div><div class="pal-name">Gold</div></div>
+      <div class="pal"><div class="pal-box" style="background:#7C5CFC"></div><div class="pal-name">Purple</div></div>
+      <div class="pal"><div class="pal-box" style="background:#5B8DEF"></div><div class="pal-name">Blue</div></div>
+      <div class="pal"><div class="pal-box" style="background:#FF6B9D"></div><div class="pal-name">Pink</div></div>
+    </div>
+  </div>
+
+  <div class="n-card">
+    <h4>&#128200; Side-by-Side Hero</h4>
+    <p><strong>Points flip counter (left)</strong> on a dark card with glass digits — keeps the personality from your original. <strong>Streaks (right)</strong> as compact mini-rows with fire emojis. Both visible at a glance without scrolling.</p>
+  </div>
+
+  <div class="n-card">
+    <h4>&#127919; Packed & Info-Rich</h4>
+    <p>Everything is visible: points, streaks, daily goal ring, seal the day, 4 activity tiles, milestone, level, weekly XP, and community — all without feeling cluttered thanks to <strong>consistent 16px radius</strong>, <strong>thin 1px borders</strong>, and <strong>compact spacing (10-12px gaps)</strong>.</p>
+  </div>
+
+  <div class="n-card">
+    <h4>&#127912; 3D-Style Icon Tiles</h4>
+    <p>Activity tiles feature <strong>gradient 3D icons</strong> with a soft shadow underneath (the ::after element). Each icon sits on its own gradient (blue Quran, green Dhikr, pink Tafsir, purple Validate). Large 52px icons dominate the tile. Corner glow adds depth.</p>
+  </div>
+
+  <div class="n-card">
+    <h4>&#127769; Personality Preserved</h4>
+    <p><strong>Flip-clock digits</strong> with center line divider. <strong>Shimmer animation</strong> on Seal the Day. <strong>Fire emojis</strong> on streaks. <strong>Pulsing live dot</strong> on community. <strong>Coral-to-gold gradient</strong> progress bar. <strong>Wave emoji</strong> greeting. Fun without being childish.</p>
+  </div>
+
+  <div class="n-card">
+    <h4>&#128290; Daily Goal Ring</h4>
+    <p>New addition: <strong>circular progress ring</strong> (like Apple Fitness) shows daily completion at a glance. Combined with a bar + XP numbers for those who want detail. Coral stroke color matches the primary accent.</p>
+  </div>
+
+  <div class="n-card">
+    <h4>&#128161; Clean White Canvas</h4>
+    <p>All-white background (#FAFAF8). <strong>Cards bring the color</strong> — dark hero, teal CTA, gradient icons, gold milestone. No colored sections or zones. The nav bar uses frosted glass. Everything breathes on white.</p>
+  </div>
+
+  <div class="n-card">
+    <h4>&#128293; vs Current Design</h4>
+    <p><strong>Replaced:</strong> heavy sunburst cards, big flip clock taking full width, teal-cream color scheme, floating point badge.<br><strong>Kept:</strong> flip digit style, streak cards with fire, Seal the Day, Outfit+Rajdhani fonts, community project section.</p>
+  </div>
+</div>
+
+</body>
+</html>

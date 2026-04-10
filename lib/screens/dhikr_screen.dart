@@ -1456,7 +1456,15 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
       final appBarColor = _illustrationTopColor(widget.azkars[safeIndex].id, isDark);
 
       return PopScope(
-        onPopInvokedWithResult: (didPop, _) {},
+        onPopInvokedWithResult: (didPop, _) {
+          final currAzkar = widget.azkars[_currentIndex];
+          final tapTarget = widget.parentState._getTarget(currAzkar.id, currAzkar.recommendedCount);
+          if (tapTarget <= 1) {
+             // Use Future.microtask or similar if it requires state updates but since we're leaving, state doesn't matter much.
+             // Actually, parentState will handle it.
+             _tryComplete(currAzkar, tapTarget, isSwipe: true);
+          }
+        },
         child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF1A1A1A) : _scaffoldBgForCategory(widget.azkars[safeIndex].category),
         appBar: AppBar(
@@ -1586,8 +1594,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             controller: _pageController,
           onPageChanged: (nextIndex) {
             final prevAzkar = widget.azkars[_currentIndex];
-            if (prevAzkar.recommendedCount == 1) {
-              _tryComplete(prevAzkar, prevAzkar.recommendedCount, isSwipe: true);
+            final prevTarget = widget.parentState._getTarget(prevAzkar.id, prevAzkar.recommendedCount);
+            if (prevTarget <= 1) {
+              _tryComplete(prevAzkar, prevTarget, isSwipe: true);
             }
             if (_audioPlayer.playing) {
               _audioPlayer.stop();
@@ -1733,8 +1742,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   ),
                 ),
                 // ── Draggable counter button ──
-                LayoutBuilder(
-                  builder: (ctx, constraints) {
+                if (tapTarget > 1)
+                  LayoutBuilder(
+                    builder: (ctx, constraints) {
                     final screenW = constraints.maxWidth;
                     final screenH = constraints.maxHeight;
                     final safeBottom = MediaQuery.of(context).padding.bottom;
