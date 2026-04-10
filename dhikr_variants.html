@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Dhikr — Color Variants</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #1a1a1a;
+    padding: 30px 20px;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    min-height: 100vh;
+  }
+
+  .variant-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .variant-label {
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .variant-sub {
+    color: #888;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+  }
+
+  .phone {
+    width: 320px;
+    height: 680px;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Shared header structure ── */
+  .header {
+    padding: 18px 20px 18px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hdr-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .back-btn {
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .hdr-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  .hdr-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+  .hdr-sub {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+  .hdr-sub::before, .hdr-sub::after {
+    content: '•';
+    margin: 0 6px;
+    opacity: 0.6;
+  }
+  .progress-dots {
+    display: flex;
+    gap: 4px;
+    margin-top: 12px;
+    justify-content: center;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* ── Arabic content area ── */
+  .arabic-area {
+    flex: 1;
+    padding: 20px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .bismillah {
+    font-family: 'Amiri', serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 18px;
+    direction: rtl;
+  }
+  .arabic-verse {
+    font-family: 'Amiri', serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    direction: rtl;
+    line-height: 1.9;
+  }
+  .ayah-marker {
+    display: inline-block;
+    font-size: 13px;
+    margin: 0 4px;
+    opacity: 0.7;
+  }
+
+  /* ── Hadith section ── */
+  .hadith {
+    padding: 18px 18px 14px;
+    flex-shrink: 0;
+  }
+  .hadith-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .hadith-divider {
+    height: 1px;
+    margin-bottom: 10px;
+    opacity: 0.2;
+  }
+  .hadith-text {
+    font-size: 10px;
+    line-height: 1.55;
+    font-weight: 500;
+  }
+  .hadith-ref {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
+
+  /* ── Counter ── */
+  .counter-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 0 0 18px;
+    flex-shrink: 0;
+  }
+  .counter {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .counter-num {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .counter-sub {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-top: 3px;
+  }
+
+  /* ═══════════════════════════════════════════ */
+  /* VARIANT 1: DARK PINK / MAGENTA               */
+  /* ═══════════════════════════════════════════ */
+  .v1 {
+    background: #FFF0F5;
+  }
+  .v1 .header {
+    background: linear-gradient(160deg, #880E4F 0%, #C2185B 50%, #E91E63 100%);
+    color: #fff;
+  }
+  .v1 .back-btn { background: rgba(255,255,255,0.15); color: #fff; }
+  .v1 .hdr-badge { background: rgba(255,255,255,0.18); color: #fff; }
+  .v1 .dot:nth-child(1) { background: #FFD54F; }
+  .v1 .dot:nth-child(2) { background: #E91E63; }
+  .v1 .dot:nth-child(3) { background: #F8BBD0; }
+  .v1 .dot:nth-child(4) { background: #880E4F; }
+  .v1 .dot:nth-child(5) { background: #FF6B9D; }
+  .v1 .arabic-area { background: #FFF0F5; }
+  .v1 .bismillah { color: #880E4F; }
+  .v1 .arabic-verse { color: #4A0028; }
+  .v1 .ayah-marker { color: #C2185B; }
+  .v1 .hadith {
+    background: linear-gradient(145deg, #C2185B 0%, #880E4F 100%);
+    color: #FFE0EC;
+  }
+  .v1 .hadith-title { color: #fff; }
+  .v1 .hadith-divider { background: #fff; }
+  .v1 .hadith-ref { background: rgba(255,255,255,0.15); color: #fff; }
+  .v1 .counter-wrap { background: linear-gradient(145deg, #C2185B 0%, #880E4F 100%); }
+  .v1 .counter {
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.2), 0 8px 24px rgba(136,14,79,0.4);
+  }
+  .v1 .counter-num { color: #C2185B; }
+  .v1 .counter-sub { background: #FFE0EC; color: #880E4F; }
+
+  /* ═══════════════════════════════════════════ */
+  /* VARIANT 2: LIGHT CREAM + GOLD GRADIENT       */
+  /* ═══════════════════════════════════════════ */
+  .v2 {
+    background: #FFFBF0;
+  }
+  .v2 .header {
+    background: linear-gradient(160deg, #FFF8E1 0%, #FFE082 60%, #FFC107 100%);
+    color: #5D4037;
+  }
+  .v2 .back-btn { background: rgba(93,64,55,0.15); color: #5D4037; }
+  .v2 .hdr-badge { background: rgba(255,255,255,0.6); color: #5D4037; }
+  .v2 .dot:nth-child(1) { background: #FF9800; }
+  .v2 .dot:nth-child(2) { background: #FFC107; }
+  .v2 .dot:nth-child(3) { background: #FFD54F; }
+  .v2 .dot:nth-child(4) { background: #FFE082; }
+  .v2 .dot:nth-child(5) { background: #FFECB3; }
+  .v2 .arabic-area { background: #FFFBF0; }
+  .v2 .bismillah { color: #B8860B; }
+  .v2 .arabic-verse { color: #3E2723; }
+  .v2 .ayah-marker { color: #D4A017; }
+  .v2 .hadith {
+    background: linear-gradient(145deg, #FFF8E1 0%, #FFE082 100%);
+    color: #5D4037;
+    border-top: 2px solid #FFD54F;
+  }
+  .v2 .hadith-title { color: #B8860B; }
+  .v2 .hadith-divider { background: #B8860B; }
+  .v2 .hadith-ref { background: rgba(184,134,11,0.15); color: #B8860B; }
+  .v2 .counter-wrap { background: linear-gradient(145deg, #FFF8E1 0%, #FFE082 100%); }
+  .v2 .counter {
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255,193,7,0.2), 0 8px 24px rgba(184,134,11,0.3);
+  }
+  .v2 .counter-num { color: #B8860B; }
+  .v2 .counter-sub { background: #FFF8E1; color: #B8860B; }
+
+  /* ═══════════════════════════════════════════ */
+  /* VARIANT 3: DARK NAVY + CYAN GLOW             */
+  /* ═══════════════════════════════════════════ */
+  .v3 {
+    background: #0A1628;
+  }
+  .v3 .header {
+    background: linear-gradient(160deg, #0A1628 0%, #142945 50%, #1E3A5F 100%);
+    color: #E0F7FA;
+    position: relative;
+  }
+  .v3 .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00E5FF, transparent);
+  }
+  .v3 .back-btn { background: rgba(0,229,255,0.12); color: #00E5FF; }
+  .v3 .hdr-badge { background: rgba(0,229,255,0.15); color: #00E5FF; }
+  .v3 .dot:nth-child(1) { background: #00E5FF; }
+  .v3 .dot:nth-child(2) { background: #40C4FF; }
+  .v3 .dot:nth-child(3) { background: #18FFFF; }
+  .v3 .dot:nth-child(4) { background: #536DFE; }
+  .v3 .dot:nth-child(5) { background: #7C4DFF; }
+  .v3 .arabic-area { background: #0A1628; }
+  .v3 .bismillah {
+    color: #00E5FF;
+    text-shadow: 0 0 20px rgba(0,229,255,0.4);
+  }
+  .v3 .arabic-verse {
+    color: #E0F7FA;
+    text-shadow: 0 0 10px rgba(0,229,255,0.15);
+  }
+  .v3 .ayah-marker { color: #00E5FF; }
+  .v3 .hadith {
+    background: linear-gradient(145deg, #142945 0%, #0A1628 100%);
+    color: #B2EBF2;
+    border-top: 1px solid rgba(0,229,255,0.2);
+  }
+  .v3 .hadith-title { color: #00E5FF; }
+  .v3 .hadith-divider { background: #00E5FF; }
+  .v3 .hadith-ref { background: rgba(0,229,255,0.12); color: #00E5FF; border: 1px solid rgba(0,229,255,0.3); }
+  .v3 .counter-wrap { background: linear-gradient(145deg, #142945 0%, #0A1628 100%); }
+  .v3 .counter {
+    background: #0A1628;
+    border: 2px solid #00E5FF;
+    box-shadow: 0 0 0 4px rgba(0,229,255,0.15), 0 0 30px rgba(0,229,255,0.4);
+  }
+  .v3 .counter-num { color: #00E5FF; text-shadow: 0 0 15px rgba(0,229,255,0.6); }
+  .v3 .counter-sub { background: rgba(0,229,255,0.15); color: #00E5FF; }
+
+  /* ═══════════════════════════════════════════ */
+  /* VARIANT 4: LIGHT LAVENDER + PURPLE GRADIENT  */
+  /* ═══════════════════════════════════════════ */
+  .v4 {
+    background: #F5F0FF;
+  }
+  .v4 .header {
+    background: linear-gradient(160deg, #E1BEE7 0%, #CE93D8 50%, #BA68C8 100%);
+    color: #4A148C;
+  }
+  .v4 .back-btn { background: rgba(255,255,255,0.3); color: #4A148C; }
+  .v4 .hdr-badge { background: rgba(255,255,255,0.5); color: #4A148C; }
+  .v4 .dot:nth-child(1) { background: #4A148C; }
+  .v4 .dot:nth-child(2) { background: #7B1FA2; }
+  .v4 .dot:nth-child(3) { background: #BA68C8; }
+  .v4 .dot:nth-child(4) { background: #E1BEE7; }
+  .v4 .dot:nth-child(5) { background: #F3E5F5; }
+  .v4 .arabic-area { background: #F5F0FF; }
+  .v4 .bismillah { color: #6A1B9A; }
+  .v4 .arabic-verse { color: #311B4F; }
+  .v4 .ayah-marker { color: #8E24AA; }
+  .v4 .hadith {
+    background: linear-gradient(145deg, #F3E5F5 0%, #E1BEE7 100%);
+    color: #4A148C;
+  }
+  .v4 .hadith-title { color: #6A1B9A; }
+  .v4 .hadith-divider { background: #6A1B9A; }
+  .v4 .hadith-ref { background: rgba(106,27,154,0.15); color: #6A1B9A; }
+  .v4 .counter-wrap { background: linear-gradient(145deg, #F3E5F5 0%, #E1BEE7 100%); }
+  .v4 .counter {
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(186,104,200,0.25), 0 8px 24px rgba(106,27,154,0.3);
+  }
+  .v4 .counter-num { color: #6A1B9A; }
+  .v4 .counter-sub { background: #F3E5F5; color: #6A1B9A; }
+
+  /* ═══════════════════════════════════════════ */
+  /* VARIANT 5: DARK EMERALD + GOLD (PREMIUM)     */
+  /* ═══════════════════════════════════════════ */
+  .v5 {
+    background: #0A1F18;
+  }
+  .v5 .header {
+    background: linear-gradient(160deg, #0A1F18 0%, #164A3B 50%, #1E6B53 100%);
+    color: #FFF8E1;
+    position: relative;
+  }
+  .v5 .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(212,166,65,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(212,166,65,0.08) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .v5 .header > * { position: relative; z-index: 1; }
+  .v5 .back-btn { background: rgba(212,166,65,0.15); color: #D4A641; }
+  .v5 .hdr-badge { background: rgba(212,166,65,0.15); color: #D4A641; border: 1px solid rgba(212,166,65,0.3); }
+  .v5 .dot:nth-child(1) { background: #D4A641; }
+  .v5 .dot:nth-child(2) { background: #F5DFA0; }
+  .v5 .dot:nth-child(3) { background: #1E6B53; }
+  .v5 .dot:nth-child(4) { background: #14B8A6; }
+  .v5 .dot:nth-child(5) { background: #B8860B; }
+  .v5 .arabic-area { background: #0A1F18; }
+  .v5 .bismillah {
+    color: #D4A641;
+    text-shadow: 0 0 15px rgba(212,166,65,0.3);
+  }
+  .v5 .arabic-verse { color: #FFF8E1; }
+  .v5 .ayah-marker { color: #D4A641; }
+  .v5 .hadith {
+    background: linear-gradient(145deg, #164A3B 0%, #0A1F18 100%);
+    color: #E8DCC4;
+    border-top: 1px solid rgba(212,166,65,0.25);
+  }
+  .v5 .hadith-title { color: #D4A641; }
+  .v5 .hadith-divider { background: #D4A641; }
+  .v5 .hadith-ref { background: rgba(212,166,65,0.12); color: #D4A641; border: 1px solid rgba(212,166,65,0.3); }
+  .v5 .counter-wrap { background: linear-gradient(145deg, #164A3B 0%, #0A1F18 100%); }
+  .v5 .counter {
+    background: #0A1F18;
+    border: 2px solid #D4A641;
+    box-shadow: 0 0 0 4px rgba(212,166,65,0.12), 0 0 30px rgba(212,166,65,0.25);
+  }
+  .v5 .counter-num { color: #D4A641; }
+  .v5 .counter-sub { background: rgba(212,166,65,0.15); color: #D4A641; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ VARIANT 1: DARK PINK ═══════════ -->
+<div class="variant-wrap">
+  <div class="variant-label">Variant 1 — Dark Pink</div>
+  <div class="variant-sub">Gradient &middot; Magenta to Rose</div>
+  <div class="phone v1">
+    <div class="header">
+      <div class="status-bar"><span>7:04</span><span>57%</span></div>
+      <div class="hdr-row">
+        <div class="back-btn">&lsaquo;</div>
+        <div class="hdr-title">Morning <span class="hdr-badge">9 / 32</span></div>
+      </div>
+      <div class="hdr-sub">Between Subh-e-Sadiq to Sunrise</div>
+      <div class="progress-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="arabic-area">
+      <div class="bismillah">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1618;&#1605;&#1617;&#1614;&#1606;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1616;&#1610;&#1618;&#1605;&#1616;</div>
+      <div class="arabic-verse">
+        &#1602;&#1615;&#1604;&#1618; &#1607;&#1615;&#1608;&#1614; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1633;&#10070;</span><br>
+        &#1575;&#1614;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1575;&#1604;&#1589;&#1617;&#1614;&#1605;&#1614;&#1583;&#1615;<span class="ayah-marker">&#10070;&#1634;&#10070;</span><br>
+        &#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1604;&#1616;&#1583;&#1618; &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1615;&#1608;&#1618;&#1604;&#1614;&#1583;&#1618;<span class="ayah-marker">&#10070;&#1635;&#10070;</span><br>
+        &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1603;&#1615;&#1606;&#1618; &#1604;&#1617;&#1614;&#1607;&#1615; &#1603;&#1615;&#1601;&#1615;&#1608;&#1611;&#1575; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1636;&#10070;</span>
+      </div>
+    </div>
+    <div class="hadith">
+      <div class="hadith-title">&#10024; Quranic Verse &amp; Hadith</div>
+      <div class="hadith-divider"></div>
+      <div class="hadith-text">
+        Abdullah ibn Khubayb reported: The Messenger of Allah said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects."
+      </div>
+      <div class="hadith-ref">Quran 112 &middot; Abu Dawud 5082</div>
+    </div>
+    <div class="counter-wrap">
+      <div class="counter">
+        <div class="counter-num">0</div>
+        <div class="counter-sub">of 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VARIANT 2: LIGHT GOLD ═══════════ -->
+<div class="variant-wrap">
+  <div class="variant-label">Variant 2 — Light Gold</div>
+  <div class="variant-sub">Gradient &middot; Cream to Amber</div>
+  <div class="phone v2">
+    <div class="header">
+      <div class="status-bar"><span>7:04</span><span>57%</span></div>
+      <div class="hdr-row">
+        <div class="back-btn">&lsaquo;</div>
+        <div class="hdr-title">Morning <span class="hdr-badge">9 / 32</span></div>
+      </div>
+      <div class="hdr-sub">Between Subh-e-Sadiq to Sunrise</div>
+      <div class="progress-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="arabic-area">
+      <div class="bismillah">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1618;&#1605;&#1617;&#1614;&#1606;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1616;&#1610;&#1618;&#1605;&#1616;</div>
+      <div class="arabic-verse">
+        &#1602;&#1615;&#1604;&#1618; &#1607;&#1615;&#1608;&#1614; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1633;&#10070;</span><br>
+        &#1575;&#1614;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1575;&#1604;&#1589;&#1617;&#1614;&#1605;&#1614;&#1583;&#1615;<span class="ayah-marker">&#10070;&#1634;&#10070;</span><br>
+        &#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1604;&#1616;&#1583;&#1618; &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1615;&#1608;&#1618;&#1604;&#1614;&#1583;&#1618;<span class="ayah-marker">&#10070;&#1635;&#10070;</span><br>
+        &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1603;&#1615;&#1606;&#1618; &#1604;&#1617;&#1614;&#1607;&#1615; &#1603;&#1615;&#1601;&#1615;&#1608;&#1611;&#1575; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1636;&#10070;</span>
+      </div>
+    </div>
+    <div class="hadith">
+      <div class="hadith-title">&#10024; Quranic Verse &amp; Hadith</div>
+      <div class="hadith-divider"></div>
+      <div class="hadith-text">
+        Abdullah ibn Khubayb reported: The Messenger of Allah said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects."
+      </div>
+      <div class="hadith-ref">Quran 112 &middot; Abu Dawud 5082</div>
+    </div>
+    <div class="counter-wrap">
+      <div class="counter">
+        <div class="counter-num">0</div>
+        <div class="counter-sub">of 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VARIANT 3: DARK NAVY CYAN ═══════════ -->
+<div class="variant-wrap">
+  <div class="variant-label">Variant 3 — Dark Navy</div>
+  <div class="variant-sub">Solid dark &middot; Cyan glow accents</div>
+  <div class="phone v3">
+    <div class="header">
+      <div class="status-bar"><span>7:04</span><span>57%</span></div>
+      <div class="hdr-row">
+        <div class="back-btn">&lsaquo;</div>
+        <div class="hdr-title">Morning <span class="hdr-badge">9 / 32</span></div>
+      </div>
+      <div class="hdr-sub">Between Subh-e-Sadiq to Sunrise</div>
+      <div class="progress-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="arabic-area">
+      <div class="bismillah">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1618;&#1605;&#1617;&#1614;&#1606;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1616;&#1610;&#1618;&#1605;&#1616;</div>
+      <div class="arabic-verse">
+        &#1602;&#1615;&#1604;&#1618; &#1607;&#1615;&#1608;&#1614; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1633;&#10070;</span><br>
+        &#1575;&#1614;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1575;&#1604;&#1589;&#1617;&#1614;&#1605;&#1614;&#1583;&#1615;<span class="ayah-marker">&#10070;&#1634;&#10070;</span><br>
+        &#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1604;&#1616;&#1583;&#1618; &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1615;&#1608;&#1618;&#1604;&#1614;&#1583;&#1618;<span class="ayah-marker">&#10070;&#1635;&#10070;</span><br>
+        &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1603;&#1615;&#1606;&#1618; &#1604;&#1617;&#1614;&#1607;&#1615; &#1603;&#1615;&#1601;&#1615;&#1608;&#1611;&#1575; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1636;&#10070;</span>
+      </div>
+    </div>
+    <div class="hadith">
+      <div class="hadith-title">&#10024; Quranic Verse &amp; Hadith</div>
+      <div class="hadith-divider"></div>
+      <div class="hadith-text">
+        Abdullah ibn Khubayb reported: The Messenger of Allah said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects."
+      </div>
+      <div class="hadith-ref">Quran 112 &middot; Abu Dawud 5082</div>
+    </div>
+    <div class="counter-wrap">
+      <div class="counter">
+        <div class="counter-num">0</div>
+        <div class="counter-sub">of 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VARIANT 4: LIGHT LAVENDER ═══════════ -->
+<div class="variant-wrap">
+  <div class="variant-label">Variant 4 — Light Lavender</div>
+  <div class="variant-sub">Gradient &middot; Soft Purple</div>
+  <div class="phone v4">
+    <div class="header">
+      <div class="status-bar"><span>7:04</span><span>57%</span></div>
+      <div class="hdr-row">
+        <div class="back-btn">&lsaquo;</div>
+        <div class="hdr-title">Morning <span class="hdr-badge">9 / 32</span></div>
+      </div>
+      <div class="hdr-sub">Between Subh-e-Sadiq to Sunrise</div>
+      <div class="progress-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="arabic-area">
+      <div class="bismillah">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1618;&#1605;&#1617;&#1614;&#1606;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1616;&#1610;&#1618;&#1605;&#1616;</div>
+      <div class="arabic-verse">
+        &#1602;&#1615;&#1604;&#1618; &#1607;&#1615;&#1608;&#1614; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1633;&#10070;</span><br>
+        &#1575;&#1614;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1575;&#1604;&#1589;&#1617;&#1614;&#1605;&#1614;&#1583;&#1615;<span class="ayah-marker">&#10070;&#1634;&#10070;</span><br>
+        &#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1604;&#1616;&#1583;&#1618; &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1615;&#1608;&#1618;&#1604;&#1614;&#1583;&#1618;<span class="ayah-marker">&#10070;&#1635;&#10070;</span><br>
+        &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1603;&#1615;&#1606;&#1618; &#1604;&#1617;&#1614;&#1607;&#1615; &#1603;&#1615;&#1601;&#1615;&#1608;&#1611;&#1575; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1636;&#10070;</span>
+      </div>
+    </div>
+    <div class="hadith">
+      <div class="hadith-title">&#10024; Quranic Verse &amp; Hadith</div>
+      <div class="hadith-divider"></div>
+      <div class="hadith-text">
+        Abdullah ibn Khubayb reported: The Messenger of Allah said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects."
+      </div>
+      <div class="hadith-ref">Quran 112 &middot; Abu Dawud 5082</div>
+    </div>
+    <div class="counter-wrap">
+      <div class="counter">
+        <div class="counter-num">0</div>
+        <div class="counter-sub">of 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VARIANT 5: DARK EMERALD + GOLD ═══════════ -->
+<div class="variant-wrap">
+  <div class="variant-label">Variant 5 — Dark Emerald</div>
+  <div class="variant-sub">Premium dark &middot; Gold accents</div>
+  <div class="phone v5">
+    <div class="header">
+      <div class="status-bar"><span>7:04</span><span>57%</span></div>
+      <div class="hdr-row">
+        <div class="back-btn">&lsaquo;</div>
+        <div class="hdr-title">Morning <span class="hdr-badge">9 / 32</span></div>
+      </div>
+      <div class="hdr-sub">Between Subh-e-Sadiq to Sunrise</div>
+      <div class="progress-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="arabic-area">
+      <div class="bismillah">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1618;&#1605;&#1617;&#1614;&#1606;&#1616; &#1575;&#1604;&#1585;&#1617;&#1614;&#1581;&#1616;&#1610;&#1618;&#1605;&#1616;</div>
+      <div class="arabic-verse">
+        &#1602;&#1615;&#1604;&#1618; &#1607;&#1615;&#1608;&#1614; &#1575;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1633;&#10070;</span><br>
+        &#1575;&#1614;&#1604;&#1604;&#1617;&#1614;&#1607;&#1615; &#1575;&#1604;&#1589;&#1617;&#1614;&#1605;&#1614;&#1583;&#1615;<span class="ayah-marker">&#10070;&#1634;&#10070;</span><br>
+        &#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1604;&#1616;&#1583;&#1618; &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1615;&#1608;&#1618;&#1604;&#1614;&#1583;&#1618;<span class="ayah-marker">&#10070;&#1635;&#10070;</span><br>
+        &#1608;&#1614;&#1604;&#1614;&#1605;&#1618; &#1610;&#1614;&#1603;&#1615;&#1606;&#1618; &#1604;&#1617;&#1614;&#1607;&#1615; &#1603;&#1615;&#1601;&#1615;&#1608;&#1611;&#1575; &#1571;&#1614;&#1581;&#1614;&#1583;&#1612;<span class="ayah-marker">&#10070;&#1636;&#10070;</span>
+      </div>
+    </div>
+    <div class="hadith">
+      <div class="hadith-title">&#10024; Quranic Verse &amp; Hadith</div>
+      <div class="hadith-divider"></div>
+      <div class="hadith-text">
+        Abdullah ibn Khubayb reported: The Messenger of Allah said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu'awwidhatayn three times at dawn and dusk. It will suffice you in all respects."
+      </div>
+      <div class="hadith-ref">Quran 112 &middot; Abu Dawud 5082</div>
+    </div>
+    <div class="counter-wrap">
+      <div class="counter">
+        <div class="counter-num">0</div>
+        <div class="counter-sub">of 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

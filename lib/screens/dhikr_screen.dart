@@ -1951,53 +1951,141 @@ String _sectionLabel(_Azkar azkar) {
 }
 
 /// Builds a RichText widget with Bismillah/Isti'adhah in a distinct color.
-Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor, {String azkarId = ''}) {
-  final cleaned = _cleanArabic(raw, azkarId: azkarId);
+Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor, {String azkarId = '', String fontName = ''}) {
+  String cleaned = _cleanArabic(raw, azkarId: azkarId);
+  // Force ayah markers ﴿N﴾ to render in Uthmani font (scheherazadeNew) so all
+  // font selections show the same ornamental separator with proper numbers.
+  final markerStyle = GoogleFonts.scheherazadeNew(
+    fontSize: baseStyle.fontSize,
+    color: baseStyle.color,
+    height: baseStyle.height,
+    fontWeight: baseStyle.fontWeight,
+  );
+  // Tight-height newline to reduce excessive gap from the large line-height
+  final tightNewline = baseStyle.copyWith(fontSize: (baseStyle.fontSize ?? 32) * 0.4, height: 1.0);
+
+  // Splits a text span into pieces, switching style on every ﴿N﴾ marker
+  // and rendering '\n' with tightNewline style for reduced vertical gap.
+  List<TextSpan> _splitMarkers(String text, TextStyle style) {
+    final result = <TextSpan>[];
+    final re = RegExp(r'﴿[٠-٩]+﴾|\n');
+    int last = 0;
+    for (final m in re.allMatches(text)) {
+      if (m.start > last) {
+        result.add(TextSpan(text: text.substring(last, m.start), style: style));
+      }
+      final matched = m.group(0)!;
+      if (matched == '\n') {
+        result.add(TextSpan(text: '\n', style: tightNewline));
+      } else {
+        result.add(TextSpan(text: matched, style: markerStyle.copyWith(color: style.color)));
+      }
+      last = m.end;
+    }
+    if (last < text.length) {
+      result.add(TextSpan(text: text.substring(last), style: style));
+    }
+    return result;
+  }
+
   final spans = <TextSpan>[];
   int lastEnd = 0;
 
   final matches = _kHighlightPatterns.allMatches(cleaned).toList();
-  
+
   for (int i = 0; i < matches.length; i++) {
     final m = matches[i];
-    
+
     if (m.start > lastEnd) {
       String beforeText = cleaned.substring(lastEnd, m.start).trimRight();
       if (beforeText.isNotEmpty) {
-        spans.add(TextSpan(text: '$beforeText\n'));
+        spans.addAll(_splitMarkers('$beforeText\n', baseStyle));
       }
     }
-    
+
     String highlightedText = m.group(0)!.trim();
     final afterMatch = cleaned.substring(m.end);
     final afterTrimmed = afterMatch.trimLeft();
-    // Don't add \n if ﴿ follows (ayah marker should stay on same line)
     final startsWithMarker = afterTrimmed.startsWith('﴿');
     String suffix = (afterTrimmed.isNotEmpty && !startsWithMarker) ? '\n' : '';
 
-    spans.add(TextSpan(
-      text: '$highlightedText$suffix',
-      style: baseStyle.copyWith(color: highlightColor),
-    ));
+    spans.addAll(_splitMarkers('$highlightedText$suffix', baseStyle.copyWith(
+      color: highlightColor,
+      height: 1.3,
+    )));
     lastEnd = m.end;
   }
-  
+
   if (lastEnd < cleaned.length) {
     String remainder = cleaned.substring(lastEnd).trimLeft();
     if (remainder.isNotEmpty) {
-      spans.add(TextSpan(text: remainder));
+      spans.addAll(_splitMarkers(remainder, baseStyle));
     }
   }
 
   // If no matches were found, just use the raw text
   if (spans.isEmpty) {
-    spans.add(TextSpan(text: cleaned));
+    spans.addAll(_splitMarkers(cleaned, baseStyle));
   }
 
-  return Text.rich(
-    TextSpan(style: baseStyle, children: spans),
-    textAlign: TextAlign.center,
-    textDirection: TextDirection.rtl,
+  // Split spans by newline boundaries into separate Text.rich blocks so we
+  // can control inter-line gap precisely (instead of being stuck with the
+  // global line-height for newlines).
+  final blocks = <List<TextSpan>>[[]];
+  for (final span in spans) {
+    final text = span.text ?? '';
+    if (text.contains('\n')) {
+      final parts = text.split('\n');
+      for (int i = 0; i < parts.length; i++) {
+        if (parts[i].isNotEmpty) {
+          blocks.last.add(TextSpan(text: parts[i], style: span.style));
+        }
+        if (i < parts.length - 1) {
+          blocks.add([]);
+        }
+      }
+    } else {
+      blocks.last.add(span);
+    }
+  }
+  Widget _buildBlock(List<TextSpan> blockSpans) {
+    final textString = blockSpans.map((s) => s.text ?? '').join();
+    // Identify header blocks like Bismillah or Isti'adhah which should ideally not wrap
+    final isHeader = textString.length < 80 && 
+        (textString.contains('بِسْمِ') || 
+         textString.contains('أَعُوذُ') || 
+         textString.contains('أَعُوْذُ'));
+         
+    Widget textWidget = Text.rich(
+      TextSpan(style: baseStyle, children: blockSpans),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.rtl,
+      textHeightBehavior: const TextHeightBehavior(
+        applyHeightToFirstAscent: false, 
+        applyHeightToLastDescent: false,
+      ),
+    );
+
+    if (isHeader) {
+      return FittedBox(fit: BoxFit.scaleDown, child: textWidget);
+    }
+    return textWidget;
+  }
+
+  final nonEmptyBlocks = blocks.where((b) => b.isNotEmpty).toList();
+  if (nonEmptyBlocks.length == 1) {
+    return _buildBlock(nonEmptyBlocks.first);
+  }
+  
+  // Multi-block: render each as its own Text.rich with a small gap between
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      for (int i = 0; i < nonEmptyBlocks.length; i++) ...[
+        _buildBlock(nonEmptyBlocks[i]),
+        if (i < nonEmptyBlocks.length - 1) const SizedBox(height: 2),
+      ],
+    ],
   );
 }
 
@@ -2114,6 +2202,7 @@ class _AzkarCard extends StatelessWidget {
                         .style(settings.arabicFontSize, kText, 2.2, FontWeight.w700),
                     isDark ? const Color(0xFF5EADDB) : const Color(0xFF1A7A5C),
                     azkarId: azkar.id,
+                    fontName: _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)].name,
                   ),
                   if (settings.showTranslation) ...[
                     const SizedBox(height: 14),
