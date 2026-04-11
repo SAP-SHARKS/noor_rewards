@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -176,6 +177,23 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool _mushafSplitTranslation = false;
   // Cache: 'surah:ayah' → translation text (for Mushaf split view)
   final Map<String, String> _mushafTransCache = {};
+  
+  // Cache double-tap recognizers so we don't leak memory in TextSpans
+  final Map<String, DoubleTapGestureRecognizer> _mushafAyahRecognizers = {};
+  
+  DoubleTapGestureRecognizer _getMushafRecognizer(int surahNum, int ayahNum) {
+    final key = '$surahNum:$ayahNum';
+    return _mushafAyahRecognizers.putIfAbsent(key, () => DoubleTapGestureRecognizer()..onDoubleTap = () {
+      if (!mounted) return;
+      setState(() {
+        _surah = surahNum;
+        _ayah = ayahNum;
+        _surahName = _surahNames[_surah - 1];
+      });
+      _openTafsirSheet();
+    });
+  }
+
   // Mushaf page-flip mode (true = PageView swipe, false = infinite scroll)
   bool _mushafPageFlip = false;
   PageController? _mushafPageController;
@@ -382,6 +400,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _controlsHideTimer?.cancel();
     _fullPageScrollController?.dispose();
     _mushafPageController?.dispose();
+    for (var r in _mushafAyahRecognizers.values) {
+      r.dispose();
+    }
     _player.dispose();
     super.dispose();
   }
@@ -3096,21 +3117,26 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       final text = _stripQuranicAnnotations(a['arabic_display'] as String? ?? '');
       final ayahNum = a['ayah'] as int? ?? (i + 1);
       final numStr = ayahNum.toString().split('').map((e) => '٠١٢٣٤٥٦٧٨٩'[int.parse(e)]).join('');
+      final surahNum = a['surah'] as int? ?? _surah;
+      final recognizer = _getMushafRecognizer(surahNum, ayahNum);
 
-      spans.add(TextSpan(text: '$text '));
+      spans.add(TextSpan(text: '$text ', recognizer: recognizer));
       spans.add(WidgetSpan(
         alignment: PlaceholderAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 1),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text('\u06DD', style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 1.4, color: goldClr.withValues(alpha: 0.75), height: 1.0, fontWeight: FontWeight.w400)),
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(numStr, style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 0.5, color: textClr, height: 1.0, fontWeight: FontWeight.w400)),
-              ),
-            ],
+        child: GestureDetector(
+          onDoubleTap: recognizer.onDoubleTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 1),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Text('\u06DD', style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 1.4, color: goldClr.withValues(alpha: 0.75), height: 1.0, fontWeight: FontWeight.w400)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(numStr, style: GoogleFonts.scheherazadeNew(fontSize: fontSize * 0.5, color: textClr, height: 1.0, fontWeight: FontWeight.w400)),
+                ),
+              ],
+            ),
           ),
         ),
       ));
@@ -3159,11 +3185,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         final transKey = '$surah:$ayahNum';
         final transText = _mushafTransCache[transKey] ?? '';
 
-        return Container(
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: dividerColor, width: 0.5)),
-          ),
-          child: IntrinsicHeight(
+        final recognizer = _getMushafRecognizer(surah, ayahNum);
+
+        return GestureDetector(
+          onDoubleTap: recognizer.onDoubleTap,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: dividerColor, width: 0.5)),
+            ),
+            child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -3223,7 +3253,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         );
