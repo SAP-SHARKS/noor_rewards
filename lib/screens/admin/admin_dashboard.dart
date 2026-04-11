@@ -1,4 +1,4 @@
-﻿// lib/screens/admin/admin_dashboard.dart
+// lib/screens/admin/admin_dashboard.dart
 // Full admin panel — sidebar nav + 6 sections
 
 import 'dart:convert';
@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../services/donation_service.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/noor_icons.dart';
 import 'sponsor_analytics_section.dart';
@@ -716,13 +717,24 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
 
   Future<void> _load() async {
     final res = await _sb.from('community_projects')
-        .select().order('sort_order');
+        .select().order('sort_order', ascending: true, nullsFirst: false);
     setState(() { _projects = List.from(res); _loading = false; });
   }
 
   Future<void> _toggle(String id, bool current, String field) async {
     await _sb.from('community_projects').update({field: !current}).eq('id', id);
     _load();
+  }
+
+  Future<void> _saveSortOrder() async {
+    try {
+      for (int i = 0; i < _projects.length; i++) {
+        final projectId = _projects[i]['id'];
+        await _sb.from('community_projects').update({'sort_order': i}).eq('id', projectId);
+      }
+    } catch (e) {
+      debugPrint('Failed to save sort_order: $e');
+    }
   }
 
   Future<void> _delete(String id) async {
@@ -741,139 +753,363 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
   }
 
   Future<void> _editDialog([Map<String, dynamic>? existing]) async {
-    final titleCtrl  = TextEditingController(text: existing?['title']  ?? '');
-    final emojiCtrl  = TextEditingController(text: existing?['emoji']  ?? '🕌');
-    final targetCtrl = TextEditingController(text: '${existing?['target_points'] ?? 10000000}');
-    final usdCtrl    = TextEditingController(text: '${existing?['estimated_usd'] ?? 0}');
-    final sponsorCtrl= TextEditingController(text: existing?['sponsor'] ?? 'Islamic Relief');
+    final titleCtrl   = TextEditingController(text: existing?['title']    ?? '');
+    final targetCtrl  = TextEditingController(text: '${existing?['target_points'] ?? 10000000}');
+    final usdCtrl     = TextEditingController(text: '${existing?['estimated_usd'] ?? 0}');
+    final sponsorCtrl = TextEditingController(text: existing?['sponsor']  ?? 'Islamic Relief');
 
-    String? pickedBase64;
-    // hide base64 from the textfield
-    if (emojiCtrl.text.startsWith('data:image')) {
-      pickedBase64 = emojiCtrl.text;
-      emojiCtrl.text = '🖼️ [Custom Image Attached]';
+    String? projectId = existing?['id'] as String?;
+    String? localDpUrl = existing?['dp_url'] as String?;
+    bool _uploadingDp = false;
+    List<ProjectMedia> media = [];
+    if (projectId != null) {
+      media = await DonationService.instance.getProjectMedia(projectId);
     }
 
     await showDialog<void>(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (_) => StatefulBuilder(
-        builder: (context, setDialogState) => Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(existing == null ? 'Add Project' : 'Edit Project',
-                  style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 16),
-              Flexible(
-                child: SingleChildScrollView(
-                  child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _Field('Title',         titleCtrl),
-                    const SizedBox(height: 12),
-                    _Field('Sponsor',       sponsorCtrl),
-                    const SizedBox(height: 12),
-                    _Field('Target Points', targetCtrl, numeric: true),
-                    const SizedBox(height: 12),
-                    _Field('Est. USD',      usdCtrl,     numeric: true),
-                    const SizedBox(height: 20),
-                    
-                    // Image/Emoji Picker Section (At bottom)
-                    Text('Project Icon / Image', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: _kText)),
-                    const SizedBox(height: 8),
-                    if (pickedBase64 == null)
-                       _Field('Emoji (e.g. 🕌)', emojiCtrl),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Container(
-                          width: 44, height: 44,
-                          decoration: BoxDecoration(color: _kBg, borderRadius: BorderRadius.circular(8), border: Border.all(color: _kBorder)),
-                          child: Center(
-                            child: Builder(builder: (_) {
-                              final text = pickedBase64 ?? emojiCtrl.text.trim();
-                              if (text.startsWith('data:image')) {
-                                return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.memory(base64Decode(text.split(',').last), fit: BoxFit.cover));
-                              } else if (text.startsWith('http')) {
-                                return ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(text, fit: BoxFit.cover, errorBuilder: (_,__,___)=>const Text('🖼️')));
-                              }
-                              return Text(text.isNotEmpty ? text : '🕌', style: const TextStyle(fontSize: 20));
-                            }),
-                          ),
+        builder: (context, setDialogState) {
+          Future<void> ensureProjectSaved() async {
+            // Save the project first if it doesn't exist yet, so we have an id
+            // for media uploads.
+            if (projectId != null) return;
+            final payload = {
+              'title': titleCtrl.text.trim().isEmpty ? 'Untitled' : titleCtrl.text.trim(),
+              'sponsor': sponsorCtrl.text,
+              'target_points': int.tryParse(targetCtrl.text) ?? 10000000,
+              'estimated_usd': double.tryParse(usdCtrl.text) ?? 0,
+              'is_active': true,
+            };
+            final inserted = await _sb
+                .from('community_projects')
+                .insert(payload)
+                .select('id')
+                .single();
+            projectId = inserted['id'] as String;
+          }
+
+          Future<void> pickAndUpload(String mediaType) async {
+            await ensureProjectSaved();
+            final picker = ImagePicker();
+            final file = mediaType == 'video'
+                ? await picker.pickVideo(source: ImageSource.gallery)
+                : await picker.pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 1600,
+                    maxHeight: 1600,
+                    imageQuality: 80,
+                  );
+            if (file == null) return;
+            final bytes = await file.readAsBytes();
+            final ext = file.path.split('.').last;
+            final newMedia = await DonationService.instance.uploadProjectMedia(
+              projectId: projectId!,
+              mediaType: mediaType,
+              bytes: bytes,
+              fileExt: ext,
+            );
+            if (newMedia != null) {
+              setDialogState(() => media.add(newMedia));
+            } else {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Upload failed'),
+                backgroundColor: _kDanger,
+              ));
+            }
+          }
+
+          Future<void> pickAndUploadDp() async {
+            await ensureProjectSaved();
+            final picker = ImagePicker();
+            final file = await picker.pickImage(
+              source: ImageSource.gallery,
+              maxWidth: 800,
+              maxHeight: 800,
+              imageQuality: 85,
+            );
+            if (file == null) return;
+            final bytes = await file.readAsBytes();
+            final ext = file.path.split('.').last;
+            setDialogState(() => _uploadingDp = true);
+            final newUrl = await DonationService.instance.uploadProjectDP(
+              projectId: projectId!,
+              bytes: bytes,
+              fileExt: ext,
+            );
+            setDialogState(() {
+              _uploadingDp = false;
+              if (newUrl != null) {
+                localDpUrl = newUrl;
+              }
+            });
+            if (newUrl == null) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('DP Upload failed'),
+                backgroundColor: _kDanger,
+              ));
+            }
+          }
+
+          Future<void> deleteMedia(ProjectMedia m) async {
+            final ok = await DonationService.instance.deleteProjectMedia(m);
+            if (ok) {
+              setDialogState(() => media.removeWhere((x) => x.id == m.id));
+            }
+          }
+
+          return Dialog(
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16)),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(existing == null ? 'Add Project' : 'Edit Project',
+                        style: GoogleFonts.outfit(
+                            fontSize: 18, fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 16),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _Field('Title', titleCtrl),
+                            const SizedBox(height: 12),
+                            _Field('Sponsor', sponsorCtrl),
+                            const SizedBox(height: 12),
+                            _Field('Target Points', targetCtrl, numeric: true),
+                            const SizedBox(height: 12),
+                            _Field('Est. USD', usdCtrl, numeric: true),
+                            const SizedBox(height: 16),
+
+                            Row(
+                              children: [
+                                Text('Display Picture (DP)',
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: _kText)),
+                                const Spacer(),
+                                ElevatedButton.icon(
+                                  onPressed: pickAndUploadDp,
+                                  icon: const Icon(Icons.upload_rounded,
+                                      size: 16),
+                                  label: const Text('Upload DP'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _kWhite,
+                                    foregroundColor: _kAccent,
+                                    elevation: 0,
+                                    side: const BorderSide(color: _kBorder),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (_uploadingDp)
+                              const Padding(
+                                padding: EdgeInsets.only(top: 12),
+                                child: SizedBox(
+                                  height: 100, width: 100,
+                                  child: Center(child: CircularProgressIndicator(color: _kAccent)),
+                                ),
+                              )
+                            else if (localDpUrl != null && localDpUrl!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(localDpUrl!,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.cover),
+                                    ),
+                                    Positioned(
+                                      top: -8,
+                                      right: -8,
+                                      child: GestureDetector(
+                                        onTap: () => setDialogState(() => localDpUrl = ''),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.redAccent,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4),
+                                            ],
+                                          ),
+                                          padding: const EdgeInsets.all(4),
+                                          child: const Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            const SizedBox(height: 24),
+
+                            // ── Media Manager ──
+                            Row(
+                              children: [
+                                Text('Media Carousel',
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: _kText)),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: _kAccent.withValues(alpha: 0.10),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text('${media.length}',
+                                      style: GoogleFonts.outfit(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: _kAccent)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                                'Upload images and videos that users will see in the carousel.',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 11, color: _kSub)),
+                            const SizedBox(height: 12),
+
+                            // Media grid
+                            if (media.isEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 26),
+                                decoration: BoxDecoration(
+                                  color: _kBg,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: _kBorder,
+                                      style: BorderStyle.solid),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Icon(Icons.perm_media_outlined,
+                                        size: 32,
+                                        color: Colors.grey.shade400),
+                                    const SizedBox(height: 6),
+                                    Text('No media yet',
+                                        style: GoogleFonts.outfit(
+                                            fontSize: 12,
+                                            color: _kSub)),
+                                  ],
+                                ),
+                              )
+                            else
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  for (final m in media)
+                                    _MediaThumb(
+                                      media: m,
+                                      onDelete: () => deleteMedia(m),
+                                    ),
+                                ],
+                              ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    icon: const Icon(
+                                        Icons.image_outlined,
+                                        size: 18),
+                                    label: const Text('Add Image'),
+                                    style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12)),
+                                    onPressed: () => pickAndUpload('image'),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    icon: const Icon(
+                                        Icons.videocam_outlined,
+                                        size: 18),
+                                    label: const Text('Add Video'),
+                                    style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12)),
+                                    onPressed: () => pickAndUpload('video'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            icon: const Icon(Icons.upload_file_rounded, size: 18),
-                            label: Text(pickedBase64 != null ? 'Change Image' : 'Upload Image'),
-                            style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
-                            onPressed: () async {
-                              final picker = ImagePicker();
-                              final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 300, maxHeight: 300, imageQuality: 60);
-                              if (file != null) {
-                                final bytes = await file.readAsBytes();
-                                final b64 = base64Encode(bytes);
-                                setDialogState(() {
-                                  pickedBase64 = 'data:image/jpeg;base64,$b64';
-                                });
-                              }
-                            },
-                          ),
-                        ),
-                        if (pickedBase64 != null) ...[
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.close_rounded, color: _kDanger),
-                            tooltip: 'Clear image',
-                            onPressed: () {
-                              setDialogState(() {
-                                pickedBase64 = null;
-                                emojiCtrl.text = '🕌';
-                              });
-                            },
-                          ),
-                        ],
-                      ],
+                      ),
                     ),
-                  ]),
+                    const SizedBox(height: 20),
+                    Row(children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: _kAccent),
+                          onPressed: () async {
+                            final payload = {
+                              'title': titleCtrl.text,
+                              'sponsor': sponsorCtrl.text,
+                              'target_points':
+                                  int.tryParse(targetCtrl.text) ?? 10000000,
+                              'estimated_usd':
+                                  double.tryParse(usdCtrl.text) ?? 0,
+                              if (localDpUrl != null) 'dp_url': localDpUrl,
+                            };
+                            if (projectId == null) {
+                              await _sb
+                                  .from('community_projects')
+                                  .insert(payload);
+                            } else {
+                              await _sb
+                                  .from('community_projects')
+                                  .update(payload)
+                                  .eq('id', projectId!);
+                            }
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                            _load();
+                          },
+                          child: const Text('Save',
+                              style: TextStyle(color: _kWhite)),
+                        ),
+                      ),
+                    ]),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: _kAccent),
-                    onPressed: () async {
-                      final payload = {
-                        'title': titleCtrl.text, 
-                        'emoji': pickedBase64 ?? emojiCtrl.text.trim(),
-                        'sponsor': sponsorCtrl.text,
-                        'target_points': int.tryParse(targetCtrl.text) ?? 10000000,
-                        'estimated_usd': double.tryParse(usdCtrl.text) ?? 0,
-                      };
-                      if (existing == null) {
-                        await _sb.from('community_projects').insert(payload);
-                      } else {
-                        await _sb.from('community_projects').update(payload).eq('id', existing['id']);
-                      }
-                      if (!context.mounted) return;
-                      Navigator.pop(context);
-                      _load();
-                    },
-                    child: const Text('Save', style: TextStyle(color: _kWhite)),
-                  ),
-                ),
-              ]),
-            ]),
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -898,14 +1134,23 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
       Expanded(
         child: _loading
             ? const Center(child: CircularProgressIndicator(color: _kAccent))
-            : ListView.separated(
+            : ReorderableListView.builder(
                 itemCount: _projects.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                onReorder: (oldIndex, newIndex) {
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  setState(() {
+                    final item = _projects.removeAt(oldIndex);
+                    _projects.insert(newIndex, item);
+                  });
+                  _saveSortOrder();
+                },
                 itemBuilder: (_, idx) {
                   final p = _projects[idx];
                   final isActive = p['is_active']    == true;
                   final isDone   = p['is_completed'] == true;
                   return Container(
+                    key: ValueKey(p['id']),
+                    margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: _kWhite,
@@ -916,26 +1161,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       // Title row
                       Row(children: [
-                        Builder(
-                          builder: (ctx) {
-                            final e = p['emoji']?.toString() ?? '🕌';
-                            if (e.startsWith('data:image')) {
-                              final bytes = base64Decode(e.split(',').last);
-                              return ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: Image.memory(bytes, width: 26, height: 26, fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Text('🖼️', style: TextStyle(fontSize: 22))),
-                              );
-                            } else if (e.startsWith('http')) {
-                              return ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: Image.network(e, width: 26, height: 26, fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Text('🖼️', style: TextStyle(fontSize: 22))),
-                              );
-                            }
-                            return Text(e, style: const TextStyle(fontSize: 22));
-                          }
-                        ),
+                        _ProjectCoverThumb(projectId: p['id'] as String),
                         const SizedBox(width: 10),
                         Expanded(child: Text(p['title'] ?? '',
                             style: GoogleFonts.outfit(
@@ -958,20 +1184,34 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                       ]),
                       const SizedBox(height: 8),
                       // Toggle row
-                      Row(children: [
-                        Text('Active', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-                        Switch(
-                            value: isActive,
-                            onChanged: (_) => _toggle(p['id'], isActive, 'is_active'),
-                            activeThumbColor: _kAccent,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                        const SizedBox(width: 10),
-                        Text('Done', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-                        Switch(
-                            value: isDone,
-                            onChanged: (_) => _toggle(p['id'], isDone, 'is_completed'),
-                            activeThumbColor: _kGold,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center, 
+                        spacing: 12, runSpacing: 8,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Active', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+                              const SizedBox(width: 4),
+                              Switch(
+                                  value: isActive,
+                                  onChanged: (_) => _toggle(p['id'], isActive, 'is_active'),
+                                  activeThumbColor: _kAccent,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Done', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+                              const SizedBox(width: 4),
+                              Switch(
+                                  value: isDone,
+                                  onChanged: (_) => _toggle(p['id'], isDone, 'is_completed'),
+                                  activeThumbColor: _kGold,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                            ],
+                          ),
                       ]),
                     ]),
                   );
@@ -1003,6 +1243,147 @@ class _ProjChip extends StatelessWidget {
         style: GoogleFonts.outfit(
             fontSize: 11, fontWeight: FontWeight.w600, color: _kAccent)),
   );
+}
+
+// ── Thumb shown in the edit-project dialog for each uploaded media item ──
+class _MediaThumb extends StatelessWidget {
+  final ProjectMedia media;
+  final VoidCallback onDelete;
+  const _MediaThumb({required this.media, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          width: 96,
+          height: 96,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: _kBorder),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: media.isImage
+              ? Image.network(media.url,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Icon(
+                      Icons.broken_image_outlined,
+                      color: Colors.white60))
+              : Container(
+                  color: Colors.black,
+                  child: const Center(
+                    child: Icon(Icons.play_circle_outline_rounded,
+                        size: 32, color: Colors.white),
+                  ),
+                ),
+        ),
+        if (media.isVideo)
+          Positioned(
+            left: 6,
+            top: 6,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text('VIDEO',
+                  style: GoogleFonts.outfit(
+                      fontSize: 9,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5)),
+            ),
+          ),
+        Positioned(
+          right: 4,
+          top: 4,
+          child: GestureDetector(
+            onTap: onDelete,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: _kDanger,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.close_rounded,
+                  size: 14, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Cover thumbnail (first media) shown in the admin project list ──
+class _ProjectCoverThumb extends StatefulWidget {
+  final String projectId;
+  const _ProjectCoverThumb({required this.projectId});
+
+  @override
+  State<_ProjectCoverThumb> createState() => _ProjectCoverThumbState();
+}
+
+class _ProjectCoverThumbState extends State<_ProjectCoverThumb> {
+  ProjectMedia? _cover;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final list =
+        await DonationService.instance.getProjectMedia(widget.projectId);
+    if (!mounted) return;
+    setState(() {
+      _cover = list.isNotEmpty ? list.first : null;
+      _loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: _kBg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: _kBorder),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: _loading
+          ? const Center(
+              child: SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 1.5, color: _kAccent)))
+          : _cover == null
+              ? Icon(Icons.image_outlined,
+                  size: 18, color: Colors.grey.shade400)
+              : (_cover!.isVideo
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Container(color: Colors.black),
+                        const Center(
+                          child: Icon(Icons.play_arrow_rounded,
+                              color: Colors.white, size: 22),
+                        ),
+                      ],
+                    )
+                  : Image.network(_cover!.url,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.broken_image_outlined, size: 16))),
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

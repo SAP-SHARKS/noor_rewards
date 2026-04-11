@@ -1,4 +1,4 @@
-﻿// lib/screens/impact_report_screen.dart
+// lib/screens/impact_report_screen.dart
 //
 // Akhirah Balance — a premium Islamic banking-style dashboard showing
 // the user's spiritual portfolio: deeds, streaks, and earnings.
@@ -12,6 +12,7 @@ import '../services/streak_service.dart';
 import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
+import '../widgets/project_media_carousel.dart';
 
 // â”€â”€ Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _C {
@@ -536,6 +537,7 @@ class CommunityImpactPage extends StatefulWidget {
 
 class _CommunityImpactPageState extends State<CommunityImpactPage> {
   List<Map<String, dynamic>> _projects = [];
+  Map<String, List<ProjectMedia>> _projectMedia = {};
   int _myAvailablePoints = 0;
   bool _loading = true;
 
@@ -548,7 +550,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       final uid = sb.auth.currentUser?.id;
 
       // Load all projects
-      final res = await sb.from('community_projects').select().order('sort_order');
+      final res = await sb.from('community_projects').select().order('sort_order', ascending: true, nullsFirst: false);
       _projects = List<Map<String, dynamic>>.from(res);
 
       // Community totals (all users)
@@ -580,6 +582,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
         p['my_points'] = myDonations[p['id']] ?? 0;
         p['is_completed'] = real >= ((p['target_points'] as num?)?.toInt() ?? 1);
       }
+      
+      final pids = _projects.map((p) => p['id'] as String).toList();
+      _projectMedia = await DonationService.instance.getMediaForProjects(pids);
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
@@ -738,7 +743,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     // Title row
                     Row(children: [
-                      NoorIcon.fromEmoji(p['emoji'] as String? ?? '', size: 24),
+                      _ImpactProjectCover(project: p),
                       const SizedBox(width: 10),
                       Expanded(child: Text('${p['title']}',
                           style: GoogleFonts.outfit(
@@ -759,6 +764,15 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     Text('${p['description'] ?? ''}',
                         style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
                     const SizedBox(height: 14),
+
+                    if ((_projectMedia[p['id']] ?? []).isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: ProjectMediaCarousel(media: _projectMedia[p['id']]!, height: 180),
+                        ),
+                      ),
 
                     // Community progress bar
                     Row(children: [
@@ -989,5 +1003,91 @@ class _DayBar extends StatelessWidget {
           color: highlight ? _C.gold : _C.sub)),
     ]));
   }
+}
+
+// ── Project cover for impact-report list (loads first media item or explicit dp_url) ──
+class _ImpactProjectCover extends StatefulWidget {
+  final Map<String, dynamic> project;
+  const _ImpactProjectCover({required this.project});
+
+  @override
+  State<_ImpactProjectCover> createState() => _ImpactProjectCoverState();
+}
+
+class _ImpactProjectCoverState extends State<_ImpactProjectCover> {
+  static final Map<String, ProjectMedia?> _cache = {};
+  ProjectMedia? _cover;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final dpUrl = widget.project['dp_url'] as String?;
+    if (dpUrl != null && dpUrl.isNotEmpty) {
+      _loading = false;
+      return;
+    }
+
+    final projectId = widget.project['id'] as String;
+    if (_cache.containsKey(projectId)) {
+      _cover = _cache[projectId];
+      _loading = false;
+    } else {
+      _load(projectId);
+    }
+  }
+
+  Future<void> _load(String projectId) async {
+    final list = await DonationService.instance.getProjectMedia(projectId);
+    final cover = list.isNotEmpty ? list.first : null;
+    _cache[projectId] = cover;
+    if (!mounted) return;
+    setState(() { _cover = cover; _loading = false; });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const double s = 48; // increased size for DP visibility
+    final radius = BorderRadius.circular(12);
+
+    final dpUrl = widget.project['dp_url'] as String?;
+    if (dpUrl != null && dpUrl.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: radius,
+        child: Image.network(dpUrl, width: s, height: s, fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _fallbackCover(s, radius)),
+      );
+    }
+
+    if (_loading) {
+      return Container(
+        width: s, height: s,
+        decoration: BoxDecoration(color: const Color(0xFFF1F5F4), borderRadius: radius),
+        child: const Center(child: SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 1.5, color: _C.teal))),
+      );
+    }
+    if (_cover == null) return _fallbackCover(s, radius);
+
+    if (_cover!.isVideo) {
+      return Container(
+        width: s, height: s,
+        decoration: BoxDecoration(color: Colors.black, borderRadius: radius),
+        child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
+      );
+    }
+    return ClipRRect(
+      borderRadius: radius,
+      child: Image.network(
+        _cover!.url, width: s, height: s, fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _fallbackCover(s, radius),
+      ),
+    );
+  }
+
+  Widget _fallbackCover(double s, BorderRadius r) => Container(
+        width: s, height: s,
+        decoration: BoxDecoration(color: const Color(0xFFF7F4EF), borderRadius: r),
+        child: const Icon(Icons.volunteer_activism_rounded, size: 24, color: _C.teal),
+      );
 }
 
