@@ -2048,31 +2048,20 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
       blocks.last.add(span);
     }
   }
-  Widget _buildBlock(List<TextSpan> blockSpans, {bool tight = false}) {
+  Widget _buildBlock(List<TextSpan> blockSpans) {
     final textString = blockSpans.map((s) => s.text ?? '').join();
     // Identify header blocks like Bismillah or Isti'adhah which should ideally not wrap
-    final isHeader = textString.length < 80 &&
-        (textString.contains('بِسْمِ') ||
-         textString.contains('أَعُوذُ') ||
+    final isHeader = textString.length < 80 && 
+        (textString.contains('بِسْمِ') || 
+         textString.contains('أَعُوذُ') || 
          textString.contains('أَعُوْذُ'));
-
-    // For multi-block (separated by Column), use a tighter line-height since
-    // the global 2.2 was meant for flowing paragraphs not stacked blocks.
-    final blockStyle = tight ? baseStyle.copyWith(height: 1.5) : baseStyle;
-    final tightSpans = tight
-      ? blockSpans.map((s) => TextSpan(
-          text: s.text,
-          style: s.style?.copyWith(height: 1.5),
-          children: s.children,
-        )).toList()
-      : blockSpans;
-
+         
     Widget textWidget = Text.rich(
-      TextSpan(style: blockStyle, children: tightSpans),
+      TextSpan(style: baseStyle, children: blockSpans),
       textAlign: TextAlign.center,
       textDirection: TextDirection.rtl,
       textHeightBehavior: const TextHeightBehavior(
-        applyHeightToFirstAscent: false,
+        applyHeightToFirstAscent: false, 
         applyHeightToLastDescent: false,
       ),
     );
@@ -2087,15 +2076,14 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
   if (nonEmptyBlocks.length == 1) {
     return _buildBlock(nonEmptyBlocks.first);
   }
-
-  // Multi-block: render each as its own Text.rich with tight spacing
+  
+  // Multi-block: render each as its own Text.rich with a small gap between
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisSize: MainAxisSize.min,
     children: [
       for (int i = 0; i < nonEmptyBlocks.length; i++) ...[
-        _buildBlock(nonEmptyBlocks[i], tight: true),
-        if (i < nonEmptyBlocks.length - 1) const SizedBox(height: 6),
+        _buildBlock(nonEmptyBlocks[i]),
+        if (i < nonEmptyBlocks.length - 1) const SizedBox(height: 2),
       ],
     ],
   );
