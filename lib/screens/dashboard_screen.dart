@@ -22,6 +22,7 @@ import 'streak_screen.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/motivational_popup.dart';
+import '../widgets/project_media_carousel.dart';
 
 // ── Admin email whitelist (client-side guard) ─────────────────────────────────
 const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
@@ -68,6 +69,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Community project
   Map<String, dynamic>? _project;
+
+  int _adminRefreshCount = 0;
 
   // ── Motivational popup ───────────────────────────────────────────────────
   Timer? _startupPopupTimer;     // First popup after drum-counter animation
@@ -244,7 +247,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _streakSnap = snap;
 
       final proj = await _supabase.from('community_projects')
-          .select().eq('is_active', true).eq('is_completed', false).maybeSingle();
+          .select().eq('is_active', true).eq('is_completed', false)
+          .order('sort_order', ascending: true, nullsFirst: false).limit(1).maybeSingle();
       _project = proj;
     } catch (_) {}
     if (mounted) setState(() {});
@@ -277,6 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       extendBody: true,
       body: IndexedStack(index: _tab, children: [
         _HomeTab(
+          key: ValueKey('home_$_adminRefreshCount'),
           name: widget.name,
           noorPoints: _noorPoints,
           totalXp: _totalXp,
@@ -317,7 +322,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           },
         ),
         const LevelScreen(),           // Tab 1 — Journey
-        const ImpactReportScreen(isTab: true), // Tab 2 — Akhirah
+        ImpactReportScreen(key: ValueKey('impact_$_adminRefreshCount'), isTab: true), // Tab 2 — Akhirah
         _ProfileTab(
             name: widget.name, noorPoints: _noorPoints,
             totalXp: _totalXp, level: _level, levelTitle: _levelTitle,
@@ -366,6 +371,7 @@ class _HomeTab extends StatefulWidget {
   final VoidCallback? onGoProfile;
   final Future<bool> Function() onValidate;
   const _HomeTab({
+    super.key,
     required this.name, required this.noorPoints, required this.todayPoints,
     required this.weekPoints, required this.monthPoints, required this.streak,
     required this.totalXp, required this.level, required this.levelTitle,
@@ -429,7 +435,7 @@ class _HomeTabState extends State<_HomeTab> {
           .select()
           .eq('is_active', true)
           .eq('is_completed', false)
-          .order('sort_order');
+          .order('sort_order', ascending: true, nullsFirst: false);
 
       final data = List<Map<String, dynamic>>.from(
         (projects as List).map((p) => Map<String, dynamic>.from(p as Map))
@@ -599,9 +605,7 @@ class _HomeTabState extends State<_HomeTab> {
         ),
 
 
-        // ── Community progress ────────────────────────────────────────────
-        const SizedBox(height: 20),
-        if (widget.project != null) _CommunityCard(project: widget.project!),
+
 
         // ── My Donations ─────────────────────────────────────────────────
         if (_myDonations.isNotEmpty) ...[
@@ -1647,52 +1651,7 @@ class _ProgBar extends StatelessWidget {
   }
 }
 
-class _CommunityCard extends StatelessWidget {
-  final Map<String, dynamic> project;
-  const _CommunityCard({required this.project});
-  @override
-  Widget build(BuildContext context) {
-    final cur = (project['current_points'] as num?)?.toInt() ?? 4200000;
-    final tgt = (project['target_points'] as num?)?.toInt() ?? 10000000;
-    final pct = (cur / tgt).clamp(0.0, 1.0);
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: _C.communityBg,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: _C.communityBr.withValues(alpha: 0.6)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Community Progress: ${project['title']} ${project['emoji']}',
-            style: GoogleFonts.rajdhani(fontSize: 14, fontWeight: FontWeight.w700,
-                color: const Color(0xFF7A5C00), letterSpacing: 0.5),
-            maxLines: 2, overflow: TextOverflow.ellipsis),
-        const SizedBox(height: 14),
-        TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0, end: pct),
-          duration: const Duration(milliseconds: 1400), curve: Curves.easeOut,
-          builder: (_, v, __) => ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(value: v, minHeight: 10,
-                backgroundColor: const Color(0xFFE8C870).withValues(alpha: 0.4),
-                valueColor: const AlwaysStoppedAnimation(_C.amber)),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Row(children: [
-          Text('${_fmtM(cur)} / ${_fmtM(tgt)} points',
-              style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF7A5C00), fontWeight: FontWeight.w500)),
-          const Spacer(),
-          Text('${(pct * 100).toStringAsFixed(0)}%',
-            style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700,
-                color: const Color(0xFF7A5C00), letterSpacing: 0.5)),
-        ]),
-      ]),
-    );
-  }
 
-  String _fmtM(int n) => n >= 1000000 ? '${(n / 1000000).toStringAsFixed(1)}M' : '$n';
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Activity Card — bold solid card with unique per-type decoration
@@ -1978,16 +1937,118 @@ class _HomeBgPainter extends CustomPainter {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-Widget _buildProjIcon(dynamic emojiVal, double size) {
-  final e = emojiVal?.toString() ?? '🕌';
-  if (e.startsWith('http')) {
+// Project cover thumbnail — loads first media item for the project from Supabase.
+class _ProjectCover extends StatefulWidget {
+  final String projectId;
+  final double size;
+  const _ProjectCover({required this.projectId, this.size = 28});
+
+  @override
+  State<_ProjectCover> createState() => _ProjectCoverState();
+}
+
+class _ProjectCoverState extends State<_ProjectCover> {
+  static final Map<String, ProjectMedia?> _cache = {};
+  ProjectMedia? _cover;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_cache.containsKey(widget.projectId)) {
+      _cover = _cache[widget.projectId];
+      _loading = false;
+    } else {
+      _load();
+    }
+  }
+
+  Future<void> _load() async {
+    final list =
+        await DonationService.instance.getProjectMedia(widget.projectId);
+    final cover = list.isNotEmpty ? list.first : null;
+    _cache[widget.projectId] = cover;
+    if (!mounted) return;
+    setState(() {
+      _cover = cover;
+      _loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.size;
+    final radius = BorderRadius.circular(widget.size * 0.25);
+    if (_loading) {
+      return Container(
+        width: s,
+        height: s,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F4EF),
+          borderRadius: radius,
+        ),
+        child: Center(
+          child: SizedBox(
+            width: widget.size * 0.6,
+            height: widget.size * 0.6,
+            child: const CircularProgressIndicator(
+                strokeWidth: 1.5, color: _C.teal),
+          ),
+        ),
+      );
+    }
+    if (_cover == null) {
+      return Container(
+        width: s,
+        height: s,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F4EF),
+          borderRadius: radius,
+        ),
+        child: Icon(Icons.volunteer_activism_rounded,
+            size: widget.size * 0.6, color: _C.teal),
+      );
+    }
+    if (_cover!.isVideo) {
+      return Container(
+        width: s,
+        height: s,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: radius,
+        ),
+        child: Icon(Icons.play_arrow_rounded,
+            color: Colors.white, size: widget.size * 1.1),
+      );
+    }
     return ClipRRect(
-      borderRadius: BorderRadius.circular(size / 3),
-      child: Image.network(e, width: size * 1.5, height: size * 1.5, fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => NoorIcon.image(size: size)),
+      borderRadius: radius,
+      child: Image.network(
+        _cover!.url,
+        width: s,
+        height: s,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => NoorIcon.image(size: widget.size),
+      ),
     );
   }
-  return NoorIcon.fromEmoji(e, size: size);
+}
+
+// Convenience helper that picks the right widget for a project map.
+Widget _buildProjIcon(Map<String, dynamic> project, double size) {
+  final dpUrl = project['dp_url'] as String?;
+  if (dpUrl != null && dpUrl.isNotEmpty) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size * 0.3),
+      child: Image.network(dpUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) =>
+              _ProjectCover(projectId: project['id'] as String, size: size)),
+    );
+  }
+  return _ProjectCover(projectId: project['id'] as String, size: size);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2009,7 +2070,7 @@ class _MyDonationsSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: 220,
+          height: 250,
           child: ListView.separated(
             clipBehavior: Clip.hardEdge,   // ← cards are clipped; no peeking until swipe
             scrollDirection: Axis.horizontal,
@@ -2042,11 +2103,7 @@ class _MyDonationsSection extends StatelessWidget {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       // Header
                       Row(children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(color: const Color(0xFFF7F4EF), borderRadius: BorderRadius.circular(12)),
-                          child: _buildProjIcon(d['emoji'], 18),
-                        ),
+                        _buildProjIcon(d, 54),
                         const SizedBox(width: 12),
                         Expanded(child: Text(d['title'] ?? '',
                             style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text),
@@ -2130,7 +2187,7 @@ class _MyDonationsSection extends StatelessWidget {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Center(
-                              child: Text(myPts == 0 ? 'Donate Now →' : 'Donate More →',
+                              child: Text('See Details →',
                                   style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
                             ),
                           ),
@@ -2515,6 +2572,7 @@ class _ImpactTab extends StatefulWidget {
 class _ImpactTabState extends State<_ImpactTab> {
   List<Map<String, dynamic>> _projects = [];
   List<Map<String, dynamic>> _myDonations = [];
+  Map<String, List<ProjectMedia>> _projectMedia = {};
   bool _loading = true;
 
   @override
@@ -2523,7 +2581,7 @@ class _ImpactTabState extends State<_ImpactTab> {
   Future<void> _load() async {
     try {
       final res = await Supabase.instance.client.from('community_projects')
-          .select().order('sort_order');
+          .select().order('sort_order', ascending: true, nullsFirst: false);
       _projects = List<Map<String, dynamic>>.from(res);
       
       // Calculate real total from user_donations
@@ -2548,6 +2606,9 @@ class _ImpactTabState extends State<_ImpactTab> {
           p['is_completed'] = false;
         }
       }
+
+      final projectIds = _projects.map((p) => p['id'] as String).toList();
+      _projectMedia = await DonationService.instance.getMediaForProjects(projectIds);
     } catch (_) {}
     
     // Load user's donations in parallel
@@ -2592,8 +2653,8 @@ class _ImpactTabState extends State<_ImpactTab> {
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16)]),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                _buildProjIcon(p['emoji'], 18),
-                const SizedBox(width: 8),
+                _buildProjIcon(p, 52),
+                const SizedBox(width: 14),
                 Expanded(child: Text('${p['title']}',
                     style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text))),
                 Container(
@@ -2604,12 +2665,23 @@ class _ImpactTabState extends State<_ImpactTab> {
                 ),
               ]),
               const SizedBox(height: 16),
-              Container(
-                height: 130, width: double.infinity,
-                decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [Color(0xFF89CFF0), Color(0xFF4ECDC4)]),
-                    borderRadius: BorderRadius.circular(16)),
-                child: Center(child: NoorIcon.drop(size: 64)),
+              Builder(
+                builder: (context) {
+                  final mediaList = _projectMedia[p['id']] ?? [];
+                  if (mediaList.isNotEmpty) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: ProjectMediaCarousel(media: mediaList, height: 180),
+                    );
+                  }
+                  return Container(
+                    height: 130, width: double.infinity,
+                    decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [Color(0xFF89CFF0), Color(0xFF4ECDC4)]),
+                        borderRadius: BorderRadius.circular(16)),
+                    child: Center(child: NoorIcon.drop(size: 64)),
+                  );
+                }
               ),
               const SizedBox(height: 16),
               ClipRRect(borderRadius: BorderRadius.circular(8),
@@ -2649,7 +2721,7 @@ class _ImpactTabState extends State<_ImpactTab> {
                     child: Row(children: [
                       NoorIcon.coin(size: 14),
                       const SizedBox(width: 4),
-                      Text('Donate', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: availablePoints > 0 ? Colors.white : Colors.grey.shade600)),
+                      Text('See Details', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: availablePoints > 0 ? Colors.white : Colors.grey.shade600)),
                     ]),
                   ),
                 ),
@@ -2671,9 +2743,9 @@ class _ImpactTabState extends State<_ImpactTab> {
                   color: const Color(0xFFFEF3D4), borderRadius: BorderRadius.circular(18),
                   border: Border.all(color: const Color(0xFFE8C870).withValues(alpha: 0.5))),
               child: Row(children: [
-                Container(width: 50, height: 50, decoration: BoxDecoration(color: Colors.white,
+                Container(width: 66, height: 66, decoration: BoxDecoration(color: Colors.white,
                     borderRadius: BorderRadius.circular(50)),
-                    child: Center(child: _buildProjIcon(p['emoji'], 24))),
+                    child: Center(child: _buildProjIcon(p, 56))),
                 const SizedBox(width: 14),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(p['title'], style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: _C.text)),
@@ -2736,11 +2808,28 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
   bool _donating = false;
   bool _success = false;
   String? _errorMsg;
+  List<ProjectMedia> _media = [];
+  bool _mediaLoading = true;
 
   @override
   void initState() {
     super.initState();
     if (widget.availablePoints < 50) _selectedAmount = widget.availablePoints;
+    _loadMedia();
+  }
+
+  Future<void> _loadMedia() async {
+    final id = widget.project['id'] as String?;
+    if (id == null) {
+      setState(() => _mediaLoading = false);
+      return;
+    }
+    final list = await DonationService.instance.getProjectMedia(id);
+    if (!mounted) return;
+    setState(() {
+      _media = list;
+      _mediaLoading = false;
+    });
   }
 
   void _setAmount(int amt) {
@@ -2821,19 +2910,17 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   style: GoogleFonts.outfit(fontSize: 16, color: _C.sub, height: 1.4)),
                 const SizedBox(height: 32),
               ] else ...[
-              // INPUT STATE
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(color: _C.communityBg, shape: BoxShape.circle),
-                    child: _buildProjIcon(widget.project['emoji'], 28),
+                    child: _buildProjIcon(widget.project, 54),
                   ),
-                ],
+                  const SizedBox(width: 12),
+                  Text('Support this Cause', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: _C.text)),
+                ]
               ),
-              const SizedBox(height: 16),
-              Text('Support this Cause', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: _C.text)),
               Text(widget.project['title'], style: GoogleFonts.outfit(fontSize: 14, color: _C.sub, fontWeight: FontWeight.w500)),
               const SizedBox(height: 24),
 
@@ -2916,6 +3003,23 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                 const SizedBox(height: 16),
               ],
 
+              // ── Optional Media Carousel ──
+              if (_mediaLoading)
+                Container(
+                  height: 180,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(color: const Color(0xFFF1F5F4), borderRadius: BorderRadius.circular(20)),
+                  child: const Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: _C.teal))),
+                )
+              else if (_media.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: ProjectMediaCarousel(media: _media, height: 180),
+                  ),
+                ),
+
               // Donate Button
               SizedBox(
                 width: double.infinity,
@@ -2931,7 +3035,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   ),
                   child: _donating
                     ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-                    : Text('Confirm Donation', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700)),
+                    : Text('Donate & Earn Reward', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700)),
                 ),
               ),
             ],
@@ -3630,8 +3734,16 @@ class _ProfileTabState extends State<_ProfileTab> {
                 // Admin Panel button (admins only)
                 if (_kAdminEmails.contains(user?.email)) ...[
                   GestureDetector(
-                    onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const AdminDashboard())),
+                    onTap: () async {
+                      await Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const AdminDashboard()));
+                      // Refresh dashboard tabs on return to update sequences/projects
+                      final dashboard = context.findAncestorStateOfType<_DashboardScreenState>();
+                      if (dashboard != null) {
+                        dashboard._adminRefreshCount++;
+                        dashboard.setState(() {});
+                      }
+                    },
                     child: Container(
                       width: double.infinity, height: 54,
                       decoration: BoxDecoration(
