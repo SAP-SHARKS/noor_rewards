@@ -531,7 +531,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 // Navigated to from the Akhirah Balance tab
 // ——————————————————————————————————————————————————————————————————————————
 class CommunityImpactPage extends StatefulWidget {
-  const CommunityImpactPage({super.key});
+  final String? scrollToProjectId;
+  const CommunityImpactPage({super.key, this.scrollToProjectId});
   @override State<CommunityImpactPage> createState() => _CommunityImpactPageState();
 }
 
@@ -540,6 +541,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
   Map<String, List<ProjectMedia>> _projectMedia = {};
   int _myAvailablePoints = 0;
   bool _loading = true;
+  final Map<String, GlobalKey> _projectKeys = {};
 
   @override
   void initState() { super.initState(); _load(); }
@@ -586,7 +588,23 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       final pids = _projects.map((p) => p['id'] as String).toList();
       _projectMedia = await DonationService.instance.getMediaForProjects(pids);
     } catch (_) {}
-    if (mounted) setState(() => _loading = false);
+    if (mounted) {
+      setState(() => _loading = false);
+      // Scroll to specific project if requested
+      if (widget.scrollToProjectId != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final key = _projectKeys[widget.scrollToProjectId];
+          if (key?.currentContext != null) {
+            Scrollable.ensureVisible(
+              key!.currentContext!,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOutCubic,
+              alignment: 0.1,
+            );
+          }
+        });
+      }
+    }
   }
 
   String _fmt(num n) => n >= 1000000
@@ -729,7 +747,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 final pct     = (cur / tgt).clamp(0.0, 1.0);
                 final myPct   = (myPts / tgt).clamp(0.0, 1.0);
                 final done    = p['is_completed'] == true;
+                final pid = p['id'] as String;
+                _projectKeys.putIfAbsent(pid, () => GlobalKey());
                 return Container(
+                  key: _projectKeys[pid],
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,

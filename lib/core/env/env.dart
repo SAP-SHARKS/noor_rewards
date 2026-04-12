@@ -5,7 +5,8 @@ class Env {
     await dotenv.load(fileName: '.env');
   }
 
-  static bool get isDev => (dotenv.env['IS_DEV']?.toLowerCase() ?? 'true') == 'true';
+  // changed default fallback from 'true' to 'false' so production is the default
+  static bool get isDev => (dotenv.env['IS_DEV']?.toLowerCase() ?? 'false') == 'true';
 
   static String get qfEnv => isDev ? 'prelive' : 'production';
 
@@ -16,11 +17,11 @@ class Env {
     if (isDev) {
       return (devId != null && devId.isNotEmpty) 
           ? devId 
-          : '74985a30-ba9a-4a4e-995c-3d8c88d32d16'; // Fallback
+          : 'a9a32c8d-b110-4ac0-b8d8-fa4714be01c6'; // Pre-Prod provided by QF
     } else {
       return (prodId != null && prodId.isNotEmpty) 
           ? prodId 
-          : 'b0b2b612-b905-4d0e-9164-559f03ccb265'; // Fallback
+          : '44f22d7d-b4dc-467b-b4c8-04f545c124e1'; // Production provided by QF
     }
   }
 

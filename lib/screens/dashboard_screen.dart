@@ -727,7 +727,7 @@ class _HomeTabState extends State<_HomeTab> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const CommunityImpactPage(),
+                  builder: (_) => CommunityImpactPage(scrollToProjectId: project['id'] as String?),
                 ),
               );
             },
