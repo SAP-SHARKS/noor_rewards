@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
+import '../services/settings_service.dart';
 import '../services/quran_api_service.dart';   // Quran Foundation authenticated API
 
 
@@ -631,7 +632,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     if (uid == null) return;
     try {
       if (earnRewards) {
-        await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a});
+        final coins = SettingsService.instance.config.coinsPerAyah;
+        await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a, 'p_coins': coins});
         // Award XP for reading one ayah
         await XpService.instance.earnXp(XpReward.ayahRead);
         // Update live notification counter

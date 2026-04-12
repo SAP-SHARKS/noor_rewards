@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class NotificationService {
   NotificationService._();
@@ -19,7 +20,7 @@ class NotificationService {
 
     // Get token
     final token = await messaging.getToken();
-    print('FCM_TOKEN: $token');
+    debugPrint('FCM_TOKEN: $token');
 
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (token != null && userId != null) {
@@ -32,8 +33,26 @@ class NotificationService {
           'timezone': currentTimeZone,
         });
       } catch (e) {
-        print('Error saving FCM token and timezone: $e');
+        debugPrint('Error saving FCM token and timezone: $e');
       }
     }
+
+    // Listen for continuous native token refreshes to ensure notifications never break
+    messaging.onTokenRefresh.listen((newToken) async {
+      final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+      if (currentUserId != null) {
+        try {
+          final tzInfo = await FlutterTimezone.getLocalTimezone();
+          await Supabase.instance.client.from('fcm_tokens').upsert({
+            'user_id': currentUserId,
+            'token': newToken,
+            'timezone': tzInfo.identifier,
+          });
+          debugPrint('FCM_TOKEN REFRESHED: $newToken');
+        } catch (e) {
+          debugPrint('Error saving refreshed FCM token: $e');
+        }
+      }
+    });
   }
 }

@@ -12,6 +12,7 @@ import 'package:just_audio/just_audio.dart';
 import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
+import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
@@ -507,6 +508,13 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
   Future<void> _completeDhikr(String dhikrId, int target) async {
     try {
+      final coins = SettingsService.instance.config.coinsPerDhikr;
+      await Supabase.instance.client.rpc('earn_dhikr_points', params: {
+        'p_type': dhikrId, 
+        'p_count': target,
+        'p_coins': coins
+      });
+
       await XpService.instance.earnDhikrXp(dhikrId);
       // Update live notification counter
       NoorLiveNotificationService.instance.recordDhikr();
@@ -523,7 +531,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       // If already claimed today, just proceed silently — no error shown
 
       setState(() {
-        _pointsToday += 20;
+        _pointsToday += coins;
         if (isDailyGoal) _pointsToday += 50;
         _setsCompleted += 1;
         _completedIds.add(dhikrId);
@@ -1474,7 +1482,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
           foregroundColor: Colors.white,
-          toolbarHeight: 56,
+          toolbarHeight: 92,
           flexibleSpace: Builder(
             builder: (context) {
               int ci = safeIndex;
@@ -1517,51 +1525,72 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   ci = _pageController.page!.round().clamp(0, widget.azkars.length - 1);
                 }
               } catch (_) {}
-              final catId = widget.azkars[ci].category;
+              final azkar = widget.azkars[ci];
+              final catId = azkar.category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
               final timing = _kTimingInfo[catId];
               final isMorning = catId == 'morning';
+              final readCount = widget.parentState._getTarget(azkar.id, azkar.recommendedCount);
+              final String readLabel = readCount == 1
+                  ? 'Read once'
+                  : 'Read $readCount times';
               return Column(mainAxisSize: MainAxisSize.min, children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(catLabel, style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white)),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFFFFFF), Color(0xFFE8F0FE)],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.18),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: Text('${ci + 1} / ${widget.azkars.length}',
-                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.80))),
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: isMorning ? const Color(0xFF0C4A3E) : const Color(0xFF1E1B4B),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 if (timing != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 4, height: 4,
+                        width: 5, height: 5,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isMorning ? const Color(0xFFFFD700) : const Color(0xFF93C5FD),
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Text(timing,
                         style: GoogleFonts.outfit(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.55),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          letterSpacing: 0.2,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Container(
-                        width: 4, height: 4,
+                        width: 5, height: 5,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isMorning ? const Color(0xFFFFD700) : const Color(0xFF93C5FD),
@@ -1570,6 +1599,31 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     ],
                   ),
                 ],
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFD86B), Color(0xFFF5A623)],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFF5A623).withValues(alpha: 0.45),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(readLabel,
+                    style: GoogleFonts.outfit(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF3B1F00),
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
               ]);
             }
           ),
@@ -1966,7 +2020,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
 
   // Splits a text span into pieces, switching style on every ﴿N﴾ marker
   // and rendering '\n' with tightNewline style for reduced vertical gap.
-  List<TextSpan> _splitMarkers(String text, TextStyle style) {
+  List<TextSpan> splitMarkers(String text, TextStyle style) {
     final result = <TextSpan>[];
     final re = RegExp(r'﴿[٠-٩]+﴾|\n');
     int last = 0;
@@ -1999,7 +2053,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
     if (m.start > lastEnd) {
       String beforeText = cleaned.substring(lastEnd, m.start).trimRight();
       if (beforeText.isNotEmpty) {
-        spans.addAll(_splitMarkers('$beforeText\n', baseStyle));
+        spans.addAll(splitMarkers('$beforeText\n', baseStyle));
       }
     }
 
@@ -2009,7 +2063,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
     final startsWithMarker = afterTrimmed.startsWith('﴿');
     String suffix = (afterTrimmed.isNotEmpty && !startsWithMarker) ? '\n' : '';
 
-    spans.addAll(_splitMarkers('$highlightedText$suffix', baseStyle.copyWith(
+    spans.addAll(splitMarkers('$highlightedText$suffix', baseStyle.copyWith(
       color: highlightColor,
       height: 1.3,
     )));
@@ -2019,13 +2073,13 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
   if (lastEnd < cleaned.length) {
     String remainder = cleaned.substring(lastEnd).trimLeft();
     if (remainder.isNotEmpty) {
-      spans.addAll(_splitMarkers(remainder, baseStyle));
+      spans.addAll(splitMarkers(remainder, baseStyle));
     }
   }
 
   // If no matches were found, just use the raw text
   if (spans.isEmpty) {
-    spans.addAll(_splitMarkers(cleaned, baseStyle));
+    spans.addAll(splitMarkers(cleaned, baseStyle));
   }
 
   // Split spans by newline boundaries into separate Text.rich blocks so we
@@ -2048,7 +2102,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
       blocks.last.add(span);
     }
   }
-  Widget _buildBlock(List<TextSpan> blockSpans) {
+  Widget buildBlock(List<TextSpan> blockSpans) {
     final textString = blockSpans.map((s) => s.text ?? '').join();
     // Identify header blocks like Bismillah or Isti'adhah which should ideally not wrap
     final isHeader = textString.length < 80 && 
@@ -2074,7 +2128,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
 
   final nonEmptyBlocks = blocks.where((b) => b.isNotEmpty).toList();
   if (nonEmptyBlocks.length == 1) {
-    return _buildBlock(nonEmptyBlocks.first);
+    return buildBlock(nonEmptyBlocks.first);
   }
   
   // Multi-block: render each as its own Text.rich with a small gap between
@@ -2082,7 +2136,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       for (int i = 0; i < nonEmptyBlocks.length; i++) ...[
-        _buildBlock(nonEmptyBlocks[i]),
+        buildBlock(nonEmptyBlocks[i]),
         if (i < nonEmptyBlocks.length - 1) const SizedBox(height: 2),
       ],
     ],
@@ -2124,8 +2178,6 @@ class _AzkarCard extends StatelessWidget {
     final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
     final kPrimary  = const Color(0xFF0D9488);
-    final kBeneBg = isDark ? const Color(0xFF2A2416) : const Color(0xFFEAF6F0);
-    final kBeneTxt = isDark ? const Color(0xFFEADBBE) : const Color(0xFF1E4031);
 
     String rawRef = azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim();
     String bottomRef = '';
@@ -2333,7 +2385,9 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_3' || id == 'evening_3') return 'shield';
   // Ikhlas, Falaq, Nas
   if (id == 'morning_9' || id == 'morning_10' || id == 'morning_11' ||
-      id == 'evening_9' || id == 'evening_10' || id == 'evening_11') return 'three_quls';
+      id == 'evening_9' || id == 'evening_10' || id == 'evening_11') {
+    return 'three_quls';
+  }
   // Sovereignty — ask for good day/evening
   if (id == 'morning_12' || id == 'evening_12') return 'path';
   // Fitrah
@@ -2376,61 +2430,109 @@ String _pickIllustration(String rawId) {
   // ── Old IDs (morning_lwa_*, evening_lwa_*, general categories) ──
   if (id == 'morning_lwa_1' || id == 'evening_lwa_1' ||
       id.contains('ayat_kursi') || id.contains('ayat-kursi') ||
-      id.contains('ayatul_kursi') || id.contains('ayatul-kursi')) return 'shield';
+      id.contains('ayatul_kursi') || id.contains('ayatul-kursi')) {
+    return 'shield';
+  }
   if (id == 'morning_lwa_2' || id == 'evening_lwa_2' ||
-      id.contains('three_quls') || id.contains('3_quls')) return 'three_quls';
+      id.contains('three_quls') || id.contains('3_quls')) {
+    return 'three_quls';
+  }
   if (id == 'morning_lwa_3' || id == 'evening_lwa_3' ||
-      id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar')) return 'gates';
+      id.contains('sayyid_istighfar') || id.contains('sayyid-istighfar')) {
+    return 'gates';
+  }
   if (id == 'morning_lwa_4' || id == 'evening_lwa_4' ||
-      id.contains('anxiety') || id.contains('hamm_hazan')) return 'chains';
+      id.contains('anxiety') || id.contains('hamm_hazan')) {
+    return 'chains';
+  }
   if (id == 'morning_lwa_5' || id == 'evening_lwa_5' ||
-      id.contains('dua_afiyah') || id.contains('wellbeing')) return 'six_wards';
+      id.contains('dua_afiyah') || id.contains('wellbeing')) {
+    return 'six_wards';
+  }
   if (id == 'morning_lwa_6' || id == 'evening_lwa_6' ||
-      id.contains('four_evils') || id.contains('4_evils')) return 'repelling';
+      id.contains('four_evils') || id.contains('4_evils')) {
+    return 'repelling';
+  }
   if (id == 'morning_lwa_7' || id == 'evening_lwa_7' ||
-      id.contains('entrust') || id.contains('ya_hayyu')) return 'heart';
+      id.contains('entrust') || id.contains('ya_hayyu')) {
+    return 'heart';
+  }
   if (id == 'morning_lwa_8' || id == 'evening_lwa_8' ||
-      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) return 'vessel';
+      id.contains('shukr') || id.contains('gratitude') || id.contains('nimat')) {
+    return 'vessel';
+  }
   if (id == 'morning_lwa_9' || id == 'evening_lwa_9' ||
-      id.contains('fitrah') || id.contains('tawhid')) return 'dawn';
+      id.contains('fitrah') || id.contains('tawhid')) {
+    return 'dawn';
+  }
   if (id == 'morning_lwa_10' || id == 'evening_lwa_10' ||
-      id.contains('praise_morning') || id.contains('uthni')) return 'ripples';
+      id.contains('praise_morning') || id.contains('uthni')) {
+    return 'ripples';
+  }
   if (id == 'morning_lwa_11' || id == 'evening_lwa_11' ||
-      id.contains('good_day') || id.contains('khayr_yawm')) return 'path';
+      id.contains('good_day') || id.contains('khayr_yawm')) {
+    return 'path';
+  }
   if (id == 'morning_lwa_12' || id == 'evening_lwa_12' ||
       id.contains('bless_day') || id.contains('bless_evening') ||
-      id.contains('fath') || id.contains('barakah_yawm')) return 'blessings';
+      id.contains('fath') || id.contains('barakah_yawm')) {
+    return 'blessings';
+  }
   if (id == 'morning_lwa_13' || id == 'evening_lwa_13' ||
-      id.contains('freed_hellfire') || id.contains('ush_hidu')) return 'flame';
+      id.contains('freed_hellfire') || id.contains('ush_hidu')) {
+    return 'flame';
+  }
   if (id == 'morning_lwa_14' || id == 'evening_lwa_14' ||
-      id.contains('bika_asbahna') || id.contains('nushur')) return 'cycle';
+      id.contains('bika_asbahna') || id.contains('nushur')) {
+    return 'cycle';
+  }
   if (id == 'morning_lwa_15' || id == 'evening_lwa_15' ||
-      id.contains('afini_badani') || id.contains('good_health')) return 'vessels';
+      id.contains('afini_badani') || id.contains('good_health')) {
+    return 'vessels';
+  }
   if (id == 'morning_lwa_16' || id == 'evening_lwa_16' ||
-      id.contains('hasbiyallah') || id.contains('arsh_azeem')) return 'pillars';
+      id.contains('hasbiyallah') || id.contains('arsh_azeem')) {
+    return 'pillars';
+  }
   if (id == 'morning_lwa_17' || id == 'evening_lwa_17' ||
-      id.contains('raditu_billah') || id.contains('pleased_allah')) return 'hand';
+      id.contains('raditu_billah') || id.contains('pleased_allah')) {
+    return 'hand';
+  }
   if (id == 'morning_lwa_18' || id == 'evening_lwa_18' ||
-      id.contains('la_yadurru') || id.contains('bismillah_protect')) return 'invincible';
+      id.contains('la_yadurru') || id.contains('bismillah_protect')) {
+    return 'invincible';
+  }
   if (id == 'morning_lwa_19' || id == 'evening_lwa_19' ||
-      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) return 'ocean';
+      id.contains('subhanallahi_wabihamdih') || id.contains('subhanallahi_wa_bihamdih')) {
+    return 'ocean';
+  }
   if (id == 'morning_lwa_20' || id == 'evening_lwa_20' ||
       id == 'la_ilaha_illallah' || id == 'post_prayer_la_ilaha' ||
-      id.contains('unparalleled_reward')) return 'scales';
+      id.contains('unparalleled_reward')) {
+    return 'scales';
+  }
   if (id == 'morning_lwa_21' || id == 'evening_lwa_21' ||
       id == 'subhanallah' || id == 'alhamdulillah' || id == 'allahu_akbar' ||
       id == 'post_prayer_subhanallah' || id == 'post_prayer_alhamdulillah' ||
       id == 'post_prayer_allahu_akbar' ||
-      id.contains('sleeping_tasbih')) return 'glory';
+      id.contains('sleeping_tasbih')) {
+    return 'glory';
+  }
   if (id == 'morning_lwa_22' || id == 'evening_lwa_22' ||
       id == 'salawat_ibrahimiyya' || id == 'salawat_simple' ||
-      id == 'salawat_friday' || id.contains('salawat')) return 'salawat';
+      id == 'salawat_friday' || id.contains('salawat')) {
+    return 'salawat';
+  }
   if (id == 'evening_lwa_23' || id.contains('kalimat_taammat')) return 'invincible';
   if (id == 'morning_lwa_23' ||
       id == 'astaghfirullah' || id == 'istighfar_extended' ||
-      id.contains('astaghfiru')) return 'doors';
+      id.contains('astaghfiru')) {
+    return 'doors';
+  }
   if (id == 'morning_lwa_24' || id == 'evening_lwa_24' ||
-      id.contains('adada_khalqih') || id.contains('cosmic_weight')) return 'cosmic';
+      id.contains('adada_khalqih') || id.contains('cosmic_weight')) {
+    return 'cosmic';
+  }
 
   return 'tree'; // Default
 }
@@ -2478,35 +2580,35 @@ Widget _buildIllustration({
   int pointsToday = 0,
 }) {
   final ill = _pickIllustration(azkarId);
-  Widget _w(Widget Function({required double progress, required bool isComplete, required int tapCount, required int pointsToday}) ctor) =>
+  Widget w(Widget Function({required double progress, required bool isComplete, required int tapCount, required int pointsToday}) ctor) =>
     ctor(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday);
 
   return switch (ill) {
-    'shield'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ProtectionShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'three_quls' => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeQuls(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'gates'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GatesOfJannah(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'chains'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BreakingChains(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'six_wards'  => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixWards(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'repelling'  => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RepellingLight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'heart'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CradledHeart(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'vessel'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OverflowingVessel(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'dawn'       => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RisingDawn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'ripples'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _PraiseRipples(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'path'       => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GlowingPath(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'blessings'  => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _FiveBlessings(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'flame'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _FreedomFlame(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'cycle'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CycleOfReturn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'vessels'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeVessels(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'pillars'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SevenPillars(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'hand'       => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GuidingHand(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'invincible' => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _InvincibleName(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'ocean'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OceanOfForgiveness(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'scales'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _UnparalleledScales(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'glory'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SunriseGlory(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'salawat'    => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _TenSalawat(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'doors'      => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DoorsOfMercy(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'cosmic'     => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CosmicWeight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    _            => _w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'shield'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ProtectionShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'three_quls' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeQuls(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'gates'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GatesOfJannah(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'chains'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BreakingChains(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'six_wards'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixWards(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'repelling'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RepellingLight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'heart'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CradledHeart(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'vessel'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OverflowingVessel(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'dawn'       => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RisingDawn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'ripples'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _PraiseRipples(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'path'       => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GlowingPath(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'blessings'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _FiveBlessings(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'flame'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _FreedomFlame(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'cycle'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CycleOfReturn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'vessels'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeVessels(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'pillars'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SevenPillars(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'hand'       => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GuidingHand(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'invincible' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _InvincibleName(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'ocean'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OceanOfForgiveness(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'scales'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _UnparalleledScales(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'glory'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SunriseGlory(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'salawat'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _TenSalawat(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'doors'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DoorsOfMercy(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'cosmic'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CosmicWeight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    _            => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
   };
 }
 

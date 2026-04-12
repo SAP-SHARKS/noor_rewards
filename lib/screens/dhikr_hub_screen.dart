@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dhikr_screen.dart';
 import '../utils/asset_helper.dart';
@@ -131,7 +131,7 @@ class DhikrHubScreen extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
+      onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -233,7 +233,7 @@ class DhikrHubScreen extends StatelessWidget {
 
   Widget _buildMiniGradientCard(BuildContext context, String title, String id, String emoji, Color baseColor) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
+      onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),

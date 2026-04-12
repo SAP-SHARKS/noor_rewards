@@ -279,12 +279,12 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                       try {
                         // Assuming QfAuthService is defined globally or we can just import it
                         await QfAuthService.instance.signIn();
-                        if (mounted) {
+                        if (context.mounted) {
                            // Navigate to dashboard or handle success
                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully authenticated with Quran.com!')));
                         }
                       } catch (e) {
-                         if (mounted && !e.toString().contains('cancelled')) {
+                         if (context.mounted && !e.toString().contains('cancelled')) {
                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception:', '').trim()), backgroundColor: Colors.red));
                          }
                       } finally {

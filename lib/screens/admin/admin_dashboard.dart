@@ -1,11 +1,12 @@
 // lib/screens/admin/admin_dashboard.dart
 // Full admin panel — sidebar nav + 6 sections
 
-import 'dart:convert';
+import 'dart:io';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -760,7 +761,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
 
     String? projectId = existing?['id'] as String?;
     String? localDpUrl = existing?['dp_url'] as String?;
-    bool _uploadingDp = false;
+    bool uploadingDp = false;
     List<ProjectMedia> media = [];
     if (projectId != null) {
       media = await DonationService.instance.getProjectMedia(projectId);
@@ -802,8 +803,36 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                     imageQuality: 80,
                   );
             if (file == null) return;
-            final bytes = await file.readAsBytes();
-            final ext = file.path.split('.').last;
+
+            // Try cropping images to 16:9 — fall back to original if crop fails/cancelled
+            String finalPath = file.path;
+            String ext = file.path.split('.').last;
+            if (mediaType == 'image') {
+              try {
+                final cropped = await ImageCropper().cropImage(
+                  sourcePath: file.path,
+                  aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9),
+                  uiSettings: [
+                    AndroidUiSettings(
+                      toolbarTitle: 'Crop Banner Image',
+                      toolbarColor: _kAccent,
+                      toolbarWidgetColor: Colors.white,
+                      activeControlsWidgetColor: _kAccent,
+                      lockAspectRatio: true,
+                    ),
+                    IOSUiSettings(title: 'Crop Banner Image', aspectRatioLockEnabled: true),
+                  ],
+                );
+                if (cropped != null) {
+                  finalPath = cropped.path;
+                  ext = cropped.path.split('.').last;
+                }
+              } catch (e) {
+                debugPrint('Crop skipped: $e');
+              }
+            }
+
+            final bytes = await File(finalPath).readAsBytes();
             final newMedia = await DonationService.instance.uploadProjectMedia(
               projectId: projectId!,
               mediaType: mediaType,
@@ -831,16 +860,41 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
               imageQuality: 85,
             );
             if (file == null) return;
-            final bytes = await file.readAsBytes();
-            final ext = file.path.split('.').last;
-            setDialogState(() => _uploadingDp = true);
+
+            // Try cropping to 16:9 — fall back to original if crop fails/cancelled
+            String finalPath = file.path;
+            String ext = file.path.split('.').last;
+            try {
+              final cropped = await ImageCropper().cropImage(
+                sourcePath: file.path,
+                aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9),
+                uiSettings: [
+                  AndroidUiSettings(
+                    toolbarTitle: 'Crop Display Picture',
+                    toolbarColor: _kAccent,
+                    toolbarWidgetColor: Colors.white,
+                    activeControlsWidgetColor: _kAccent,
+                    lockAspectRatio: true,
+                  ),
+                  IOSUiSettings(title: 'Crop Display Picture', aspectRatioLockEnabled: true),
+                ],
+              );
+              if (cropped != null) {
+                finalPath = cropped.path;
+                ext = cropped.path.split('.').last;
+              }
+            } catch (e) {
+              debugPrint('Crop skipped: $e');
+            }
+            final bytes = await File(finalPath).readAsBytes();
+            setDialogState(() => uploadingDp = true);
             final newUrl = await DonationService.instance.uploadProjectDP(
               projectId: projectId!,
               bytes: bytes,
               fileExt: ext,
             );
             setDialogState(() {
-              _uploadingDp = false;
+              uploadingDp = false;
               if (newUrl != null) {
                 localDpUrl = newUrl;
               }
@@ -915,7 +969,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                                 ),
                               ],
                             ),
-                            if (_uploadingDp)
+                            if (uploadingDp)
                               const Padding(
                                 padding: EdgeInsets.only(top: 12),
                                 child: SizedBox(

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
@@ -34,7 +36,6 @@ class _C {
   static const sub         = Color(0xFF8E8E93);
   static const darkBtn     = Color(0xFF1C1C1E);
   static const communityBg = Color(0xFFFEF3D4);
-  static const communityBr = Color(0xFFE8C870);
   static const amber       = Color(0xFFF5A623);
   static const navHome     = Color(0xFFE8643A);
   static const navImpact   = Color(0xFF2BAE9B);
@@ -55,12 +56,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final _supabase = Supabase.instance.client;
 
   // Profile state
-  int _noorPoints  = 0;
-  int _todayPoints = 0;
-  int _weekPoints  = 0;
-  int _monthPoints = 0;
-  int _streak      = 0;
-  int _totalXp     = 0;
+  int? _noorPoints;
+  int? _todayPoints;
+  int? _weekPoints;
+  int? _monthPoints;
+  int? _streak;
+  int? _totalXp;
   int _level       = 1;
   String _levelTitle = 'Seeker';
   StreakSnapshot _streakSnap = StreakSnapshot.empty;
@@ -71,6 +72,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<String, dynamic>? _project;
 
   int _adminRefreshCount = 0;
+  bool _navVisible = true;
+
+  // Nav Keys for nested routing
+  final List<GlobalKey<NavigatorState>> _navKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
+
+  Widget _buildTabNavigator(int index, Widget child) {
+    return Navigator(
+      key: _navKeys[index],
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => child,
+          settings: settings,
+        );
+      },
+    );
+  }
 
   // ── Motivational popup ───────────────────────────────────────────────────
   Timer? _startupPopupTimer;     // First popup after drum-counter animation
@@ -121,31 +143,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // • _popupVisible gate prevents a new show if one is already on screen.
   // ────────────────────────────────────────────────────────────────────────
   Future<void> _scheduleMotivationalPopup() async {
-    return; // DISABLED per user request (temporarily hidden)
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool(_kDndKey) == true) return; // permanent block
-    } catch (_) {}
-
-    // Animation takes 300ms delay + 1400ms roll + 500ms breathing room = 2200ms.
-    // The very first popup waits for the counter to finish before showing.
-    _startupPopupTimer = Timer(const Duration(milliseconds: 2200), () {
-      if (mounted) {
-        setState(() => _counterAnimating = false);
-        _doShowPopup();
-      }
-    });
+    // DISABLED per user request (temporarily hidden)
   }
 
   // Arms the NEXT single popup timer — called only after current popup closes.
   void _scheduleNextPopup() {
-    return; // DISABLED per user request (temporarily hidden)
-    if (!mounted || _sessionDnd || _popupVisible) return;
-    _repeatingPopupTimer?.cancel();
-    final delay = 30 + math.Random().nextInt(16); // 30–45 s
-    _repeatingPopupTimer = Timer(Duration(seconds: delay), _doShowPopup);
+    // DISABLED per user request (temporarily hidden)
   }
 
+  // ignore: unused_element
   void _doShowPopup() {
     // Block completely if the user chose Do Not Disturb or a popup is already active.
     if (!mounted || _sessionDnd || _popupVisible) return;
@@ -219,38 +225,60 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final profile = await _supabase.from('profiles')
           .select('noor_points, country, total_xp, level, avatar_url').eq('id', uid).maybeSingle();
-      _noorPoints = (profile?['noor_points'] as num?)?.toInt() ?? 0;
-      _totalXp    = (profile?['total_xp']    as num?)?.toInt() ?? 0;
-      _level      = (profile?['level']       as num?)?.toInt() ?? 1;
-      _country    = profile?['country'] as String?;
-      _avatarUrl  = profile?['avatar_url'] as String?;
+          
+      if (profile != null) {
+        _noorPoints = (profile['noor_points'] as num?)?.toInt() ?? 0;
+        _totalXp    = (profile['total_xp']    as num?)?.toInt() ?? 0;
+        _level      = (profile['level']       as num?)?.toInt() ?? 1;
+        _country    = profile['country'] as String?;
+        _avatarUrl  = profile['avatar_url'] as String?;
+      } else {
+        _noorPoints = 0; // Better to show 0 explicitly rather than leave null
+        if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile returned zero rows for $uid')));
+        }
+      }
 
-      // Resolve level title from xp_levels table
-      final levels = await _supabase.from('xp_levels')
-          .select('level, title').eq('level', _level).maybeSingle();
-      _levelTitle = (levels?['title'] as String?) ?? _levelTitleFor(_level);
+      // Resolve level title
+      try {
+        final levels = await _supabase.from('xp_levels')
+            .select('level, title').eq('level', _level).maybeSingle();
+        if (_levelTitle == 'Seeker' || _levelTitle == 'Champion' || _levelTitle == 'Legend' || _levelTitle == 'Believer' || _levelTitle == 'Devoted') {
+            _levelTitle = (levels?['title'] as String?) ?? _levelTitleFor(_level);
+        }
+      } catch (_) {}
 
-      // Fetch daily / weekly / monthly points + streak in parallel
+      // Fetch points in parallel, but handle individual failures safely without throwing everything via catchError
       final results = await Future.wait([
-        _supabase.rpc('get_today_points'),
-        _supabase.rpc('get_week_points'),
-        _supabase.rpc('get_month_points'),
-        _supabase.rpc('get_day_streak'),
+        _supabase.rpc('get_today_points').catchError((e) { print('today err: $e'); return 0; }),
+        _supabase.rpc('get_week_points').catchError((e) { print('week err: $e'); return 0; }),
+        _supabase.rpc('get_month_points').catchError((e) { print('month err: $e'); return 0; }),
+        _supabase.rpc('get_day_streak').catchError((e) { print('streak err: $e'); return 0; }),
       ]);
       _todayPoints = (results[0] as num?)?.toInt() ?? 0;
       _weekPoints  = (results[1] as num?)?.toInt() ?? 0;
       _monthPoints = (results[2] as num?)?.toInt() ?? 0;
       _streak      = (results[3] as num?)?.toInt() ?? 0;
 
-      // Load streak snapshot
-      final snap = await StreakService.instance.loadSnapshot();
-      _streakSnap = snap;
+      // Load streak snapshot safely
+      try {
+        final snap = await StreakService.instance.loadSnapshot();
+        _streakSnap = snap;
+      } catch (_) {}
 
-      final proj = await _supabase.from('community_projects')
-          .select().eq('is_active', true).eq('is_completed', false)
-          .order('sort_order', ascending: true, nullsFirst: false).limit(1).maybeSingle();
-      _project = proj;
-    } catch (_) {}
+      try {
+        final proj = await _supabase.from('community_projects')
+            .select().eq('is_active', true).eq('is_completed', false)
+            .order('sort_order', ascending: true, nullsFirst: false).limit(1).maybeSingle();
+        _project = proj;
+      } catch (_) {}
+    } catch (e) {
+      _levelTitle = 'Root error: $e';
+      _noorPoints ??= 0;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Dashboard Load Error: $e')));
+      }
+    }
     if (mounted) setState(() {});
   }
 
@@ -268,87 +296,128 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _goToScreen(Widget screen) async {
     // Suppress popups while user is in a reading/focus screen
     _isInFocusScreen = true;
-    final result = await Navigator.push<int>(
-        context, MaterialPageRoute(builder: (_) => screen));
+    final nav = _navKeys[_tab].currentState ?? Navigator.of(context);
+    await nav.push<int>(
+        MaterialPageRoute(builder: (_) => screen));
     _isInFocusScreen = false;
-    if ((result ?? 0) > 0) _loadHomeData(); // refresh points on return
+    _loadHomeData(); // Refresh points constantly on return
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _C.bg,
-      extendBody: true,
-      body: IndexedStack(index: _tab, children: [
-        _HomeTab(
-          key: ValueKey('home_$_adminRefreshCount'),
-          name: widget.name,
-          noorPoints: _noorPoints,
-          totalXp: _totalXp,
-          level: _level,
-          levelTitle: _levelTitle,
-          todayPoints: _todayPoints,
-          weekPoints: _weekPoints,
-          monthPoints: _monthPoints,
-          streak: _streak,
-          streakSnap: _streakSnap,
-          project: _project,
-          homeVisitCount: _homeVisitCount,
-          avatarUrl: _avatarUrl,
-          onGoQuran:       () => _goToScreen(const QuranHubScreen()),
-          onGoDhikr:       () => _goToScreen(const DhikrHubScreen()),
-          onGoTafsir:      () => _goToScreen(const TafsirHubScreen()),
-          onGoAchievements:() => Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const LevelScreen())),
-          onGoProfile: () => setState(() => _tab = 3),
-          onGoInvite: () {
-            final uid = Supabase.instance.client.auth.currentUser?.id;
-            if (uid == null) return;
-            Supabase.instance.client.from('profiles').select('referral_code').eq('id', uid).single().then((res) {
-              final code = res['referral_code'] as String?;
-              if (!mounted) return;
-              showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                isScrollControlled: true,
-                builder: (ctx) => _InviteSheet(referralCode: code ?? ''),
-              );
-            });
-          },
-          onValidate: () async {
-            final awarded = await XpService.instance.claimValidateXp();
-            await _loadHomeData();
-            return awarded;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final activeNav = _navKeys[_tab].currentState;
+        if (activeNav != null && activeNav.canPop()) {
+          activeNav.pop();
+        } else {
+          if (_tab != 0) {
+            setState(() => _tab = 0);
+          } else {
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: _C.bg,
+        extendBody: true,
+      body: NotificationListener<UserScrollNotification>(
+        onNotification: (notif) {
+          if (notif.metrics.axis == Axis.vertical) {
+            if (notif.direction == ScrollDirection.reverse) {
+              if (_navVisible) setState(() => _navVisible = false);
+            } else if (notif.direction == ScrollDirection.forward) {
+              if (!_navVisible) setState(() => _navVisible = true);
+            }
+          }
+          return false;
+        },
+        child: IndexedStack(index: _tab, children: [
+          _HomeTab(
+            key: ValueKey('home_${_adminRefreshCount}_${_noorPoints}_${_streak}'),
+            name: widget.name,
+            noorPoints: _noorPoints,
+            totalXp: _totalXp ?? 0,
+            level: _level,
+            levelTitle: _levelTitle,
+            todayPoints: _todayPoints,
+            weekPoints: _weekPoints,
+            monthPoints: _monthPoints,
+            streak: _streak,
+            streakSnap: _streakSnap,
+            project: _project,
+            homeVisitCount: _homeVisitCount,
+            avatarUrl: _avatarUrl,
+            onGoQuran:       () => _goToScreen(const QuranHubScreen()),
+            onGoDhikr:       () => _goToScreen(const DhikrHubScreen()),
+            onGoTafsir:      () => _goToScreen(const TafsirHubScreen()),
+            onGoAchievements:() => setState(() => _tab = 1),
+            onGoProfile: () => setState(() => _tab = 3),
+            onGoInvite: () {
+              final uid = Supabase.instance.client.auth.currentUser?.id;
+              if (uid == null) return;
+              Supabase.instance.client.from('profiles').select('referral_code').eq('id', uid).single().then((res) {
+                final code = res['referral_code'] as String?;
+                if (!mounted) return;
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (ctx) => _InviteSheet(referralCode: code ?? ''),
+                );
+              });
+            },
+            onValidate: () async {
+              final awarded = await XpService.instance.claimValidateXp();
+              await _loadHomeData();
+              return awarded;
+            },
+            hasError: _noorPoints == null,
+          ),
+          _buildTabNavigator(1, const LevelScreen()),           // Tab 1 — Journey
+          _buildTabNavigator(2, ImpactReportScreen(key: ValueKey('impact_$_adminRefreshCount'), isTab: true)), // Tab 2 — Akhirah
+          _buildTabNavigator(3, _ProfileTab(
+              name: widget.name, noorPoints: _noorPoints ?? 0,
+              totalXp: _totalXp ?? 0, level: _level, levelTitle: _levelTitle,
+              country: _country, streak: _streak ?? 0,
+              avatarUrl: _avatarUrl,
+              currentUserId: _supabase.auth.currentUser?.id ?? '',
+              onSignOut: _signOut,
+              onRefresh: _loadHomeData)),
+        ]),
+      ),
+      bottomNavigationBar: AnimatedSlide(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.fastOutSlowIn,
+        offset: _navVisible ? Offset.zero : const Offset(0, 1.2),
+        child: _BottomNav(
+          tab: _tab,
+          onTap: (i) {
+            if (i == 0 && _tab != 0) {
+              // User returning to Home tab: kick off a new counter animation
+              // and block any popup for the duration (300ms + 1400ms + 500ms = 2200ms).
+              setState(() {
+                _tab = i;
+                _homeVisitCount++;
+                _counterAnimating = true;
+              });
+              Future.delayed(const Duration(milliseconds: 2200), () {
+                if (mounted) setState(() => _counterAnimating = false);
+              });
+            } else {
+              // Keep on current tab: pop if not root to simulate returning to root
+              final activeNav = _navKeys[i].currentState;
+              if (activeNav != null && activeNav.canPop()) {
+                activeNav.popUntil((route) => route.isFirst);
+              }
+              setState(() => _tab = i);
+              _loadHomeData(); // Refresh values proactively
+            }
           },
         ),
-        const LevelScreen(),           // Tab 1 — Journey
-        ImpactReportScreen(key: ValueKey('impact_$_adminRefreshCount'), isTab: true), // Tab 2 — Akhirah
-        _ProfileTab(
-            name: widget.name, noorPoints: _noorPoints,
-            totalXp: _totalXp, level: _level, levelTitle: _levelTitle,
-            country: _country, streak: _streak,
-            avatarUrl: _avatarUrl,
-            currentUserId: _supabase.auth.currentUser?.id ?? '',
-            onSignOut: _signOut),
-      ]),
-      bottomNavigationBar: _BottomNav(
-        tab: _tab,
-        onTap: (i) {
-          if (i == 0 && _tab != 0) {
-            // User returning to Home tab: kick off a new counter animation
-            // and block any popup for the duration (300ms + 1400ms + 500ms = 2200ms).
-            setState(() {
-              _tab = i;
-              _homeVisitCount++;
-              _counterAnimating = true;
-            });
-            Future.delayed(const Duration(milliseconds: 2200), () {
-              if (mounted) setState(() => _counterAnimating = false);
-            });
-          } else {
-            setState(() => _tab = i);
-          }
-        },
+        ),
       ),
     );
   }
@@ -363,13 +432,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
 class _HomeTab extends StatefulWidget {
   final String name, levelTitle;
   final String? avatarUrl;
-  final int noorPoints, todayPoints, weekPoints, monthPoints, streak, totalXp, level;
+  final int? noorPoints, todayPoints, weekPoints, monthPoints, streak;
+  final int totalXp, level;
   final int homeVisitCount;
   final Map<String, dynamic>? project;
   final StreakSnapshot streakSnap;
   final VoidCallback onGoQuran, onGoDhikr, onGoTafsir, onGoAchievements, onGoInvite;
   final VoidCallback? onGoProfile;
   final Future<bool> Function() onValidate;
+  final bool hasError;
   const _HomeTab({
     super.key,
     required this.name, required this.noorPoints, required this.todayPoints,
@@ -382,6 +453,7 @@ class _HomeTab extends StatefulWidget {
     required this.onGoQuran, required this.onGoDhikr,
     required this.onGoTafsir, required this.onValidate, required this.onGoAchievements,
     required this.onGoInvite,
+    this.hasError = false,
   });
 
   @override
@@ -528,7 +600,7 @@ class _HomeTabState extends State<_HomeTab> {
                     child: Center(child: Text('N',
                         style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)))),
                   const SizedBox(width: 7),
-                  Text(_fmt(widget.noorPoints),
+                  Text(widget.hasError || widget.noorPoints == null ? '---' : _fmt(widget.noorPoints ?? 0),
                       style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5)),
                 ]),
               ),
@@ -571,7 +643,7 @@ class _HomeTabState extends State<_HomeTab> {
         // ── Noor Counter (tasbih drum display) ────────────────────────────────
         const SizedBox(height: 22),
         Center(child: _NoorCounter(
-          value: widget.noorPoints,
+          value: widget.noorPoints ?? 0,
           visitCount: widget.homeVisitCount,
         )),
 
@@ -602,6 +674,7 @@ class _HomeTabState extends State<_HomeTab> {
           weekPts:  widget.weekPoints,
           monthPts: widget.monthPoints,
           streak:   widget.streak,
+          hasError: widget.hasError,
         ),
 
 
@@ -649,7 +722,7 @@ class _HomeTabState extends State<_HomeTab> {
           const SizedBox(height: 12),
           _MyDonationsSection(
             donations: _myDonations,
-            availablePoints: widget.noorPoints,
+            availablePoints: widget.noorPoints ?? 0,
             onDonateMore: (project) {
               Navigator.push(
                 context,
@@ -1524,12 +1597,14 @@ class _SunburstPainter extends CustomPainter {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ProgressCard extends StatelessWidget {
-  final int todayPts, weekPts, monthPts, streak;
+  final int? todayPts, weekPts, monthPts, streak;
+  final bool hasError;
   const _ProgressCard({
     required this.todayPts,
     required this.weekPts,
     required this.monthPts,
     required this.streak,
+    this.hasError = false,
   });
 
   // Target goals — gamification benchmarks
@@ -1572,7 +1647,7 @@ class _ProgressCard extends StatelessWidget {
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               NoorIcon.fire(size:13),
               const SizedBox(width: 4),
-              Text('$streak day${streak == 1 ? '' : 's'}',
+              Text(hasError ? '---' : '${streak ?? 0} day${streak == 1 ? '' : 's'}',
                 style: GoogleFonts.rajdhani(
                     fontSize: 13, fontWeight: FontWeight.w700,
                     color: Colors.white, letterSpacing: 0.5)),
@@ -1584,13 +1659,13 @@ class _ProgressCard extends StatelessWidget {
 
         // Three progress bars
         _ProgBar(label: 'Today',   pts: todayPts, goal: _dayGoal,
-            color: const Color(0xFF00897B), icon: NoorIcon.sunrise(size:16)),
+            color: const Color(0xFF00897B), icon: NoorIcon.sunrise(size:16), hasError: hasError),
         const SizedBox(height: 12),
         _ProgBar(label: 'This Week', pts: weekPts, goal: _weekGoal,
-            color: const Color(0xFF5C6BC0), icon: NoorIcon.calendar(size:16)),
+            color: const Color(0xFF5C6BC0), icon: NoorIcon.calendar(size:16), hasError: hasError),
         const SizedBox(height: 12),
         _ProgBar(label: 'This Month', pts: monthPts, goal: _monthGoal,
-            color: const Color(0xFFE91E8C), icon: NoorIcon.calendar(size:16)),
+            color: const Color(0xFFE91E8C), icon: NoorIcon.calendar(size:16), hasError: hasError),
       ]),
     );
   }
@@ -1598,18 +1673,22 @@ class _ProgressCard extends StatelessWidget {
 
 class _ProgBar extends StatelessWidget {
   final String label;
-  final int pts, goal;
+  final int? pts;
+  final int goal;
   final Widget icon;
   final Color color;
+  final bool hasError;
   const _ProgBar({
     required this.label, required this.pts,
     required this.goal,  required this.color, required this.icon,
+    this.hasError = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final pct = (pts / goal).clamp(0.0, 1.0);
-    final done = pts >= goal;
+    final cur = pts ?? 0;
+    final pct = (cur / goal).clamp(0.0, 1.0);
+    final done = cur >= goal;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         icon,
@@ -1617,7 +1696,9 @@ class _ProgBar extends StatelessWidget {
         Text(label, style: GoogleFonts.outfit(
             fontSize: 13, fontWeight: FontWeight.w700, color: _C.text)),
         const Spacer(),
-        if (done)
+        if (hasError || pts == null)
+          Text('--- / $goal', style: GoogleFonts.rajdhani(fontSize: 14, fontWeight: FontWeight.w700, color: _C.text))
+        else if (done)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
             decoration: BoxDecoration(
@@ -1949,6 +2030,9 @@ class _ProjectCover extends StatefulWidget {
 
 class _ProjectCoverState extends State<_ProjectCover> {
   static final Map<String, ProjectMedia?> _cache = {};
+  /// Call this to invalidate all cached covers (e.g. after admin upload).
+  static void clearCache() => _cache.clear();
+
   ProjectMedia? _cover;
   bool _loading = true;
 
@@ -2070,7 +2154,7 @@ class _MyDonationsSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: 250,
+          height: 340,
           child: ListView.separated(
             clipBehavior: Clip.hardEdge,   // ← cards are clipped; no peeking until swipe
             scrollDirection: Axis.horizontal,
@@ -2087,11 +2171,34 @@ class _MyDonationsSection extends StatelessWidget {
                   final myPct = (myPts / target).clamp(0.0, 1.0);
                   final isCompleted = d['is_completed'] == true;
 
+                  final dpUrl = d['dp_url'] as String?;
+                  Widget banner;
+                  if (dpUrl != null && dpUrl.isNotEmpty) {
+                    banner = SizedBox(
+                      width: double.infinity,
+                      height: 130,
+                      child: Image.network(
+                        dpUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: const Color(0xFFF7F4EF),
+                          child: const Center(child: Icon(Icons.volunteer_activism_rounded, size: 48, color: Color(0xFF2BAE99))),
+                        ),
+                      ),
+                    );
+                  } else {
+                    banner = Container(
+                      width: double.infinity, height: 130,
+                      color: const Color(0xFFF7F4EF),
+                      child: const Icon(Icons.volunteer_activism_rounded, size: 48, color: Color(0xFF2BAE99)),
+                    );
+                  }
+
                   String fmt(int n) => n >= 1000000 ? '${(n/1000000).toStringAsFixed(1)}M' : (n >= 1000 ? '${(n/1000).toStringAsFixed(1)}k' : '$n');
 
                   return Container(
                     width: donations.length == 1 ? constraints.maxWidth : 280,
-                    padding: const EdgeInsets.all(18),
+                    clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(22),
@@ -2100,19 +2207,26 @@ class _MyDonationsSection extends StatelessWidget {
                           blurRadius: 12, offset: const Offset(0, 4))],
                       border: Border.all(color: Colors.grey.shade100, width: 1.5),
                     ),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      // Header
-                      Row(children: [
-                        _buildProjIcon(d, 54),
-                        const SizedBox(width: 12),
-                        Expanded(child: Text(d['title'] ?? '',
-                            style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text),
-                            maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      ]),
-                      const Spacer(),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      // Wide Banner
+                      banner,
                       
-                      // Chart & Stats Row
-                      Row(
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title
+                              Center(
+                                child: Text((d['title'] ?? '').toString().toUpperCase(),
+                                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text, letterSpacing: -0.2),
+                                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                              ),
+                              const Spacer(),
+                              
+                              // Chart & Stats Row
+                              Row(
                         children: [
                           // Circular Chart
                           SizedBox(
@@ -2192,6 +2306,10 @@ class _MyDonationsSection extends StatelessWidget {
                             ),
                           ),
                         ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ]),
                   );
                 },
@@ -2653,8 +2771,6 @@ class _ImpactTabState extends State<_ImpactTab> {
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16)]),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                _buildProjIcon(p, 52),
-                const SizedBox(width: 14),
                 Expanded(child: Text('${p['title']}',
                     style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text))),
                 Container(
@@ -2668,10 +2784,30 @@ class _ImpactTabState extends State<_ImpactTab> {
               Builder(
                 builder: (context) {
                   final mediaList = _projectMedia[p['id']] ?? [];
+                  final dpUrl = p['dp_url'] as String?;
                   if (mediaList.isNotEmpty) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: ProjectMediaCarousel(media: mediaList, height: 180),
+                    );
+                  }
+                  if (dpUrl != null && dpUrl.isNotEmpty) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: SizedBox(
+                        height: 180, width: double.infinity,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.network(dpUrl, fit: BoxFit.cover),
+                            BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                              child: Container(color: Colors.black.withValues(alpha: 0.2)),
+                            ),
+                            Image.network(dpUrl, fit: BoxFit.contain),
+                          ],
+                        ),
+                      ),
                     );
                   }
                   return Container(
@@ -2775,7 +2911,7 @@ class _ImpactTabState extends State<_ImpactTab> {
             // Update the parent dashboard (header) balance smoothly
             if (parentState != null) {
               parentState.setState(() {
-                parentState._noorPoints = (parentState._noorPoints - amount).clamp(0, 99999999);
+                parentState._noorPoints = ((parentState._noorPoints ?? 0) - amount).clamp(0, 99999999);
               });
             }
           },
@@ -3281,11 +3417,13 @@ class _ProfileTab extends StatefulWidget {
   final String? country;
   final String? avatarUrl;
   final VoidCallback onSignOut;
+  final VoidCallback onRefresh;
   const _ProfileTab({required this.name, required this.noorPoints,
       required this.totalXp, required this.level, required this.levelTitle,
       required this.country, required this.streak, required this.currentUserId,
       this.avatarUrl,
-      required this.onSignOut});
+      required this.onSignOut,
+      required this.onRefresh});
   @override
   State<_ProfileTab> createState() => _ProfileTabState();
 }
@@ -3308,6 +3446,7 @@ class _ProfileTabState extends State<_ProfileTab> {
     );
     // Reload leaderboard in case anything changed
     _loadLeaderboard();
+    widget.onRefresh();
   }
 
   Future<void> _loadLeaderboard() async {
@@ -3737,11 +3876,13 @@ class _ProfileTabState extends State<_ProfileTab> {
                     onTap: () async {
                       await Navigator.push(context,
                           MaterialPageRoute(builder: (_) => const AdminDashboard()));
+                      if (!context.mounted) return;
                       // Refresh dashboard tabs on return to update sequences/projects
+                      _ProjectCoverState.clearCache();
                       final dashboard = context.findAncestorStateOfType<_DashboardScreenState>();
                       if (dashboard != null) {
                         dashboard._adminRefreshCount++;
-                        dashboard.setState(() {});
+                        dashboard._loadHomeData();
                       }
                     },
                     child: Container(

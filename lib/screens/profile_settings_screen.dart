@@ -405,7 +405,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         ),
         child: _avatarUrl == null
           ? Center(child: Text(initial,
-              style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white)))
+              style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white)))
           : null,
       ),
       if (_uploadingPhoto)
@@ -414,10 +414,26 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           child: const Center(child: SizedBox(width: 20, height: 20,
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))),
         )),
+      if (_avatarUrl != null && !_uploadingPhoto)
+        Positioned(
+          bottom: 0, right: 0,
+          child: GestureDetector(
+            onTap: _removePhoto,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFD32F2F),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: const Icon(Icons.close_rounded, size: 14, color: Colors.white),
+            ),
+          ),
+        ),
     ]);
   }
 
-  Widget _avatarCircle({double radius = 28, double fontSize = 22}) {
+  Widget _avatarCircle({double radius = 36, double fontSize = 24}) {
     final initial = _displayName.isNotEmpty ? _displayName[0].toUpperCase()
         : _email.isNotEmpty ? _email[0].toUpperCase() : 'N';
     return Stack(clipBehavior: Clip.none, children: [
@@ -449,6 +465,22 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           child: const Center(child: SizedBox(width: 16, height: 16,
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))),
         )),
+      if (_avatarUrl != null && !_uploadingPhoto)
+        Positioned(
+          bottom: 0, right: 0,
+          child: GestureDetector(
+            onTap: _removePhoto,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFD32F2F),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+              child: Icon(Icons.close_rounded, size: radius * 0.4, color: Colors.white),
+            ),
+          ),
+        ),
     ]);
   }
 
@@ -475,7 +507,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       )],
     ),
     child: Row(children: [
-      _avatarCircle(radius: 32, fontSize: 26),
+      _avatarCircle(radius: 36, fontSize: 24),
       const SizedBox(width: 16),
       Expanded(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

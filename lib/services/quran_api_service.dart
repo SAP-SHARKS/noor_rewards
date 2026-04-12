@@ -176,7 +176,7 @@ class QuranApiService {
     return mapped;
   }
 
-  /// Bulk word-by-word for an entire surah. Returns Map<ayahNumber, List<word>>.
+  /// Bulk word-by-word for an entire surah. Returns `Map<ayahNumber, List<word>>`.
   Future<Map<int, List<Map<String, dynamic>>>> wordsBySurah(int surah) async {
     final box = await _cacheBox;
     final cacheKey = 'wordsBySurah_$surah';
