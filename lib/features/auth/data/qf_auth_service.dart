@@ -20,7 +20,7 @@ class QfAuthService {
 
   Future<void> signIn() async {
     try {
-      final AuthorizationResponse? authResponse = await _appAuth.authorize(
+      final AuthorizationResponse authResponse = await _appAuth.authorize(
         AuthorizationRequest(
           Env.qfClientId,
           _redirectUri,
@@ -30,7 +30,7 @@ class QfAuthService {
         ),
       );
 
-      if (authResponse != null && authResponse.authorizationCode != null) {
+      if (authResponse.authorizationCode != null) {
         // Exchange code for token using Supabase Edge Function as QF requires Confidential Client
         final response = await _supabase.functions.invoke(
           'qf-token-exchange',

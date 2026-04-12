@@ -3,50 +3,18 @@
 // All XP-earning events in the app must call methods here.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'settings_service.dart';
 
 // ── XP Rewards ─────────────────────────────────────────────────────────────────
 class XpReward {
-  static const int ayahRead      = 5;   // per ayah read
+  static int get ayahRead      => SettingsService.instance.config.xpPerAyah; // per ayah read
   static const int juzComplete   = 100; // per juz completed
-  static const int dailyLogin    = 5;   // once per day
-  static const int validateCoins = 20;  // validate & support
+  static int get dailyLogin    => SettingsService.instance.config.xpDailyLogin;   // once per day
+  static int get validateCoins => SettingsService.instance.config.xpValidateCoins;  // validate & support
 
   // ── Per-dhikr XP weights ──────────────────────────────────────────────────
-  // Weighted by spiritual significance and count required.
-  // Higher count or deeper meaning → higher XP.
-  static const Map<String, int> _dhikrXpMap = {
-    // General — short (×33)
-    'subhanallah':              8,
-    'alhamdulillah':            8,
-    'allahu_akbar':             8,
-    // General — higher count (×100), deeper significance
-    'la_ilaha_illallah':        15,
-    'astaghfirullah':           15,
-    'salawat':                  15,
-    // Morning adhkar — one-off supplications
-    'morning_adhkar_1':         5,
-    'morning_adhkar_2':         5,
-    'morning_ayat_kursi':       6,
-    'morning_tasbih':           12, // ×100
-    // Evening adhkar — one-off supplications
-    'evening_adhkar_1':         5,
-    'evening_adhkar_2':         5,
-    'evening_tasbih':           12, // ×100
-    // Post-prayer adhkar
-    'post_prayer_subhanallah':  8,
-    'post_prayer_alhamdulillah':8,
-    'post_prayer_allahu_akbar': 8,
-    'post_prayer_ayat_kursi':   6,
-    // Sleeping adhkar
-    'sleeping_ayat_kursi':      6,
-    'sleeping_tasbih':          8,
-    'sleeping_alhamdulillah':   8,
-    'sleeping_allahu_akbar':    8,
-    'sleeping_bismillah':       5,
-  };
-
-  /// Returns the XP for a given dhikr ID. Falls back to 8 XP if not found.
-  static int dhikrXp(String dhikrId) => _dhikrXpMap[dhikrId] ?? 8;
+  /// Returns the XP for a given dhikr ID, dynamically pulled from Admin settings.
+  static int dhikrXp(String dhikrId) => SettingsService.instance.config.xpPerDhikr;
 }
 
 // ── Level info ─────────────────────────────────────────────────────────────────

@@ -65,7 +65,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
   }
 
   void _openTafsir({int surah = 1, int ayah = 1}) {
-    Navigator.push(context,
+    Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute(builder: (_) =>
             TafsirScreen(initialSurah: surah, initialAyah: ayah)));
   }

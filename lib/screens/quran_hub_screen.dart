@@ -153,7 +153,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
     HapticFeedback.mediumImpact();
     final s = surah ?? _selSurah;
     final a = ayah  ?? _selAyah;
-    final nav = Navigator.of(context); // capture before async gap
+    final nav = Navigator.of(context, rootNavigator: true); // capture before async gap
 
     // Persist chosen position so Resume is immediately in sync
     final uid = _sb.auth.currentUser?.id;
