@@ -755,6 +755,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
 
   Future<void> _editDialog([Map<String, dynamic>? existing]) async {
     final titleCtrl   = TextEditingController(text: existing?['title']    ?? '');
+    final descCtrl    = TextEditingController(text: existing?['description'] ?? '');
     final targetCtrl  = TextEditingController(text: '${existing?['target_points'] ?? 10000000}');
     final usdCtrl     = TextEditingController(text: '${existing?['estimated_usd'] ?? 0}');
     final sponsorCtrl = TextEditingController(text: existing?['sponsor']  ?? 'Islamic Relief');
@@ -778,6 +779,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
             if (projectId != null) return;
             final payload = {
               'title': titleCtrl.text.trim().isEmpty ? 'Untitled' : titleCtrl.text.trim(),
+              'description': descCtrl.text,
               'sponsor': sponsorCtrl.text,
               'target_points': int.tryParse(targetCtrl.text) ?? 10000000,
               'estimated_usd': double.tryParse(usdCtrl.text) ?? 0,
@@ -941,6 +943,23 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                             _Field('Title', titleCtrl),
                             const SizedBox(height: 12),
                             _Field('Sponsor', sponsorCtrl),
+                            const SizedBox(height: 12),
+                            // Description (multi-line)
+                            Text('Description', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: _kSub)),
+                            const SizedBox(height: 6),
+                            TextField(
+                              controller: descCtrl,
+                              maxLines: 4,
+                              style: GoogleFonts.outfit(fontSize: 14, color: _kText),
+                              decoration: InputDecoration(
+                                hintText: 'Describe the cause, impact, and how donations help...',
+                                hintStyle: GoogleFonts.outfit(fontSize: 13, color: _kSub.withValues(alpha: 0.5)),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: _kBorder)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: _kBorder)),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: _kAccent)),
+                                contentPadding: const EdgeInsets.all(12),
+                              ),
+                            ),
                             const SizedBox(height: 12),
                             _Field('Target Points', targetCtrl, numeric: true),
                             const SizedBox(height: 12),
@@ -1132,6 +1151,7 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                           onPressed: () async {
                             final payload = {
                               'title': titleCtrl.text,
+                              'description': descCtrl.text,
                               'sponsor': sponsorCtrl.text,
                               'target_points':
                                   int.tryParse(targetCtrl.text) ?? 10000000,

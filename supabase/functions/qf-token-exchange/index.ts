@@ -24,7 +24,7 @@ serve(async (req) => {
       return jsonResponse({ error: "Missing required parameters" }, 400);
     }
 
-    const qfEnv = Deno.env.get("QF_ENV") || "prelive";
+    const qfEnv = Deno.env.get("QF_ENV") || "production";
     const authBase = qfEnv === "production"
       ? "https://oauth2.quran.foundation"
       : "https://prelive-oauth2.quran.foundation";
