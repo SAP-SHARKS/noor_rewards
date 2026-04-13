@@ -23,6 +23,9 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
       await Supabase.instance.client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: 'io.supabase.flutterquickstart://login-callback/',
+        queryParams: {
+          'prompt': 'select_account',
+        },
       );
     } on AuthException catch (error) {
       if (mounted) {

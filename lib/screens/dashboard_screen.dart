@@ -53,6 +53,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _tab = 0;
+  int _akhirahVisitCount = 0;
   final _supabase = Supabase.instance.client;
 
   // Profile state
@@ -111,7 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadHomeData();
-    // Claim daily login XP once per day (fire & forget)
+    // Claim daily login pts once per day (fire & forget)
     XpService.instance.claimDailyLoginXp();
     // Record login streak
     StreakService.instance.recordActivity(StreakType.login);
@@ -377,7 +378,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             hasError: _noorPoints == null,
           ),
           _buildTabNavigator(1, const LevelScreen()),           // Tab 1 — Journey
-          _buildTabNavigator(2, ImpactReportScreen(key: ValueKey('impact_$_adminRefreshCount'), isTab: true)), // Tab 2 — Akhirah
+          _buildTabNavigator(2, ImpactReportScreen(
+            key: ValueKey('impact_$_adminRefreshCount'),
+            isTab: true,
+            visitCount: _akhirahVisitCount,
+          )), // Tab 2 — Akhirah
           _buildTabNavigator(3, _ProfileTab(
               name: widget.name, noorPoints: _noorPoints ?? 0,
               totalXp: _totalXp ?? 0, level: _level, levelTitle: _levelTitle,
@@ -407,6 +412,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 if (mounted) setState(() => _counterAnimating = false);
               });
             } else {
+              if (i == 2 && _tab != 2) {
+                setState(() => _akhirahVisitCount++);
+              }
               // Keep on current tab: pop if not root to simulate returning to root
               final activeNav = _navKeys[i].currentState;
               if (activeNav != null && activeNav.canPop()) {
@@ -653,7 +661,7 @@ class _HomeTabState extends State<_HomeTab> {
           final awarded = await widget.onValidate();
           if (!mounted) return awarded;
           if (awarded) {
-            // Fresh XP: play confetti + full celebration modal
+            // Fresh pts: play confetti + full celebration modal
             _confettiController.play();
             _showValidateModal(); // modal calls _triggerBoostPopup on dismiss
           } else {
@@ -748,13 +756,13 @@ class _HomeTabState extends State<_HomeTab> {
             _ActivityCard('Read Quran',    NoorIcon.book(size: 28),
               solid: const Color(0xFF3B72F6),
               solidDeep: const Color(0xFF1A4DC4),
-              reward: '+5 XP / ayah',
+              reward: '+5 pts / ayah',
               patternType: _CardPattern.arcRings,
               onTap: widget.onGoQuran),
             _ActivityCard('Dhikar & Dua',  NoorIcon.beads(size: 28),
               solid: const Color(0xFF18B97A),
               solidDeep: const Color(0xFF0A7A50),
-              reward: '+10 XP / set',
+              reward: '+10 pts / set',
               patternType: _CardPattern.floatingDots,
               onTap: widget.onGoDhikr),
             _ActivityCard('Invite Friends', NoorIcon.handshake(size: 28),
@@ -766,7 +774,7 @@ class _HomeTabState extends State<_HomeTab> {
             _ActivityCard('Achievements',   NoorIcon.trophy(size: 28),
               solid: const Color(0xFF8B5CF6),
               solidDeep: const Color(0xFF5B21B6),
-              reward: '${_fmt(widget.totalXp)} XP • Lv ${widget.level}',
+              reward: '${_fmt(widget.totalXp)} pts • Lv ${widget.level}',
               patternType: _CardPattern.diamondSparks,
               onTap: widget.onGoAchievements),
           ],
@@ -1020,7 +1028,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           Container(height: 40, width: 1, color: Colors.white12),
                           _RewardPill(icon: NoorIcon.people(size:20), label: 'Friend gets', points: '+500'),
                           Container(height: 40, width: 1, color: Colors.white12),
-                          _RewardPill(icon: NoorIcon.lightning(size:20), label: 'Instant', points: 'XP'),
+                          _RewardPill(icon: NoorIcon.lightning(size:20), label: 'Instant', points: 'pts'),
                         ],
                       ),
                     ),
@@ -1712,7 +1720,7 @@ class _ProgBar extends StatelessWidget {
             TextSpan(text: '$pts ',
                 style: GoogleFonts.outfit(
                     fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
-            TextSpan(text: '/ $goal XP',
+            TextSpan(text: '/ $goal pts',
                 style: GoogleFonts.outfit(
                     fontSize: 11, color: _C.sub)),
           ])),
@@ -3290,7 +3298,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text('Leaderboard',
                       style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _C.text)),
-                  Text('Top contributors by lifetime XP',
+                  Text('Top contributors by lifetime pts',
                       style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
                 ])),
                 IconButton(
@@ -3393,7 +3401,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                 maxLines: 1, overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                           ])),
-                          Text('$xp XP',
+                          Text('$xp pts',
                               style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _C.navRanking)),
                         ]),
                       );
@@ -3664,7 +3672,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                               style: GoogleFonts.outfit(
                                   fontSize: 15, fontWeight: FontWeight.w800,
                                   color: _C.text)),
-                          Text('Top contributors by lifetime XP',
+                          Text('Top contributors by lifetime pts',
                               style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                         ])),
                       ]),
@@ -3783,7 +3791,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                               Text('$title • Lv $lv',
                                   style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                             ])),
-                            Text('$xp XP',
+                            Text('$xp pts',
                                 style: GoogleFonts.outfit(
                                     fontSize: 13, fontWeight: FontWeight.w700,
                                     color: _C.navRanking)),
@@ -4456,7 +4464,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                   Center(
                     child: Text(
                       _freshXp
-                          ? 'JazakAllah!  +${XpReward.validateCoins} XP'
+                          ? 'JazakAllah!  +${XpReward.validateCoins} pts'
                           : 'Already sealed today',
                       style: GoogleFonts.rajdhani(
                         fontSize: 14.5, fontWeight: FontWeight.w700,

@@ -37,6 +37,7 @@ const _navItems = [
   (icon: Icons.campaign_rounded,         label: 'Banners'),
   (icon: Icons.settings_rounded,         label: 'All Config'),
   (icon: Icons.bar_chart_rounded,        label: 'Sponsor Report'),
+  (icon: Icons.category_rounded,         label: 'Azkar Categories'),
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,6 +55,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     'Overview', 'Economy Controls', 'Theme & Colors',
     'Project Manager', 'User Management', 'Feature Flags',
     'Banners & Messages', 'Raw Config', 'Sponsor Report',
+    'Azkar Categories',
   ];
 
   @override
@@ -89,6 +91,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       case 6: return _BannersSection(adminEmail: _adminEmail);
       case 7: return _RawConfigSection(adminEmail: _adminEmail);
       case 8: return const SponsorAnalyticsSection();
+      case 9: return const _AzkarCategoriesSection();
       default: return const SizedBox();
     }
   }
@@ -427,6 +430,11 @@ class _ThemeSection extends StatefulWidget {
 
 class _ThemeSectionState extends State<_ThemeSection> {
   late Color _primary, _secondary, _donation, _bannerColor;
+  // Screen-specific colors
+  late Color _azkarAccent, _azkarMorningGrad1, _azkarMorningGrad2;
+  late Color _azkarEveningGrad1, _azkarEveningGrad2, _azkarHighlight;
+  late Color _quranBg, _quranAccent, _quranGold;
+  late Color _dashBg, _dashText, _dashTeal;
   bool _saving = false;
 
   // ── Quick-theme presets ───────────────────────────────────────────────────
@@ -474,6 +482,18 @@ class _ThemeSectionState extends State<_ThemeSection> {
     _secondary  = cfg.secondaryColor;
     _donation   = cfg.donationColor;
     _bannerColor = cfg.bannerColor;
+    _azkarAccent       = cfg.azkarAccent;
+    _azkarMorningGrad1 = cfg.azkarMorningGrad1;
+    _azkarMorningGrad2 = cfg.azkarMorningGrad2;
+    _azkarEveningGrad1 = cfg.azkarEveningGrad1;
+    _azkarEveningGrad2 = cfg.azkarEveningGrad2;
+    _azkarHighlight    = cfg.azkarHighlight;
+    _quranBg      = cfg.quranBg;
+    _quranAccent  = cfg.quranAccent;
+    _quranGold    = cfg.quranGold;
+    _dashBg   = cfg.dashBg;
+    _dashText = cfg.dashText;
+    _dashTeal = cfg.dashTeal;
   }
 
   String _toHex(Color c) =>
@@ -486,6 +506,18 @@ class _ThemeSectionState extends State<_ThemeSection> {
       'secondary_color': _toHex(_secondary),
       'donation_color':  _toHex(_donation),
       'banner_color':    _toHex(_bannerColor),
+      'azkar_accent':         _toHex(_azkarAccent),
+      'azkar_morning_grad1':  _toHex(_azkarMorningGrad1),
+      'azkar_morning_grad2':  _toHex(_azkarMorningGrad2),
+      'azkar_evening_grad1':  _toHex(_azkarEveningGrad1),
+      'azkar_evening_grad2':  _toHex(_azkarEveningGrad2),
+      'azkar_highlight':      _toHex(_azkarHighlight),
+      'quran_bg':      _toHex(_quranBg),
+      'quran_accent':  _toHex(_quranAccent),
+      'quran_gold':    _toHex(_quranGold),
+      'dash_bg':   _toHex(_dashBg),
+      'dash_text': _toHex(_dashText),
+      'dash_teal': _toHex(_dashTeal),
     }, adminEmail: widget.adminEmail);
     if (mounted) {
       setState(() => _saving = false);
@@ -597,6 +629,46 @@ class _ThemeSectionState extends State<_ThemeSection> {
           _ColorTile('Banner Color',    _bannerColor,(c) => setState(() { _bannerColor = c; _activePreset = null; })),
         ]),
         const SizedBox(height: 28),
+
+        // ── Azkar / Dhikr Screen Colors ──
+        Text('Azkar Screen', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _kText)),
+        const SizedBox(height: 4),
+        Text('Top bar gradients, accent colors, and bottom section.', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+        const SizedBox(height: 14),
+        Column(children: [
+          _ColorTile('Azkar Accent',         _azkarAccent,       (c) => setState(() => _azkarAccent = c)),
+          _ColorTile('Morning Gradient Start', _azkarMorningGrad1, (c) => setState(() => _azkarMorningGrad1 = c)),
+          _ColorTile('Morning Gradient End',   _azkarMorningGrad2, (c) => setState(() => _azkarMorningGrad2 = c)),
+          _ColorTile('Evening Gradient Start', _azkarEveningGrad1, (c) => setState(() => _azkarEveningGrad1 = c)),
+          _ColorTile('Evening Gradient End',   _azkarEveningGrad2, (c) => setState(() => _azkarEveningGrad2 = c)),
+          _ColorTile('Bismillah Highlight',    _azkarHighlight,    (c) => setState(() => _azkarHighlight = c)),
+        ]),
+        const SizedBox(height: 28),
+
+        // ── Quran Screen Colors ──
+        Text('Quran Screen', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _kText)),
+        const SizedBox(height: 4),
+        Text('Background, accent, and gold for all reading modes.', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+        const SizedBox(height: 14),
+        Column(children: [
+          _ColorTile('Quran Background', _quranBg,     (c) => setState(() => _quranBg = c)),
+          _ColorTile('Quran Accent',     _quranAccent, (c) => setState(() => _quranAccent = c)),
+          _ColorTile('Quran Gold',       _quranGold,   (c) => setState(() => _quranGold = c)),
+        ]),
+        const SizedBox(height: 28),
+
+        // ── Dashboard Colors ──
+        Text('Dashboard', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _kText)),
+        const SizedBox(height: 4),
+        Text('Home screen background, text, and teal accent.', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+        const SizedBox(height: 14),
+        Column(children: [
+          _ColorTile('Dashboard Background', _dashBg,   (c) => setState(() => _dashBg = c)),
+          _ColorTile('Dashboard Text',       _dashText, (c) => setState(() => _dashText = c)),
+          _ColorTile('Dashboard Teal',       _dashTeal, (c) => setState(() => _dashTeal = c)),
+        ]),
+        const SizedBox(height: 28),
+
         // Live preview strip
         Container(
           padding: const EdgeInsets.all(20),
@@ -944,22 +1016,25 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                             const SizedBox(height: 12),
                             _Field('Sponsor', sponsorCtrl),
                             const SizedBox(height: 12),
-                            // Description (multi-line)
-                            Text('Description', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: _kSub)),
-                            const SizedBox(height: 6),
-                            TextField(
-                              controller: descCtrl,
-                              maxLines: 4,
-                              style: GoogleFonts.outfit(fontSize: 14, color: _kText),
-                              decoration: InputDecoration(
-                                hintText: 'Describe the cause, impact, and how donations help...',
-                                hintStyle: GoogleFonts.outfit(fontSize: 13, color: _kSub.withValues(alpha: 0.5)),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: _kBorder)),
-                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: _kBorder)),
-                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: _kAccent)),
-                                contentPadding: const EdgeInsets.all(12),
+                            // Description (multi-line, same style as _Field)
+                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text('Description', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: _kText)),
+                              const SizedBox(height: 6),
+                              TextField(
+                                controller: descCtrl,
+                                maxLines: 3,
+                                minLines: 2,
+                                style: GoogleFonts.outfit(fontSize: 14),
+                                decoration: InputDecoration(
+                                  hintText: 'Describe the cause, impact, and how donations help...',
+                                  hintStyle: GoogleFonts.outfit(fontSize: 13, color: _kSub.withValues(alpha: 0.5)),
+                                  filled: true, fillColor: _kWhite, isDense: true,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: _kBorder)),
+                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: _kAccent, width: 2)),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                ),
                               ),
-                            ),
+                            ]),
                             const SizedBox(height: 12),
                             _Field('Target Points', targetCtrl, numeric: true),
                             const SizedBox(height: 12),
@@ -1159,19 +1234,26 @@ class _ProjectsSectionState extends State<_ProjectsSection> {
                                   double.tryParse(usdCtrl.text) ?? 0,
                               if (localDpUrl != null) 'dp_url': localDpUrl,
                             };
-                            if (projectId == null) {
-                              await _sb
-                                  .from('community_projects')
-                                  .insert(payload);
-                            } else {
-                              await _sb
-                                  .from('community_projects')
-                                  .update(payload)
-                                  .eq('id', projectId!);
+                            try {
+                              if (projectId == null) {
+                                await _sb
+                                    .from('community_projects')
+                                    .insert(payload);
+                              } else {
+                                await _sb
+                                    .from('community_projects')
+                                    .update(payload)
+                                    .eq('id', projectId!);
+                              }
+                              if (!context.mounted) return;
+                              Navigator.pop(context);
+                              _load();
+                            } catch (e) {
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Save failed: $e'), backgroundColor: _kDanger),
+                              );
                             }
-                            if (!context.mounted) return;
-                            Navigator.pop(context);
-                            _load();
                           },
                           child: const Text('Save',
                               style: TextStyle(color: _kWhite)),
@@ -1952,4 +2034,98 @@ class _SaveButton extends StatelessWidget {
               fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
     ),
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION 9 — Azkar Categories Visibility
+// ─────────────────────────────────────────────────────────────────────────────
+class _AzkarCategoriesSection extends StatefulWidget {
+  const _AzkarCategoriesSection();
+  @override State<_AzkarCategoriesSection> createState() => _AzkarCategoriesSectionState();
+}
+
+class _AzkarCategoriesSectionState extends State<_AzkarCategoriesSection> {
+  final _sb = Supabase.instance.client;
+  List<Map<String, dynamic>> _categories = [];
+  bool _loading = true;
+
+  @override
+  void initState() { super.initState(); _load(); }
+
+  Future<void> _load() async {
+    try {
+      final res = await _sb.from('azkar_categories').select().order('sort_order');
+      _categories = List<Map<String, dynamic>>.from(res);
+    } catch (_) {}
+    if (mounted) setState(() => _loading = false);
+  }
+
+  Future<void> _toggleVisibility(String id, bool currentVisible) async {
+    try {
+      await _sb.from('azkar_categories').update({'is_visible': !currentVisible}).eq('id', id);
+      _load();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed: $e'), backgroundColor: _kDanger),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _SectionHeader('Azkar Categories', Icons.category_rounded,
+            'Show or hide categories in the Dua & Azkar screen. Hidden categories won\'t appear to users.'),
+        const SizedBox(height: 16),
+        Expanded(
+          child: _loading
+            ? const Center(child: CircularProgressIndicator(color: _kAccent))
+            : ListView.separated(
+                itemCount: _categories.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, color: _kBorder),
+                itemBuilder: (_, idx) {
+                  final c = _categories[idx];
+                  final isVisible = c['is_visible'] != false;
+                  final label = c['label'] as String? ?? c['id'] as String;
+                  final iconName = c['icon_name'] as String? ?? 'spa_rounded';
+                  return ListTile(
+                    leading: Container(
+                      width: 40, height: 40,
+                      decoration: BoxDecoration(
+                        color: isVisible ? _kAccent.withValues(alpha: 0.1) : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.spa_rounded,
+                        size: 20,
+                        color: isVisible ? _kAccent : Colors.grey.shade400,
+                      ),
+                    ),
+                    title: Text(label,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: isVisible ? _kText : _kSub,
+                        )),
+                    subtitle: Text(
+                      'ID: ${c['id']}  •  Order: ${c['sort_order'] ?? '-'}',
+                      style: GoogleFonts.outfit(fontSize: 11, color: _kSub),
+                    ),
+                    trailing: Switch(
+                      value: isVisible,
+                      onChanged: (_) => _toggleVisibility(c['id'] as String, isVisible),
+                      activeColor: _kAccent,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  );
+                },
+              ),
+        ),
+      ]),
+    );
+  }
 }

@@ -26,7 +26,6 @@ class QfAuthService {
           _redirectUri,
           discoveryUrl: '${Env.qfAuthBase}/.well-known/openid-configuration',
           scopes: ['openid', 'offline_access'], 
-          promptValues: const ['login'], 
         ),
       );
 

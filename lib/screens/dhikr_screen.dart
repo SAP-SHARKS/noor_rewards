@@ -2540,33 +2540,7 @@ String _pickIllustration(String rawId) {
 /// Returns the top gradient color of each illustration to fill behind the app bar.
 Color _illustrationTopColor(String azkarId, bool isDark) {
   if (isDark) return const Color(0xFF121212);
-  const colors = {
-    'shield':     Color(0xFF0A1628),
-    'three_quls': Color(0xFF0D0A1F),
-    'gates':      Color(0xFF1A0E2E),
-    'chains':     Color(0xFF0A0C12),
-    'six_wards':  Color(0xFF0A1A18),
-    'repelling':  Color(0xFF0F0A14),
-    'heart':      Color(0xFF120818),
-    'vessel':     Color(0xFF0E1608),
-    'dawn':       Color(0xFF0A0A1A),
-    'ripples':    Color(0xFF08101E),
-    'path':       Color(0xFF0A0E18),
-    'blessings':  Color(0xFF0C0818),
-    'flame':      Color(0xFF1A0A08),
-    'cycle':      Color(0xFF0A0E1A),
-    'vessels':    Color(0xFF081218),
-    'pillars':    Color(0xFF0A0814),
-    'hand':       Color(0xFF0C1008),
-    'invincible': Color(0xFF08101A),
-    'ocean':      Color(0xFF061218),
-    'scales':     Color(0xFF0C0A14),
-    'glory':      Color(0xFF14100A),
-    'salawat':    Color(0xFF0A1210),
-    'doors':      Color(0xFF0E0A18),
-    'cosmic':     Color(0xFF080A14),
-  };
-  return colors[_pickIllustration(azkarId)] ?? const Color(0xFF081623);
+  return const Color(0xFFF0F5F2);
 }
 
 // =============================================================================
@@ -2811,6 +2785,24 @@ class _ShootingStar {
   }
 }
 
+/// Shared light background for all illustration painters.
+void _paintLightBg(Canvas canvas, double w, double h, {double progress = 0}) {
+  final warmth = progress * 0.08;
+  canvas.drawRect(
+    Rect.fromLTWH(0, 0, w, h),
+    Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color.fromRGBO((240 - warmth * 15).round(), (245 - warmth * 10).round(), (242 - warmth * 8).round(), 1.0),
+          Color.fromRGBO((235 - warmth * 20).round(), (240 - warmth * 12).round(), (238 - warmth * 10).round(), 1.0),
+          Color.fromRGBO((228 - warmth * 25).round(), (234 - warmth * 15).round(), (230 - warmth * 12).round(), 1.0),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, w, h)),
+  );
+}
+
 class _NoorTreePainter extends CustomPainter {
   final double progress;
   final double sway;
@@ -2848,19 +2840,7 @@ class _NoorTreePainter extends CustomPainter {
 
     // 1. Softer gradient — lighter tones to reduce eye strain
     final warmth = progress * 0.3;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((18 + warmth * 25).round(), (42 + warmth * 20).round(), (55 + warmth * 15).round(), 1.0),
-            Color.fromRGBO((22 + warmth * 30).round(), (58 + warmth * 25).round(), (68 + warmth * 20).round(), 1.0),
-            Color.fromRGBO((26 + warmth * 35).round(), (72 + warmth * 30).round(), (62 + warmth * 25).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -3505,15 +3485,7 @@ class _ProtectionShieldPainter extends CustomPainter {
     final cy = h * 0.48;
 
     // 1. Night-sky gradient background (deeper blue-purple for protection theme)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF0A1628), Color(0xFF0F2744), Color(0xFF132D46)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -4182,15 +4154,7 @@ class _ThreeQulsPainter extends CustomPainter {
     final cy = h * 0.45;
 
     // 1. Deep night-sky background (purple-tinted for Quls theme)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF0D0A1F), Color(0xFF15102E), Color(0xFF1A1340)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -4704,15 +4668,7 @@ class _GatesOfJannahPainter extends CustomPainter {
     final cx = w / 2;
 
     // 1. Background — warm dark gradient (paradise hues)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF1A0E2E), Color(0xFF1F1435), Color(0xFF251A3A)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -5304,19 +5260,7 @@ class _BreakingChainsPainter extends CustomPainter {
 
     // 1. Background — dark steel/charcoal (oppressive → freeing)
     final bgBrightness = progress * 0.15;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((10 + bgBrightness * 40).round(), (12 + bgBrightness * 35).round(), (18 + bgBrightness * 30).round(), 1.0),
-            Color.fromRGBO((15 + bgBrightness * 50).round(), (18 + bgBrightness * 45).round(), (25 + bgBrightness * 40).round(), 1.0),
-            Color.fromRGBO((18 + bgBrightness * 60).round(), (22 + bgBrightness * 55).round(), (30 + bgBrightness * 50).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars (more visible as chains break)
     const starPos = [
@@ -5804,15 +5748,7 @@ class _SixWardsPainter extends CustomPainter {
     final cy = h * 0.42;
 
     // 1. Background — deep teal-dark (wellbeing/healing theme)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF0A1A18), Color(0xFF0E2A25), Color(0xFF12362E)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -6226,19 +6162,7 @@ class _RepellingLightPainter extends CustomPainter {
 
     // 1. Background — very dark purple/black (ominous → purified)
     final purify = progress * 0.20;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((15 + purify * 15).round(), (10 + purify * 20).round(), (20 + purify * 25).round(), 1.0),
-            Color.fromRGBO((18 + purify * 20).round(), (14 + purify * 25).round(), (28 + purify * 30).round(), 1.0),
-            Color.fromRGBO((22 + purify * 25).round(), (18 + purify * 30).round(), (35 + purify * 35).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars — more visible as evils are repelled
     const starPos = [
@@ -6634,15 +6558,7 @@ class _CradledHeartPainter extends CustomPainter {
     final cy = h * 0.42;
 
     // 1. Background — deep warm purple (mercy/trust theme)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF120818), Color(0xFF1A1028), Color(0xFF201435)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -7103,15 +7019,7 @@ class _OverflowingVesselPainter extends CustomPainter {
     final vesselCy = h * 0.52;
 
     // 1. Background — deep earthy green-gold (gratitude/growth)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF0E1608), Color(0xFF162210), Color(0xFF1C2E14)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -7504,21 +7412,7 @@ class _RisingDawnPainter extends CustomPainter {
 
     // 1. Sky gradient — transitions from night to dawn with progress
     final dawn = progress;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((10 + dawn * 15).round(), (10 + dawn * 12).round(), (26 + dawn * 20).round(), 1.0),
-            Color.fromRGBO((14 + dawn * 50).round(), (14 + dawn * 30).round(), (30 + dawn * 25).round(), 1.0),
-            Color.fromRGBO((20 + dawn * 120).round(), (20 + dawn * 65).round(), (35 + dawn * 35).round(), 1.0),
-            Color.fromRGBO((25 + dawn * 180).round().clamp(0, 255), (25 + dawn * 100).round().clamp(0, 255), (38 + dawn * 50).round().clamp(0, 255), 1.0),
-          ],
-          stops: const [0.0, 0.35, 0.65, 1.0],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars — fade out as dawn brightens
     const starPos = [
@@ -7853,15 +7747,7 @@ class _PraiseRipplesPainter extends CustomPainter {
     final cy = h * 0.42;
 
     // 1. Background — deep navy blue (serene praise)
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF08101E), Color(0xFF0C1A30), Color(0xFF102440)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -8161,19 +8047,7 @@ class _FiveBlessingsPainter extends CustomPainter {
     final cx = w / 2;
 
     // 1. Background — deep celestial gradient
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO(12, 8, 24, 1.0),
-            Color.fromRGBO(14, 12, 28, 1.0),
-            Color.fromRGBO(10, 16, 24, 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -8515,19 +8389,7 @@ class _GlowingPathPainter extends CustomPainter {
 
     // 1. Background — dark to warm gradient (journey forward)
     final warmth = progress * 0.25;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((10 + warmth * 30).round(), (14 + warmth * 20).round(), (24 + warmth * 15).round(), 1.0),
-            Color.fromRGBO((12 + warmth * 40).round(), (18 + warmth * 28).round(), (30 + warmth * 20).round(), 1.0),
-            Color.fromRGBO((15 + warmth * 50).round(), (22 + warmth * 35).round(), (28 + warmth * 25).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -9115,28 +8977,7 @@ class _FreedomFlamePainter extends CustomPainter {
     // 1. Background — dark ember to cool serenity as progress grows
     final warmth = (1.0 - progress).clamp(0.0, 1.0);
     final coolness = progress;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO(
-              (26 * warmth + 8 * coolness).round(),
-              (10 * warmth + 14 * coolness).round(),
-              (8 * warmth + 22 * coolness).round(), 1.0),
-            Color.fromRGBO(
-              (30 * warmth + 10 * coolness).round(),
-              (12 * warmth + 18 * coolness).round(),
-              (10 * warmth + 28 * coolness).round(), 1.0),
-            Color.fromRGBO(
-              (22 * warmth + 8 * coolness).round(),
-              (8 * warmth + 16 * coolness).round(),
-              (6 * warmth + 24 * coolness).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars — become visible as flames recede
     const starPos = [
@@ -9693,19 +9534,7 @@ class _CycleOfReturnPainter extends CustomPainter {
 
     // 1. Background — night sky transitioning to dawn warmth
     final warmth = progress * 0.2;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((10 + warmth * 40).round(), (14 + warmth * 20).round(), (26 + warmth * 10).round(), 1.0),
-            Color.fromRGBO((12 + warmth * 50).round(), (16 + warmth * 30).round(), (30 + warmth * 15).round(), 1.0),
-            Color.fromRGBO((8 + warmth * 60).round(), (12 + warmth * 35).round(), (24 + warmth * 20).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -10218,19 +10047,7 @@ class _ThreeVesselsPainter extends CustomPainter {
 
     // 1. Background — deep healing tones
     final warmth = progress * 0.15;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((8 + warmth * 20).round(), (18 + warmth * 30).round(), (24 + warmth * 15).round(), 1.0),
-            Color.fromRGBO((10 + warmth * 25).round(), (20 + warmth * 35).round(), (28 + warmth * 20).round(), 1.0),
-            Color.fromRGBO((6 + warmth * 15).round(), (14 + warmth * 25).round(), (20 + warmth * 15).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -10730,19 +10547,7 @@ class _SevenPillarsPainter extends CustomPainter {
 
     // 1. Background — deep royal night
     final depth = progress * 0.12;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((10 + depth * 30).round(), (8 + depth * 15).round(), (20 + depth * 25).round(), 1.0),
-            Color.fromRGBO((14 + depth * 35).round(), (10 + depth * 20).round(), (26 + depth * 30).round(), 1.0),
-            Color.fromRGBO((8 + depth * 20).round(), (6 + depth * 12).round(), (18 + depth * 22).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -11240,19 +11045,7 @@ class _GuidingHandPainter extends CustomPainter {
 
     // 1. Background — warm garden-like tones
     final warmth = progress * 0.15;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((12 + warmth * 25).round(), (16 + warmth * 35).round(), (8 + warmth * 15).round(), 1.0),
-            Color.fromRGBO((14 + warmth * 30).round(), (20 + warmth * 40).round(), (10 + warmth * 20).round(), 1.0),
-            Color.fromRGBO((10 + warmth * 20).round(), (14 + warmth * 30).round(), (8 + warmth * 12).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -11804,19 +11597,7 @@ class _InvincibleNamePainter extends CustomPainter {
 
     // 1. Background — deep celestial blue
     final depth = progress * 0.12;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((8 + depth * 20).round(), (16 + depth * 25).round(), (26 + depth * 30).round(), 1.0),
-            Color.fromRGBO((10 + depth * 25).round(), (18 + depth * 30).round(), (30 + depth * 35).round(), 1.0),
-            Color.fromRGBO((6 + depth * 15).round(), (12 + depth * 20).round(), (22 + depth * 25).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -12295,19 +12076,7 @@ class _OceanOfForgivenessPainter extends CustomPainter {
 
     // 1. Background — deep ocean dark
     final depth = progress * 0.10;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((6 + depth * 15).round(), (18 + depth * 30).round(), (24 + depth * 20).round(), 1.0),
-            Color.fromRGBO((4 + depth * 10).round(), (14 + depth * 25).round(), (22 + depth * 18).round(), 1.0),
-            Color.fromRGBO((3 + depth * 8).round(), (10 + depth * 20).round(), (18 + depth * 15).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars (above ocean horizon)
     const starPos = [
@@ -12763,19 +12532,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
 
     // 1. Background — regal dark violet
     final depth = progress * 0.12;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO((12 + depth * 20).round(), (10 + depth * 15).round(), (20 + depth * 25).round(), 1.0),
-            Color.fromRGBO((14 + depth * 25).round(), (12 + depth * 18).round(), (24 + depth * 30).round(), 1.0),
-            Color.fromRGBO((10 + depth * 15).round(), (8 + depth * 12).round(), (18 + depth * 20).round(), 1.0),
-          ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // 2. Stars
     const starPos = [
@@ -13153,12 +12910,7 @@ class _SunriseGloryPainter extends CustomPainter {
 
     // Background — warm dawn
     final warmth = progress * 0.18;
-    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()
-      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-        Color.fromRGBO((20 + warmth * 60).round(), (16 + warmth * 30).round(), (10 + warmth * 15).round(), 1.0),
-        Color.fromRGBO((18 + warmth * 50).round(), (14 + warmth * 25).round(), (8 + warmth * 12).round(), 1.0),
-        Color.fromRGBO((14 + warmth * 40).round(), (10 + warmth * 20).round(), (6 + warmth * 10).round(), 1.0),
-      ]).createShader(Rect.fromLTWH(0, 0, w, h)));
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // Stars fade as sun rises
     const starPos = [(0.10, 0.06), (0.25, 0.14), (0.42, 0.05), (0.58, 0.10), (0.74, 0.07), (0.88, 0.13), (0.35, 0.20), (0.65, 0.18)];
@@ -13333,11 +13085,7 @@ class _TenSalawatPainter extends CustomPainter {
 
     // Background — serene green-tinted night
     final depth = progress * 0.12;
-    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-      Color.fromRGBO((10 + depth * 15).round(), (18 + depth * 30).round(), (16 + depth * 20).round(), 1.0),
-      Color.fromRGBO((8 + depth * 12).round(), (16 + depth * 25).round(), (14 + depth * 18).round(), 1.0),
-      Color.fromRGBO((6 + depth * 10).round(), (12 + depth * 20).round(), (10 + depth * 15).round(), 1.0),
-    ]).createShader(Rect.fromLTWH(0, 0, w, h)));
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // Stars
     const starPos = [(0.08, 0.06), (0.22, 0.14), (0.40, 0.04), (0.56, 0.12), (0.72, 0.07), (0.88, 0.15), (0.32, 0.20), (0.64, 0.18), (0.16, 0.22), (0.78, 0.10)];
@@ -13469,11 +13217,7 @@ class _DoorsOfMercyPainter extends CustomPainter {
 
     // Background — deep purple/violet
     final depth = progress * 0.12;
-    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-      Color.fromRGBO((14 + depth * 20).round(), (10 + depth * 15).round(), (24 + depth * 30).round(), 1.0),
-      Color.fromRGBO((16 + depth * 25).round(), (12 + depth * 18).round(), (28 + depth * 35).round(), 1.0),
-      Color.fromRGBO((10 + depth * 15).round(), (8 + depth * 12).round(), (20 + depth * 25).round(), 1.0),
-    ]).createShader(Rect.fromLTWH(0, 0, w, h)));
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // Stars
     const starPos = [(0.10, 0.06), (0.24, 0.14), (0.42, 0.05), (0.58, 0.11), (0.72, 0.07), (0.88, 0.14), (0.34, 0.20), (0.66, 0.18), (0.16, 0.22)];
@@ -13621,9 +13365,7 @@ class _CosmicWeightPainter extends CustomPainter {
     final w = size.width, h = size.height, cx = w / 2, cy = h * 0.42;
 
     // Background — deep cosmic void
-    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-      const Color(0xFF080A14), const Color(0xFF0A0C18), const Color(0xFF060810),
-    ]).createShader(Rect.fromLTWH(0, 0, w, h)));
+    _paintLightBg(canvas, w, h, progress: progress);
 
     // Dense star field — cosmic scale
     for (int i = 0; i < 25; i++) {

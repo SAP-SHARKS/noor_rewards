@@ -13,28 +13,31 @@ import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
 import '../services/quran_api_service.dart';   // Quran Foundation authenticated API
+import '../models/app_config.dart';
 
+/// Shorthand to get the live AppConfig.
+AppConfig get _cfg => SettingsService.instance.config;
 
-// ── Palette ────────────────────────────────────────────────────────────────────
-const _kBg    = Color(0xFFEDF7F4); // Light mint (gradient start)
+// ── Palette (reads from admin-controlled AppConfig) ────────────────────────────
 const _kWhite = Color(0xFFFFFFFF);
-const _kText  = Color(0xFF1C1C1E);
 const _kSub   = Color(0xFF8E8E93);
-const _kTeal  = Color(0xFF2BAE99);
-const _kGold  = Color(0xFFFFAA00);
+Color get _kBg   => _cfg.quranBg;
+Color get _kText => _cfg.quranTextColor;
+Color get _kTeal => _cfg.quranAccent;
+Color get _kGold => _cfg.quranGold;
 
 // Screen-level gradient for the Quran reading background
 // Deep teal-mint top → cool sky-blue mid → soft pearl bottom
 // More contrast = noticeably visible gradient on the screen
-const _kBgGradient = LinearGradient(
+LinearGradient get _kBgGradient => LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-    Color(0xFFC8EDE6), // rich teal-mint
-    Color(0xFFD6EEF7), // cool sky blue
-    Color(0xFFEFF8F4), // soft pale green-white
+    _cfg.quranBg.withValues(alpha: 0.85),
+    const Color(0xFFD6EEF7),
+    const Color(0xFFEFF8F4),
   ],
-  stops: [0.0, 0.5, 1.0],
+  stops: const [0.0, 0.5, 1.0],
 );
 
 // ── All 114 surah lengths (1-indexed, index 0 is unused) ──────────────────────
@@ -1042,7 +1045,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         color: isCurrent ? _kTeal : _kText)),
                 subtitle: Text('${_surahLengths[n]} ayahs',
                     style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-                trailing: isCurrent ? const Icon(Icons.check_circle_rounded, color: _kTeal) : null,
+                trailing: isCurrent ? Icon(Icons.check_circle_rounded, color: _kTeal) : null,
               );
             },
           )),
@@ -2164,7 +2167,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       body: _darkMode
           ? _buildBody(bg, cardBg, barBg, txt, sub)
           : DecoratedBox(
-              decoration: const BoxDecoration(gradient: _kBgGradient),
+              decoration: BoxDecoration(gradient: _kBgGradient),
               child: _buildBody(bg, cardBg, barBg, txt, sub),
             ),
     );
@@ -2392,8 +2395,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   Divider(height: 1, color: _darkMode ? Colors.white12 : Colors.grey.shade100),
                   const SizedBox(height: 20),
                   if (_loading)
-                    const Center(child: Padding(
-                      padding: EdgeInsets.all(32),
+                    Center(child: Padding(
+                      padding: const EdgeInsets.all(32),
                       child: CircularProgressIndicator(
                           color: _kTeal, strokeWidth: 2),
                     ))
