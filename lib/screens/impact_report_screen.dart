@@ -30,7 +30,8 @@ class _C {
 
 class ImpactReportScreen extends StatefulWidget {
   final bool isTab;
-  const ImpactReportScreen({super.key, this.isTab = false});
+  final int visitCount;
+  const ImpactReportScreen({super.key, this.isTab = false, this.visitCount = 0});
   @override State<ImpactReportScreen> createState() => _ImpactReportScreenState();
 }
 
@@ -127,10 +128,13 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     return 'Seeker';
   }
 
-  // â”€â”€ Derived spiritual holdings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  int get _treesPlanted   => math.max(1, _noorPoints ~/ 100);
-  int get _totalDhikr     => (_snap.dhikr * 33) + (_snap.quran * 20) + (_snap.login * 10);
-  int get _slavesFreed    => math.max(0, _totalXp ~/ 1000);
+  // ── Derived spiritual holdings ─────────────────────────────────────────────
+  int get _hasanaat       => _totalXp * 15 + _noorPoints * 5;
+  int get _treesPlanted   => (_snap.dhikr * 25) + (_snap.login * 2);
+  int get _sinsWiped      => (_snap.dhikr * 50) + (_snap.login * 5);
+  int get _treasures      => (_snap.dhikr * 5) + (_snap.quran * 2);
+  int get _slavesFreed    => _snap.dhikr * 2;
+  int get _palacesBuilt   => _snap.quran > 0 ? math.max(1, _snap.quran ~/ 3) : 0;
   int get _bestStreak     => [_snap.bestLogin, _snap.bestDhikr, _snap.bestQuran]
                                 .reduce((a, b) => a > b ? a : b);
 
@@ -181,7 +185,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     );
   }
 
-  // â”€â”€ Hero / Balance Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Hero / Balance Card ────────────────────────────────────────────────────
   Widget _buildHero() => SliverToBoxAdapter(
     child: Container(
       decoration: const BoxDecoration(
@@ -328,16 +332,16 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ),
   );
 
-  // â”€â”€ Mini stat pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  Widget _buildMiniStats() => Row(children: [
-    Expanded(child: _MiniStat(NoorIcon.tree(size:20), _fmt(_treesPlanted), 'TREES', const Color(0xFF2D7A45))),
+  // ── Mini stat pills ────────────────────────────────────────────────────────
+  Widget _buildMiniStats() => Row(key: ValueKey(widget.visitCount), children: [
+    Expanded(child: _MiniStat(NoorIcon.star(size:20), _hasanaat, 'DEEDS', _C.gold)),
     const SizedBox(width: 10),
-    Expanded(child: _MiniStat(NoorIcon.beads(size:20), _fmt(_totalDhikr), 'DHIKR', _C.teal)),
+    Expanded(child: _MiniStat(NoorIcon.tree(size:20), _treesPlanted, 'TREES', const Color(0xFF2D7A45))),
     const SizedBox(width: 10),
-    Expanded(child: _MiniStat(NoorIcon.shield(size:20), _fmt(_slavesFreed), 'PROTECTED', _C.purple)),
+    Expanded(child: _MiniStat(NoorIcon.drop(size:20), _sinsWiped, 'FORGIVEN', _C.teal)),
   ]);
 
-  // â”€â”€ Your Holdings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Your Holdings ──────────────────────────────────────────────────────────
   Widget _buildHoldingsSection() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -345,7 +349,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         Text('Your Holdings',
             style: GoogleFonts.outfit(
                 fontSize: 20, fontWeight: FontWeight.w900, color: _C.text)),
-        Text('See All â†’',
+        Text('See All →',
             style: GoogleFonts.outfit(
                 fontSize: 13, fontWeight: FontWeight.w700, color: _C.teal)),
       ]),
@@ -355,6 +359,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   );
 
   Widget _buildHoldingsCard() => Container(
+    key: ValueKey(widget.visitCount),
     decoration: BoxDecoration(
       color: _C.card,
       borderRadius: BorderRadius.circular(20),
@@ -365,26 +370,65 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ),
     child: Column(children: [
       _HoldingRow(
-        icon: NoorIcon.tree(size:24),
-        color: const Color(0xFF2D7A45),
-        bgColor: const Color(0xFFE8F5EC),
-        title: 'Trees in Jannah',
-        subtitle: 'Planted in Paradise',
-        value: _fmt(_treesPlanted),
-        change: '+${math.max(0, _todayPoints ~/ 100)} today',
+        icon: NoorIcon.sparkles(size:24),
+        color: _C.gold,
+        bgColor: const Color(0xFFFDF6E3),
+        title: 'Hasanaat Earned',
+        subtitle: 'Recorded in your Book of Deeds',
+        value: _hasanaat,
+        change: '+${_todayPoints * 15} today',
         positive: true,
         isFirst: true,
         isLast: false,
       ),
       const Divider(height: 1, indent: 70, endIndent: 20),
       _HoldingRow(
-        icon: NoorIcon.beads(size:24),
+        icon: NoorIcon.tree(size:24),
+        color: const Color(0xFF2D7A45),
+        bgColor: const Color(0xFFE8F5EC),
+        title: 'Trees in Jannah',
+        subtitle: 'From SubhanAllah & Tasbih',
+        value: _treesPlanted,
+        change: '+${_snap.dhikr > 0 ? 25 : 0} today',
+        positive: true,
+        isFirst: false,
+        isLast: false,
+      ),
+      const Divider(height: 1, indent: 70, endIndent: 20),
+      _HoldingRow(
+        icon: NoorIcon.drop(size:24),
         color: _C.teal,
         bgColor: const Color(0xFFE0F7F4),
-        title: 'Total Dhikr',
-        subtitle: 'Remembrances of Allah',
-        value: _fmt(_totalDhikr),
-        change: '+${_snap.dhikr > 0 ? _snap.dhikr * 33 : 0} today',
+        title: 'Sins Forgiven',
+        subtitle: 'Like the foam of the sea',
+        value: _sinsWiped,
+        change: '+${_snap.dhikr > 0 ? 50 : 0} today',
+        positive: true,
+        isFirst: false,
+        isLast: false,
+      ),
+      const Divider(height: 1, indent: 70, endIndent: 20),
+      _HoldingRow(
+        icon: NoorIcon.mosque(size:24),
+        color: const Color(0xFF4A90E2),
+        bgColor: const Color(0xFFEAF2F8),
+        title: 'Palaces Built',
+        subtitle: 'Surah Ikhlas & Sunnahs',
+        value: _palacesBuilt,
+        change: '+${_snap.quran ~/ 3} total',
+        positive: true,
+        isFirst: false,
+        isLast: false,
+      ),
+      const Divider(height: 1, indent: 70, endIndent: 20),
+      _HoldingRow(
+        icon: NoorIcon.diamond(size:24),
+        color: const Color(0xFF9B59B6),
+        bgColor: const Color(0xFFF5EEF8),
+        title: 'Treasures of Jannah',
+        subtitle: 'La Hawla Wa La Quwwata',
+        value: _treasures,
+        change: '+${_snap.dhikr > 0 ? 5 : 0} today',
         positive: true,
         isFirst: false,
         isLast: false,
@@ -396,8 +440,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         bgColor: const Color(0xFFEEEAF8),
         title: 'Slaves Freed',
         subtitle: 'Equivalent reward earned',
-        value: _fmt(_slavesFreed),
-        change: '+${_totalXp ~/ 2000} this week',
+        value: _slavesFreed,
+        change: '+${_snap.dhikr > 0 ? 2 : 0} today',
         positive: true,
         isFirst: false,
         isLast: false,
@@ -405,11 +449,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       const Divider(height: 1, indent: 70, endIndent: 20),
       _HoldingRow(
         icon: NoorIcon.hands(size: 24),
-        color: _C.gold,
-        bgColor: const Color(0xFFFDF6E3),
+        color: const Color(0xFFE67E22),
+        bgColor: const Color(0xFFFEF5E7),
         title: 'Sadaqah Given',
         subtitle: 'Points donated to community',
-        value: _fmt(_totalDonated),
+        value: _totalDonated,
         change: 'All time',
         positive: true,
         isFirst: false,
@@ -418,13 +462,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ]),
   );
 
-  // â”€â”€ Activity card (session time) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Activity card (session time) ───────────────────────────────────────────
   Widget _buildActivityCard() {
     final hours = _sessionSec ~/ 3600;
     final mins  = (_sessionSec % 3600) ~/ 60;
-    // Mock weekly bars using streak history length as proxy
     final days  = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    // Use week points as basis for the current bar, rest are illustrative
     final weekRatio = math.min(1.0, _weekPoints / math.max(1, 700));
     final bars = [0.3, 0.5, weekRatio * 0.7, 0.8, 1.0, weekRatio, 0.4];
 
@@ -502,9 +544,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       Row(children: [
         Expanded(child: _DarkStat('Total Points', _fmt(_noorPoints), NoorIcon.star(size:16))),
         Container(height: 44, width: 1, color: Colors.white12),
-        Expanded(child: _DarkStat('Total XP', _fmt(_totalXp), NoorIcon.lightning(size:16))),
-        Container(height: 44, width: 1, color: Colors.white12),
         Expanded(child: _DarkStat('Level', '$_level', NoorIcon.medal(size:16))),
+        Container(height: 44, width: 1, color: Colors.white12),
+        Expanded(child: _DarkStat('Title', _levelTitle, NoorIcon.crown(size:16))),
       ]),
       const SizedBox(height: 16),
       Container(
@@ -906,7 +948,8 @@ class _HeroBadge extends StatelessWidget {
 
 class _MiniStat extends StatelessWidget {
   final Widget icon;
-  final String value, label;
+  final String label;
+  final int value;
   final Color color;
   const _MiniStat(this.icon, this.value, this.label, this.color);
   @override
@@ -922,7 +965,7 @@ class _MiniStat extends StatelessWidget {
     child: Column(children: [
       icon,
       const SizedBox(height: 6),
-      Text(value,
+      _AnimatedNumText(value,
           style: GoogleFonts.outfit(
               fontSize: 20, fontWeight: FontWeight.w900, color: color)),
       Text(label,
@@ -933,9 +976,34 @@ class _MiniStat extends StatelessWidget {
   );
 }
 
+class _AnimatedNumText extends StatelessWidget {
+  final int value;
+  final TextStyle style;
+  const _AnimatedNumText(this.value, {required this.style});
+
+  static String fmt(num n) => n >= 1000000
+      ? '${(n / 1000000).toStringAsFixed(1)}M'
+      : n >= 1000
+          ? '${(n / 1000).toStringAsFixed(1)}k'
+          : n.toStringAsFixed(0);
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 2000),
+      curve: Curves.easeOutExpo,
+      tween: Tween<double>(begin: 0, end: value.toDouble()),
+      builder: (context, val, child) {
+        return Text(fmt(val), style: style);
+      },
+    );
+  }
+}
+
 class _HoldingRow extends StatelessWidget {
   final Widget icon;
-  final String title, subtitle, value, change;
+  final String title, subtitle, change;
+  final int value;
   final Color color, bgColor;
   final bool positive, isFirst, isLast;
   const _HoldingRow({
@@ -962,7 +1030,7 @@ class _HoldingRow extends StatelessWidget {
             style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
       ])),
       Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        Text(value,
+        _AnimatedNumText(value,
             style: GoogleFonts.outfit(
                 fontSize: 16, fontWeight: FontWeight.w900, color: _C.text)),
         Text(change,
@@ -976,16 +1044,20 @@ class _HoldingRow extends StatelessWidget {
 
 
 class _DarkStat extends StatelessWidget {
-  final String label, value;
+  final String label;
+  final dynamic value;
   final Widget icon;
   const _DarkStat(this.label, this.value, this.icon);
   @override
   Widget build(BuildContext context) => Column(children: [
     icon,
     const SizedBox(height: 4),
-    Text(value,
-        style: GoogleFonts.outfit(
-            fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white)),
+    value is int 
+      ? _AnimatedNumText(value, style: GoogleFonts.outfit(
+            fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white))
+      : Text(value.toString(),
+            style: GoogleFonts.outfit(
+                fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white)),
     Text(label,
         style: GoogleFonts.outfit(fontSize: 10, color: Colors.white38),
         textAlign: TextAlign.center),

@@ -1,5 +1,5 @@
 // lib/screens/level_screen.dart
-// Full XP / Levels / Badges / Challenges / History screen
+// Full pts / Levels / Badges / Challenges / History screen
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -229,7 +229,7 @@ class _ProgressTabState extends State<_ProgressTab> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
         // ═══════════════════════════════════════════════════════════════════
-        // SPLIT HERO — Level (left) + XP Period (right) in one premium card
+        // SPLIT HERO — Level (left) + pts Period (right) in one premium card
         // ═══════════════════════════════════════════════════════════════════
         Container(
           width: double.infinity,
@@ -282,7 +282,7 @@ class _ProgressTabState extends State<_ProgressTab> {
               ),
             ),
 
-            // ── Split: Level | XP ─────────────────────────────────────────
+            // ── Split: Level | pts ─────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
               child: IntrinsicHeight(
@@ -309,7 +309,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                               fontSize: 11, fontWeight: FontWeight.w600,
                               color: Colors.white60)),
                       const SizedBox(height: 14),
-                      // XP progress bar
+                      // pts progress bar
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: TweenAnimationBuilder<double>(
@@ -324,7 +324,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text('$toNext XP to Level ${widget.level + 1}',
+                      Text('$toNext pts to Level ${widget.level + 1}',
                           style: GoogleFonts.outfit(
                               fontSize: 10, color: Colors.white60)),
                     ]),
@@ -337,7 +337,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                     color: Colors.white.withValues(alpha: 0.18),
                   ),
 
-                  // Right half — Period XP ──────────────────────────────────
+                  // Right half — Period pts ──────────────────────────────────
                   Flexible(
                     flex: 2,
                     child: _histLoading
@@ -352,7 +352,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                             tween: IntTween(begin: 0, end: _totalXp),
                             duration: const Duration(milliseconds: 900),
                             curve: Curves.easeOut,
-                            builder: (_, v, __) => Text('$v XP',
+                            builder: (_, v, __) => Text('$v pts',
                                 style: GoogleFonts.rajdhani(
                                     fontSize: 32, fontWeight: FontWeight.w900,
                                     color: Colors.white, height: 1.1)),
@@ -455,7 +455,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                       style: GoogleFonts.outfit(
                           fontSize: 15, fontWeight: FontWeight.w700, color: _kText)),
                   const SizedBox(height: 4),
-                  Text('Start earning XP — read Quran, do Dhikr & Dua.',
+                  Text('Start earning pts — read Quran, do Dhikr & Dua.',
                       style: GoogleFonts.outfit(fontSize: 12, color: _kSub),
                       textAlign: TextAlign.center),
                 ])),
@@ -466,18 +466,18 @@ class _ProgressTabState extends State<_ProgressTab> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // ── How to Earn XP ─────────────────────────────────────────────
-            Text('How to Earn XP',
+            // ── How to Earn pts ─────────────────────────────────────────────
+            Text('How to Earn pts',
                 style: GoogleFonts.outfit(
                     fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 14),
-            _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${XpReward.ayahRead} XP'),
-            _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${XpReward.juzComplete} XP'),
+            _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${XpReward.ayahRead} pts'),
+            _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${XpReward.juzComplete} pts'),
             if (_showAllXpGuide) ...[
-              _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+8 XP'),
-              _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+15 XP'),
-              _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${XpReward.dailyLogin} XP'),
-              _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${XpReward.validateCoins} XP'),
+              _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+8 pts'),
+              _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+15 pts'),
+              _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${XpReward.dailyLogin} pts'),
+              _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${XpReward.validateCoins} pts'),
             ],
             GestureDetector(
               onTap: () => setState(() => _showAllXpGuide = !_showAllXpGuide),
@@ -522,11 +522,11 @@ class _ProgressTabState extends State<_ProgressTab> {
   }
 
   static const _tierGroups = [
-    (title: 'Seeker',   emoji: '🌱', range: '1–5',   xp: '0–500 XP',        color: Color(0xFF78C1F3), unlocks: 'Basic features'),
-    (title: 'Believer', emoji: '🌟', range: '6–10',  xp: '500–1,500 XP',    color: Color(0xFF4CAF50), unlocks: 'Custom profile themes'),
-    (title: 'Devoted',  emoji: '💜', range: '11–20', xp: '1,500–5,000 XP',  color: Color(0xFFAB47BC), unlocks: 'Leaderboard badge'),
-    (title: 'Champion', emoji: '🏆', range: '21–50', xp: '5,000–20,000 XP', color: Color(0xFFF5A623), unlocks: 'Exclusive voting rights'),
-    (title: 'Legend',   emoji: '👑', range: '50+',   xp: '20,000+ XP',      color: Color(0xFFE53935), unlocks: 'Hall of Fame listing'),
+    (title: 'Seeker',   emoji: '🌱', range: '1–5',   xp: '0–500 pts',        color: Color(0xFF78C1F3), unlocks: 'Basic features'),
+    (title: 'Believer', emoji: '🌟', range: '6–10',  xp: '500–1,500 pts',    color: Color(0xFF4CAF50), unlocks: 'Custom profile themes'),
+    (title: 'Devoted',  emoji: '💜', range: '11–20', xp: '1,500–5,000 pts',  color: Color(0xFFAB47BC), unlocks: 'Leaderboard badge'),
+    (title: 'Champion', emoji: '🏆', range: '21–50', xp: '5,000–20,000 pts', color: Color(0xFFF5A623), unlocks: 'Exclusive voting rights'),
+    (title: 'Legend',   emoji: '👑', range: '50+',   xp: '20,000+ pts',      color: Color(0xFFE53935), unlocks: 'Hall of Fame listing'),
   ];
 }
 
@@ -922,7 +922,7 @@ class _BadgeCard extends StatelessWidget {
                   height: 1.3),
               textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
           const SizedBox(height: 6),
-          // ── XP reward chip ──────────────────────────────────────────────
+          // ── pts reward chip ──────────────────────────────────────────────
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -935,7 +935,7 @@ class _BadgeCard extends StatelessWidget {
                   : null,
             ),
             child: Text(
-              earned ? '+${badge.xpReward} XP ✓' : '+${badge.xpReward} XP',
+              earned ? '+${badge.xpReward} pts ✓' : '+${badge.xpReward} pts',
               style: GoogleFonts.rajdhani(
                   fontSize: 12, fontWeight: FontWeight.w800,
                   color: earned ? accent : const Color(0xFF8E8E93),
@@ -1043,7 +1043,7 @@ class _RamadanBanner extends StatelessWidget {
             style: GoogleFonts.outfit(
                 fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
         const SizedBox(height: 4),
-        Text('3× XP multiplier • Special badges • Community wells goal',
+        Text('3× pts multiplier • Special badges • Community wells goal',
             style: GoogleFonts.outfit(fontSize: 12,
                 color: Colors.white.withValues(alpha: 0.75))),
         const SizedBox(height: 10),
@@ -1132,10 +1132,10 @@ class _ChallengeCard extends StatelessWidget {
         ],
         const SizedBox(height: 12),
         Wrap(spacing: 8, children: [
-          if (xpReward > 0) _RewardChip('+$xpReward XP', cardColor),
+          if (xpReward > 0) _RewardChip('+$xpReward pts', cardColor),
           if (coinReward > 0) _RewardChip('+$coinReward Noor', _kGold),
           if (multiplier > 1.0)
-            _RewardChip('${multiplier.toStringAsFixed(0)}× XP Boost', Colors.orange),
+            _RewardChip('${multiplier.toStringAsFixed(0)}× pts Boost', Colors.orange),
           if (endDate.isNotEmpty)
             _RewardChip('Ends ${endDate.substring(0, 10)}', _kSub),
         ]),
@@ -1230,7 +1230,7 @@ class _BreakdownChip extends StatelessWidget {
               maxLines: 1, overflow: TextOverflow.ellipsis,
               style: GoogleFonts.outfit(
                   fontSize: 11, fontWeight: FontWeight.w700, color: _kText)),
-          Text('+$xp XP',
+          Text('+$xp pts',
               style: GoogleFonts.outfit(
                   fontSize: 10, fontWeight: FontWeight.w600, color: color)),
         ]),
@@ -1289,14 +1289,14 @@ class _ActivityRow extends StatelessWidget {
             Text(timeStr,
                 style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
         ])),
-        // XP badge
+        // pts badge
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             color: meta.color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Text('+$pts XP',
+          child: Text('+$pts pts',
               style: GoogleFonts.outfit(
                   fontSize: 12, fontWeight: FontWeight.w800,
                   color: meta.color)),
@@ -1592,7 +1592,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
         Row(children: [
           Text('NEXT MILESTONE', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white54, letterSpacing: 1.2)),
           const Spacer(),
-          Text('+${milestone.xpBonus} XP', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFFFFD700))),
+          Text('+${milestone.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFFFFD700))),
         ]),
         const SizedBox(height: 8),
         Row(children: [
@@ -1660,7 +1660,7 @@ class _StreakMilestoneList extends StatelessWidget {
                 color: done ? const Color(0xFFFFD700).withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text('+${m.xpBonus} XP', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
+              child: Text('+${m.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
                   color: done ? const Color(0xFFFFD700) : Colors.white24, letterSpacing: 0.4)),
             ),
           ]),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dhikr_screen.dart';
 import '../utils/asset_helper.dart';
 import '../widgets/noor_icons.dart';
@@ -7,11 +8,42 @@ import '../widgets/noor_icons.dart';
 const _kBg = Color(0xFFF7F3EE);
 const _kText = Color(0xFF1C1C1E);
 
-class DhikrHubScreen extends StatelessWidget {
+class DhikrHubScreen extends StatefulWidget {
   const DhikrHubScreen({super.key});
+  @override State<DhikrHubScreen> createState() => _DhikrHubScreenState();
+}
+
+class _DhikrHubScreenState extends State<DhikrHubScreen> {
+  Set<String>? _hiddenIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVisibility();
+  }
+
+  Future<void> _loadVisibility() async {
+    try {
+      final res = await Supabase.instance.client.from('azkar_categories').select('id, is_visible');
+      if (!mounted) return;
+      final hidden = <String>{};
+      for (final r in (res as List)) {
+        if (r['is_visible'] == false) hidden.add(r['id'] as String);
+      }
+      setState(() => _hiddenIds = hidden);
+    } catch (_) {
+      if (mounted) setState(() => _hiddenIds = <String>{});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_hiddenIds == null) {
+      return const Scaffold(
+        backgroundColor: _kBg,
+        body: Center(child: CircularProgressIndicator(color: Color(0xFF6B4EE6))),
+      );
+    }
     final List<Map<String, dynamic>> essentials = [
       {'title': 'Duas of Ummah', 'id': 'ummah', 'color': const Color(0xFF6B4EE6), 'icon': '🌍'},
       {'title': 'Morning', 'id': 'morning', 'color': const Color(0xFFF59E0B), 'icon': '🌅'},
@@ -48,6 +80,9 @@ class DhikrHubScreen extends StatelessWidget {
       {'title': 'Hajj & Umrah', 'id': 'hajj', 'color': const Color(0xFF000000), 'icon': '🕋'},
     ];
 
+    final visibleEssentials = essentials.where((e) => !_hiddenIds!.contains(e['id'])).toList();
+    final visibleOthers = others.where((e) => !_hiddenIds!.contains(e['id'])).toList();
+
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
@@ -71,7 +106,13 @@ class DhikrHubScreen extends StatelessWidget {
                 style: GoogleFonts.outfit(
                     fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 16),
-            GridView.builder(
+            if (visibleEssentials.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
+              )
+            else
+              GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -80,9 +121,9 @@ class DhikrHubScreen extends StatelessWidget {
                 mainAxisSpacing: 14,
                 childAspectRatio: 0.9,
               ),
-              itemCount: essentials.length,
+              itemCount: visibleEssentials.length,
               itemBuilder: (context, index) {
-                final item = essentials[index];
+                final item = visibleEssentials[index];
                 return _buildGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
               },
             ),
@@ -92,7 +133,13 @@ class DhikrHubScreen extends StatelessWidget {
                 style: GoogleFonts.outfit(
                     fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 16),
-            GridView.builder(
+            if (visibleOthers.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
+              )
+            else
+              GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -101,9 +148,9 @@ class DhikrHubScreen extends StatelessWidget {
                 mainAxisSpacing: 12,
                 childAspectRatio: 0.85,
               ),
-              itemCount: others.length,
+              itemCount: visibleOthers.length,
               itemBuilder: (context, index) {
-                final item = others[index];
+                final item = visibleOthers[index];
                 return _buildMiniGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
               },
             ),

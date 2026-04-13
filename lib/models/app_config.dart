@@ -22,10 +22,31 @@ class AppConfig {
   int get dailyFreeCap        => _int('daily_free_cap',        500);
   int get weeklyXpCap         => _int('weekly_xp_cap',        2000);
 
-  // ── Theme ──────────────────────────────────────────────────────────────────
+  // ── Theme — Global ─────────────────────────────────────────────────────────
   Color get primaryColor    => _color('primary_color',    const Color(0xFF2BAE99));
   Color get secondaryColor  => _color('secondary_color',  const Color(0xFF6B4EBB));
   Color get donationColor   => _color('donation_color',   const Color(0xFFF5A623));
+
+  // ── Theme — Dashboard ─────────────────────────────────────────────────────
+  Color get dashBg          => _color('dash_bg',          const Color(0xFFF7F3EE));
+  Color get dashText        => _color('dash_text',        const Color(0xFF1C1C1E));
+  Color get dashTeal        => _color('dash_teal',        const Color(0xFF2BAE99));
+
+  // ── Theme — Azkar/Dhikr ───────────────────────────────────────────────────
+  Color get azkarAccent         => _color('azkar_accent',          const Color(0xFF0D9488));
+  Color get azkarMorningGrad1   => _color('azkar_morning_grad1',   const Color(0xFF0C4A3E));
+  Color get azkarMorningGrad2   => _color('azkar_morning_grad2',   const Color(0xFF0D9488));
+  Color get azkarEveningGrad1   => _color('azkar_evening_grad1',   const Color(0xFF1E1B4B));
+  Color get azkarEveningGrad2   => _color('azkar_evening_grad2',   const Color(0xFF4338CA));
+  Color get azkarBottomGrad1    => _color('azkar_bottom_grad1',    const Color(0xFF0A6B52));
+  Color get azkarBottomGrad2    => _color('azkar_bottom_grad2',    const Color(0xFF0C4A3E));
+  Color get azkarHighlight      => _color('azkar_highlight',       const Color(0xFF1A7A5C));
+
+  // ── Theme — Quran ─────────────────────────────────────────────────────────
+  Color get quranBg         => _color('quran_bg',         const Color(0xFFEDF7F4));
+  Color get quranAccent     => _color('quran_accent',     const Color(0xFF2BAE99));
+  Color get quranGold       => _color('quran_gold',       const Color(0xFFFFAA00));
+  Color get quranTextColor  => _color('quran_text',       const Color(0xFF1C1C1E));
 
   // ── Feature Flags ──────────────────────────────────────────────────────────
   bool get featureLeaderboard => _bool('feature_leaderboard', true);
