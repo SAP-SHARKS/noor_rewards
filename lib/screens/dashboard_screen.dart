@@ -582,6 +582,7 @@ class _HomeTabState extends State<_HomeTab> {
           ),
         ),
         SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const SizedBox(height: 8),

@@ -288,7 +288,14 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         }
                       } catch (e) {
                          if (context.mounted && !e.toString().contains('cancelled')) {
-                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception:', '').trim()), backgroundColor: Colors.red));
+                           showDialog(
+                             context: context,
+                             builder: (c) => AlertDialog(
+                               title: const Text('Auth Error'),
+                               content: SingleChildScrollView(child: Text(e.toString())),
+                               actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))],
+                             )
+                           );
                          }
                       } finally {
                         if (mounted) setState(() => _isLoading = false);

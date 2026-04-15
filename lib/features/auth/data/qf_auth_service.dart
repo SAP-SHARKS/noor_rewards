@@ -25,7 +25,7 @@ class QfAuthService {
           Env.qfClientId,
           _redirectUri,
           discoveryUrl: '${Env.qfAuthBase}/.well-known/openid-configuration',
-          scopes: ['openid', 'offline_access'], 
+          scopes: ['openid'], 
         ),
       );
 
