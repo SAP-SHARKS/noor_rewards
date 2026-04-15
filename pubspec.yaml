@@ -42,6 +42,7 @@ dependencies:
   image_cropper: ^8.0.2
 
   hive: any
+  path_provider: 2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -52,6 +53,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
   image: ^4.8.0
+  jni: any
 flutter:
   uses-material-design: true
   assets:
