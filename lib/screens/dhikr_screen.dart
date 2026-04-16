@@ -86,7 +86,7 @@ class _Category {
 
 class _DhikrSettings {
   double arabicFontSize = 32.0;
-  double translationFontSize = 14.0;
+  double translationFontSize = 17.0;
   bool darkMode = false;
   int arabicFontIdx = 0;  // index into _kArabicFonts
   bool showTranslation = false;
@@ -167,7 +167,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _settings.arabicFontSize = prefs.getDouble('dhikr_ar_size') ?? 32.0;
-      _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 14.0;
+      _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 17.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
       _settings.showTranslation = prefs.getBool('dhikr_show_translation_v2') ?? false;
       _settings.showTransliteration = prefs.getBool('dhikr_show_transliteration') ?? true;
@@ -862,7 +862,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           max: 56.0,
                           activeColor: const Color(0xFF0D9488),
                           onChanged: (val) {
-                            final translationSize = 12.0 + (val - 20.0) * (12.0 / 36.0);
+                            final translationSize = 16.0 + (val - 20.0) * (12.0 / 36.0);
                             setModalState(() {
                               _settings.arabicFontSize = val;
                               _settings.translationFontSize = translationSize;
@@ -926,7 +926,6 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                   : const Color(0xFF8E8E93))),
                                       const SizedBox(height: 4),
                                       Text(font.arabicPreview,
-                                          textDirection: TextDirection.rtl,
                                           style: font.style(
                                               22, txtColor, 1.6, FontWeight.w700)),
                                     ],
@@ -2156,7 +2155,6 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
     Widget textWidget = Text.rich(
       TextSpan(style: baseStyle, children: blockSpans),
       textAlign: TextAlign.center,
-      textDirection: TextDirection.rtl,
       textHeightBehavior: const TextHeightBehavior(
         applyHeightToFirstAscent: false, 
         applyHeightToLastDescent: false,
@@ -2255,25 +2253,113 @@ class _AzkarCard extends StatelessWidget {
 
     String cleanReward = azkar.reward.trim();
     extractReference(cleanReward, (clean, ref) {
-      cleanReward = clean.replaceAll(RegExp(r'^\||\|$'), '').trim();
+      cleanReward = clean.replaceAll(RegExp(r'^\|'), '').replaceAll(RegExp(r'\|$'), '').trim();
       if (bottomRef.isEmpty) bottomRef = ref;
     });
+    // Strip pipe-separated reference (e.g. "Knower of the Unseen | At-Tirmidhi 3392")
+    if (cleanReward.contains('|')) {
+      final pipeParts = cleanReward.split('|');
+      cleanReward = pipeParts.first.trim();
+      final pipedRef = pipeParts.skip(1).join(' ').trim();
+      if (bottomRef.isEmpty && pipedRef.isNotEmpty) bottomRef = pipedRef;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Illustration section (clipped to prevent overflow) ──
-        ClipRect(
-          child: _buildIllustration(
-                  azkarId: azkar.id,
-                  progress: targetCount == 0
-                      ? 0.0
-                      : (currentCount / targetCount).clamp(0.0, 1.0),
-                  isComplete: isComplete,
-                  tapCount: currentCount,
-                  pointsToday: pointsToday,
+        // ── Illustration + pts badge overlaid at bottom-right ──
+        SizedBox(
+          height: 260,
+          child: Stack(
+            fit: StackFit.expand,
+            clipBehavior: Clip.hardEdge,
+            children: [
+              _buildIllustration(
+                azkarId: azkar.id,
+                progress: targetCount == 0
+                    ? 0.0
+                    : (currentCount / targetCount).clamp(0.0, 1.0),
+                isComplete: isComplete,
+                tapCount: currentCount,
+                pointsToday: pointsToday,
+              ),
+              if (pointsToday > 0)
+                Positioned(
+                  bottom: 10,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.55),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.star_rounded, size: 12,
+                            color: const Color(0xFFB8860B).withValues(alpha: 0.90)),
+                        const SizedBox(width: 4),
+                        Text(
+                          '+$pointsToday pts',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF92620A),
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
+            ],
+          ),
         ),
+
+
+        // ── Motivational tagline capsule — bold, eye-catching pill ──
+
+        Builder(builder: (ctx) {
+          final tagline = _pickTagline(azkar.id);
+          if (tagline.isEmpty) return const SizedBox.shrink();
+          final tagColor = _pickTaglineColor(azkar.id, isDark);
+          return Container(
+            width: double.infinity,
+            color: kCardBg,
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: tagColor.withValues(alpha: isDark ? 0.14 : 0.08),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: tagColor.withValues(alpha: isDark ? 0.45 : 0.30),
+                    width: 1.4,
+                  ),
+                ),
+                child: Text(
+                  tagline,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w800,
+                    color: tagColor,
+                    letterSpacing: 0.1,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+
 
         // ── Card section with smooth top transition ──
         Container(
@@ -2318,8 +2404,12 @@ class _AzkarCard extends StatelessWidget {
                       azkar.translation,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.outfit(
-                        fontSize: settings.translationFontSize, 
-                        color: kSub
+                        fontSize: settings.translationFontSize,
+                        fontWeight: FontWeight.w500,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.88)
+                            : const Color(0xFF1C1C1E),
+                        height: 1.65,
                       ),
                     ),
                   ],
@@ -2383,7 +2473,7 @@ class _AzkarCard extends StatelessWidget {
                         child: Container(height: 0.5, color: dividerColor),
                       ),
                       Text(azkar.hadithFull,
-                        style: GoogleFonts.outfit(fontSize: 15.5, color: subColor, height: 1.7)),
+                        style: GoogleFonts.outfit(fontSize: 15.5, color: textColor, height: 1.7)),
                     ],
 
                     // ── Reference ──
@@ -2632,7 +2722,107 @@ Widget _buildIllustration({
   };
 }
 
-/// Arabic text style for illustration labels — uses Amiri for elegant rendering.
+// =============================================================================
+// Motivational tagline — short punchy benefit line shown inside illustration
+// =============================================================================
+String _pickTagline(String id) {
+  // ── Specific numeric IDs first (most precise) ──
+  if (id == 'morning_32' || id == 'evening_31')
+    return 'Sins forgiven — even if like the foam of the sea';
+  if (id == 'morning_31' || id == 'evening_30')
+    return '10 freed · 100 hasanat · 100 sins erased · Shaytan repelled';
+  if (id == 'morning_33' || id == 'evening_32')
+    return '10 blessings descend from Allah upon you';
+  if (id == 'morning_30')
+    return 'Ask Allah to bless and beautify your day';
+  if (id == 'morning_29' || id == 'evening_29')
+    return 'Allah is sufficient for you in every affair';
+  if (id == 'morning_28' || id == 'evening_28')
+    return "Wellbeing of body, hearing & sight — granted";
+  if (id == 'morning_27' || id == 'evening_27')
+    return 'Freed from Hellfire every morning & evening';
+  if (id == 'morning_26' || id == 'evening_26')
+    return 'Guaranteed Jannah — if you die this day';
+  if (id == 'morning_25' || id == 'evening_25')
+    return 'Your life entrusted to the Ever-Living';
+  if (id == 'morning_24' || id == 'evening_24')
+    return 'All evil in His creation repelled from you';
+  if (id == 'morning_23' || id == 'evening_23')
+    return 'Nothing shall harm you — by perfect words';
+  if (id == 'morning_21' || id == 'evening_21')
+    return 'Complete protection in the name of Allah';
+  if (id == 'morning_20' || id == 'evening_20')
+    return 'Start surrendered — to Islam, sincerity & truth';
+
+  // ── Illustration-key based fallback ──
+  final ill = _pickIllustration(id);
+  return switch (ill) {
+    'shield'     => 'Guarded by Allah until morning comes',
+    'three_quls' => 'Sufficient against every harm recited 3 times',
+    'gates'      => 'Doors of Allah mercy open wide for you',
+    'chains'     => 'Worry and sorrow lifted by the will of Allah',
+    'six_wards'  => 'Guarded in your deen dunya and akhirah',
+    'repelling'  => 'Evil repelled from every direction',
+    'heart'      => 'Heart held by the Ever Living Ever Sustaining',
+    'vessel'     => 'Gratitude that multiplies your blessings',
+    'dawn'       => 'Start pure on the fitrah of Islam',
+    'ripples'    => 'Praise that ripples through all creation',
+    'path'       => 'Guided to every good this day',
+    'invincible' => 'Nothing shall harm you by His name',
+    'flame'      => 'Freed from Hellfire morning and evening',
+    'doors'      => 'Guaranteed Jannah if you die today',
+    'vessels'    => 'Wellbeing of body hearing and sight',
+    'pillars'    => 'Allah is sufficient in every affair',
+    'blessings'  => 'Seeking Allah blessing for a beautiful day',
+    'scales'     => 'Ten freed 100 hasanat Shaytan repelled',
+    'ocean'      => 'Sins forgiven even if like the foam of the sea',
+    'salawat'    => 'Ten blessings from Allah upon you',
+    'glory'      => 'Glorified and praised in morning light',
+    'cycle'      => 'Return to Allah He is Ever Forgiving',
+    'hand'       => 'Guided by the hand of Allah',
+    'cosmic'     => 'Words heavier than the heavens and earth',
+    'dua_scene'  => 'Begin your day in surrender to Allah',
+    _            => '',
+  };
+}
+
+/// Per-illustration tagline color — distinct for each category, always readable.
+Color _pickTaglineColor(String id, bool isDark) {
+  final ill = _pickIllustration(id);
+
+  // Light mode: deep saturated tones (dark enough on white bg)
+  // Dark mode:  bright vivid tones (light enough on dark bg)
+  return switch (ill) {
+    'shield'     => isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8), // royal blue
+    'three_quls' => isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9), // violet
+    'gates'      => isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), // emerald green
+    'chains'     => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46), // deep teal
+    'six_wards'  => isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534), // forest green
+    'repelling'  => isDark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B), // deep red
+    'heart'      => isDark ? const Color(0xFFF9A8D4) : const Color(0xFF9D174D), // rose/pink
+    'vessel'     => isDark ? const Color(0xFF7DD3FC) : const Color(0xFF0369A1), // sky blue
+    'dawn'       => isDark ? const Color(0xFFFCD34D) : const Color(0xFF92400E), // amber
+    'ripples'    => isDark ? const Color(0xFF67E8F9) : const Color(0xFF0E7490), // cyan
+    'path'       => isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3), // indigo
+    'invincible' => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E3A8A), // navy
+    'flame'      => isDark ? const Color(0xFFFDA4AF) : const Color(0xFF9F1239), // crimson
+    'doors'      => isDark ? const Color(0xFFC4B5FD) : const Color(0xFF5B21B6), // purple
+    'vessels'    => isDark ? const Color(0xFF5EEAD4) : const Color(0xFF0F766E), // teal
+    'pillars'    => isDark ? const Color(0xFFD8B4FE) : const Color(0xFF7E22CE), // deep violet
+    'blessings'  => isDark ? const Color(0xFFFBBF24) : const Color(0xFF92400E), // golden amber
+    'scales'     => isDark ? const Color(0xFF86EFAC) : const Color(0xFF14532D), // forest
+    'ocean'      => isDark ? const Color(0xFF38BDF8) : const Color(0xFF075985), // ocean blue
+    'salawat'    => isDark ? const Color(0xFFFDA4AF) : const Color(0xFF881337), // deep rose
+    'glory'      => isDark ? const Color(0xFFFCD34D) : const Color(0xFF713F12), // golden
+    'cycle'      => isDark ? const Color(0xFFA3E635) : const Color(0xFF3F6212), // lime green
+    'hand'       => isDark ? const Color(0xFF6EE7B7) : const Color(0xFF134E4A), // teal-green
+    'cosmic'     => isDark ? const Color(0xFFBAFA60) : const Color(0xFF1E1B4B), // deep indigo
+    'dua_scene'  => isDark ? const Color(0xFFA7F3D0) : const Color(0xFF064E3B), // deep green
+    _            => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46),
+  };
+}
+
+/// Arabic calligraphy text style used inside illustration canvases.
 TextStyle _illusArabic(double size, Color color, {FontWeight weight = FontWeight.w700}) =>
     GoogleFonts.amiri(fontSize: size, color: color, fontWeight: weight, height: 1.4);
 
@@ -2869,7 +3059,7 @@ class _DuaScenePainter extends CustomPainter {
     // Apply punch scale
     canvas.save();
     canvas.translate(cx, groundY);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -groundY);
 
     // ── 5. Tree (right side) ──
@@ -2881,74 +3071,15 @@ class _DuaScenePainter extends CustomPainter {
     canvas.restore();
 
     // ── 7. Shockwave ──
-    if (shockPhase > 0 && shockPhase < 1) {
-      final ringR = w * 0.40 * shockPhase;
-      final ringA = (1.0 - shockPhase) * 0.30;
-      canvas.drawCircle(Offset(cx, groundY - 30), ringR, Paint()
-        ..color = Color.fromRGBO(212, 175, 55, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // ── 8. Particles ──
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.25;
-        final px = cx + math.cos(angle) * dist;
-        final py = groundY - 30 + math.sin(angle) * dist * 0.5 - t * 25;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = p.color.withValues(alpha: a));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // ── 9. Progress label ──
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'الحمد لله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // ── 10. Points badge ──
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Tree with trunk, branches, and leaf canopy — taller than the person
@@ -3485,7 +3616,7 @@ class _NoorTreePainter extends CustomPainter {
     final pTree = 0.20 + progress * 0.80;
     final treeCenterY = groundY - (groundY - h * 0.28) * pTree * 0.5;
     canvas.translate(cx, treeCenterY);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -treeCenterY);
 
     // 5. Trunk — tapered with gradient
@@ -3695,108 +3826,15 @@ class _NoorTreePainter extends CustomPainter {
     canvas.restore(); // end punch scale
 
     // 7. Shockwave ring on tap — expands from tree center
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.42;
-      final ringR = maxR * shockPhase;
-      final ringA = (1.0 - shockPhase) * 0.45;
-      canvas.drawCircle(
-        Offset(cx, treeCenterY), ringR,
-        Paint()
-          ..color = const Color(0xFF1BDE9A).withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase));
-      // Inner softer ring
-      canvas.drawCircle(
-        Offset(cx, treeCenterY), ringR * 0.7,
-        Paint()
-          ..color = const Color(0xFFD4AF37).withValues(alpha: ringA * 0.5)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Floating noor particles — with trails
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final py = p.startY * h - t * h * 0.55;
-        final px = cx + p.x * w * 0.36 + math.sin(t * math.pi * 3) * p.drift;
-        final a = (1.0 - t) * 0.9;
-        final pSize = p.size * (1.0 - t * 0.4);
-
-        // Trail (3 fading dots behind)
-        for (int trail = 1; trail <= 3; trail++) {
-          final tOff = trail * 0.04;
-          final tT = (t - tOff).clamp(0.0, 1.0);
-          if (tT <= 0) continue;
-          final tpy = p.startY * h - tT * h * 0.55;
-          final tpx = cx + p.x * w * 0.36 + math.sin(tT * math.pi * 3) * p.drift;
-          canvas.drawCircle(Offset(tpx, tpy), pSize * (0.6 - trail * 0.12),
-            Paint()..color = p.color.withValues(alpha: a * (0.3 - trail * 0.08)));
-        }
-
-        // Main particle with glow
-        canvas.drawCircle(Offset(px, py), pSize + 3,
-          Paint()
-            ..color = p.color.withValues(alpha: a * 0.15)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
-        canvas.drawCircle(Offset(px, py), pSize,
-          Paint()..color = p.color.withValues(alpha: a));
-        // Bright core
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-          Paint()..color = Colors.white.withValues(alpha: a * 0.7));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 9. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'الحمد لله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(isComplete ? 13 : 12, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 10. Noor points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(
-        rrect,
-        Paint()..color = const Color(0xFFC9A87C),
-      );
-      canvas.drawRRect(
-        rrect,
-        Paint()
-          ..color = const Color(0xFFB8956A)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2,
-      );
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   void _drawBranches(Canvas canvas, Offset bot, Offset top,
@@ -4066,9 +4104,7 @@ class _ProtectionShieldPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 4. Person silhouette (praying figure)
     _drawPerson(canvas, cx, groundY);
@@ -4081,130 +4117,15 @@ class _ProtectionShieldPainter extends CustomPainter {
     canvas.restore(); // end punch scale
 
     // 7. Shockwave ring on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.44;
-      final ringR = maxR * shockPhase;
-      final ringA = (1.0 - shockPhase) * 0.40;
-      canvas.drawCircle(
-        Offset(cx, cy),
-        ringR,
-        Paint()
-          ..color = Color.fromRGBO(74, 144, 217, ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-      canvas.drawCircle(
-        Offset(cx, cy),
-        ringR * 0.7,
-        Paint()
-          ..color = Color.fromRGBO(212, 175, 55, ringA * 0.5)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Floating particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        // Particles rise outward from shield center
-        final angle = p.x * math.pi;
-        final dist = w * 0.15 + t * w * 0.25;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy - t * h * 0.35 + math.sin(t * math.pi * 2) * 8;
-        final a = (1.0 - t) * 0.85;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        // Trail
-        for (int trail = 1; trail <= 2; trail++) {
-          final tOff = trail * 0.05;
-          final tT = (t - tOff).clamp(0.0, 1.0);
-          if (tT <= 0) continue;
-          final tDist = w * 0.15 + tT * w * 0.25;
-          final tpx = cx + math.cos(angle) * tDist;
-          final tpy = cy - tT * h * 0.35 + math.sin(tT * math.pi * 2) * 8;
-          canvas.drawCircle(
-            Offset(tpx, tpy),
-            pSize * (0.5 - trail * 0.12),
-            Paint()
-              ..color = const Color(0xFF4A90D9)
-                  .withValues(alpha: a * (0.25 - trail * 0.08)),
-          );
-        }
-
-        // Main particle with glow
-        canvas.drawCircle(
-          Offset(px, py),
-          pSize + 3,
-          Paint()
-            ..color = const Color(0xFF4A90D9).withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
-        );
-        canvas.drawCircle(
-          Offset(px, py),
-          pSize,
-          Paint()..color = const Color(0xFF4A90D9).withValues(alpha: a),
-        );
-        canvas.drawCircle(
-          Offset(px, py),
-          pSize * 0.35,
-          Paint()..color = Colors.white.withValues(alpha: a * 0.7),
-        );
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 9. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'محفوظ بإذن الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 10. Noor points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(
-        rrect,
-        Paint()..color = const Color(0xFFC9A87C),
-      );
-      canvas.drawRRect(
-        rrect,
-        Paint()
-          ..color = const Color(0xFFB8956A)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2,
-      );
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Standing person — clean, simple silhouette facing forward
@@ -4612,9 +4533,7 @@ class _ThreeQulsPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Central book/Quran symbol
     _drawQuranSymbol(canvas, cx, cy);
@@ -4625,98 +4544,15 @@ class _ThreeQulsPainter extends CustomPainter {
     canvas.restore();
 
     // 5. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.44;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      // Triple-colored shockwave
-      for (int i = 0; i < 3; i++) {
-        final delay = i * 0.08;
-        final t = (shockPhase - delay).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final r = maxR * t;
-        canvas.drawCircle(
-          Offset(cx, cy), r,
-          Paint()
-            ..color = _layerColors[i].withValues(alpha: ringA * (1.0 - i * 0.2))
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2.0 * (1.0 - t),
-        );
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 6. Floating particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 20 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.6 - t * 20;
-        final a = (1.0 - t) * 0.80;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        // Pick layer color based on particle index
-        final layerIdx = (p.x.abs() * 3).floor().clamp(0, 2);
-        final pColor = _layerColors[layerIdx];
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = pColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'كُفيت بإذن الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 8. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Central Quran/book icon
@@ -5136,7 +4972,7 @@ class _GatesOfJannahPainter extends CustomPainter {
     canvas.save();
     final gateCy = groundY - 50;
     canvas.translate(cx, gateCy);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -gateCy);
 
     // 3. Light behind gates (grows with progress)
@@ -5151,93 +4987,15 @@ class _GatesOfJannahPainter extends CustomPainter {
     canvas.restore();
 
     // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.42;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, gateCy), r,
-        Paint()
-          ..color = Color.fromRGBO(212, 175, 55, ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-      canvas.drawCircle(
-        Offset(cx, gateCy), r * 0.7,
-        Paint()
-          ..color = Color.fromRGBO(255, 255, 255, ringA * 0.3)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Floating particles — rise upward through the gate opening
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final px = cx + p.x * w * 0.15 + math.sin(t * math.pi * 2) * 6;
-        final py = groundY - t * h * 0.65;
-        final a = (1.0 - t) * 0.80;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = const Color(0xFFD4AF37).withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = const Color(0xFFD4AF37).withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.65));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'غُفر لك بإذن الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Warm paradise light that shines through the gap between the gates
@@ -5712,9 +5470,7 @@ class _BreakingChainsPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Central light (person freed — grows as chains break)
     _drawFreedomLight(canvas, cx, cy, w);
@@ -5725,93 +5481,15 @@ class _BreakingChainsPainter extends CustomPainter {
     canvas.restore();
 
     // 5. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.40;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = Color.fromRGBO(16, 185, 129, ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 6. Floating sparks on tap
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.30;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        // Spark color — bright teal/green (freedom)
-        final sparkColor = isComplete
-            ? const Color(0xFFD4AF37)
-            : const Color(0xFF10B981);
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'حُررت بإذن الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFF10B981)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 8. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Central light that grows as chains break — representing freedom
@@ -6194,9 +5872,7 @@ class _SixWardsPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Central person silhouette (small, subtle)
     _drawPerson(canvas, cx, cy);
@@ -6212,65 +5888,14 @@ class _SixWardsPainter extends CustomPainter {
     canvas.restore();
 
     // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.42;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(Offset(cx, cy), r, Paint()
-        ..color = Color.fromRGBO(46, 196, 169, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Particles — rise outward in 6 directions
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final dirIdx = (p.x.abs() * 6).floor().clamp(0, 5);
-        final angle = dirIdx * math.pi / 3 + math.pi / 6;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist + math.sin(t * math.pi * 2) * 4;
-        final py = cy + math.sin(angle) * dist * 0.6 - t * 10;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final pColor = _wardColors[dirIdx];
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()
-          ..color = pColor.withValues(alpha: a * 0.12)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'عافاك الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFF2EC4A9) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
+    // progress % label removed
     // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20;
-      final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   void _drawPerson(Canvas canvas, double cx, double cy) {
@@ -6348,14 +5973,7 @@ class _SixWardsPainter extends CustomPainter {
       canvas.drawCircle(Offset(wx, wy), 1.2 * wardProgress, Paint()
         ..color = Colors.white.withValues(alpha: wardProgress * 0.45));
 
-      // Direction label (small Arabic text) on completion
-      if (isComplete && wardProgress > 0.8) {
-        final tp = TextPainter(
-          text: TextSpan(text: _wardLabels[i], style: _illusTag(11, color.withValues(alpha: 0.55))),
-          textDirection: TextDirection.rtl,
-        )..layout();
-        tp.paint(canvas, Offset(wx - tp.width / 2, wy + panelSize + 6));
-      }
+      // Direction label removed
     }
   }
 
@@ -6609,9 +6227,7 @@ class _RepellingLightPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Four shadow entities being pushed back
     _drawShadows(canvas, cx, cy, w, h);
@@ -6622,69 +6238,14 @@ class _RepellingLightPainter extends CustomPainter {
     canvas.restore();
 
     // 5. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.42;
-      final ringA = (1.0 - shockPhase) * 0.40;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(Offset(cx, cy), r, Paint()
-        ..color = Color.fromRGBO(255, 255, 255, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-      canvas.drawCircle(Offset(cx, cy), r * 0.75, Paint()
-        ..color = Color.fromRGBO(212, 175, 55, ringA * 0.4)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 6. Particles — light sparks pushing outward
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 20 + t * w * 0.30;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.6 - t * 10;
-        final a = (1.0 - t) * 0.80;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()
-          ..color = const Color(0xFFFFD97D).withValues(alpha: a * 0.12)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()
-          ..color = const Color(0xFFFFD97D).withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()
-          ..color = Colors.white.withValues(alpha: a * 0.65));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'أعاذك الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
+    // progress % label removed
     // 8. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20;
-      final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// 4 shadow forms at the corners, pushed further back as progress grows
@@ -6705,53 +6266,53 @@ class _RepellingLightPainter extends CustomPainter {
       final ex = side == 0 ? cx - eyeSpacing + shake : cx + eyeSpacing + shake;
       final mirror = side == 0 ? 1.0 : -1.0;
 
-      // Dark smoky aura behind each eye
+      // Thick smoky aura behind each eye
       canvas.drawOval(
-        Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 2.8, height: eyeH * 3.0),
+        Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 3.5, height: eyeH * 3.5),
         Paint()
-          ..color = const Color(0xFF1A0000).withValues(alpha: evilAlpha * 0.20)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+          ..color = const Color(0xFF3A0000).withValues(alpha: evilAlpha * 0.40)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
       );
 
-      // Eye shape — angular, cat-like (outer path)
+      // Eye shape — elegant, smooth almond
       final eyePath = Path()
-        ..moveTo(ex - eyeW * 1.2, eyeY + eyeH * 0.2 * mirror)   // inner corner (slightly offset)
-        ..quadraticBezierTo(ex - eyeW * 0.3, eyeY - eyeH * 1.1, ex + eyeW * 0.6, eyeY - eyeH * 0.6) // top lid curve
-        ..quadraticBezierTo(ex + eyeW * 1.1, eyeY - eyeH * 0.2, ex + eyeW * 1.3, eyeY + eyeH * 0.3) // outer tip
-        ..quadraticBezierTo(ex + eyeW * 0.5, eyeY + eyeH * 1.2, ex - eyeW * 0.2, eyeY + eyeH * 0.8)  // bottom lid
-        ..quadraticBezierTo(ex - eyeW * 0.8, eyeY + eyeH * 0.5, ex - eyeW * 1.2, eyeY + eyeH * 0.2 * mirror) // back to inner
+        ..moveTo(ex - eyeW * 1.1, eyeY)
+        ..quadraticBezierTo(ex, eyeY - eyeH * 1.3, ex + eyeW * 1.1, eyeY)
+        ..quadraticBezierTo(ex, eyeY + eyeH * 1.3, ex - eyeW * 1.1, eyeY)
         ..close();
 
-      // Red glow fill
+      // Deep fiery golden-red radial gradient 
       canvas.drawPath(eyePath, Paint()
         ..shader = RadialGradient(colors: [
-          Color.fromRGBO(220, 20, 20, evilAlpha * 0.85),
-          Color.fromRGBO(150, 0, 0, evilAlpha * 0.70),
-          Color.fromRGBO(80, 0, 0, evilAlpha * 0.50),
-        ], stops: const [0.0, 0.5, 1.0])
-        .createShader(Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 2.5, height: eyeH * 2.5)));
+          Color.fromRGBO(255, 140, 40, evilAlpha * 0.95), // Bright inner fire
+          Color.fromRGBO(190, 10, 10, evilAlpha * 0.85),  // Deep blood red
+          Color.fromRGBO(40, 0, 0, evilAlpha * 0.70),     // Dark edges
+        ], stops: const [0.15, 0.5, 1.0])
+        .createShader(Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 2.2, height: eyeH * 2.2)));
 
-      // Dark border
+      // Outer rim
       canvas.drawPath(eyePath, Paint()
-        ..color = Color.fromRGBO(60, 0, 0, evilAlpha * 0.80)
+        ..color = Color.fromRGBO(30, 0, 0, evilAlpha * 0.90)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5);
+        ..strokeWidth = 2.0);
 
-      // Slit pupil (vertical dark line)
-      final pupilH = eyeH * 1.2;
-      canvas.drawLine(
-        Offset(ex + eyeW * 0.1, eyeY - pupilH * 0.4),
-        Offset(ex + eyeW * 0.1, eyeY + pupilH * 0.4),
+      // Elegant diamond-slit pupil
+      final pupilPath = Path()
+        ..moveTo(ex + eyeW * 0.05, eyeY - eyeH * 0.8)
+        ..quadraticBezierTo(ex + eyeW * 0.25, eyeY, ex + eyeW * 0.05, eyeY + eyeH * 0.8)
+        ..quadraticBezierTo(ex - eyeW * 0.15, eyeY, ex + eyeW * 0.05, eyeY - eyeH * 0.8)
+        ..close();
+      
+      canvas.drawPath(pupilPath, Paint()
+        ..color = Color.fromRGBO(15, 0, 0, evilAlpha * 0.95));
+
+      // Soft white glint (spark of menace)
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(ex + eyeW * 0.3, eyeY - eyeH * 0.35), width: eyeW * 0.25, height: eyeH * 0.25),
         Paint()
-          ..color = Color.fromRGBO(10, 0, 0, evilAlpha * 0.85)
-          ..strokeWidth = 2.5
-          ..strokeCap = StrokeCap.round,
+          ..color = Colors.white.withValues(alpha: evilAlpha * 0.65)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5)
       );
-
-      // White glint (spark of menace)
-      canvas.drawCircle(
-        Offset(ex + eyeW * 0.3, eyeY - eyeH * 0.2), 1.5,
-        Paint()..color = Colors.white.withValues(alpha: evilAlpha * 0.60));
 
       // ── Crack lines (appear as progress > 0.2, get more severe) ──
       if (progress > 0.2) {
@@ -7038,7 +6599,7 @@ class _CradledHeartPainter extends CustomPainter {
     // Apply punch scale
     canvas.save();
     canvas.translate(cx, cy + floatY);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -(cy + floatY));
 
     // 3. Cupping hands of light (appear from sides)
@@ -7053,63 +6614,14 @@ class _CradledHeartPainter extends CustomPainter {
     canvas.restore();
 
     // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.40;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(Offset(cx, cy + floatY), r, Paint()
-        ..color = Color.fromRGBO(232, 121, 249, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Particles — gentle upward sparkles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final px = cx + p.x * w * 0.25 + math.sin(t * math.pi * 2) * 8;
-        final py = cy - t * h * 0.40;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final pColor = Color.lerp(const Color(0xFFE879F9), const Color(0xFFD4AF37), t)!;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()
-          ..color = pColor.withValues(alpha: a * 0.12)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'توكلت على الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFE879F9) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
+    // progress % label removed
     // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20;
-      final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Two cupping hands of light that close around the heart
@@ -7134,10 +6646,10 @@ class _CradledHeartPainter extends CustomPainter {
       final layerAlpha = alpha * (0.65 - layer * 0.12) * appear;
       final strokeW = (3.0 - layer * 0.6) * (isComplete ? 1.1 : 1.0);
 
-      // Glow behind arc
+      // Glow behind arc (cupping upwards)
       canvas.drawArc(
         Rect.fromCenter(center: Offset(cx, shelterCy), width: r * 2, height: r * 1.8),
-        math.pi, -math.pi * appear, false,
+        0, math.pi * appear, false,
         Paint()
           ..color = color.withValues(alpha: layerAlpha * 0.15)
           ..style = PaintingStyle.stroke
@@ -7146,10 +6658,10 @@ class _CradledHeartPainter extends CustomPainter {
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
       );
 
-      // Main shelter arc — semicircle opening downward
+      // Main shelter arc — semicircle opening upward (U-shape cradle)
       canvas.drawArc(
         Rect.fromCenter(center: Offset(cx, shelterCy), width: r * 2, height: r * 1.8),
-        math.pi, -math.pi * appear, false,
+        0, math.pi * appear, false,
         Paint()
           ..color = color.withValues(alpha: layerAlpha)
           ..style = PaintingStyle.stroke
@@ -7219,10 +6731,6 @@ class _CradledHeartPainter extends CustomPainter {
       ..color = Colors.white.withValues(alpha: heartAlpha * 0.25)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8);
-
-    // Highlight on top-left of heart
-    canvas.drawCircle(Offset(-s * 0.4, -s * 0.4), s * 0.2, Paint()
-      ..color = Colors.white.withValues(alpha: heartAlpha * 0.35));
 
     canvas.restore();
   }
@@ -7448,7 +6956,7 @@ class _OverflowingVesselPainter extends CustomPainter {
     // Apply punch scale
     canvas.save();
     canvas.translate(cx, vesselCy);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -vesselCy);
 
     // 3. Vessel shape
@@ -7466,60 +6974,14 @@ class _OverflowingVesselPainter extends CustomPainter {
     canvas.restore();
 
     // 7. Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.40;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      canvas.drawCircle(Offset(cx, vesselCy), maxR * shockPhase, Paint()
-        ..color = Color.fromRGBO(212, 175, 55, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Tap particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.25;
-        final px = cx + math.cos(angle) * dist;
-        final py = vesselCy - 10 - t * h * 0.30;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final ci = ((p.x.abs() * 8).floor()).clamp(0, 7);
-        final pColor = _blessingColors[ci];
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 9. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'الحمد لله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
+    // progress % label removed
     // 10. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20; final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Ornate vessel / bowl shape
@@ -7887,7 +7349,7 @@ class _RisingDawnPainter extends CustomPainter {
     canvas.save();
     final sunCy = horizonY - progress * horizonY * 0.45;
     canvas.translate(cx, sunCy);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -sunCy);
 
     // 4. Sun rising from horizon
@@ -7910,57 +7372,14 @@ class _RisingDawnPainter extends CustomPainter {
     }
 
     // 7. Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.40;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      canvas.drawCircle(Offset(cx, sunCy), maxR * shockPhase, Paint()
-        ..color = Color.fromRGBO(255, 200, 60, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Particles — golden sparks rising
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final px = cx + p.x * w * 0.30 + math.sin(t * math.pi * 2) * 6;
-        final py = horizonY - t * h * 0.50;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final pColor = Color.lerp(const Color(0xFFFF9F43), const Color(0xFFFFD97D), t)!;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 9. Label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'على فطرة الإسلام' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFFFD97D) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
+    // progress % label removed
     // 10. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20; final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Sun disc rising from the horizon
@@ -8235,9 +7654,7 @@ class _PraiseRipplesPainter extends CustomPainter {
 
     // Apply punch
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Expanding praise ripple rings (continuous)
     _drawPraiseRipples(canvas, cx, cy, w);
@@ -8248,58 +7665,13 @@ class _PraiseRipplesPainter extends CustomPainter {
     canvas.restore();
 
     // 5. Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.42;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      canvas.drawCircle(Offset(cx, cy), maxR * shockPhase, Paint()
-        ..color = Color.fromRGBO(212, 175, 55, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 6. Particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 18 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.6 - t * 15;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final pColor = Color.lerp(const Color(0xFFD4AF37), const Color(0xFF38BDF8), (p.x.abs()))!;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'الحمد لله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20; final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
+    // progress % label removed
   }
 
   /// Concentric ripple rings expanding outward — representing hamd radiating
@@ -8411,6 +7783,10 @@ class _PraiseRipplesPainter extends CustomPainter {
 // ✨ Five Blessings (خمس بركات) — Ask Allah to bless your day
 // Dua asks for: فتح (victory), نصر (help), نور (light), بركة (barakah), هدى (guidance)
 // =============================================================================
+// =============================================================================
+// 🌅 Blessed Day Scenery — mountains, trees, birds, home, golden sky
+// morning_30: Allahumma inni as'aluka khayr hadha-l-yawm
+// =============================================================================
 class _FiveBlessings extends StatefulWidget {
   final double progress;
   final bool isComplete;
@@ -8427,65 +7803,54 @@ class _FiveBlessings extends StatefulWidget {
 }
 
 class _FiveBlessingsState extends State<_FiveBlessings> with TickerProviderStateMixin {
-  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _flowCtrl;
-  late Animation<double> _pulse, _grow, _pAnim, _punch, _shock;
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _birdCtrl, _glowCtrl;
+  late Animation<double> _pulse, _grow;
   double _prevProgress = 0.0;
-  int _prevTap = 0;
-  final List<_Particle> _particles = List.generate(18, (i) => _Particle(seed: i + 1200));
 
   @override
   void initState() {
     super.initState();
-    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000))..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.92, end: 1.08).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
-    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.93, end: 1.07).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
     _prevProgress = widget.progress; _growCtrl.value = widget.progress;
-    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat(reverse: true);
-    _pCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
-    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
-    _prevTap = widget.tapCount;
-    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
-    _punch = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.10).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
-      TweenSequenceItem(tween: Tween(begin: 1.10, end: 0.96).chain(CurveTween(curve: Curves.easeInOut)), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
-    ]).animate(_punchCtrl);
-    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
-    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
-    _flowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
+    _starCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat(reverse: true);
+    _birdCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 5000))..repeat();
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat(reverse: true);
   }
 
   @override
   void didUpdateWidget(_FiveBlessings old) {
     super.didUpdateWidget(old);
-    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
-    if (widget.tapCount != _prevTap) {
-      _prevTap = widget.tapCount;
-      for (final p in _particles) { p.reset(); }
-      _pCtrl.forward(from: 0); _punchCtrl.forward(from: 0); _shockCtrl.forward(from: 0);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
     }
   }
 
   @override
   void dispose() {
     _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
-    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _flowCtrl.dispose();
+    _birdCtrl.dispose(); _glowCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _flowCtrl]),
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _birdCtrl, _glowCtrl]),
       builder: (_, __) => SizedBox(
-        height: 290,
+        height: 260,
         child: CustomPaint(
           painter: _FiveBlessingsPainter(
-            progress: _grow.value, pulse: _pulse.value, starPhase: _starCtrl.value,
-            particlePhase: _pAnim.value, particles: _particles, isComplete: widget.isComplete,
-            pointsToday: widget.pointsToday, punchScale: _punch.value,
-            shockPhase: _shock.value, flowPhase: _flowCtrl.value,
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            birdPhase: _birdCtrl.value,
+            glowPhase: _glowCtrl.value,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
           ),
         ),
       ),
@@ -8497,257 +7862,269 @@ class _FiveBlessingsPainter extends CustomPainter {
   final double progress;
   final double pulse;
   final double starPhase;
-  final double particlePhase;
-  final List<_Particle> particles;
+  final double birdPhase;
+  final double glowPhase;
   final bool isComplete;
   final int pointsToday;
-  final double punchScale;
-  final double shockPhase;
-  final double flowPhase;
 
   const _FiveBlessingsPainter({
     required this.progress, required this.pulse, required this.starPhase,
-    required this.particlePhase, required this.particles, required this.isComplete,
-    this.pointsToday = 0, this.punchScale = 1.0, this.shockPhase = 1.0, this.flowPhase = 0.0,
+    required this.birdPhase, required this.glowPhase,
+    required this.isComplete, this.pointsToday = 0,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final cx = w / 2;
+    final w = size.width, h = size.height;
 
-    // 1. Background — deep celestial gradient
-    _paintLightBg(canvas, w, h, progress: progress);
+    // ── Sky gradient — warm sunrise to clear blue ──
+    final skyTop = Color.lerp(const Color(0xFFFFD580), const Color(0xFF87CEEB), progress)!;
+    final skyMid = Color.lerp(const Color(0xFFFF9F43), const Color(0xFF4FC3F7), progress)!;
+    final skyBot = Color.lerp(const Color(0xFFFF7846), const Color(0xFF81D4FA), progress)!;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()..shader = LinearGradient(
+        begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        colors: [skyTop, skyMid, skyBot],
+      ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
 
-    // 2. Stars
-    const starPos = [
-      (0.08, 0.05), (0.20, 0.12), (0.35, 0.03), (0.52, 0.08),
-      (0.67, 0.05), (0.80, 0.11), (0.93, 0.06), (0.42, 0.16),
-      (0.15, 0.20), (0.72, 0.18), (0.88, 0.15),
-    ];
-    final sp = Paint();
-    for (int i = 0; i < starPos.length; i++) {
-      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
-      sp.color = Colors.white.withValues(alpha: 0.15 + 0.40 * tw);
-      canvas.drawCircle(Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.8 + tw * 0.9, sp);
+    // ── Sun / soft glow ──
+    final sunX = w * 0.72;
+    final sunY = h * (0.22 - progress * 0.08);
+    final sunR = 28.0 + pulse * 4;
+    final sunAlpha = 0.3 + progress * 0.5;
+    // outer halo
+    canvas.drawCircle(Offset(sunX, sunY), sunR + 18, Paint()
+      ..color = const Color(0xFFFFD580).withValues(alpha: sunAlpha * 0.35 * pulse)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18));
+    canvas.drawCircle(Offset(sunX, sunY), sunR + 8, Paint()
+      ..color = const Color(0xFFFFA726).withValues(alpha: sunAlpha * 0.55));
+    canvas.drawCircle(Offset(sunX, sunY), sunR, Paint()
+      ..color = const Color(0xFFFFE066).withValues(alpha: sunAlpha));
+
+    // ── Distant mountains (back layer) ──
+    final mtn1 = Paint()..color = Color.lerp(
+      const Color(0xFFB0C4DE), const Color(0xFF7986CB), progress)!.withValues(alpha: 0.60 + progress * 0.20);
+    _drawMountain(canvas, Offset(w * 0.05, h * 0.62), w * 0.38, h * 0.28, mtn1);
+    _drawMountain(canvas, Offset(w * 0.35, h * 0.60), w * 0.32, h * 0.32, mtn1);
+    _drawMountain(canvas, Offset(w * 0.62, h * 0.61), w * 0.42, h * 0.26, mtn1);
+
+    // Mountain snow caps
+    if (progress > 0.2) {
+      final snowA = ((progress - 0.2) / 0.8).clamp(0.0, 0.9);
+      final snowPaint = Paint()..color = Colors.white.withValues(alpha: snowA * 0.75);
+      _drawMountainCap(canvas, Offset(w * 0.24, h * 0.34), w * 0.12, snowPaint);
+      _drawMountainCap(canvas, Offset(w * 0.51, h * 0.28), w * 0.10, snowPaint);
     }
 
-    // Apply punch
-    canvas.save();
-    canvas.translate(cx, h * 0.50);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -h * 0.50);
+    // ── Green valley / ground ──
+    final groundColor = Color.lerp(
+      const Color(0xFF8D9A5E), const Color(0xFF4CAF50), progress)!;
+    final groundPath = Path()
+      ..moveTo(0, h * 0.70)
+      ..quadraticBezierTo(w * 0.25, h * 0.66, w * 0.5, h * 0.68)
+      ..quadraticBezierTo(w * 0.75, h * 0.70, w, h * 0.67)
+      ..lineTo(w, h)..lineTo(0, h)..close();
+    canvas.drawPath(groundPath, Paint()..color = groundColor);
 
-    // The five blessings: فتح نصر نور بركة هدى
-    // Positioned as descending streams from heaven to a receiving vessel/cupped hands
-    const blessingColors = [
-      Color(0xFFD4AF37), // فتح — victory (gold)
-      Color(0xFF34D399), // نصر — help (emerald)
-      Color(0xFF38BDF8), // نور — light (sky blue)
-      Color(0xFFFBBF24), // بركة — barakah (warm amber)
-      Color(0xFFA78BFA), // هدى — guidance (violet)
+    // ── Pine trees — appear progressively ──
+    final treeCount = (progress * 5).ceil().clamp(0, 5);
+    final treePositions = [
+      (w * 0.08, h * 0.73, 0.85),
+      (w * 0.20, h * 0.70, 1.0),
+      (w * 0.78, h * 0.72, 0.90),
+      (w * 0.87, h * 0.70, 1.05),
+      (w * 0.50, h * 0.71, 0.75),
     ];
-    const blessingLabels = ['فتح', 'نصر', 'نور', 'بركة', 'هدى'];
+    final treeColor = Color.lerp(
+      const Color(0xFF2E7D32), const Color(0xFF1B5E20), 0.5)!;
+    for (int i = 0; i < treeCount; i++) {
+      final (tx, ty, tScale) = treePositions[i];
+      final tAlpha = ((progress * 5 - i)).clamp(0.0, 1.0);
+      _drawPineTree(canvas, Offset(tx, ty), h * 0.22 * tScale, treeColor.withValues(alpha: tAlpha));
+    }
 
-    // 3. Source: celestial opening at top center
-    final sourceY = h * 0.06;
-    final sourceAlpha = (progress * 1.5).clamp(0.0, 0.6);
+    // ── Cozy home — appears after 40% ──
+    if (progress > 0.35) {
+      final homeAlpha = ((progress - 0.35) / 0.65).clamp(0.0, 1.0);
+      _drawHome(canvas, Offset(w * 0.42, h * 0.73), w * 0.18, homeAlpha, isComplete);
+    }
 
-    // Celestial opening glow
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, sourceY), width: w * 0.5 * pulse, height: 14 * pulse),
-      Paint()
-        ..color = Colors.white.withValues(alpha: sourceAlpha * 0.12)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+    // ── Path / road leading to the home ──
+    if (progress > 0.45) {
+      final pathAlpha = ((progress - 0.45) / 0.55).clamp(0.0, 0.60);
+      final roadPaint = Paint()
+        ..color = const Color(0xFFD4A96A).withValues(alpha: pathAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..strokeCap = StrokeCap.round;
+      final road = Path()
+        ..moveTo(w * 0.5, h)
+        ..quadraticBezierTo(w * 0.5, h * 0.85, w * 0.5, h * 0.75);
+      canvas.drawPath(road, roadPaint);
+    }
+
+    // ── Birds flying — wispy V shapes ──
+    if (progress > 0.25) {
+      final birdAlpha = ((progress - 0.25) / 0.75).clamp(0.0, 0.85);
+      _drawFlyingBirds(canvas, w, h, birdPhase, birdAlpha, isComplete);
+    }
+
+    // ── Completion rays from sun ──
+    if (isComplete) {
+      for (int i = 0; i < 8; i++) {
+        final angle = i * math.pi / 4;
+        final rayLen = (20 + glowPhase * 14) * pulse;
+        canvas.drawLine(
+          Offset(sunX + math.cos(angle) * (sunR + 4), sunY + math.sin(angle) * (sunR + 4)),
+          Offset(sunX + math.cos(angle) * (sunR + rayLen), sunY + math.sin(angle) * rayLen),
+          Paint()
+            ..color = const Color(0xFFFFD700).withValues(alpha: 0.55 * glowPhase)
+            ..strokeWidth = 1.8
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+      // Soft golden ground shimmer
+      canvas.drawRect(
+        Rect.fromLTWH(0, h * 0.66, w, h * 0.34),
+        Paint()..color = const Color(0xFFFFD700).withValues(alpha: 0.08 * glowPhase)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+      );
+    }
+  }
+
+  void _drawMountain(Canvas canvas, Offset tip, double width, double mtnH, Paint paint) {
+    final path = Path()
+      ..moveTo(tip.dx - width / 2, tip.dy + mtnH)
+      ..lineTo(tip.dx, tip.dy)
+      ..lineTo(tip.dx + width / 2, tip.dy + mtnH)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  void _drawMountainCap(Canvas canvas, Offset tip, double capW, Paint paint) {
+    final path = Path()
+      ..moveTo(tip.dx - capW / 2, tip.dy + capW * 0.5)
+      ..lineTo(tip.dx, tip.dy)
+      ..lineTo(tip.dx + capW / 2, tip.dy + capW * 0.5)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  void _drawPineTree(Canvas canvas, Offset base, double height, Color color) {
+    final trunk = Paint()..color = const Color(0xFF5D4037);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(base.dx, base.dy - height * 0.08), width: height * 0.10, height: height * 0.18),
+        const Radius.circular(2),
+      ),
+      trunk,
     );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, sourceY), width: w * 0.3, height: 6),
-      Paint()
-        ..shader = LinearGradient(colors: [
-          Colors.transparent,
-          Colors.white.withValues(alpha: sourceAlpha * 0.3),
-          Colors.white.withValues(alpha: sourceAlpha * 0.5),
-          Colors.white.withValues(alpha: sourceAlpha * 0.3),
-          Colors.transparent,
-        ]).createShader(Rect.fromCenter(center: Offset(cx, sourceY), width: w * 0.3, height: 6)),
+    // Three tiers of pine foliage
+    final tiers = [
+      (0.0, 1.0, 0.55),   // bottom tier
+      (0.28, 0.80, 0.45), // middle tier
+      (0.54, 0.55, 0.32), // top tier
+    ];
+    for (final (yFrac, widthFrac, heightFrac) in tiers) {
+      final ty = base.dy - height * yFrac;
+      final tw = height * widthFrac;
+      final th = height * heightFrac;
+      final path = Path()
+        ..moveTo(base.dx - tw / 2, ty)
+        ..lineTo(base.dx, ty - th)
+        ..lineTo(base.dx + tw / 2, ty)
+        ..close();
+      canvas.drawPath(path, Paint()..color = color);
+    }
+  }
+
+  void _drawHome(Canvas canvas, Offset pos, double size, double alpha, bool complete) {
+    // Wall
+    final wallColor = Color.lerp(
+      const Color(0xFFF5E6C8), complete ? const Color(0xFFFFF9E3) : const Color(0xFFF5E6C8), alpha)!;
+    canvas.drawRect(
+      Rect.fromCenter(center: Offset(pos.dx, pos.dy - size * 0.30),
+        width: size, height: size * 0.60),
+      Paint()..color = wallColor.withValues(alpha: alpha),
     );
+    // Roof
+    final roofPath = Path()
+      ..moveTo(pos.dx - size * 0.60, pos.dy - size * 0.57)
+      ..lineTo(pos.dx, pos.dy - size)
+      ..lineTo(pos.dx + size * 0.60, pos.dy - size * 0.57)
+      ..close();
+    canvas.drawPath(roofPath, Paint()..color = const Color(0xFFB35C2E).withValues(alpha: alpha));
+    // Door
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(pos.dx - size * 0.10, pos.dy - size * 0.38, size * 0.20, size * 0.38),
+        const Radius.circular(3),
+      ),
+      Paint()..color = const Color(0xFF6D4C41).withValues(alpha: alpha),
+    );
+    // Window
+    canvas.drawRect(
+      Rect.fromCenter(center: Offset(pos.dx - size * 0.27, pos.dy - size * 0.40),
+        width: size * 0.18, height: size * 0.16),
+      Paint()..color = complete
+        ? const Color(0xFFFFE57F).withValues(alpha: alpha * 0.9)
+        : const Color(0xFF90CAF9).withValues(alpha: alpha * 0.8),
+    );
+    // Chimney smoke (gentle)
+    final smokeX = pos.dx + size * 0.30;
+    final smokeY = pos.dy - size * 0.92;
+    for (int i = 0; i < 3; i++) {
+      canvas.drawCircle(
+        Offset(smokeX + math.sin(i * 0.9) * 3, smokeY - i * 8.0),
+        4.0 + i * 2.5,
+        Paint()..color = Colors.white.withValues(alpha: alpha * (0.25 - i * 0.07)),
+      );
+    }
+  }
 
-    // 4. Receiving area — cupped hands / vessel at bottom
-    final receiveY = h * 0.72;
-    final receiveAlpha = (progress * 0.8).clamp(0.0, 0.35);
-
-    // Cupped shape (two arcs forming a vessel)
-    final vesselPath = Path();
-    final vesselHalfW = w * 0.22;
-    vesselPath.moveTo(cx - vesselHalfW, receiveY - 8);
-    vesselPath.quadraticBezierTo(cx - vesselHalfW - 5, receiveY + 12, cx, receiveY + 20);
-    vesselPath.quadraticBezierTo(cx + vesselHalfW + 5, receiveY + 12, cx + vesselHalfW, receiveY - 8);
-
-    canvas.drawPath(vesselPath, Paint()
-      ..color = Colors.white.withValues(alpha: receiveAlpha * 0.25)
+  void _drawFlyingBirds(Canvas canvas, double w, double h, double phase, double alpha, bool complete) {
+    // Birds drift across the sky in a loose flock
+    final birdPaint = Paint()
+      ..color = const Color(0xFF37474F).withValues(alpha: alpha)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round);
+      ..strokeCap = StrokeCap.round;
 
-    // Warm glow inside vessel
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, receiveY + 8), width: vesselHalfW * 1.6, height: 20),
-      Paint()
-        ..color = const Color(0xFFD4AF37).withValues(alpha: receiveAlpha * 0.08 * pulse)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    final birdPositions = [
+      (0.15, 0.18, 0.90, 1.0),  // x_frac, y_frac, x_speed, size
+      (0.30, 0.14, 1.0,  0.85),
+      (0.40, 0.20, 0.95, 0.75),
+      (0.18, 0.22, 0.88, 0.70),
+      (0.08, 0.16, 1.05, 0.80),
+    ];
+    for (final (xBase, yBase, speed, sz) in birdPositions) {
+      final bx = ((xBase + phase * speed) % 1.1) * w - w * 0.05;
+      final by = h * yBase + math.sin(phase * math.pi * 2 * speed + xBase * 5) * 5;
+      _drawBirdV(canvas, Offset(bx, by), sz * 8, birdPaint);
+    }
+  }
+
+  void _drawBirdV(Canvas canvas, Offset center, double span, Paint paint) {
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(center.dx - span / 2, center.dy), width: span, height: span * 0.4),
+      math.pi, math.pi, false, paint,
     );
-
-    // 5. Five blessing streams descending from source to vessel
-    for (int i = 0; i < 5; i++) {
-      final threshold = (i + 1) * 0.18;
-      if (progress < threshold - 0.12) continue;
-
-      final blessingProgress = ((progress - (threshold - 0.12)) / 0.25).clamp(0.0, 1.0);
-      final color = blessingColors[i];
-
-      // Each stream has a slightly different horizontal position (fan out from source)
-      final xSpread = (i - 2) * w * 0.08; // -2, -1, 0, 1, 2 spread
-      final streamTopX = cx + xSpread * 0.3;
-      final streamBotX = cx + xSpread;
-
-      // Flowing animation offset
-      final flowOffset = (flowPhase + i * 0.2) % 1.0;
-
-      // Draw the stream as a series of dots flowing downward
-      final streamLen = (receiveY - sourceY) * blessingProgress;
-      for (int d = 0; d < 12; d++) {
-        final dt = (d / 12.0 + flowOffset) % 1.0;
-        final dy = sourceY + dt * streamLen;
-        if (dy > receiveY) continue;
-        final t = dt; // position along stream 0=top, 1=bottom
-        final dx = streamTopX + (streamBotX - streamTopX) * t;
-        final dotAlpha = blessingProgress * (0.15 + 0.35 * math.sin(dt * math.pi)) * (isComplete ? pulse : 1.0);
-        final dotR = (1.2 + t * 1.5) * (isComplete ? pulse * 0.9 + 0.1 : 1.0);
-
-        // Glow
-        canvas.drawCircle(Offset(dx, dy), dotR + 3, Paint()
-          ..color = color.withValues(alpha: dotAlpha * 0.15)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
-        // Dot
-        canvas.drawCircle(Offset(dx, dy), dotR, Paint()
-          ..color = color.withValues(alpha: dotAlpha));
-      }
-
-      // Blessing orb — main orb that descends and settles
-      final orbY = sourceY + streamLen * 0.85;
-      final orbX = streamTopX + (streamBotX - streamTopX) * 0.85;
-      final orbR = (5 + blessingProgress * 4) * (isComplete ? pulse : 1.0);
-      final orbAlpha = blessingProgress * (isComplete ? 0.85 : 0.65);
-
-      // Orb outer glow
-      canvas.drawCircle(Offset(orbX, orbY), orbR + 8, Paint()
-        ..color = color.withValues(alpha: orbAlpha * 0.10)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
-
-      // Orb body
-      canvas.drawCircle(Offset(orbX, orbY), orbR, Paint()
-        ..shader = RadialGradient(colors: [
-          Colors.white.withValues(alpha: orbAlpha * 0.7),
-          color.withValues(alpha: orbAlpha * 0.8),
-          color.withValues(alpha: orbAlpha * 0.3),
-          Colors.transparent,
-        ], stops: const [0.0, 0.3, 0.7, 1.0])
-        .createShader(Rect.fromCircle(center: Offset(orbX, orbY), radius: orbR)));
-
-      // Label below orb when blessing is fully revealed
-      if (blessingProgress > 0.7) {
-        final labelAlpha = ((blessingProgress - 0.7) / 0.3) * (isComplete ? 0.8 : 0.55);
-        final tp = TextPainter(
-          text: TextSpan(text: blessingLabels[i], style: _illusTag(11, color.withValues(alpha: labelAlpha)).copyWith(
-            shadows: [Shadow(color: color.withValues(alpha: labelAlpha * 0.4), blurRadius: 4)],
-          )),
-          textDirection: TextDirection.rtl,
-        )..layout();
-        tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 8));
-      }
-    }
-
-    // 6. Connection rays from source when complete
-    if (isComplete) {
-      for (int i = 0; i < 7; i++) {
-        final angle = -math.pi / 2 + (i - 3) * 0.22;
-        final rayLen = 22.0 * pulse;
-        final sx = cx + math.cos(angle) * 8;
-        final sy = sourceY + math.sin(angle) * 4 + 4;
-        final ex = cx + math.cos(angle) * (8 + rayLen);
-        final ey = sourceY + math.sin(angle) * (4 + rayLen * 0.3) + 4;
-        canvas.drawLine(Offset(sx, sy), Offset(ex, ey), Paint()
-          ..shader = LinearGradient(colors: [
-            Color.fromRGBO(255, 220, 120, 0.20 * pulse),
-            Colors.transparent,
-          ]).createShader(Rect.fromPoints(Offset(sx, sy), Offset(ex, ey)))
-          ..strokeWidth = 1.2..strokeCap = StrokeCap.round);
-      }
-    }
-
-    canvas.restore();
-
-    // 7. Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.35;
-      final ringA = (1.0 - shockPhase) * 0.30;
-      canvas.drawCircle(Offset(cx, h * 0.45), maxR * shockPhase, Paint()
-        ..color = Color.fromRGBO(212, 175, 55, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
-
-    // 8. Particles — blessing sparkles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final px = cx + p.x * w * 0.25;
-        final py = h * 0.45 - t * h * 0.30;
-        final a = (1.0 - t) * 0.65;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final pColor = Color.lerp(const Color(0xFFD4AF37), const Color(0xFFA78BFA), t)!;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-      }
-    }
-
-    // 9. Label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'بارك الله لك' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20; final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(center.dx + span / 2, center.dy), width: span, height: span * 0.4),
+      math.pi, math.pi, false, paint,
+    );
   }
 
   @override
   bool shouldRepaint(_FiveBlessingsPainter o) =>
       o.progress != progress || o.pulse != pulse ||
-      o.starPhase != starPhase || o.particlePhase != particlePhase ||
-      o.isComplete != isComplete || o.pointsToday != pointsToday ||
-      o.punchScale != punchScale || o.shockPhase != shockPhase ||
-      o.flowPhase != flowPhase;
+      o.starPhase != starPhase || o.birdPhase != birdPhase ||
+      o.glowPhase != glowPhase || o.isComplete != isComplete ||
+      o.pointsToday != pointsToday;
 }
+
 
 // =============================================================================
 // 🛤️ Glowing Path (طريق النور) — Ask Allah for a good day
@@ -8879,7 +8256,7 @@ class _GlowingPathPainter extends CustomPainter {
     canvas.save();
     final pathCy = h * 0.50;
     canvas.translate(cx, pathCy);
-    canvas.scale(punchScale, punchScale);
+    // punch scale removed
     canvas.translate(-cx, -pathCy);
 
     // 3. Perspective path receding into distance
@@ -8897,55 +8274,13 @@ class _GlowingPathPainter extends CustomPainter {
     canvas.restore();
 
     // 7. Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.38;
-      final ringA = (1.0 - shockPhase) * 0.32;
-      canvas.drawCircle(Offset(cx, h * 0.65), maxR * shockPhase, Paint()
-        ..color = Color.fromRGBO(212, 175, 55, ringA)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Particles — trail sparkles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final px = cx + p.x * w * 0.20;
-        final py = h * 0.65 - t * h * 0.40;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final pColor = Color.lerp(const Color(0xFFD4AF37), const Color(0xFF34D399), t)!;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = pColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = pColor.withValues(alpha: a));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 9. Label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'بارك الله يومك' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800,
-          letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20; final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2; final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
+    // progress % label removed
   }
 
   /// Perspective path with edges converging toward vanishing point
@@ -9467,9 +8802,7 @@ class _FreedomFlamePainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Draw the 4 flame layers (outer ring of fire around center)
     _drawFlames(canvas, cx, cy, w, h);
@@ -9480,95 +8813,15 @@ class _FreedomFlamePainter extends CustomPainter {
     canvas.restore();
 
     // 5. Shockwave on tap — cool blue instead of fire
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.40;
-      final ringColor = isComplete
-          ? const Color(0xFF06B6D4)
-          : Color.lerp(const Color(0xFFF97316), const Color(0xFF06B6D4), progress)!;
-      final ringA = (1.0 - shockPhase) * 0.40;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = ringColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 6. Tap particles — ember sparks transforming to cool light
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.30;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 18;
-        final a = (1.0 - t) * 0.75;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final sparkColor = isComplete
-            ? const Color(0xFF06B6D4)
-            : Color.lerp(const Color(0xFFEF4444), const Color(0xFF06B6D4), progress)!;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'أُعتقت بإذن الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFF06B6D4)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 8. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// 4 flame layers surrounding the figure — each extinguishes at 25% intervals
@@ -9703,14 +8956,6 @@ class _FreedomFlamePainter extends CustomPainter {
     if (fadeIn > 0.5) {
       const labels = ['بَرْد', 'سَلَام', 'نُور', 'أَمَان'];
       final labelAlpha = ((fadeIn - 0.5) * 2).clamp(0.0, 0.7);
-      final tp = TextPainter(
-        text: TextSpan(
-          text: labels[index],
-          style: _illusTag(11, coolColor.withValues(alpha: labelAlpha)),
-        ),
-        textDirection: TextDirection.rtl,
-      )..layout();
-      tp.paint(canvas, Offset(orbX - tp.width / 2, orbY + orbR + 8));
     }
   }
 
@@ -10046,12 +9291,6 @@ class _CycleOfReturnPainter extends CustomPainter {
     canvas.drawPath(hillPath, Paint()..color = Color.lerp(
       const Color(0xFFE6A050), const Color(0xFFF5B041), progress)!);
 
-    // Morning label
-    final tpM = TextPainter(
-      text: TextSpan(text: 'صُبْح', style: _illusArabic(13, const Color(0xFFA06000).withValues(alpha: 0.70))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tpM.paint(canvas, Offset(halfW * 0.5 - tpM.width / 2, h * 0.72));
     canvas.restore();
 
     // ── RIGHT HALF: Evening (cool night) ──
@@ -10102,12 +9341,6 @@ class _CycleOfReturnPainter extends CustomPainter {
       ..lineTo(w, h)..lineTo(halfW, h)..close();
     canvas.drawPath(eHillPath, Paint()..color = const Color(0xFF1E2845).withValues(alpha: 0.85));
 
-    // Evening label
-    final tpE = TextPainter(
-      text: TextSpan(text: 'مَسَاء', style: _illusArabic(13, const Color(0xFFE8D98A).withValues(alpha: 0.70))),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tpE.paint(canvas, Offset(halfW + halfW * 0.5 - tpE.width / 2, h * 0.72));
     canvas.restore();
 
     // ── Center divider — soft gradient blend ──
@@ -10116,37 +9349,9 @@ class _CycleOfReturnPainter extends CustomPainter {
       Paint()..color = Colors.white.withValues(alpha: 0.20));
 
     // ── Progress label ──
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'وَإِلَيْكَ النُّشُور' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // ── Points badge ──
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(text: badgeLabel, style: const TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final badgeW = tp3.width + 20;
-      final badgeH = tp3.height + 10;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH), const Radius.circular(10));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   @override
@@ -10158,8 +9363,9 @@ class _CycleOfReturnPainter extends CustomPainter {
       o.orbitPhase != orbitPhase;
 }
 
+
 // =============================================================================
-// 🫁 Three Vessels (أوعية العافية) — Health in body, hearing, sight
+// 💚 Body Hearing Sight — Allah's gift of wellbeing (morning_28 / evening_28)
 // =============================================================================
 class _ThreeVessels extends StatefulWidget {
   final double progress;
@@ -10176,75 +9382,29 @@ class _ThreeVessels extends StatefulWidget {
   State<_ThreeVessels> createState() => _ThreeVesselsState();
 }
 
-class _ThreeVesselsState extends State<_ThreeVessels>
-    with TickerProviderStateMixin {
-  late AnimationController _pulseCtrl;
-  late Animation<double> _pulse;
-  late AnimationController _growCtrl;
-  late Animation<double> _grow;
+class _ThreeVesselsState extends State<_ThreeVessels> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl;
+  late Animation<double> _pulse, _grow, _glow;
   double _prevProgress = 0.0;
-  late AnimationController _starCtrl;
-  late AnimationController _pCtrl;
-  late Animation<double> _pAnim;
-  int _prevTap = 0;
-  late AnimationController _punchCtrl;
-  late Animation<double> _punch;
-  late AnimationController _shockCtrl;
-  late Animation<double> _shock;
-  late AnimationController _flowCtrl;
 
-  final List<_Particle> _particles =
-      List.generate(16, (i) => _Particle(seed: i + 1500));
+  static const _rows = [
+    (label: 'Wellbeing',  sub: 'in your body',                    hex: 0xFF0D8A6A, isGood: true),
+    (label: 'Wellbeing',  sub: 'in your hearing',                  hex: 0xFF1565C0, isGood: true),
+    (label: 'Wellbeing',  sub: 'in your sight',                    hex: 0xFF6A1B9A, isGood: true),
+    (label: 'Protection', sub: 'from disbelief and poverty',       hex: 0xFFC84B31, isGood: false),
+    (label: 'Protection', sub: 'from the punishment of the grave', hex: 0xFF8B4513, isGood: false),
+  ];
 
   @override
   void initState() {
     super.initState();
-
-    _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500))
-      ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.93, end: 1.07)
-        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
-
-    _growCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2400))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
-    _prevProgress = widget.progress;
-    _growCtrl.value = widget.progress;
-
-    _starCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2000))
-      ..repeat(reverse: true);
-
-    _pCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1100));
-    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
-    _prevTap = widget.tapCount;
-
-    _punchCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _punch = TweenSequence<double>([
-      TweenSequenceItem(
-          tween: Tween(begin: 1.0, end: 1.10)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 40),
-      TweenSequenceItem(
-          tween: Tween(begin: 1.10, end: 0.96)
-              .chain(CurveTween(curve: Curves.easeInOut)),
-          weight: 30),
-      TweenSequenceItem(
-          tween: Tween(begin: 0.96, end: 1.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 30),
-    ]).animate(_punchCtrl);
-
-    _shockCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
-
-    _flowCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3200))
-      ..repeat(reverse: true);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1800))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.4, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -10254,414 +9414,135 @@ class _ThreeVesselsState extends State<_ThreeVessels>
       _growCtrl.animateTo(widget.progress);
       _prevProgress = widget.progress;
     }
-    if (widget.tapCount != _prevTap) {
-      _prevTap = widget.tapCount;
-      for (final p in _particles) {
-        p.reset();
-      }
-      _pCtrl.forward(from: 0);
-      _punchCtrl.forward(from: 0);
-      _shockCtrl.forward(from: 0);
-    }
   }
 
   @override
   void dispose() {
-    _pulseCtrl.dispose();
-    _growCtrl.dispose();
-    _starCtrl.dispose();
-    _pCtrl.dispose();
-    _punchCtrl.dispose();
-    _shockCtrl.dispose();
-    _flowCtrl.dispose();
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
-      animation: Listenable.merge([
-        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
-        _punchCtrl, _shockCtrl, _flowCtrl,
-      ]),
-      builder: (_, __) => SizedBox(
-        height: 290,
-        child: CustomPaint(
-          painter: _ThreeVesselsPainter(
-            progress: _grow.value,
-            pulse: _pulse.value,
-            starPhase: _starCtrl.value,
-            particlePhase: _pAnim.value,
-            particles: _particles,
-            isComplete: widget.isComplete,
-            pointsToday: widget.pointsToday,
-            punchScale: _punch.value,
-            shockPhase: _shock.value,
-            flowPhase: _flowCtrl.value,
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        return SizedBox(
+          height: 260,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: isDark
+                        ? [const Color(0xFF1A2030), const Color(0xFF1A2828)]
+                        : [const Color(0xFFF5F9FF), const Color(0xFFEDF8F3)],
+                  ),
+                ),
+              ),
+              CustomPaint(painter: _VesselDotPainter(isDark: isDark)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (int i = 0; i < _rows.length; i++)
+                      _buildRow(rowIdx: i, total: _rows.length, progress: progress, isDark: isDark),
+                  ],
+                ),
+              ),
+              if (widget.isComplete)
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  child: Container(
+                    height: 3,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                        Colors.transparent,
+                        const Color(0xFF26C485).withValues(alpha: _glow.value * 0.85),
+                        Colors.transparent,
+                      ]),
+                    ),
+                  ),
+                ),
+            ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRow({required int rowIdx, required int total, required double progress, required bool isDark}) {
+    final row = _rows[rowIdx];
+    final accent = Color(row.hex);
+    final threshold = rowIdx / total;
+    final rowP = ((progress - threshold) * total).clamp(0.0, 1.0);
+    return AnimatedOpacity(
+      opacity: rowP,
+      duration: const Duration(milliseconds: 350),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: isDark ? 0.11 : 0.07),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: accent.withValues(alpha: isDark ? 0.35 : 0.22), width: 1.2),
+        ),
+        child: Row(
+          children: [
+            Container(width: 8, height: 8,
+              decoration: BoxDecoration(shape: BoxShape.circle,
+                color: accent.withValues(alpha: rowP * (isDark ? 0.9 : 0.75)))),
+            const SizedBox(width: 12),
+            Expanded(
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(text: '${row.label}  ',
+                    style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800,
+                      color: accent.withValues(alpha: rowP * (isDark ? 1.0 : 0.9)))),
+                  TextSpan(text: row.sub,
+                    style: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.w500,
+                      color: isDark
+                          ? Colors.white70.withValues(alpha: rowP)
+                          : const Color(0xFF2D3748).withValues(alpha: rowP * 0.75))),
+                ]),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _ThreeVesselsPainter extends CustomPainter {
-  final double progress;
-  final double pulse;
-  final double starPhase;
-  final double particlePhase;
-  final List<_Particle> particles;
-  final bool isComplete;
-  final int pointsToday;
-  final double punchScale;
-  final double shockPhase;
-  final double flowPhase;
-
-  // 3 vessels: body, hearing, sight — each fills at 33% intervals (3 reps)
-  static const _vesselColors = [
-    Color(0xFF10B981), // body — emerald vitality
-    Color(0xFF3B82F6), // hearing — blue clarity
-    Color(0xFF8B5CF6), // sight — violet perception
-  ];
-
-  static const _vesselLabels = ['بَدَن', 'سَمْع', 'بَصَر'];
-  // Shield color for kufr/poverty/grave protection
-  static const _shieldColor = Color(0xFFD4AF37);
-
-  const _ThreeVesselsPainter({
-    required this.progress,
-    required this.pulse,
-    required this.starPhase,
-    required this.particlePhase,
-    required this.particles,
-    required this.isComplete,
-    this.pointsToday = 0,
-    this.punchScale = 1.0,
-    this.shockPhase = 1.0,
-    this.flowPhase = 0.0,
-  });
-
+class _VesselDotPainter extends CustomPainter {
+  final bool isDark;
+  const _VesselDotPainter({required this.isDark});
   @override
   void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final cx = w / 2;
-    final cy = h * 0.42;
-
-    // 1. Background — deep healing tones
-    final warmth = progress * 0.15;
-    _paintLightBg(canvas, w, h, progress: progress);
-
-    // 2. Stars
-    const starPos = [
-      (0.10, 0.07), (0.24, 0.15), (0.42, 0.06), (0.56, 0.13),
-      (0.72, 0.08), (0.88, 0.16), (0.94, 0.06), (0.30, 0.22),
-      (0.64, 0.20), (0.16, 0.24),
-    ];
-    final sp = Paint();
-    for (int i = 0; i < starPos.length; i++) {
-      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
-      final starAlpha = (0.10 + progress * 0.25 + 0.30 * tw * progress).clamp(0.0, 0.6);
-      sp.color = Colors.white.withValues(alpha: starAlpha);
-      canvas.drawCircle(
-          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.8, sp);
-    }
-
-    // Apply punch scale
-    canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
-
-    // 3. Three vessels arranged horizontally
-    _drawVessels(canvas, cx, cy, w, h);
-
-    // 4. Protection shield below vessels (kufr, poverty, grave)
-    _drawShield(canvas, cx, cy + 55, w);
-
-    canvas.restore();
-
-    // 5. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.38;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      final ringColor = Color.lerp(
-        const Color(0xFF10B981), const Color(0xFF8B5CF6), progress)!;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = ringColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
-
-    // 6. Tap particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final sparkColor = isComplete
-            ? _shieldColor
-            : _vesselColors[(progress * 2).floor().clamp(0, 2)];
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
-
-    // 7. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'عَافَاك الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? const Color(0xFF10B981)
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
-    // 8. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
-  }
-
-  /// Three vessels — body, hearing, sight — each fills at 33% progress steps
-  void _drawVessels(Canvas canvas, double cx, double cy, double w, double h) {
-    final spacing = w * 0.25;
-    final positions = [
-      cx - spacing, // body (left)
-      cx,           // hearing (center)
-      cx + spacing, // sight (right)
-    ];
-
-    for (int i = 0; i < 3; i++) {
-      final vx = positions[i];
-      final vy = cy - 10;
-      final fillThreshold = (i + 1) / 3.0;
-      final isFilled = progress >= fillThreshold;
-      final fillLevel = ((progress - i / 3.0) * 3.0).clamp(0.0, 1.0);
-      final color = _vesselColors[i];
-
-      // Vessel outline — cup/chalice shape
-      final vesselW = 28.0;
-      final vesselH = 36.0;
-      final vesselPath = Path()
-        ..moveTo(vx - vesselW / 2, vy - vesselH / 2)
-        ..quadraticBezierTo(vx - vesselW / 2 - 4, vy + vesselH * 0.3,
-                            vx - vesselW / 4, vy + vesselH / 2)
-        ..lineTo(vx + vesselW / 4, vy + vesselH / 2)
-        ..quadraticBezierTo(vx + vesselW / 2 + 4, vy + vesselH * 0.3,
-                            vx + vesselW / 2, vy - vesselH / 2)
-        ..close();
-
-      // Vessel outline
-      final outlineAlpha = 0.15 + fillLevel * 0.25;
-      canvas.drawPath(vesselPath, Paint()
-        ..color = color.withValues(alpha: outlineAlpha)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5);
-
-      // Fill level — noor rising inside the vessel
-      if (fillLevel > 0.01) {
-        final fillTop = vy + vesselH / 2 - vesselH * fillLevel;
-        final fillRect = Rect.fromLTRB(
-          vx - vesselW / 3, fillTop,
-          vx + vesselW / 3, vy + vesselH / 2 - 2,
-        );
-
-        // Animated wave surface
-        final waveY = fillTop + math.sin(flowPhase * math.pi * 2 + i * 1.5) * 2;
-
-        final fillPath = Path()
-          ..moveTo(fillRect.left, waveY)
-          ..quadraticBezierTo(vx, waveY - 3 * math.sin(flowPhase * math.pi * 2 + i),
-                              fillRect.right, waveY)
-          ..lineTo(fillRect.right, fillRect.bottom)
-          ..lineTo(fillRect.left, fillRect.bottom)
-          ..close();
-
-        canvas.save();
-        canvas.clipPath(vesselPath);
-        canvas.drawPath(fillPath, Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              color.withValues(alpha: 0.25),
-              color.withValues(alpha: 0.50),
-            ],
-          ).createShader(fillRect));
-        canvas.restore();
-
-        // Inner glow when filled
-        if (isFilled) {
-          canvas.drawCircle(
-            Offset(vx, vy), 18,
-            Paint()
-              ..color = color.withValues(alpha: 0.12 * pulse)
-              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-          );
-        }
-      }
-
-      // Organ icon above vessel — simple symbolic shapes
-      final iconY = vy - vesselH / 2 - 14;
-      final iconAlpha = 0.25 + fillLevel * 0.50;
-
-      if (i == 0) {
-        // Body — simple figure silhouette
-        canvas.drawCircle(Offset(vx, iconY - 4), 4,
-          Paint()..color = color.withValues(alpha: iconAlpha));
-        canvas.drawLine(Offset(vx, iconY), Offset(vx, iconY + 8),
-          Paint()..color = color.withValues(alpha: iconAlpha)..strokeWidth = 1.5..strokeCap = StrokeCap.round);
-      } else if (i == 1) {
-        // Hearing — ear-like curve
-        final earPath = Path()
-          ..moveTo(vx + 3, iconY - 5)
-          ..quadraticBezierTo(vx + 7, iconY, vx + 3, iconY + 5)
-          ..quadraticBezierTo(vx, iconY + 2, vx + 1, iconY - 2);
-        canvas.drawPath(earPath, Paint()
-          ..color = color.withValues(alpha: iconAlpha)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5
-          ..strokeCap = StrokeCap.round);
-      } else {
-        // Sight — eye shape
-        final eyePath = Path()
-          ..moveTo(vx - 6, iconY)
-          ..quadraticBezierTo(vx, iconY - 5, vx + 6, iconY)
-          ..quadraticBezierTo(vx, iconY + 5, vx - 6, iconY);
-        canvas.drawPath(eyePath, Paint()
-          ..color = color.withValues(alpha: iconAlpha)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.3);
-        canvas.drawCircle(Offset(vx, iconY), 2,
-          Paint()..color = color.withValues(alpha: iconAlpha));
-      }
-
-      // Label below vessel
-      if (fillLevel > 0.3) {
-        final labelAlpha = ((fillLevel - 0.3) / 0.7).clamp(0.0, 0.7);
-        final tp = TextPainter(
-          text: TextSpan(
-            text: _vesselLabels[i],
-            style: _illusTag(11, color.withValues(alpha: labelAlpha)),
-          ),
-          textDirection: TextDirection.rtl,
-        )..layout();
-        tp.paint(canvas, Offset(vx - tp.width / 2, vy + vesselH / 2 + 6));
+    final paint = Paint()
+      ..color = (isDark ? Colors.white : const Color(0xFF0D6B52)).withValues(alpha: isDark ? 0.04 : 0.05);
+    const spacing = 22.0;
+    for (double x = spacing; x < size.width; x += spacing) {
+      for (double y = spacing; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), 1.2, paint);
       }
     }
   }
-
-  /// Protection shield below — represents protection from kufr, poverty, grave
-  void _drawShield(Canvas canvas, double cx, double cy, double w) {
-    // Shield only appears as progress grows
-    if (progress < 0.15) return;
-
-    final shieldAlpha = ((progress - 0.15) / 0.85).clamp(0.0, 1.0);
-    final shieldR = 12 + shieldAlpha * 8;
-
-    // Shield shape — pointed bottom, rounded top
-    final shieldPath = Path()
-      ..moveTo(cx, cy + shieldR + 4)  // bottom point
-      ..quadraticBezierTo(cx - shieldR - 6, cy + 2, cx - shieldR, cy - shieldR * 0.3)
-      ..quadraticBezierTo(cx - shieldR, cy - shieldR, cx, cy - shieldR - 2)
-      ..quadraticBezierTo(cx + shieldR, cy - shieldR, cx + shieldR, cy - shieldR * 0.3)
-      ..quadraticBezierTo(cx + shieldR + 6, cy + 2, cx, cy + shieldR + 4)
-      ..close();
-
-    // Shield glow
-    canvas.drawCircle(
-      Offset(cx, cy), shieldR + 8,
-      Paint()
-        ..color = _shieldColor.withValues(alpha: shieldAlpha * 0.08 * pulse)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-    );
-
-    // Shield fill
-    canvas.drawPath(shieldPath, Paint()
-      ..color = _shieldColor.withValues(alpha: shieldAlpha * 0.12));
-
-    // Shield border
-    canvas.drawPath(shieldPath, Paint()
-      ..color = _shieldColor.withValues(alpha: shieldAlpha * 0.35)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2);
-
-    // On completion: inner emblem
-    if (isComplete) {
-      canvas.drawCircle(
-        Offset(cx, cy - 2), 4 * pulse,
-        Paint()
-          ..color = _shieldColor.withValues(alpha: 0.30 * pulse)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-      );
-      canvas.drawCircle(
-        Offset(cx, cy - 2), 2,
-        Paint()..color = _shieldColor.withValues(alpha: 0.50),
-      );
-    }
-  }
-
   @override
-  bool shouldRepaint(_ThreeVesselsPainter o) =>
-      o.progress != progress || o.pulse != pulse ||
-      o.starPhase != starPhase || o.particlePhase != particlePhase ||
-      o.isComplete != isComplete || o.pointsToday != pointsToday ||
-      o.punchScale != punchScale || o.shockPhase != shockPhase ||
-      o.flowPhase != flowPhase;
+  bool shouldRepaint(_VesselDotPainter o) => o.isDark != isDark;
 }
 
+
+
 // =============================================================================
-// 🏛️ Seven Pillars (سبع أعمدة) — Allah will suffice you in everything
+// 📜 Seven Times Promise — Allah suffices in this world & Hereafter
+// Hasbiyallahu (morning_29 / evening_29)
 // =============================================================================
 class _SevenPillars extends StatefulWidget {
   final double progress;
@@ -10678,75 +9559,32 @@ class _SevenPillars extends StatefulWidget {
   State<_SevenPillars> createState() => _SevenPillarsState();
 }
 
-class _SevenPillarsState extends State<_SevenPillars>
-    with TickerProviderStateMixin {
-  late AnimationController _pulseCtrl;
-  late Animation<double> _pulse;
-  late AnimationController _growCtrl;
-  late Animation<double> _grow;
+class _SevenPillarsState extends State<_SevenPillars> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _fadeCtrl;
+  late Animation<double> _pulse, _grow, _glow, _fade;
   double _prevProgress = 0.0;
-  late AnimationController _starCtrl;
-  late AnimationController _pCtrl;
-  late Animation<double> _pAnim;
-  int _prevTap = 0;
-  late AnimationController _punchCtrl;
-  late Animation<double> _punch;
-  late AnimationController _shockCtrl;
-  late Animation<double> _shock;
-  late AnimationController _shimmerCtrl;
 
-  final List<_Particle> _particles =
-      List.generate(16, (i) => _Particle(seed: i + 1600));
+  // The benefit split into meaningful lines
+  static const _lines = [
+    'Allah will suffice you',
+    'against whatever concerns you',
+    'in the matters of',
+    'this world',
+    'and the Hereafter',
+  ];
 
   @override
   void initState() {
     super.initState();
-
-    _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500))
-      ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.93, end: 1.07)
-        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
-
-    _growCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2600))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.96, end: 1.04).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
-    _prevProgress = widget.progress;
-    _growCtrl.value = widget.progress;
-
-    _starCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2100))
-      ..repeat(reverse: true);
-
-    _pCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1100));
-    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
-    _prevTap = widget.tapCount;
-
-    _punchCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _punch = TweenSequence<double>([
-      TweenSequenceItem(
-          tween: Tween(begin: 1.0, end: 1.10)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 40),
-      TweenSequenceItem(
-          tween: Tween(begin: 1.10, end: 0.96)
-              .chain(CurveTween(curve: Curves.easeInOut)),
-          weight: 30),
-      TweenSequenceItem(
-          tween: Tween(begin: 0.96, end: 1.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 30),
-    ]).animate(_punchCtrl);
-
-    _shockCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
-
-    _shimmerCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3500))
-      ..repeat(reverse: true);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1800))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.3, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _fadeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600))..forward();
+    _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeIn);
   }
 
   @override
@@ -10756,402 +9594,160 @@ class _SevenPillarsState extends State<_SevenPillars>
       _growCtrl.animateTo(widget.progress);
       _prevProgress = widget.progress;
     }
-    if (widget.tapCount != _prevTap) {
-      _prevTap = widget.tapCount;
-      for (final p in _particles) {
-        p.reset();
-      }
-      _pCtrl.forward(from: 0);
-      _punchCtrl.forward(from: 0);
-      _shockCtrl.forward(from: 0);
-    }
   }
 
   @override
   void dispose() {
-    _pulseCtrl.dispose();
-    _growCtrl.dispose();
-    _starCtrl.dispose();
-    _pCtrl.dispose();
-    _punchCtrl.dispose();
-    _shockCtrl.dispose();
-    _shimmerCtrl.dispose();
+    _pulseCtrl.dispose(); _growCtrl.dispose();
+    _glowCtrl.dispose(); _fadeCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
-      animation: Listenable.merge([
-        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
-        _punchCtrl, _shockCtrl, _shimmerCtrl,
-      ]),
-      builder: (_, __) => SizedBox(
-        height: 290,
-        child: CustomPaint(
-          painter: _SevenPillarsPainter(
-            progress: _grow.value,
-            pulse: _pulse.value,
-            starPhase: _starCtrl.value,
-            particlePhase: _pAnim.value,
-            particles: _particles,
-            isComplete: widget.isComplete,
-            pointsToday: widget.pointsToday,
-            punchScale: _punch.value,
-            shockPhase: _shock.value,
-            shimmerPhase: _shimmerCtrl.value,
-          ),
-        ),
-      ),
-    );
-  }
-}
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _fadeCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        final totalLines = _lines.length;
 
-class _SevenPillarsPainter extends CustomPainter {
-  final double progress;
-  final double pulse;
-  final double starPhase;
-  final double particlePhase;
-  final List<_Particle> particles;
-  final bool isComplete;
-  final int pointsToday;
-  final double punchScale;
-  final double shockPhase;
-  final double shimmerPhase;
+        return SizedBox(
+          height: 260,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // ── Background — deep indigo to teal gradient ──
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDark
+                        ? [const Color(0xFF1A2E3A), const Color(0xFF1E3D30)]
+                        : [const Color(0xFFF0F7FF), const Color(0xFFE8F5F0)],
+                  ),
+                ),
+              ),
 
-  static const _pillarColor = Color(0xFF8B5CF6); // violet/purple — majesty
-  static const _throneColor = Color(0xFFD4AF37); // golden — العرش العظيم
-  static const _domeColor = Color(0xFF6366F1);   // indigo — dome of sufficiency
+              // ── Soft radial glow in center ──
+              Center(
+                child: Container(
+                  width: 220 * _pulse.value,
+                  height: 220 * _pulse.value,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFD4AF37).withValues(alpha: 0.12 * _glow.value),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
-  const _SevenPillarsPainter({
-    required this.progress,
-    required this.pulse,
-    required this.starPhase,
-    required this.particlePhase,
-    required this.particles,
-    required this.isComplete,
-    this.pointsToday = 0,
-    this.punchScale = 1.0,
-    this.shockPhase = 1.0,
-    this.shimmerPhase = 0.0,
-  });
+              // ── Lines revealed progressively ──
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (int i = 0; i < totalLines; i++) ...[
+                      _buildLine(
+                        context,
+                        text: _lines[i],
+                        lineIndex: i,
+                        totalLines: totalLines,
+                        progress: progress,
+                        isComplete: widget.isComplete,
+                        isDark: isDark,
+                      ),
+                      if (i < totalLines - 1) const SizedBox(height: 6),
+                    ],
+                  ],
+                ),
+              ),
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final cx = w / 2;
-    final cy = h * 0.44;
-
-    // 1. Background — deep royal night
-    final depth = progress * 0.12;
-    _paintLightBg(canvas, w, h, progress: progress);
-
-    // 2. Stars
-    const starPos = [
-      (0.08, 0.06), (0.22, 0.14), (0.38, 0.04), (0.54, 0.12),
-      (0.68, 0.07), (0.84, 0.15), (0.92, 0.05), (0.30, 0.20),
-      (0.60, 0.22), (0.14, 0.18), (0.76, 0.19),
-    ];
-    final sp = Paint();
-    for (int i = 0; i < starPos.length; i++) {
-      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
-      final starAlpha = (0.10 + progress * 0.30 + 0.30 * tw * progress).clamp(0.0, 0.65);
-      sp.color = Colors.white.withValues(alpha: starAlpha);
-      canvas.drawCircle(
-          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.9, sp);
-    }
-
-    // Apply punch scale
-    canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
-
-    // 3. Throne silhouette at center top
-    _drawThrone(canvas, cx, cy - 30, w);
-
-    // 4. Seven pillars arranged in semicircle below throne
-    _drawPillars(canvas, cx, cy, w, h);
-
-    // 5. Dome of sufficiency — appears on completion
-    if (progress > 0.7) {
-      _drawDome(canvas, cx, cy, w);
-    }
-
-    canvas.restore();
-
-    // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.38;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _pillarColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
-
-    // 7. Tap particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final sparkColor = isComplete ? _throneColor : _pillarColor;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
-
-    // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'حَسْبِيَ الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? _throneColor
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
-
-    // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
-  }
-
-  /// Throne silhouette — العرش العظيم
-  void _drawThrone(Canvas canvas, double cx, double cy, double w) {
-    final throneAlpha = 0.20 + progress * 0.45;
-
-    // Throne base — wide arc
-    final throneW = 50.0;
-    final throneH = 20.0;
-    final thronePath = Path()
-      ..moveTo(cx - throneW / 2, cy + throneH / 2)
-      ..quadraticBezierTo(cx - throneW / 2 - 5, cy - throneH, cx - 8, cy - throneH - 5)
-      ..quadraticBezierTo(cx, cy - throneH - 12 * pulse, cx + 8, cy - throneH - 5)
-      ..quadraticBezierTo(cx + throneW / 2 + 5, cy - throneH, cx + throneW / 2, cy + throneH / 2)
-      ..close();
-
-    // Throne glow
-    canvas.drawCircle(
-      Offset(cx, cy - 5), 25,
-      Paint()
-        ..color = _throneColor.withValues(alpha: throneAlpha * 0.15 * pulse)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15),
-    );
-
-    // Throne fill
-    canvas.drawPath(thronePath, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          _throneColor.withValues(alpha: throneAlpha * 0.5),
-          _throneColor.withValues(alpha: throneAlpha * 0.15),
-        ],
-      ).createShader(Rect.fromCenter(center: Offset(cx, cy), width: throneW, height: throneH * 2)));
-
-    // Throne outline
-    canvas.drawPath(thronePath, Paint()
-      ..color = _throneColor.withValues(alpha: throneAlpha * 0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0);
-  }
-
-  /// Seven pillars of light — each rises at 1/7 progress intervals
-  void _drawPillars(Canvas canvas, double cx, double cy, double w, double h) {
-    final arcR = w * 0.32;
-    final baseY = cy + 35; // pillars stand on this baseline
-
-    for (int i = 0; i < 7; i++) {
-      // Spread 7 pillars in a semicircle below the throne
-      final angle = math.pi + (i / 6) * math.pi; // pi to 2pi (bottom semicircle)
-      final px = cx + math.cos(angle) * arcR * 0.85;
-
-      final riseThreshold = (i + 1) / 7.0;
-      final isErected = progress >= riseThreshold;
-      final pillarProgress = ((progress - i / 7.0) * 7.0).clamp(0.0, 1.0);
-
-      // Pillar height — grows from 0 to full
-      final maxH = 55.0;
-      final pillarH = maxH * pillarProgress;
-      final pillarW = 5.0;
-
-      if (pillarProgress < 0.01) continue;
-
-      final pillarTop = baseY - pillarH;
-      final pillarAlpha = 0.35 + pillarProgress * 0.45;
-
-      // Shimmer effect — light travels up the pillar
-      final shimmerY = baseY - pillarH * ((shimmerPhase + i * 0.14) % 1.0);
-
-      // Pillar glow
-      canvas.drawRect(
-        Rect.fromLTRB(px - pillarW, pillarTop, px + pillarW, baseY),
-        Paint()
-          ..color = _pillarColor.withValues(alpha: pillarAlpha * 0.08)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
-      );
-
-      // Pillar body — gradient from bottom to top
-      canvas.drawRect(
-        Rect.fromLTRB(px - pillarW / 2, pillarTop, px + pillarW / 2, baseY),
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              (isErected ? Colors.white : _pillarColor).withValues(alpha: pillarAlpha * 0.7),
-              _pillarColor.withValues(alpha: pillarAlpha * 0.3),
+              // ── Completion shimmer at bottom ──
+              if (widget.isComplete)
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  child: Container(
+                    height: 3,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.transparent,
+                          const Color(0xFFD4AF37).withValues(alpha: _glow.value * 0.8),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
             ],
-          ).createShader(Rect.fromLTRB(px - pillarW / 2, pillarTop, px + pillarW / 2, baseY)),
-      );
-
-      // Shimmer dot travelling up
-      if (isErected) {
-        canvas.drawCircle(
-          Offset(px, shimmerY), 3,
-          Paint()
-            ..color = Colors.white.withValues(alpha: 0.30 * pulse)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+          ),
         );
-      }
-
-      // Pillar cap — bright tip
-      canvas.drawCircle(
-        Offset(px, pillarTop), 3.0 * (isErected ? pulse : 0.7),
-        Paint()
-          ..color = (isErected ? Colors.white : _pillarColor)
-              .withValues(alpha: pillarAlpha * 0.6),
-      );
-      if (isErected) {
-        canvas.drawCircle(
-          Offset(px, pillarTop), 6,
-          Paint()
-            ..color = _pillarColor.withValues(alpha: 0.12 * pulse)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
-        );
-      }
-
-      // Pillar base
-      canvas.drawCircle(
-        Offset(px, baseY), 2.5,
-        Paint()..color = _pillarColor.withValues(alpha: pillarAlpha * 0.3),
-      );
-    }
+      },
+    );
   }
 
-  /// Dome of sufficiency — كفاية — appears when most pillars are up
-  void _drawDome(Canvas canvas, double cx, double cy, double w) {
-    final domeProgress = ((progress - 0.7) / 0.3).clamp(0.0, 1.0);
-    final domeAlpha = domeProgress * 0.25 * pulse;
-    final arcR = w * 0.32;
-    final baseY = cy + 35;
-    final domeTop = cy - 55;
+  Widget _buildLine(
+    BuildContext context, {
+    required String text,
+    required int lineIndex,
+    required int totalLines,
+    required double progress,
+    required bool isComplete,
+    bool isDark = false,
+  }) {
+    // Each line reveals when progress passes its threshold
+    final threshold = lineIndex / totalLines;
+    final lineProgress = ((progress - threshold) * totalLines).clamp(0.0, 1.0);
 
-    // Dome arc — connects all pillar tips
-    final domePath = Path()
-      ..moveTo(cx - arcR * 0.85, baseY)
-      ..quadraticBezierTo(cx, domeTop * domeProgress + baseY * (1 - domeProgress),
-                          cx + arcR * 0.85, baseY);
+    // Style varies: two lines big + bold, rest smaller
+    final isBig = lineIndex == 0 || lineIndex == totalLines - 1;
+    final isHighlight = lineIndex == 3; // "this world AND the Hereafter" lines
 
-    canvas.drawPath(domePath, Paint()
-      ..color = _domeColor.withValues(alpha: domeAlpha)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round);
+    final Color textColor;
+    final double fontSize;
 
-    // Fill beneath dome — protective canopy
-    final fillPath = Path()
-      ..moveTo(cx - arcR * 0.85, baseY)
-      ..quadraticBezierTo(cx, domeTop * domeProgress + baseY * (1 - domeProgress),
-                          cx + arcR * 0.85, baseY)
-      ..close();
-
-    canvas.drawPath(fillPath, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          _domeColor.withValues(alpha: domeAlpha * 0.4),
-          Colors.transparent,
-        ],
-      ).createShader(Rect.fromLTRB(cx - arcR, domeTop, cx + arcR, baseY)));
-
-    // On completion — golden crown at dome apex
-    if (isComplete) {
-      final apexY = domeTop;
-      canvas.drawCircle(
-        Offset(cx, apexY), 5 * pulse,
-        Paint()
-          ..color = _throneColor.withValues(alpha: 0.30 * pulse)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-      );
-      canvas.drawCircle(
-        Offset(cx, apexY), 2.5,
-        Paint()..color = _throneColor.withValues(alpha: 0.55),
-      );
+    if (isHighlight || isComplete) {
+      textColor = const Color(0xFFFFD700);
+      fontSize = isBig ? 20 : 17;
+    } else if (lineIndex == 0) {
+      textColor = isDark
+          ? Colors.white.withValues(alpha: lineProgress)
+          : const Color(0xFF0C3547).withValues(alpha: lineProgress);
+      fontSize = 22;
+    } else {
+      textColor = isDark
+          ? Colors.white.withValues(alpha: lineProgress * 0.85)
+          : const Color(0xFF0C4A3E).withValues(alpha: lineProgress * 0.85);
+      fontSize = isBig ? 19 : 15;
     }
-  }
 
-  @override
-  bool shouldRepaint(_SevenPillarsPainter o) =>
-      o.progress != progress || o.pulse != pulse ||
-      o.starPhase != starPhase || o.particlePhase != particlePhase ||
-      o.isComplete != isComplete || o.pointsToday != pointsToday ||
-      o.punchScale != punchScale || o.shockPhase != shockPhase ||
-      o.shimmerPhase != shimmerPhase;
+    return AnimatedOpacity(
+      opacity: lineProgress.clamp(0.0, 1.0),
+      duration: const Duration(milliseconds: 400),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: GoogleFonts.outfit(
+          fontSize: fontSize * (lineIndex == 0 ? _pulse.value : 1.0),
+          fontWeight: lineIndex == 0 || isComplete
+              ? FontWeight.w800
+              : FontWeight.w600,
+          color: textColor,
+          letterSpacing: lineIndex == 0 ? 0.5 : 0.2,
+          height: 1.3,
+        ),
+      ),
+    );
+  }
 }
+
 
 // =============================================================================
 // 🤝 Guiding Hand (يد الشفاعة) — Prophet holds your hand into Jannah
@@ -11357,9 +9953,7 @@ class _GuidingHandPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Gateway arch (centered)
     _drawHand(canvas, cx, cy + 5, w);
@@ -11367,90 +9961,15 @@ class _GuidingHandPainter extends CustomPainter {
     canvas.restore();
 
     // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.38;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _handColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Tap particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final sparkColor = isComplete ? _gateColor : _handColor;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'رَضِيتُ بِالله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? _gateColor
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Luminous hand reaching down — prophetic guidance
@@ -11685,17 +10204,6 @@ class _GuidingHandPainter extends CustomPainter {
           ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: gateH * 0.6)),
       );
 
-      // جنة label
-      final tp = TextPainter(
-        text: TextSpan(
-          text: 'جَنَّة',
-          style: _illusTag(11, _gateColor.withValues(alpha: 0.55 * pulse)).copyWith(
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        textDirection: TextDirection.rtl,
-      )..layout();
-      tp.paint(canvas, Offset(cx - tp.width / 2, cy - 3));
     }
   }
 
@@ -11912,9 +10420,7 @@ class _InvincibleNamePainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Approaching threats that dissolve on the dome
     _drawThreats(canvas, cx, cy, w);
@@ -11928,90 +10434,15 @@ class _InvincibleNamePainter extends CustomPainter {
     canvas.restore();
 
     // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.40;
-      final ringA = (1.0 - shockPhase) * 0.40;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _domeColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Tap particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.30;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final sparkColor = isComplete ? _coreColor : _domeColor;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'لَا يَضُرُّ مَعَ اسْمِهِ شَيْء' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? _domeColor
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// 3 concentric dome layers — each at 33% progress (3 reps)
@@ -12385,9 +10816,7 @@ class _OceanOfForgivenessPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // 3. Ocean waves
     _drawOcean(canvas, cx, cy, w, h);
@@ -12401,90 +10830,15 @@ class _OceanOfForgivenessPainter extends CustomPainter {
     canvas.restore();
 
     // 6. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.38;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _oceanColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Tap particles — rising from ocean
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.5 - t * 25;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        final sparkColor = isComplete ? _clearColor : _oceanColor;
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = sparkColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = sparkColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 8. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'غُفِرَت بإذن الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? _clearColor
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 9. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
   }
 
   /// Ocean waves — multiple sine layers with depth
@@ -12599,26 +10953,6 @@ class _OceanOfForgivenessPainter extends CustomPainter {
       Paint()
         ..color = _clearColor.withValues(alpha: coreAlpha * 0.10 * pulse)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-    );
-
-    // Outer glow
-    canvas.drawCircle(
-      Offset(cx, cy), 18,
-      Paint()
-        ..color = _clearColor.withValues(alpha: coreAlpha * 0.12 * pulse)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
-    );
-
-    // Inner core
-    canvas.drawCircle(
-      Offset(cx, cy), 8,
-      Paint()
-        ..shader = RadialGradient(colors: [
-          Colors.white.withValues(alpha: coreAlpha * 0.7),
-          _clearColor.withValues(alpha: coreAlpha * 0.4),
-          Colors.transparent,
-        ], stops: const [0.0, 0.5, 1.0])
-        .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: 8)),
     );
 
     // On completion — expanded purity aura
@@ -12850,201 +11184,146 @@ class _UnparalleledScalesPainter extends CustomPainter {
 
     // Apply punch scale
     canvas.save();
-    canvas.translate(cx, cy);
-    canvas.scale(punchScale, punchScale);
-    canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
-    // 3. Scale (mizan) structure
-    _drawScale(canvas, cx, cy, w);
+    // 3. Cage & Freed Souls structure
+    _drawCageAndSouls(canvas, cx, cy, w);
 
-    // 4. Four reward indicators around the scale
+    // 4. Four reward indicators around it
     _drawRewards(canvas, cx, cy, w);
 
     canvas.restore();
 
     // 5. Shockwave on tap
-    if (shockPhase > 0 && shockPhase < 1) {
-      final maxR = w * 0.38;
-      final ringA = (1.0 - shockPhase) * 0.35;
-      final r = maxR * shockPhase;
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _goldColor.withValues(alpha: ringA)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5 * (1.0 - shockPhase),
-      );
-    }
+    // tap-effect removed — smooth calm
 
     // 6. Golden hasanat raining down
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-
-        canvas.drawCircle(Offset(px, py), pSize + 2,
-          Paint()
-            ..color = _goldColor.withValues(alpha: a * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(
-            Offset(px, py), pSize, Paint()..color = _goldColor.withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // 7. Progress label
-    final pct = (progress * 100).round();
-    final label = isComplete ? 'لَا إِلٰهَ إِلَّا الله' : '$pct%';
-    final tp2 = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: _illusArabic(14, isComplete
-              ? _goldColor
-              : const Color(0xFF5A6570)),
-      ),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
     // 8. Points badge
-    if (pointsToday > 0) {
-      final badgeLabel = '+$pointsToday pts';
-      final tp3 = TextPainter(
-        text: TextSpan(
-          text: badgeLabel,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
+  }
 
-      final badgeW = tp3.width + 36;
-      final badgeH = tp3.height + 18;
-      final badgeX = cx - badgeW / 2;
-      final badgeY = h * 0.82 + tp2.height + 6;
-      final rrect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rrect, Paint()
-        ..color = const Color(0xFFB8956A)
+  /// A breaking cage releasing 10 abstract human silhouettes with chains shattering
+  void _drawCageAndSouls(Canvas canvas, double cx, double cy, double w) {
+    final cageAlpha = (1.0 - progress * 0.85).clamp(0.0, 1.0);
+    final cageColor = const Color(0xFF64748B);
+    final baseY = cy + 30;
+    final topY = cy - 40;
+    final cageW = 72.0;
+
+    // ── Cage floor (oval base) ──
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, baseY), width: cageW, height: 14),
+      Paint()
+        ..color = cageColor.withValues(alpha: cageAlpha * 0.80)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(badgeX + 18, badgeY + 9));
-    }
-  }
-
-  /// Grand scale (mizan) — good deeds side rises higher with progress
-  void _drawScale(Canvas canvas, double cx, double cy, double w) {
-    final scaleAlpha = 0.40 + progress * 0.45;
-
-    // Central pillar — thick and solid
-    canvas.drawLine(
-      Offset(cx, cy - 45), Offset(cx, cy + 15),
+        ..strokeWidth = 2.2,
+    );
+    // ── Cage top ring ──
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, topY), width: cageW * 0.60, height: 10),
       Paint()
-        ..color = _scaleColor.withValues(alpha: scaleAlpha * 0.80)
-        ..strokeWidth = 3.5
-        ..strokeCap = StrokeCap.round,
+        ..color = cageColor.withValues(alpha: cageAlpha * 0.60)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.8,
+    );
+    // ── Hook above ──
+    canvas.drawLine(
+      Offset(cx, topY - 5), Offset(cx, topY - 14),
+      Paint()..color = cageColor.withValues(alpha: cageAlpha * 0.55)
+             ..strokeWidth = 2.0..strokeCap = StrokeCap.round,
     );
 
-    // Fulcrum triangle at top
-    final fulcrumPath = Path()
-      ..moveTo(cx, cy - 48)
-      ..lineTo(cx - 8, cy - 38)
-      ..lineTo(cx + 8, cy - 38)
-      ..close();
-    canvas.drawPath(fulcrumPath, Paint()
-      ..color = _scaleColor.withValues(alpha: scaleAlpha * 0.85));
-
-    // Beam — tilts as good deeds accumulate
-    final tilt = progress * 10;
-    final beamLen = w * 0.30;
-    final beamLeftY = cy - 36 - tilt;
-    final beamRightY = cy - 36 + tilt;
-
-    canvas.drawLine(
-      Offset(cx - beamLen, beamLeftY),
-      Offset(cx + beamLen, beamRightY),
-      Paint()
-        ..color = _scaleColor.withValues(alpha: scaleAlpha * 0.80)
-        ..strokeWidth = 3.0,
-    );
-
-    // Left pan — good deeds (heavy)
-    final leftPanX = cx - beamLen;
-    _drawPan(canvas, leftPanX, beamLeftY + 6, true, scaleAlpha);
-
-    // Right pan — empty/lighter
-    final rightPanX = cx + beamLen;
-    _drawPan(canvas, rightPanX, beamRightY + 6, false, scaleAlpha);
-
-    // Hasanat coins in left pan
-    final coinCount = (progress * 8).floor().clamp(0, 8);
-    for (int i = 0; i < coinCount; i++) {
-      final coinX = leftPanX + (i - 3.5) * 6;
-      final coinY = beamLeftY + 18 + (i % 3) * 4;
-      canvas.drawCircle(
-        Offset(coinX, coinY), 3.5,
-        Paint()..color = _goldColor.withValues(alpha: scaleAlpha * 0.80),
-      );
-      canvas.drawCircle(
-        Offset(coinX, coinY), 1.5,
-        Paint()..color = Colors.white.withValues(alpha: scaleAlpha * 0.40),
-      );
+    // ── Bars — bend outward as progress rises ──
+    final bend = progress * 40.0;
+    for (int i = 0; i < 6; i++) {
+      final t = i / 5.0;
+      final bx = cx - cageW / 2 + cageW * t;
+      final pushX = bx + (t < 0.5 ? -bend * (0.5 - t) * 2 : bend * (t - 0.5) * 2);
+      final barAlpha = cageAlpha * (0.55 + (1 - t.abs()) * 0.10);
+      final barPath = Path()
+        ..moveTo(bx, baseY - 7)
+        ..quadraticBezierTo(pushX, cy - 8, cx * (0.4 + 0.6 * (1 - t.abs())), topY + 5);
+      canvas.drawPath(barPath, Paint()
+        ..color = cageColor.withValues(alpha: barAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.8
+        ..strokeCap = StrokeCap.round);
     }
 
-    // Raining coins animation
-    if (progress > 0.05) {
-      for (int r = 0; r < 3; r++) {
-        final rainT = (rainPhase + r * 0.33) % 1.0;
-        final rainX = leftPanX + (r - 1) * 8;
-        final rainY = beamLeftY - 20 + rainT * 25;
-        final rainA = (1.0 - rainT) * 0.50 * progress;
-        canvas.drawCircle(
-          Offset(rainX, rainY), 3,
-          Paint()..color = _goldColor.withValues(alpha: rainA),
+    // ── 10 figures: inside caged until threshold, then break free and rise ──
+    for (int i = 0; i < 10; i++) {
+      final threshold = i / 10.0;
+      final freed = progress > threshold;
+
+      if (!freed) {
+        // Waiting inside cage — tiny silhouette (head + body)
+        final col = i % 5;
+        final row = i ~/ 5;
+        final fx = cx - 16.0 + col * 8.0;
+        final fy = cy + 8.0 + row * 14.0;
+        final a = 0.18 + starPhase * 0.05;
+        // head
+        canvas.drawCircle(Offset(fx, fy - 6), 3.2, Paint()..color = Colors.white.withValues(alpha: a));
+        // body
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(fx, fy + 1), width: 5, height: 8), const Radius.circular(2)),
+          Paint()..color = Colors.white.withValues(alpha: a * 0.75),
         );
+        // chain link (horizontal bar at waist)
+        canvas.drawLine(
+          Offset(fx - 5, fy + 1), Offset(fx + 5, fy + 1),
+          Paint()..color = cageColor.withValues(alpha: a * 1.5)
+                 ..strokeWidth = 1.2..strokeCap = StrokeCap.round,
+        );
+      } else {
+        // Freed — figure rising with broken chain glowing
+        final sp = ((progress - threshold) * 10.0).clamp(0.0, 1.0);
+        final floatDir = i % 2 == 0 ? 1.0 : -1.0;
+        final riseX = cx + math.sin(sp * math.pi * 1.8 + i * 0.7) * 28 * floatDir;
+        final riseY = cy + 15 - sp * 115;
+        final figAlpha = (1.0 - sp * 0.30).clamp(0.0, 1.0);
+
+        // Soft freedom glow
+        canvas.drawCircle(Offset(riseX, riseY), 14,
+          Paint()
+            ..color = const Color(0xFFD4AF37).withValues(alpha: sp * 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+
+        // Head
+        canvas.drawCircle(Offset(riseX, riseY - 9), 4.5,
+          Paint()..color = Colors.white.withValues(alpha: figAlpha));
+        // Body
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(riseX, riseY + 1), width: 7, height: 12), const Radius.circular(3)),
+          Paint()..color = Colors.white.withValues(alpha: figAlpha * 0.80),
+        );
+        // Arms raised in freedom (two short lines going up)
+        canvas.drawLine(
+          Offset(riseX - 3, riseY - 2), Offset(riseX - 8, riseY - 8),
+          Paint()..color = Colors.white.withValues(alpha: figAlpha * 0.70)
+                 ..strokeWidth = 1.4..strokeCap = StrokeCap.round);
+        canvas.drawLine(
+          Offset(riseX + 3, riseY - 2), Offset(riseX + 8, riseY - 8),
+          Paint()..color = Colors.white.withValues(alpha: figAlpha * 0.70)
+                 ..strokeWidth = 1.4..strokeCap = StrokeCap.round);
+
+        // Broken chain flash (only at moment of breaking)
+        if (sp < 0.25) {
+          final breakA = (1.0 - sp / 0.25) * 0.80;
+          canvas.drawLine(
+            Offset(riseX - 6, riseY + 5), Offset(riseX - 2, riseY + 3),
+            Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
+                   ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+          canvas.drawLine(
+            Offset(riseX + 2, riseY + 3), Offset(riseX + 6, riseY + 5),
+            Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
+                   ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+        }
       }
-    }
-  }
-
-  /// Scale pan — curved dish with chains
-  void _drawPan(Canvas canvas, double cx, double cy, bool isFull, double alpha) {
-    final panW = 38.0;
-    final panPath = Path()
-      ..moveTo(cx - panW / 2, cy)
-      ..quadraticBezierTo(cx, cy + (isFull ? 14 : 10), cx + panW / 2, cy);
-
-    // Chains connecting pan to beam
-    canvas.drawLine(Offset(cx - panW / 2, cy), Offset(cx, cy - 6),
-      Paint()..color = _scaleColor.withValues(alpha: alpha * 0.55)..strokeWidth = 1.5);
-    canvas.drawLine(Offset(cx + panW / 2, cy), Offset(cx, cy - 6),
-      Paint()..color = _scaleColor.withValues(alpha: alpha * 0.55)..strokeWidth = 1.5);
-
-    // Pan dish — filled arc
-    canvas.drawPath(panPath, Paint()
-      ..color = (isFull ? _goldColor : _scaleColor).withValues(alpha: alpha * 0.50)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5);
-
-    if (isFull) {
-      canvas.drawCircle(Offset(cx, cy + 5), 14,
-        Paint()
-          ..color = _goldColor.withValues(alpha: alpha * 0.12 * pulse)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
     }
   }
 
@@ -13083,18 +11362,6 @@ class _UnparalleledScalesPainter extends CustomPainter {
         );
       }
 
-      // Label — positioned below orb with good spacing
-      if (progress > threshold * 0.5) {
-        final labelAlpha = ((progress - threshold * 0.5) / (threshold * 0.5)).clamp(0.0, 0.70);
-        final tp = TextPainter(
-          text: TextSpan(
-            text: label,
-            style: _illusTag(11, color.withValues(alpha: labelAlpha)),
-          ),
-          textDirection: TextDirection.rtl,
-        )..layout();
-        tp.paint(canvas, Offset(rx - tp.width / 2, ry + 14));
-      }
     }
 
     // On completion — connecting golden rays from all 4 rewards to scale
@@ -13218,7 +11485,7 @@ class _SunriseGloryPainter extends CustomPainter {
     final horizonY = cy + 30;
     canvas.drawLine(Offset(0, horizonY), Offset(w, horizonY), Paint()..color = const Color(0xFFF59E0B).withValues(alpha: 0.08 + progress * 0.12)..strokeWidth = 1.0);
 
-    canvas.save(); canvas.translate(cx, cy); canvas.scale(punchScale, punchScale); canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // Sun — grows and brightens with progress (stays in safe zone)
     final sunR = 14 + progress * 18;
@@ -13255,9 +11522,6 @@ class _SunriseGloryPainter extends CustomPainter {
         if (ringProgress < 0.5) continue;
         final labelAlpha = ((ringProgress - 0.5) * 2).clamp(0.0, 0.6);
         final color = _ringColors[i];
-        final tp = TextPainter(text: TextSpan(text: _ringLabels[i], style: _illusTag(11, color.withValues(alpha: labelAlpha))), textDirection: TextDirection.rtl)..layout();
-        final labelX = cx + (i - 1) * (w * 0.28); // spread evenly: left, center, right
-        tp.paint(canvas, Offset(labelX - tp.width / 2, labelY.clamp(0.0, h - 30)));
       }
     }
 
@@ -13275,36 +11539,14 @@ class _SunriseGloryPainter extends CustomPainter {
     canvas.restore();
 
     // Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      canvas.drawCircle(Offset(cx, cy), w * 0.38 * shockPhase, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: (1.0 - shockPhase) * 0.35)..style = PaintingStyle.stroke..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // Particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0); if (t <= 0) continue;
-        final angle = p.x * math.pi * 2; final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist, py = cy + math.sin(angle) * dist * 0.7 - t * 15;
-        final a = (1.0 - t) * 0.70; final pSize = p.size * (1.0 - t * 0.3);
-        canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = const Color(0xFFF59E0B).withValues(alpha: a));
-        canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // Label
-    final label = isComplete ? 'خَيْرٌ مِمَّا طَلَعَتْ عَلَيْهِ الشَّمْس' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFF59E0B) : const Color(0xFF5A6570))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
-    if (pointsToday > 0) {
-      final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.5)), textDirection: TextDirection.ltr)..layout();
-      final bx = cx - (tp3.width + 20) / 2, by = h * 0.80 + tp2.height + 6;
-      final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 20, tp3.height + 10), const Radius.circular(10));
-      canvas.drawRRect(rr, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rr, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(bx + 5, by + 3));
-    }
   }
 
   @override
@@ -13388,7 +11630,7 @@ class _TenSalawatPainter extends CustomPainter {
       canvas.drawCircle(Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.8, Paint()..color = Colors.white.withValues(alpha: (0.10 + progress * 0.25 + 0.30 * tw * progress).clamp(0.0, 0.6)));
     }
 
-    canvas.save(); canvas.translate(cx, cy); canvas.scale(punchScale, punchScale); canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // Central dome silhouette (Madinah)
     final domeY = cy + 5;
@@ -13427,17 +11669,14 @@ class _TenSalawatPainter extends CustomPainter {
     canvas.restore();
 
     // Shockwave
-    if (shockPhase > 0 && shockPhase < 1) { canvas.drawCircle(Offset(cx, cy), w * 0.38 * shockPhase, Paint()..color = _crescentColor.withValues(alpha: (1.0 - shockPhase) * 0.35)..style = PaintingStyle.stroke..strokeWidth = 2.5 * (1.0 - shockPhase)); }
+    // tap-effect removed — smooth calm
 
     // Particles
-    if (particlePhase > 0 && particlePhase < 1) { for (final p in particles) { final t = (particlePhase / p.speed).clamp(0.0, 1.0); if (t <= 0) continue; final angle = p.x * math.pi * 2; final dist = 15 + t * w * 0.28; final px = cx + math.cos(angle) * dist, py = cy + math.sin(angle) * dist * 0.7 - t * 15; final a = (1.0 - t) * 0.70; final pSize = p.size * (1.0 - t * 0.3); canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = _crescentColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3)); canvas.drawCircle(Offset(px, py), pSize, Paint()..color = _crescentColor.withValues(alpha: a)); canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6)); } }
+    // tap-effect removed — smooth calm
 
     // Label
-    final label = isComplete ? 'صَلَّى اللهُ عَلَيْهِ وَسَلَّم' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(14, isComplete ? _crescentColor : const Color(0xFF5A6570))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
-    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.5)), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 20) / 2, by = h * 0.80 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 20, tp3.height + 10), const Radius.circular(10)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFC9A87C)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2); tp3.paint(canvas, Offset(bx + 10, by + 5)); }
   }
 
   @override bool shouldRepaint(_TenSalawatPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.orbitPhase != orbitPhase;
@@ -13521,7 +11760,7 @@ class _DoorsOfMercyPainter extends CustomPainter {
     // Background — soft warm cream
     _paintLightBg(canvas, w, h, progress: progress);
 
-    canvas.save(); canvas.translate(cx, cy); canvas.scale(punchScale, punchScale); canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // Big heart shape
     final heartR = w * 0.30;
@@ -13625,17 +11864,14 @@ class _DoorsOfMercyPainter extends CustomPainter {
     canvas.restore();
 
     // Shockwave
-    if (shockPhase > 0 && shockPhase < 1) { canvas.drawCircle(Offset(cx, cy), w * 0.38 * shockPhase, Paint()..color = _heartColor.withValues(alpha: (1.0 - shockPhase) * 0.35)..style = PaintingStyle.stroke..strokeWidth = 2.5 * (1.0 - shockPhase)); }
+    // tap-effect removed — smooth calm
 
     // Particles
-    if (particlePhase > 0 && particlePhase < 1) { for (final p in particles) { final t = (particlePhase / p.speed).clamp(0.0, 1.0); if (t <= 0) continue; final angle = p.x * math.pi * 2; final dist = 15 + t * w * 0.28; final px = cx + math.cos(angle) * dist, py = cy + math.sin(angle) * dist * 0.7 - t * 15; final a = (1.0 - t) * 0.70; final pSize = p.size * (1.0 - t * 0.3); canvas.drawCircle(Offset(px, py), pSize + 2, Paint()..color = _heartColor.withValues(alpha: a * 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3)); canvas.drawCircle(Offset(px, py), pSize, Paint()..color = _heartColor.withValues(alpha: a)); canvas.drawCircle(Offset(px, py), pSize * 0.35, Paint()..color = Colors.white.withValues(alpha: a * 0.6)); } }
+    // tap-effect removed — smooth calm
 
     // Label
-    final label = isComplete ? 'أَسْتَغْفِرُ الله وَأَتُوبُ إِلَيْه' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(14, isComplete ? _mercyColor : const Color(0xFF5A6570))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
-    if (pointsToday > 0) { final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.5)), textDirection: TextDirection.ltr)..layout(); final bx = cx - (tp3.width + 20) / 2, by = h * 0.80 + tp2.height + 6; final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 20, tp3.height + 10), const Radius.circular(10)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFC9A87C)); canvas.drawRRect(rr, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2); tp3.paint(canvas, Offset(bx + 10, by + 5)); }
   }
 
   @override bool shouldRepaint(_DoorsOfMercyPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.glowPhase != glowPhase;
@@ -13710,7 +11946,7 @@ class _CosmicWeightPainter extends CustomPainter {
     // Background
     _paintLightBg(canvas, w, h, progress: progress);
 
-    canvas.save(); canvas.translate(cx, cy); canvas.scale(punchScale, punchScale); canvas.translate(-cx, -cy);
+    // punch scale removed — smooth calm tap
 
     // ── Scale structure — thick, bright, prominent ──
     final beamY = cy;
@@ -13777,15 +12013,7 @@ class _CosmicWeightPainter extends CustomPainter {
         ..color = color.withValues(alpha: phraseA * 0.70)
         ..style = PaintingStyle.stroke..strokeWidth = 1.8);
 
-      // Label inside circle
-      if (reached) {
-        final tp = TextPainter(
-          text: TextSpan(text: _phraseLabels[i],
-            style: _illusTag(8, color.withValues(alpha: phraseA * pulse))),
-          textDirection: TextDirection.rtl,
-        )..layout();
-        tp.paint(canvas, Offset(ox - tp.width / 2, oy - tp.height / 2));
-      }
+      // Label inside circle — removed
     }
 
     // ── Right pan chains (light side — empty) ──
@@ -13807,41 +12035,14 @@ class _CosmicWeightPainter extends CustomPainter {
     canvas.restore();
 
     // Shockwave
-    if (shockPhase > 0 && shockPhase < 1) {
-      canvas.drawCircle(Offset(cx, cy), w * 0.40 * shockPhase, Paint()
-        ..color = const Color(0xFFD4AF37).withValues(alpha: (1.0 - shockPhase) * 0.35)
-        ..style = PaintingStyle.stroke..strokeWidth = 2.5 * (1.0 - shockPhase));
-    }
+    // tap-effect removed — smooth calm
 
     // Particles
-    if (particlePhase > 0 && particlePhase < 1) {
-      for (final p in particles) {
-        final t = (particlePhase / p.speed).clamp(0.0, 1.0);
-        if (t <= 0) continue;
-        final angle = p.x * math.pi * 2;
-        final dist = 15 + t * w * 0.28;
-        final px = cx + math.cos(angle) * dist;
-        final py = cy + math.sin(angle) * dist * 0.6 - t * 15;
-        final a = (1.0 - t) * 0.70;
-        final pSize = p.size * (1.0 - t * 0.3);
-        final sc = _phraseColors[(t * 3).floor().clamp(0, 3)];
-        canvas.drawCircle(Offset(px, py), pSize, Paint()..color = sc.withValues(alpha: a));
-      }
-    }
+    // tap-effect removed — smooth calm
 
     // Label
-    final label = isComplete ? 'سُبْحَانَ اللهِ وَبِحَمْدِه' : '${(progress * 100).round()}%';
-    final tp2 = TextPainter(text: TextSpan(text: label, style: _illusArabic(14, isComplete ? const Color(0xFFD4AF37) : const Color(0xFF5A6570))), textDirection: TextDirection.rtl)..layout();
-    tp2.paint(canvas, Offset(cx - tp2.width / 2, h * 0.82));
+    // progress % label removed
 
-    if (pointsToday > 0) {
-      final tp3 = TextPainter(text: TextSpan(text: '+$pointsToday pts', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.5)), textDirection: TextDirection.ltr)..layout();
-      final bx = cx - (tp3.width + 20) / 2, by = h * 0.82 + tp2.height + 6;
-      final rr = RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, tp3.width + 20, tp3.height + 10), const Radius.circular(10));
-      canvas.drawRRect(rr, Paint()..color = const Color(0xFFC9A87C));
-      canvas.drawRRect(rr, Paint()..color = const Color(0xFFB8956A)..style = PaintingStyle.stroke..strokeWidth = 1.2);
-      tp3.paint(canvas, Offset(bx + 10, by + 5));
-    }
   }
 
   @override bool shouldRepaint(_CosmicWeightPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.cosmicPhase != cosmicPhase;

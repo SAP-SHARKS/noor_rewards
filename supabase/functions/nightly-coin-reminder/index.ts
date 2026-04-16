@@ -54,15 +54,15 @@ serve(async (req: Request) => {
       });
     }
 
-    // Step 2: Check if these users have a "validate" record in `user_activities` within the last 12 hours
-    const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000).toISOString();
+    // Step 2: Check if these users have a "validate" record in `user_activities` within the last 3 hours
+    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString();
     
     const { data: recentValidates, error: validateError } = await supabase
       .from('user_activities')
       .select('user_id')
       .in('user_id', targetedUsers)
       .eq('activity_type', 'validate')
-      .gte('created_at', twelveHoursAgo);
+      .gte('created_at', threeHoursAgo);
 
     if (validateError) throw new Error(`Validate activities load error: ${validateError.message}`);
 
