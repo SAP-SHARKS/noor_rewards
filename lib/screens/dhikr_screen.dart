@@ -2740,7 +2740,7 @@ String _pickTagline(String id) {
   if (id == 'morning_28' || id == 'evening_28')
     return "Wellbeing of body, hearing & sight — granted";
   if (id == 'morning_27' || id == 'evening_27')
-    return 'Freed from Hellfire every morning & evening';
+    return 'Allah will free him from the Fire who reads this 4 times';
   if (id == 'morning_26' || id == 'evening_26')
     return 'Guaranteed Jannah — if you die this day';
   if (id == 'morning_25' || id == 'evening_25')
