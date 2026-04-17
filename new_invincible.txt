@@ -1,0 +1,473 @@
+// =============================================================================
+// 🦂 Protected from All Evil — Scorpion & Threats repelled by Allah's name
+// morning_23 / evening_23 — "Nothing shall harm you by perfect words"
+// =============================================================================
+class _InvincibleName extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _InvincibleName({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_InvincibleName> createState() => _InvincibleNameState();
+}
+
+class _InvincibleNameState extends State<_InvincibleName>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl,
+      _threatCtrl, _shieldCtrl;
+  late Animation<double> _pulse, _grow, _threat, _shield;
+  double _prevProgress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1700))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.94, end: 1.06)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 850));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    _starCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2200))
+      ..repeat(reverse: true);
+
+    // Threats creep toward man (loop, slow)
+    _threatCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3000))
+      ..repeat(reverse: true);
+    _threat = CurvedAnimation(parent: _threatCtrl, curve: Curves.easeInOut);
+
+    // Shield pulse glow
+    _shieldCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+    _shield = Tween<double>(begin: 0.7, end: 1.0)
+        .animate(CurvedAnimation(parent: _shieldCtrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void didUpdateWidget(_InvincibleName old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _threatCtrl.dispose(); _shieldCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _starCtrl, _threatCtrl, _shieldCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _InvincibleNamePainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            threatPhase: _threat.value,
+            shieldGlow: _shield.value,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InvincibleNamePainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double threatPhase;
+  final double shieldGlow;
+  final bool isComplete;
+  final int pointsToday;
+
+  const _InvincibleNamePainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.threatPhase,
+    required this.shieldGlow,
+    required this.isComplete,
+    this.pointsToday = 0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // ── Background: deep night sky ──
+    final bgPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          const Color(0xFF0D1B2A),
+          const Color(0xFF1A2A3E),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
+
+    // ── Subtle ground line ──
+    final groundY = h * 0.78;
+    canvas.drawLine(
+      Offset(0, groundY), Offset(w, groundY),
+      Paint()..color = Colors.white.withValues(alpha: 0.08)..strokeWidth = 1.0,
+    );
+
+    // ── Background stars ──
+    _drawStars(canvas, w, h);
+
+    // ── Man in center ──
+    final manX = w * 0.50;
+    final manY = groundY - 2;
+    _drawMan(canvas, manX, manY);
+
+    // ── Shield around man ──
+    _drawShield(canvas, manX, manY - 22);
+
+    // ── Scorpion approaching from the left ──
+    _drawScorpion(canvas, manX, manY, w, h, groundY);
+
+    // ── Eye threat from top-right ──
+    _drawEvilEye(canvas, w, h);
+
+    // ── Snake approaching from bottom-right ──
+    _drawSnake(canvas, manX, groundY, w);
+
+    // ── Repelled sparks when progress > 0 ──
+    if (progress > 0.1) {
+      _drawRepelledSparks(canvas, manX, manY - 22, w);
+    }
+
+    // ── Completion: full bright shield ──
+    if (isComplete) {
+      _drawCompletionGlow(canvas, manX, manY - 22);
+    }
+  }
+
+  void _drawStars(Canvas canvas, double w, double h) {
+    const positions = [
+      (0.08, 0.08), (0.18, 0.04), (0.32, 0.10), (0.55, 0.05),
+      (0.70, 0.12), (0.85, 0.06), (0.92, 0.15), (0.42, 0.16),
+      (0.62, 0.20), (0.15, 0.18),
+    ];
+    for (int i = 0; i < positions.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final a = (0.15 + 0.35 * tw).clamp(0.0, 0.6);
+      canvas.drawCircle(
+        Offset(positions[i].$1 * w, positions[i].$2 * h),
+        0.8 + tw * 0.7,
+        Paint()..color = Colors.white.withValues(alpha: a),
+      );
+    }
+  }
+
+  /// Simple stick-figure man
+  void _drawMan(Canvas canvas, double cx, double baseY) {
+    final skin = const Color(0xFFD4A574);
+    final robe = Colors.white.withValues(alpha: 0.90);
+    final p = Paint()..color = skin;
+
+    // Head
+    canvas.drawCircle(Offset(cx, baseY - 42), 8.0, p);
+
+    // Body (robe — filled rounded rect)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(cx, baseY - 22), width: 14, height: 22),
+        const Radius.circular(4),
+      ),
+      Paint()..color = robe,
+    );
+
+    // Arms out slightly
+    canvas.drawLine(
+      Offset(cx - 7, baseY - 28), Offset(cx - 14, baseY - 20),
+      Paint()..color = skin..strokeWidth = 2.5..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(cx + 7, baseY - 28), Offset(cx + 14, baseY - 20),
+      Paint()..color = skin..strokeWidth = 2.5..strokeCap = StrokeCap.round,
+    );
+
+    // Legs
+    canvas.drawLine(
+      Offset(cx - 3, baseY - 11), Offset(cx - 5, baseY),
+      Paint()..color = robe..strokeWidth = 3.0..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(cx + 3, baseY - 11), Offset(cx + 5, baseY),
+      Paint()..color = robe..strokeWidth = 3.0..strokeCap = StrokeCap.round,
+    );
+  }
+
+  /// Dome shield around the man
+  void _drawShield(Canvas canvas, double cx, double cy) {
+    final shieldR = 36.0 + 4.0 * (pulse - 1.0);
+    final shieldProgress = progress.clamp(0.0, 1.0);
+    final shieldAlpha = (0.12 + shieldProgress * 0.22) * shieldGlow;
+
+    // Outer glow ring
+    canvas.drawCircle(
+      Offset(cx, cy),
+      shieldR + 8,
+      Paint()
+        ..color = const Color(0xFF60A5FA).withValues(alpha: shieldAlpha * 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+    );
+
+    // Shield dome fill
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(cx, cy), width: shieldR * 2, height: shieldR * 2),
+      math.pi, math.pi,
+      false,
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: shieldAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5,
+    );
+    // Bottom flat line of dome
+    canvas.drawLine(
+      Offset(cx - shieldR, cy), Offset(cx + shieldR, cy),
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: shieldAlpha * 0.7)
+        ..strokeWidth = 1.5,
+    );
+
+    // Inner fill (subtle)
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(cx, cy), width: shieldR * 2, height: shieldR * 2),
+      math.pi, math.pi,
+      true,
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: shieldAlpha * 0.08),
+    );
+
+    // Cross-hatch lines (shield texture — 2 arcs)
+    if (shieldProgress > 0.3) {
+      final lineA = (shieldProgress - 0.3) / 0.7 * shieldAlpha * 0.4;
+      for (final dx in [-shieldR * 0.4, 0.0, shieldR * 0.4]) {
+        canvas.drawLine(
+          Offset(cx + dx, cy), Offset(cx + dx, cy - shieldR * 0.9),
+          Paint()..color = const Color(0xFF3B82F6).withValues(alpha: lineA)
+                 ..strokeWidth = 0.8,
+        );
+      }
+    }
+  }
+
+  /// Scorpion approaching from the left
+  void _drawScorpion(Canvas canvas, double manX, double manY,
+      double w, double h, double groundY) {
+    // Scorpion position: starts off-screen left, approaches but stops at shield edge
+    final shieldEdge = manX - 38.0;
+    final startX = manX - w * 0.48;
+    // Oscillates: creeps forward with threatPhase, but never reaches shield
+    final rawX = startX + (shieldEdge - startX - 20) * (0.4 + 0.6 * threatPhase);
+    final scX = rawX; // scorpion center X
+    final scY = groundY - 6;
+
+    final c = const Color(0xFFE74C3C); // red scorpion
+
+    // ── Body (elongated oval) ──
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(scX, scY), width: 20, height: 10),
+      Paint()..color = c.withValues(alpha: 0.90),
+    );
+
+    // ── Head ──
+    canvas.drawCircle(Offset(scX + 11, scY), 5.0,
+        Paint()..color = c.withValues(alpha: 0.85));
+
+    // ── Pincers (two lines from head) ──
+    canvas.drawLine(
+      Offset(scX + 14, scY - 2), Offset(scX + 20, scY - 6),
+      Paint()..color = c.withValues(alpha: 0.80)..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(scX + 14, scY + 2), Offset(scX + 20, scY + 4),
+      Paint()..color = c.withValues(alpha: 0.80)..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+    );
+
+    // ── 6 legs (3 each side) ──
+    for (int i = 0; i < 3; i++) {
+      final lx = scX - 6.0 + i * 5.0;
+      canvas.drawLine(Offset(lx, scY - 4), Offset(lx - 3, scY - 11),
+          Paint()..color = c.withValues(alpha: 0.65)..strokeWidth = 1.3..strokeCap = StrokeCap.round);
+      canvas.drawLine(Offset(lx, scY + 4), Offset(lx - 3, scY + 11),
+          Paint()..color = c.withValues(alpha: 0.65)..strokeWidth = 1.3..strokeCap = StrokeCap.round);
+    }
+
+    // ── Tail curving upward with stinger ──
+    final tailPath = Path()
+      ..moveTo(scX - 8, scY)
+      ..quadraticBezierTo(scX - 18, scY - 16, scX - 14, scY - 24);
+    canvas.drawPath(tailPath,
+        Paint()..color = c.withValues(alpha: 0.85)
+               ..style = PaintingStyle.stroke
+               ..strokeWidth = 2.5..strokeCap = StrokeCap.round);
+    // Stinger tip
+    canvas.drawCircle(Offset(scX - 14, scY - 26), 3.5,
+        Paint()..color = const Color(0xFFFF6B35).withValues(alpha: 0.95));
+
+    // Label
+    _drawLabel(canvas, 'scorpion', Offset(scX - 10, scY + 16),
+        c.withValues(alpha: 0.55));
+  }
+
+  /// Evil eye threat from top-right
+  void _drawEvilEye(Canvas canvas, double w, double h) {
+    final eyeX = w * 0.80;
+    final eyeY = h * 0.24 + math.sin(threatPhase * math.pi) * 8;
+    final c = const Color(0xFF8B5CF6); // purple
+
+    // Eye white
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(eyeX, eyeY), width: 28, height: 14),
+      Paint()..color = Colors.white.withValues(alpha: 0.22),
+    );
+    // Iris
+    canvas.drawCircle(Offset(eyeX, eyeY), 5.5,
+        Paint()..color = c.withValues(alpha: 0.75));
+    // Pupil
+    canvas.drawCircle(Offset(eyeX, eyeY), 2.5,
+        Paint()..color = Colors.black.withValues(alpha: 0.60));
+    // Angry brow
+    canvas.drawLine(
+      Offset(eyeX - 12, eyeY - 10), Offset(eyeX + 12, eyeY - 8),
+      Paint()..color = c.withValues(alpha: 0.55)..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+    );
+    // Glow
+    canvas.drawCircle(Offset(eyeX, eyeY), 18,
+        Paint()
+          ..color = c.withValues(alpha: 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+
+    _drawLabel(canvas, 'evil eye', Offset(eyeX - 14, eyeY + 12),
+        c.withValues(alpha: 0.50));
+  }
+
+  /// Snake creeping from bottom-right
+  void _drawSnake(Canvas canvas, double manX, double groundY, double w) {
+    final shieldEdge = manX + 40.0;
+    final startX = manX + w * 0.42;
+    final snakeX = startX - (startX - shieldEdge - 18) * (0.35 + 0.65 * threatPhase);
+    final snakeY = groundY - 4;
+    final c = const Color(0xFF10B981); // green snake
+
+    // Snake body — S-curve path
+    final bodyPath = Path()
+      ..moveTo(snakeX + 22, snakeY)
+      ..cubicTo(snakeX + 10, snakeY - 14, snakeX - 5, snakeY + 10, snakeX, snakeY);
+    canvas.drawPath(
+      bodyPath,
+      Paint()
+        ..color = c.withValues(alpha: 0.82)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..strokeCap = StrokeCap.round,
+    );
+    // Head
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(snakeX - 2, snakeY), width: 12, height: 8),
+      Paint()..color = c.withValues(alpha: 0.90),
+    );
+    // Eye
+    canvas.drawCircle(Offset(snakeX - 6, snakeY - 2), 1.5,
+        Paint()..color = Colors.red.withValues(alpha: 0.80));
+    // Forked tongue
+    canvas.drawLine(Offset(snakeX - 9, snakeY), Offset(snakeX - 14, snakeY - 3),
+        Paint()..color = Colors.red.withValues(alpha: 0.75)..strokeWidth = 1.2..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(snakeX - 9, snakeY), Offset(snakeX - 14, snakeY + 3),
+        Paint()..color = Colors.red.withValues(alpha: 0.75)..strokeWidth = 1.2..strokeCap = StrokeCap.round);
+
+    _drawLabel(canvas, 'snake', Offset(snakeX - 6, snakeY + 12),
+        c.withValues(alpha: 0.50));
+  }
+
+  /// Small impact sparks at shield edge when threats approach
+  void _drawRepelledSparks(Canvas canvas, double cx, double cy, double w) {
+    // Left side (scorpion side)
+    final leftEdge = cx - 38.0;
+    for (int i = 0; i < 4; i++) {
+      final angle = math.pi + (i - 1.5) * 0.35;
+      final dist = 40.0 + 4 * math.sin(starPhase * math.pi * 3 + i * 1.1);
+      final sx = cx + math.cos(angle) * dist;
+      final sy = cy + math.sin(angle) * dist;
+      final sparkProgress = (0.5 + 0.5 * math.sin(starPhase * math.pi * 4 + i * 0.8));
+      canvas.drawCircle(Offset(sx, sy), 1.8 + sparkProgress,
+        Paint()..color = const Color(0xFF60A5FA).withValues(alpha: sparkProgress * progress * 0.65));
+    }
+
+    // Right side (snake side)
+    for (int i = 0; i < 3; i++) {
+      final angle = (i - 1.0) * 0.4;
+      final dist = 40.0 + 3 * math.sin(starPhase * math.pi * 2 + i * 1.3);
+      final sx = cx + math.cos(angle) * dist;
+      final sy = cy + math.sin(angle) * dist;
+      final sparkProgress = (0.5 + 0.5 * math.sin(starPhase * math.pi * 3 + i * 1.2));
+      canvas.drawCircle(Offset(sx, sy), 1.5 + sparkProgress,
+        Paint()..color = const Color(0xFF60A5FA).withValues(alpha: sparkProgress * progress * 0.55));
+    }
+  }
+
+  void _drawCompletionGlow(Canvas canvas, double cx, double cy) {
+    canvas.drawCircle(
+      Offset(cx, cy),
+      55,
+      Paint()
+        ..color = const Color(0xFF60A5FA).withValues(alpha: 0.18 * shieldGlow)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+  }
+
+  void _drawLabel(Canvas canvas, String text, Offset pos, Color color) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: color,
+          fontSize: 9.0,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos);
+  }
+
+  @override
+  bool shouldRepaint(_InvincibleNamePainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.threatPhase != threatPhase ||
+      o.shieldGlow != shieldGlow || o.isComplete != isComplete ||
+      o.pointsToday != pointsToday;
+}
