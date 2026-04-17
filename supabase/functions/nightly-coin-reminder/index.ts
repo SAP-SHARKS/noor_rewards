@@ -82,6 +82,38 @@ serve(async (req: Request) => {
       });
     }
 
+    // Step 2.5: Deduplicate — skip users who already received this notification today
+    // Check notification_log table (create if needed) to avoid duplicate sends
+    const todayStart = new Date(now);
+    todayStart.setUTCHours(0, 0, 0, 0);
+
+    // Ensure the dedup table exists
+    await supabase.rpc('ensure_notification_log_exists').catch(() => {});
+
+    const { data: alreadySent } = await supabase
+      .from('notification_log')
+      .select('user_id')
+      .eq('notification_type', 'nightly_checkin')
+      .gte('sent_at', todayStart.toISOString());
+
+    const alreadySentSet = new Set((alreadySent || []).map((r: any) => r.user_id));
+
+    // Filter out users who already got today's notification
+    const dedupedUsers: string[] = [];
+    const dedupedTokens: string[] = [];
+    for (const userId of targetedUsers) {
+      if (!usersWhoValidated.has(userId) && !alreadySentSet.has(userId)) {
+        dedupedUsers.push(userId);
+        dedupedTokens.push(targetedTokensMap.get(userId)!);
+      }
+    }
+
+    if (dedupedTokens.length === 0) {
+      return new Response(JSON.stringify({ message: 'All targeted users already notified or validated.' }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     // Step 3: Build Google OAuth2 Token utilizing Service Account Secrets
     const projectId = Deno.env.get('FCM_PROJECT_ID');
     const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
@@ -119,7 +151,9 @@ serve(async (req: Request) => {
 
     // Step 4: Send Firebase Notifications in bulk loop
     const results = [];
-    for (const token of tokensToSend) {
+    for (let idx = 0; idx < dedupedTokens.length; idx++) {
+      const token = dedupedTokens[idx];
+      const userId = dedupedUsers[idx];
       const fcmPayload = {
         message: {
           token: token,
@@ -148,12 +182,21 @@ serve(async (req: Request) => {
 
       const resJson = await fcmResponse.json();
       results.push({ token, success: fcmResponse.ok, result: resJson });
+
+      // Log successful sends to prevent duplicates
+      if (fcmResponse.ok) {
+        await supabase.from('notification_log').insert({
+          user_id: userId,
+          notification_type: 'nightly_checkin',
+          sent_at: now.toISOString(),
+        }).catch(() => {});
+      }
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      sent_count: tokensToSend.length, 
-      results 
+    return new Response(JSON.stringify({
+      success: true,
+      sent_count: dedupedTokens.length,
+      results
     }), {
       headers: { 'Content-Type': 'application/json' },
     });

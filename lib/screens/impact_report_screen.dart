@@ -825,7 +825,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     ]),
                     const SizedBox(height: 6),
                     Text('${p['description'] ?? ''}',
-                        style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+                        style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF1A1A1A), height: 1.4)),
                     const SizedBox(height: 14),
 
                     if ((_projectMedia[p['id']] ?? []).isNotEmpty)
@@ -892,19 +892,20 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     if (!done)
                       SizedBox(
                         width: double.infinity,
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: _C.teal,
-                            side: BorderSide(color: _C.teal),
-                            padding: const EdgeInsets.symmetric(vertical: 11),
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _C.teal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 13),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
+                            elevation: 0,
                           ),
                           onPressed: () => _showDonateSheet(p),
                           icon: const Text('🤲', style: TextStyle(fontSize: 14)),
                           label: Text('Donate & Earn Reward',
                               style: GoogleFonts.outfit(
-                                  fontSize: 13, fontWeight: FontWeight.w700)),
+                                  fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
                         ),
                       ),
                   ]),
