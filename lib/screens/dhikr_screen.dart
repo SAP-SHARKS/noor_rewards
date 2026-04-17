@@ -2769,7 +2769,7 @@ String _pickTagline(String id) {
     'ripples'    => 'Praise that ripples through all creation',
     'path'       => 'Guided to every good this day',
     'invincible' => 'Nothing shall harm you by His name',
-    'flame'      => 'Freed from Hellfire morning and evening',
+    'flame'      => 'Allah will free him from the Fire who reads this 4 times',
     'doors'      => 'Guaranteed Jannah if you die today',
     'vessels'    => 'Wellbeing of body hearing and sight',
     'pillars'    => 'Allah is sufficient in every affair',
@@ -8588,6 +8588,10 @@ class _GlowingPathPainter extends CustomPainter {
 // =============================================================================
 // 🔥 Freedom Flame (عتق من النار) — Get yourself freed from Hellfire
 // =============================================================================
+// =============================================================================
+// 🔥 Freedom from Fire — Allah frees from Hellfire who reads this 4 times
+// morning_27 / evening_27
+// =============================================================================
 class _FreedomFlame extends StatefulWidget {
   final double progress;
   final bool isComplete;
@@ -8605,73 +8609,44 @@ class _FreedomFlame extends StatefulWidget {
 
 class _FreedomFlameState extends State<_FreedomFlame>
     with TickerProviderStateMixin {
-  late AnimationController _pulseCtrl;
-  late Animation<double> _pulse;
-  late AnimationController _growCtrl;
-  late Animation<double> _grow;
+  late AnimationController _pulseCtrl, _growCtrl, _flameCtrl, _walkCtrl, _shieldCtrl;
+  late Animation<double> _pulse, _grow, _flame, _walk, _shield;
   double _prevProgress = 0.0;
-  late AnimationController _starCtrl;
-  late AnimationController _pCtrl;
-  late Animation<double> _pAnim;
-  int _prevTap = 0;
-  late AnimationController _punchCtrl;
-  late Animation<double> _punch;
-  late AnimationController _shockCtrl;
-  late Animation<double> _shock;
-  late AnimationController _flameCtrl;
-
-  final List<_Particle> _particles =
-      List.generate(18, (i) => _Particle(seed: i + 1300));
 
   @override
   void initState() {
     super.initState();
 
     _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1400))
+        vsync: this, duration: const Duration(milliseconds: 1600))
       ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+    _pulse = Tween<double>(begin: 0.94, end: 1.06)
         .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
     _growCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+        vsync: this, duration: const Duration(milliseconds: 850));
     _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
     _prevProgress = widget.progress;
     _growCtrl.value = widget.progress;
 
-    _starCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2100))
-      ..repeat(reverse: true);
-
-    _pCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1100));
-    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
-    _prevTap = widget.tapCount;
-
-    _punchCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _punch = TweenSequence<double>([
-      TweenSequenceItem(
-          tween: Tween(begin: 1.0, end: 1.10)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 40),
-      TweenSequenceItem(
-          tween: Tween(begin: 1.10, end: 0.96)
-              .chain(CurveTween(curve: Curves.easeInOut)),
-          weight: 30),
-      TweenSequenceItem(
-          tween: Tween(begin: 0.96, end: 1.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 30),
-    ]).animate(_punchCtrl);
-
-    _shockCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
-
+    // Flame flicker — fast loop
     _flameCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2800))
+        vsync: this, duration: const Duration(milliseconds: 600))
       ..repeat(reverse: true);
+    _flame = CurvedAnimation(parent: _flameCtrl, curve: Curves.easeInOut);
+
+    // Person walks rightward as progress grows
+    _walkCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1200));
+    _walk = CurvedAnimation(parent: _walkCtrl, curve: Curves.easeOutCubic);
+    _walkCtrl.value = widget.progress;
+
+    // Shield/safe-zone glow
+    _shieldCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100))
+      ..repeat(reverse: true);
+    _shield = Tween<double>(begin: 0.6, end: 1.0)
+        .animate(CurvedAnimation(parent: _shieldCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -8679,28 +8654,15 @@ class _FreedomFlameState extends State<_FreedomFlame>
     super.didUpdateWidget(old);
     if (widget.progress != _prevProgress) {
       _growCtrl.animateTo(widget.progress);
+      _walkCtrl.animateTo(widget.progress);
       _prevProgress = widget.progress;
-    }
-    if (widget.tapCount != _prevTap) {
-      _prevTap = widget.tapCount;
-      for (final p in _particles) {
-        p.reset();
-      }
-      _pCtrl.forward(from: 0);
-      _punchCtrl.forward(from: 0);
-      _shockCtrl.forward(from: 0);
     }
   }
 
   @override
   void dispose() {
-    _pulseCtrl.dispose();
-    _growCtrl.dispose();
-    _starCtrl.dispose();
-    _pCtrl.dispose();
-    _punchCtrl.dispose();
-    _shockCtrl.dispose();
-    _flameCtrl.dispose();
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _flameCtrl.dispose();
+    _walkCtrl.dispose(); _shieldCtrl.dispose();
     super.dispose();
   }
 
@@ -8708,23 +8670,19 @@ class _FreedomFlameState extends State<_FreedomFlame>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([
-        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
-        _punchCtrl, _shockCtrl, _flameCtrl,
+        _pulseCtrl, _growCtrl, _flameCtrl, _walkCtrl, _shieldCtrl,
       ]),
       builder: (_, __) => SizedBox(
-        height: 290,
+        height: 260,
         child: CustomPaint(
           painter: _FreedomFlamePainter(
             progress: _grow.value,
             pulse: _pulse.value,
-            starPhase: _starCtrl.value,
-            particlePhase: _pAnim.value,
-            particles: _particles,
+            flamePhase: _flame.value,
+            walkPhase: _walk.value,
+            shieldGlow: _shield.value,
             isComplete: widget.isComplete,
             pointsToday: widget.pointsToday,
-            punchScale: _punch.value,
-            shockPhase: _shock.value,
-            flamePhase: _flameCtrl.value,
           ),
         ),
       ),
@@ -8735,323 +8693,287 @@ class _FreedomFlameState extends State<_FreedomFlame>
 class _FreedomFlamePainter extends CustomPainter {
   final double progress;
   final double pulse;
-  final double starPhase;
-  final double particlePhase;
-  final List<_Particle> particles;
+  final double flamePhase;
+  final double walkPhase;
+  final double shieldGlow;
   final bool isComplete;
   final int pointsToday;
-  final double punchScale;
-  final double shockPhase;
-  final double flamePhase;
-
-  // 4 flame layers — each extinguishes at 25% increments (4 reps)
-  static const _flameColors = [
-    Color(0xFFEF4444), // fierce red
-    Color(0xFFF97316), // orange
-    Color(0xFFF59E0B), // amber
-    Color(0xFFDC2626), // deep red
-  ];
-
-  // Cool noor colors for the transformed state
-  static const _coolColors = [
-    Color(0xFF06B6D4), // cyan
-    Color(0xFF3B82F6), // blue
-    Color(0xFF8B5CF6), // violet
-    Color(0xFF10B981), // emerald
-  ];
 
   const _FreedomFlamePainter({
     required this.progress,
     required this.pulse,
-    required this.starPhase,
-    required this.particlePhase,
-    required this.particles,
+    required this.flamePhase,
+    required this.walkPhase,
+    required this.shieldGlow,
     required this.isComplete,
     this.pointsToday = 0,
-    this.punchScale = 1.0,
-    this.shockPhase = 1.0,
-    this.flamePhase = 0.0,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final cx = w / 2;
-    final cy = h * 0.44;
+    final groundY = h * 0.78;
 
-    // 1. Background — dark ember to cool serenity as progress grows
-    final warmth = (1.0 - progress).clamp(0.0, 1.0);
-    final coolness = progress;
-    _paintLightBg(canvas, w, h, progress: progress);
+    // ── Background: deep dark with warm left / cool right split ──
+    _paintBackground(canvas, w, h, progress);
 
-    // 2. Stars — become visible as flames recede
-    const starPos = [
-      (0.12, 0.08), (0.25, 0.18), (0.40, 0.05), (0.55, 0.14),
-      (0.70, 0.09), (0.85, 0.17), (0.92, 0.07), (0.35, 0.24),
-      (0.62, 0.22), (0.18, 0.21), (0.78, 0.26),
+    // ── Ground line ──
+    canvas.drawLine(
+      Offset(0, groundY), Offset(w, groundY),
+      Paint()..color = Colors.white.withValues(alpha: 0.08)..strokeWidth = 1.0,
+    );
+
+    // ── LEFT: Hellfire ──
+    _drawFire(canvas, w, h, groundY);
+
+    // ── Divider: thin glowing barrier that grows with progress ──
+    _drawBarrier(canvas, w, h, groundY);
+
+    // ── RIGHT: Safe zone + person ──
+    _drawSafeZone(canvas, w, h, groundY);
+
+    // ── Person walking away from fire ──
+    _drawPerson(canvas, w, h, groundY);
+  }
+
+  void _paintBackground(Canvas canvas, double w, double h, double prog) {
+    // Left half — fiery dark red-orange
+    final leftPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: const [
+          Color(0xFF7C0000),
+          Color(0xFFB91C1C),
+          Color(0xFF450A0A),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, w * 0.48, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w * 0.48, h), leftPaint);
+
+    // Right half — deep safe night
+    final rightPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: const [
+          Color(0xFF1E3A5F),
+          Color(0xFF0F2942),
+          Color(0xFF0A1929),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromLTWH(w * 0.48, 0, w * 0.52, h));
+    canvas.drawRect(Rect.fromLTWH(w * 0.48, 0, w * 0.52, h), rightPaint);
+
+    // Ember glow bleeding from left into right — reduces as progress grows
+    final bleedAlpha = (0.35 - prog * 0.28).clamp(0.0, 0.35);
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            const Color(0xFFEF4444).withValues(alpha: bleedAlpha),
+            Colors.transparent,
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+  }
+
+  void _drawFire(Canvas canvas, double w, double h, double groundY) {
+    const fireX = 0.22; // fire center at 22% width
+    final fx = w * fireX;
+    final fBaseY = groundY;
+
+    // Draw 3 flame layers — large, medium, small
+    _drawFlameLayer(canvas, fx, fBaseY, width: 70, height: 90,
+        color: const Color(0xFFFF6B00), phase: flamePhase, seed: 0);
+    _drawFlameLayer(canvas, fx - 10, fBaseY, width: 44, height: 70,
+        color: const Color(0xFFFF9F1C), phase: flamePhase, seed: 1);
+    _drawFlameLayer(canvas, fx + 12, fBaseY, width: 36, height: 60,
+        color: const Color(0xFFFFCC02), phase: flamePhase, seed: 2);
+    // Inner white-hot core
+    _drawFlameLayer(canvas, fx, fBaseY, width: 22, height: 40,
+        color: Colors.white.withValues(alpha: 0.70), phase: flamePhase, seed: 3);
+
+    // Ember sparks floating up from fire
+    for (int i = 0; i < 8; i++) {
+      final ex = fx + (i % 3 - 1) * 18.0;
+      final ey = fBaseY - 60 - (i * 19.0) % 75
+          + math.sin(flamePhase * math.pi * 2 + i * 0.9) * 12;
+      final ea = (0.55 - (i * 0.07)).clamp(0.0, 0.8) * flamePhase;
+      final er = 1.2 + (i % 3) * 0.6;
+      canvas.drawCircle(Offset(ex, ey), er,
+          Paint()..color = const Color(0xFFFF9F1C).withValues(alpha: ea));
+    }
+
+
+  }
+
+  void _drawFlameLayer(Canvas canvas, double cx, double baseY, {
+    required double width, required double height,
+    required Color color, required double phase, required int seed,
+  }) {
+    final sway = math.sin(phase * math.pi * 2 + seed * 1.1) * 6;
+    final tip = baseY - height + math.sin(phase * math.pi * 2 + seed * 0.7) * 8;
+    final path = Path()
+      ..moveTo(cx - width / 2, baseY)
+      ..quadraticBezierTo(
+          cx - width * 0.3 + sway, baseY - height * 0.45,
+          cx + sway * 0.5, tip)
+      ..quadraticBezierTo(
+          cx + width * 0.3 + sway, baseY - height * 0.45,
+          cx + width / 2, baseY)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  void _drawBarrier(Canvas canvas, double w, double h, double groundY) {
+    final barrierX = w * 0.50;
+    final barrierH = groundY * (0.35 + progress * 0.55); // grows taller with progress
+    final barrierAlpha = (0.20 + progress * 0.55).clamp(0.0, 0.85);
+
+    // Glow behind barrier
+    canvas.drawRect(
+      Rect.fromLTWH(barrierX - 8, groundY - barrierH, 16, barrierH),
+      Paint()
+        ..color = const Color(0xFF60A5FA).withValues(alpha: barrierAlpha * 0.18)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
+    // Barrier line
+    canvas.drawLine(
+      Offset(barrierX, groundY), Offset(barrierX, groundY - barrierH),
+      Paint()
+        ..color = const Color(0xFF93C5FD).withValues(alpha: barrierAlpha)
+        ..strokeWidth = 2.0,
+    );
+  }
+
+  void _drawSafeZone(Canvas canvas, double w, double h, double groundY) {
+    final safeAlpha = (0.08 + progress * 0.18).clamp(0.0, 0.28) * shieldGlow;
+
+    // Soft safe-zone glow on right side
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.52, 0, w * 0.48, h),
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: safeAlpha)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+
+    // Stars in the safe night sky
+    const stars = [
+      (0.62, 0.08), (0.72, 0.05), (0.82, 0.12), (0.90, 0.07),
+      (0.68, 0.17), (0.78, 0.22), (0.88, 0.18), (0.96, 0.13),
     ];
-    final sp = Paint();
-    for (int i = 0; i < starPos.length; i++) {
-      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
-      final starAlpha = (progress * 0.5 * tw).clamp(0.0, 0.7);
-      sp.color = Colors.white.withValues(alpha: starAlpha);
+    for (int i = 0; i < stars.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(shieldGlow * math.pi * 2 + i * 0.8);
+      final a = (0.12 + 0.28 * tw * progress).clamp(0.0, 0.55);
       canvas.drawCircle(
-          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.9, sp);
-    }
-
-    // Apply punch scale
-    canvas.save();
-    // punch scale removed — smooth calm tap
-
-    // 3. Draw the 4 flame layers (outer ring of fire around center)
-    _drawFlames(canvas, cx, cy, w, h);
-
-    // 4. Central figure — silhouette of light (the person being freed)
-    _drawFigure(canvas, cx, cy);
-
-    canvas.restore();
-
-    // 5. Shockwave on tap — cool blue instead of fire
-    // tap-effect removed — smooth calm
-
-    // 6. Tap particles — ember sparks transforming to cool light
-    // tap-effect removed — smooth calm
-
-    // 7. Progress label
-    // progress % label removed
-
-    // 8. Points badge
-  }
-
-  /// 4 flame layers surrounding the figure — each extinguishes at 25% intervals
-  void _drawFlames(Canvas canvas, double cx, double cy, double w, double h) {
-    // 4 flame arcs: top-right, bottom-right, bottom-left, top-left
-    final flameAngles = [
-      -math.pi * 0.25, // top-right
-       math.pi * 0.25, // bottom-right
-       math.pi * 0.75, // bottom-left
-      -math.pi * 0.75, // top-left
-    ];
-
-    for (int i = 0; i < 4; i++) {
-      final extinguishThreshold = (i + 1) * 0.25;
-      final isExtinguished = progress >= extinguishThreshold;
-      final layerProgress = ((progress - i * 0.25) / 0.25).clamp(0.0, 1.0);
-      final baseAngle = flameAngles[i];
-
-      if (isExtinguished) {
-        // Flame extinguished → show cool noor residue fading in
-        _drawCoolNoor(canvas, cx, cy, baseAngle, i, layerProgress);
-      } else {
-        // Flame still burning — flicker and sway
-        _drawSingleFlame(canvas, cx, cy, baseAngle, i, layerProgress);
-      }
-    }
-  }
-
-  /// Draws a single burning flame arc
-  void _drawSingleFlame(Canvas canvas, double cx, double cy,
-      double baseAngle, int index, double strainProgress) {
-    final baseR = 42.0;
-    final flameColor = _flameColors[index];
-
-    // Strain: flame flickers more intensely as it nears extinguishing
-    final flickerIntensity = 1.0 + strainProgress * 2.0;
-    final flicker = math.sin(flamePhase * math.pi * 2 * flickerIntensity + index * 1.5);
-    final flicker2 = math.cos(flamePhase * math.pi * 3 + index * 2.1);
-
-    // 3 tongues of flame per layer
-    for (int t = 0; t < 3; t++) {
-      final tongueAngle = baseAngle + (t - 1) * 0.28;
-      final tongueLen = (18 + 8 * flicker + t * 3) * pulse;
-      final tongueWidth = 6.0 + flicker2 * 2;
-
-      final startX = cx + math.cos(tongueAngle) * baseR;
-      final startY = cy + math.sin(tongueAngle) * baseR;
-      final endX = cx + math.cos(tongueAngle) * (baseR + tongueLen);
-      final endY = cy + math.sin(tongueAngle) * (baseR + tongueLen);
-      final midX = (startX + endX) / 2 + math.sin(flamePhase * math.pi * 4 + t) * 4;
-      final midY = (startY + endY) / 2 + math.cos(flamePhase * math.pi * 3 + t) * 3;
-
-      // Flame glow
-      final glowAlpha = (0.22 + strainProgress * 0.10) * pulse;
-      canvas.drawCircle(
-        Offset(midX, midY), tongueWidth + 6,
-        Paint()
-          ..color = flameColor.withValues(alpha: glowAlpha)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-      );
-
-      // Flame body — path from base to tip
-      final flamePath = Path()
-        ..moveTo(startX - math.sin(tongueAngle) * tongueWidth * 0.4,
-                 startY + math.cos(tongueAngle) * tongueWidth * 0.4)
-        ..quadraticBezierTo(midX, midY,
-                            endX, endY)
-        ..quadraticBezierTo(midX + math.sin(tongueAngle) * tongueWidth * 0.3,
-                            midY - math.cos(tongueAngle) * tongueWidth * 0.3,
-                            startX + math.sin(tongueAngle) * tongueWidth * 0.4,
-                            startY - math.cos(tongueAngle) * tongueWidth * 0.4)
-        ..close();
-
-      final flameAlpha = (0.85 - strainProgress * 0.10).clamp(0.50, 0.90);
-      canvas.drawPath(flamePath, Paint()
-        ..color = flameColor.withValues(alpha: flameAlpha));
-
-      // Bright core
-      canvas.drawCircle(
-        Offset(startX, startY), 2.5,
-        Paint()
-          ..color = const Color(0xFFFFE4B5).withValues(alpha: flameAlpha * 0.7)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+        Offset(stars[i].$1 * w, stars[i].$2 * h), 0.8 + tw * 0.6,
+        Paint()..color = Colors.white.withValues(alpha: a),
       );
     }
 
-    // Heat shimmer around flame area
-    final shimmerAlpha = (0.06 + strainProgress * 0.04) * pulse;
-    canvas.drawCircle(
-      Offset(cx + math.cos(baseAngle) * (baseR + 10),
-             cy + math.sin(baseAngle) * (baseR + 10)),
-      20,
-      Paint()
-        ..color = flameColor.withValues(alpha: shimmerAlpha)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15),
-    );
-  }
-
-  /// Cool noor light replacing an extinguished flame
-  void _drawCoolNoor(Canvas canvas, double cx, double cy,
-      double baseAngle, int index, double fadeIn) {
-    final coolColor = _coolColors[index];
-    final baseR = 42.0;
-
-    // Noor orb appearing where flame was
-    final orbX = cx + math.cos(baseAngle) * (baseR + 8);
-    final orbY = cy + math.sin(baseAngle) * (baseR + 8);
-    final orbR = 6 + fadeIn * 8;
-    final orbAlpha = fadeIn * 0.55 * pulse;
-
-    // Outer glow
-    canvas.drawCircle(
-      Offset(orbX, orbY), orbR + 10,
-      Paint()
-        ..color = coolColor.withValues(alpha: orbAlpha * 0.3)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
-    );
-
-    // Orb body
-    canvas.drawCircle(
-      Offset(orbX, orbY), orbR,
-      Paint()
-        ..shader = RadialGradient(colors: [
-          Colors.white.withValues(alpha: orbAlpha * 0.6),
-          coolColor.withValues(alpha: orbAlpha),
-          Colors.transparent,
-        ], stops: const [0.0, 0.5, 1.0])
-        .createShader(Rect.fromCircle(center: Offset(orbX, orbY), radius: orbR)),
-    );
-
-    // Small label — Arabic word for coolness/safety
-    if (fadeIn > 0.5) {
-      const labels = ['بَرْد', 'سَلَام', 'نُور', 'أَمَان'];
-      final labelAlpha = ((fadeIn - 0.5) * 2).clamp(0.0, 0.7);
+    // Crescent moon (completion symbol)
+    if (progress > 0.5) {
+      final moonA = ((progress - 0.5) * 2).clamp(0.0, 1.0) * 0.85;
+      final moonX = w * 0.88;
+      final moonY = h * 0.18;
+      canvas.drawCircle(Offset(moonX, moonY), 10,
+          Paint()..color = Colors.white.withValues(alpha: moonA * 0.90));
+      canvas.drawCircle(Offset(moonX + 6, moonY - 2), 8,
+          Paint()..color = const Color(0xFF0F2942).withValues(alpha: moonA));
     }
+
+
   }
 
-  /// Central figure — human silhouette of light (the person being freed)
-  void _drawFigure(Canvas canvas, double cx, double cy) {
-    // As progress grows, figure transitions from dim to radiant
-    final figureAlpha = 0.15 + progress * 0.55;
-    final figureColor = isComplete
-        ? const Color(0xFF06B6D4)
-        : Color.lerp(const Color(0xFF9CA3AF), const Color(0xFF06B6D4), progress)!;
+  void _drawPerson(Canvas canvas, double w, double h, double groundY) {
+    // Person starts near the fire (left) and walks right as progress increases
+    final startX = w * 0.36;
+    final endX   = w * 0.70;
+    final personX = startX + (endX - startX) * walkPhase;
+    final personY = groundY - 2;
+
+    final skin = const Color(0xFFD4A574);
+    final robe = Colors.white.withValues(alpha: 0.92);
+    final walkBob = math.sin(walkPhase * math.pi * 6) * 1.5; // walking bob
+
+    // Shadow on ground
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(personX, personY + 2), width: 16, height: 5),
+      Paint()..color = Colors.black.withValues(alpha: 0.18),
+    );
 
     // Head
-    final headR = 8.0 * pulse;
-    canvas.drawCircle(
-      Offset(cx, cy - 18), headR,
-      Paint()
-        ..color = figureColor.withValues(alpha: figureAlpha * 0.5)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+    canvas.drawCircle(Offset(personX, personY - 40 + walkBob), 7.5,
+        Paint()..color = skin);
+
+    // Body (robe)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(personX, personY - 22 + walkBob), width: 13, height: 20),
+        const Radius.circular(4),
+      ),
+      Paint()..color = robe,
     );
-    canvas.drawCircle(
-      Offset(cx, cy - 18), headR * 0.6,
-      Paint()..color = figureColor.withValues(alpha: figureAlpha),
+
+    // Arms (raised slightly in relief/thankfulness)
+    final armLift = (walkPhase * 20 - 6).clamp(-8.0, 4.0);
+    canvas.drawLine(
+      Offset(personX - 6, personY - 27 + walkBob),
+      Offset(personX - 13, personY - 20 + walkBob + armLift),
+      Paint()..color = skin..strokeWidth = 2.2..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(personX + 6, personY - 27 + walkBob),
+      Offset(personX + 13, personY - 20 + walkBob + armLift),
+      Paint()..color = skin..strokeWidth = 2.2..strokeCap = StrokeCap.round,
     );
 
-    // Body — simple tapered form
-    final bodyPath = Path()
-      ..moveTo(cx - 6, cy - 10)
-      ..lineTo(cx - 10, cy + 15)
-      ..quadraticBezierTo(cx, cy + 20, cx + 10, cy + 15)
-      ..lineTo(cx + 6, cy - 10)
-      ..close();
+    // Legs (walking animation)
+    final legSwing = math.sin(walkPhase * math.pi * 8) * 4;
+    canvas.drawLine(
+      Offset(personX - 2, personY - 12 + walkBob),
+      Offset(personX - 4 - legSwing, personY),
+      Paint()..color = robe..strokeWidth = 2.8..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(personX + 2, personY - 12 + walkBob),
+      Offset(personX + 4 + legSwing, personY),
+      Paint()..color = robe..strokeWidth = 2.8..strokeCap = StrokeCap.round,
+    );
 
-    canvas.drawPath(bodyPath, Paint()
-      ..color = figureColor.withValues(alpha: figureAlpha * 0.6)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-
-    // Arms raised upward on completion (celebration / du'a posture)
-    if (progress > 0.5) {
-      final armAlpha = ((progress - 0.5) * 2).clamp(0.0, 1.0) * figureAlpha;
-      final armSpread = 12 + progress * 8;
-
-      // Left arm
-      canvas.drawLine(
-        Offset(cx - 5, cy - 5),
-        Offset(cx - armSpread, cy - 20 - progress * 8),
-        Paint()
-          ..color = figureColor.withValues(alpha: armAlpha * 0.7)
-          ..strokeWidth = 2.0
-          ..strokeCap = StrokeCap.round,
-      );
-      // Right arm
-      canvas.drawLine(
-        Offset(cx + 5, cy - 5),
-        Offset(cx + armSpread, cy - 20 - progress * 8),
-        Paint()
-          ..color = figureColor.withValues(alpha: armAlpha * 0.7)
-          ..strokeWidth = 2.0
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-
-    // Radiant aura on completion
-    if (isComplete) {
-      for (int i = 0; i < 3; i++) {
-        final auraR = 25.0 + i * 12;
-        final auraA = (0.10 - i * 0.03) * pulse;
-        canvas.drawCircle(
-          Offset(cx, cy), auraR,
+    // Heat shimmer behind person when close to fire (early in progress)
+    if (walkPhase < 0.4) {
+      final heatA = (0.4 - walkPhase) * 0.35;
+      canvas.drawCircle(Offset(personX, personY - 25), 20,
           Paint()
-            ..color = const Color(0xFF06B6D4).withValues(alpha: auraA)
-            ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8.0 + i * 4),
-        );
-      }
-
-      // Golden crown of freedom
-      canvas.drawCircle(
-        Offset(cx, cy - 28), 4 * pulse,
-        Paint()
-          ..color = const Color(0xFFD4AF37).withValues(alpha: 0.40 * pulse)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
-      );
-      canvas.drawCircle(
-        Offset(cx, cy - 28), 2.0,
-        Paint()..color = const Color(0xFFD4AF37).withValues(alpha: 0.55),
-      );
+            ..color = const Color(0xFFFF6B00).withValues(alpha: heatA)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12));
     }
+  }
+
+  void _drawLabel(Canvas canvas, String text, Offset pos, Color color) {
+    final tp = TextPainter(
+      text: TextSpan(text: text,
+          style: TextStyle(color: color, fontSize: 9.5,
+              fontWeight: FontWeight.w700, letterSpacing: 0.4)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos);
   }
 
   @override
   bool shouldRepaint(_FreedomFlamePainter o) =>
       o.progress != progress || o.pulse != pulse ||
-      o.starPhase != starPhase || o.particlePhase != particlePhase ||
-      o.isComplete != isComplete || o.pointsToday != pointsToday ||
-      o.punchScale != punchScale || o.shockPhase != shockPhase ||
-      o.flamePhase != flamePhase;
+      o.flamePhase != flamePhase || o.walkPhase != walkPhase ||
+      o.shieldGlow != shieldGlow || o.isComplete != isComplete ||
+      o.pointsToday != pointsToday;
 }
+
 
 // =============================================================================
 // 🌅 Cycle of Return (دورة الرجوع) — By You we live, die, and return
@@ -10219,6 +10141,10 @@ class _GuidingHandPainter extends CustomPainter {
 // =============================================================================
 // 🛡️ Invincible Name (الاسم الحصين) — Nothing can harm by Allah's Name
 // =============================================================================
+// =============================================================================
+// 🦂 Protected from All Evil — Scorpion & Threats repelled by Allah's name
+// morning_23 / evening_23 — "Nothing shall harm you by perfect words"
+// =============================================================================
 class _InvincibleName extends StatefulWidget {
   final double progress;
   final bool isComplete;
@@ -10236,73 +10162,43 @@ class _InvincibleName extends StatefulWidget {
 
 class _InvincibleNameState extends State<_InvincibleName>
     with TickerProviderStateMixin {
-  late AnimationController _pulseCtrl;
-  late Animation<double> _pulse;
-  late AnimationController _growCtrl;
-  late Animation<double> _grow;
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl,
+      _threatCtrl, _shieldCtrl;
+  late Animation<double> _pulse, _grow, _threat, _shield;
   double _prevProgress = 0.0;
-  late AnimationController _starCtrl;
-  late AnimationController _pCtrl;
-  late Animation<double> _pAnim;
-  int _prevTap = 0;
-  late AnimationController _punchCtrl;
-  late Animation<double> _punch;
-  late AnimationController _shockCtrl;
-  late Animation<double> _shock;
-  late AnimationController _fieldCtrl;
-
-  final List<_Particle> _particles =
-      List.generate(16, (i) => _Particle(seed: i + 1800));
 
   @override
   void initState() {
     super.initState();
 
     _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1400))
+        vsync: this, duration: const Duration(milliseconds: 1700))
       ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.92, end: 1.08)
+    _pulse = Tween<double>(begin: 0.94, end: 1.06)
         .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
     _growCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+        vsync: this, duration: const Duration(milliseconds: 850));
     _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
     _prevProgress = widget.progress;
     _growCtrl.value = widget.progress;
 
     _starCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2100))
+        vsync: this, duration: const Duration(milliseconds: 2200))
       ..repeat(reverse: true);
 
-    _pCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1100));
-    _pAnim = CurvedAnimation(parent: _pCtrl, curve: Curves.easeOut);
-    _prevTap = widget.tapCount;
+    // Threats creep toward man (loop, slow)
+    _threatCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 3000))
+      ..repeat(reverse: true);
+    _threat = CurvedAnimation(parent: _threatCtrl, curve: Curves.easeInOut);
 
-    _punchCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _punch = TweenSequence<double>([
-      TweenSequenceItem(
-          tween: Tween(begin: 1.0, end: 1.10)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 40),
-      TweenSequenceItem(
-          tween: Tween(begin: 1.10, end: 0.96)
-              .chain(CurveTween(curve: Curves.easeInOut)),
-          weight: 30),
-      TweenSequenceItem(
-          tween: Tween(begin: 0.96, end: 1.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 30),
-    ]).animate(_punchCtrl);
-
-    _shockCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
-
-    _fieldCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 4000))
-      ..repeat();
+    // Shield pulse glow
+    _shieldCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+    _shield = Tween<double>(begin: 0.7, end: 1.0)
+        .animate(CurvedAnimation(parent: _shieldCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -10312,26 +10208,12 @@ class _InvincibleNameState extends State<_InvincibleName>
       _growCtrl.animateTo(widget.progress);
       _prevProgress = widget.progress;
     }
-    if (widget.tapCount != _prevTap) {
-      _prevTap = widget.tapCount;
-      for (final p in _particles) {
-        p.reset();
-      }
-      _pCtrl.forward(from: 0);
-      _punchCtrl.forward(from: 0);
-      _shockCtrl.forward(from: 0);
-    }
   }
 
   @override
   void dispose() {
-    _pulseCtrl.dispose();
-    _growCtrl.dispose();
-    _starCtrl.dispose();
-    _pCtrl.dispose();
-    _punchCtrl.dispose();
-    _shockCtrl.dispose();
-    _fieldCtrl.dispose();
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _threatCtrl.dispose(); _shieldCtrl.dispose();
     super.dispose();
   }
 
@@ -10339,23 +10221,19 @@ class _InvincibleNameState extends State<_InvincibleName>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([
-        _pulseCtrl, _growCtrl, _starCtrl, _pCtrl,
-        _punchCtrl, _shockCtrl, _fieldCtrl,
+        _pulseCtrl, _growCtrl, _starCtrl, _threatCtrl, _shieldCtrl,
       ]),
       builder: (_, __) => SizedBox(
-        height: 290,
+        height: 260,
         child: CustomPaint(
           painter: _InvincibleNamePainter(
             progress: _grow.value,
             pulse: _pulse.value,
             starPhase: _starCtrl.value,
-            particlePhase: _pAnim.value,
-            particles: _particles,
+            threatPhase: _threat.value,
+            shieldGlow: _shield.value,
             isComplete: widget.isComplete,
             pointsToday: widget.pointsToday,
-            punchScale: _punch.value,
-            shockPhase: _shock.value,
-            fieldPhase: _fieldCtrl.value,
           ),
         ),
       ),
@@ -10367,251 +10245,376 @@ class _InvincibleNamePainter extends CustomPainter {
   final double progress;
   final double pulse;
   final double starPhase;
-  final double particlePhase;
-  final List<_Particle> particles;
+  final double threatPhase;
+  final double shieldGlow;
   final bool isComplete;
   final int pointsToday;
-  final double punchScale;
-  final double shockPhase;
-  final double fieldPhase;
-
-  static const _domeColor = Color(0xFF3B82F6);   // blue — divine protection
-  static const _coreColor = Color(0xFFD4AF37);    // golden — Bismillah radiance
-  static const _harmColor = Color(0xFF6B7280);    // grey — dissolving threats
 
   const _InvincibleNamePainter({
     required this.progress,
     required this.pulse,
     required this.starPhase,
-    required this.particlePhase,
-    required this.particles,
+    required this.threatPhase,
+    required this.shieldGlow,
     required this.isComplete,
     this.pointsToday = 0,
-    this.punchScale = 1.0,
-    this.shockPhase = 1.0,
-    this.fieldPhase = 0.0,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final cx = w / 2;
-    final cy = h * 0.44;
 
-    // 1. Background — deep celestial blue
-    final depth = progress * 0.12;
-    _paintLightBg(canvas, w, h, progress: progress);
+    // ── Background: deep night sky ──
+    final bgPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          const Color(0xFF0D1B2A),
+          const Color(0xFF1A2A3E),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
 
-    // 2. Stars
-    const starPos = [
-      (0.08, 0.07), (0.24, 0.16), (0.40, 0.05), (0.56, 0.13),
-      (0.70, 0.08), (0.86, 0.15), (0.94, 0.06), (0.32, 0.22),
-      (0.62, 0.20), (0.16, 0.24), (0.78, 0.21),
+    // ── Subtle ground line ──
+    final groundY = h * 0.78;
+    canvas.drawLine(
+      Offset(0, groundY), Offset(w, groundY),
+      Paint()..color = Colors.white.withValues(alpha: 0.08)..strokeWidth = 1.0,
+    );
+
+    // ── Background stars ──
+    _drawStars(canvas, w, h);
+
+    // ── Man in center ──
+    final manX = w * 0.50;
+    final manY = groundY - 2;
+    _drawMan(canvas, manX, manY);
+
+    // ── Shield around man ──
+    _drawShield(canvas, manX, manY - 22);
+
+    // ── Scorpion approaching from the left ──
+    _drawScorpion(canvas, manX, manY, w, h, groundY);
+
+    // ── Eye threat from top-right ──
+    _drawEvilEye(canvas, w, h);
+
+    // ── Snake approaching from bottom-right ──
+    _drawSnake(canvas, manX, groundY, w);
+
+    // ── Repelled sparks when progress > 0 ──
+    if (progress > 0.1) {
+      _drawRepelledSparks(canvas, manX, manY - 22, w);
+    }
+
+    // ── Completion: full bright shield ──
+    if (isComplete) {
+      _drawCompletionGlow(canvas, manX, manY - 22);
+    }
+  }
+
+  void _drawStars(Canvas canvas, double w, double h) {
+    const positions = [
+      (0.08, 0.08), (0.18, 0.04), (0.32, 0.10), (0.55, 0.05),
+      (0.70, 0.12), (0.85, 0.06), (0.92, 0.15), (0.42, 0.16),
+      (0.62, 0.20), (0.15, 0.18),
     ];
-    final sp = Paint();
-    for (int i = 0; i < starPos.length; i++) {
-      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
-      final starAlpha = (0.10 + progress * 0.25 + 0.30 * tw * progress).clamp(0.0, 0.65);
-      sp.color = Colors.white.withValues(alpha: starAlpha);
+    for (int i = 0; i < positions.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final a = (0.15 + 0.35 * tw).clamp(0.0, 0.6);
       canvas.drawCircle(
-          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.9, sp);
-    }
-
-    // Apply punch scale
-    canvas.save();
-    // punch scale removed — smooth calm tap
-
-    // 3. Approaching threats that dissolve on the dome
-    _drawThreats(canvas, cx, cy, w);
-
-    // 4. Protection dome — 3 layers building with progress (3 reps)
-    _drawDome(canvas, cx, cy, w);
-
-    // 5. Central Bismillah core
-    _drawCore(canvas, cx, cy);
-
-    canvas.restore();
-
-    // 6. Shockwave on tap
-    // tap-effect removed — smooth calm
-
-    // 7. Tap particles
-    // tap-effect removed — smooth calm
-
-    // 8. Progress label
-    // progress % label removed
-
-    // 9. Points badge
-  }
-
-  /// 3 concentric dome layers — each at 33% progress (3 reps)
-  void _drawDome(Canvas canvas, double cx, double cy, double w) {
-    for (int i = 0; i < 3; i++) {
-      final layerThreshold = (i + 1) / 3.0;
-      final layerProgress = ((progress - i / 3.0) * 3.0).clamp(0.0, 1.0);
-      if (layerProgress < 0.01) continue;
-
-      final baseR = 30.0 + i * 22;
-      final r = baseR * layerProgress;
-      final alpha = (0.08 + layerProgress * 0.12) * pulse;
-      final isActive = progress >= layerThreshold;
-
-      // Dome ring
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _domeColor.withValues(alpha: alpha)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = isActive ? 2.0 : 1.2,
+        Offset(positions[i].$1 * w, positions[i].$2 * h),
+        0.8 + tw * 0.7,
+        Paint()..color = Colors.white.withValues(alpha: a),
       );
-
-      // Dome fill — very subtle
-      canvas.drawCircle(
-        Offset(cx, cy), r,
-        Paint()
-          ..color = _domeColor.withValues(alpha: alpha * 0.15),
-      );
-
-      // Rotating energy dots along each ring
-      if (isActive) {
-        final dotCount = 4 + i * 2;
-        for (int d = 0; d < dotCount; d++) {
-          final dotAngle = fieldPhase * math.pi * 2 + (d / dotCount) * math.pi * 2 + i * 0.5;
-          final dx = cx + math.cos(dotAngle) * r;
-          final dy = cy + math.sin(dotAngle) * r;
-          canvas.drawCircle(
-            Offset(dx, dy), 1.5,
-            Paint()..color = _domeColor.withValues(alpha: alpha * 2.5),
-          );
-        }
-      }
     }
   }
 
-  /// Threats approaching and dissolving on the dome surface
-  void _drawThreats(Canvas canvas, double cx, double cy, double w) {
-    // 6 threats from different directions — arrows/shadows
-    const threatAngles = [0.3, 1.1, 2.0, 3.3, 4.2, 5.4];
+  /// Simple stick-figure man
+  void _drawMan(Canvas canvas, double cx, double baseY) {
+    final skin = const Color(0xFFD4A574);
+    final robe = Colors.white.withValues(alpha: 0.90);
+    final p = Paint()..color = skin;
 
-    for (int i = 0; i < threatAngles.length; i++) {
-      final angle = threatAngles[i] + fieldPhase * 0.3;
-      final outerR = w * 0.48;
+    // Head
+    canvas.drawCircle(Offset(cx, baseY - 42), 8.0, p);
 
-      // Threat travels inward but dissolves at the dome boundary
-      final domeR = 30.0 + (progress.clamp(0.0, 1.0) * 2).floor() * 22;
-      final actualDomeR = domeR * progress.clamp(0.0, 1.0);
+    // Body (robe — filled rounded rect)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(cx, baseY - 22), width: 14, height: 22),
+        const Radius.circular(4),
+      ),
+      Paint()..color = robe,
+    );
 
-      // Threat position — orbiting and approaching
-      final approachPhase = (fieldPhase + i * 0.16) % 1.0;
-      final threatDist = outerR - (outerR - actualDomeR - 5) * approachPhase;
-      final tx = cx + math.cos(angle) * threatDist;
-      final ty = cy + math.sin(angle) * threatDist;
+    // Arms out slightly
+    canvas.drawLine(
+      Offset(cx - 7, baseY - 28), Offset(cx - 14, baseY - 20),
+      Paint()..color = skin..strokeWidth = 2.5..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(cx + 7, baseY - 28), Offset(cx + 14, baseY - 20),
+      Paint()..color = skin..strokeWidth = 2.5..strokeCap = StrokeCap.round,
+    );
 
-      // Dissolve when reaching dome
-      final nearDome = (threatDist - actualDomeR).clamp(0.0, 30.0) / 30.0;
-      final threatAlpha = nearDome * 0.25 * (1.0 - progress * 0.3);
-
-      if (threatAlpha < 0.02) continue;
-
-      // Threat shape — dark arrow/shard
-      final shardLen = 6.0 * nearDome;
-      final shardAngle = angle + math.pi; // points toward center
-      final endX = tx + math.cos(shardAngle) * shardLen;
-      final endY = ty + math.sin(shardAngle) * shardLen;
-
-      canvas.drawLine(
-        Offset(tx, ty), Offset(endX, endY),
-        Paint()
-          ..color = _harmColor.withValues(alpha: threatAlpha)
-          ..strokeWidth = 2.0
-          ..strokeCap = StrokeCap.round,
-      );
-
-      // Dissolution spark when threat hits dome
-      if (nearDome < 0.3 && progress > 0.1) {
-        final sparkA = (1.0 - nearDome / 0.3) * 0.30 * progress;
-        canvas.drawCircle(
-          Offset(tx, ty), 3,
-          Paint()
-            ..color = _domeColor.withValues(alpha: sparkA)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-        );
-      }
-    }
+    // Legs
+    canvas.drawLine(
+      Offset(cx - 3, baseY - 11), Offset(cx - 5, baseY),
+      Paint()..color = robe..strokeWidth = 3.0..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(cx + 3, baseY - 11), Offset(cx + 5, baseY),
+      Paint()..color = robe..strokeWidth = 3.0..strokeCap = StrokeCap.round,
+    );
   }
 
-  /// Central Bismillah radiance — golden core
-  void _drawCore(Canvas canvas, double cx, double cy) {
-    final coreAlpha = 0.15 + progress * 0.50;
+  /// Dome shield around the man
+  void _drawShield(Canvas canvas, double cx, double cy) {
+    final shieldR = 36.0 + 4.0 * (pulse - 1.0);
+    final shieldProgress = progress.clamp(0.0, 1.0);
+    final shieldAlpha = (0.12 + shieldProgress * 0.22) * shieldGlow;
 
-    // Outer radiance
+    // Outer glow ring
     canvas.drawCircle(
-      Offset(cx, cy), 18,
+      Offset(cx, cy),
+      shieldR + 8,
       Paint()
-        ..color = _coreColor.withValues(alpha: coreAlpha * 0.12 * pulse)
+        ..color = const Color(0xFF60A5FA).withValues(alpha: shieldAlpha * 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
     );
 
-    // Inner glow
-    canvas.drawCircle(
-      Offset(cx, cy), 10,
+    // Shield dome fill
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(cx, cy), width: shieldR * 2, height: shieldR * 2),
+      math.pi, math.pi,
+      false,
       Paint()
-        ..shader = RadialGradient(colors: [
-          Colors.white.withValues(alpha: coreAlpha * 0.6),
-          _coreColor.withValues(alpha: coreAlpha * 0.4),
-          Colors.transparent,
-        ], stops: const [0.0, 0.5, 1.0])
-        .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: 10)),
+        ..color = const Color(0xFF3B82F6).withValues(alpha: shieldAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5,
+    );
+    // Bottom flat line of dome
+    canvas.drawLine(
+      Offset(cx - shieldR, cy), Offset(cx + shieldR, cy),
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: shieldAlpha * 0.7)
+        ..strokeWidth = 1.5,
     );
 
-    // Core dot
-    canvas.drawCircle(
-      Offset(cx, cy), 4 * pulse,
-      Paint()..color = _coreColor.withValues(alpha: coreAlpha * 0.5),
+    // Inner fill (subtle)
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(cx, cy), width: shieldR * 2, height: shieldR * 2),
+      math.pi, math.pi,
+      true,
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: shieldAlpha * 0.08),
     );
 
-    // Radiating lines — 8 rays from center
-    if (progress > 0.2) {
-      final rayAlpha = ((progress - 0.2) / 0.8).clamp(0.0, 1.0) * 0.20 * pulse;
-      for (int r = 0; r < 8; r++) {
-        final rayAngle = r * math.pi / 4 + fieldPhase * 0.5;
-        final innerR = 12.0;
-        final outerR = 20.0 + progress * 8;
+    // Cross-hatch lines (shield texture — 2 arcs)
+    if (shieldProgress > 0.3) {
+      final lineA = (shieldProgress - 0.3) / 0.7 * shieldAlpha * 0.4;
+      for (final dx in [-shieldR * 0.4, 0.0, shieldR * 0.4]) {
         canvas.drawLine(
-          Offset(cx + math.cos(rayAngle) * innerR, cy + math.sin(rayAngle) * innerR),
-          Offset(cx + math.cos(rayAngle) * outerR, cy + math.sin(rayAngle) * outerR),
-          Paint()
-            ..color = _coreColor.withValues(alpha: rayAlpha)
-            ..strokeWidth = 1.0
-            ..strokeCap = StrokeCap.round,
+          Offset(cx + dx, cy), Offset(cx + dx, cy - shieldR * 0.9),
+          Paint()..color = const Color(0xFF3B82F6).withValues(alpha: lineA)
+                 ..strokeWidth = 0.8,
         );
       }
+    }
+  }
+
+  /// Scorpion approaching from the left
+  void _drawScorpion(Canvas canvas, double manX, double manY,
+      double w, double h, double groundY) {
+    // Scorpion position: starts off-screen left, approaches but stops at shield edge
+    final shieldEdge = manX - 38.0;
+    final startX = manX - w * 0.48;
+    // Oscillates: creeps forward with threatPhase, but never reaches shield
+    final rawX = startX + (shieldEdge - startX - 20) * (0.4 + 0.6 * threatPhase);
+    final scX = rawX; // scorpion center X
+    final scY = groundY - 6;
+
+    final c = const Color(0xFFE74C3C); // red scorpion
+
+    // ── Body (elongated oval) ──
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(scX, scY), width: 20, height: 10),
+      Paint()..color = c.withValues(alpha: 0.90),
+    );
+
+    // ── Head ──
+    canvas.drawCircle(Offset(scX + 11, scY), 5.0,
+        Paint()..color = c.withValues(alpha: 0.85));
+
+    // ── Pincers (two lines from head) ──
+    canvas.drawLine(
+      Offset(scX + 14, scY - 2), Offset(scX + 20, scY - 6),
+      Paint()..color = c.withValues(alpha: 0.80)..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(scX + 14, scY + 2), Offset(scX + 20, scY + 4),
+      Paint()..color = c.withValues(alpha: 0.80)..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+    );
+
+    // ── 6 legs (3 each side) ──
+    for (int i = 0; i < 3; i++) {
+      final lx = scX - 6.0 + i * 5.0;
+      canvas.drawLine(Offset(lx, scY - 4), Offset(lx - 3, scY - 11),
+          Paint()..color = c.withValues(alpha: 0.65)..strokeWidth = 1.3..strokeCap = StrokeCap.round);
+      canvas.drawLine(Offset(lx, scY + 4), Offset(lx - 3, scY + 11),
+          Paint()..color = c.withValues(alpha: 0.65)..strokeWidth = 1.3..strokeCap = StrokeCap.round);
     }
 
-    // On completion — pulsing invincibility aura
-    if (isComplete) {
-      for (int i = 0; i < 2; i++) {
-        final auraR = 22.0 + i * 10;
-        final auraA = (0.08 - i * 0.03) * pulse;
-        canvas.drawCircle(
-          Offset(cx, cy), auraR,
-          Paint()
-            ..color = _coreColor.withValues(alpha: auraA)
-            ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6.0 + i * 4),
-        );
-      }
+    // ── Tail curving upward with stinger ──
+    final tailPath = Path()
+      ..moveTo(scX - 8, scY)
+      ..quadraticBezierTo(scX - 18, scY - 16, scX - 14, scY - 24);
+    canvas.drawPath(tailPath,
+        Paint()..color = c.withValues(alpha: 0.85)
+               ..style = PaintingStyle.stroke
+               ..strokeWidth = 2.5..strokeCap = StrokeCap.round);
+    // Stinger tip
+    canvas.drawCircle(Offset(scX - 14, scY - 26), 3.5,
+        Paint()..color = const Color(0xFFFF6B35).withValues(alpha: 0.95));
+
+    // Label
+    _drawLabel(canvas, 'scorpion', Offset(scX - 10, scY + 16),
+        c.withValues(alpha: 0.55));
+  }
+
+  /// Evil eye threat from top-right
+  void _drawEvilEye(Canvas canvas, double w, double h) {
+    final eyeX = w * 0.80;
+    final eyeY = h * 0.24 + math.sin(threatPhase * math.pi) * 8;
+    final c = const Color(0xFF8B5CF6); // purple
+
+    // Eye white
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(eyeX, eyeY), width: 28, height: 14),
+      Paint()..color = Colors.white.withValues(alpha: 0.22),
+    );
+    // Iris
+    canvas.drawCircle(Offset(eyeX, eyeY), 5.5,
+        Paint()..color = c.withValues(alpha: 0.75));
+    // Pupil
+    canvas.drawCircle(Offset(eyeX, eyeY), 2.5,
+        Paint()..color = Colors.black.withValues(alpha: 0.60));
+    // Angry brow
+    canvas.drawLine(
+      Offset(eyeX - 12, eyeY - 10), Offset(eyeX + 12, eyeY - 8),
+      Paint()..color = c.withValues(alpha: 0.55)..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+    );
+    // Glow
+    canvas.drawCircle(Offset(eyeX, eyeY), 18,
+        Paint()
+          ..color = c.withValues(alpha: 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+
+    _drawLabel(canvas, 'evil eye', Offset(eyeX - 14, eyeY + 12),
+        c.withValues(alpha: 0.50));
+  }
+
+  /// Snake creeping from bottom-right
+  void _drawSnake(Canvas canvas, double manX, double groundY, double w) {
+    final shieldEdge = manX + 40.0;
+    final startX = manX + w * 0.42;
+    final snakeX = startX - (startX - shieldEdge - 18) * (0.35 + 0.65 * threatPhase);
+    final snakeY = groundY - 4;
+    final c = const Color(0xFF10B981); // green snake
+
+    // Snake body — S-curve path
+    final bodyPath = Path()
+      ..moveTo(snakeX + 22, snakeY)
+      ..cubicTo(snakeX + 10, snakeY - 14, snakeX - 5, snakeY + 10, snakeX, snakeY);
+    canvas.drawPath(
+      bodyPath,
+      Paint()
+        ..color = c.withValues(alpha: 0.82)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..strokeCap = StrokeCap.round,
+    );
+    // Head
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(snakeX - 2, snakeY), width: 12, height: 8),
+      Paint()..color = c.withValues(alpha: 0.90),
+    );
+    // Eye
+    canvas.drawCircle(Offset(snakeX - 6, snakeY - 2), 1.5,
+        Paint()..color = Colors.red.withValues(alpha: 0.80));
+    // Forked tongue
+    canvas.drawLine(Offset(snakeX - 9, snakeY), Offset(snakeX - 14, snakeY - 3),
+        Paint()..color = Colors.red.withValues(alpha: 0.75)..strokeWidth = 1.2..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(snakeX - 9, snakeY), Offset(snakeX - 14, snakeY + 3),
+        Paint()..color = Colors.red.withValues(alpha: 0.75)..strokeWidth = 1.2..strokeCap = StrokeCap.round);
+
+    _drawLabel(canvas, 'snake', Offset(snakeX - 6, snakeY + 12),
+        c.withValues(alpha: 0.50));
+  }
+
+  /// Small impact sparks at shield edge when threats approach
+  void _drawRepelledSparks(Canvas canvas, double cx, double cy, double w) {
+    // Left side (scorpion side)
+    final leftEdge = cx - 38.0;
+    for (int i = 0; i < 4; i++) {
+      final angle = math.pi + (i - 1.5) * 0.35;
+      final dist = 40.0 + 4 * math.sin(starPhase * math.pi * 3 + i * 1.1);
+      final sx = cx + math.cos(angle) * dist;
+      final sy = cy + math.sin(angle) * dist;
+      final sparkProgress = (0.5 + 0.5 * math.sin(starPhase * math.pi * 4 + i * 0.8));
+      canvas.drawCircle(Offset(sx, sy), 1.8 + sparkProgress,
+        Paint()..color = const Color(0xFF60A5FA).withValues(alpha: sparkProgress * progress * 0.65));
     }
+
+    // Right side (snake side)
+    for (int i = 0; i < 3; i++) {
+      final angle = (i - 1.0) * 0.4;
+      final dist = 40.0 + 3 * math.sin(starPhase * math.pi * 2 + i * 1.3);
+      final sx = cx + math.cos(angle) * dist;
+      final sy = cy + math.sin(angle) * dist;
+      final sparkProgress = (0.5 + 0.5 * math.sin(starPhase * math.pi * 3 + i * 1.2));
+      canvas.drawCircle(Offset(sx, sy), 1.5 + sparkProgress,
+        Paint()..color = const Color(0xFF60A5FA).withValues(alpha: sparkProgress * progress * 0.55));
+    }
+  }
+
+  void _drawCompletionGlow(Canvas canvas, double cx, double cy) {
+    canvas.drawCircle(
+      Offset(cx, cy),
+      55,
+      Paint()
+        ..color = const Color(0xFF60A5FA).withValues(alpha: 0.18 * shieldGlow)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+  }
+
+  void _drawLabel(Canvas canvas, String text, Offset pos, Color color) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: color,
+          fontSize: 9.0,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos);
   }
 
   @override
   bool shouldRepaint(_InvincibleNamePainter o) =>
       o.progress != progress || o.pulse != pulse ||
-      o.starPhase != starPhase || o.particlePhase != particlePhase ||
-      o.isComplete != isComplete || o.pointsToday != pointsToday ||
-      o.punchScale != punchScale || o.shockPhase != shockPhase ||
-      o.fieldPhase != fieldPhase;
+      o.starPhase != starPhase || o.threatPhase != threatPhase ||
+      o.shieldGlow != shieldGlow || o.isComplete != isComplete ||
+      o.pointsToday != pointsToday;
 }
+
 
 // =============================================================================
 // 🌊 Ocean of Forgiveness (بحر المغفرة) — Sins forgiven like foam of the sea
@@ -10982,6 +10985,8 @@ class _OceanOfForgivenessPainter extends CustomPainter {
 // =============================================================================
 // ⚖️ Unparalleled Scales (ميزان لا يُضاهى) — 10 slaves, 100 hasanat, shield
 // =============================================================================
+// Freed Slaves Illustration — La ilaha illallah 100x
+// =============================================================================
 class _UnparalleledScales extends StatefulWidget {
   final double progress;
   final bool isComplete;
@@ -11138,11 +11143,6 @@ class _UnparalleledScalesPainter extends CustomPainter {
   final double shockPhase;
   final double rainPhase;
 
-  static const _goldColor = Color(0xFFD4AF37);   // golden hasanat
-  static const _scaleColor = Color(0xFF8B5CF6);  // violet — mizan
-  static const _chainColor = Color(0xFF10B981);  // emerald — freed chains
-  static const _shieldColor = Color(0xFF3B82F6); // blue — shaytan shield
-
   const _UnparalleledScalesPainter({
     required this.progress,
     required this.pulse,
@@ -11160,221 +11160,252 @@ class _UnparalleledScalesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final cx = w / 2;
-    final cy = h * 0.42;
 
-    // 1. Background — regal dark violet
-    final depth = progress * 0.12;
-    _paintLightBg(canvas, w, h, progress: progress);
+    // ── Desert sky gradient — warm amber top to hazy cream horizon ──
+    final skyPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        stops: const [0.0, 0.40, 0.72, 1.0],
+        colors: const [
+          Color(0xFFB45309), // deep amber at top
+          Color(0xFFD97706), // golden mid-sky
+          Color(0xFFFDE68A), // pale yellow near horizon
+          Color(0xFFFFF8E7), // hazy cream at ground level
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), skyPaint);
 
-    // 2. Stars
-    const starPos = [
-      (0.10, 0.07), (0.24, 0.14), (0.40, 0.05), (0.56, 0.12),
-      (0.72, 0.06), (0.86, 0.15), (0.48, 0.20), (0.30, 0.22),
-      (0.66, 0.18), (0.14, 0.20),
-    ];
-    final sp = Paint();
-    for (int i = 0; i < starPos.length; i++) {
-      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.8);
-      final starAlpha = (0.10 + progress * 0.25 + 0.30 * tw * progress).clamp(0.0, 0.6);
-      sp.color = Colors.white.withValues(alpha: starAlpha);
-      canvas.drawCircle(
-          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.9, sp);
+    // ── Distant sun glow (upper-right) ──
+    canvas.drawCircle(Offset(w * 0.82, h * 0.20), 24,
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.28)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
+    canvas.drawCircle(Offset(w * 0.82, h * 0.20), 10,
+        Paint()..color = Colors.white.withValues(alpha: 0.60));
+
+    // ── Sandy dune at bottom ──
+    final groundY = h * 0.75;
+    final dunePath = Path()
+      ..moveTo(0, groundY + 5)
+      ..quadraticBezierTo(w * 0.20, groundY - 12, w * 0.38, groundY + 3)
+      ..quadraticBezierTo(w * 0.58, groundY + 16, w * 0.74, groundY + 4)
+      ..quadraticBezierTo(w * 0.90, groundY - 9, w, groundY + 7)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(dunePath,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: const [Color(0xFFD4922A), Color(0xFFA8711A)],
+          ).createShader(Rect.fromLTWH(0, groundY - 12, w, h - groundY + 12)));
+
+    // ── Heat shimmer (subtle shimmer dots above dune) ──
+    for (int i = 0; i < 7; i++) {
+      final sx = w * (0.08 + i * 0.13);
+      final sy = groundY - 5 + math.sin(starPhase * math.pi * 2 + i * 1.2) * 5;
+      final sa = (0.05 + 0.07 * math.sin(starPhase * math.pi * 3 + i).abs());
+      canvas.drawCircle(Offset(sx, sy), 1.8, Paint()..color = Colors.white.withValues(alpha: sa));
     }
 
-    // Apply punch scale
+    // Main cage scene
+    _drawCage(canvas, w, h);
+  }
+
+  void _drawCage(Canvas canvas, double w, double h) {
+    // Cage nudged left so freed figures have room on the right
+    final cx = w * 0.35;
+    final cy = h * 0.63; // grounded on desert surface
+
+    const cageW = 114.0;  // wider cage to fit 4 figures comfortably
+    const cageH = 92.0;
+    final topY  = cy - cageH / 2;
+    final botY  = cy + cageH / 2;
+    final leftX = cx - cageW / 2;
+    final rightX = cx + cageW / 2;
+
+    // Door swings open rightward as progress increases (starts opening at 40%)
+    final doorOpen = ((progress - 0.35) / 0.65).clamp(0.0, 1.0);
+    final doorAngle = doorOpen * math.pi * 0.48; // ~86 degrees max
+
+    final cagePaint = Paint()
+      ..color = const Color(0xFF6B7280).withValues(alpha: 0.82)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round;
+
+    // Top arc (dome of birdcage)
+    final arcRect = Rect.fromLTRB(leftX, topY - 10, rightX, topY + 50);
+    canvas.drawArc(arcRect, math.pi, math.pi, false, cagePaint);
+
+    // Bottom floor
+    canvas.drawLine(Offset(leftX, botY), Offset(rightX, botY), cagePaint);
+
+    // Left wall    // Left wall (solid)
+    canvas.drawLine(Offset(leftX, topY + 22), Offset(leftX, botY), cagePaint);
+
+    // Vertical bars inside cage (skip left/right walls, skip rightmost for door)
+    const numBars = 7;
+    for (int i = 1; i < numBars - 1; i++) {
+      final bx = leftX + cageW * i / (numBars - 1);
+      if (bx >= rightX - 4) continue; // leave room for door
+      canvas.drawLine(
+        Offset(bx, topY + 22), Offset(bx, botY),
+        Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.38)
+               ..strokeWidth = 1.4..strokeCap = StrokeCap.round,
+      );
+    }
+
+    // Horizontal ring mid-cage
+    canvas.drawLine(
+      Offset(leftX, cy + 2), Offset(rightX - 2, cy + 2),
+      Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.25)..strokeWidth = 1.1,
+    );
+
+    // Door on right side — amber, swings outward rightward
+    final doorHingeX = rightX;
+    final doorHingeY = topY + 24;
+    final doorLen = botY - doorHingeY - 2;
+
     canvas.save();
-    // punch scale removed — smooth calm tap
-
-    // 3. Cage & Freed Souls structure
-    _drawCageAndSouls(canvas, cx, cy, w);
-
-    // 4. Four reward indicators around it
-    _drawRewards(canvas, cx, cy, w);
-
+    canvas.translate(doorHingeX, doorHingeY);
+    canvas.rotate(-doorAngle);
+    canvas.drawLine(
+      Offset.zero, Offset(0, doorLen),
+      Paint()
+        ..color = const Color(0xFFD97706).withValues(alpha: 0.90)
+        ..strokeWidth = 3.0
+        ..strokeCap = StrokeCap.round,
+    );
+    // Door handle
+    canvas.drawCircle(Offset(5, doorLen * 0.5), 2.5,
+        Paint()..color = const Color(0xFFD97706).withValues(alpha: 0.75));
     canvas.restore();
 
-    // 5. Shockwave on tap
-    // tap-effect removed — smooth calm
 
-    // 6. Golden hasanat raining down
-    // tap-effect removed — smooth calm
+    // ── All figures green ──
+    const green = Color(0xFF10B981);
 
-    // 7. Progress label
-    // progress % label removed
+    // ── 6 positions in a 2-column x 3-row grid inside cage ──
+    final col0 = cx - 20.0; // left column
+    final col1 = cx + 12.0; // right column
+    final row0 = cy - 22.0; // top row
+    final row1 = cy - 2.0;  // middle row
+    final row2 = cy + 18.0; // bottom row
 
-    // 8. Points badge
+    // ── Figures 0,1,2 always remain inside ──
+    _drawPrisoner(canvas, Offset(col0, row0), green, starPhase, idx: 0);
+    _drawPrisoner(canvas, Offset(col1, row0), green, starPhase, idx: 1);
+    _drawPrisoner(canvas, Offset(col0, row1), green, starPhase, idx: 2);
+
+    // ── Figure 3 exits at progress >= 0.33 ──
+    if (progress < 0.33) {
+      _drawPrisoner(canvas, Offset(col1, row1), green, starPhase, idx: 3);
+    } else {
+      final sp3 = ((progress - 0.33) / 0.67).clamp(0.0, 1.0);
+      _drawFreeingFigure(canvas, sp: sp3, color: green,
+        startX: rightX + 6, startY: row1,
+        targetX: w * 0.78, targetY: cy - 18, pulse: pulse);
+    }
+
+    // ── Figure 4 exits at progress >= 0.66 ──
+    if (progress < 0.66) {
+      _drawPrisoner(canvas, Offset(col0, row2), green, starPhase, idx: 4);
+    } else {
+      final sp4 = ((progress - 0.66) / 0.34).clamp(0.0, 1.0);
+      _drawFreeingFigure(canvas, sp: sp4, color: green,
+        startX: rightX + 6, startY: row2,
+        targetX: w * 0.84, targetY: cy - 4, pulse: pulse);
+    }
+
+    // ── Figure 5 exits at completion ──
+    if (!isComplete) {
+      _drawPrisoner(canvas, Offset(col1, row2), green, starPhase, idx: 5);
+    } else {
+      _drawFreeingFigure(canvas, sp: 1.0, color: green,
+        startX: rightX + 6, startY: row2,
+        targetX: w * 0.90, targetY: cy + 8, pulse: pulse);
+    }
   }
 
-  /// A breaking cage releasing 10 abstract human silhouettes with chains shattering
-  void _drawCageAndSouls(Canvas canvas, double cx, double cy, double w) {
-    final cageAlpha = (1.0 - progress * 0.85).clamp(0.0, 1.0);
-    final cageColor = const Color(0xFF64748B);
-    final baseY = cy + 30;
-    final topY = cy - 40;
-    final cageW = 72.0;
-
-    // ── Cage floor (oval base) ──
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, baseY), width: cageW, height: 14),
-      Paint()
-        ..color = cageColor.withValues(alpha: cageAlpha * 0.80)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2,
+  void _drawPrisoner(Canvas canvas, Offset pos, Color color, double starPhase, {required int idx}) {
+    final a = 0.72 + 0.18 * math.sin(starPhase * math.pi * 2 + idx * 1.2).abs();
+    // Head
+    canvas.drawCircle(Offset(pos.dx, pos.dy - 7), 4.5,
+        Paint()..color = color.withValues(alpha: a));
+    // Body
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(pos.dx, pos.dy + 3), width: 7, height: 11),
+        const Radius.circular(2.5),
+      ),
+      Paint()..color = color.withValues(alpha: a * 0.80),
     );
-    // ── Cage top ring ──
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, topY), width: cageW * 0.60, height: 10),
-      Paint()
-        ..color = cageColor.withValues(alpha: cageAlpha * 0.60)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8,
-    );
-    // ── Hook above ──
+    // Chains at ankles
     canvas.drawLine(
-      Offset(cx, topY - 5), Offset(cx, topY - 14),
-      Paint()..color = cageColor.withValues(alpha: cageAlpha * 0.55)
-             ..strokeWidth = 2.0..strokeCap = StrokeCap.round,
+      Offset(pos.dx - 5, pos.dy + 8), Offset(pos.dx + 5, pos.dy + 8),
+      Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.70)
+             ..strokeWidth = 1.5..strokeCap = StrokeCap.round,
     );
+  }
 
-    // ── Bars — bend outward as progress rises ──
-    final bend = progress * 40.0;
-    for (int i = 0; i < 6; i++) {
-      final t = i / 5.0;
-      final bx = cx - cageW / 2 + cageW * t;
-      final pushX = bx + (t < 0.5 ? -bend * (0.5 - t) * 2 : bend * (t - 0.5) * 2);
-      final barAlpha = cageAlpha * (0.55 + (1 - t.abs()) * 0.10);
-      final barPath = Path()
-        ..moveTo(bx, baseY - 7)
-        ..quadraticBezierTo(pushX, cy - 8, cx * (0.4 + 0.6 * (1 - t.abs())), topY + 5);
-      canvas.drawPath(barPath, Paint()
-        ..color = cageColor.withValues(alpha: barAlpha)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8
-        ..strokeCap = StrokeCap.round);
-    }
+  void _drawFreeingFigure(Canvas canvas, {
+    required double sp,
+    required Color color,
+    required double startX, required double startY,
+    required double targetX, required double targetY,
+    required double pulse,
+  }) {
+    final posX = startX + (targetX - startX) * sp;
+    final posY = startY + (targetY - startY) * sp + math.sin(sp * math.pi) * -14;
+    final alpha = (0.80 + 0.20 * pulse).clamp(0.0, 1.0);
 
-    // ── 10 figures: inside caged until threshold, then break free and rise ──
-    for (int i = 0; i < 10; i++) {
-      final threshold = i / 10.0;
-      final freed = progress > threshold;
+    // Freedom glow
+    canvas.drawCircle(Offset(posX, posY), 18,
+        Paint()
+          ..color = color.withValues(alpha: sp * 0.11)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
 
-      if (!freed) {
-        // Waiting inside cage — tiny silhouette (head + body)
-        final col = i % 5;
-        final row = i ~/ 5;
-        final fx = cx - 16.0 + col * 8.0;
-        final fy = cy + 8.0 + row * 14.0;
-        final a = 0.18 + starPhase * 0.05;
-        // head
-        canvas.drawCircle(Offset(fx, fy - 6), 3.2, Paint()..color = Colors.white.withValues(alpha: a));
-        // body
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(fx, fy + 1), width: 5, height: 8), const Radius.circular(2)),
-          Paint()..color = Colors.white.withValues(alpha: a * 0.75),
-        );
-        // chain link (horizontal bar at waist)
-        canvas.drawLine(
-          Offset(fx - 5, fy + 1), Offset(fx + 5, fy + 1),
-          Paint()..color = cageColor.withValues(alpha: a * 1.5)
-                 ..strokeWidth = 1.2..strokeCap = StrokeCap.round,
-        );
-      } else {
-        // Freed — figure rising with broken chain glowing
-        final sp = ((progress - threshold) * 10.0).clamp(0.0, 1.0);
-        final floatDir = i % 2 == 0 ? 1.0 : -1.0;
-        final riseX = cx + math.sin(sp * math.pi * 1.8 + i * 0.7) * 28 * floatDir;
-        final riseY = cy + 15 - sp * 115;
-        final figAlpha = (1.0 - sp * 0.30).clamp(0.0, 1.0);
+    // Head
+    canvas.drawCircle(Offset(posX, posY - 9), 5.0,
+        Paint()..color = color.withValues(alpha: alpha));
+    // Body
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(posX, posY + 3), width: 8, height: 13),
+        const Radius.circular(3),
+      ),
+      Paint()..color = color.withValues(alpha: alpha * 0.80),
+    );
+    // Arms in walking/raised gesture
+    final armSwing = math.sin(sp * math.pi * 5) * 5;
+    canvas.drawLine(Offset(posX - 4, posY - 1), Offset(posX - 9, posY - 7 + armSwing),
+        Paint()..color = color.withValues(alpha: alpha * 0.72)
+               ..strokeWidth = 1.6..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(posX + 4, posY - 1), Offset(posX + 9, posY - 7 - armSwing),
+        Paint()..color = color.withValues(alpha: alpha * 0.72)
+               ..strokeWidth = 1.6..strokeCap = StrokeCap.round);
 
-        // Soft freedom glow
-        canvas.drawCircle(Offset(riseX, riseY), 14,
-          Paint()
-            ..color = const Color(0xFFD4AF37).withValues(alpha: sp * 0.12)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
-
-        // Head
-        canvas.drawCircle(Offset(riseX, riseY - 9), 4.5,
-          Paint()..color = Colors.white.withValues(alpha: figAlpha));
-        // Body
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(riseX, riseY + 1), width: 7, height: 12), const Radius.circular(3)),
-          Paint()..color = Colors.white.withValues(alpha: figAlpha * 0.80),
-        );
-        // Arms raised in freedom (two short lines going up)
-        canvas.drawLine(
-          Offset(riseX - 3, riseY - 2), Offset(riseX - 8, riseY - 8),
-          Paint()..color = Colors.white.withValues(alpha: figAlpha * 0.70)
-                 ..strokeWidth = 1.4..strokeCap = StrokeCap.round);
-        canvas.drawLine(
-          Offset(riseX + 3, riseY - 2), Offset(riseX + 8, riseY - 8),
-          Paint()..color = Colors.white.withValues(alpha: figAlpha * 0.70)
-                 ..strokeWidth = 1.4..strokeCap = StrokeCap.round);
-
-        // Broken chain flash (only at moment of breaking)
-        if (sp < 0.25) {
-          final breakA = (1.0 - sp / 0.25) * 0.80;
-          canvas.drawLine(
-            Offset(riseX - 6, riseY + 5), Offset(riseX - 2, riseY + 3),
-            Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
-                   ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
-          canvas.drawLine(
-            Offset(riseX + 2, riseY + 3), Offset(riseX + 6, riseY + 5),
-            Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
-                   ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
-        }
-      }
+    // Broken chain flash just after exit
+    if (sp < 0.28) {
+      final breakA = (1.0 - sp / 0.28) * 0.80;
+      canvas.drawLine(Offset(posX - 7, posY + 8), Offset(posX - 2, posY + 6),
+          Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
+                 ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+      canvas.drawLine(Offset(posX + 2, posY + 6), Offset(posX + 7, posY + 8),
+          Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
+                 ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
     }
   }
 
-  /// Four reward indicators: freed slaves, hasanat, sins erased, shaytan shield
-  void _drawRewards(Canvas canvas, double cx, double cy, double w) {
-    // Position 4 rewards evenly spread below the scale
-    final rewardY = cy + 48;
-    final spacing = w * 0.20;
-    final rewards = [
-      (cx - spacing * 1.5, rewardY, _chainColor, 'عِتْق', 0.25),       // freed slaves
-      (cx - spacing * 0.5, rewardY, _goldColor, 'حَسَنَات', 0.50),     // 100 hasanat
-      (cx + spacing * 0.5, rewardY, const Color(0xFFEF4444), 'مَحْو', 0.75), // sins erased
-      (cx + spacing * 1.5, rewardY, _shieldColor, 'حِصْن', 1.0),       // shaytan shield
-    ];
-
-    for (int i = 0; i < rewards.length; i++) {
-      final (rx, ry, color, label, threshold) = rewards[i];
-      final reached = progress >= threshold;
-      final rewardAlpha = reached
-          ? 0.75 + 0.15 * pulse
-          : (progress / threshold).clamp(0.0, 1.0) * 0.35;
-
-      if (rewardAlpha < 0.03) continue;
-
-      // Reward orb
-      canvas.drawCircle(
-        Offset(rx, ry), reached ? 7.0 * pulse : 4.5,
-        Paint()..color = color.withValues(alpha: rewardAlpha),
-      );
-      if (reached) {
-        canvas.drawCircle(
-          Offset(rx, ry), 12,
-          Paint()
-            ..color = color.withValues(alpha: rewardAlpha * 0.15)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-        );
-      }
-
-    }
-
-    // On completion — connecting golden rays from all 4 rewards to scale
-    if (isComplete) {
-      for (final (rx, ry, color, _, _) in rewards) {
-        canvas.drawLine(
-          Offset(rx, ry - 5), Offset(cx, cy),
-          Paint()
-            ..color = color.withValues(alpha: 0.10 * pulse)
-            ..strokeWidth = 0.8,
-        );
-      }
-    }
+  void _drawText(Canvas canvas, String text, Offset pos, Color color, double size, FontWeight weight) {
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: TextStyle(color: color, fontSize: size, fontWeight: weight)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos);
   }
 
   @override
@@ -11385,6 +11416,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.rainPhase != rainPhase;
 }
+
 
 // =============================================================================
 // ☀️ Sunrise Glory (مجد الشروق) — Tasbih, Tahmid, Takbir
@@ -11536,8 +11568,6 @@ class _SunriseGloryPainter extends CustomPainter {
       }
     }
 
-    canvas.restore();
-
     // Shockwave
     // tap-effect removed — smooth calm
 
@@ -11665,8 +11695,6 @@ class _TenSalawatPainter extends CustomPainter {
     if (isComplete) {
       canvas.drawLine(Offset(cx, cy - 30 - domeH), Offset(cx, 0), Paint()..color = _beamColor.withValues(alpha: 0.12 * pulse)..strokeWidth = 3..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
     }
-
-    canvas.restore();
 
     // Shockwave
     // tap-effect removed — smooth calm
@@ -11861,8 +11889,6 @@ class _DoorsOfMercyPainter extends CustomPainter {
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
     }
 
-    canvas.restore();
-
     // Shockwave
     // tap-effect removed — smooth calm
 
@@ -12031,8 +12057,6 @@ class _CosmicWeightPainter extends CustomPainter {
     canvas.drawPath(rightPanPath, Paint()
       ..color = const Color(0xFF9CA3AF).withValues(alpha: 0.55)
       ..style = PaintingStyle.stroke..strokeWidth = 2.5..strokeCap = StrokeCap.round);
-
-    canvas.restore();
 
     // Shockwave
     // tap-effect removed — smooth calm

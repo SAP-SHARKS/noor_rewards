@@ -1,0 +1,390 @@
+// =============================================================================
+// 🔥 Freedom from Fire — Allah frees from Hellfire who reads this 4 times
+// morning_27 / evening_27
+// =============================================================================
+class _FreedomFlame extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _FreedomFlame({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+
+  @override
+  State<_FreedomFlame> createState() => _FreedomFlameState();
+}
+
+class _FreedomFlameState extends State<_FreedomFlame>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _flameCtrl, _walkCtrl, _shieldCtrl;
+  late Animation<double> _pulse, _grow, _flame, _walk, _shield;
+  double _prevProgress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1600))
+      ..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.94, end: 1.06)
+        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+
+    _growCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 850));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress;
+    _growCtrl.value = widget.progress;
+
+    // Flame flicker — fast loop
+    _flameCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600))
+      ..repeat(reverse: true);
+    _flame = CurvedAnimation(parent: _flameCtrl, curve: Curves.easeInOut);
+
+    // Person walks rightward as progress grows
+    _walkCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1200));
+    _walk = CurvedAnimation(parent: _walkCtrl, curve: Curves.easeOutCubic);
+    _walkCtrl.value = widget.progress;
+
+    // Shield/safe-zone glow
+    _shieldCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1100))
+      ..repeat(reverse: true);
+    _shield = Tween<double>(begin: 0.6, end: 1.0)
+        .animate(CurvedAnimation(parent: _shieldCtrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void didUpdateWidget(_FreedomFlame old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) {
+      _growCtrl.animateTo(widget.progress);
+      _walkCtrl.animateTo(widget.progress);
+      _prevProgress = widget.progress;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _flameCtrl.dispose();
+    _walkCtrl.dispose(); _shieldCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseCtrl, _growCtrl, _flameCtrl, _walkCtrl, _shieldCtrl,
+      ]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _FreedomFlamePainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            flamePhase: _flame.value,
+            walkPhase: _walk.value,
+            shieldGlow: _shield.value,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FreedomFlamePainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double flamePhase;
+  final double walkPhase;
+  final double shieldGlow;
+  final bool isComplete;
+  final int pointsToday;
+
+  const _FreedomFlamePainter({
+    required this.progress,
+    required this.pulse,
+    required this.flamePhase,
+    required this.walkPhase,
+    required this.shieldGlow,
+    required this.isComplete,
+    this.pointsToday = 0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final groundY = h * 0.78;
+
+    // ── Background: deep dark with warm left / cool right split ──
+    _paintBackground(canvas, w, h, progress);
+
+    // ── Ground line ──
+    canvas.drawLine(
+      Offset(0, groundY), Offset(w, groundY),
+      Paint()..color = Colors.white.withValues(alpha: 0.08)..strokeWidth = 1.0,
+    );
+
+    // ── LEFT: Hellfire ──
+    _drawFire(canvas, w, h, groundY);
+
+    // ── Divider: thin glowing barrier that grows with progress ──
+    _drawBarrier(canvas, w, h, groundY);
+
+    // ── RIGHT: Safe zone + person ──
+    _drawSafeZone(canvas, w, h, groundY);
+
+    // ── Person walking away from fire ──
+    _drawPerson(canvas, w, h, groundY);
+  }
+
+  void _paintBackground(Canvas canvas, double w, double h, double prog) {
+    // Left half — fiery dark red-orange
+    final leftPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: const [
+          Color(0xFF7C0000),
+          Color(0xFFB91C1C),
+          Color(0xFF450A0A),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, w * 0.48, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w * 0.48, h), leftPaint);
+
+    // Right half — deep safe night
+    final rightPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: const [
+          Color(0xFF1E3A5F),
+          Color(0xFF0F2942),
+          Color(0xFF0A1929),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromLTWH(w * 0.48, 0, w * 0.52, h));
+    canvas.drawRect(Rect.fromLTWH(w * 0.48, 0, w * 0.52, h), rightPaint);
+
+    // Ember glow bleeding from left into right — reduces as progress grows
+    final bleedAlpha = (0.35 - prog * 0.28).clamp(0.0, 0.35);
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            const Color(0xFFEF4444).withValues(alpha: bleedAlpha),
+            Colors.transparent,
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+  }
+
+  void _drawFire(Canvas canvas, double w, double h, double groundY) {
+    const fireX = 0.22; // fire center at 22% width
+    final fx = w * fireX;
+    final fBaseY = groundY;
+
+    // Draw 3 flame layers — large, medium, small
+    _drawFlameLayer(canvas, fx, fBaseY, width: 70, height: 90,
+        color: const Color(0xFFFF6B00), phase: flamePhase, seed: 0);
+    _drawFlameLayer(canvas, fx - 10, fBaseY, width: 44, height: 70,
+        color: const Color(0xFFFF9F1C), phase: flamePhase, seed: 1);
+    _drawFlameLayer(canvas, fx + 12, fBaseY, width: 36, height: 60,
+        color: const Color(0xFFFFCC02), phase: flamePhase, seed: 2);
+    // Inner white-hot core
+    _drawFlameLayer(canvas, fx, fBaseY, width: 22, height: 40,
+        color: Colors.white.withValues(alpha: 0.70), phase: flamePhase, seed: 3);
+
+    // Ember sparks floating up from fire
+    for (int i = 0; i < 8; i++) {
+      final ex = fx + (i % 3 - 1) * 18.0;
+      final ey = fBaseY - 60 - (i * 19.0) % 75
+          + math.sin(flamePhase * math.pi * 2 + i * 0.9) * 12;
+      final ea = (0.55 - (i * 0.07)).clamp(0.0, 0.8) * flamePhase;
+      final er = 1.2 + (i % 3) * 0.6;
+      canvas.drawCircle(Offset(ex, ey), er,
+          Paint()..color = const Color(0xFFFF9F1C).withValues(alpha: ea));
+    }
+
+    // Fire label
+    _drawLabel(canvas, 'Hellfire', Offset(fx - 20, groundY + 8),
+        Colors.orange.withValues(alpha: 0.60));
+  }
+
+  void _drawFlameLayer(Canvas canvas, double cx, double baseY, {
+    required double width, required double height,
+    required Color color, required double phase, required int seed,
+  }) {
+    final sway = math.sin(phase * math.pi * 2 + seed * 1.1) * 6;
+    final tip = baseY - height + math.sin(phase * math.pi * 2 + seed * 0.7) * 8;
+    final path = Path()
+      ..moveTo(cx - width / 2, baseY)
+      ..quadraticBezierTo(
+          cx - width * 0.3 + sway, baseY - height * 0.45,
+          cx + sway * 0.5, tip)
+      ..quadraticBezierTo(
+          cx + width * 0.3 + sway, baseY - height * 0.45,
+          cx + width / 2, baseY)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  void _drawBarrier(Canvas canvas, double w, double h, double groundY) {
+    final barrierX = w * 0.50;
+    final barrierH = groundY * (0.35 + progress * 0.55); // grows taller with progress
+    final barrierAlpha = (0.20 + progress * 0.55).clamp(0.0, 0.85);
+
+    // Glow behind barrier
+    canvas.drawRect(
+      Rect.fromLTWH(barrierX - 8, groundY - barrierH, 16, barrierH),
+      Paint()
+        ..color = const Color(0xFF60A5FA).withValues(alpha: barrierAlpha * 0.18)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
+    // Barrier line
+    canvas.drawLine(
+      Offset(barrierX, groundY), Offset(barrierX, groundY - barrierH),
+      Paint()
+        ..color = const Color(0xFF93C5FD).withValues(alpha: barrierAlpha)
+        ..strokeWidth = 2.0,
+    );
+  }
+
+  void _drawSafeZone(Canvas canvas, double w, double h, double groundY) {
+    final safeAlpha = (0.08 + progress * 0.18).clamp(0.0, 0.28) * shieldGlow;
+
+    // Soft safe-zone glow on right side
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.52, 0, w * 0.48, h),
+      Paint()
+        ..color = const Color(0xFF3B82F6).withValues(alpha: safeAlpha)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+
+    // Stars in the safe night sky
+    const stars = [
+      (0.62, 0.08), (0.72, 0.05), (0.82, 0.12), (0.90, 0.07),
+      (0.68, 0.17), (0.78, 0.22), (0.88, 0.18), (0.96, 0.13),
+    ];
+    for (int i = 0; i < stars.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(shieldGlow * math.pi * 2 + i * 0.8);
+      final a = (0.12 + 0.28 * tw * progress).clamp(0.0, 0.55);
+      canvas.drawCircle(
+        Offset(stars[i].$1 * w, stars[i].$2 * h), 0.8 + tw * 0.6,
+        Paint()..color = Colors.white.withValues(alpha: a),
+      );
+    }
+
+    // Crescent moon (completion symbol)
+    if (progress > 0.5) {
+      final moonA = ((progress - 0.5) * 2).clamp(0.0, 1.0) * 0.85;
+      final moonX = w * 0.88;
+      final moonY = h * 0.18;
+      canvas.drawCircle(Offset(moonX, moonY), 10,
+          Paint()..color = Colors.white.withValues(alpha: moonA * 0.90));
+      canvas.drawCircle(Offset(moonX + 6, moonY - 2), 8,
+          Paint()..color = const Color(0xFF0F2942).withValues(alpha: moonA));
+    }
+
+    if (isComplete) {
+      _drawLabel(canvas, 'Saved', Offset(w * 0.68, groundY + 8),
+          const Color(0xFF60A5FA).withValues(alpha: 0.70));
+    }
+  }
+
+  void _drawPerson(Canvas canvas, double w, double h, double groundY) {
+    // Person starts near the fire (left) and walks right as progress increases
+    final startX = w * 0.36;
+    final endX   = w * 0.70;
+    final personX = startX + (endX - startX) * walkPhase;
+    final personY = groundY - 2;
+
+    final skin = const Color(0xFFD4A574);
+    final robe = Colors.white.withValues(alpha: 0.92);
+    final walkBob = math.sin(walkPhase * math.pi * 6) * 1.5; // walking bob
+
+    // Shadow on ground
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(personX, personY + 2), width: 16, height: 5),
+      Paint()..color = Colors.black.withValues(alpha: 0.18),
+    );
+
+    // Head
+    canvas.drawCircle(Offset(personX, personY - 40 + walkBob), 7.5,
+        Paint()..color = skin);
+
+    // Body (robe)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(personX, personY - 22 + walkBob), width: 13, height: 20),
+        const Radius.circular(4),
+      ),
+      Paint()..color = robe,
+    );
+
+    // Arms (raised slightly in relief/thankfulness)
+    final armLift = (walkPhase * 20 - 6).clamp(-8.0, 4.0);
+    canvas.drawLine(
+      Offset(personX - 6, personY - 27 + walkBob),
+      Offset(personX - 13, personY - 20 + walkBob + armLift),
+      Paint()..color = skin..strokeWidth = 2.2..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(personX + 6, personY - 27 + walkBob),
+      Offset(personX + 13, personY - 20 + walkBob + armLift),
+      Paint()..color = skin..strokeWidth = 2.2..strokeCap = StrokeCap.round,
+    );
+
+    // Legs (walking animation)
+    final legSwing = math.sin(walkPhase * math.pi * 8) * 4;
+    canvas.drawLine(
+      Offset(personX - 2, personY - 12 + walkBob),
+      Offset(personX - 4 - legSwing, personY),
+      Paint()..color = robe..strokeWidth = 2.8..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(personX + 2, personY - 12 + walkBob),
+      Offset(personX + 4 + legSwing, personY),
+      Paint()..color = robe..strokeWidth = 2.8..strokeCap = StrokeCap.round,
+    );
+
+    // Heat shimmer behind person when close to fire (early in progress)
+    if (walkPhase < 0.4) {
+      final heatA = (0.4 - walkPhase) * 0.35;
+      canvas.drawCircle(Offset(personX, personY - 25), 20,
+          Paint()
+            ..color = const Color(0xFFFF6B00).withValues(alpha: heatA)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12));
+    }
+  }
+
+  void _drawLabel(Canvas canvas, String text, Offset pos, Color color) {
+    final tp = TextPainter(
+      text: TextSpan(text: text,
+          style: TextStyle(color: color, fontSize: 9.5,
+              fontWeight: FontWeight.w700, letterSpacing: 0.4)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos);
+  }
+
+  @override
+  bool shouldRepaint(_FreedomFlamePainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.flamePhase != flamePhase || o.walkPhase != walkPhase ||
+      o.shieldGlow != shieldGlow || o.isComplete != isComplete ||
+      o.pointsToday != pointsToday;
+}

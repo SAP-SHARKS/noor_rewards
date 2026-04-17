@@ -1,0 +1,256 @@
+class _UnparalleledScalesPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double rainPhase;
+
+  const _UnparalleledScalesPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.rainPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // Background
+    _paintLightBg(canvas, w, h, progress: progress);
+
+    // Subtle background stars
+    const starPos = [
+      (0.10, 0.08), (0.25, 0.13), (0.42, 0.06), (0.58, 0.12),
+      (0.75, 0.07), (0.88, 0.14), (0.18, 0.22), (0.65, 0.19),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.9);
+      final a = (0.08 + 0.22 * tw * progress).clamp(0.0, 0.50);
+      sp.color = Colors.white.withValues(alpha: a);
+      canvas.drawCircle(Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.7 + tw * 0.8, sp);
+    }
+
+    // Main cage scene
+    _drawCage(canvas, w, h);
+  }
+
+  void _drawCage(Canvas canvas, double w, double h) {
+    // Cage nudged left so freed figures have room on the right
+    final cx = w * 0.36;
+    final cy = h * 0.50;
+
+    const cageW = 90.0;
+    const cageH = 78.0;
+    final topY  = cy - cageH / 2;
+    final botY  = cy + cageH / 2;
+    final leftX = cx - cageW / 2;
+    final rightX = cx + cageW / 2;
+
+    // Door swings open rightward as progress increases
+    final doorOpen = (progress * 2.5).clamp(0.0, 1.0);
+    final doorAngle = doorOpen * math.pi * 0.45; // max ~80 degrees
+
+    final cagePaint = Paint()
+      ..color = const Color(0xFF6B7280).withValues(alpha: 0.82)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round;
+
+    // Top arc (dome of birdcage)
+    final arcRect = Rect.fromLTRB(leftX, topY - 8, rightX, topY + 40);
+    canvas.drawArc(arcRect, math.pi, math.pi, false, cagePaint);
+
+    // Bottom floor
+    canvas.drawLine(Offset(leftX, botY), Offset(rightX, botY), cagePaint);
+
+    // Hanging hook
+    canvas.drawLine(
+      Offset(cx, topY - 8), Offset(cx, topY - 22),
+      Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.55)
+             ..strokeWidth = 1.8..strokeCap = StrokeCap.round,
+    );
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(cx + 5, topY - 22), width: 10, height: 10),
+      math.pi, math.pi, false,
+      Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.40)
+             ..style = PaintingStyle.stroke..strokeWidth = 1.6,
+    );
+
+    // Left wall (solid)
+    canvas.drawLine(Offset(leftX, topY + 16), Offset(leftX, botY), cagePaint);
+
+    // Vertical bars (skip leftmost and rightmost which are walls)
+    const numBars = 6;
+    for (int i = 1; i < numBars - 1; i++) {
+      final bx = leftX + cageW * i / (numBars - 1);
+      canvas.drawLine(
+        Offset(bx, topY + 16), Offset(bx, botY),
+        Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.40)
+               ..strokeWidth = 1.4..strokeCap = StrokeCap.round,
+      );
+    }
+
+    // Horizontal ring mid-cage
+    canvas.drawLine(
+      Offset(leftX, cy + 2), Offset(rightX - 2, cy + 2),
+      Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.28)..strokeWidth = 1.1,
+    );
+
+    // Door on the right — amber color, swings outward (rightward)
+    final doorHingeX = rightX;
+    final doorHingeY = topY + 18;
+    final doorLen = botY - doorHingeY - 2;
+
+    canvas.save();
+    canvas.translate(doorHingeX, doorHingeY);
+    canvas.rotate(doorAngle);
+    canvas.drawLine(
+      Offset.zero, Offset(0, doorLen),
+      Paint()
+        ..color = const Color(0xFFD97706).withValues(alpha: 0.90)
+        ..strokeWidth = 3.0
+        ..strokeCap = StrokeCap.round,
+    );
+    // Small door handle
+    canvas.drawCircle(
+      Offset(-5, doorLen * 0.5),
+      2.5,
+      Paint()..color = const Color(0xFFD97706).withValues(alpha: 0.75),
+    );
+    canvas.restore();
+
+    // ── 4 figures: 2 always inside, 2 walk out rightward ──
+
+    // Inside figure positions
+    final fig0 = Offset(cx - 14, cy - 6); // left inside
+    final fig1 = Offset(cx + 8,  cy - 6); // right inside
+
+    // Figure colours — distinct and visually clear
+    const color0 = Color(0xFF3B82F6); // blue
+    const color1 = Color(0xFF8B5CF6); // purple
+    const color2 = Color(0xFF10B981); // emerald (exits at 50%)
+    const color3 = Color(0xFFF59E0B); // amber (exits at 100%)
+
+    // Trapped figures (always visible)
+    _drawPrisoner(canvas, fig0, color0, starPhase, idx: 0);
+    _drawPrisoner(canvas, fig1, color1, starPhase, idx: 1);
+
+    // Figure 2 exits at progress >= 0.5
+    if (progress >= 0.5) {
+      final sp2 = ((progress - 0.5) / 0.5).clamp(0.0, 1.0);
+      _drawFreeingFigure(canvas, sp: sp2, color: color2,
+        startX: rightX + 4, startY: cy - 6,
+        targetX: w * 0.82, targetY: cy - 14, pulse: pulse);
+    }
+
+    // Figure 3 exits at progress >= 1.0 (complete)
+    if (isComplete) {
+      _drawFreeingFigure(canvas, sp: 1.0, color: color3,
+        startX: rightX + 4, startY: cy + 10,
+        targetX: w * 0.88, targetY: cy + 4, pulse: pulse);
+      // "Freed!" label
+      _drawText(canvas, 'Freed!', Offset(w * 0.70, cy - 30),
+          const Color(0xFF10B981), 11.5, FontWeight.w800);
+    }
+  }
+
+  void _drawPrisoner(Canvas canvas, Offset pos, Color color, double starPhase, {required int idx}) {
+    final a = 0.72 + 0.18 * math.sin(starPhase * math.pi * 2 + idx * 1.2).abs();
+    // Head
+    canvas.drawCircle(Offset(pos.dx, pos.dy - 7), 4.5,
+        Paint()..color = color.withValues(alpha: a));
+    // Body
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(pos.dx, pos.dy + 3), width: 7, height: 11),
+        const Radius.circular(2.5),
+      ),
+      Paint()..color = color.withValues(alpha: a * 0.80),
+    );
+    // Chains at ankles
+    canvas.drawLine(
+      Offset(pos.dx - 5, pos.dy + 8), Offset(pos.dx + 5, pos.dy + 8),
+      Paint()..color = const Color(0xFF6B7280).withValues(alpha: 0.70)
+             ..strokeWidth = 1.5..strokeCap = StrokeCap.round,
+    );
+  }
+
+  void _drawFreeingFigure(Canvas canvas, {
+    required double sp,
+    required Color color,
+    required double startX, required double startY,
+    required double targetX, required double targetY,
+    required double pulse,
+  }) {
+    final posX = startX + (targetX - startX) * sp;
+    final posY = startY + (targetY - startY) * sp + math.sin(sp * math.pi) * -14;
+    final alpha = (0.80 + 0.20 * pulse).clamp(0.0, 1.0);
+
+    // Freedom glow
+    canvas.drawCircle(Offset(posX, posY), 18,
+        Paint()
+          ..color = color.withValues(alpha: sp * 0.11)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+
+    // Head
+    canvas.drawCircle(Offset(posX, posY - 9), 5.0,
+        Paint()..color = color.withValues(alpha: alpha));
+    // Body
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(posX, posY + 3), width: 8, height: 13),
+        const Radius.circular(3),
+      ),
+      Paint()..color = color.withValues(alpha: alpha * 0.80),
+    );
+    // Arms in walking/raised gesture
+    final armSwing = math.sin(sp * math.pi * 5) * 5;
+    canvas.drawLine(Offset(posX - 4, posY - 1), Offset(posX - 9, posY - 7 + armSwing),
+        Paint()..color = color.withValues(alpha: alpha * 0.72)
+               ..strokeWidth = 1.6..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(posX + 4, posY - 1), Offset(posX + 9, posY - 7 - armSwing),
+        Paint()..color = color.withValues(alpha: alpha * 0.72)
+               ..strokeWidth = 1.6..strokeCap = StrokeCap.round);
+
+    // Broken chain flash just after exit
+    if (sp < 0.28) {
+      final breakA = (1.0 - sp / 0.28) * 0.80;
+      canvas.drawLine(Offset(posX - 7, posY + 8), Offset(posX - 2, posY + 6),
+          Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
+                 ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+      canvas.drawLine(Offset(posX + 2, posY + 6), Offset(posX + 7, posY + 8),
+          Paint()..color = const Color(0xFFD4AF37).withValues(alpha: breakA)
+                 ..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+    }
+  }
+
+  void _drawText(Canvas canvas, String text, Offset pos, Color color, double size, FontWeight weight) {
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: TextStyle(color: color, fontSize: size, fontWeight: weight)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos);
+  }
+
+  @override
+  bool shouldRepaint(_UnparalleledScalesPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.rainPhase != rainPhase;
+}
