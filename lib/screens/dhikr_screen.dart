@@ -2511,10 +2511,13 @@ String _pickIllustration(String rawId) {
 
   // ── New morning/evening IDs (by content) ──
   // Al-Fateha & opening of Baqarah — dua scene
-  if (id == 'morning_1' || id == 'morning_2' ||
-      id == 'evening_1' || id == 'evening_2') return 'dua_scene';
+  if (id == 'morning_1' || id == 'evening_1') return 'dua_scene';
+  if (id == 'morning_2' || id == 'evening_2') return 'baqarah_shield';
   // Ayat al-Kursi
   if (id == 'morning_3' || id == 'evening_3') return 'shield';
+  if (id == 'morning_4' || id == 'evening_4') return 'baqarah_close';
+  if (id == 'morning_5' || id == 'evening_5') return 'baqarah_close';
+  if (id == 'morning_6' || id == 'evening_6') return 'night_peace';
   // Last verses of Baqarah — protection from evils
   if (id == 'morning_7' || id == 'evening_7' ||
       id == 'morning_8' || id == 'evening_8') return 'repelling';
@@ -2718,6 +2721,9 @@ Widget _buildIllustration({
     'salawat'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _TenSalawat(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'doors'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DoorsOfMercy(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'cosmic'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CosmicWeight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'baqarah_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'baqarah_close'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahClose(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'night_peace'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NightPeace(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     _            => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
   };
 }
@@ -2753,6 +2759,12 @@ String _pickTagline(String id) {
     return 'Complete protection in the name of Allah';
   if (id == 'morning_20' || id == 'evening_20')
     return 'Start surrendered — to Islam, sincerity & truth';
+  if (id == 'morning_2' || id == 'evening_2')
+    return 'Satan will not enter the home of one who recites this';
+  if (id == 'morning_4' || id == 'morning_5' || id == 'evening_4' || id == 'evening_5')
+    return 'They are enough for you - recite before sleep';
+  if (id == 'morning_6' || id == 'evening_6')
+    return 'Reading last 2 verses of al-Baqarah will suffice you';
 
   // ── Illustration-key based fallback ──
   final ill = _pickIllustration(id);
@@ -2781,7 +2793,10 @@ String _pickTagline(String id) {
     'cycle'      => 'Return to Allah He is Ever Forgiving',
     'hand'       => 'Guided by the hand of Allah',
     'cosmic'     => 'Words heavier than the heavens and earth',
-    'dua_scene'  => 'Begin your day in surrender to Allah',
+    'dua_scene'      => 'Begin your day in surrender to Allah',
+    'baqarah_shield' => 'Satan will not enter the home of one who recites this',
+    'baqarah_close'  => 'They are enough for you - recite before sleep',
+    'night_peace'    => 'Reading last 2 verses of al-Baqarah will suffice you',
     _            => '',
   };
 }
@@ -2817,7 +2832,10 @@ Color _pickTaglineColor(String id, bool isDark) {
     'cycle'      => isDark ? const Color(0xFFA3E635) : const Color(0xFF3F6212), // lime green
     'hand'       => isDark ? const Color(0xFF6EE7B7) : const Color(0xFF134E4A), // teal-green
     'cosmic'     => isDark ? const Color(0xFFBAFA60) : const Color(0xFF1E1B4B), // deep indigo
-    'dua_scene'  => isDark ? const Color(0xFFA7F3D0) : const Color(0xFF064E3B), // deep green
+    'dua_scene'      => isDark ? const Color(0xFFA7F3D0) : const Color(0xFF064E3B),
+    'baqarah_shield' => isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
+    'baqarah_close'  => isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
+    'night_peace'    => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E3A5F),
     _            => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46),
   };
 }
@@ -6243,8 +6261,81 @@ class _RepellingLightPainter extends CustomPainter {
     // 6. Particles — light sparks pushing outward
     // tap-effect removed — smooth calm
 
-    // 7. Progress label
-    // progress % label removed
+    // 7a. "Evil Eye" fire-style title
+    if (progress > 0.03) {
+      final titleAlpha = (progress / 0.25).clamp(0.0, 1.0);
+      final titlePainter = TextPainter(
+        text: TextSpan(children: [
+          TextSpan(
+            text: 'Evil ',
+            style: GoogleFonts.outfit(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              foreground: Paint()
+                ..shader = const LinearGradient(
+                  colors: [Color(0xFFFF6B00), Color(0xFFFF2200)],
+                ).createShader(const Rect.fromLTWH(0, 0, 80, 28))
+                ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 0.5),
+              letterSpacing: 2.5,
+            ),
+          ),
+          TextSpan(
+            text: 'Eye',
+            style: GoogleFonts.outfit(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              foreground: Paint()
+                ..shader = const LinearGradient(
+                  colors: [Color(0xFFFF2200), Color(0xFF8B0000)],
+                ).createShader(const Rect.fromLTWH(0, 0, 60, 28))
+                ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 0.5),
+              letterSpacing: 2.5,
+            ),
+          ),
+        ]),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: w);
+
+      // Fire glow behind title
+      final glowPaint = Paint()
+        ..color = const Color(0xFFFF4400).withValues(alpha: titleAlpha * 0.18)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+      canvas.drawRect(
+        Rect.fromCenter(
+          center: Offset(cx, h * 0.82),
+          width: titlePainter.width + 40,
+          height: 34,
+        ),
+        glowPaint,
+      );
+
+      // Draw title with alpha
+      canvas.save();
+      canvas.translate((w - titlePainter.width) / 2, h * 0.79);
+      final titleAlphaPaint = Paint()..color = Colors.white.withValues(alpha: titleAlpha);
+      canvas.saveLayer(Rect.fromLTWH(0, 0, titlePainter.width, 30), titleAlphaPaint);
+      titlePainter.paint(canvas, Offset.zero);
+      canvas.restore();
+      canvas.restore();
+    }
+
+    // 7b. Protection label
+    if (progress > 0.05) {
+      final labelAlpha = (progress / 0.3).clamp(0.0, 1.0);
+      final tp = TextPainter(
+        text: TextSpan(
+          text: 'Protection from Evil Eye',
+          style: GoogleFonts.outfit(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFFFCA5A5).withValues(alpha: labelAlpha * 0.80),
+            letterSpacing: 1.2,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: w);
+      tp.paint(canvas, Offset((w - tp.width) / 2, h - 24));
+    }
     // 8. Points badge
   }
 
@@ -6270,7 +6361,7 @@ class _RepellingLightPainter extends CustomPainter {
       canvas.drawOval(
         Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 3.5, height: eyeH * 3.5),
         Paint()
-          ..color = const Color(0xFF3A0000).withValues(alpha: evilAlpha * 0.40)
+          ..color = const Color(0xFF8B0000).withValues(alpha: evilAlpha * 0.45)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
       );
 
@@ -6281,30 +6372,19 @@ class _RepellingLightPainter extends CustomPainter {
         ..quadraticBezierTo(ex, eyeY + eyeH * 1.3, ex - eyeW * 1.1, eyeY)
         ..close();
 
-      // Deep fiery golden-red radial gradient 
+      // Deep blood-red sclera — evil eye ball
       canvas.drawPath(eyePath, Paint()
-        ..shader = RadialGradient(colors: [
-          Color.fromRGBO(255, 140, 40, evilAlpha * 0.95), // Bright inner fire
-          Color.fromRGBO(190, 10, 10, evilAlpha * 0.85),  // Deep blood red
-          Color.fromRGBO(40, 0, 0, evilAlpha * 0.70),     // Dark edges
-        ], stops: const [0.15, 0.5, 1.0])
-        .createShader(Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 2.2, height: eyeH * 2.2)));
+        ..color = Color.fromRGBO(160, 10, 10, evilAlpha * 0.96));
 
-      // Outer rim
+      // Outer rim - red eyelid
       canvas.drawPath(eyePath, Paint()
-        ..color = Color.fromRGBO(30, 0, 0, evilAlpha * 0.90)
+        ..color = Color.fromRGBO(180, 10, 10, evilAlpha * 1.0)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0);
+        ..strokeWidth = 3.0);
 
-      // Elegant diamond-slit pupil
-      final pupilPath = Path()
-        ..moveTo(ex + eyeW * 0.05, eyeY - eyeH * 0.8)
-        ..quadraticBezierTo(ex + eyeW * 0.25, eyeY, ex + eyeW * 0.05, eyeY + eyeH * 0.8)
-        ..quadraticBezierTo(ex - eyeW * 0.15, eyeY, ex + eyeW * 0.05, eyeY - eyeH * 0.8)
-        ..close();
-      
-      canvas.drawPath(pupilPath, Paint()
-        ..color = Color.fromRGBO(15, 0, 0, evilAlpha * 0.95));
+      // Pupil dot — larger for better visibility
+      canvas.drawCircle(Offset(ex, eyeY), eyeW * 0.30,
+        Paint()..color = Color.fromRGBO(0, 0, 0, evilAlpha * 1.0));
 
       // Soft white glint (spark of menace)
       canvas.drawOval(
@@ -12071,6 +12151,536 @@ class _CosmicWeightPainter extends CustomPainter {
 
   @override bool shouldRepaint(_CosmicWeightPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.cosmicPhase != cosmicPhase;
 }
+
+
+// =============================================================================
+// Shield — Baqarah Opening: Satan repelled from home (morning_2/evening_2)
+// =============================================================================
+class _BaqarahShield extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _BaqarahShield({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_BaqarahShield> createState() => _BaqarahShieldState();
+}
+
+class _BaqarahShieldState extends State<_BaqarahShield> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  static const _lines = [
+    (text: 'Satan cannot',     accent: false),
+    (text: 'enter the home',   accent: false),
+    (text: 'or come near',     accent: false),
+    (text: 'his family',       accent: false),
+    (text: 'who recites this', accent: true),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1700))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.3, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2500))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_BaqarahShield old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override
+  void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        return SizedBox(
+          height: 260,
+          child: Stack(fit: StackFit.expand, children: [
+            Container(decoration: BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: isDark
+                  ? [const Color(0xFF1A2030), const Color(0xFF1E2840), const Color(0xFF181C30)]
+                  : [const Color(0xFFF0F6FF), const Color(0xFFEBF2FF), const Color(0xFFF5F0FF)],
+            ))),
+            Center(child: Container(
+              width: 210 * _pulse.value, height: 210 * _pulse.value,
+              decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [
+                const Color(0xFF6366F1).withValues(alpha: 0.06 * _glow.value), Colors.transparent,
+              ])),
+            )),
+            CustomPaint(painter: _ShieldStarPainter(phase: _shimCtrl.value)),
+            Positioned(top: 20, left: 0, right: 0, child: Center(child: SizedBox(
+              width: 44, height: 36,
+              child: CustomPaint(painter: _HouseIconPainter(
+                fill: (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
+                    .withValues(alpha: (0.18 + progress * 0.55).clamp(0.0, 1.0)),
+                stroke: (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
+                    .withValues(alpha: (0.40 + progress * 0.55).clamp(0.0, 1.0)),
+              )),
+            ))),
+            Padding(
+              padding: const EdgeInsets.only(top: 76, left: 24, right: 24, bottom: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < _lines.length; i++) ...[
+                    _buildLine(i, progress, isDark),
+                    if (i < _lines.length - 1) const SizedBox(height: 4),
+                  ],
+                ],
+              ),
+            ),
+            if (widget.isComplete) Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 3,
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [
+                Colors.transparent, const Color(0xFF6366F1).withValues(alpha: _glow.value * 0.70), Colors.transparent,
+              ])))),
+          ]),
+        );
+      },
+    );
+  }
+
+  Widget _buildLine(int i, double progress, bool isDark) {
+    final seg = _lines[i];
+    final total = _lines.length;
+    final threshold = i / total;
+    final lineP = ((progress - threshold) * total).clamp(0.0, 1.0);
+    final opacity = lineP.clamp(0.18, 1.0);
+    final isLast = i == total - 1;
+    Color color; double fontSize; FontWeight weight;
+    if (isLast || seg.accent) {
+      color = Color.lerp(
+        (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA)).withValues(alpha: 0.40),
+        isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3), lineP)!;
+      fontSize = 19; weight = FontWeight.w800;
+    } else if (i == 0) {
+      color = (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
+          .withValues(alpha: lineP.clamp(0.25, 1.0));
+      fontSize = 18; weight = FontWeight.w700;
+    } else {
+      color = (isDark ? Colors.white : const Color(0xFF1E293B))
+          .withValues(alpha: lineP.clamp(0.18, isDark ? 0.85 : 0.80));
+      fontSize = 16; weight = FontWeight.w500;
+    }
+    return AnimatedOpacity(
+      opacity: opacity, duration: const Duration(milliseconds: 420),
+      child: Text(seg.text, textAlign: TextAlign.center, style: GoogleFonts.outfit(
+        fontSize: fontSize * (isLast ? _pulse.value : 1.0), fontWeight: weight, color: color,
+        letterSpacing: isLast ? 0.8 : 0.2, height: 1.4,
+      )),
+    );
+  }
+}
+
+class _HouseIconPainter extends CustomPainter {
+  final Color fill, stroke;
+  const _HouseIconPainter({required this.fill, required this.stroke});
+  @override void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final roof = Path()..moveTo(w/2,0)..lineTo(w,h*0.45)..lineTo(0,h*0.45)..close();
+    canvas.drawPath(roof, Paint()..color = fill);
+    canvas.drawPath(roof, Paint()..color = stroke..style = PaintingStyle.stroke..strokeWidth = 1.8..strokeJoin = StrokeJoin.round);
+    final walls = RRect.fromRectAndRadius(Rect.fromLTWH(w*0.15, h*0.43, w*0.70, h*0.57), const Radius.circular(2));
+    canvas.drawRRect(walls, Paint()..color = fill);
+    canvas.drawRRect(walls, Paint()..color = stroke..style = PaintingStyle.stroke..strokeWidth = 1.8);
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(w*0.38, h*0.62, w*0.24, h*0.38), const Radius.circular(2)),
+      Paint()..color = stroke.withValues(alpha: stroke.a * 0.6));
+  }
+  @override bool shouldRepaint(_HouseIconPainter o) => o.fill != fill || o.stroke != stroke;
+}
+
+class _ShieldStarPainter extends CustomPainter {
+  final double phase;
+  const _ShieldStarPainter({required this.phase});
+  static const _pts = [
+    (0.10, 0.10, 0.9), (0.90, 0.08, 1.1), (0.30, 0.85, 1.0),
+    (0.75, 0.80, 0.8), (0.55, 0.12, 1.2), (0.18, 0.50, 0.9),
+    (0.82, 0.45, 1.0), (0.45, 0.70, 1.1), (0.65, 0.58, 0.8),
+    (0.25, 0.30, 1.0), (0.85, 0.25, 0.9), (0.50, 0.95, 1.2),
+  ];
+  @override void paint(Canvas canvas, Size size) {
+    final p = Paint();
+    for (int i = 0; i < _pts.length; i++) {
+      final (rx, ry, r) = _pts[i];
+      final tw = (math.sin((phase + i * 0.19) * math.pi * 2) * 0.5 + 0.5);
+      p.color = const Color(0xFF38BDF8).withValues(alpha: tw * 0.22);
+      canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
+    }
+  }
+  @override bool shouldRepaint(_ShieldStarPainter o) => o.phase != phase;
+}
+
+// =============================================================================
+// Book — Baqarah closing verses: enough for you (morning_4&5/evening_4&5)
+// =============================================================================
+class _BaqarahClose extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _BaqarahClose({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_BaqarahClose> createState() => _BaqarahCloseState();
+}
+
+class _BaqarahCloseState extends State<_BaqarahClose> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  static const _segments = [
+    (text: 'Whoever recites',        big: false, gold: false),
+    (text: 'the last two verses',    big: false, gold: false),
+    (text: 'of Surah Al-Baqarah',    big: false, gold: false),
+    (text: 'at night --',            big: false, gold: false),
+    (text: 'they will be',           big: false, gold: false),
+    (text: 'enough for him',         big: true,  gold: true),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2600))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.25, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3000))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_BaqarahClose old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override
+  void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        return SizedBox(
+          height: 260,
+          child: Stack(fit: StackFit.expand, children: [
+            Container(decoration: BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: isDark
+                  ? [const Color(0xFF1A2030), const Color(0xFF1E2840), const Color(0xFF181C30)]
+                  : [const Color(0xFFFAF5EB), const Color(0xFFF0EAF8), const Color(0xFFEBF3FA)],
+            ))),
+            Center(child: Container(
+              width: 190 * _pulse.value, height: 190 * _pulse.value,
+              decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [
+                const Color(0xFF6366F1).withValues(alpha: 0.07 * _glow.value), Colors.transparent,
+              ])),
+            )),
+            CustomPaint(painter: _BaqarahClosePainter(phase: _shimCtrl.value)),
+            Positioned(top: 18, left: 0, right: 0, child: Center(child: SizedBox(
+              width: 48, height: 32,
+              child: CustomPaint(painter: _BookIconPainter(
+                color: (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
+                    .withValues(alpha: (0.30 + progress * 0.65).clamp(0.0, 1.0)),
+              )),
+            ))),
+            Padding(
+              padding: const EdgeInsets.only(top: 72, left: 22, right: 22, bottom: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < _segments.length; i++) ...[
+                    _buildSegment(i, progress, isDark),
+                    if (i < _segments.length - 1) const SizedBox(height: 3),
+                  ],
+                ],
+              ),
+            ),
+            if (widget.isComplete) Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 3,
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [
+                Colors.transparent, const Color(0xFF6366F1).withValues(alpha: _glow.value * 0.7), Colors.transparent,
+              ])))),
+          ]),
+        );
+      },
+    );
+  }
+
+  Widget _buildSegment(int i, double progress, bool isDark) {
+    final seg = _segments[i];
+    final total = _segments.length;
+    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
+    final opacity = segP.clamp(0.18, 1.0);
+    Color color; double fontSize; FontWeight weight;
+    if (seg.gold) {
+      color = Color.lerp((isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA)).withValues(alpha: 0.40),
+        isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3), segP)!;
+      fontSize = 24.0 * _pulse.value; weight = FontWeight.w900;
+    } else if (i == 0) {
+      color = (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA)).withValues(alpha: segP.clamp(0.25, 1.0));
+      fontSize = 17; weight = FontWeight.w700;
+    } else {
+      color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(alpha: segP.clamp(0.22, isDark ? 0.80 : 0.75));
+      fontSize = seg.big ? 17 : 15; weight = FontWeight.w500;
+    }
+    return AnimatedOpacity(
+      opacity: opacity, duration: const Duration(milliseconds: 440),
+      child: Text(seg.text, textAlign: TextAlign.center, style: GoogleFonts.outfit(
+        fontSize: fontSize, fontWeight: weight, color: color, letterSpacing: seg.gold ? 1.0 : 0.2, height: 1.4,
+      )),
+    );
+  }
+}
+
+class _BookIconPainter extends CustomPainter {
+  final Color color;
+  const _BookIconPainter({required this.color});
+  @override void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final p = Paint()..color = color..style = PaintingStyle.stroke..strokeWidth = 1.8..strokeCap = StrokeCap.round;
+    final left = Path()
+      ..moveTo(w/2, h*0.1)..quadraticBezierTo(w*0.1, h*0.1, w*0.05, h*0.5)
+      ..quadraticBezierTo(w*0.08, h*0.9, w/2, h*0.95)..close();
+    canvas.drawPath(left, Paint()..color = color.withValues(alpha: color.a * 0.25));
+    canvas.drawPath(left, p);
+    final right = Path()
+      ..moveTo(w/2, h*0.1)..quadraticBezierTo(w*0.9, h*0.1, w*0.95, h*0.5)
+      ..quadraticBezierTo(w*0.92, h*0.9, w/2, h*0.95)..close();
+    canvas.drawPath(right, Paint()..color = color.withValues(alpha: color.a * 0.25));
+    canvas.drawPath(right, p);
+    canvas.drawLine(Offset(w/2, h*0.08), Offset(w/2, h*0.96), p);
+    for (int i = 0; i < 3; i++) {
+      final y = h * (0.3 + i * 0.18);
+      canvas.drawLine(Offset(w*0.15, y), Offset(w*0.44, y), Paint()..color = color.withValues(alpha: color.a*0.45)..strokeWidth = 1.2);
+      canvas.drawLine(Offset(w*0.56, y), Offset(w*0.85, y), Paint()..color = color.withValues(alpha: color.a*0.45)..strokeWidth = 1.2);
+    }
+  }
+  @override bool shouldRepaint(_BookIconPainter o) => o.color != color;
+}
+
+class _BaqarahClosePainter extends CustomPainter {
+  final double phase;
+  const _BaqarahClosePainter({required this.phase});
+  static const _pts = [
+    (0.08, 0.08, 1.0), (0.92, 0.06, 0.8), (0.20, 0.88, 1.1),
+    (0.78, 0.82, 0.9), (0.50, 0.10, 1.2), (0.14, 0.45, 0.8),
+    (0.86, 0.42, 1.0), (0.42, 0.75, 0.9), (0.62, 0.60, 1.1),
+    (0.30, 0.22, 0.8), (0.70, 0.20, 1.0), (0.55, 0.92, 0.9),
+  ];
+  @override void paint(Canvas canvas, Size size) {
+    final p = Paint();
+    for (int i = 0; i < _pts.length; i++) {
+      final (rx, ry, r) = _pts[i];
+      final tw = (math.sin((phase + i * 0.21) * math.pi * 2) * 0.5 + 0.5);
+      p.color = const Color(0xFF6366F1).withValues(alpha: tw * 0.10);
+      canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
+    }
+  }
+  @override bool shouldRepaint(_BaqarahClosePainter o) => o.phase != phase;
+}
+
+// =============================================================================
+// Moon — Night Peace: peaceful sleep, room with night window (morning_6/evening_6)
+// =============================================================================
+class _NightPeace extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _NightPeace({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_NightPeace> createState() => _NightPeaceState();
+}
+
+class _NightPeaceState extends State<_NightPeace> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.3, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_NightPeace old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override
+  void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(painter: _NightPeacePainter(
+          progress: _grow.value, pulse: _pulse.value,
+          glowPhase: _glow.value, starPhase: _shimCtrl.value,
+          isComplete: widget.isComplete,
+        )),
+      ),
+    );
+  }
+}
+
+class _NightPeacePainter extends CustomPainter {
+  final double progress, pulse, glowPhase, starPhase;
+  final bool isComplete;
+  const _NightPeacePainter({required this.progress, required this.pulse, required this.glowPhase, required this.starPhase, required this.isComplete});
+
+  static const _skinTone = Color(0xFFD4956A);
+  static const _bedBase  = Color(0xFF6B4E2B);
+  static const _mattress = Color(0xFFF0E6D3);
+  static const _blanket  = Color(0xFF4A7C8E);
+  static const _pillow   = Color(0xFFE8D5B7);
+  static const _nightSky = Color(0xFF0B192E);
+  static const _moonClr  = Color(0xFFFFF3C4);
+  static const _starClr  = Color(0xFFE8D9B0);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final alpha = progress.clamp(0.18, 1.0);
+
+    // Background wall
+    canvas.drawRect(Rect.fromLTWH(0,0,w,h), Paint()..shader = LinearGradient(
+      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: [const Color(0xFF1A1008), const Color(0xFF2C1F0F), const Color(0xFF3D2B16)],
+    ).createShader(Rect.fromLTWH(0,0,w,h)));
+
+    // Floor
+    final floorY = h * 0.72;
+    canvas.drawRect(Rect.fromLTWH(0, floorY, w, h - floorY), Paint()..shader = LinearGradient(
+      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: [const Color(0xFF8B6F47).withValues(alpha: 0.55), const Color(0xFF8B6F47).withValues(alpha: 0.35)],
+    ).createShader(Rect.fromLTWH(0, floorY, w, h - floorY)));
+
+    _drawWindow(canvas, w, h, alpha);
+    _drawBed(canvas, w, h, alpha);
+
+    if (isComplete) {
+      canvas.drawRect(Rect.fromLTWH(0, 0, w, 3), Paint()..shader = LinearGradient(colors: [
+        Colors.transparent, const Color(0xFFFFF3C4).withValues(alpha: glowPhase * 0.7), Colors.transparent,
+      ]).createShader(Rect.fromLTWH(0, 0, w, 3)));
+    }
+  }
+
+  void _drawWindow(Canvas canvas, double w, double h, double alpha) {
+    final winL = w * 0.06, winT = h * 0.08, winW = w * 0.30, winH = h * 0.50;
+    final winR = winL + winW, winB = winT + winH;
+    final skyRect = Rect.fromLTWH(winL, winT, winW, winH);
+    canvas.drawRRect(RRect.fromRectAndRadius(skyRect, const Radius.circular(4)), Paint()..color = _nightSky.withValues(alpha: alpha));
+    final moonX = winL + winW * 0.72, moonY = winT + winH * 0.18;
+    final moonR = winW * 0.12 * pulse;
+    canvas.drawCircle(Offset(moonX, moonY), moonR, Paint()..color = _moonClr.withValues(alpha: alpha * 0.90));
+    canvas.drawCircle(Offset(moonX + moonR * 0.35, moonY - moonR * 0.05), moonR * 0.82, Paint()..color = _nightSky.withValues(alpha: alpha * 0.85));
+    final starData = [(0.20, 0.15, 1.0), (0.45, 0.10, 0.8), (0.15, 0.35, 0.9), (0.60, 0.28, 0.7), (0.35, 0.50, 0.8), (0.75, 0.45, 1.0), (0.28, 0.70, 0.7), (0.55, 0.65, 0.9), (0.10, 0.60, 0.8)];
+    final sp = Paint();
+    for (int i = 0; i < starData.length; i++) {
+      final (rx, ry, r) = starData[i];
+      final twinkle = (math.sin((starPhase + i * 0.22) * math.pi * 2) * 0.5 + 0.5);
+      sp.color = _starClr.withValues(alpha: twinkle * alpha * 0.75);
+      canvas.drawCircle(Offset(winL + rx * winW, winT + ry * winH), r, sp);
+    }
+    canvas.drawRRect(RRect.fromRectAndRadius(skyRect, const Radius.circular(4)), Paint()..color = const Color(0xFF5A4A3A).withValues(alpha: 0.90)..style = PaintingStyle.stroke..strokeWidth = 5.0);
+    final cp = Paint()..color = const Color(0xFF5A4A3A).withValues(alpha: 0.85)..strokeWidth = 3.0;
+    canvas.drawLine(Offset((winL + winR) / 2, winT), Offset((winL + winR) / 2, winB), cp);
+    canvas.drawLine(Offset(winL, winT + winH * 0.5), Offset(winR, winT + winH * 0.5), cp);
+  }
+
+  void _drawBed(Canvas canvas, double w, double h, double alpha) {
+    final bL = w * 0.40, bW = w * 0.54, bT = h * 0.32, bH = h * 0.52;
+    final bR = bL + bW, bB = bT + bH;
+    final hbH = bH * 0.18;
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bL - 4, bT, bW + 8, hbH + 6), const Radius.circular(10)), Paint()..color = _bedBase.withValues(alpha: alpha * 0.92));
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bL - 6, bT + hbH, 12, bH - hbH), const Radius.circular(4)), Paint()..color = _bedBase.withValues(alpha: alpha * 0.80));
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bR - 6, bT + hbH, 12, bH - hbH), const Radius.circular(4)), Paint()..color = _bedBase.withValues(alpha: alpha * 0.80));
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bL - 4, bB - 14, bW + 8, 14), const Radius.circular(6)), Paint()..color = _bedBase.withValues(alpha: alpha * 0.85));
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bL + 4, bT + hbH + 2, bW - 8, bH - hbH - 14), const Radius.circular(4)), Paint()..color = _mattress.withValues(alpha: alpha * 0.88));
+    _drawSleepingPerson(canvas, bL, bT, bW, bH, hbH, alpha);
+  }
+
+  void _drawSleepingPerson(Canvas canvas, double bL, double bT, double bW, double bH, double hbH, double alpha) {
+    final cx = bL + bW / 2;
+    final pillowT = bT + hbH + 6;
+    final headR   = bW * 0.095;
+    final headCy  = pillowT + headR * 1.1;
+    // Pillow
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(cx, headCy + headR * 0.3), width: headR * 3.4, height: headR * 1.2), const Radius.circular(8)), Paint()..color = _pillow.withValues(alpha: alpha * 0.90));
+    // Blanket
+    final blanketTop = headCy + headR * 0.55;
+    final blanketBot = bT + bH - 14;
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bL + 4, blanketTop, bW - 8, blanketBot - blanketTop), const Radius.circular(6)), Paint()..color = _blanket.withValues(alpha: alpha * 0.90));
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bL + 4, blanketTop, bW - 8, headR * 0.5), const Radius.circular(6)), Paint()..color = const Color(0xFF5A8FA0).withValues(alpha: alpha * 0.70));
+    // Head glow
+    canvas.drawCircle(Offset(cx, headCy), headR * 1.35, Paint()..color = _skinTone.withValues(alpha: alpha * 0.08)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    canvas.drawCircle(Offset(cx, headCy), headR, Paint()..color = _skinTone.withValues(alpha: alpha * 0.95));
+    // Hair
+    final hairPath = Path()
+      ..moveTo(cx - headR * 0.95, headCy - headR * 0.05)
+      ..quadraticBezierTo(cx - headR * 0.80, headCy - headR * 1.45, cx, headCy - headR * 1.50)
+      ..quadraticBezierTo(cx + headR * 0.80, headCy - headR * 1.45, cx + headR * 0.95, headCy - headR * 0.05)
+      ..quadraticBezierTo(cx + headR * 0.60, headCy - headR * 0.15, cx, headCy - headR * 0.10)
+      ..quadraticBezierTo(cx - headR * 0.60, headCy - headR * 0.15, cx - headR * 0.95, headCy - headR * 0.05)
+      ..close();
+    canvas.drawPath(hairPath, Paint()..color = const Color(0xFF2C1A0E).withValues(alpha: alpha * 0.92));
+    // Closed eyes
+    final eyeY  = headCy - headR * 0.12;
+    final eyeOff = headR * 0.32;
+    final eyePaint = Paint()..color = const Color(0xFF3D2B16).withValues(alpha: alpha * 0.90)..style = PaintingStyle.stroke..strokeWidth = 1.8..strokeCap = StrokeCap.round;
+    canvas.drawPath(Path()..moveTo(cx - eyeOff - headR * 0.22, eyeY)..quadraticBezierTo(cx - eyeOff, eyeY + headR * 0.20, cx - eyeOff + headR * 0.22, eyeY), eyePaint);
+    canvas.drawPath(Path()..moveTo(cx + eyeOff - headR * 0.22, eyeY)..quadraticBezierTo(cx + eyeOff, eyeY + headR * 0.20, cx + eyeOff + headR * 0.22, eyeY), eyePaint);
+    // Nose & smile
+    canvas.drawCircle(Offset(cx, headCy + headR * 0.15), headR * 0.07, Paint()..color = const Color(0xFFC07A50).withValues(alpha: alpha * 0.55));
+    canvas.drawPath(Path()..moveTo(cx - headR * 0.22, headCy + headR * 0.38)..quadraticBezierTo(cx, headCy + headR * 0.58, cx + headR * 0.22, headCy + headR * 0.38),
+      Paint()..color = const Color(0xFF7B4A2D).withValues(alpha: alpha * 0.65)..style = PaintingStyle.stroke..strokeWidth = 1.4..strokeCap = StrokeCap.round);
+    // Zzz
+    if (progress > 0.25) {
+      final zAlpha = ((progress - 0.25) / 0.75 * 0.60).clamp(0.0, 0.60);
+      final drift  = (starPhase % 1.0) * headR * 1.0;
+      final zData  = [(cx + headR * 0.55, headCy - headR * 1.8 - drift, 8.5 * pulse), (cx + headR * 0.80, headCy - headR * 2.8 - drift * 0.85, 6.5 * pulse), (cx + headR * 1.0, headCy - headR * 3.7 - drift * 0.70, 4.8 * pulse)];
+      for (int i = 0; i < zData.length; i++) {
+        final (zx, zy, zSize) = zData[i];
+        final tp = TextPainter(text: TextSpan(text: 'z', style: TextStyle(color: const Color(0xFF818CF8).withValues(alpha: zAlpha * (1.0 - i * 0.30)), fontSize: zSize, fontWeight: FontWeight.w800)), textDirection: TextDirection.ltr)..layout();
+        tp.paint(canvas, Offset(zx, zy));
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_NightPeacePainter o) => o.progress != progress || o.pulse != pulse || o.glowPhase != glowPhase || o.starPhase != starPhase || o.isComplete != isComplete;
+}
+
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Toolbar button & divider for the floating action bar

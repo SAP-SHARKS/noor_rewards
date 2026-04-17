@@ -2163,7 +2163,7 @@ class _MyDonationsSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: 340,
+          height: 480,
           child: ListView.separated(
             clipBehavior: Clip.hardEdge,   // ← cards are clipped; no peeking until swipe
             scrollDirection: Axis.horizontal,
@@ -2185,7 +2185,7 @@ class _MyDonationsSection extends StatelessWidget {
                   if (dpUrl != null && dpUrl.isNotEmpty) {
                     banner = SizedBox(
                       width: double.infinity,
-                      height: 130,
+                      height: 240,
                       child: Image.network(
                         dpUrl,
                         fit: BoxFit.cover,
@@ -2197,7 +2197,7 @@ class _MyDonationsSection extends StatelessWidget {
                     );
                   } else {
                     banner = Container(
-                      width: double.infinity, height: 130,
+                      width: double.infinity, height: 240,
                       color: const Color(0xFFF7F4EF),
                       child: const Icon(Icons.volunteer_activism_rounded, size: 48, color: Color(0xFF2BAE99)),
                     );
@@ -2206,7 +2206,7 @@ class _MyDonationsSection extends StatelessWidget {
                   String fmt(int n) => n >= 1000000 ? '${(n/1000000).toStringAsFixed(1)}M' : (n >= 1000 ? '${(n/1000).toStringAsFixed(1)}k' : '$n');
 
                   return Container(
-                    width: donations.length == 1 ? constraints.maxWidth : 280,
+                    width: donations.length == 1 ? constraints.maxWidth : 300,
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -2232,6 +2232,16 @@ class _MyDonationsSection extends StatelessWidget {
                                     style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text, letterSpacing: -0.2),
                                     maxLines: 1, overflow: TextOverflow.ellipsis),
                               ),
+                              // Description snippet
+                              if ((d['description'] ?? '').toString().isNotEmpty) ...[
+                                const SizedBox(height: 6),
+                                Text(
+                                  (d['description'] ?? '').toString(),
+                                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF1A1A1A), height: 1.35),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                               const Spacer(),
                               
                               // Chart & Stats Row

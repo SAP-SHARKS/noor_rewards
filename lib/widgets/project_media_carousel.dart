@@ -143,6 +143,54 @@ class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
                   ),
                 ),
               ),
+
+            // Left arrow
+            if (widget.media.length > 1 && _currentIndex > 0)
+              Positioned(
+                left: 8,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => _pageController.previousPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+                    ),
+                  ),
+                ),
+              ),
+
+            // Right arrow
+            if (widget.media.length > 1 && _currentIndex < widget.media.length - 1)
+              Positioned(
+                right: 8,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -189,6 +237,17 @@ class _ImageSlide extends StatelessWidget {
             backgroundColor: Colors.transparent,
             iconTheme: const IconThemeData(color: Colors.white),
             elevation: 0,
+            leading: IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 22),
+              ),
+              onPressed: () => Navigator.of(ctx).pop(),
+            ),
           ),
           body: InteractiveViewer(
             panEnabled: true,

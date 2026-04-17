@@ -1,0 +1,300 @@
+﻿        height: 290,
+        child: CustomPaint(
+          painter: _RepellingLightPainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            starPhase: _starCtrl.value,
+            particlePhase: _pAnim.value,
+            particles: _particles,
+            isComplete: widget.isComplete,
+            pointsToday: widget.pointsToday,
+            punchScale: _punch.value,
+            shockPhase: _shock.value,
+            driftPhase: _driftCtrl.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RepellingLightPainter extends CustomPainter {
+  final double progress;
+  final double pulse;
+  final double starPhase;
+  final double particlePhase;
+  final List<_Particle> particles;
+  final bool isComplete;
+  final int pointsToday;
+  final double punchScale;
+  final double shockPhase;
+  final double driftPhase;
+
+  // 4 evils: self, shaytan, shirk, harming others
+  static const _shadowColors = [
+    Color(0xFF3B0764), // self — deep purple
+    Color(0xFF7F1D1D), // shaytan — blood red
+    Color(0xFF1C1C1C), // shirk — near black
+    Color(0xFF0C1E3A), // harming others — deep navy
+  ];
+
+  const _RepellingLightPainter({
+    required this.progress,
+    required this.pulse,
+    required this.starPhase,
+    required this.particlePhase,
+    required this.particles,
+    required this.isComplete,
+    this.pointsToday = 0,
+    this.punchScale = 1.0,
+    this.shockPhase = 1.0,
+    this.driftPhase = 0.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+    final cy = h * 0.43;
+
+    // 1. Background — very dark purple/black (ominous → purified)
+    final purify = progress * 0.20;
+    _paintLightBg(canvas, w, h, progress: progress);
+
+    // 2. Stars — more visible as evils are repelled
+    const starPos = [
+      (0.10, 0.07), (0.23, 0.16), (0.37, 0.05), (0.54, 0.11),
+      (0.68, 0.07), (0.82, 0.15), (0.92, 0.09), (0.44, 0.21),
+      (0.61, 0.25), (0.29, 0.23), (0.76, 0.20),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starPos.length; i++) {
+      final tw = 0.5 + 0.5 * math.sin(starPhase * math.pi * 2 + i * 0.7);
+      final starA = (0.06 + progress * 0.40 + 0.40 * tw * progress);
+      sp.color = Colors.white.withValues(alpha: starA.clamp(0.0, 0.75));
+      canvas.drawCircle(
+          Offset(starPos[i].$1 * w, starPos[i].$2 * h), 0.8 + tw * 1.0, sp);
+    }
+
+    // Apply punch scale
+    canvas.save();
+    // punch scale removed — smooth calm tap
+
+    // 3. Four shadow entities being pushed back
+    _drawShadows(canvas, cx, cy, w, h);
+
+    // 4. Central divine light (grows as shadows retreat)
+    _drawCentralLight(canvas, cx, cy, w);
+
+    canvas.restore();
+
+    // 5. Shockwave on tap
+    // tap-effect removed — smooth calm
+
+    // 6. Particles — light sparks pushing outward
+    // tap-effect removed — smooth calm
+
+    // 7. Progress label
+    // progress % label removed
+    // 8. Points badge
+  }
+
+  /// 4 shadow forms at the corners, pushed further back as progress grows
+  void _drawShadows(Canvas canvas, double cx, double cy, double w, double h) {
+    // Evil eyes that crack and shatter with progress
+    final evilAlpha = (1.0 - progress * 1.1).clamp(0.0, 0.90);
+    if (evilAlpha < 0.01 && !isComplete) return;
+
+    final eyeY = cy - 15;
+    final eyeSpacing = w * 0.20;
+    final eyeW = w * 0.11 * (1.0 - progress * 0.3); // eyes shrink slightly
+    final eyeH = eyeW * 0.45;
+
+    // Subtle tremble as being destroyed
+    final shake = progress > 0.3 ? math.sin(driftPhase * math.pi * 8) * progress * 3 : 0.0;
+
+    for (int side = 0; side < 2; side++) {
+      final ex = side == 0 ? cx - eyeSpacing + shake : cx + eyeSpacing + shake;
+      final mirror = side == 0 ? 1.0 : -1.0;
+
+      // Thick smoky aura behind each eye
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 3.5, height: eyeH * 3.5),
+        Paint()
+          ..color = const Color(0xFF3A0000).withValues(alpha: evilAlpha * 0.40)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+      );
+
+      // Eye shape — elegant, smooth almond
+      final eyePath = Path()
+        ..moveTo(ex - eyeW * 1.1, eyeY)
+        ..quadraticBezierTo(ex, eyeY - eyeH * 1.3, ex + eyeW * 1.1, eyeY)
+        ..quadraticBezierTo(ex, eyeY + eyeH * 1.3, ex - eyeW * 1.1, eyeY)
+        ..close();
+
+      // Deep fiery golden-red radial gradient 
+      canvas.drawPath(eyePath, Paint()
+        ..shader = RadialGradient(colors: [
+          Color.fromRGBO(255, 140, 40, evilAlpha * 0.95), // Bright inner fire
+          Color.fromRGBO(190, 10, 10, evilAlpha * 0.85),  // Deep blood red
+          Color.fromRGBO(40, 0, 0, evilAlpha * 0.70),     // Dark edges
+        ], stops: const [0.15, 0.5, 1.0])
+        .createShader(Rect.fromCenter(center: Offset(ex, eyeY), width: eyeW * 2.2, height: eyeH * 2.2)));
+
+      // Outer rim
+      canvas.drawPath(eyePath, Paint()
+        ..color = Color.fromRGBO(30, 0, 0, evilAlpha * 0.90)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0);
+
+      // Elegant diamond-slit pupil
+      final pupilPath = Path()
+        ..moveTo(ex + eyeW * 0.05, eyeY - eyeH * 0.8)
+        ..quadraticBezierTo(ex + eyeW * 0.25, eyeY, ex + eyeW * 0.05, eyeY + eyeH * 0.8)
+        ..quadraticBezierTo(ex - eyeW * 0.15, eyeY, ex + eyeW * 0.05, eyeY - eyeH * 0.8)
+        ..close();
+      
+      canvas.drawPath(pupilPath, Paint()
+        ..color = Color.fromRGBO(15, 0, 0, evilAlpha * 0.95));
+
+      // Soft white glint (spark of menace)
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(ex + eyeW * 0.3, eyeY - eyeH * 0.35), width: eyeW * 0.25, height: eyeH * 0.25),
+        Paint()
+          ..color = Colors.white.withValues(alpha: evilAlpha * 0.65)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5)
+      );
+
+      // ── Crack lines (appear as progress > 0.2, get more severe) ──
+      if (progress > 0.2) {
+        final crackIntensity = ((progress - 0.2) / 0.8).clamp(0.0, 1.0);
+        final crackPaint = Paint()
+          ..color = Color.fromRGBO(255, 200, 100, crackIntensity * 0.80)
+          ..strokeWidth = 1.2 + crackIntensity * 1.0
+          ..strokeCap = StrokeCap.round;
+
+        // Crack from center outward — more cracks as progress grows
+        final crackCount = (crackIntensity * 6).ceil().clamp(0, 6);
+        final rng = math.Random(side * 7 + 42);
+        for (int c = 0; c < crackCount; c++) {
+          final startAngle = rng.nextDouble() * math.pi * 2;
+          final startR = eyeW * 0.3;
+          final endR = eyeW * (0.6 + rng.nextDouble() * 0.7);
+          final sx = ex + eyeW * 0.1 + math.cos(startAngle) * startR;
+          final sy = eyeY + math.sin(startAngle) * startR * 0.6;
+          final endX = ex + eyeW * 0.1 + math.cos(startAngle) * endR;
+          final endY = eyeY + math.sin(startAngle) * endR * 0.6;
+          // Jagged midpoint
+          final mx = (sx + endX) / 2 + (rng.nextDouble() - 0.5) * 6;
+          final my = (sy + endY) / 2 + (rng.nextDouble() - 0.5) * 4;
+          canvas.drawLine(Offset(sx, sy), Offset(mx, my), crackPaint);
+          canvas.drawLine(Offset(mx, my), Offset(endX, endY), crackPaint);
+        }
+      }
+
+      // ── Shattering fragments (progress > 0.6) ──
+      if (progress > 0.6) {
+        final shatterT = ((progress - 0.6) / 0.4).clamp(0.0, 1.0);
+        final fragRng = math.Random(side * 13 + 99);
+        for (int f = 0; f < 8; f++) {
+          final angle = fragRng.nextDouble() * math.pi * 2;
+          final dist = shatterT * (20 + fragRng.nextDouble() * 25);
+          final fx = ex + math.cos(angle) * dist;
+          final fy = eyeY + math.sin(angle) * dist * 0.6;
+          final fragA = evilAlpha * (1.0 - shatterT) * 0.60;
+          final fragSize = 2.0 + fragRng.nextDouble() * 3.0;
+          if (fragA < 0.02) continue;
+
+          // Dark red fragment
+          canvas.drawCircle(Offset(fx, fy), fragSize * (1.0 - shatterT * 0.5),
+            Paint()..color = Color.fromRGBO(150, 20, 20, fragA));
+          // Bright edge on fragment
+          canvas.drawCircle(Offset(fx, fy), fragSize * 0.3 * (1.0 - shatterT),
+            Paint()..color = Color.fromRGBO(255, 200, 100, fragA * 0.5));
+        }
+      }
+    }
+  }
+
+  /// Central divine light that grows as shadows retreat
+  void _drawCentralLight(Canvas canvas, double cx, double cy, double w) {
+    final lightR = 14 + progress * 35;
+    final alpha = progress * (isComplete ? 0.55 : 0.35) * pulse;
+
+    // Outer warm glow
+    canvas.drawCircle(Offset(cx, cy), lightR + 20, Paint()
+      ..color = Color.fromRGBO(255, 217, 125, alpha * 0.35)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
+
+    // Mid glow
+    canvas.drawCircle(Offset(cx, cy), lightR, Paint()
+      ..shader = RadialGradient(colors: [
+        Color.fromRGBO(255, 255, 255, alpha * 0.90),
+        Color.fromRGBO(212, 175, 55, alpha * 0.60),
+        Colors.transparent,
+      ], stops: const [0.0, 0.5, 1.0])
+      .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: lightR)));
+
+    // Bright core
+    canvas.drawCircle(Offset(cx, cy), 5 * pulse, Paint()
+      ..color = Colors.white.withValues(alpha: alpha * 1.2));
+
+    // Light rays radiating outward on completion
+    if (isComplete) {
+      for (int i = 0; i < 8; i++) {
+        final angle = i * math.pi / 4 + driftPhase * math.pi * 0.08;
+        final rayLen = lightR + 20 * pulse;
+        final sx = cx + math.cos(angle) * 8;
+        final sy = cy + math.sin(angle) * 8;
+        final ex = cx + math.cos(angle) * rayLen;
+        final ey = cy + math.sin(angle) * rayLen;
+        canvas.drawLine(Offset(sx, sy), Offset(ex, ey), Paint()
+          ..shader = LinearGradient(colors: [
+            Color.fromRGBO(255, 217, 125, 0.25 * pulse),
+            Colors.transparent,
+          ]).createShader(Rect.fromPoints(Offset(sx, sy), Offset(ex, ey)))
+          ..strokeWidth = 1.5
+          ..strokeCap = StrokeCap.round);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RepellingLightPainter o) =>
+      o.progress != progress || o.pulse != pulse ||
+      o.starPhase != starPhase || o.particlePhase != particlePhase ||
+      o.isComplete != isComplete || o.pointsToday != pointsToday ||
+      o.punchScale != punchScale || o.shockPhase != shockPhase ||
+      o.driftPhase != driftPhase;
+}
+
+// =============================================================================
+// 💜 Cradled Heart (القلب المطمئن) — Entrust all matters to Allah
+// =============================================================================
+class _CradledHeart extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _CradledHeart({
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_CradledHeart> createState() => _CradledHeartState();
+}
+
+class _CradledHeartState extends State<_CradledHeart>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulse;
+  late AnimationController _growCtrl;
+  late Animation<double> _grow;
+  double _prevProgress = 0.0;
+  late AnimationController _starCtrl;
+  late AnimationController _pCtrl;
