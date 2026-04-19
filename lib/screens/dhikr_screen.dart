@@ -91,6 +91,7 @@ class _DhikrSettings {
   int arabicFontIdx = 0;  // index into _kArabicFonts
   bool showTranslation = false;
   bool showTransliteration = true;
+  bool showIllustration = true;   // show/hide the illustration area
 }
 
 IconData _parseIcon(String name) {
@@ -171,6 +172,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
       _settings.showTranslation = prefs.getBool('dhikr_show_translation_v2') ?? false;
       _settings.showTransliteration = prefs.getBool('dhikr_show_transliteration') ?? true;
+      _settings.showIllustration     = prefs.getBool('dhikr_show_illustration') ?? true;
       int loadFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
       if (loadFontIdx >= _kArabicFonts.length) loadFontIdx = 0;
       _settings.arabicFontIdx = loadFontIdx;
@@ -195,6 +197,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     await prefs.setBool('dhikr_dark_mode', _settings.darkMode);
     await prefs.setBool('dhikr_show_translation_v2', _settings.showTranslation);
     await prefs.setBool('dhikr_show_transliteration', _settings.showTransliteration);
+    await prefs.setBool('dhikr_show_illustration', _settings.showIllustration);
     await prefs.setInt('dhikr_ar_font', _settings.arabicFontIdx);
   }
 
@@ -848,6 +851,22 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             _savePrefs();
                           },
                         ),
+                        SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text('Show Illustration',
+                              style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
+                          subtitle: Text('Hide the visual artwork area',
+                              style: GoogleFonts.outfit(fontSize: 12,
+                                  color: txtColor.withValues(alpha: 0.55))),
+                          activeTrackColor: const Color(0xFF0D9488),
+                          value: _settings.showIllustration,
+                          onChanged: (val) {
+                            setModalState(() => _settings.showIllustration = val);
+                            setState(() => _settings.showIllustration = val);
+                            onUpdate?.call();
+                            _savePrefs();
+                          },
+                        ),
                         const Divider(),
 
                         // Text Sizes
@@ -1194,7 +1213,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         // ── Beautiful Master List ───────────────────────────────────────────
         const SizedBox(height: 14),
         Expanded(
-          child: _filtered.isEmpty 
+          child: _filtered.isEmpty
           ? Center(child: Text('No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
           : ListView.builder(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
@@ -1854,15 +1873,16 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     final screenW = constraints.maxWidth;
                     final screenH = constraints.maxHeight;
                     final safeBottom = MediaQuery.of(context).padding.bottom;
-                    final defaultX = screenW / 2 - 55; // center (half of ~110 width)
+                    final btnWidth = isComplete ? 190.0 : 110.0;
+                    final defaultX = screenW / 2 - btnWidth / 2;
                     final defaultY = screenH - 130 - safeBottom;
-                    final dx = _counterOffset?.dx ?? defaultX;
+                    final dx = isComplete ? (screenW / 2 - btnWidth / 2) : (_counterOffset?.dx ?? defaultX);
                     final dy = _counterOffset?.dy ?? defaultY;
 
                     return Stack(
                       children: [
                         Positioned(
-                          left: dx.clamp(0.0, screenW - 110),
+                          left: dx.clamp(0.0, screenW - btnWidth),
                           top: dy.clamp(60.0, screenH - 70),
                           child: GestureDetector(
                             onTap: isComplete ? null : () => _tryComplete(azkar, tapTarget, isSwipe: false),
@@ -2268,7 +2288,7 @@ class _AzkarCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // ── Illustration + pts badge overlaid at bottom-right ──
-        SizedBox(
+        if (settings.showIllustration) SizedBox(
           height: 260,
           child: Stack(
             fit: StackFit.expand,
@@ -2472,8 +2492,21 @@ class _AzkarCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Container(height: 0.5, color: dividerColor),
                       ),
-                      Text(azkar.hadithFull,
-                        style: GoogleFonts.outfit(fontSize: 15.5, color: textColor, height: 1.7)),
+                      ...() {
+                        final parts = azkar.hadithFull.split('\n\n').where((p) => p.trim().isNotEmpty).toList();
+                        final widgets = <Widget>[];
+                        for (int i = 0; i < parts.length; i++) {
+                          widgets.add(Text(parts[i].trim(),
+                            style: GoogleFonts.outfit(fontSize: 15.5, color: textColor, height: 1.7)));
+                          if (i < parts.length - 1) {
+                            widgets.add(Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Container(height: 0.5, color: dividerColor),
+                            ));
+                          }
+                        }
+                        return widgets;
+                      }(),
                     ],
 
                     // ── Reference ──
@@ -2519,13 +2552,12 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_5' || id == 'evening_5') return 'baqarah_close';
   if (id == 'morning_6' || id == 'evening_6') return 'night_peace';
   // Last verses of Baqarah — protection from evils
-  if (id == 'morning_7' || id == 'evening_7' ||
-      id == 'morning_8' || id == 'evening_8') return 'repelling';
+  if (id == 'morning_7' || id == 'evening_7') return 'repelling';
+  if (id == 'morning_8' || id == 'evening_8') return 'baqarah_burden';
   // Ikhlas, Falaq, Nas
-  if (id == 'morning_9' || id == 'morning_10' || id == 'morning_11' ||
-      id == 'evening_9' || id == 'evening_10' || id == 'evening_11') {
-    return 'three_quls';
-  }
+  if (id == 'morning_9' || id == 'evening_9') return 'dawn_dusk';
+  if (id == 'morning_10' || id == 'evening_10') return 'falaq_shield';
+  if (id == 'morning_11' || id == 'evening_11') return 'dua_hands';
   // Sovereignty & Fitrah — sunrise scene
   if (id == 'morning_12' || id == 'evening_12' ||
       id == 'morning_13' || id == 'evening_13') return 'dawn';
@@ -2533,6 +2565,8 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_14' || id == 'evening_14') return 'cycle';
   // Gratitude
   if (id == 'morning_16' || id == 'evening_16') return 'vessel';
+  // Gratitude fulfilled — tree + overlay text
+  if (id == 'morning_15' || id == 'evening_15') return 'gratitude_tree';
   // Raditu billahi — pleased with Allah
   if (id == 'morning_18' || id == 'evening_18') return 'hand';
   // Well-being / Afiyah — 6 direction protection
@@ -2698,7 +2732,10 @@ Widget _buildIllustration({
   return switch (ill) {
     'dua_scene'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DuaScene(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'shield'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ProtectionShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'three_quls' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeQuls(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'dawn_dusk'   => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DawnDusk(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'falaq_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _AlFalaqShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'dua_hands'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DuaHands(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'three_quls'   => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeQuls(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'gates'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GatesOfJannah(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'chains'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BreakingChains(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'six_wards'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixWards(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -2724,6 +2761,8 @@ Widget _buildIllustration({
     'baqarah_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'baqarah_close'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahClose(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'night_peace'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NightPeace(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'gratitude_tree' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GratitudeTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'baqarah_burden' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahBurden(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     _            => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
   };
 }
@@ -2755,22 +2794,38 @@ String _pickTagline(String id) {
     return 'All evil in His creation repelled from you';
   if (id == 'morning_23' || id == 'evening_23')
     return 'Nothing shall harm you — by perfect words';
+  if (id == 'morning_22' || id == 'evening_22')
+    return 'Shield yourself from minor and major shirk — morning & evening';
   if (id == 'morning_21' || id == 'evening_21')
     return 'Complete protection in the name of Allah';
   if (id == 'morning_20' || id == 'evening_20')
-    return 'Start surrendered — to Islam, sincerity & truth';
+    return 'Weightier than all voluntary prayers — from dawn till dusk';
+  if (id == 'morning_18' || id == 'evening_18')
+    return 'Recite morning & evening — earn the pleasure & blessing of Allah on the Day of Judgment';
+  if (id == 'morning_17' || id == 'evening_17')
+    return 'Your reward awaits directly with Allah when you meet Him';
+  if (id == 'morning_15' || id == 'evening_15')
+    return 'Recite morning & evening to fulfill your obligation of gratitude to Allah';
+  if (id == 'morning_14' || id == 'evening_14')
+    return 'The Prophet taught this dua for morning and evening — do not miss it';
   if (id == 'morning_2' || id == 'evening_2')
     return 'Satan will not enter the home of one who recites this';
   if (id == 'morning_4' || id == 'morning_5' || id == 'evening_4' || id == 'evening_5')
     return 'They are enough for you - recite before sleep';
   if (id == 'morning_6' || id == 'evening_6')
     return 'Reading last 2 verses of al-Baqarah will suffice you';
+  if (id == 'morning_8' || id == 'evening_8')
+    return 'Every dua in this verse - Allah said: I have done so';
 
   // ── Illustration-key based fallback ──
   final ill = _pickIllustration(id);
   return switch (ill) {
     'shield'     => 'Guarded by Allah until morning comes',
-    'three_quls' => 'Sufficient against every harm recited 3 times',
+    'dawn_dusk'  => 'Recite 3x at dawn & dusk — suffice you against all harm',
+    'falaq_shield' => 'Recite 3x at dawn & dusk — it will suffice you in all respects',
+    'dua_hands'    => 'Refuge from the whisperer — in the Lord of Mankind',
+    'gratitude_tree' => 'Recite 3x morning & evening — your gratitude to Allah is fulfilled',
+    'three_quls'  => 'Sufficient against every harm recited 3 times',
     'gates'      => 'Doors of Allah mercy open wide for you',
     'chains'     => 'Worry and sorrow lifted by the will of Allah',
     'six_wards'  => 'Guarded in your deen dunya and akhirah',
@@ -2797,6 +2852,7 @@ String _pickTagline(String id) {
     'baqarah_shield' => 'Satan will not enter the home of one who recites this',
     'baqarah_close'  => 'They are enough for you - recite before sleep',
     'night_peace'    => 'Reading last 2 verses of al-Baqarah will suffice you',
+    'baqarah_burden' => 'Every dua in this verse - Allah said: I have done so',
     _            => '',
   };
 }
@@ -2809,7 +2865,11 @@ Color _pickTaglineColor(String id, bool isDark) {
   // Dark mode:  bright vivid tones (light enough on dark bg)
   return switch (ill) {
     'shield'     => isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8), // royal blue
-    'three_quls' => isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9), // violet
+    'dawn_dusk'  => isDark ? const Color(0xFFFBBF24) : const Color(0xFF92400E), // amber
+    'falaq_shield' => isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95), // deep violet
+    'dua_hands'    => isDark ? const Color(0xFFFBBF24) : const Color(0xFF78350F), // warm amber
+    'gratitude_tree' => isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), // emerald
+    'three_quls'   => isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9), // violet
     'gates'      => isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), // emerald green
     'chains'     => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46), // deep teal
     'six_wards'  => isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534), // forest green
@@ -2836,6 +2896,7 @@ Color _pickTaglineColor(String id, bool isDark) {
     'baqarah_shield' => isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
     'baqarah_close'  => isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
     'night_peace'    => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E3A5F),
+    'baqarah_burden' => isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534),
     _            => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46),
   };
 }
@@ -3303,6 +3364,122 @@ class _DuaScenePainter extends CustomPainter {
 // =============================================================================
 // 🌳 Noor Tree (شجرة النور) — Islamic growth animation
 // =============================================================================
+// =============================================================================
+// Gratitude Tree — "Ni'mah, 'Afiyah, Sitr" dua (morning_15/evening_15)
+// Tree grows as gratitude is fulfilled. Text overlay from benefit.
+// "Recite 3x morning & evening → obligation of gratitude fulfilled." (Ibn al-Sunni)
+// =============================================================================
+class _GratitudeTree extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _GratitudeTree({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_GratitudeTree> createState() => _GratitudeTreeState();
+}
+
+class _GratitudeTreeState extends State<_GratitudeTree> with TickerProviderStateMixin {
+  late AnimationController _fadeCtrl;
+  late Animation<double> _fade;
+
+  @override void initState() {
+    super.initState();
+    _fadeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1800))..repeat(reverse: true);
+    _fade = Tween<double>(begin: 0.70, end: 1.0).animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeInOut));
+  }
+
+  @override void dispose() { _fadeCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final p = widget.progress;
+
+    // Text lines revealed progressively
+    final lines = [
+      (text: 'Blessings',     threshold: 0.00, big: false),
+      (text: 'Well-being',    threshold: 0.18, big: false),
+      (text: 'Concealment',   threshold: 0.36, big: false),
+      (text: 'Gratitude',     threshold: 0.55, big: true),
+      (text: 'Fulfilled.',    threshold: 0.72, big: true),
+    ];
+
+    return AnimatedBuilder(
+      animation: _fadeCtrl,
+      builder: (context, _) => SizedBox(
+        height: 290,
+        child: Stack(children: [
+          // Full tree behind
+          Positioned.fill(child: _NoorTree(
+            progress: widget.progress,
+            isComplete: widget.isComplete,
+            tapCount: widget.tapCount,
+            pointsToday: widget.pointsToday,
+          )),
+          // Text overlay — top portion with frosted background
+          Positioned(
+            top: 0, left: 0, right: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                  colors: isDark
+                    ? [const Color(0xFF0A1A0D).withValues(alpha: 0.88), const Color(0xFF0A1A0D).withValues(alpha: 0.0)]
+                    : [const Color(0xFFF0FDF4).withValues(alpha: 0.90), const Color(0xFFF0FDF4).withValues(alpha: 0.0)],
+                ),
+              ),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  for (int i = 0; i < lines.length; i++)
+                    _buildChip(lines[i], p, isDark),
+                ],
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildChip(({String text, double threshold, bool big}) line, double p, bool isDark) {
+    final visible = p >= line.threshold;
+    final chipA = visible ? (((p - line.threshold) / 0.25).clamp(0.0, 1.0)) : 0.0;
+
+    final accent = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+    final textCol = line.big
+        ? Color.lerp(accent.withValues(alpha: 0.35), accent, chipA)!
+        : (isDark ? Colors.white : const Color(0xFF1E4028)).withValues(alpha: chipA * 0.82);
+
+    return AnimatedOpacity(
+      opacity: chipA.clamp(0.0, 1.0),
+      duration: const Duration(milliseconds: 500),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: line.big ? 10 : 8, vertical: line.big ? 5 : 4),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: chipA * (line.big ? 0.14 : 0.08)),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: accent.withValues(alpha: chipA * (line.big ? 0.50 : 0.22)),
+            width: 0.9,
+          ),
+        ),
+        child: Text(
+          line.text,
+          style: GoogleFonts.outfit(
+            fontSize: line.big ? 13.5 * _fade.value : 11.5,
+            fontWeight: line.big ? FontWeight.w800 : FontWeight.w600,
+            color: textCol,
+            letterSpacing: line.big ? 0.5 : 0.2,
+          ),
+        ),
+      ),
+    );
+  }
+}
 class _NoorTree extends StatefulWidget {
   final double progress;   // 0.0 → 1.0
   final bool isComplete;
@@ -6382,16 +6559,26 @@ class _RepellingLightPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3.0);
 
-      // Pupil dot — larger for better visibility
-      canvas.drawCircle(Offset(ex, eyeY), eyeW * 0.30,
+      // Iris ring — dark red around black pupil
+      canvas.drawCircle(Offset(ex, eyeY), eyeW * 0.38,
+        Paint()..color = Color.fromRGBO(90, 5, 5, evilAlpha * 0.90));
+
+      // Black pupil core
+      canvas.drawCircle(Offset(ex, eyeY), eyeW * 0.28,
         Paint()..color = Color.fromRGBO(0, 0, 0, evilAlpha * 1.0));
 
-      // Soft white glint (spark of menace)
-      canvas.drawOval(
-        Rect.fromCenter(center: Offset(ex + eyeW * 0.3, eyeY - eyeH * 0.35), width: eyeW * 0.25, height: eyeH * 0.25),
-        Paint()
-          ..color = Colors.white.withValues(alpha: evilAlpha * 0.65)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5)
+      // White catch-light (top-right of pupil, like a real eye)
+      canvas.drawCircle(
+        Offset(ex + eyeW * 0.10, eyeY - eyeW * 0.12),
+        eyeW * 0.07,
+        Paint()..color = Colors.white.withValues(alpha: evilAlpha * 0.90),
+      );
+
+      // Tiny secondary glint (bottom-left, for depth)
+      canvas.drawCircle(
+        Offset(ex - eyeW * 0.08, eyeY + eyeW * 0.09),
+        eyeW * 0.035,
+        Paint()..color = Colors.white.withValues(alpha: evilAlpha * 0.40),
       );
 
       // ── Crack lines (appear as progress > 0.2, get more severe) ──
@@ -12678,6 +12865,792 @@ class _NightPeacePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_NightPeacePainter o) => o.progress != progress || o.pulse != pulse || o.glowPhase != glowPhase || o.starPhase != starPhase || o.isComplete != isComplete;
+}
+
+
+
+// =============================================================================
+// An-Nas Refuge — Surah An-Nas, 3x at dawn & dusk (morning_11/evening_11)
+// "It will suffice you in all respects." — Abu Dawud 5082
+// Refuge from: inner whispers, fear, and the whispering devil
+// Theme: warm amber/cream — surrender, refuge, divine protection
+// =============================================================================
+class _DuaHands extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _DuaHands({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_DuaHands> createState() => _DuaHandsState();
+}
+
+class _DuaHandsState extends State<_DuaHands> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  // Structured around the 3 types of refuge sought in Surah An-Nas
+  static const _segments = [
+    (text: 'Say: I seek refuge',          color: 0),
+    (text: 'in the Lord of Mankind',      color: 0),
+    (text: 'the King of Mankind',         color: 1),
+    (text: 'the God of Mankind —',        color: 1),
+    (text: 'from the whispering devil',   color: 1),
+    (text: 'He retreats when you remember Allah.', color: 2),
+  ];
+
+  @override void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3200))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _grow  = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2400))..repeat(reverse: true);
+    _glow  = Tween<double>(begin: 0.28, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
+  }
+
+  @override void didUpdateWidget(_DuaHands old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        return SizedBox(
+          height: 260,
+          child: Stack(fit: StackFit.expand, children: [
+            // Background
+            Container(decoration: BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              colors: isDark
+                  ? [const Color(0xFF120A00), const Color(0xFF1C1000), const Color(0xFF120A00)]
+                  : [const Color(0xFFFFFBF0), const Color(0xFFFFF6E0), const Color(0xFFFEEFCA)],
+            ))),
+            // Radial glow
+            Center(child: Container(
+              width: 180 * _pulse.value, height: 180 * _pulse.value,
+              decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [
+                const Color(0xFFFFBF00).withValues(alpha: 0.07 * _glow.value), Colors.transparent,
+              ])),
+            )),
+            // Dot specks
+            CustomPaint(painter: _NasDotPainter(phase: _shimCtrl.value, isDark: isDark)),
+            // Emoji icon — 🤲 dua hands, monochrome tinted
+            Positioned(top: 14, left: 0, right: 0, child: Center(
+              child: Opacity(
+                opacity: (0.15 + progress * 0.72).clamp(0.0, 1.0),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    isDark ? const Color(0xFFFFD060) : const Color(0xFF92400E),
+                    BlendMode.srcIn,
+                  ),
+                  child: const Text('\u{1F932}', style: TextStyle(fontSize: 30)),
+                ),
+              ),
+            )),
+            // Text segments
+            Padding(
+              padding: const EdgeInsets.only(top: 58, left: 20, right: 20, bottom: 14),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < _segments.length; i++) ...[
+                    _buildSegment(i, progress, isDark),
+                    if (i < _segments.length - 1) SizedBox(height: i == 1 ? 8 : 2),
+                  ],
+                ],
+              ),
+            ),
+            // Completion bar
+            if (widget.isComplete) Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 3,
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [
+                Colors.transparent, const Color(0xFFFFBF00).withValues(alpha: _glow.value * 0.65), Colors.transparent,
+              ])))),
+          ]),
+        );
+      },
+    );
+  }
+
+  Widget _buildSegment(int i, double progress, bool isDark) {
+    final seg = _segments[i];
+    final total = _segments.length;
+    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
+    final opacity = segP.clamp(0.18, 1.0);
+
+    Color color; double fontSize; FontWeight weight;
+
+    if (seg.color == 2) {
+      color = Color.lerp(
+        (isDark ? const Color(0xFFFFD060) : const Color(0xFF92400E)).withValues(alpha: 0.35),
+        isDark ? const Color(0xFFFFD060) : const Color(0xFF78350F), segP)!;
+      fontSize = 16.0 * _pulse.value; weight = FontWeight.w800;
+    } else if (seg.color == 1) {
+      color = (isDark ? const Color(0xFFFFD060) : const Color(0xFF92400E))
+          .withValues(alpha: segP.clamp(0.25, 0.80));
+      fontSize = 13.5; weight = FontWeight.w500;
+    } else {
+      color = (isDark ? Colors.white : const Color(0xFF1C1107))
+          .withValues(alpha: segP.clamp(0.20, isDark ? 0.88 : 0.80));
+      fontSize = 15.5; weight = FontWeight.w700;
+    }
+
+    return AnimatedOpacity(
+      opacity: opacity, duration: const Duration(milliseconds: 440),
+      child: Text(seg.text, textAlign: TextAlign.center, style: GoogleFonts.outfit(
+        fontSize: fontSize, fontWeight: weight, color: color,
+        letterSpacing: 0.15, height: 1.45,
+      )),
+    );
+  }
+}
+
+
+// Warm amber dot/star speckle background
+class _NasDotPainter extends CustomPainter {
+  final double phase;
+  final bool isDark;
+  const _NasDotPainter({required this.phase, required this.isDark});
+  static const _pts = [
+    (0.08, 0.08, 1.0), (0.92, 0.07, 0.9), (0.18, 0.90, 0.8),
+    (0.82, 0.88, 1.0), (0.50, 0.06, 0.9), (0.12, 0.50, 0.8),
+    (0.88, 0.48, 0.9), (0.38, 0.82, 1.0), (0.65, 0.68, 0.8),
+    (0.26, 0.24, 1.0), (0.74, 0.20, 0.9), (0.50, 0.94, 0.8),
+  ];
+  @override void paint(Canvas canvas, Size size) {
+    final p = Paint();
+    for (int i = 0; i < _pts.length; i++) {
+      final (rx, ry, r) = _pts[i];
+      final t = (math.sin((phase + i * 0.26) * math.pi * 2) * 0.5 + 0.5);
+      p.color = (isDark ? const Color(0xFFFFD060) : const Color(0xFFE88B20)).withValues(alpha: t * 0.14);
+      canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
+    }
+  }
+  @override bool shouldRepaint(_NasDotPainter o) => o.phase != phase || o.isDark != isDark;
+}
+// =============================================================================
+// Al-Falaq Shield — Surah Al-Falaq, 3x at dawn & dusk (morning_10/evening_10)
+// "It will suffice you in all respects." — Abu Dawud 5082
+// 4 evils repelled: creation, darkness, blowers in knots, envy
+// Theme: deep indigo/violet (night protection)
+// =============================================================================
+class _AlFalaqShield extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _AlFalaqShield({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_AlFalaqShield> createState() => _AlFalaqShieldState();
+}
+
+class _AlFalaqShieldState extends State<_AlFalaqShield> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  // Each line reveals progressively — 4 evils + the core declaration
+  static const _segments = [
+    (text: 'Seek refuge in the Lord of Daybreak',  color: 0),
+    (text: 'from evil of what He created',          color: 1),
+    (text: 'from darkness when it settles',         color: 1),
+    (text: 'from blowers in knots',                 color: 1),
+    (text: 'from envy when it strikes —',           color: 1),
+    (text: 'Sufficed in all respects.',             color: 2),
+  ];
+
+  @override void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3000))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.25, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4200))..repeat();
+  }
+
+  @override void didUpdateWidget(_AlFalaqShield old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        return SizedBox(
+          height: 260,
+          child: Stack(fit: StackFit.expand, children: [
+            // Deep indigo/violet background
+            Container(decoration: BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              colors: isDark
+                  ? [const Color(0xFF0D0B1E), const Color(0xFF130E2A), const Color(0xFF0A0816)]
+                  : [const Color(0xFFF5F3FF), const Color(0xFFEDE9FE), const Color(0xFFF0EBFF)],
+            ))),
+            // Soft radial glow — violet
+            Center(child: Container(
+              width: 220 * _pulse.value, height: 220 * _pulse.value,
+              decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [
+                const Color(0xFF7C3AED).withValues(alpha: 0.07 * _glow.value), Colors.transparent,
+              ])),
+            )),
+            // Star specks
+            CustomPaint(painter: _FalaqDotPainter(phase: _shimCtrl.value, isDark: isDark)),
+            // Moon crescent icon
+            Positioned(top: 16, left: 0, right: 0, child: Center(child: SizedBox(
+              width: 36, height: 36,
+              child: CustomPaint(painter: _CrescentIconPainter(
+                color: (isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95))
+                    .withValues(alpha: (0.20 + progress * 0.75).clamp(0.0, 1.0)),
+              )),
+            ))),
+            // Text segments
+            Padding(
+              padding: const EdgeInsets.only(top: 62, left: 20, right: 20, bottom: 14),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < _segments.length; i++) ...[
+                    _buildSegment(i, progress, isDark),
+                    if (i < _segments.length - 1) SizedBox(height: i == 0 ? 8 : 2),
+                  ],
+                ],
+              ),
+            ),
+            // Completion bar
+            if (widget.isComplete) Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 3,
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [
+                Colors.transparent,
+                const Color(0xFF7C3AED).withValues(alpha: _glow.value * 0.70),
+                Colors.transparent,
+              ])))),
+          ]),
+        );
+      },
+    );
+  }
+
+  Widget _buildSegment(int i, double progress, bool isDark) {
+    final seg = _segments[i];
+    final total = _segments.length;
+    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
+    final opacity = segP.clamp(0.18, 1.0);
+
+    Color color;
+    double fontSize;
+    FontWeight weight;
+
+    if (seg.color == 2) {
+      // Final declaration — large, glowing violet
+      color = Color.lerp(
+        (isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95)).withValues(alpha: 0.35),
+        isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95), segP)!;
+      fontSize = 20.0 * _pulse.value; weight = FontWeight.w900;
+    } else if (seg.color == 1) {
+      // The 4 evils — softer, muted
+      color = (isDark ? const Color(0xFFDDD6FE) : const Color(0xFF6D28D9))
+          .withValues(alpha: segP.clamp(0.25, 0.85));
+      fontSize = 13.5; weight = FontWeight.w500;
+    } else {
+      // Opening declaration — white/dark, prominent
+      color = (isDark ? Colors.white : const Color(0xFF1E1B4B))
+          .withValues(alpha: segP.clamp(0.20, isDark ? 0.90 : 0.80));
+      fontSize = 15.5; weight = FontWeight.w700;
+    }
+
+    return AnimatedOpacity(
+      opacity: opacity, duration: const Duration(milliseconds: 440),
+      child: Text(seg.text, textAlign: TextAlign.center, style: GoogleFonts.outfit(
+        fontSize: fontSize, fontWeight: weight, color: color,
+        letterSpacing: 0.15, height: 1.45,
+      )),
+    );
+  }
+}
+
+// Crescent moon icon for Al-Falaq (night / daybreak)
+class _CrescentIconPainter extends CustomPainter {
+  final Color color;
+  const _CrescentIconPainter({required this.color});
+  @override void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final path = Path();
+    // Outer circle
+    path.addOval(Rect.fromCircle(center: Offset(w * 0.50, h * 0.50), radius: w * 0.45));
+    // Subtract shifted circle to create crescent
+    final erasePath = Path();
+    erasePath.addOval(Rect.fromCircle(center: Offset(w * 0.65, h * 0.42), radius: w * 0.40));
+    final crescent = Path.combine(PathOperation.difference, path, erasePath);
+    canvas.drawPath(crescent, Paint()..color = color..style = PaintingStyle.fill);
+  }
+  @override bool shouldRepaint(_CrescentIconPainter o) => o.color != color;
+}
+
+// Dot painter for Al-Falaq — cool violet/indigo dots
+class _FalaqDotPainter extends CustomPainter {
+  final double phase;
+  final bool isDark;
+  const _FalaqDotPainter({required this.phase, required this.isDark});
+  static const _pts = [
+    (0.07, 0.07, 1.0), (0.93, 0.06, 0.9), (0.20, 0.90, 0.8),
+    (0.80, 0.88, 1.0), (0.50, 0.08, 0.9), (0.12, 0.52, 0.8),
+    (0.88, 0.50, 1.0), (0.38, 0.80, 0.9), (0.67, 0.65, 0.8),
+    (0.25, 0.28, 1.0), (0.75, 0.20, 0.9), (0.52, 0.94, 0.8),
+  ];
+  @override void paint(Canvas canvas, Size size) {
+    final p = Paint();
+    for (int i = 0; i < _pts.length; i++) {
+      final (rx, ry, r) = _pts[i];
+      final twink = (math.sin((phase + i * 0.25) * math.pi * 2) * 0.5 + 0.5);
+      p.color = (isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED))
+          .withValues(alpha: twink * 0.18);
+      canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
+    }
+  }
+  @override bool shouldRepaint(_FalaqDotPainter o) => o.phase != phase || o.isDark != isDark;
+}
+// =============================================================================
+// Burden â€” 2:286: Allah does not burden a soul beyond capacity (morning_8/evening_8)
+// Every dua in this verse â€” Allah answered: "I have done so"
+// =============================================================================
+class _BaqarahBurden extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _BaqarahBurden({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_BaqarahBurden> createState() => _BaqarahBurdenState();
+}
+
+class _BaqarahBurdenState extends State<_BaqarahBurden> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  // Text segments â€” structured around the verse's message
+  static const _segments = [
+    (text: 'Allah does not burden',   big: false, color: 0),
+    (text: 'a soul',                  big: false, color: 0),
+    (text: 'beyond what it can bear', big: false, color: 0),
+    (text: 'Every dua in this verse:',  big: false, color: 1),
+    (text: 'Allah answered:',         big: false, color: 1),
+    (text: '"I have done so."',       big: true,  color: 2),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2100))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.25, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500))..repeat();
+  }
+
+  @override
+  void didUpdateWidget(_BaqarahBurden old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override
+  void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) {
+        final progress = _grow.value;
+        return SizedBox(
+          height: 260,
+          child: Stack(fit: StackFit.expand, children: [
+            // Background
+            Container(decoration: BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: isDark
+                  ? [const Color(0xFF0F1F14), const Color(0xFF142B1C), const Color(0xFF0D1A10)]
+                  : [const Color(0xFFF0FDF4), const Color(0xFFECFDF5), const Color(0xFFF7FEF9)],
+            ))),
+            // Soft radial glow
+            Center(child: Container(
+              width: 200 * _pulse.value, height: 200 * _pulse.value,
+              decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [
+                const Color(0xFF22C55E).withValues(alpha: 0.06 * _glow.value), Colors.transparent,
+              ])),
+            )),
+            // Star specks
+            CustomPaint(painter: _BurdenDotPainter(phase: _shimCtrl.value, isDark: isDark)),
+            // Icon â€” gentle scale/balance or open hands
+            Positioned(top: 18, left: 0, right: 0, child: Center(child: SizedBox(
+              width: 44, height: 32,
+              child: CustomPaint(painter: _ScaleIconPainter(
+                color: (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
+                    .withValues(alpha: (0.20 + progress * 0.75).clamp(0.0, 1.0)),
+              )),
+            ))),
+            // Text
+            Padding(
+              padding: const EdgeInsets.only(top: 70, left: 22, right: 22, bottom: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < _segments.length; i++) ...[
+                    _buildSegment(i, progress, isDark),
+                    if (i < _segments.length - 1) SizedBox(height: i == 2 ? 10 : 3),
+                  ],
+                ],
+              ),
+            ),
+            // Completion bar
+            if (widget.isComplete) Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 3,
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [
+                Colors.transparent, const Color(0xFF22C55E).withValues(alpha: _glow.value * 0.70), Colors.transparent,
+              ])))),
+          ]),
+        );
+      },
+    );
+  }
+
+  Widget _buildSegment(int i, double progress, bool isDark) {
+    final seg = _segments[i];
+    final total = _segments.length;
+    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
+    final opacity = segP.clamp(0.18, 1.0);
+
+    Color color;
+    double fontSize;
+    FontWeight weight;
+    double? letterSpacing;
+
+    if (seg.color == 2) {
+      // "I have done so" â€” green accent, larger, pulsing
+      color = Color.lerp(
+        (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)).withValues(alpha: 0.35),
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), segP)!;
+      fontSize = 22.0 * _pulse.value; weight = FontWeight.w900; letterSpacing = 0.8;
+    } else if (seg.color == 1) {
+      // Transition text â€” muted green/teal
+      color = (isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534))
+          .withValues(alpha: segP.clamp(0.25, 0.88));
+      fontSize = 15; weight = FontWeight.w600; letterSpacing = 0.3;
+    } else {
+      // Body text
+      color = (isDark ? Colors.white : const Color(0xFF1E293B))
+          .withValues(alpha: segP.clamp(0.20, isDark ? 0.80 : 0.75));
+      fontSize = seg.big ? 17 : 15.5; weight = FontWeight.w500; letterSpacing = 0.1;
+    }
+
+    return AnimatedOpacity(
+      opacity: opacity, duration: const Duration(milliseconds: 440),
+      child: Text(seg.text, textAlign: TextAlign.center, style: GoogleFonts.outfit(
+        fontSize: fontSize, fontWeight: weight, color: color,
+        letterSpacing: letterSpacing ?? 0.1, height: 1.45,
+      )),
+    );
+  }
+}
+
+// Simple scale/balance icon â€” two pans hanging from a bar
+class _ScaleIconPainter extends CustomPainter {
+  final Color color;
+  const _ScaleIconPainter({required this.color});
+  @override void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final p = Paint()..color = color..style = PaintingStyle.stroke..strokeWidth = 1.8..strokeCap = StrokeCap.round;
+    // Horizontal bar
+    canvas.drawLine(Offset(w * 0.10, h * 0.35), Offset(w * 0.90, h * 0.35), p);
+    // Centre pivot
+    canvas.drawLine(Offset(w * 0.50, h * 0.35), Offset(w * 0.50, h * 0.08), p);
+    canvas.drawCircle(Offset(w * 0.50, h * 0.08), 3.0, Paint()..color = color);
+    // Left arm strings + pan
+    canvas.drawLine(Offset(w * 0.18, h * 0.35), Offset(w * 0.10, h * 0.75), p);
+    canvas.drawLine(Offset(w * 0.10, h * 0.85), Offset(w * 0.28, h * 0.85), p);
+    canvas.drawLine(Offset(w * 0.10, h * 0.75), Offset(w * 0.10, h * 0.85), Paint()..color = color..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(w * 0.28, h * 0.75), Offset(w * 0.28, h * 0.85), Paint()..color = color..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(w * 0.28, h * 0.35), Offset(w * 0.28, h * 0.75), p);
+    // Right arm strings + pan
+    canvas.drawLine(Offset(w * 0.72, h * 0.35), Offset(w * 0.72, h * 0.75), p);
+    canvas.drawLine(Offset(w * 0.72, h * 0.75), Offset(w * 0.72, h * 0.85), Paint()..color = color..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(w * 0.90, h * 0.75), Offset(w * 0.90, h * 0.85), Paint()..color = color..strokeWidth = 1.8..strokeCap = StrokeCap.round);
+    canvas.drawLine(Offset(w * 0.72, h * 0.85), Offset(w * 0.90, h * 0.85), p);
+    canvas.drawLine(Offset(w * 0.82, h * 0.35), Offset(w * 0.90, h * 0.75), p);
+  }
+  @override bool shouldRepaint(_ScaleIconPainter o) => o.color != color;
+}
+
+class _BurdenDotPainter extends CustomPainter {
+  final double phase;
+  final bool isDark;
+  const _BurdenDotPainter({required this.phase, required this.isDark});
+  static const _pts = [
+    (0.08, 0.08, 0.9), (0.92, 0.07, 1.0), (0.22, 0.88, 0.8),
+    (0.78, 0.85, 1.1), (0.50, 0.10, 1.0), (0.15, 0.50, 0.8),
+    (0.85, 0.48, 0.9), (0.40, 0.78, 1.0), (0.65, 0.62, 0.8),
+    (0.28, 0.25, 1.1), (0.72, 0.22, 0.9), (0.55, 0.93, 1.0),
+  ];
+  @override void paint(Canvas canvas, Size size) {
+    final p = Paint();
+    for (int i = 0; i < _pts.length; i++) {
+      final (rx, ry, r) = _pts[i];
+      final tw = (math.sin((phase + i * 0.22) * math.pi * 2) * 0.5 + 0.5);
+      p.color = const Color(0xFF22C55E).withValues(alpha: tw * 0.10);
+      canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
+    }
+  }
+  @override bool shouldRepaint(_BurdenDotPainter o) => o.phase != phase;
+}
+
+// =============================================================================
+// Dawn & Dusk â€” Surah Al-Ikhlas 3x recited at dawn and dusk (morning_9/evening_9)
+// Split screen: left half = dawn (warm sunrise), right half = dusk (cool twilight)
+// =============================================================================
+class _DawnDusk extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _DawnDusk({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_DawnDusk> createState() => _DawnDuskState();
+}
+
+class _DawnDuskState extends State<_DawnDusk> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl;
+  late Animation<double> _pulse, _grow, _glow;
+  double _prevProgress = 0.0;
+
+  @override void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3200))..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 0.97, end: 1.03).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _growCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _grow = CurvedAnimation(parent: _growCtrl, curve: Curves.easeOutCubic);
+    _prevProgress = widget.progress; _growCtrl.value = widget.progress;
+    _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2400))..repeat(reverse: true);
+    _glow = Tween<double>(begin: 0.3, end: 1.0).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _shimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 4000))..repeat();
+  }
+
+  @override void didUpdateWidget(_DawnDusk old) {
+    super.didUpdateWidget(old);
+    if (widget.progress != _prevProgress) { _growCtrl.animateTo(widget.progress); _prevProgress = widget.progress; }
+  }
+
+  @override void dispose() { _pulseCtrl.dispose(); _growCtrl.dispose(); _glowCtrl.dispose(); _shimCtrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl, _shimCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(painter: _DawnDuskPainter(
+          progress: _grow.value, pulse: _pulse.value,
+          glowPhase: _glow.value, starPhase: _shimCtrl.value,
+          isComplete: widget.isComplete,
+        )),
+      ),
+    );
+  }
+}
+
+class _DawnDuskPainter extends CustomPainter {
+  final double progress, pulse, glowPhase, starPhase;
+  final bool isComplete;
+  const _DawnDuskPainter({required this.progress, required this.pulse, required this.glowPhase, required this.starPhase, required this.isComplete});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final mid = w / 2;
+    final alpha = progress.clamp(0.18, 1.0);
+
+    // â”€â”€ LEFT HALF: DAWN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    final dawnRect = Rect.fromLTWH(0, 0, mid, h);
+    canvas.save();
+    canvas.clipRect(dawnRect);
+
+    // Dawn sky gradient
+    canvas.drawRect(dawnRect, Paint()..shader = LinearGradient(
+      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: [
+        const Color(0xFF0F172A), // deep navy at top
+        const Color(0xFF1E3A5F), // navy-blue
+        const Color(0xFF7E3517), // rust horizon
+        const Color(0xFFD4621A), // orange sunrise
+        const Color(0xFFFBBF85), // warm amber ground
+      ],
+      stops: const [0.0, 0.25, 0.55, 0.78, 1.0],
+    ).createShader(dawnRect));
+
+    // Dawn sun â€” rising, lower-left
+    final sunX = mid * 0.62;
+    final sunY = h * 0.65;
+    final sunR = 18.0 * pulse;
+    // Glow
+    canvas.drawCircle(Offset(sunX, sunY), sunR * 2.8, Paint()
+      ..color = const Color(0xFFFF8C00).withValues(alpha: alpha * 0.20 * glowPhase)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+    canvas.drawCircle(Offset(sunX, sunY), sunR * 1.7, Paint()
+      ..color = const Color(0xFFFFBF00).withValues(alpha: alpha * 0.35)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    // Sun disc
+    canvas.drawCircle(Offset(sunX, sunY), sunR, Paint()
+      ..shader = RadialGradient(colors: [
+        const Color(0xFFFFF0A0).withValues(alpha: alpha),
+        const Color(0xFFFF8C00).withValues(alpha: alpha),
+      ]).createShader(Rect.fromCircle(center: Offset(sunX, sunY), radius: sunR)));
+
+    // Dawn horizon glow line
+    final hY = h * 0.72;
+    canvas.drawRect(Rect.fromLTWH(0, hY - 1, mid, 3), Paint()
+      ..shader = LinearGradient(colors: [
+        const Color(0xFFFF8C00).withValues(alpha: alpha * 0.0),
+        const Color(0xFFFF8C00).withValues(alpha: alpha * 0.60),
+        const Color(0xFFFF8C00).withValues(alpha: alpha * 0.0),
+      ]).createShader(Rect.fromLTWH(0, hY - 1, mid, 3)));
+
+    // Dawn label
+    _drawLabel(canvas, 'DAWN', mid * 0.50, h * 0.14, const Color(0xFFFFE9B8), alpha * 0.90, 13.0);
+
+    // "3x" badge
+
+    canvas.restore();
+
+    // â”€â”€ CENTRE DIVIDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    canvas.drawRect(Rect.fromLTWH(mid - 1, 0, 2, h), Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        colors: [
+          const Color(0xFFFFBF00).withValues(alpha: alpha * 0.0),
+          const Color(0xFFFFBF00).withValues(alpha: alpha * 0.55),
+          const Color(0xFF818CF8).withValues(alpha: alpha * 0.50),
+          const Color(0xFF818CF8).withValues(alpha: alpha * 0.0),
+        ],
+      ).createShader(Rect.fromLTWH(mid - 1, 0, 2, h)));
+
+    // â”€â”€ RIGHT HALF: DUSK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    final duskRect = Rect.fromLTWH(mid, 0, mid, h);
+    canvas.save();
+    canvas.clipRect(duskRect);
+
+    // Dusk sky gradient
+    canvas.drawRect(duskRect, Paint()..shader = LinearGradient(
+      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: [
+        const Color(0xFF0A0F1E), // near-black
+        const Color(0xFF12063A), // deep violet
+        const Color(0xFF3B1F6E), // purple
+        const Color(0xFF8B2FC9), // violet horizon
+        const Color(0xFFD78ADB), // mauve ground
+      ],
+      stops: const [0.0, 0.22, 0.50, 0.72, 1.0],
+    ).createShader(duskRect));
+
+    // Stars (dusk side) â€” more stars visible
+    final starData = [
+      (0.15, 0.08, 1.3), (0.42, 0.05, 1.0), (0.65, 0.12, 0.8),
+      (0.28, 0.22, 0.9), (0.80, 0.08, 1.1), (0.55, 0.28, 0.7),
+      (0.08, 0.35, 0.8), (0.90, 0.30, 1.0), (0.35, 0.40, 0.9),
+      (0.70, 0.42, 0.8), (0.18, 0.55, 0.7), (0.88, 0.50, 1.0),
+    ];
+    final sp = Paint();
+    for (int i = 0; i < starData.length; i++) {
+      final (rx, ry, r) = starData[i];
+      final twink = (math.sin((starPhase + i * 0.23) * math.pi * 2) * 0.5 + 0.5);
+      sp.color = Colors.white.withValues(alpha: twink * alpha * 0.80);
+      canvas.drawCircle(Offset(mid + rx * mid, ry * h), r, sp);
+    }
+
+    // Crescent moon â€” dusk side
+    final moonX = mid + mid * 0.60;
+    final moonY = h * 0.28;
+    final moonR = 15.0 * pulse;
+    canvas.drawCircle(Offset(moonX, moonY), moonR, Paint()
+      ..color = const Color(0xFFE2E8F0).withValues(alpha: alpha * 0.92));
+    canvas.drawCircle(Offset(moonX + moonR * 0.40, moonY - moonR * 0.08), moonR * 0.82, Paint()
+      ..color = const Color(0xFF3B1F6E).withValues(alpha: alpha * 0.95));
+
+    // Dusk horizon glow
+    canvas.drawRect(Rect.fromLTWH(mid, hY - 1, mid, 3), Paint()
+      ..shader = LinearGradient(colors: [
+        const Color(0xFF8B2FC9).withValues(alpha: alpha * 0.0),
+        const Color(0xFF8B2FC9).withValues(alpha: alpha * 0.55),
+        const Color(0xFF8B2FC9).withValues(alpha: alpha * 0.0),
+      ]).createShader(Rect.fromLTWH(mid, hY - 1, mid, 3)));
+
+    // Dusk label
+    _drawLabel(canvas, 'DUSK', mid + mid * 0.50, h * 0.14, const Color(0xFFDDD6FE), alpha * 0.90, 13.0);
+
+    // "3x" badge
+
+    canvas.restore();
+
+    // â”€â”€ CENTRE TEXT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    if (progress > 0.10) {
+      final txtAlpha = ((progress - 0.10) / 0.40).clamp(0.0, 1.0);
+      // "Suffices against all harm" text
+      final tp = TextPainter(
+        text: TextSpan(
+          text: 'Suffice against all harm',
+          style: GoogleFonts.outfit(
+            fontSize: 12.0,
+            fontWeight: FontWeight.w700,
+            color: Colors.white.withValues(alpha: txtAlpha * 0.85),
+            letterSpacing: 0.8,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: w);
+      tp.paint(canvas, Offset((w - tp.width) / 2, h - 22));
+    }
+
+    // Completion shimmer line
+    if (isComplete) {
+      canvas.drawRect(Rect.fromLTWH(0, 0, w, 3), Paint()
+        ..shader = LinearGradient(colors: [
+          Colors.transparent, const Color(0xFFFFBF00).withValues(alpha: glowPhase * 0.65),
+          const Color(0xFF818CF8).withValues(alpha: glowPhase * 0.65), Colors.transparent,
+        ]).createShader(Rect.fromLTWH(0, 0, w, 3)));
+    }
+  }
+
+  void _drawLabel(Canvas canvas, String text, double cx, double cy, Color color, double alpha, double fontSize) {
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: GoogleFonts.outfit(
+        fontSize: fontSize, fontWeight: FontWeight.w800, color: color.withValues(alpha: alpha),
+        letterSpacing: 3.0,
+      )),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(cx - tp.width / 2, cy - tp.height / 2));
+  }
+
+
+  @override
+  bool shouldRepaint(_DawnDuskPainter o) =>
+    o.progress != progress || o.pulse != pulse || o.glowPhase != glowPhase || o.starPhase != starPhase || o.isComplete != isComplete;
 }
 
 

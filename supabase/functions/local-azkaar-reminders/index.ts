@@ -111,6 +111,49 @@ serve(async (req: Request) => {
       });
     }
 
+    // Step 2.5: Deduplicate — skip users already notified today
+    const todayStart = new Date(now);
+    todayStart.setUTCHours(0, 0, 0, 0);
+
+    const { data: alreadySent } = await supabase
+      .from('notification_log')
+      .select('user_id, notification_type')
+      .in('notification_type', ['morning_azkaar', 'evening_azkaar'])
+      .gte('sent_at', todayStart.toISOString());
+
+    const sentMorningSet = new Set<string>();
+    const sentEveningSet = new Set<string>();
+    for (const r of alreadySent || []) {
+      if (r.notification_type === 'morning_azkaar') sentMorningSet.add(r.user_id);
+      if (r.notification_type === 'evening_azkaar') sentEveningSet.add(r.user_id);
+    }
+
+    const dedupedMorningUsers: string[] = [];
+    const dedupedMorningTokens: string[] = [];
+    for (const userId of morningUsers) {
+      const token = tokensMap.get(userId);
+      if (token && tokensToSendMorning.includes(token) && !sentMorningSet.has(userId)) {
+        dedupedMorningUsers.push(userId);
+        dedupedMorningTokens.push(token);
+      }
+    }
+
+    const dedupedEveningUsers: string[] = [];
+    const dedupedEveningTokens: string[] = [];
+    for (const userId of eveningUsers) {
+      const token = tokensMap.get(userId);
+      if (token && tokensToSendEvening.includes(token) && !sentEveningSet.has(userId)) {
+        dedupedEveningUsers.push(userId);
+        dedupedEveningTokens.push(token);
+      }
+    }
+
+    if (dedupedMorningTokens.length === 0 && dedupedEveningTokens.length === 0) {
+      return new Response(JSON.stringify({ message: 'All targeted users already notified today.' }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     // Step 3: Build Google OAuth2 Token utilizing Service Account Secrets
     const projectId = Deno.env.get('FCM_PROJECT_ID');
     const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
@@ -149,7 +192,9 @@ serve(async (req: Request) => {
 
     // Step 4: Send Firebase Notifications in bulk loop
     // Morning reminders
-    for (const token of tokensToSendMorning) {
+    for (let i = 0; i < dedupedMorningTokens.length; i++) {
+      const token = dedupedMorningTokens[i];
+      const userId = dedupedMorningUsers[i];
       const fcmPayload = {
         message: {
           token: token,
@@ -178,10 +223,20 @@ serve(async (req: Request) => {
 
       const resJson = await fcmResponse.json();
       results.push({ token, type: 'morning', success: fcmResponse.ok, result: resJson });
+
+      if (fcmResponse.ok) {
+        await supabase.from('notification_log').insert({
+          user_id: userId,
+          notification_type: 'morning_azkaar',
+          sent_at: now.toISOString(),
+        }).catch(() => {});
+      }
     }
 
     // Evening reminders
-    for (const token of tokensToSendEvening) {
+    for (let i = 0; i < dedupedEveningTokens.length; i++) {
+      const token = dedupedEveningTokens[i];
+      const userId = dedupedEveningUsers[i];
       const fcmPayload = {
         message: {
           token: token,
@@ -210,13 +265,21 @@ serve(async (req: Request) => {
 
       const resJson = await fcmResponse.json();
       results.push({ token, type: 'evening', success: fcmResponse.ok, result: resJson });
+
+      if (fcmResponse.ok) {
+        await supabase.from('notification_log').insert({
+          user_id: userId,
+          notification_type: 'evening_azkaar',
+          sent_at: now.toISOString(),
+        }).catch(() => {});
+      }
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      sent_morning_count: tokensToSendMorning.length,
-      sent_evening_count: tokensToSendEvening.length,
-      results 
+    return new Response(JSON.stringify({
+      success: true,
+      sent_morning_count: dedupedMorningTokens.length,
+      sent_evening_count: dedupedEveningTokens.length,
+      results
     }), {
       headers: { 'Content-Type': 'application/json' },
     });
