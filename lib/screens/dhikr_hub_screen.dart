@@ -97,85 +97,117 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                 fontSize: 24, fontWeight: FontWeight.w700, color: _kText)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Daily Essentials',
-                style: GoogleFonts.outfit(
-                    fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
-            const SizedBox(height: 16),
-            if (visibleEssentials.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
-              )
-            else
-              GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                childAspectRatio: 0.9,
-              ),
-              itemCount: visibleEssentials.length,
-              itemBuilder: (context, index) {
-                final item = visibleEssentials[index];
-                return _buildGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
-              },
-            ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Responsive columns for essentials based on count
+          final essCount = visibleEssentials.length;
+          final int essCols;
+          final double essAspect;
+          if (essCount <= 2) {
+            essCols = 1;
+            essAspect = 1.8;
+          } else {
+            essCols = 2;
+            essAspect = 0.9;
+          }
 
-            const SizedBox(height: 32),
-            Text('Other Categories',
-                style: GoogleFonts.outfit(
-                    fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
-            const SizedBox(height: 16),
-            if (visibleOthers.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
-              )
-            else
-              GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: visibleOthers.length,
-              itemBuilder: (context, index) {
-                final item = visibleOthers[index];
-                return _buildMiniGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
-              },
+          // Responsive columns for others based on count
+          final othCount = visibleOthers.length;
+          final int othCols;
+          final double othAspect;
+          if (othCount <= 2) {
+            othCols = 2;
+            othAspect = 1.1;
+          } else {
+            othCols = 3;
+            othAspect = 0.85;
+          }
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Daily Essentials',
+                    style: GoogleFonts.outfit(
+                        fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
+                const SizedBox(height: 16),
+                if (visibleEssentials.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
+                  )
+                else
+                  GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: essCols,
+                    crossAxisSpacing: 14,
+                    mainAxisSpacing: 14,
+                    childAspectRatio: essAspect,
+                  ),
+                  itemCount: visibleEssentials.length,
+                  itemBuilder: (context, index) {
+                    final item = visibleEssentials[index];
+                    return _buildGradientCard(context, item['title'], item['id'], item['icon'], item['color'], isStacked: essCols == 1);
+                  },
+                ),
+
+                const SizedBox(height: 32),
+                Text('Other Categories',
+                    style: GoogleFonts.outfit(
+                        fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
+                const SizedBox(height: 16),
+                if (visibleOthers.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
+                  )
+                else
+                  GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: othCols,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: othAspect,
+                  ),
+                  itemCount: visibleOthers.length,
+                  itemBuilder: (context, index) {
+                    final item = visibleOthers[index];
+                    return _buildMiniGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
+                  },
+                ),
+                const SizedBox(height: 40),
+              ],
             ),
-            const SizedBox(height: 40),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildGradientCard(BuildContext context, String title, String id, String emoji, Color baseColor) {
+  Widget _buildGradientCard(BuildContext context, String title, String id, String emoji, Color baseColor, {bool isStacked = false}) {
     String? customImagePath = AssetHelper.getCustomImagePath(title);
     bool isCustomCard = customImagePath != null;
     Color? customTextColor;
-    
+
     if (isCustomCard) {
       if (id == 'evening') {
         customTextColor = const Color(0xFF1E3A8A); // Deep blue
       } else if (id == 'sleeping') {
         customTextColor = const Color(0xFF0F172A); // Midnight blue
       } else {
-        customTextColor = baseColor.computeLuminance() > 0.5 ? Colors.black87 : baseColor; 
-        // Default color fallback for random images matching category theme!
+        customTextColor = baseColor.computeLuminance() > 0.5 ? Colors.black87 : baseColor;
       }
     }
+
+    final double imgWidth = isStacked ? 180 : 120;
+    final double imgBottom = isStacked ? 10 : 30;
+    final double titleSize = isStacked ? 26 : 18;
+    final double emojiSize = isStacked ? 130 : 90;
 
     return GestureDetector(
       onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id))),
@@ -201,8 +233,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                 Positioned(
                   top: 0,
                   right: -10,
-                  bottom: 30, // Leave enough white area at the bottom for the text
-                  width: 120, // Constrain width so it doesn't overlap text horizontally
+                  bottom: imgBottom,
+                  width: imgWidth,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(customImagePath, fit: BoxFit.contain, alignment: Alignment.centerRight),
@@ -215,8 +247,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   child: Opacity(
                     opacity: 0.55,
                     child: SizedBox(
-                      width: 90, height: 90,
-                      child: NoorIcon.fromEmoji(emoji, size: 90),
+                      width: emojiSize, height: emojiSize,
+                      child: NoorIcon.fromEmoji(emoji, size: emojiSize),
                     ),
                   ),
                 ),
@@ -263,8 +295,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   children: [
                     Text(title,
                         style: GoogleFonts.outfit(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: titleSize,
+                            fontWeight: FontWeight.w900,
                             color: isCustomCard ? customTextColor : Colors.white,
                             height: 1.1,
                             letterSpacing: -0.5)),
