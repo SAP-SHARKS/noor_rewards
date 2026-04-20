@@ -31,7 +31,9 @@ class NotificationService {
           'user_id': userId,
           'token': token,
           'timezone': currentTimeZone,
-        });
+          'device_type': 'android',
+          'last_seen': DateTime.now().toUtc().toIso8601String(),
+        }, onConflict: 'user_id');
       } catch (e) {
         debugPrint('Error saving FCM token and timezone: $e');
       }
@@ -47,7 +49,9 @@ class NotificationService {
             'user_id': currentUserId,
             'token': newToken,
             'timezone': tzInfo.identifier,
-          });
+            'device_type': 'android',
+            'last_seen': DateTime.now().toUtc().toIso8601String(),
+          }, onConflict: 'user_id');
           debugPrint('FCM_TOKEN REFRESHED: $newToken');
         } catch (e) {
           debugPrint('Error saving refreshed FCM token: $e');

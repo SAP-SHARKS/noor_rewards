@@ -2558,9 +2558,12 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_9' || id == 'evening_9') return 'dawn_dusk';
   if (id == 'morning_10' || id == 'evening_10') return 'falaq_shield';
   if (id == 'morning_11' || id == 'evening_11') return 'dua_hands';
-  // Sovereignty & Fitrah — sunrise scene
-  if (id == 'morning_12' || id == 'evening_12' ||
-      id == 'morning_13' || id == 'evening_13') return 'dawn';
+  // Sovereignty (morning) & Fitrah (morning) — sunrise scene
+  if (id == 'morning_12' || id == 'morning_13') return 'dawn';
+  // Sovereignty & Fitrah (evening) — nighttime scene
+  if (id == 'evening_13') return 'night_peace';
+  // Sovereignty evening — text-based dominion declaration
+  if (id == 'evening_12') return 'evening_sovereignty';
   // By Your Leave
   if (id == 'morning_14' || id == 'evening_14') return 'cycle';
   // Gratitude
@@ -2573,8 +2576,12 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_19' || id == 'evening_19') return 'six_wards';
   // SubhanAllah 'adada khalqihi — cosmic weight
   if (id == 'morning_20' || id == 'evening_20') return 'cosmic';
+  // Divine Praise — reward awaits with Allah (morning_17 = evening_17)
+  if (id == 'morning_17' || id == 'evening_17') return 'benefit_text_17';
   // Bismillah protection — invincible name
   if (id == 'morning_21' || id == 'evening_21') return 'invincible';
+  // Refuge from shirk — shield/protection
+  if (id == 'morning_22' || id == 'evening_22') return 'shield';
   // Perfect words — invincible name
   if (id == 'morning_23' || id == 'evening_23') return 'invincible';
   // Knower of unseen — repelling light
@@ -2755,12 +2762,14 @@ Widget _buildIllustration({
     'ocean'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OceanOfForgiveness(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'scales'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _UnparalleledScales(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'glory'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SunriseGlory(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
-    'salawat'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _TenSalawat(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'salawat'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BenefitTextIllustration(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday, benefitText: '10 blessings descend upon you from Allah for every single Salawat', subtitle: 'Prophet Muhammad \uFDFA', completedSubtitle: 'May Allah accept your Salawat', accentColor: const Color(0xFFEC4899))),
+    'benefit_text_17' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BenefitTextIllustration(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday, benefitText: 'Angels couldn\'t record its reward — Allah says He will reward it Himself', subtitle: 'Ibn Majah 3801', completedSubtitle: 'May Allah reward you beyond measure', accentColor: const Color(0xFF6B4EE6))),
     'doors'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DoorsOfMercy(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'cosmic'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CosmicWeight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'baqarah_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'baqarah_close'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahClose(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'night_peace'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NightPeace(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'evening_sovereignty' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _EveningSovereignty(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'gratitude_tree' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GratitudeTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'baqarah_burden' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahBurden(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     _            => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorTree(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -2786,8 +2795,10 @@ String _pickTagline(String id) {
     return "Wellbeing of body, hearing & sight — granted";
   if (id == 'morning_27' || id == 'evening_27')
     return 'Allah will free him from the Fire who reads this 4 times';
-  if (id == 'morning_26' || id == 'evening_26')
+  if (id == 'morning_26')
     return 'Guaranteed Jannah — if you die this day';
+  if (id == 'evening_26')
+    return 'Guaranteed Jannah — if you die this night';
   if (id == 'morning_25' || id == 'evening_25')
     return 'Your life entrusted to the Ever-Living';
   if (id == 'morning_24' || id == 'evening_24')
@@ -2808,6 +2819,12 @@ String _pickTagline(String id) {
     return 'Recite morning & evening to fulfill your obligation of gratitude to Allah';
   if (id == 'morning_14' || id == 'evening_14')
     return 'The Prophet taught this dua for morning and evening — do not miss it';
+  if (id == 'morning_12')
+    return 'Declare Allah\'s dominion at the start of your morning — all kingdom belongs to Him';
+  if (id == 'evening_12')
+    return 'As evening falls, the entire kingdom belongs to Allah alone';
+  if (id == 'evening_13')
+    return 'End your evening upon the pure fitrah — as the Prophet (ﷺ) taught';
   if (id == 'morning_2' || id == 'evening_2')
     return 'Satan will not enter the home of one who recites this';
   if (id == 'morning_4' || id == 'morning_5' || id == 'evening_4' || id == 'evening_5')
@@ -11851,7 +11868,194 @@ class _SunriseGloryPainter extends CustomPainter {
 }
 
 // =============================================================================
-// 🌙 Ten Salawat (عشر صلوات) — Receive the intercession of the Prophet
+// Floral Ornament Painter — decorative flower/leaf motif for text illustrations
+// =============================================================================
+class _FloralOrnamentPainter extends CustomPainter {
+  final Color color;
+  final bool isComplete;
+  _FloralOrnamentPainter({required this.color, required this.isComplete});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = size.width * 0.42;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.round;
+
+    // Draw 6 petals as curved leaf shapes
+    for (int i = 0; i < 6; i++) {
+      final angle = i * math.pi / 3;
+      final tipX = cx + r * math.cos(angle);
+      final tipY = cy + r * math.sin(angle);
+      final cp1x = cx + r * 0.7 * math.cos(angle - 0.45);
+      final cp1y = cy + r * 0.7 * math.sin(angle - 0.45);
+      final cp2x = cx + r * 0.7 * math.cos(angle + 0.45);
+      final cp2y = cy + r * 0.7 * math.sin(angle + 0.45);
+
+      final path = Path()
+        ..moveTo(cx, cy)
+        ..quadraticBezierTo(cp1x, cp1y, tipX, tipY)
+        ..quadraticBezierTo(cp2x, cp2y, cx, cy);
+      canvas.drawPath(path, paint);
+    }
+
+    // Center dot or checkmark
+    if (isComplete) {
+      final checkPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2
+        ..strokeCap = StrokeCap.round;
+      final path = Path()
+        ..moveTo(cx - 5, cy)
+        ..lineTo(cx - 1, cy + 4)
+        ..lineTo(cx + 6, cy - 4);
+      canvas.drawPath(path, checkPaint);
+    } else {
+      canvas.drawCircle(Offset(cx, cy), 2.5, Paint()..color = color);
+    }
+
+    // Outer ring of small dots between petals
+    for (int i = 0; i < 6; i++) {
+      final angle = i * math.pi / 3 + math.pi / 6;
+      final dx = cx + r * 0.65 * math.cos(angle);
+      final dy = cy + r * 0.65 * math.sin(angle);
+      canvas.drawCircle(Offset(dx, dy), 1.3, Paint()..color = color.withValues(alpha: 0.5));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _FloralOrnamentPainter old) => old.color != color || old.isComplete != isComplete;
+}
+
+// =============================================================================
+// Text-based Benefit Illustration — shows reward text with animated styling
+// =============================================================================
+class _BenefitTextIllustration extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  final String benefitText;
+  final String subtitle;
+  final String completedSubtitle;
+  final Color accentColor;
+  const _BenefitTextIllustration({required this.progress, required this.isComplete, required this.tapCount, required this.pointsToday, required this.benefitText, this.subtitle = '', this.completedSubtitle = '', required this.accentColor});
+  @override
+  State<_BenefitTextIllustration> createState() => _BenefitTextIllustrationState();
+}
+
+class _BenefitTextIllustrationState extends State<_BenefitTextIllustration> with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeIn);
+    _scale = Tween<double>(begin: 0.92, end: 1.0).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack));
+    _ctrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF7F4EF);
+    final textColor = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final accent = widget.isComplete ? const Color(0xFF2BAE7C) : widget.accentColor;
+
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (context, _) {
+        return Container(
+          decoration: BoxDecoration(color: bg),
+          child: Center(
+            child: Opacity(
+              opacity: _fade.value,
+              child: Transform.scale(
+                scale: _scale.value,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Decorative top line
+                      Container(
+                        width: 40, height: 3,
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      // Floral ornament
+                      SizedBox(
+                        width: 36, height: 36,
+                        child: CustomPaint(
+                          painter: _FloralOrnamentPainter(color: accent, isComplete: widget.isComplete),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Benefit text
+                      Text(
+                        widget.isComplete ? 'MashaAllah! Reward Secured' : widget.benefitText,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.lora(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                          height: 1.35,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Subtitle
+                      Text(
+                        widget.isComplete
+                            ? widget.completedSubtitle
+                            : widget.subtitle,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: textColor.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      // Decorative bottom line
+                      Container(
+                        width: 40, height: 3,
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// =============================================================================
+// Ten Salawat (old CustomPaint version — kept for reference)
 // =============================================================================
 class _TenSalawat extends StatefulWidget {
   final double progress; final bool isComplete; final int tapCount; final int pointsToday;
@@ -12871,6 +13075,220 @@ class _NightPeacePainter extends CustomPainter {
 
 // =============================================================================
 // An-Nas Refuge — Surah An-Nas, 3x at dawn & dusk (morning_11/evening_11)
+// =============================================================================
+// Evening Sovereignty (evening_12) — text-based night illustration
+// "Amsaina wa amsal-mulku lillah" — We entered the evening, dominion is Allah's
+// Deep navy night sky · crescent moon · key phrases revealed progressively
+// =============================================================================
+class _EveningSovereignty extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _EveningSovereignty({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_EveningSovereignty> createState() => _EveningSovereigntyState();
+}
+
+class _EveningSovereigntyState extends State<_EveningSovereignty> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _revealCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1600))..repeat(reverse: true);
+    _growCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _starCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))..repeat(reverse: true);
+    _pCtrl     = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _revealCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000));
+    _growCtrl.animateTo(widget.progress);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _revealCtrl.forward();
+    });
+  }
+
+  @override
+  void didUpdateWidget(_EveningSovereignty old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress);
+    if (widget.tapCount > old.tapCount) {
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose();
+    _revealCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _revealCtrl]),
+      builder: (context, _) {
+        final pulse = _pulseCtrl.value;
+        final star  = _starCtrl.value;
+        final reveal = _revealCtrl.value;
+        final p = _growCtrl.value;
+
+        // 5 key English phrases revealed progressively
+        final segments = [
+          (en: 'We have entered the evening', big: false),
+          (en: 'The Kingdom belongs to Allah', big: true),
+          (en: 'None worthy of worship but Allah alone', big: false),
+          (en: 'All praise · He is All-Powerful over everything', big: false),
+          (en: 'We ask for the good of this night', big: false),
+        ];
+
+        return SizedBox(
+          height: 260,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background painter — night sky + crescent + stars
+              CustomPaint(
+                painter: _EveningSovereigntyPainter(pulse: pulse, star: star, p: p),
+              ),
+              // Text segments — English only, compact
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (int i = 0; i < segments.length; i++) ...[
+                      _buildLine(segments[i], reveal, i, segments.length),
+                      if (i < segments.length - 1) const SizedBox(height: 4),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLine(({String en, bool big}) seg,
+      double reveal, int idx, int total) {
+    final segReveal = ((reveal - (idx / total) * 0.55) / 0.45).clamp(0.0, 1.0);
+    final accent    = const Color(0xFFD4AF37);
+    final bodyColor = const Color(0xFFB8C8D8);
+
+    return AnimatedOpacity(
+      opacity: segReveal.clamp(0.0, 1.0),
+      duration: const Duration(milliseconds: 400),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: seg.big ? 14 : 8,
+          vertical:   seg.big ? 8  : 4,
+        ),
+        decoration: seg.big ? BoxDecoration(
+          color: accent.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: accent.withValues(alpha: 0.35), width: 1),
+        ) : null,
+        child: Text(
+          seg.en,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.outfit(
+            fontSize: seg.big ? 15 : 12.5,
+            fontWeight: seg.big ? FontWeight.w700 : FontWeight.w400,
+            color: seg.big ? accent : bodyColor,
+            letterSpacing: seg.big ? 0.3 : 0.1,
+            height: 1.4,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EveningSovereigntyPainter extends CustomPainter {
+  final double pulse, star, p;
+  const _EveningSovereigntyPainter({required this.pulse, required this.star, required this.p});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // Dark navy gradient background
+    final bgPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        colors: [Color(0xFF060C16), Color(0xFF0C1624), Color(0xFF0F1E34)],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
+
+    // Crescent moon — top right
+    final mx = w * 0.83; final my = h * 0.20; final mr = 26.0;
+    final moonAlpha = (0.55 + pulse * 0.25).clamp(0.0, 1.0);
+    // outer disc
+    canvas.drawCircle(Offset(mx, my), mr,
+        Paint()..color = const Color(0xFFD4AF37).withValues(alpha: moonAlpha * 0.90));
+    // crescent cutout
+    canvas.drawCircle(Offset(mx + mr * 0.44, my - mr * 0.08), mr * 0.80,
+        Paint()..color = const Color(0xFF060C16));
+    // soft glow around moon
+    canvas.drawCircle(Offset(mx, my), mr * 2.0,
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: pulse * 0.07)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16));
+
+    // Stars — scattered
+    final starPos = [
+      (0.06, 0.08), (0.20, 0.05), (0.36, 0.09), (0.52, 0.03), (0.66, 0.13),
+      (0.13, 0.22), (0.42, 0.18), (0.70, 0.28), (0.92, 0.08), (0.04, 0.35),
+      (0.28, 0.30), (0.58, 0.26), (0.87, 0.38), (0.10, 0.45), (0.48, 0.42),
+      (0.76, 0.15), (0.33, 0.42),
+    ];
+    final sp = Paint()..style = PaintingStyle.fill;
+    for (int i = 0; i < starPos.length; i++) {
+      final (sx, sy) = starPos[i];
+      final flicker = (star + i * 0.17) % 1.0;
+      sp.color = Colors.white.withValues(alpha: (0.25 + flicker * 0.45).clamp(0.0, 1.0) * 0.75);
+      canvas.drawCircle(Offset(w * sx, h * sy), 1.2 + (i % 3) * 0.5, sp);
+    }
+
+    // Horizon glow — bottom warm edge
+    canvas.drawRect(
+      Rect.fromLTWH(0, h * 0.62, w, h * 0.38),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.bottomCenter, end: Alignment.topCenter,
+          colors: [
+            const Color(0xFF1C2D4A).withValues(alpha: 0.55),
+            const Color(0xFF1C2D4A).withValues(alpha: 0.0),
+          ],
+        ).createShader(Rect.fromLTWH(0, h * 0.62, w, h * 0.38)),
+    );
+
+    // Completion gold wash
+    if (p >= 1.0) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, w, h),
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: 0.06)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 40),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_EveningSovereigntyPainter old) =>
+      old.pulse != pulse || old.star != star || old.p != p;
+}
+
+// =============================================================================
 // "It will suffice you in all respects." — Abu Dawud 5082
 // Refuge from: inner whispers, fear, and the whispering devil
 // Theme: warm amber/cream — surrender, refuge, divine protection
