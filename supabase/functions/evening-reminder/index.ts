@@ -2,78 +2,100 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 
-serve(async (req: Request) => {
+// ── Evening Reminder ── fires hourly, targets users at local 20:00 (8 PM)
+// Deduped via notification_log — max ONE send per user per day.
+// Distinct from local-azkaar-reminders (which targets 17:00).
+
+const TARGET_HOUR = 20; // 8 PM in the user's local timezone
+const LOG_TYPE    = 'evening_reminder';
+
+serve(async (_req: Request) => {
   try {
-    // 1. Initialize Supabase Admin Client
-    // We use the SERVICE_ROLE_KEY because cron jobs are entirely backend processes 
-    // and we need to bypass row-level security (RLS) to read all user activity logs.
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // 2. Identify Users who have NOT logged in today
-    const startOfToday = new Date();
-    startOfToday.setUTCHours(0, 0, 0, 0);
+    const now = new Date();
 
-    // Get all FCM tokens
+    // ── 1. Load all FCM tokens with timezone ─────────────────────────────────
     const { data: fcmTokens, error: fcmError } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token');
+      .select('user_id, token, timezone');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
-
-    // Get all user analytics (for last_active_at)
-    const { data: analytics, error: analyticsError } = await supabase
-      .from('user_analytics')
-      .select('user_id, last_active_at');
-
-    if (analyticsError) throw new Error(`Analytics load error: ${analyticsError.message}`);
-
-    const lastActiveMap = new Map<string, string>();
-    for (const a of analytics || []) {
-      lastActiveMap.set(a.user_id, a.last_active_at);
-    }
-
-    // Filter tokens for users who haven't opened the app today
-    const tokensToSend: string[] = [];
-    for (const row of fcmTokens || []) {
-      const lastActiveStr = lastActiveMap.get(row.user_id);
-      
-      if (!lastActiveStr) {
-        // No analytics record implies they haven't been active, send reminder
-        tokensToSend.push(row.token);
-      } else {
-        const lastActiveDate = new Date(lastActiveStr);
-        if (lastActiveDate < startOfToday) {
-          // Last logged in BEFORE today 00:00 UTC
-          tokensToSend.push(row.token);
-        }
-      }
-    }
-
-    if (tokensToSend.length === 0) {
-      return new Response(JSON.stringify({ message: 'All users with tokens have already logged in today.' }), {
+    if (!fcmTokens || fcmTokens.length === 0) {
+      return new Response(JSON.stringify({ message: 'No FCM tokens found.' }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // 3. Build Google OAuth2 Token utilizing Service Account Secrets
-    const projectId = Deno.env.get('FCM_PROJECT_ID');
-    const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
+    // ── 2. Filter users whose local hour == TARGET_HOUR ──────────────────────
+    const targetUsers: string[] = [];
+    const tokensMap = new Map<string, string>();
+
+    for (const row of fcmTokens) {
+      const tz = row.timezone || 'UTC';
+      let hour = -1;
+      try {
+        const parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: tz, hour: 'numeric', hour12: false,
+        }).formatToParts(now);
+        hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '-1', 10);
+      } catch {
+        const parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'UTC', hour: 'numeric', hour12: false,
+        }).formatToParts(now);
+        hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '-1', 10);
+      }
+
+      tokensMap.set(row.user_id, row.token);
+      if (hour === TARGET_HOUR) targetUsers.push(row.user_id);
+    }
+
+    if (targetUsers.length === 0) {
+      return new Response(JSON.stringify({
+        message: `No users at ${TARGET_HOUR}:00 local time right now.`,
+        server_utc_hour: now.getUTCHours(),
+      }), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // ── 3. Dedup — skip users already notified today ──────────────────────────
+    const todayStart = new Date(now);
+    todayStart.setUTCHours(0, 0, 0, 0);
+
+    const { data: alreadySent } = await supabase
+      .from('notification_log')
+      .select('user_id')
+      .eq('notification_type', LOG_TYPE)
+      .gte('sent_at', todayStart.toISOString());
+
+    const alreadySentSet = new Set<string>((alreadySent || []).map((r: any) => r.user_id));
+
+    const dedupedUsers = targetUsers.filter(uid => !alreadySentSet.has(uid));
+
+    if (dedupedUsers.length === 0) {
+      return new Response(JSON.stringify({
+        message: 'All targeted users already received this notification today.',
+      }), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // ── 4. Build Google OAuth2 access token ───────────────────────────────────
+    const projectId    = Deno.env.get('FCM_PROJECT_ID');
+    const clientEmail  = Deno.env.get('FCM_CLIENT_EMAIL');
     const privateKeyStr = Deno.env.get('FCM_PRIVATE_KEY');
 
     if (!projectId || !clientEmail || !privateKeyStr) {
-      throw new Error('FCM configs missing (FCM_PROJECT_ID, FCM_CLIENT_EMAIL, FCM_PRIVATE_KEY)');
+      throw new Error('FCM secrets missing: FCM_PROJECT_ID, FCM_CLIENT_EMAIL, FCM_PRIVATE_KEY');
     }
 
-    const privateKey = privateKeyStr.replace(/\\n/g, '\n');
+    const privateKey    = privateKeyStr.replace(/\\n/g, '\n');
     const privateKeyObj = await importPKCS8(privateKey, 'RS256');
-    
+
     const jwt = await new SignJWT({
-      iss: clientEmail,
+      iss:   clientEmail,
       scope: 'https://www.googleapis.com/auth/firebase.messaging',
-      aud: 'https://oauth2.googleapis.com/token',
+      aud:   'https://oauth2.googleapis.com/token',
     })
       .setProtectedHeader({ alg: 'RS256', typ: 'JWT' })
       .setIssuedAt()
@@ -86,31 +108,19 @@ serve(async (req: Request) => {
       body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
     });
 
-    const tokenDataRes = await tokenResponse.json();
+    const tokenData = await tokenResponse.json();
     if (!tokenResponse.ok) {
-      throw new Error(`Google Auth error: ${tokenDataRes.error_description || tokenDataRes.error}`);
+      throw new Error(`Google OAuth error: ${tokenData.error_description ?? tokenData.error}`);
     }
+    const accessToken = tokenData.access_token;
 
-    const accessToken = tokenDataRes.access_token;
+    // ── 5. Send notifications + log to prevent duplicates ────────────────────
+    const results: object[] = [];
 
-    // 4. Send Firebase Notifications in bulk loop
-    const results = [];
-    for (const token of tokensToSend) {
-      const fcmPayload = {
-        message: {
-          token: token,
-          notification: {
-            title: 'Evening Azkaar',
-            body: 'Take a few minutes to complete your evening Azkaar and keep your streak alive!'
-          },
-          android: {
-            priority: 'high',
-            notification: { sound: 'default' }
-          }
-        }
-      };
+    for (const userId of dedupedUsers) {
+      const token = tokensMap.get(userId)!;
 
-      const fcmResponse = await fetch(
+      const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
         {
           method: 'POST',
@@ -118,21 +128,41 @@ serve(async (req: Request) => {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(fcmPayload),
+          body: JSON.stringify({
+            message: {
+              token,
+              notification: {
+                title: '🌙 Evening Azkaar',
+                body:  'Take a few minutes to complete your evening Azkaar and keep your streak alive!',
+              },
+              data: { route: 'evening' },
+              android: { priority: 'high', notification: { sound: 'default' } },
+              apns:    { payload: { aps: { sound: 'default' } } },
+            },
+          }),
         }
       );
 
-      const resJson = await fcmResponse.json();
-      results.push({ token, success: fcmResponse.ok, result: resJson });
+      const resJson = await res.json();
+      results.push({ userId, success: res.ok, result: resJson });
+
+      // Log BEFORE checking ok — even a partial failure should guard against retries
+      if (res.ok) {
+        await supabase.from('notification_log').insert({
+          user_id:           userId,
+          notification_type: LOG_TYPE,
+          sent_at:           now.toISOString(),
+        }).catch(() => {});
+      }
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      sent_count: tokensToSend.length, 
-      results 
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({
+      success:           true,
+      server_utc_hour:   now.getUTCHours(),
+      target_local_hour: TARGET_HOUR,
+      sent_count:        dedupedUsers.length,
+      results,
+    }), { headers: { 'Content-Type': 'application/json' } });
 
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), {
