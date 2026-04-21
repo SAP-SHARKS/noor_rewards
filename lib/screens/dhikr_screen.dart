@@ -2569,11 +2569,11 @@ String _pickIllustration(String rawId) {
   // Gratitude
   if (id == 'morning_16' || id == 'evening_16') return 'vessel';
   // Gratitude fulfilled — tree + overlay text
-  if (id == 'morning_15' || id == 'evening_15') return 'gratitude_tree';
-  // Raditu billahi — pleased with Allah
-  if (id == 'morning_18' || id == 'evening_18') return 'hand';
+  if (id == 'morning_15' || id == 'evening_15') return 'cycle';
+  // Raditu billahi — door of divine pleasure opening
+  if (id == 'morning_18' || id == 'evening_18') return 'noor_door';
   // Well-being / Afiyah — 6 direction protection
-  if (id == 'morning_19' || id == 'evening_19') return 'six_wards';
+  if (id == 'morning_19' || id == 'evening_19') return 'afiyah_guard';
   // SubhanAllah 'adada khalqihi — cosmic weight
   if (id == 'morning_20' || id == 'evening_20') return 'cosmic';
   // Divine Praise — reward awaits with Allah (morning_17 = evening_17)
@@ -2745,6 +2745,7 @@ Widget _buildIllustration({
     'three_quls'   => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeQuls(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'gates'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GatesOfJannah(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'chains'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BreakingChains(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'afiyah_guard'   => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _AfiyahGuard(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'six_wards'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixWards(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'repelling'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RepellingLight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'heart'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CradledHeart(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -2757,6 +2758,7 @@ Widget _buildIllustration({
     'cycle'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CycleOfReturn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'vessels'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ThreeVessels(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'pillars'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SevenPillars(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'noor_door'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _NoorDoor(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'hand'       => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GuidingHand(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'invincible' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _InvincibleName(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'ocean'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OceanOfForgiveness(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -2870,6 +2872,9 @@ String _pickTagline(String id) {
     'baqarah_close'  => 'They are enough for you - recite before sleep',
     'night_peace'    => 'Reading last 2 verses of al-Baqarah will suffice you',
     'baqarah_burden' => 'Every dua in this verse - Allah said: I have done so',
+    'afiyah_guard' => 'Guarded in your Deen · Dunya · Akhirah — and from all six sides',
+    'noor_door'    => 'Recite morning & evening — earn the pleasure of Allah on the Day of Judgment',
+    'evening_sovereignty' => 'As evening falls, the entire kingdom belongs to Allah alone',
     _            => '',
   };
 }
@@ -5892,6 +5897,222 @@ class _BreakingChainsPainter extends CustomPainter {
       o.punchScale != punchScale ||
       o.shockPhase != shockPhase ||
       o.floatPhase != floatPhase;
+}
+
+// =============================================================================
+// 🛡️ Afiyah Guard (morning_19 / evening_19) — text-based illustration
+// "Well-being in this world & the Hereafter" — Abu Dawud 5074
+// Deep teal shield · phrases cascade in · six-directions badge on completion
+// =============================================================================
+class _AfiyahGuard extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _AfiyahGuard({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_AfiyahGuard> createState() => _AfiyahGuardState();
+}
+
+class _AfiyahGuardState extends State<_AfiyahGuard> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _pCtrl, _punchCtrl, _shockCtrl, _revealCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1600))..repeat(reverse: true);
+    _growCtrl   = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _pCtrl      = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _revealCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1800));
+    _growCtrl.animateTo(widget.progress);
+    Future.delayed(const Duration(milliseconds: 250), () {
+      if (mounted) _revealCtrl.forward();
+    });
+  }
+
+  @override
+  void didUpdateWidget(_AfiyahGuard old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress);
+    if (widget.tapCount > old.tapCount) {
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _pCtrl.dispose();
+    _punchCtrl.dispose(); _shockCtrl.dispose(); _revealCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _revealCtrl, _shockCtrl]),
+      builder: (context, _) {
+        final pulse  = _pulseCtrl.value;
+        final reveal = _revealCtrl.value;
+        final shock  = _shockCtrl.value;
+
+        const teal = Color(0xFF00BFA5);
+        const gold = Color(0xFFD4AF37);
+        const body = Color(0xFFB2DFDB);
+
+        Widget heroCard(String line1, String line2, Color accent, double threshold) {
+          final t = ((reveal - threshold) / 0.35).clamp(0.0, 1.0);
+          return Opacity(
+            opacity: t,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: accent.withValues(alpha: 0.40), width: 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(line1,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      fontSize: 13, fontWeight: FontWeight.w700,
+                      color: accent, letterSpacing: 0.2,
+                    )),
+                  Text(line2,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      fontSize: 10.5, color: accent.withValues(alpha: 0.70),
+                    )),
+                ],
+              ),
+            ),
+          );
+        }
+
+        Widget subLine(String text, double threshold) {
+          final t = ((reveal - threshold) / 0.30).clamp(0.0, 1.0);
+          return Opacity(
+            opacity: t,
+            child: Text(text,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontSize: 11.5, color: body, letterSpacing: 0.1)),
+          );
+        }
+
+        Widget dirBadge() {
+          final t = ((reveal - 0.62) / 0.35).clamp(0.0, 1.0);
+          const dirs = ['Front', 'Back', 'Right', 'Left', 'Above', 'Below'];
+          return Opacity(
+            opacity: t,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 5,
+              runSpacing: 4,
+              children: dirs.map((d) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: teal.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: teal.withValues(alpha: 0.35)),
+                ),
+                child: Text(d, style: GoogleFonts.outfit(
+                  fontSize: 10, color: teal.withValues(alpha: 0.90),
+                  fontWeight: FontWeight.w600)),
+              )).toList(),
+            ),
+          );
+        }
+
+        return ClipRect(
+          child: SizedBox(
+            height: 260,
+            child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Dark teal background
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft, end: Alignment.bottomRight,
+                    colors: [Color(0xFF0D2B2B), Color(0xFF0A3333), Color(0xFF0D2020)],
+                  ),
+                ),
+              ),
+              // Pulse ring — smaller so it doesn't clip the top
+              Center(
+                child: Container(
+                  width: 130 + pulse * 10,
+                  height: 130 + pulse * 10,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF00BFA5).withValues(alpha: 0.05 + pulse * 0.04),
+                      width: 22,
+                    ),
+                  ),
+                ),
+              ),
+              // Tap shock ring
+              if (shock > 0)
+                Center(
+                  child: Container(
+                    width: shock * 220,
+                    height: shock * 220,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: teal.withValues(alpha: (1 - shock) * 0.35),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+              // Text content — wider padding makes it appear narrower
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Two hero cards side-by-side: Dunya | Akhirah
+                    Row(
+                      children: [
+                        Expanded(child: heroCard('This World', 'Dunya', teal, 0.00)),
+                        const SizedBox(width: 6),
+                        Expanded(child: heroCard('Hereafter', 'Akhirah', gold, 0.18)),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    subLine('Well-being in Faith · Family · Wealth', 0.32),
+                    const SizedBox(height: 4),
+                    subLine('Conceal my faults · Calm my fears', 0.50),
+                    const SizedBox(height: 6),
+                    dirBadge(),
+                    const SizedBox(height: 4),
+                    Opacity(
+                      opacity: ((reveal - 0.82) / 0.22).clamp(0.0, 1.0),
+                      child: Text('Guard me from all six sides',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          color: teal.withValues(alpha: 0.60),
+                          fontStyle: FontStyle.italic,
+                        )),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      },
+    );
+  }
 }
 
 // =============================================================================
@@ -9954,6 +10175,354 @@ class _SevenPillarsState extends State<_SevenPillars> with TickerProviderStateMi
   }
 }
 
+
+// =============================================================================
+// 🚪 Noor Door — Raditu Billahi (morning_18 / evening_18)
+// "I am pleased with Allah as my Lord" — Ahmad 18967
+// Double golden doors swing open; divine Noor floods the frame
+// Completion: doors fully open + gold flash + label مَرْضَاةُ اللّٰهِ
+// =============================================================================
+class _NoorDoor extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _NoorDoor({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_NoorDoor> createState() => _NoorDoorState();
+}
+
+class _NoorDoorState extends State<_NoorDoor> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _doorCtrl;
+  late Animation<double> _pulse, _grow, _door;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
+    _growCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _starCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))..repeat(reverse: true);
+    _pCtrl     = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _doorCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
+      ..addListener(() => setState(() {}));
+
+    _pulse = CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut);
+    _grow  = CurvedAnimation(parent: _growCtrl,  curve: Curves.easeOut);
+    _door  = CurvedAnimation(parent: _doorCtrl,  curve: Curves.easeInOut);
+
+    _growCtrl.animateTo(widget.progress);
+    // Begin opening doors with slight delay
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) _doorCtrl.animateTo(widget.progress.clamp(0.15, 1.0));
+    });
+  }
+
+  @override
+  void didUpdateWidget(_NoorDoor old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress);
+    _doorCtrl.animateTo((widget.progress).clamp(0.15, 1.0));
+    if (widget.tapCount > old.tapCount) {
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose();
+    _doorCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _doorCtrl, _pCtrl, _shockCtrl]),
+      builder: (context, _) {
+        return SizedBox(
+          height: 260,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CustomPaint(
+                painter: _NoorDoorPainter(
+                  pulse:    _pulse.value,
+                  grow:     _grow.value,
+                  star:     _starCtrl.value,
+                  door:     _door.value,
+                  shock:    _shockCtrl.value,
+                  p:        _pCtrl.value,
+                  complete: widget.isComplete,
+                ),
+              ),
+              if (widget.isComplete)
+                Align(
+                  alignment: const Alignment(0, 0.72),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.5)),
+                    ),
+                    child: Text(
+                      'مَرْضَاةُ اللّٰهِ',
+                      style: GoogleFonts.amiri(
+                        fontSize: 20,
+                        color: const Color(0xFFD4AF37),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _NoorDoorPainter extends CustomPainter {
+  final double pulse, grow, star, door, shock, p;
+  final bool complete;
+  const _NoorDoorPainter({
+    required this.pulse, required this.grow, required this.star,
+    required this.door,  required this.shock, required this.p,
+    required this.complete,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+
+    // ── Background: warm cream/gold gradient ──────────────────────────────────
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFFFFF8E7),
+            const Color(0xFFFFF3CC),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // ── Noor burst (central light rays) ───────────────────────────────────────
+    final noorAlpha = (0.25 + door * 0.55 + pulse * 0.08).clamp(0.0, 1.0);
+    final rayPaint = Paint()
+      ..color = const Color(0xFFFFE680).withValues(alpha: noorAlpha * 0.6)
+      ..style = PaintingStyle.fill;
+
+    // Draw 16 rays from center
+    const rayCount = 16;
+    final rayMaxLen = h * 0.80;
+    final rayPath = Path();
+    for (int i = 0; i < rayCount; i++) {
+      final angle = (i / rayCount) * 3.14159265 * 2;
+      final halfAngle = 3.14159265 / rayCount * 0.45;
+      final rayLen = rayMaxLen * (0.7 + (i % 3) * 0.1);
+      rayPath.moveTo(cx, h * 0.46);
+      rayPath.lineTo(
+        cx + rayLen * 1.1 * (i % 2 == 0 ? 1 : 0.85) * math.cos(angle - halfAngle),
+        h * 0.46 + rayLen * math.sin(angle - halfAngle),
+      );
+      rayPath.lineTo(
+        cx + rayLen * math.cos(angle + halfAngle),
+        h * 0.46 + rayLen * math.sin(angle + halfAngle),
+      );
+      rayPath.close();
+    }
+    canvas.drawPath(rayPath, rayPaint);
+
+    // Inner glow circle
+    canvas.drawCircle(
+      Offset(cx, h * 0.46),
+      42 + pulse * 14 + door * 26,
+      Paint()
+        ..color = Colors.white.withValues(alpha: (0.5 + door * 0.35).clamp(0.0, 1.0))
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+
+    // ── Floor line ────────────────────────────────────────────────────────────
+    final floorY = h * 0.82;
+    canvas.drawRect(
+      Rect.fromLTWH(0, floorY, w, h - floorY),
+      Paint()..color = const Color(0xFFF5E6C0),
+    );
+
+    // ── Clip all drawing to canvas bounds ────────────────────────────────────
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+
+    // ── Arch: narrower + segmental (shallow) arc ───────────────────────────
+    // archW = 52% of width → less wide look
+    // Radius > archW/2 → flattens the arc so peak stays within canvas
+    final archW     = w * 0.52;
+    final archLeft  = cx - archW / 2;
+    final archRight = cx + archW / 2;
+    final springY   = h * 0.20;    // where vertical sides meet the arc
+    final arcRadius = w * 0.37;    // larger than archW/2 → shallow segmental arc
+
+    final archPaint = Paint()
+      ..color = const Color(0xFFB8860B)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 11
+      ..strokeCap = StrokeCap.round;
+
+    final archPath = Path()
+      ..moveTo(archLeft, floorY)
+      ..lineTo(archLeft, springY)
+      ..arcToPoint(
+        Offset(archRight, springY),
+        radius: Radius.circular(arcRadius),
+        largeArc: false,
+      )
+      ..lineTo(archRight, floorY);
+    canvas.drawPath(archPath, archPaint);
+
+    // Keystone ornament — sits at estimated arc peak
+    // For a segmental arc: peak drop = radius - sqrt(radius²-(archW/2)²)
+    final peakDrop = arcRadius - math.sqrt(arcRadius * arcRadius - (archW / 2) * (archW / 2));
+    final keystoneY = springY - peakDrop;
+    canvas.drawCircle(
+      Offset(cx, keystoneY + 4),
+      9,
+      Paint()..color = const Color(0xFFD4AF37),
+    );
+    canvas.drawCircle(
+      Offset(cx, keystoneY + 4),
+      5.5,
+      Paint()..color = const Color(0xFFFFE680),
+    );
+
+    canvas.restore();
+
+    // ── Doors (swing open on progress) ────────────────────────────────────────
+    // door = 0 → fully closed, door = 1 → fully open
+    // Left door: rotates from closed (angle 0) to open (angle ~-75°)
+    // Right door: mirrors
+    final maxAngle = 1.20; // radians ≈ 69°
+    final doorAngle = door * maxAngle;
+
+    final doorH = floorY - springY;
+    final doorW = archW / 2 - 4;
+
+    // Door colours
+    final doorLight  = const Color(0xFFE8BE50);   // face colour
+    final doorDark   = const Color(0xFFB8860B);   // edge / shadow
+    final doorEdge   = const Color(0xFF8B6914);   // deep edge
+    final panelColor = const Color(0xFFD4A820).withValues(alpha: 0.55);
+
+    void drawDoor(Canvas c, bool isLeft) {
+      // Perspective: left door swings left, right door swings right
+      // We shrink width by cos(angle) to fake 3-D
+      final cosA  = math.cos(doorAngle).clamp(0.0, 1.0);
+      final sign  = isLeft ? -1.0 : 1.0;
+      final hinge = isLeft ? archLeft + 4 : archRight - 4;
+      final visibleW = doorW * cosA;  // apparent width shrinks as door opens
+
+      // Door face rect
+      final faceRect = isLeft
+          ? Rect.fromLTWH(hinge, springY, visibleW, doorH)
+          : Rect.fromLTWH(hinge - visibleW, springY, visibleW, doorH);
+
+      // Door fill — gold gradient
+      c.drawRect(
+        faceRect,
+        Paint()
+          ..shader = LinearGradient(
+            begin: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+            end:   isLeft ? Alignment.centerRight : Alignment.centerLeft,
+            colors: [doorDark, doorLight, doorDark.withValues(alpha: 0.85)],
+          ).createShader(faceRect),
+      );
+
+      // Panel inset (decorative rectangle)
+      if (visibleW > 12) {
+        final px = isLeft ? hinge + visibleW * 0.12 : hinge - visibleW * 0.88;
+        final topPanel = Rect.fromLTWH(px, springY + doorH * 0.06, visibleW * 0.76, doorH * 0.32);
+        final botPanel = Rect.fromLTWH(px, springY + doorH * 0.06 + doorH * 0.38, visibleW * 0.76, doorH * 0.34);
+        final rr = RRect.fromRectAndRadius(topPanel, const Radius.circular(4));
+        final rr2 = RRect.fromRectAndRadius(botPanel, const Radius.circular(4));
+        c.drawRRect(rr,  Paint()..color = panelColor);
+        c.drawRRect(rr2, Paint()..color = panelColor);
+        // Panel border
+        final pBorder = Paint()..color = doorDark.withValues(alpha: 0.4)..style = PaintingStyle.stroke..strokeWidth = 1.2;
+        c.drawRRect(rr,  pBorder);
+        c.drawRRect(rr2, pBorder);
+      }
+
+      // Handle (knob)
+      if (visibleW > 10) {
+        final knobX = isLeft ? hinge + visibleW * 0.78 : hinge - visibleW * 0.78;
+        final knobY = springY + doorH * 0.52;
+        c.drawCircle(Offset(knobX, knobY), 5.5, Paint()..color = doorEdge);
+        c.drawCircle(Offset(knobX, knobY), 3.5, Paint()..color = const Color(0xFFFFE999));
+      }
+
+      // Edge shadow to give depth
+      final edgeX = isLeft ? hinge + visibleW : hinge - visibleW;
+      c.drawLine(
+        Offset(edgeX, springY),
+        Offset(edgeX, floorY),
+        Paint()..color = doorEdge.withValues(alpha: 0.6)..strokeWidth = 3,
+      );
+    }
+
+    drawDoor(canvas, true);   // left door
+    drawDoor(canvas, false);  // right door
+
+    // ── Floating Noor particles ────────────────────────────────────────────────
+    if (door > 0.12) {
+      final rng = [0.48, 0.52, 0.45, 0.56, 0.50, 0.42, 0.58];
+      final rngy = [0.28, 0.45, 0.60, 0.35, 0.50, 0.40, 0.55];
+      final particlePaint = Paint();
+      for (int i = 0; i < rng.length; i++) {
+        final flicker = (star + i * 0.23) % 1.0;
+        final alpha = (door * (0.3 + flicker * 0.5)).clamp(0.0, 0.8);
+        particlePaint.color = const Color(0xFFFFE680).withValues(alpha: alpha);
+        final radius = 2.5 + (i % 3) * 1.8;
+        canvas.drawCircle(Offset(w * rng[i], h * rngy[i]), radius, particlePaint
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+      }
+    }
+
+    // ── Tap shockwave ─────────────────────────────────────────────────────────
+    if (shock > 0) {
+      canvas.drawCircle(
+        Offset(cx, h * 0.38),
+        shock * w * 0.45,
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: (1 - shock) * 0.35)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
+    }
+
+    // ── Completion gold wash ──────────────────────────────────────────────────
+    if (complete) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, w, h),
+        Paint()
+          ..color = const Color(0xFFD4AF37).withValues(alpha: 0.07)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_NoorDoorPainter old) =>
+      old.pulse != pulse || old.grow != grow || old.star != star ||
+      old.door != door  || old.shock != shock || old.p != p || old.complete != complete;
+}
 
 // =============================================================================
 // 🤝 Guiding Hand (يد الشفاعة) — Prophet holds your hand into Jannah
@@ -14070,7 +14639,8 @@ class _DawnDuskPainter extends CustomPainter {
   bool shouldRepaint(_DawnDuskPainter o) =>
     o.progress != progress || o.pulse != pulse || o.glowPhase != glowPhase || o.starPhase != starPhase || o.isComplete != isComplete;
 }
-
+
+
 
 
 // ─────────────────────────────────────────────────────────────────────────────

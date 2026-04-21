@@ -13,6 +13,7 @@ import 'services/settings_service.dart';
 import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart';       // Quran Foundation credentials
 import 'services/notification_service.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'utils/asset_helper.dart';
 
@@ -103,6 +104,7 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
+      navigatorKey: notificationNavigatorKey,
       home: const AuthGate(),
     );
   }

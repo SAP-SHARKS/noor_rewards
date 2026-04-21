@@ -138,6 +138,7 @@ serve(async (_req: Request) => {
             message: {
               token,
               notification: { title, body },
+              data: { route: logType === 'morning_azkaar' ? 'morning' : 'evening' },
               android: { priority: 'high', notification: { sound: 'default' } },
               apns: { payload: { aps: { sound: 'default' } } },
             },
