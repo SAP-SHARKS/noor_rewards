@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase, fetchAllConfig, updateConfigKey } from "@/lib/supabase";
+import { useConfig } from "@/lib/config-context";
 
 const THEME_PRESETS = [
   {
@@ -58,7 +57,6 @@ const COLOR_KEYS = [
 ];
 
 function flutterColorToHex(fc: string): string {
-  // "0xFF2BAE99" → "#2BAE99"
   if (fc && fc.startsWith("0x") && fc.length >= 10) {
     return "#" + fc.slice(4);
   }
@@ -66,45 +64,11 @@ function flutterColorToHex(fc: string): string {
 }
 
 function hexToFlutterColor(hex: string): string {
-  // "#2BAE99" → "0xFF2BAE99"
   return "0xFF" + hex.replace("#", "").toUpperCase();
 }
 
 export default function ThemePage() {
-  const [config, setConfig] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
-  const emailRef = useRef("");
-
-  useEffect(() => {
-    Promise.all([
-      fetchAllConfig(),
-      supabase.auth.getUser(),
-    ]).then(([rows, { data }]) => {
-      const map: Record<string, string> = {};
-      for (const r of rows) map[r.key] = r.value;
-      setConfig(map);
-      emailRef.current = data.user?.email ?? "admin";
-      setLoading(false);
-    });
-  }, []);
-
-  async function saveColor(key: string, flutterVal: string) {
-    setSaving(key);
-    await updateConfigKey(key, flutterVal, emailRef.current);
-    setConfig((prev) => ({ ...prev, [key]: flutterVal }));
-    setSaving(null);
-  }
-
-  async function applyPreset(preset: (typeof THEME_PRESETS)[0]) {
-    setSaving("preset");
-    const email = emailRef.current;
-    for (const [key, value] of Object.entries(preset.colors)) {
-      await updateConfigKey(key, value, email);
-    }
-    setConfig((prev) => ({ ...prev, ...preset.colors }));
-    setSaving(null);
-  }
+  const { config, loading, save, saveBatch } = useConfig();
 
   if (loading)
     return (
@@ -124,8 +88,7 @@ export default function ThemePage() {
           {THEME_PRESETS.map((preset) => (
             <button
               key={preset.name}
-              onClick={() => applyPreset(preset)}
-              disabled={saving === "preset"}
+              onClick={() => saveBatch(preset.colors)}
               className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:border-teal-400 transition cursor-pointer"
             >
               <div className="flex gap-1 mb-2">
@@ -162,7 +125,7 @@ export default function ThemePage() {
                   type="color"
                   value={hex.length === 7 ? hex : "#000000"}
                   onChange={(e) =>
-                    saveColor(key, hexToFlutterColor(e.target.value))
+                    save(key, hexToFlutterColor(e.target.value))
                   }
                   className="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer p-0"
                 />
@@ -172,9 +135,6 @@ export default function ThemePage() {
                     {config[key] ?? "—"}
                   </p>
                 </div>
-                {saving === key && (
-                  <span className="text-xs text-teal-600">Saving...</span>
-                )}
               </div>
             );
           })}

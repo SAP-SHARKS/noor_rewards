@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase, fetchAllConfig, updateConfigKey } from "@/lib/supabase";
+import { useState } from "react";
+import { useConfig } from "@/lib/config-context";
 
 const BANNER_FIELDS = [
   { key: "banner_enabled", label: "Banner Enabled", type: "toggle" as const },
@@ -25,30 +25,21 @@ function hexToFlutter(hex: string): string {
 }
 
 export default function BannersPage() {
-  const [config, setConfig] = useState<Record<string, string>>({});
+  const { config, loading, save } = useConfig();
   const [editing, setEditing] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
-  const emailRef = useRef("");
+  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-    Promise.all([
-      fetchAllConfig(),
-      supabase.auth.getUser(),
-    ]).then(([rows, { data }]) => {
-      const map: Record<string, string> = {};
-      for (const r of rows) map[r.key] = r.value;
-      setConfig(map);
-      setEditing(map);
-      emailRef.current = data.user?.email ?? "admin";
-      setLoading(false);
-    });
-  }, []);
+  if (!initialized && !loading) {
+    const map: Record<string, string> = {};
+    for (const f of BANNER_FIELDS) map[f.key] = config[f.key] ?? "";
+    setEditing(map);
+    setInitialized(true);
+  }
 
-  async function save(key: string, value: string) {
+  async function handleSave(key: string, value: string) {
     setSaving(key);
-    await updateConfigKey(key, value, emailRef.current);
-    setConfig((prev) => ({ ...prev, [key]: value }));
+    await save(key, value);
     setEditing((prev) => ({ ...prev, [key]: value }));
     setSaving(null);
   }
@@ -94,7 +85,7 @@ export default function BannersPage() {
               {field.type === "toggle" ? (
                 <button
                   onClick={() =>
-                    save(field.key, bannerOn ? "false" : "true")
+                    handleSave(field.key, bannerOn ? "false" : "true")
                   }
                   className={`relative w-[52px] h-[28px] rounded-full transition-colors cursor-pointer ${
                     bannerOn ? "bg-teal-500" : "bg-slate-200"
@@ -115,7 +106,7 @@ export default function BannersPage() {
                       : "#000000"
                   }
                   onChange={(e) =>
-                    save(field.key, hexToFlutter(e.target.value))
+                    handleSave(field.key, hexToFlutter(e.target.value))
                   }
                   className="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer p-0"
                 />
@@ -133,7 +124,7 @@ export default function BannersPage() {
                     className="w-56 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                   />
                   <button
-                    onClick={() => save(field.key, editing[field.key])}
+                    onClick={() => handleSave(field.key, editing[field.key])}
                     disabled={
                       editing[field.key] === config[field.key] ||
                       saving === field.key

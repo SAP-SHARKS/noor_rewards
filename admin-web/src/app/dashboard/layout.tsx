@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase, ADMIN_EMAILS } from "@/lib/supabase";
+import { ConfigProvider } from "@/lib/config-context";
 import type { User } from "@supabase/supabase-js";
 
 const NAV_ITEMS = [
@@ -145,7 +146,9 @@ export default function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="p-6">{children}</main>
+        <main className="p-6">
+            <ConfigProvider>{children}</ConfigProvider>
+          </main>
       </div>
     </div>
   );

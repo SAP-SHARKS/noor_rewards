@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 type Profile = {
   id: string;
   display_name: string;
-  total_xp: number;
+  noor_points: number;
   level: number;
   day_streak: number;
   country: string;
@@ -25,7 +25,7 @@ export default function UsersPage() {
     supabase
       .from("profiles")
       .select("*")
-      .order("total_xp", { ascending: false })
+      .order("noor_points", { ascending: false })
       .limit(100)
       .then(({ data }) => {
         setUsers(data ?? []);
@@ -37,7 +37,7 @@ export default function UsersPage() {
     const amount = parseInt(grantAmount);
     if (!amount || amount <= 0) return;
     setGranting(true);
-    await supabase.rpc("earn_xp", {
+    await supabase.rpc("grant_points", {
       p_user_id: userId,
       p_amount: amount,
     });
@@ -45,7 +45,7 @@ export default function UsersPage() {
     const { data } = await supabase
       .from("profiles")
       .select("*")
-      .order("total_xp", { ascending: false })
+      .order("noor_points", { ascending: false })
       .limit(100);
     setUsers(data ?? []);
     setGrantUserId(null);
@@ -77,7 +77,7 @@ export default function UsersPage() {
           className="flex-1 max-w-sm px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         <p className="text-sm text-slate-500">
-          Top {users.length} users by XP
+          Top {users.length} users by Points
         </p>
       </div>
 
@@ -95,7 +95,7 @@ export default function UsersPage() {
                 Level
               </th>
               <th className="text-right px-4 py-3 font-medium text-slate-600">
-                Total XP
+                Points
               </th>
               <th className="text-right px-4 py-3 font-medium text-slate-600">
                 Streak
@@ -122,7 +122,7 @@ export default function UsersPage() {
                   {u.level}
                 </td>
                 <td className="px-4 py-3 text-right font-semibold text-slate-800">
-                  {u.total_xp?.toLocaleString()}
+                  {u.noor_points?.toLocaleString()}
                 </td>
                 <td className="px-4 py-3 text-right text-slate-600">
                   {u.day_streak}d
@@ -134,7 +134,7 @@ export default function UsersPage() {
                         type="number"
                         value={grantAmount}
                         onChange={(e) => setGrantAmount(e.target.value)}
-                        placeholder="XP"
+                        placeholder="Pts"
                         className="w-20 px-2 py-1 border border-slate-200 rounded text-xs text-right"
                       />
                       <button
@@ -156,7 +156,7 @@ export default function UsersPage() {
                       onClick={() => setGrantUserId(u.id)}
                       className="text-xs text-teal-600 hover:text-teal-800 cursor-pointer"
                     >
-                      Grant XP
+                      Grant Points
                     </button>
                   )}
                 </td>

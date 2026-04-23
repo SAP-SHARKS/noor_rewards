@@ -1,31 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase, fetchAllConfig } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import { useConfig } from "@/lib/config-context";
 
 export default function OverviewPage() {
+  const { config, loading: configLoading } = useConfig();
   const [stats, setStats] = useState({
     totalUsers: 0,
-    totalXp: 0,
+    totalPoints: 0,
     activeProjects: 0,
     badgesAwarded: 0,
   });
-  const [configSnapshot, setConfigSnapshot] = useState<Record<string, string>>(
-    {}
-  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       const [
         { count: userCount },
-        { data: xpData },
+        { data: pointsData },
         { count: projectCount },
         { count: badgeCount },
-        configRows,
       ] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("total_xp"),
+        supabase.from("profiles").select("noor_points"),
         supabase
           .from("community_projects")
           .select("*", { count: "exact", head: true })
@@ -33,28 +31,23 @@ export default function OverviewPage() {
         supabase
           .from("user_badges")
           .select("*", { count: "exact", head: true }),
-        fetchAllConfig(),
       ]);
 
-      const totalXp =
-        xpData?.reduce((sum, r) => sum + (r.total_xp ?? 0), 0) ?? 0;
+      const totalPoints =
+        pointsData?.reduce((sum, r) => sum + (r.noor_points ?? 0), 0) ?? 0;
 
       setStats({
         totalUsers: userCount ?? 0,
-        totalXp,
+        totalPoints,
         activeProjects: projectCount ?? 0,
         badgesAwarded: badgeCount ?? 0,
       });
-
-      const snap: Record<string, string> = {};
-      for (const row of configRows) snap[row.key] = row.value;
-      setConfigSnapshot(snap);
       setLoading(false);
     }
     load();
   }, []);
 
-  if (loading)
+  if (loading || configLoading)
     return (
       <div className="flex items-center justify-center py-20">
         <div className="animate-spin w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full" />
@@ -68,8 +61,8 @@ export default function OverviewPage() {
       icon: "👥",
     },
     {
-      label: "Total XP Earned",
-      value: stats.totalXp.toLocaleString(),
+      label: "Total Points Earned",
+      value: stats.totalPoints.toLocaleString(),
       icon: "⭐",
     },
     {
@@ -87,10 +80,8 @@ export default function OverviewPage() {
   const importantKeys = [
     "coins_per_ayah",
     "coins_per_dhikr",
-    "xp_per_ayah",
-    "xp_per_dhikr",
+    "coins_per_dua",
     "daily_free_cap",
-    "weekly_xp_cap",
     "maintenance_mode",
     "banner_enabled",
   ];
@@ -120,12 +111,12 @@ export default function OverviewPage() {
         <h2 className="text-base font-semibold text-slate-800 mb-4">
           Current Config Snapshot
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {importantKeys.map((key) => (
             <div key={key} className="bg-slate-50 rounded-lg p-3">
               <p className="text-xs text-slate-500 font-mono">{key}</p>
               <p className="text-sm font-semibold text-slate-800 mt-0.5">
-                {configSnapshot[key] ?? "—"}
+                {config[key] ?? "—"}
               </p>
             </div>
           ))}
