@@ -1,96 +1,53 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import {
-  supabase,
-  fetchAllConfig,
-  updateConfigKey,
-  type AppConfigRow,
-} from "@/lib/supabase";
+import { useState } from "react";
+import { useConfig } from "@/lib/config-context";
 
 const ECONOMY_KEYS = [
   {
     key: "coins_per_ayah",
-    label: "Coins per Ayah",
-    desc: "Coins earned for each Quran ayah read",
+    label: "Points per Ayah",
+    desc: "Points earned for each Quran ayah read",
   },
   {
     key: "coins_per_dhikr",
-    label: "Coins per Dhikr",
-    desc: "Coins earned for completing a dhikr set",
+    label: "Points per Dhikr",
+    desc: "Points earned for completing a dhikr set",
   },
   {
     key: "coins_per_tafsir_10min",
-    label: "Coins per 10min Tafsir",
-    desc: "Coins earned for 10 minutes of Tafsir listening",
+    label: "Points per 10min Tafsir",
+    desc: "Points earned for 10 minutes of Tafsir listening",
   },
   {
     key: "coins_per_dua",
-    label: "Coins per Dua",
-    desc: "Coins earned per dua completion",
-  },
-  {
-    key: "xp_per_ayah",
-    label: "XP per Ayah",
-    desc: "XP earned for each Quran ayah",
-  },
-  {
-    key: "xp_per_dhikr",
-    label: "XP per Dhikr",
-    desc: "XP for completing a dhikr set",
-  },
-  {
-    key: "xp_per_tafsir_10min",
-    label: "XP per 10min Tafsir",
-    desc: "XP for 10 minutes of Tafsir",
-  },
-  {
-    key: "xp_daily_login",
-    label: "XP Daily Login",
-    desc: "XP bonus for daily login",
-  },
-  {
-    key: "xp_validate_coins",
-    label: "XP Validate Coins",
-    desc: "XP for coin validation",
+    label: "Points per Dua",
+    desc: "Points earned per dua completion",
   },
   {
     key: "daily_free_cap",
     label: "Daily Free Cap",
-    desc: "Max free coins per day",
-  },
-  {
-    key: "weekly_xp_cap",
-    label: "Weekly XP Cap",
-    desc: "Max XP earnable per week",
+    desc: "Max free points per day",
   },
 ];
 
 export default function EconomyPage() {
-  const [config, setConfig] = useState<Record<string, string>>({});
+  const { config, loading, save } = useConfig();
   const [editing, setEditing] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const emailRef = useRef("");
+  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-    Promise.all([
-      fetchAllConfig(),
-      supabase.auth.getUser(),
-    ]).then(([rows, { data }]) => {
-      const map: Record<string, string> = {};
-      for (const r of rows) map[r.key] = r.value;
-      setConfig(map);
-      setEditing(map);
-      emailRef.current = data.user?.email ?? "admin";
-      setLoading(false);
-    });
-  }, []);
+  // Sync editing state from config on first load
+  if (!initialized && !loading) {
+    const map: Record<string, string> = {};
+    for (const { key } of ECONOMY_KEYS) map[key] = config[key] ?? "";
+    setEditing(map);
+    setInitialized(true);
+  }
 
   async function handleSave(key: string) {
     setSaving(key);
-    await updateConfigKey(key, editing[key], emailRef.current);
-    setConfig((prev) => ({ ...prev, [key]: editing[key] }));
+    await save(key, editing[key]);
     setSaving(null);
   }
 
@@ -104,8 +61,8 @@ export default function EconomyPage() {
   return (
     <div className="max-w-3xl">
       <p className="text-sm text-slate-500 mb-6">
-        Control earning rates for coins and XP across the app. Changes propagate
-        to all users in real-time.
+        Control earning rates for points across the app. Changes propagate to
+        all users in real-time.
       </p>
 
       <div className="space-y-3">

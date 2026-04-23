@@ -17,17 +17,16 @@ export default function RawConfigPage() {
   const emailRef = useRef("");
 
   useEffect(() => {
-    Promise.all([
-      fetchAllConfig(),
-      supabase.auth.getUser(),
-    ]).then(([configData, { data }]) => {
-      setRows(configData);
-      const map: Record<string, string> = {};
-      for (const r of configData) map[r.key] = r.value;
-      setEditing(map);
-      emailRef.current = data.user?.email ?? "admin";
-      setLoading(false);
-    });
+    Promise.all([fetchAllConfig(), supabase.auth.getUser()]).then(
+      ([configData, { data }]) => {
+        setRows(configData);
+        const map: Record<string, string> = {};
+        for (const r of configData) map[r.key] = r.value;
+        setEditing(map);
+        emailRef.current = data.user?.email ?? "admin";
+        setLoading(false);
+      }
+    );
   }, []);
 
   async function handleSave(key: string) {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase, fetchAllConfig, updateConfigKey } from "@/lib/supabase";
+import { useState } from "react";
+import { useConfig } from "@/lib/config-context";
 
 const FEATURE_FLAGS = [
   {
@@ -44,23 +44,8 @@ const FEATURE_FLAGS = [
 ];
 
 export default function FeaturesPage() {
-  const [config, setConfig] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const { config, loading, save } = useConfig();
   const [toggling, setToggling] = useState<string | null>(null);
-  const emailRef = useRef("");
-
-  useEffect(() => {
-    Promise.all([
-      fetchAllConfig(),
-      supabase.auth.getUser(),
-    ]).then(([rows, { data }]) => {
-      const map: Record<string, string> = {};
-      for (const r of rows) map[r.key] = r.value;
-      setConfig(map);
-      emailRef.current = data.user?.email ?? "admin";
-      setLoading(false);
-    });
-  }, []);
 
   async function handleToggle(key: string) {
     const current = config[key] === "true";
@@ -73,10 +58,8 @@ export default function FeaturesPage() {
     )
       return;
 
-    const newVal = current ? "false" : "true";
-    setConfig((prev) => ({ ...prev, [key]: newVal }));
     setToggling(key);
-    await updateConfigKey(key, newVal, emailRef.current);
+    await save(key, current ? "false" : "true");
     setToggling(null);
   }
 
