@@ -867,7 +867,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: '📖',
         title: 'Read 5 Quran Pages',
-        desc: 'Complete now → earn +50 XP bonus',
+        desc: 'Complete now → earn +50 points bonus',
         onTap: () {
           Navigator.of(context).pop();
           widget.onGoQuran();
@@ -876,7 +876,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: '📿',
         title: 'Complete a Dhikr Set',
-        desc: 'Finish your Azkaar → earn +30 XP bonus',
+        desc: 'Finish your Azkaar → earn +30 points bonus',
         onTap: () {
           Navigator.of(context).pop();
           widget.onGoDhikr();

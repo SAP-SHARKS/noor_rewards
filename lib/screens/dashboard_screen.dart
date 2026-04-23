@@ -13,7 +13,7 @@ import 'tafsir_hub_screen.dart';
 import 'level_screen.dart';
 import 'impact_report_screen.dart';
 import 'profile_settings_screen.dart';
-import 'admin/admin_dashboard.dart';
+
 import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
@@ -25,9 +25,8 @@ import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/motivational_popup.dart';
 import '../widgets/project_media_carousel.dart';
+import 'project_detail_screen.dart';
 
-// ── Admin email whitelist (client-side guard) ─────────────────────────────────
-const _kAdminEmails = {'pak.zakn@gmail.com', 'zaid_azam@zeir.io'};
 
 // ── Palette ────────────────────────────────────────────────────────────────────
 class _C {
@@ -72,7 +71,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // Community project
   Map<String, dynamic>? _project;
 
-  int _adminRefreshCount = 0;
+
   bool _navVisible = true;
 
   // Nav Keys for nested routing
@@ -337,7 +336,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
         child: IndexedStack(index: _tab, children: [
           _HomeTab(
-            key: ValueKey('home_${_adminRefreshCount}_${_noorPoints}_${_streak}'),
+            key: ValueKey('home_${_noorPoints}_${_streak}'),
             name: widget.name,
             noorPoints: _noorPoints,
             totalXp: _totalXp ?? 0,
@@ -379,7 +378,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           _buildTabNavigator(1, const LevelScreen()),           // Tab 1 — Journey
           _buildTabNavigator(2, ImpactReportScreen(
-            key: ValueKey('impact_$_adminRefreshCount'),
+            key: const ValueKey('impact'),
             isTab: true,
             visitCount: _akhirahVisitCount,
           )), // Tab 2 — Akhirah
@@ -2784,104 +2783,24 @@ class _ImpactTabState extends State<_ImpactTab> {
         const SizedBox(height: 20),
 
         for (final p in active) ...[
-          Container(
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16)]),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Expanded(child: Text('${p['title']}',
-                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text))),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  decoration: BoxDecoration(color: const Color(0xFFFFF3D4), borderRadius: BorderRadius.circular(12)),
-                  child: Text('\$${p['estimated_usd'].toStringAsFixed(0)}',
-                      style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _C.amber)),
-                ),
-              ]),
-              const SizedBox(height: 16),
-              Builder(
-                builder: (context) {
-                  final mediaList = _projectMedia[p['id']] ?? [];
-                  final dpUrl = p['dp_url'] as String?;
-                  if (mediaList.isNotEmpty) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: ProjectMediaCarousel(media: mediaList, height: 180),
-                    );
-                  }
-                  if (dpUrl != null && dpUrl.isNotEmpty) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: SizedBox(
-                        height: 180, width: double.infinity,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image.network(dpUrl, fit: BoxFit.cover),
-                            BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                              child: Container(color: Colors.black.withValues(alpha: 0.2)),
-                            ),
-                            Image.network(dpUrl, fit: BoxFit.contain),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                  return Container(
-                    height: 130, width: double.infinity,
-                    decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [Color(0xFF89CFF0), Color(0xFF4ECDC4)]),
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Center(child: NoorIcon.drop(size: 64)),
-                  );
-                }
-              ),
-              const SizedBox(height: 16),
-              ClipRRect(borderRadius: BorderRadius.circular(8),
-                child: LinearProgressIndicator(
-                  value: ((p['current_points'] as num) / (p['target_points'] as num)).clamp(0.0, 1.0),
-                  minHeight: 10,
-                  backgroundColor: const Color(0xFFFFE8A0),
-                  valueColor: const AlwaysStoppedAnimation(_C.amber),
-                )),
-              const SizedBox(height: 10),
-              Row(children: [
-                Text('${_fmtM(p['current_points'])} / ${_fmtM(p['target_points'])} points',
-                    style: GoogleFonts.outfit(fontSize: 13, color: _C.sub, fontWeight: FontWeight.w500)),
-                const Spacer(),
-                Text('${((p['current_points'] as num) / (p['target_points'] as num) * 100).toStringAsFixed(0)}%',
-                    style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: _C.amber)),
-              ]),
-              const SizedBox(height: 14),
-              Row(children: [
-                Expanded(child: Text('Sponsored by ${p['sponsor']}',
-                    style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
-                    maxLines: 1, overflow: TextOverflow.ellipsis)),
-                const SizedBox(width: 8),
-                // ── Donate Button ──
-                InkWell(
-                  onTap: availablePoints > 0 ? () {
-                    _showDonateSheet(context, p, availablePoints, parentState);
-                  } : null,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: availablePoints > 0 ? _C.navImpact : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: availablePoints > 0 ? [BoxShadow(color: _C.navImpact.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))] : null,
-                    ),
-                    child: Row(children: [
-                      NoorIcon.coin(size: 14),
-                      const SizedBox(width: 4),
-                      Text('See Details', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: availablePoints > 0 ? Colors.white : Colors.grey.shade600)),
-                    ]),
+          _ProjectCard(
+            project: p,
+            mediaList: _projectMedia[p['id']] ?? [],
+            availablePoints: availablePoints,
+            fmtM: _fmtM,
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProjectDetailScreen(
+                    project: p,
+                    availablePoints: availablePoints,
+                    onDonationSuccess: () => _load(),
                   ),
                 ),
-              ]),
-            ]),
+              );
+              _load();
+            },
           ),
           const SizedBox(height: 16),
         ],
@@ -2938,6 +2857,165 @@ class _ImpactTabState extends State<_ImpactTab> {
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROJECT CARD — tappable preview in the Impact tab
+// ─────────────────────────────────────────────────────────────────────────────
+class _ProjectCard extends StatelessWidget {
+  final Map<String, dynamic> project;
+  final List<ProjectMedia> mediaList;
+  final int availablePoints;
+  final String Function(num) fmtM;
+  final VoidCallback onTap;
+
+  const _ProjectCard({
+    required this.project,
+    required this.mediaList,
+    required this.availablePoints,
+    required this.fmtM,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final p       = project;
+    final dpUrl   = p['dp_url'] as String?;
+    final current = (p['current_points'] as num?)?.toInt() ?? 0;
+    final target  = (p['target_points']  as num?)?.toInt() ?? 1;
+    final pct     = (current / target).clamp(0.0, 1.0);
+    final category = p['category'] as String?;
+    final location = p['location'] as String?;
+
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          // Hero image
+          SizedBox(
+            height: 200,
+            child: mediaList.isNotEmpty
+                ? ProjectMediaCarousel(media: mediaList, height: 200)
+                : dpUrl != null && dpUrl.isNotEmpty
+                    ? Stack(fit: StackFit.expand, children: [
+                        Image.network(dpUrl, fit: BoxFit.cover),
+                      ])
+                    : Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF2BAE99), Color(0xFF1A9E8C)]),
+                        ),
+                        child: Center(child: NoorIcon.drop(size: 64)),
+                      ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // Badges
+              if (category != null || location != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Wrap(spacing: 6, children: [
+                    if (category != null && category.isNotEmpty)
+                      _ImpactChip(category, const Color(0xFFE8F8F5), const Color(0xFF2BAE99)),
+                    if (location != null && location.isNotEmpty)
+                      _ImpactChip('📍 $location', const Color(0xFFFFF3D4), _C.amber),
+                  ]),
+                ),
+
+              // Title
+              Text(p['title'] ?? '',
+                style: GoogleFonts.outfit(
+                    fontSize: 17, fontWeight: FontWeight.w800, color: _C.text,
+                    height: 1.3)),
+              const SizedBox(height: 6),
+
+              // Sponsor
+              Text('By ${p['sponsor'] ?? ''}',
+                style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+              const SizedBox(height: 14),
+
+              // Progress bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: pct,
+                  minHeight: 8,
+                  backgroundColor: const Color(0xFFE8F8F5),
+                  valueColor: const AlwaysStoppedAnimation(Color(0xFF2BAE99)),
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              Row(children: [
+                Text('${fmtM(current)} / ${fmtM(target)} pts',
+                  style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF3D4),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text('\$${(p['estimated_usd'] ?? 0).toStringAsFixed(0)}',
+                    style: GoogleFonts.outfit(
+                        fontSize: 12, fontWeight: FontWeight.w700,
+                        color: _C.amber)),
+                ),
+              ]),
+              const SizedBox(height: 14),
+
+              // CTA button
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                decoration: BoxDecoration(
+                  gradient: availablePoints > 0
+                      ? const LinearGradient(
+                          colors: [Color(0xFF2BAE99), Color(0xFF1A9883)])
+                      : null,
+                  color: availablePoints > 0 ? null : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: availablePoints > 0
+                      ? [BoxShadow(
+                          color: const Color(0xFF2BAE99).withValues(alpha: 0.28),
+                          blurRadius: 12, offset: const Offset(0, 4))]
+                      : null,
+                ),
+                child: Center(
+                  child: Text(
+                    availablePoints > 0 ? '🤲  View Campaign & Donate' : 'View Campaign',
+                    style: GoogleFonts.outfit(
+                      fontSize: 14, fontWeight: FontWeight.w700,
+                      color: availablePoints > 0 ? Colors.white : _C.sub,
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+class _ImpactChip extends StatelessWidget {
+  final String label;
+  final Color bg;
+  final Color fg;
+  const _ImpactChip(this.label, this.bg, this.fg);
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+    decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+    child: Text(label,
+        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -3888,42 +3966,6 @@ class _ProfileTabState extends State<_ProfileTab> {
                   ]),
                 ),
                 const SizedBox(height: 14),
-
-                // Admin Panel button (admins only)
-                if (_kAdminEmails.contains(user?.email)) ...[
-                  GestureDetector(
-                    onTap: () async {
-                      await Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const AdminDashboard()));
-                      if (!context.mounted) return;
-                      // Refresh dashboard tabs on return to update sequences/projects
-                      _ProjectCoverState.clearCache();
-                      final dashboard = context.findAncestorStateOfType<_DashboardScreenState>();
-                      if (dashboard != null) {
-                        dashboard._adminRefreshCount++;
-                        dashboard._loadHomeData();
-                      }
-                    },
-                    child: Container(
-                      width: double.infinity, height: 54,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: _C.darkBtn,
-                        boxShadow: [BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 12, offset: const Offset(0, 4),
-                        )],
-                      ),
-                      child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.admin_panel_settings_rounded, color: _C.teal, size: 22),
-                        const SizedBox(width: 10),
-                        Text('Admin Panel', style: GoogleFonts.outfit(
-                            fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
-                      ])),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                ],
 
                 // Sign Out
                 GestureDetector(

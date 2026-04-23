@@ -26,7 +26,7 @@ serve(async (req: Request) => {
     
     let pushMessage = 'Congratulations! You just earned a new reward!';
     if (rewardName && pointsAmt) {
-      pushMessage = `You earned ${pointsAmt} XP for ${rewardName}!`;
+      pushMessage = `You earned ${pointsAmt} points for ${rewardName}!`;
     } else if (rewardName) {
       pushMessage = `You just unlocked: ${rewardName}!`;
     } else if (pointsAmt) {

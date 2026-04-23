@@ -2087,14 +2087,17 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
     final re = RegExp(r'﴿[٠-٩]+﴾|\n');
     int last = 0;
     for (final m in re.allMatches(text)) {
-      if (m.start > last) {
-        result.add(TextSpan(text: text.substring(last, m.start), style: style));
-      }
       final matched = m.group(0)!;
+      if (m.start > last) {
+        final chunk = text.substring(last, m.start);
+        // Append word joiner before markers so text can't break away from them
+        result.add(TextSpan(text: matched != '\n' ? '$chunk\u2060' : chunk, style: style));
+      }
       if (matched == '\n') {
         result.add(TextSpan(text: '\n', style: tightNewline));
       } else {
-        result.add(TextSpan(text: matched, style: markerStyle.copyWith(color: style.color)));
+        // Prefix with word joiner (\u2060) to prevent line-break before marker
+        result.add(TextSpan(text: '\u2060$matched', style: markerStyle.copyWith(color: style.color)));
       }
       last = m.end;
     }
@@ -2175,8 +2178,9 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
     Widget textWidget = Text.rich(
       TextSpan(style: baseStyle, children: blockSpans),
       textAlign: TextAlign.center,
+      textDirection: TextDirection.rtl,
       textHeightBehavior: const TextHeightBehavior(
-        applyHeightToFirstAscent: false, 
+        applyHeightToFirstAscent: false,
         applyHeightToLastDescent: false,
       ),
     );
@@ -2567,7 +2571,7 @@ String _pickIllustration(String rawId) {
   // By Your Leave
   if (id == 'morning_14' || id == 'evening_14') return 'cycle';
   // Gratitude
-  if (id == 'morning_16' || id == 'evening_16') return 'vessel';
+  if (id == 'morning_16' || id == 'evening_16') return 'six_dir_shield';
   // Gratitude fulfilled — tree + overlay text
   if (id == 'morning_15' || id == 'evening_15') return 'cycle';
   // Raditu billahi — door of divine pleasure opening
@@ -2575,7 +2579,7 @@ String _pickIllustration(String rawId) {
   // Well-being / Afiyah — 6 direction protection
   if (id == 'morning_19' || id == 'evening_19') return 'afiyah_guard';
   // SubhanAllah 'adada khalqihi — cosmic weight
-  if (id == 'morning_20' || id == 'evening_20') return 'cosmic';
+  if (id == 'morning_20' || id == 'evening_20') return 'heavy_scales';
   // Divine Praise — reward awaits with Allah (morning_17 = evening_17)
   if (id == 'morning_17' || id == 'evening_17') return 'benefit_text_17';
   // Bismillah protection — invincible name
@@ -2587,7 +2591,7 @@ String _pickIllustration(String rawId) {
   // Knower of unseen — repelling light
   if (id == 'morning_24' || id == 'evening_24') return 'repelling';
   // Ya Hayyu Ya Qayyum — cradled heart
-  if (id == 'morning_25' || id == 'evening_25') return 'heart';
+  if (id == 'morning_25' || id == 'evening_25') return 'blinking_eyes';
   // Sayyid al-Istighfar — heart purification
   if (id == 'morning_26' || id == 'evening_26') return 'doors';
   // Freed from Hellfire — freedom flame
@@ -2748,7 +2752,10 @@ Widget _buildIllustration({
     'afiyah_guard'   => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _AfiyahGuard(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'six_wards'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixWards(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'repelling'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RepellingLight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'blinking_eyes' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BlinkingEyes(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'heart'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CradledHeart(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'six_dir_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _SixDirShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'gratitude_bowl' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _GratitudeBowl(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'vessel'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _OverflowingVessel(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'dawn'       => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _RisingDawn(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'ripples'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _PraiseRipples(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -2767,6 +2774,7 @@ Widget _buildIllustration({
     'salawat'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BenefitTextIllustration(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday, benefitText: '10 blessings descend upon you from Allah for every single Salawat', subtitle: 'Prophet Muhammad \uFDFA', completedSubtitle: 'May Allah accept your Salawat', accentColor: const Color(0xFFEC4899))),
     'benefit_text_17' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BenefitTextIllustration(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday, benefitText: 'Angels couldn\'t record its reward — Allah says He will reward it Himself', subtitle: 'Ibn Majah 3801', completedSubtitle: 'May Allah reward you beyond measure', accentColor: const Color(0xFF6B4EE6))),
     'doors'      => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DoorsOfMercy(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'heavy_scales'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _HeavyScales(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'cosmic'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _CosmicWeight(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'baqarah_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'baqarah_close'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _BaqarahClose(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -2850,6 +2858,8 @@ String _pickTagline(String id) {
     'six_wards'  => 'Guarded in your deen dunya and akhirah',
     'repelling'  => 'Evil repelled from every direction',
     'heart'      => 'Heart held by the Ever Living Ever Sustaining',
+    'six_dir_shield' => 'Protected from all 6 directions — by Allah\'s grace',
+    'gratitude_bowl' => 'Your blessings are from Allah alone — no partner for Him',
     'vessel'     => 'Gratitude that multiplies your blessings',
     'dawn'       => 'Start pure on the fitrah of Islam',
     'ripples'    => 'Praise that ripples through all creation',
@@ -2896,7 +2906,10 @@ Color _pickTaglineColor(String id, bool isDark) {
     'chains'     => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46), // deep teal
     'six_wards'  => isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534), // forest green
     'repelling'  => isDark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B), // deep red
+    'blinking_eyes' => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E40AF), // deep blue
     'heart'      => isDark ? const Color(0xFFF9A8D4) : const Color(0xFF9D174D), // rose/pink
+    'six_dir_shield' => isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3), // indigo
+    'gratitude_bowl' => isDark ? const Color(0xFFFFD700) : const Color(0xFFB45309), // gold
     'vessel'     => isDark ? const Color(0xFF7DD3FC) : const Color(0xFF0369A1), // sky blue
     'dawn'       => isDark ? const Color(0xFFFCD34D) : const Color(0xFF92400E), // amber
     'ripples'    => isDark ? const Color(0xFF67E8F9) : const Color(0xFF0E7490), // cyan
@@ -6923,7 +6936,314 @@ class _RepellingLightPainter extends CustomPainter {
 }
 
 // =============================================================================
-// 💜 Cradled Heart (القلب المطمئن) — Entrust all matters to Allah
+// 👁️ Blinking Eyes — "Do not leave me to myself even for the blink of an eye"
+// morning_25 / evening_25 — Ya Hayyu Ya Qayyum supplication
+// =============================================================================
+class _BlinkingEyes extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _BlinkingEyes({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+  @override State<_BlinkingEyes> createState() => _BlinkingEyesState();
+}
+
+class _BlinkingEyesState extends State<_BlinkingEyes> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _blinkCtrl, _shockCtrl;
+  late Animation<double> _blinkAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this,
+        duration: const Duration(milliseconds: 2000))..repeat(reverse: true);
+    _growCtrl  = AnimationController(vsync: this,
+        duration: const Duration(milliseconds: 700));
+    _shockCtrl = AnimationController(vsync: this,
+        duration: const Duration(milliseconds: 600));
+
+    // Blink: mostly open, quick close every ~3.5 s
+    _blinkCtrl = AnimationController(vsync: this,
+        duration: const Duration(milliseconds: 3500))..repeat();
+    // blinkAnim = 0 → eye OPEN, 1 → eye FULLY CLOSED
+    // We stay near 0 for 85% of the cycle then spike to 1 and back
+    _blinkAnim = TweenSequence<double>([
+      TweenSequenceItem(tween: ConstantTween(0.0),       weight: 75), // open
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeIn)),       weight: 8),  // closing
+      TweenSequenceItem(tween: ConstantTween(1.0),       weight: 4),  // closed
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0)
+          .chain(CurveTween(curve: Curves.easeOut)),      weight: 13), // opening
+    ]).animate(_blinkCtrl);
+
+    _growCtrl.animateTo(widget.progress);
+  }
+
+  @override
+  void didUpdateWidget(_BlinkingEyes old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress);
+    if (widget.tapCount > old.tapCount) _shockCtrl.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose();
+    _blinkCtrl.dispose(); _shockCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _blinkAnim, _shockCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          size: const Size(double.infinity, 260),
+          painter: _BlinkingEyesPainter(
+            pulse:    _pulseCtrl.value,
+            grow:     _growCtrl.value,
+            blink:    _blinkAnim.value,
+            shock:    _shockCtrl.value,
+            complete: widget.isComplete,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BlinkingEyesPainter extends CustomPainter {
+  final double pulse, grow, blink, shock;
+  final bool complete;
+
+  const _BlinkingEyesPainter({
+    required this.pulse, required this.grow,
+    required this.blink, required this.shock,
+    required this.complete,
+  });
+
+  static const _quote = 'Do not leave me to myself\neven for the blink of an eye';
+
+  // Cute, round cartoon eye — simple, cheerful, clean.
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w  = size.width;
+    final h  = size.height;
+    final cx = w / 2;
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+
+    // ── Soft background ───────────────────────────────────────────────────────
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFFFF8F0), Color(0xFFEFF6FF), Color(0xFFF5F0FF)],
+        begin: Alignment.topLeft, end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(0, 0, w, h)));
+
+    // Floating 4-pointed sparkle stars
+    final starPts = [
+      Offset(w * 0.10, h * 0.09), Offset(w * 0.84, h * 0.08),
+      Offset(w * 0.05, h * 0.60), Offset(w * 0.93, h * 0.58),
+      Offset(w * 0.48, h * 0.05), Offset(w * 0.22, h * 0.76),
+      Offset(w * 0.76, h * 0.75),
+    ];
+    for (int i = 0; i < starPts.length; i++) {
+      final b = math.sin((pulse + i * 0.40) * math.pi) * 0.5 + 0.5;
+      _drawStar(canvas, starPts[i], 3.0 + b * 3.0,
+          const Color(0xFFFFD700).withValues(alpha: 0.35 + b * 0.45));
+    }
+
+    // ── Eye geometry ──────────────────────────────────────────────────────────
+    final eyeCenter = Offset(cx, h * 0.37);
+    // Gentle breathing scale with pulse
+    final breathe = 1.0 + pulse * 0.025;
+    final eyeR    = h * 0.235 * breathe;  // outer circle
+    final irisR   = eyeR * 0.62;          // iris
+    final pupilR  = irisR * 0.47;         // pupil
+
+    // ── Soft outer glow ───────────────────────────────────────────────────────
+    canvas.drawCircle(eyeCenter, eyeR + 12 + pulse * 5, Paint()
+      ..color = const Color(0xFFBFDBFE)
+          .withValues(alpha: 0.14 + grow * 0.10 + pulse * 0.06)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22));
+
+    // ── Sclera (white eye circle) ─────────────────────────────────────────────
+    canvas.drawCircle(eyeCenter, eyeR,
+        Paint()..color = const Color(0xFFFFFEF0));
+
+    // ── Iris ──────────────────────────────────────────────────────────────────
+    canvas.drawCircle(eyeCenter, irisR, Paint()
+      ..shader = RadialGradient(
+        colors: const [
+          Color(0xFFFCD34D), // bright amber centre
+          Color(0xFFD97706),
+          Color(0xFF92400E), // deep outer ring
+        ],
+        stops: const [0.0, 0.50, 1.0],
+      ).createShader(Rect.fromCircle(center: eyeCenter, radius: irisR)));
+
+    // Gold rim grows with progress
+    canvas.drawCircle(eyeCenter, irisR, Paint()
+      ..color = const Color(0xFFFFD700)
+          .withValues(alpha: 0.15 + grow * 0.30 + pulse * 0.08)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0);
+
+    // Inner iris shimmer
+    if (grow > 0.05) {
+      canvas.drawCircle(eyeCenter, irisR * 0.82, Paint()
+        ..color = const Color(0xFFFDE68A)
+            .withValues(alpha: grow * (0.18 + pulse * 0.10))
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+    }
+
+    // ── Pupil ─────────────────────────────────────────────────────────────────
+    canvas.drawCircle(eyeCenter, pupilR,
+        Paint()..color = const Color(0xFF0D0D0D));
+
+    // ── Catchlights (big cartoony white ovals) ────────────────────────────────
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: eyeCenter.translate(-pupilR * 0.32, -pupilR * 0.42),
+        width: pupilR * 1.05, height: pupilR * 1.35,
+      ),
+      Paint()..color = Colors.white.withValues(alpha: 0.95),
+    );
+    canvas.drawCircle(
+      eyeCenter.translate(pupilR * 0.44, pupilR * 0.36),
+      pupilR * 0.30,
+      Paint()..color = Colors.white.withValues(alpha: 0.50),
+    );
+
+    // ── Eye outline (thick cartoony border) ───────────────────────────────────
+    canvas.drawCircle(eyeCenter, eyeR, Paint()
+      ..color = const Color(0xFF1A0D05)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.5);
+
+    // ── Blink: warm eyelid sweeps down from the top ───────────────────────────
+    if (blink > 0.01) {
+      canvas.save();
+      canvas.clipPath(Path()
+        ..addOval(Rect.fromCircle(center: eyeCenter, radius: eyeR + 1)));
+      final lidBottom  = eyeCenter.dy - eyeR + (eyeR * 2 + 5) * blink;
+      // Skin-tone fill
+      canvas.drawRect(
+        Rect.fromLTRB(
+          eyeCenter.dx - eyeR - 5, eyeCenter.dy - eyeR - 5,
+          eyeCenter.dx + eyeR + 5, lidBottom,
+        ),
+        Paint()..color = const Color(0xFFFFD4A8),
+      );
+      // Lid edge (the lash line)
+      canvas.drawLine(
+        Offset(eyeCenter.dx - eyeR * 0.88, lidBottom),
+        Offset(eyeCenter.dx + eyeR * 0.88, lidBottom),
+        Paint()
+          ..color = const Color(0xFF1A0D05)
+          ..strokeWidth = 3.0
+          ..strokeCap = StrokeCap.round,
+      );
+      canvas.restore();
+    }
+
+    // ── Cartoon upper eyelashes (5 bold curved strokes from top arc) ──────────
+    final openFrac = (1.0 - blink).clamp(0.0, 1.0);
+    if (openFrac > 0.12) {
+      const lashCt = 5;
+      for (int i = 0; i < lashCt; i++) {
+        final t = i / (lashCt - 1);
+        // Span top arc: from ~-150° to ~-30°
+        final eyeAngle = -math.pi * 0.835 + t * math.pi * 0.670;
+        final bx = eyeCenter.dx + eyeR * math.cos(eyeAngle);
+        final by = eyeCenter.dy + eyeR * math.sin(eyeAngle);
+        // Length: longer at edges, shorter in middle (cartoon look)
+        final lLen = (14.0 + (0.5 - (t - 0.5).abs()) * -6.0) * openFrac;
+        // Direction: radially outward with a slight left/right tilt
+        final lashAngle = eyeAngle + (t - 0.5) * 0.45;
+        canvas.drawLine(
+          Offset(bx, by),
+          Offset(bx + lLen * math.cos(lashAngle),
+                 by + lLen * math.sin(lashAngle)),
+          Paint()
+            ..color = const Color(0xFF1A0D05).withValues(alpha: openFrac * 0.95)
+            ..strokeWidth = 3.5
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+
+    // ── Shockwave ─────────────────────────────────────────────────────────────
+    if (shock > 0) {
+      canvas.drawCircle(eyeCenter, eyeR + shock * 65, Paint()
+        ..color = const Color(0xFF93C5FD).withValues(alpha: (1 - shock) * 0.40)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5);
+    }
+
+    // ── Completion: gold shimmer + side stars ─────────────────────────────────
+    if (complete) {
+      canvas.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()
+        ..color = const Color(0xFFFFD700).withValues(alpha: 0.05 + pulse * 0.04));
+      _drawStar(canvas,
+          eyeCenter.translate(-eyeR * 1.55, -eyeR * 0.25),
+          10 + pulse * 4,
+          const Color(0xFFFFD700).withValues(alpha: 0.65 + pulse * 0.30));
+      _drawStar(canvas,
+          eyeCenter.translate(eyeR * 1.55, -eyeR * 0.25),
+          10 + pulse * 4,
+          const Color(0xFFFFD700).withValues(alpha: 0.65 + pulse * 0.30));
+    }
+
+    // ── Quote ─────────────────────────────────────────────────────────────────
+    final qAlpha = (0.60 + grow * 0.40 + pulse * 0.04).clamp(0.0, 1.0);
+    final tp = TextPainter(
+      text: TextSpan(
+        text: _quote,
+        style: TextStyle(
+          color: const Color(0xFF1E3A5F).withValues(alpha: qAlpha),
+          fontSize: 12.5,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.3,
+          height: 1.55,
+        ),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: w * 0.80);
+    tp.paint(canvas,
+        Offset(cx - tp.width / 2, h * 0.77 - tp.height / 2));
+
+    canvas.restore();
+  }
+
+  // 4-pointed cartoon star
+  void _drawStar(Canvas canvas, Offset center, double radius, Color color) {
+    final path = Path();
+    const pts = 4;
+    for (int i = 0; i < pts * 2; i++) {
+      final a = i * math.pi / pts - math.pi / 2;
+      final r = i.isEven ? radius : radius * 0.38;
+      final pt = Offset(center.dx + r * math.cos(a), center.dy + r * math.sin(a));
+      if (i == 0) path.moveTo(pt.dx, pt.dy); else path.lineTo(pt.dx, pt.dy);
+    }
+    path.close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(_BlinkingEyesPainter o) =>
+      o.pulse != pulse || o.grow != grow ||
+      o.blink != blink || o.shock != shock || o.complete != complete;
+}
+
 // =============================================================================
 class _CradledHeart extends StatefulWidget {
   final double progress;
@@ -7302,6 +7622,871 @@ class _CradledHeartPainter extends CustomPainter {
       o.isComplete != isComplete || o.pointsToday != pointsToday ||
       o.punchScale != punchScale || o.shockPhase != shockPhase ||
       o.floatPhase != floatPhase;
+}
+
+
+
+// =============================================================================
+// 🛡️ Six-Direction Shield — 360° protection around a person
+// morning_16 / evening_16 — "ma asbaha bi min ni'mah, faminka wahdaka"
+// =============================================================================
+class _SixDirShield extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _SixDirShield({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+  @override State<_SixDirShield> createState() => _SixDirShieldState();
+}
+
+class _SixDirShieldState extends State<_SixDirShield> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _rotateCtrl,
+      _pCtrl, _punchCtrl, _shockCtrl, _starCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1800))..repeat(reverse: true);
+    _growCtrl   = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _rotateCtrl = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
+    _starCtrl   = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000))..repeat(reverse: true);
+    _pCtrl      = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _growCtrl.animateTo(widget.progress);
+  }
+
+  @override
+  void didUpdateWidget(_SixDirShield old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress);
+    if (widget.tapCount > old.tapCount) {
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose();  _rotateCtrl.dispose();
+    _starCtrl.dispose();  _pCtrl.dispose();    _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _rotateCtrl, _starCtrl, _shockCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          size: const Size(double.infinity, 260),
+          painter: _SixDirShieldPainter(
+            pulse:    _pulseCtrl.value,
+            grow:     _growCtrl.value,
+            rotate:   _rotateCtrl.value,
+            star:     _starCtrl.value,
+            shock:    _shockCtrl.value,
+            complete: widget.isComplete,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SixDirShieldPainter extends CustomPainter {
+  final double pulse, grow, rotate, star, shock;
+  final bool complete;
+
+  const _SixDirShieldPainter({
+    required this.pulse,   required this.grow,   required this.rotate,
+    required this.star,    required this.shock,  required this.complete,
+  });
+
+  // 6 shields evenly spaced at 60° — starting at top (270°)
+  static const List<double> _angles = [
+    -math.pi / 2,          // Top      — Above
+    -math.pi / 6,          // Top-right — Front-right
+     math.pi / 6,          // Bot-right — Front
+     math.pi / 2,          // Bottom   — Below
+     5 * math.pi / 6,      // Bot-left  — Back
+    -5 * math.pi / 6,      // Top-left  — Back-left
+  ];
+
+  static const List<Color> _shieldColors = [
+    Color(0xFF818CF8),  // indigo  — Above
+    Color(0xFF38BDF8),  // sky     — Front-right
+    Color(0xFF34D399),  // emerald — Front
+    Color(0xFFFBBF24),  // amber   — Below
+    Color(0xFFF87171),  // coral   — Back
+    Color(0xFFC084FC),  // violet  — Back-left
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w  = size.width;
+    final h  = size.height;
+    final cx = w / 2;
+    final cy = h * 0.50;
+    final center = Offset(cx, cy);
+    const orbitR = 68.0;
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+
+    // ── Background: deep midnight indigo ─────────────────────────────────────
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFF0F0C29), Color(0xFF1E1B4B), Color(0xFF0F172A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ).createShader(Rect.fromLTWH(0, 0, 400, 260)),
+    );
+
+    // ── Twinkling stars ───────────────────────────────────────────────────────
+    const starPts = [
+      Offset(0.08, 0.07), Offset(0.20, 0.04), Offset(0.78, 0.05),
+      Offset(0.93, 0.10), Offset(0.05, 0.65), Offset(0.96, 0.60),
+      Offset(0.14, 0.88), Offset(0.88, 0.85), Offset(0.45, 0.95),
+      Offset(0.60, 0.92), Offset(0.30, 0.13), Offset(0.72, 0.15),
+    ];
+    for (int i = 0; i < starPts.length; i++) {
+      final b = math.sin((star + i * 0.35) * math.pi) * 0.5 + 0.5;
+      canvas.drawCircle(
+        Offset(starPts[i].dx * w, starPts[i].dy * h),
+        1.0 + b * 1.2,
+        Paint()..color = Colors.white.withValues(alpha: 0.15 + b * 0.55),
+      );
+    }
+
+    // ── Slowly rotating golden guard ring ────────────────────────────────────
+    final ringAngle = rotate * 2 * math.pi;
+    canvas.drawCircle(
+      center, orbitR + 20,
+      Paint()
+        ..color = const Color(0xFFFFD700).withValues(alpha: 0.10 + pulse * 0.05)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8,
+    );
+    // 18 tiny golden dot sentinels on the ring
+    for (int i = 0; i < 18; i++) {
+      final a    = ringAngle + i * (math.pi / 9);
+      final dotR = orbitR + 20;
+      canvas.drawCircle(
+        Offset(cx + dotR * math.cos(a), cy + dotR * math.sin(a)),
+        i % 3 == 0 ? 2.2 : 1.1,
+        Paint()..color = const Color(0xFFFFD700).withValues(alpha: i % 3 == 0 ? 0.50 : 0.22),
+      );
+    }
+
+    // ── Translucent protection dome ───────────────────────────────────────────
+    const domeR = 44.0;
+    // Outer glow
+    canvas.drawCircle(
+      center, domeR + 10,
+      Paint()
+        ..color = const Color(0xFF818CF8).withValues(alpha: 0.06 + pulse * 0.06)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+    );
+    // Surface tint
+    canvas.drawCircle(
+      center, domeR,
+      Paint()..color = const Color(0xFF4F46E5).withValues(alpha: 0.07 + grow * 0.05),
+    );
+    // Dome rim
+    canvas.drawCircle(
+      center, domeR,
+      Paint()
+        ..color = const Color(0xFF818CF8).withValues(alpha: 0.18 + grow * 0.08)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2,
+    );
+
+    // ── Connection beams from center to each shield (appear with shield) ──────
+    for (int i = 0; i < 6; i++) {
+      final stagger = (grow * 1.4 - i * 0.18).clamp(0.0, 1.0);
+      if (stagger <= 0) continue;
+      final a    = _angles[i];
+      final endX = cx + orbitR * math.cos(a);
+      final endY = cy + orbitR * math.sin(a);
+      canvas.drawLine(
+        center,
+        Offset(endX, endY),
+        Paint()
+          ..color = _shieldColors[i].withValues(alpha: 0.14 * stagger)
+          ..strokeWidth = 1.2,
+      );
+    }
+
+    // ── Central person silhouette ─────────────────────────────────────────────
+    _drawPerson(canvas, center);
+
+    // ── Six shields — staggered pop-in via elasticOut ─────────────────────────
+    for (int i = 0; i < 6; i++) {
+      final rawT   = (grow * 1.5 - i * 0.18).clamp(0.0, 1.0);
+      if (rawT <= 0) continue;
+      final scaleT = Curves.elasticOut.transform(rawT.clamp(0.0, 1.0));
+      _drawShield(canvas, center, orbitR, _angles[i], _shieldColors[i], scaleT, pulse);
+    }
+
+    // ── Shockwave on tap ──────────────────────────────────────────────────────
+    if (shock > 0) {
+      canvas.drawCircle(
+        center,
+        domeR + shock * 72,
+        Paint()
+          ..color = const Color(0xFFFFD700).withValues(alpha: (1 - shock) * 0.45)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5,
+      );
+    }
+
+    // ── Completion golden shimmer ─────────────────────────────────────────────
+    if (complete) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, w, h),
+        Paint()..color = const Color(0xFFFFD700).withValues(alpha: 0.04 + pulse * 0.04),
+      );
+    }
+
+    canvas.restore();
+  }
+
+  // ── Person silhouette — simple white cartoon figure ────────────────────────
+  void _drawPerson(Canvas canvas, Offset center) {
+    const bodyColor = Color(0xFFE0E7FF);
+    final p = Paint()..color = bodyColor;
+
+    // Head
+    canvas.drawCircle(center.translate(0, -20), 9, p);
+    // Neck
+    canvas.drawRect(
+      Rect.fromCenter(center: center.translate(0, -9), width: 5, height: 5),
+      p,
+    );
+    // Body
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: center.translate(0, 3), width: 18, height: 20),
+        const Radius.circular(5),
+      ),
+      p,
+    );
+    final stroke = Paint()
+      ..color = bodyColor
+      ..style  = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    // Arms (down at sides, relaxed)
+    canvas.drawLine(center.translate(-9, -5), center.translate(-15, 8),  stroke);
+    canvas.drawLine(center.translate( 9, -5), center.translate( 15, 8),  stroke);
+    // Legs
+    canvas.drawLine(center.translate(-4, 13), center.translate(-5, 26),  stroke);
+    canvas.drawLine(center.translate( 4, 13), center.translate( 5, 26),  stroke);
+  }
+
+  // ── Single shield at a given angle/orbit ─────────────────────────────────
+  void _drawShield(Canvas canvas, Offset center, double orbitR,
+      double angle, Color color, double scaleT, double pulse) {
+    final sx = center.dx + orbitR * math.cos(angle);
+    final sy = center.dy + orbitR * math.sin(angle);
+
+    canvas.save();
+    canvas.translate(sx, sy);
+    canvas.scale(scaleT);
+    // Rotate so the shield's tip points inward toward the center
+    canvas.rotate(angle + math.pi / 2);
+
+    const sw = 22.0;   // shield width
+    const sh = 28.0;   // shield height (flat top to pointed tip)
+
+    // Heater shield path (naturally tip-down)
+    final shieldPath = Path()
+      ..moveTo(-sw / 2, -sh / 2)
+      ..lineTo( sw / 2, -sh / 2)
+      ..quadraticBezierTo( sw / 2 + 4,  0,  0,  sh / 2)
+      ..quadraticBezierTo(-sw / 2 - 4,  0, -sw / 2, -sh / 2)
+      ..close();
+
+    // Outer glow
+    canvas.drawPath(
+      shieldPath,
+      Paint()
+        ..color = color.withValues(alpha: 0.40 + pulse * 0.15)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, complete ? 11 : 7),
+    );
+
+    // Shield fill (solid, slightly translucent)
+    canvas.drawPath(
+      shieldPath,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.92),
+            color.withValues(alpha: 0.70),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(Rect.fromLTWH(-sw / 2, -sh / 2, sw, sh)),
+    );
+
+    // White border
+    canvas.drawPath(
+      shieldPath,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6,
+    );
+
+    // Inner rim detail
+    final innerPath = Path()
+      ..moveTo(-sw / 2 + 4, -sh / 2 + 4)
+      ..lineTo( sw / 2 - 4, -sh / 2 + 4)
+      ..quadraticBezierTo( sw / 2 - 1, 0,  0,  sh / 2 - 5)
+      ..quadraticBezierTo(-sw / 2 + 1, 0, -sw / 2 + 4, -sh / 2 + 4);
+    canvas.drawPath(
+      innerPath,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.28)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.9,
+    );
+
+    // Center star emblem
+    _drawMiniStar(canvas, Offset.zero, 4.5, Colors.white.withValues(alpha: 0.85));
+
+    canvas.restore();
+  }
+
+  // ── 4-pointed star ────────────────────────────────────────────────────────
+  void _drawMiniStar(Canvas canvas, Offset c, double r, Color color) {
+    final path = Path();
+    for (int i = 0; i < 4; i++) {
+      final a = i * math.pi / 2 - math.pi / 4;
+      path.moveTo(c.dx, c.dy);
+      path.lineTo(c.dx + r * math.cos(a - 0.2), c.dy + r * math.sin(a - 0.2));
+      path.lineTo(c.dx + r * 2.0 * math.cos(a), c.dy + r * 2.0 * math.sin(a));
+      path.lineTo(c.dx + r * math.cos(a + 0.2), c.dy + r * math.sin(a + 0.2));
+      path.close();
+    }
+    canvas.drawPath(path, Paint()..color = color..style = PaintingStyle.fill);
+  }
+
+  @override
+  bool shouldRepaint(_SixDirShieldPainter o) =>
+      o.pulse   != pulse   || o.grow  != grow  || o.rotate != rotate ||
+      o.star    != star    || o.shock != shock  || o.complete != complete;
+}
+
+// =============================================================================
+// 🥣 Gratitude Bowl — cartoon scene: golden chalice + rising blessing bubbles
+// morning_16 / evening_16 — "ma asbaha bi min ni'mah, faminka wahdaka"
+// =============================================================================
+class _GratitudeBowl extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _GratitudeBowl({
+    required this.progress, required this.isComplete,
+    required this.tapCount,  this.pointsToday = 0,
+  });
+  @override State<_GratitudeBowl> createState() => _GratitudeBowlState();
+}
+
+class _GratitudeBowlState extends State<_GratitudeBowl> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _floatCtrl,
+      _pCtrl, _punchCtrl, _shockCtrl, _starCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))
+      ..repeat(reverse: true);
+    _growCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _floatCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))
+      ..repeat();
+    _starCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))
+      ..repeat(reverse: true);
+    _pCtrl     = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _growCtrl.animateTo(widget.progress);
+  }
+
+  @override
+  void didUpdateWidget(_GratitudeBowl old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress);
+    if (widget.tapCount > old.tapCount) {
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _floatCtrl.dispose();
+    _starCtrl.dispose();  _pCtrl.dispose();   _punchCtrl.dispose();
+    _shockCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _floatCtrl, _starCtrl, _shockCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          size: const Size(double.infinity, 260),
+          painter: _GratitudeBowlPainter(
+            pulse:    _pulseCtrl.value,
+            grow:     _growCtrl.value,
+            float:    _floatCtrl.value,
+            star:     _starCtrl.value,
+            shock:    _shockCtrl.value,
+            complete: widget.isComplete,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GratitudeBowlPainter extends CustomPainter {
+  final double pulse, grow, float, star, shock;
+  final bool complete;
+  const _GratitudeBowlPainter({
+    required this.pulse, required this.grow,   required this.float,
+    required this.star,  required this.shock,  required this.complete,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w / 2;
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+
+    // ─── Background: warm cream → soft lavender left-to-right ────────────────
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = LinearGradient(
+          colors: [const Color(0xFFFFF7E6), const Color(0xFFF8F0FF)],
+          begin: Alignment.centerLeft, end: Alignment.centerRight,
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+    // Soft ground strip
+    canvas.drawRect(
+      Rect.fromLTWH(0, h * 0.82, w, h * 0.18),
+      Paint()..color = const Color(0xFFF5ECD8),
+    );
+
+    // ─── Twinkling sparkle stars ──────────────────────────────────────────────
+    final sparklePositions = [
+      Offset(w * 0.22, h * 0.08), Offset(w * 0.78, h * 0.08),
+      Offset(w * 0.35, h * 0.05), Offset(w * 0.65, h * 0.05),
+      Offset(w * 0.15, h * 0.20), Offset(w * 0.85, h * 0.20),
+    ];
+    for (int i = 0; i < sparklePositions.length; i++) {
+      final twinkle = (math.sin((star + i * 0.3) * math.pi) * 0.5 + 0.5);
+      _drawSparkle(canvas, sparklePositions[i], 5 + twinkle * 3,
+          const Color(0xFFFFCC44).withValues(alpha: 0.3 + twinkle * 0.5));
+    }
+
+    // ─── Cartoon crescent (left, warm golden) ────────────────────────────────
+    _drawCrescent(canvas, Offset(w * 0.10, h * 0.30), 24, pulse);
+
+    // ─── Cartoon full moon (right, silver) ───────────────────────────────────
+    _drawMoon(canvas, Offset(w * 0.90, h * 0.30), 22, pulse);
+
+    // ─── Shockwave on tap ─────────────────────────────────────────────────────
+    if (shock > 0) {
+      canvas.drawCircle(
+        Offset(cx, h * 0.58),
+        40 + shock * 70,
+        Paint()
+          ..color = const Color(0xFFFFCC44).withValues(alpha: (1 - shock) * 0.35)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3,
+      );
+    }
+
+    // ─── Rising blessing bubbles ──────────────────────────────────────────────
+    // 6 bubbles: positions are their final resting spots.
+    // They start at bowl rim (h*0.60) and rise to target with progress.
+    final bubbles = [
+      // (targetX, targetY, color, iconType)
+      (cx - 58.0, h * 0.12, const Color(0xFFFF6B9D), 'heart'),   // hot pink heart
+      (cx - 28.0, h * 0.05, const Color(0xFFFFCC44), 'coin'),    // golden coin
+      (cx +  0.0, h * 0.02, const Color(0xFF7EC8E3), 'dove'),    // sky blue dove
+      (cx + 28.0, h * 0.05, const Color(0xFF5DD39E), 'leaf'),    // green leaf
+      (cx + 58.0, h * 0.12, const Color(0xFFFF9F43), 'home'),    // orange home
+      (cx +  0.0, h * 0.16, const Color(0xFFA29BFE), 'gem'),     // lavender gem
+    ];
+
+    final rimY = h * 0.60;
+    for (int i = 0; i < bubbles.length; i++) {
+      final (tx, ty, color, icon) = bubbles[i];
+      // Stagger each bubble's appearance with grow
+      final stagger = (grow - i * 0.1).clamp(0.0, 1.0);
+      if (stagger <= 0) continue;
+      // Gentle float oscillation once visible
+      final floatOff = math.sin((float + i * 0.25) * 2 * math.pi) * 5.0;
+      final currentY = rimY + (ty - rimY) * stagger + floatOff * stagger;
+      final alpha    = stagger.clamp(0.0, 1.0);
+      final r        = 13.0 + (i % 3) * 2.5; // varying radius
+      _drawBlessingBubble(canvas, Offset(tx, currentY), r, color, icon, alpha);
+    }
+
+    // ─── Central cartoon golden bowl ─────────────────────────────────────────
+    _drawBowl(canvas, cx, h * 0.68, w, grow, pulse, complete);
+
+    // ─── Two simple praying figures ───────────────────────────────────────────
+    _drawFigure(canvas, Offset(w * 0.13, h * 0.73), false, grow);
+    _drawFigure(canvas, Offset(w * 0.87, h * 0.73), true,  grow);
+
+    // ─── Completion golden shimmer ────────────────────────────────────────────
+    if (complete) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, w, h),
+        Paint()..color = const Color(0xFFFFCC44).withValues(alpha: 0.07 + pulse * 0.05),
+      );
+    }
+
+    canvas.restore();
+  }
+
+  // ── Cartoon crescent ───────────────────────────────────────────────────────
+  void _drawCrescent(Canvas canvas, Offset center, double r, double pulse) {
+    final glow = Paint()
+      ..color = const Color(0xFFFFCC44).withValues(alpha: 0.2 + pulse * 0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
+    canvas.drawCircle(center, r + 6, glow);
+
+    // Outer circle (warm gold)
+    canvas.drawCircle(center, r, Paint()..color = const Color(0xFFFFCC44));
+    // Inner circle offset to create crescent shadow
+    canvas.drawCircle(
+      center.translate(r * 0.52, -r * 0.1),
+      r * 0.82,
+      Paint()..color = const Color(0xFFFFF0C8),
+    );
+  }
+
+  // ── Cartoon full moon ──────────────────────────────────────────────────────
+  void _drawMoon(Canvas canvas, Offset center, double r, double pulse) {
+    final glow = Paint()
+      ..color = const Color(0xFFD4B8E0).withValues(alpha: 0.25 + pulse * 0.12)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+    canvas.drawCircle(center, r + 6, glow);
+    canvas.drawCircle(center, r, Paint()..color = const Color(0xFFE8E0F4));
+    // Craters
+    for (final (ox, oy, cr) in [
+      (-r * 0.28, -r * 0.18, r * 0.16),
+      ( r * 0.20,  r * 0.25, r * 0.11),
+      (-r * 0.10,  r * 0.18, r * 0.09),
+    ]) {
+      canvas.drawCircle(
+        center.translate(ox, oy), cr,
+        Paint()..color = const Color(0xFFCCC0DC),
+      );
+    }
+  }
+
+  // ── Blessing bubble with cartoonic icon ───────────────────────────────────
+  void _drawBlessingBubble(Canvas canvas, Offset center, double r,
+      Color color, String icon, double alpha) {
+    // Bubble shadow
+    canvas.drawCircle(
+      center.translate(0, 2), r,
+      Paint()..color = color.withValues(alpha: 0.22 * alpha)
+             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
+    // Bubble fill
+    canvas.drawCircle(center, r, Paint()..color = color.withValues(alpha: 0.92 * alpha));
+    // White outline
+    canvas.drawCircle(center, r,
+        Paint()..color = Colors.white.withValues(alpha: 0.55 * alpha)
+               ..style = PaintingStyle.stroke
+               ..strokeWidth = 1.8);
+    // White glare (top-left)
+    canvas.drawCircle(
+      center.translate(-r * 0.28, -r * 0.28), r * 0.28,
+      Paint()..color = Colors.white.withValues(alpha: 0.40 * alpha),
+    );
+    // Icon inside
+    final p = Paint()..color = Colors.white.withValues(alpha: 0.92 * alpha);
+    final sz = r * 0.55;
+    switch (icon) {
+      case 'heart':
+        _drawHeart(canvas, center, sz, p);
+        break;
+      case 'coin':
+        _drawCoin(canvas, center, sz, p);
+        break;
+      case 'dove':
+        _drawDove(canvas, center, sz, p);
+        break;
+      case 'leaf':
+        _drawLeaf(canvas, center, sz, p);
+        break;
+      case 'home':
+        _drawHome(canvas, center, sz, p);
+        break;
+      case 'gem':
+        _drawGem(canvas, center, sz, p);
+        break;
+    }
+  }
+
+  void _drawHeart(Canvas canvas, Offset c, double s, Paint p) {
+    final path = Path();
+    path.moveTo(c.dx, c.dy + s * 0.5);
+    path.cubicTo(c.dx - s * 1.2, c.dy - s * 0.1,
+                 c.dx - s * 1.2, c.dy - s * 1.0, c.dx, c.dy - s * 0.3);
+    path.cubicTo(c.dx + s * 1.2, c.dy - s * 1.0,
+                 c.dx + s * 1.2, c.dy - s * 0.1, c.dx, c.dy + s * 0.5);
+    canvas.drawPath(path, p..style = PaintingStyle.fill);
+  }
+
+  void _drawCoin(Canvas canvas, Offset c, double s, Paint p) {
+    canvas.drawCircle(c, s * 0.85, p..style = PaintingStyle.stroke..strokeWidth = s * 0.3);
+    canvas.drawLine(
+      c.translate(0, -s * 0.5), c.translate(0, s * 0.5),
+      p..strokeWidth = s * 0.25,
+    );
+  }
+
+  void _drawDove(Canvas canvas, Offset c, double s, Paint p) {
+    final path = Path();
+    // Body (oval)
+    path.addOval(Rect.fromCenter(center: c, width: s * 1.4, height: s * 0.8));
+    canvas.drawPath(path, p..style = PaintingStyle.fill);
+    // Wings
+    final wing = Path();
+    wing.moveTo(c.dx, c.dy);
+    wing.quadraticBezierTo(c.dx - s * 1.1, c.dy - s * 1.0, c.dx - s * 0.3, c.dy + s * 0.1);
+    wing.moveTo(c.dx, c.dy);
+    wing.quadraticBezierTo(c.dx + s * 1.1, c.dy - s * 1.0, c.dx + s * 0.3, c.dy + s * 0.1);
+    canvas.drawPath(wing, p..style = PaintingStyle.stroke..strokeWidth = s * 0.25);
+  }
+
+  void _drawLeaf(Canvas canvas, Offset c, double s, Paint p) {
+    final path = Path();
+    path.moveTo(c.dx, c.dy + s);
+    path.quadraticBezierTo(c.dx + s * 1.1, c.dy, c.dx, c.dy - s);
+    path.quadraticBezierTo(c.dx - s * 1.1, c.dy, c.dx, c.dy + s);
+    canvas.drawPath(path, p..style = PaintingStyle.fill);
+    canvas.drawLine(c.translate(0, -s), c.translate(0, s),
+        p..style = PaintingStyle.stroke..strokeWidth = s * 0.15);
+  }
+
+  void _drawHome(Canvas canvas, Offset c, double s, Paint p) {
+    final roof = Path()
+      ..moveTo(c.dx - s, c.dy)
+      ..lineTo(c.dx, c.dy - s)
+      ..lineTo(c.dx + s, c.dy)
+      ..close();
+    canvas.drawPath(roof, p..style = PaintingStyle.fill);
+    canvas.drawRect(
+      Rect.fromLTWH(c.dx - s * 0.65, c.dy, s * 1.3, s * 0.85),
+      p,
+    );
+  }
+
+  void _drawGem(Canvas canvas, Offset c, double s, Paint p) {
+    final path = Path()
+      ..moveTo(c.dx, c.dy - s)
+      ..lineTo(c.dx + s * 0.8, c.dy - s * 0.2)
+      ..lineTo(c.dx + s * 0.5, c.dy + s * 0.8)
+      ..lineTo(c.dx - s * 0.5, c.dy + s * 0.8)
+      ..lineTo(c.dx - s * 0.8, c.dy - s * 0.2)
+      ..close();
+    canvas.drawPath(path, p..style = PaintingStyle.fill);
+  }
+
+  // ── Golden cartoon bowl ────────────────────────────────────────────────────
+  void _drawBowl(Canvas canvas, double cx, double baseCenterY, double w,
+      double grow, double pulse, bool complete) {
+    final mouthW  = w * 0.28;
+    final mouthY  = baseCenterY - 22;
+    final baseW   = w * 0.12;
+    final baseY   = baseCenterY + 18;
+    final footY   = baseCenterY + 28;
+
+    final goldMain  = complete ? const Color(0xFFFFD700)  : const Color(0xFFE8A020);
+    final goldDark  = complete ? const Color(0xFFC8960C)  : const Color(0xFFC07A10);
+    final goldLight = complete ? const Color(0xFFFFF0A0)  : const Color(0xFFFACC6C);
+
+    // Glow under bowl
+    canvas.drawCircle(
+      Offset(cx, footY),
+      mouthW * 0.55,
+      Paint()
+        ..color = goldMain.withValues(alpha: 0.18 + pulse * 0.10)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
+    );
+
+    // Bowl body path (trapezoid with curved sides)
+    final bodyPath = Path()
+      ..moveTo(cx - mouthW / 2, mouthY)
+      ..quadraticBezierTo(cx - mouthW * 0.55, (mouthY + baseY) / 2, cx - baseW / 2, baseY)
+      ..lineTo(cx + baseW / 2, baseY)
+      ..quadraticBezierTo(cx + mouthW * 0.55, (mouthY + baseY) / 2, cx + mouthW / 2, mouthY)
+      ..close();
+
+    // Fill gradient
+    canvas.drawPath(
+      bodyPath,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [goldDark, goldMain, goldLight, goldDark],
+          stops: const [0.0, 0.35, 0.65, 1.0],
+          begin: Alignment.centerLeft, end: Alignment.centerRight,
+        ).createShader(Rect.fromLTRB(cx - mouthW / 2, mouthY, cx + mouthW / 2, baseY)),
+    );
+    // Outline
+    canvas.drawPath(
+      bodyPath,
+      Paint()
+        ..color = goldDark
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5,
+    );
+
+    // Rim ellipse (mouth of bowl)
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, mouthY), width: mouthW + 4, height: 12),
+      Paint()..color = goldMain,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, mouthY), width: mouthW + 4, height: 12),
+      Paint()
+        ..color = goldDark
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    // Decorative band on bowl body
+    const bandOffset = 8.0;
+    canvas.drawLine(
+      Offset(cx - mouthW * 0.44, mouthY + bandOffset),
+      Offset(cx + mouthW * 0.44, mouthY + bandOffset),
+      Paint()..color = goldLight..strokeWidth = 1.5,
+    );
+
+    // Two handles
+    for (final sign in [-1.0, 1.0]) {
+      final hx = cx + sign * mouthW / 2;
+      final hy = (mouthY + baseY) / 2 - 2;
+      canvas.drawArc(
+        Rect.fromCenter(center: Offset(hx + sign * 7, hy), width: 16, height: 14),
+        sign > 0 ? -math.pi / 2 : math.pi / 2,
+        math.pi,
+        false,
+        Paint()
+          ..color = goldDark
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+
+    // Foot/stem
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, footY), width: baseW * 1.6, height: 7),
+      Paint()..color = goldMain,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, footY), width: baseW * 1.6, height: 7),
+      Paint()
+        ..color = goldDark
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.8,
+    );
+  }
+
+  // ── Simple praying figure silhouette ──────────────────────────────────────
+  void _drawFigure(Canvas canvas, Offset center, bool mirrorX, double grow) {
+    if (grow < 0.15) return;
+
+    canvas.save();
+    if (mirrorX) {
+      canvas.translate(center.dx * 2, 0);
+      canvas.scale(-1, 1);
+    }
+
+    final alpha = ((grow - 0.15) / 0.85).clamp(0.0, 1.0);
+    final bodyColor = const Color(0xFF9B7653).withValues(alpha: alpha);
+    final p = Paint()..color = bodyColor;
+
+    // Head
+    canvas.drawCircle(center.translate(0, -28), 9, p);
+    // Body
+    final bodyRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: center.translate(0, -12), width: 16, height: 18),
+      const Radius.circular(6),
+    );
+    canvas.drawRRect(bodyRect, p);
+
+    // Raised arms (two bezier arcs going up)
+    final armPaint = Paint()
+      ..color = bodyColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5
+      ..strokeCap = StrokeCap.round;
+    // Left arm
+    final leftArm = Path()
+      ..moveTo(center.dx - 8, center.dy - 16)
+      ..quadraticBezierTo(center.dx - 20, center.dy - 28, center.dx - 14, center.dy - 40);
+    canvas.drawPath(leftArm, armPaint);
+    // Right arm
+    final rightArm = Path()
+      ..moveTo(center.dx + 8, center.dy - 16)
+      ..quadraticBezierTo(center.dx + 20, center.dy - 28, center.dx + 14, center.dy - 40);
+    canvas.drawPath(rightArm, armPaint);
+
+    // Small open palms
+    canvas.drawCircle(center.translate(-14, -40), 4, p);
+    canvas.drawCircle(center.translate(14, -40), 4, p);
+
+    canvas.restore();
+  }
+
+  // ── 4-pointed sparkle star ────────────────────────────────────────────────
+  void _drawSparkle(Canvas canvas, Offset c, double r, Color color) {
+    final p = Paint()..color = color..style = PaintingStyle.fill;
+    final path = Path();
+    for (int i = 0; i < 4; i++) {
+      final a = i * math.pi / 2 - math.pi / 4;
+      path.moveTo(c.dx, c.dy);
+      path.lineTo(c.dx + r * math.cos(a - 0.18), c.dy + r * math.sin(a - 0.18));
+      path.lineTo(c.dx + r * 2.2 * math.cos(a), c.dy + r * 2.2 * math.sin(a));
+      path.lineTo(c.dx + r * math.cos(a + 0.18), c.dy + r * math.sin(a + 0.18));
+      path.close();
+    }
+    canvas.drawPath(path, p);
+  }
+
+  @override
+  bool shouldRepaint(_GratitudeBowlPainter o) =>
+      o.pulse != pulse || o.grow != grow || o.float != float ||
+      o.star  != star  || o.shock != shock || o.complete != complete;
 }
 
 // =============================================================================
@@ -9908,7 +11093,9 @@ class _ThreeVesselsState extends State<_ThreeVessels> with TickerProviderStateMi
     final row = _rows[rowIdx];
     final accent = Color(row.hex);
     final threshold = rowIdx / total;
-    final rowP = ((progress - threshold) * total).clamp(0.0, 1.0);
+    final rawP = ((progress - threshold) * total).clamp(0.0, 1.0);
+    // Always show a faint ghost so illustration never looks empty
+    final rowP = 0.18 + rawP * 0.82;
     return AnimatedOpacity(
       opacity: rowP,
       duration: const Duration(milliseconds: 350),
@@ -10131,7 +11318,9 @@ class _SevenPillarsState extends State<_SevenPillars> with TickerProviderStateMi
   }) {
     // Each line reveals when progress passes its threshold
     final threshold = lineIndex / totalLines;
-    final lineProgress = ((progress - threshold) * totalLines).clamp(0.0, 1.0);
+    final rawLP = ((progress - threshold) * totalLines).clamp(0.0, 1.0);
+    // Always show a faint ghost so illustration never looks empty
+    final lineProgress = 0.18 + rawLP * 0.82;
 
     // Style varies: two lines big + bold, rest smaller
     final isBig = lineIndex == 0 || lineIndex == totalLines - 1;
@@ -10156,7 +11345,7 @@ class _SevenPillarsState extends State<_SevenPillars> with TickerProviderStateMi
     }
 
     return AnimatedOpacity(
-      opacity: lineProgress.clamp(0.0, 1.0),
+      opacity: lineProgress,
       duration: const Duration(milliseconds: 400),
       child: Text(
         text,
@@ -10261,20 +11450,21 @@ class _NoorDoorState extends State<_NoorDoor> with TickerProviderStateMixin {
               ),
               if (widget.isComplete)
                 Align(
-                  alignment: const Alignment(0, 0.72),
+                  alignment: const Alignment(0, 0.90),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.5)),
                     ),
                     child: Text(
-                      'مَرْضَاةُ اللّٰهِ',
-                      style: GoogleFonts.amiri(
-                        fontSize: 20,
+                      'Pleasure of Allah',
+                      style: GoogleFonts.lato(
+                        fontSize: 11,
                         color: const Color(0xFFD4AF37),
                         fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
@@ -12941,6 +14131,426 @@ class _DoorsOfMercyPainter extends CustomPainter {
   }
 
   @override bool shouldRepaint(_DoorsOfMercyPainter o) => o.progress != progress || o.pulse != pulse || o.starPhase != starPhase || o.particlePhase != particlePhase || o.isComplete != isComplete || o.pointsToday != pointsToday || o.punchScale != punchScale || o.shockPhase != shockPhase || o.glowPhase != glowPhase;
+}
+
+// =============================================================================
+// ⚖️ Heavy Scales — dhikr outweighs all other morning/evening dhikr
+// morning_20 / evening_20 — "SubhanAllah 'adada khalqihi" etc.
+// Balance beam tilts progressively LEFT as progress grows
+// =============================================================================
+class _HeavyScales extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _HeavyScales({
+    required this.progress, required this.isComplete,
+    required this.tapCount, this.pointsToday = 0,
+  });
+  @override State<_HeavyScales> createState() => _HeavyScalesState();
+}
+
+class _HeavyScalesState extends State<_HeavyScales> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl,
+      _pCtrl, _punchCtrl, _shockCtrl, _bounceCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1600))..repeat(reverse: true);
+    _growCtrl   = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _starCtrl   = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000))..repeat(reverse: true);
+    _pCtrl      = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _bounceCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _growCtrl.animateTo(widget.progress);
+  }
+
+  @override
+  void didUpdateWidget(_HeavyScales old) {
+    super.didUpdateWidget(old);
+    _growCtrl.animateTo(widget.progress, curve: Curves.easeOut);
+    if (widget.tapCount > old.tapCount) {
+      _pCtrl.forward(from: 0);
+      _punchCtrl.forward(from: 0);
+      _shockCtrl.forward(from: 0);
+      // Small bounce on each tap
+      _bounceCtrl.forward(from: 0).then((_) => _bounceCtrl.reverse());
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose();  _starCtrl.dispose();
+    _pCtrl.dispose();    _punchCtrl.dispose(); _shockCtrl.dispose();
+    _bounceCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _bounceCtrl, _shockCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          size: const Size(double.infinity, 260),
+          painter: _HeavyScalesPainter(
+            pulse:    _pulseCtrl.value,
+            grow:     _growCtrl.value,
+            star:     _starCtrl.value,
+            bounce:   _bounceCtrl.value,
+            shock:    _shockCtrl.value,
+            complete: widget.isComplete,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeavyScalesPainter extends CustomPainter {
+  final double pulse, grow, star, bounce, shock;
+  final bool complete;
+
+  const _HeavyScalesPainter({
+    required this.pulse,  required this.grow,   required this.star,
+    required this.bounce, required this.shock,  required this.complete,
+  });
+
+  // Max tilt of the scale beam (radians) at full progress
+  static const _maxTilt = 0.30; // ~17°
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w  = size.width;
+    final h  = size.height;
+    final cx = w / 2;
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+
+    // ── Background: light blue-gray ───────────────────────────────────────────
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFFF0F4F8), Color(0xFFE8EEF5)],
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
+
+    // Ground strip
+    canvas.drawRect(
+      Rect.fromLTWH(0, h * 0.86, w, h * 0.14),
+      Paint()..color = const Color(0xFFDFE8EF),
+    );
+
+    // ── Tilt angle driven by progress (with tiny bounce on tap) ──────────────
+    final bounceDelta = math.sin(bounce * math.pi) * 0.04;
+    final tilt = grow * _maxTilt + bounceDelta;
+
+    // ── Scale geometry ────────────────────────────────────────────────────────
+    // Post
+    const postCx    = 0.0;   // offset from cx
+    final pivotY    = h * 0.28;
+    const beamArm   = 0.0;   // defined below per-canvas-width
+    final armLen    = w * 0.38;
+    const stringLen = 55.0;
+    const panR      = 38.0;
+
+    // Pivot point (top of post)
+    final pivot = Offset(cx + postCx, pivotY);
+
+    // Beam endpoints (rotated by tilt — left goes down, right goes up)
+    final leftEnd  = Offset(pivot.dx - armLen * math.cos(tilt),
+                            pivot.dy + armLen * math.sin(tilt));
+    final rightEnd = Offset(pivot.dx + armLen * math.cos(tilt),
+                            pivot.dy - armLen * math.sin(tilt));
+
+    // Pan centers (below beam ends via hanging strings)
+    final leftPan  = Offset(leftEnd.dx,  leftEnd.dy  + stringLen);
+    final rightPan = Offset(rightEnd.dx, rightEnd.dy + stringLen);
+
+    // ── Glow around heavy (left) pan ─────────────────────────────────────────
+    if (grow > 0.05) {
+      canvas.drawCircle(
+        leftPan,
+        panR + 14 + pulse * 6,
+        Paint()
+          ..color = const Color(0xFFFFD700).withValues(alpha: grow * (0.12 + pulse * 0.08))
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+      );
+      // Light rays from heavy pan
+      _drawRays(canvas, leftPan, panR + 8 + pulse * 4, grow, pulse);
+    }
+
+    // ── Hanging strings ───────────────────────────────────────────────────────
+    final stringPaint = Paint()
+      ..color = const Color(0xFFB8860B)
+      ..strokeWidth = 1.6;
+    // Left strings: V-shape from beam end → outer rim of pan
+    canvas.drawLine(leftEnd, leftPan.translate(-panR * 0.62, 0), stringPaint);
+    canvas.drawLine(leftEnd, leftPan.translate( panR * 0.62, 0), stringPaint);
+    // Right strings
+    canvas.drawLine(rightEnd, rightPan.translate(-panR * 0.62, 0), stringPaint);
+    canvas.drawLine(rightEnd, rightPan.translate( panR * 0.62, 0), stringPaint);
+
+    // ── Scale post + base ─────────────────────────────────────────────────────
+    // Post
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(cx, (pivotY + h * 0.86) / 2), width: 12, height: h * 0.86 - pivotY),
+        const Radius.circular(4),
+      ),
+      Paint()..color = const Color(0xFF2D3B55),
+    );
+    // Base
+    final basePath = Path()
+      ..moveTo(cx - 38, h * 0.86)
+      ..lineTo(cx + 38, h * 0.86)
+      ..lineTo(cx + 28, h * 0.96)
+      ..lineTo(cx - 28, h * 0.96)
+      ..close();
+    canvas.drawPath(basePath, Paint()..color = const Color(0xFF2D3B55));
+    // Base top strip
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset(cx, h * 0.86), width: 80, height: 10),
+        const Radius.circular(4),
+      ),
+      Paint()..color = const Color(0xFF3D4F68),
+    );
+
+    // ── Beam ──────────────────────────────────────────────────────────────────
+    canvas.drawLine(
+      leftEnd, rightEnd,
+      Paint()
+        ..color = const Color(0xFFB8860B)
+        ..strokeWidth = 8
+        ..strokeCap = StrokeCap.round,
+    );
+    // Gold highlight on beam
+    canvas.drawLine(
+      leftEnd, rightEnd,
+      Paint()
+        ..color = const Color(0xFFFFE57F).withValues(alpha: 0.6)
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round,
+    );
+
+    // ── Pivot golden circle ───────────────────────────────────────────────────
+    canvas.drawCircle(pivot, 14, Paint()..color = const Color(0xFFB8860B));
+    canvas.drawCircle(pivot, 10, Paint()..color = const Color(0xFFFFD700));
+    canvas.drawCircle(pivot,  6, Paint()..color = const Color(0xFFFFEE88));
+
+    // ── Left pan (heavy — goes down) ──────────────────────────────────────────
+    _drawPan(canvas, leftPan, panR, true);
+    // Draw gifts inside left pan (progress-driven count)
+    final giftCount = (grow * 3).ceil().clamp(0, 3);
+    _drawGifts(canvas, leftPan, panR, giftCount, pulse);
+
+    // ── Right pan (light — goes up) ───────────────────────────────────────────
+    _drawPan(canvas, rightPan, panR, false);
+    // "All other dhikr" label inside right pan
+    _drawPanLabel(canvas, rightPan, panR);
+
+    // ── Twinkling sparkles around heavy pan ─────────────────────────────────
+    if (grow > 0.3) {
+      final sparkPositions = [
+        leftPan.translate(-panR - 18, -10),
+        leftPan.translate(-panR - 28,  16),
+        leftPan.translate(-panR - 12,  26),
+        leftPan.translate(-panR - 36,  -4),
+      ];
+      for (int i = 0; i < sparkPositions.length; i++) {
+        final t = (math.sin((star + i * 0.4) * math.pi) * 0.5 + 0.5) * grow;
+        _drawSparkle(canvas, sparkPositions[i], 4 + t * 3,
+            const Color(0xFFFFD700).withValues(alpha: 0.3 + t * 0.6));
+      }
+    }
+
+    // ── Shockwave ─────────────────────────────────────────────────────────────
+    if (shock > 0) {
+      canvas.drawCircle(
+        leftPan,
+        panR + shock * 60,
+        Paint()
+          ..color = const Color(0xFFFFD700).withValues(alpha: (1 - shock) * 0.40)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
+    }
+
+    // ── Completion shimmer ────────────────────────────────────────────────────
+    if (complete) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, w, h),
+        Paint()..color = const Color(0xFFFFD700).withValues(alpha: 0.05 + pulse * 0.04),
+      );
+    }
+
+    canvas.restore();
+  }
+
+  // ── Golden pan (arc/bowl shape) ────────────────────────────────────────────
+  void _drawPan(Canvas canvas, Offset center, double r, bool isHeavy) {
+    final panColor  = isHeavy
+        ? const Color(0xFFD4AF37)
+        : const Color(0xFFC8A028);
+
+    // Pan shadow
+    canvas.drawOval(
+      Rect.fromCenter(center: center.translate(0, 3), width: r * 2.2, height: r * 0.55),
+      Paint()..color = Colors.black.withValues(alpha: 0.08)
+             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+
+    // Pan arc (half-circle cup clipped to bottom half)
+    final panPath = Path()
+      ..addArc(Rect.fromCenter(center: center, width: r * 2.0, height: r * 2.0), 0, math.pi);
+    canvas.drawPath(panPath, Paint()
+      ..color = isHeavy
+          ? const Color(0xFFFAF0D0).withValues(alpha: 0.95)
+          : const Color(0xFFF5EAC8).withValues(alpha: 0.90)
+      ..style = PaintingStyle.fill);
+    // Pan rim
+    canvas.drawPath(panPath, Paint()
+      ..color = panColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5
+      ..strokeCap = StrokeCap.round);
+    // Bottom line of pan
+    canvas.drawLine(
+      center.translate(-r, 0), center.translate(r, 0),
+      Paint()..color = panColor..strokeWidth = 3.5..strokeCap = StrokeCap.round,
+    );
+  }
+
+  // ── Colourful gift boxes inside left pan ──────────────────────────────────
+  void _drawGifts(Canvas canvas, Offset panCenter, double panR,
+      int count, double pulse) {
+    if (count == 0) return;
+
+    // Gift positions inside the pan (arranged side-by-side)
+    final positions = [
+      panCenter.translate( 0,  -panR * 0.35),
+      panCenter.translate(-panR * 0.44, -panR * 0.28),
+      panCenter.translate( panR * 0.44, -panR * 0.28),
+    ];
+
+    const giftColors = [
+      Color(0xFFFFCC44), // gold
+      Color(0xFF2DD4BF), // teal
+      Color(0xFFA78BFA), // violet
+    ];
+    const ribbonColors = [
+      Color(0xFFFF6B6B),
+      Color(0xFFFF6B6B),
+      Color(0xFFFFCC44),
+    ];
+
+    for (int i = 0; i < count && i < positions.length; i++) {
+      _drawGiftBox(canvas, positions[i], 12.0, giftColors[i], ribbonColors[i]);
+    }
+  }
+
+  void _drawGiftBox(Canvas canvas, Offset center, double s,
+      Color boxColor, Color ribbonColor) {
+    final boxRect = Rect.fromCenter(center: center, width: s * 1.8, height: s * 1.6);
+
+    // Box body
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(boxRect, const Radius.circular(3)),
+      Paint()..color = boxColor,
+    );
+    // Box outline
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(boxRect, const Radius.circular(3)),
+      Paint()..color = boxColor.withValues(alpha: 0.6)
+             ..style = PaintingStyle.stroke
+             ..strokeWidth = 1.2,
+    );
+    // Lid strip (top 30% of box)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(boxRect.left, boxRect.top, boxRect.width, boxRect.height * 0.32),
+        const Radius.circular(3),
+      ),
+      Paint()..color = ribbonColor.withValues(alpha: 0.85),
+    );
+    // Ribbon vertical
+    canvas.drawRect(
+      Rect.fromCenter(center: center, width: s * 0.28, height: s * 1.6),
+      Paint()..color = ribbonColor.withValues(alpha: 0.85),
+    );
+    // Bow (two small circles)
+    canvas.drawCircle(center.translate(-s * 0.22, -s * 0.60), s * 0.22,
+        Paint()..color = ribbonColor);
+    canvas.drawCircle(center.translate( s * 0.22, -s * 0.60), s * 0.22,
+        Paint()..color = ribbonColor);
+  }
+
+  // ── "All other dhikr" text inside right pan ───────────────────────────────
+  void _drawPanLabel(Canvas canvas, Offset center, double r) {
+    final tp = TextPainter(
+      text: const TextSpan(
+        text: 'All other\ndhikr',
+        style: TextStyle(
+          color: Color(0xFF6B7280),
+          fontSize: 8,
+          fontWeight: FontWeight.w600,
+          height: 1.3,
+        ),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: r * 1.1);
+    // Position at vertical centre of the pan bowl (rim + r*0.5)
+    tp.paint(
+      canvas,
+      Offset(center.dx - tp.width / 2, center.dy + r * 0.40 - tp.height / 2),
+    );
+  }
+
+  // ── Light rays from heavy pan ──────────────────────────────────────────────
+  void _drawRays(Canvas canvas, Offset center, double len, double grow, double pulse) {
+    const rayAngles = [
+      -2.35, -2.55, -2.75, -2.95, -3.14,  // left arc rays
+    ];
+    final rayPaint = Paint()
+      ..color = const Color(0xFFFFD700).withValues(alpha: grow * (0.15 + pulse * 0.10))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+    for (final a in rayAngles) {
+      canvas.drawLine(
+        Offset(center.dx + 30 * math.cos(a), center.dy + 30 * math.sin(a)),
+        Offset(center.dx + len * math.cos(a), center.dy + len * math.sin(a)),
+        rayPaint,
+      );
+    }
+  }
+
+  // ── 4-pointed sparkle ─────────────────────────────────────────────────────
+  void _drawSparkle(Canvas canvas, Offset c, double r, Color color) {
+    final path = Path();
+    for (int i = 0; i < 4; i++) {
+      final a = i * math.pi / 2 - math.pi / 4;
+      path.moveTo(c.dx, c.dy);
+      path.lineTo(c.dx + r * math.cos(a - 0.2), c.dy + r * math.sin(a - 0.2));
+      path.lineTo(c.dx + r * 2.1 * math.cos(a), c.dy + r * 2.1 * math.sin(a));
+      path.lineTo(c.dx + r * math.cos(a + 0.2), c.dy + r * math.sin(a + 0.2));
+      path.close();
+    }
+    canvas.drawPath(path, Paint()..color = color..style = PaintingStyle.fill);
+  }
+
+  @override
+  bool shouldRepaint(_HeavyScalesPainter o) =>
+      o.pulse  != pulse  || o.grow  != grow  || o.star   != star ||
+      o.bounce != bounce || o.shock != shock  || o.complete != complete;
 }
 
 // =============================================================================
