@@ -1,7 +1,10 @@
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'features/auth/data/qf_auth_service.dart';
 
 import 'models/app_config.dart';
 import 'screens/onboarding_screen.dart';
@@ -50,6 +53,10 @@ Future<void> main() async {
 
     // Init the live "Noor Today" notification (like Sweatcoin's step counter)
     await NoorLiveNotificationService.instance.init();
+
+    // Wire up app_links to receive OAuth callbacks from the browser.
+    // When noorrewards://oauth2/callback arrives, hand it to QfAuthService.
+    _initAppLinks();
 
     runApp(
       ChangeNotifierProvider<SettingsService>.value(
@@ -119,6 +126,36 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+/// Initialises the app_links stream listener.
+///
+/// Any URI matching noorrewards://oauth2/callback is forwarded to
+/// [QfAuthService.handleCallback], completing the pending Completer from
+/// [QfAuthService.signIn].
+void _initAppLinks() {
+  final appLinks = AppLinks();
+
+  // Handle URI if the app was COLD-STARTED by the OAuth redirect
+  appLinks.getInitialLinkString().then((link) {
+    if (link != null) {
+      final uri = Uri.tryParse(link);
+      if (uri != null && _isQfCallback(uri)) {
+        QfAuthService.instance.handleCallback(uri);
+      }
+    }
+  });
+
+  // Handle URIs while the app is already running (warm start / foreground)
+  appLinks.uriLinkStream.listen((uri) {
+    if (_isQfCallback(uri)) {
+      QfAuthService.instance.handleCallback(uri);
+    }
+  });
+}
+
+bool _isQfCallback(Uri uri) =>
+    uri.scheme == 'noorrewards' && uri.host == 'oauth2';
 
 // ─────────────────────────────────────────────────────────────────────────────
 class AuthGate extends StatefulWidget {

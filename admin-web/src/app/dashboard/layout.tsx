@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase, ADMIN_EMAILS } from "@/lib/supabase";
@@ -30,6 +30,8 @@ export default function DashboardLayout({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [clickedHref, setClickedHref] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -86,19 +88,31 @@ export default function DashboardLayout({
         <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
+            const pending = isPending && clickedHref === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setSidebarOpen(false)}
+                onClick={(e) => {
+                  if (pathname === item.href) return;
+                  e.preventDefault();
+                  setSidebarOpen(false);
+                  setClickedHref(item.href);
+                  startTransition(() => {
+                    router.push(item.href);
+                  });
+                }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
-                  active
+                  active || pending
                     ? "bg-teal-600/20 text-teal-400 font-medium"
                     : "text-slate-400 hover:bg-white/5 hover:text-white"
                 }`}
               >
                 <span className="text-base">{item.icon}</span>
                 {item.label}
+                {pending && (
+                  <span className="ml-auto w-3.5 h-3.5 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+                )}
               </Link>
             );
           })}
