@@ -1,0 +1,113 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/dashboard/analytics",
+      "regex": "^/dashboard/analytics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/analytics(?:/)?$"
+    },
+    {
+      "page": "/dashboard/banners",
+      "regex": "^/dashboard/banners(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/banners(?:/)?$"
+    },
+    {
+      "page": "/dashboard/categories",
+      "regex": "^/dashboard/categories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/categories(?:/)?$"
+    },
+    {
+      "page": "/dashboard/config",
+      "regex": "^/dashboard/config(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/config(?:/)?$"
+    },
+    {
+      "page": "/dashboard/economy",
+      "regex": "^/dashboard/economy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/economy(?:/)?$"
+    },
+    {
+      "page": "/dashboard/features",
+      "regex": "^/dashboard/features(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/features(?:/)?$"
+    },
+    {
+      "page": "/dashboard/projects",
+      "regex": "^/dashboard/projects(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/projects(?:/)?$"
+    },
+    {
+      "page": "/dashboard/theme",
+      "regex": "^/dashboard/theme(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/theme(?:/)?$"
+    },
+    {
+      "page": "/dashboard/users",
+      "regex": "^/dashboard/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/users(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
