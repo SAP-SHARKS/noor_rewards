@@ -140,7 +140,7 @@ export default function UsersPage() {
                       <button
                         onClick={() => handleGrant(u.id)}
                         disabled={granting}
-                        className="px-2 py-1 bg-teal-600 text-white text-xs rounded hover:bg-teal-700 cursor-pointer"
+                        className="px-2 py-1 bg-slate-800 text-white text-xs rounded hover:bg-slate-900 cursor-pointer"
                       >
                         {granting ? "..." : "Grant"}
                       </button>
