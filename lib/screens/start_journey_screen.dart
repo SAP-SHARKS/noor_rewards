@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../l10n/app_localizations.dart';
 import '../features/auth/data/qf_auth_service.dart';
+import 'qf_account_conflict_screen.dart';
 
 class StartJourneyScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -286,6 +287,17 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         if (context.mounted) {
                            // Navigate to dashboard or handle success
                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully authenticated with Quran.com!')));
+                        }
+                      } on QfEmailConflictException catch (e) {
+                        // An existing account uses the same email — show the
+                        // dedicated conflict screen instead of a generic error.
+                        if (context.mounted) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => QfAccountConflictScreen(
+                              email: e.email,
+                              onBack: () => Navigator.of(context).pop(),
+                            ),
+                          ));
                         }
                       } catch (e) {
                          if (context.mounted && !e.toString().contains('cancelled')) {

@@ -3,72 +3,84 @@
 import { useState } from "react";
 import { useConfig } from "@/lib/config-context";
 
-// ── Presets ──────────────────────────────────────────────────────────────────
+// ── Presets (keys match Flutter AppConfig exactly) ───────────────────────────
 
 const PRESETS = [
   {
     name: "Noor Classic",
     desc: "Default teal and dark navy",
     colors: {
-      primary_color: "0xFF2BAE99", secondary_color: "0xFF0F172A", donation_accent: "0xFF10B981",
-      dashboard_bg: "0xFF0F172A", dashboard_text: "0xFFFFFFFF", dashboard_teal: "0xFF2BAE99",
-      azkar_accent: "0xFF2BAE99", azkar_gradient_start: "0xFF065F53", azkar_gradient_end: "0xFF0C4A3E",
-      quran_bg: "0xFFF5F0E8", quran_accent: "0xFF2BAE99", quran_gold: "0xFFD4A843",
+      primary_color: "FF2BAE99", secondary_color: "FF0F172A", donation_color: "FF10B981",
+      dash_bg: "FF0F172A", dash_text: "FFFFFFFF", dash_teal: "FF2BAE99",
+      azkar_accent: "FF2BAE99", azkar_morning_grad1: "FF065F53", azkar_morning_grad2: "FF0D9488",
+      azkar_evening_grad1: "FF1E1B4B", azkar_evening_grad2: "FF4338CA",
+      azkar_highlight: "FF1A7A5C",
+      quran_bg: "FFF5F0E8", quran_accent: "FF2BAE99", quran_gold: "FFD4A843", quran_text: "FF1C1C1E",
     },
   },
   {
     name: "Midnight",
     desc: "Deep indigo with violet accents",
     colors: {
-      primary_color: "0xFF6366F1", secondary_color: "0xFF1E1B4B", donation_accent: "0xFF818CF8",
-      dashboard_bg: "0xFF1E1B4B", dashboard_text: "0xFFFFFFFF", dashboard_teal: "0xFF6366F1",
-      azkar_accent: "0xFF6366F1", azkar_gradient_start: "0xFF312E81", azkar_gradient_end: "0xFF1E1B4B",
-      quran_bg: "0xFFF0EEFF", quran_accent: "0xFF6366F1", quran_gold: "0xFFD4A843",
+      primary_color: "FF6366F1", secondary_color: "FF1E1B4B", donation_color: "FF818CF8",
+      dash_bg: "FF1E1B4B", dash_text: "FFFFFFFF", dash_teal: "FF6366F1",
+      azkar_accent: "FF6366F1", azkar_morning_grad1: "FF312E81", azkar_morning_grad2: "FF6366F1",
+      azkar_evening_grad1: "FF1E1B4B", azkar_evening_grad2: "FF6366F1",
+      azkar_highlight: "FF4F46E5",
+      quran_bg: "FFF0EEFF", quran_accent: "FF6366F1", quran_gold: "FFD4A843", quran_text: "FF1C1C1E",
     },
   },
   {
     name: "Rose Garden",
     desc: "Warm rose with crimson tones",
     colors: {
-      primary_color: "0xFFE11D48", secondary_color: "0xFF1C1917", donation_accent: "0xFFFB7185",
-      dashboard_bg: "0xFF1C1917", dashboard_text: "0xFFFFFFFF", dashboard_teal: "0xFFE11D48",
-      azkar_accent: "0xFFE11D48", azkar_gradient_start: "0xFF881337", azkar_gradient_end: "0xFF4C0519",
-      quran_bg: "0xFFFFF1F2", quran_accent: "0xFFE11D48", quran_gold: "0xFFD4A843",
+      primary_color: "FFE11D48", secondary_color: "FF1C1917", donation_color: "FFFB7185",
+      dash_bg: "FF1C1917", dash_text: "FFFFFFFF", dash_teal: "FFE11D48",
+      azkar_accent: "FFE11D48", azkar_morning_grad1: "FF881337", azkar_morning_grad2: "FFE11D48",
+      azkar_evening_grad1: "FF4C0519", azkar_evening_grad2: "FF881337",
+      azkar_highlight: "FFE11D48",
+      quran_bg: "FFFFF1F2", quran_accent: "FFE11D48", quran_gold: "FFD4A843", quran_text: "FF1C1C1E",
     },
   },
   {
     name: "Ocean",
     desc: "Cool sky blue and deep teal",
     colors: {
-      primary_color: "0xFF0EA5E9", secondary_color: "0xFF0C4A6E", donation_accent: "0xFF38BDF8",
-      dashboard_bg: "0xFF0C4A6E", dashboard_text: "0xFFFFFFFF", dashboard_teal: "0xFF0EA5E9",
-      azkar_accent: "0xFF0EA5E9", azkar_gradient_start: "0xFF075985", azkar_gradient_end: "0xFF0C4A6E",
-      quran_bg: "0xFFF0F9FF", quran_accent: "0xFF0EA5E9", quran_gold: "0xFFD4A843",
+      primary_color: "FF0EA5E9", secondary_color: "FF0C4A6E", donation_color: "FF38BDF8",
+      dash_bg: "FF0C4A6E", dash_text: "FFFFFFFF", dash_teal: "FF0EA5E9",
+      azkar_accent: "FF0EA5E9", azkar_morning_grad1: "FF075985", azkar_morning_grad2: "FF0EA5E9",
+      azkar_evening_grad1: "FF0C4A6E", azkar_evening_grad2: "FF075985",
+      azkar_highlight: "FF0EA5E9",
+      quran_bg: "FFF0F9FF", quran_accent: "FF0EA5E9", quran_gold: "FFD4A843", quran_text: "FF1C1C1E",
     },
   },
   {
     name: "Emerald",
     desc: "Rich green with nature tones",
     colors: {
-      primary_color: "0xFF059669", secondary_color: "0xFF064E3B", donation_accent: "0xFF34D399",
-      dashboard_bg: "0xFF064E3B", dashboard_text: "0xFFFFFFFF", dashboard_teal: "0xFF059669",
-      azkar_accent: "0xFF059669", azkar_gradient_start: "0xFF065F46", azkar_gradient_end: "0xFF064E3B",
-      quran_bg: "0xFFECFDF5", quran_accent: "0xFF059669", quran_gold: "0xFFD4A843",
+      primary_color: "FF059669", secondary_color: "FF064E3B", donation_color: "FF34D399",
+      dash_bg: "FF064E3B", dash_text: "FFFFFFFF", dash_teal: "FF059669",
+      azkar_accent: "FF059669", azkar_morning_grad1: "FF065F46", azkar_morning_grad2: "FF059669",
+      azkar_evening_grad1: "FF064E3B", azkar_evening_grad2: "FF065F46",
+      azkar_highlight: "FF059669",
+      quran_bg: "FFECFDF5", quran_accent: "FF059669", quran_gold: "FFD4A843", quran_text: "FF1C1C1E",
     },
   },
   {
     name: "Monochrome",
     desc: "Clean grayscale, minimal",
     colors: {
-      primary_color: "0xFF475569", secondary_color: "0xFF0F172A", donation_accent: "0xFF64748B",
-      dashboard_bg: "0xFF0F172A", dashboard_text: "0xFFFFFFFF", dashboard_teal: "0xFF475569",
-      azkar_accent: "0xFF475569", azkar_gradient_start: "0xFF1E293B", azkar_gradient_end: "0xFF0F172A",
-      quran_bg: "0xFFF8FAFC", quran_accent: "0xFF475569", quran_gold: "0xFFD4A843",
+      primary_color: "FF475569", secondary_color: "FF0F172A", donation_color: "FF64748B",
+      dash_bg: "FF0F172A", dash_text: "FFFFFFFF", dash_teal: "FF475569",
+      azkar_accent: "FF475569", azkar_morning_grad1: "FF1E293B", azkar_morning_grad2: "FF475569",
+      azkar_evening_grad1: "FF0F172A", azkar_evening_grad2: "FF1E293B",
+      azkar_highlight: "FF475569",
+      quran_bg: "FFF8FAFC", quran_accent: "FF475569", quran_gold: "FFD4A843", quran_text: "FF1C1C1E",
     },
   },
 ];
 
-// ── Color groups ─────────────────────────────────────────────────────────────
+// ── Color groups (keys match Flutter AppConfig) ──────────────────────────────
 
 const COLOR_GROUPS = [
   {
@@ -77,7 +89,7 @@ const COLOR_GROUPS = [
     keys: [
       { key: "primary_color", label: "Primary", hint: "Main brand color, buttons, active states" },
       { key: "secondary_color", label: "Secondary", hint: "Dark backgrounds, navigation bar" },
-      { key: "donation_accent", label: "Donation Accent", hint: "Donate buttons, progress bars" },
+      { key: "donation_color", label: "Donation Accent", hint: "Donate buttons, progress bars" },
       { key: "banner_color", label: "Banner", hint: "Home screen announcement banner" },
     ],
   },
@@ -85,9 +97,9 @@ const COLOR_GROUPS = [
     title: "Home Screen",
     desc: "Colors for the main dashboard/home screen",
     keys: [
-      { key: "dashboard_bg", label: "Background", hint: "Home screen background" },
-      { key: "dashboard_text", label: "Text", hint: "Home screen text color" },
-      { key: "dashboard_teal", label: "Accent", hint: "Highlights and icons on home screen" },
+      { key: "dash_bg", label: "Background", hint: "Home screen background" },
+      { key: "dash_text", label: "Text", hint: "Home screen text color" },
+      { key: "dash_teal", label: "Accent", hint: "Highlights and icons on home" },
     ],
   },
   {
@@ -95,10 +107,11 @@ const COLOR_GROUPS = [
     desc: "Colors for the dhikr reading experience",
     keys: [
       { key: "azkar_accent", label: "Accent", hint: "Counter, buttons, active states" },
-      { key: "azkar_gradient_start", label: "Gradient Top", hint: "Background gradient start" },
-      { key: "azkar_gradient_end", label: "Gradient Bottom", hint: "Background gradient end" },
+      { key: "azkar_morning_grad1", label: "Morning Gradient Top", hint: "Morning azkar gradient start" },
+      { key: "azkar_morning_grad2", label: "Morning Gradient Bottom", hint: "Morning azkar gradient end" },
+      { key: "azkar_evening_grad1", label: "Evening Gradient Top", hint: "Evening azkar gradient start" },
+      { key: "azkar_evening_grad2", label: "Evening Gradient Bottom", hint: "Evening azkar gradient end" },
       { key: "azkar_highlight", label: "Highlight", hint: "Bismillah and special text color" },
-      { key: "azkar_card_bg", label: "Card Background", hint: "Azkar text card background" },
     ],
   },
   {
@@ -108,20 +121,27 @@ const COLOR_GROUPS = [
       { key: "quran_bg", label: "Page Background", hint: "Mushaf reading background" },
       { key: "quran_accent", label: "Accent", hint: "Surah headers, controls" },
       { key: "quran_gold", label: "Gold / Bismillah", hint: "Bismillah banner and ornaments" },
-      { key: "quran_text_color", label: "Arabic Text", hint: "Quran Arabic text color" },
+      { key: "quran_text", label: "Arabic Text", hint: "Quran Arabic text color" },
     ],
   },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function toHex(fc: string): string {
-  if (fc?.startsWith("0x") && fc.length >= 10) return "#" + fc.slice(4);
-  return fc || "#000000";
+// DB stores: "FF2BAE99" (no 0x, no #)
+// Browser color picker uses: "#2BAE99"
+function dbToHex(db: string): string {
+  if (!db || db.length < 6) return "#000000";
+  // strip 0x prefix if present (legacy)
+  let clean = db.replace(/^0x/i, "").replace("#", "");
+  // if 8 chars (with alpha), take last 6
+  if (clean.length === 8) clean = clean.slice(2);
+  return "#" + clean;
 }
 
-function toFlutter(hex: string): string {
-  return "0xFF" + hex.replace("#", "").toUpperCase();
+function hexToDb(hex: string): string {
+  // "#2BAE99" → "FF2BAE99"
+  return "FF" + hex.replace("#", "").toUpperCase();
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -132,14 +152,13 @@ export default function ThemePage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Merged view: draft overrides config
   function getColor(key: string): string {
     return draft[key] ?? config[key] ?? "";
   }
 
   function setColor(key: string, hex: string) {
     setSaved(false);
-    setDraft((prev) => ({ ...prev, [key]: toFlutter(hex) }));
+    setDraft((prev) => ({ ...prev, [key]: hexToDb(hex) }));
   }
 
   function applyPreset(preset: (typeof PRESETS)[0]) {
@@ -172,9 +191,9 @@ export default function ThemePage() {
       </div>
     );
 
-  const primary = toHex(getColor("primary_color"));
-  const secondary = toHex(getColor("secondary_color"));
-  const accent = toHex(getColor("donation_accent"));
+  const primary = dbToHex(getColor("primary_color"));
+  const secondary = dbToHex(getColor("secondary_color"));
+  const accent = dbToHex(getColor("donation_color"));
 
   return (
     <div className="max-w-5xl space-y-8">
@@ -195,17 +214,10 @@ export default function ThemePage() {
           </div>
           {hasChanges && (
             <div className="flex items-center gap-2">
-              <button
-                onClick={discardChanges}
-                className="px-4 py-2 text-sm text-slate-500 hover:text-slate-700 cursor-pointer"
-              >
+              <button onClick={discardChanges} className="px-4 py-2 text-sm text-slate-500 hover:text-slate-700 cursor-pointer">
                 Discard
               </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="px-5 py-2 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-900 disabled:opacity-50 transition cursor-pointer"
-              >
+              <button onClick={handleSave} disabled={saving} className="px-5 py-2 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-900 disabled:opacity-50 transition cursor-pointer">
                 {saving ? "Saving..." : "Save Changes"}
               </button>
             </div>
@@ -217,16 +229,10 @@ export default function ThemePage() {
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
           <h2 className="text-sm font-semibold text-slate-800">Live Preview</h2>
-          <p className="text-xs text-slate-400">
-            Shows how your selected colors will look in the app
-          </p>
+          <p className="text-xs text-slate-400">Shows how your selected colors will look in the app</p>
         </div>
         <div className="p-6 flex gap-6 flex-wrap">
-          {/* Mini phone mockup */}
-          <div
-            className="w-52 h-[340px] rounded-2xl overflow-hidden shadow-lg border border-slate-200 flex flex-col shrink-0"
-            style={{ backgroundColor: secondary }}
-          >
+          <div className="w-52 h-[340px] rounded-2xl overflow-hidden shadow-lg border border-slate-200 flex flex-col shrink-0" style={{ backgroundColor: secondary }}>
             <div className="px-3 py-2 flex items-center justify-between">
               <span className="text-[10px] text-white/60">9:41</span>
               <span className="text-[10px] text-white/60 font-medium">Noor Rewards</span>
@@ -247,44 +253,32 @@ export default function ThemePage() {
               <div className="w-full h-1.5 rounded-full bg-white/10 mb-2">
                 <div className="h-full rounded-full" style={{ backgroundColor: primary, width: "65%" }} />
               </div>
-              <div
-                className="w-full py-1.5 rounded-lg text-center text-[9px] font-medium text-white"
-                style={{ backgroundColor: accent }}
-              >
+              <div className="w-full py-1.5 rounded-lg text-center text-[9px] font-medium text-white" style={{ backgroundColor: accent }}>
                 Donate
               </div>
             </div>
             <div className="mt-auto px-4 py-2.5 flex justify-around border-t border-white/10">
               {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className={`w-5 h-5 rounded-full ${i === 1 ? "" : "bg-white/15"}`}
-                  style={i === 1 ? { backgroundColor: primary } : {}}
-                />
+                <div key={i} className={`w-5 h-5 rounded-full ${i === 1 ? "" : "bg-white/15"}`} style={i === 1 ? { backgroundColor: primary } : {}} />
               ))}
             </div>
           </div>
-
-          {/* Current colors summary */}
           <div className="flex-1 min-w-[240px]">
             <p className="text-xs font-medium text-slate-500 mb-3">Active Colors</p>
             <div className="grid grid-cols-3 gap-3">
               {[
                 { label: "Primary", key: "primary_color" },
                 { label: "Secondary", key: "secondary_color" },
-                { label: "Accent", key: "donation_accent" },
+                { label: "Donation", key: "donation_color" },
                 { label: "Azkar", key: "azkar_accent" },
                 { label: "Quran BG", key: "quran_bg" },
                 { label: "Quran Gold", key: "quran_gold" },
               ].map((s) => {
-                const hex = toHex(getColor(s.key));
+                const hex = dbToHex(getColor(s.key));
                 const changed = draft[s.key] !== undefined;
                 return (
                   <div key={s.label} className="text-center">
-                    <div
-                      className={`w-full h-12 rounded-lg border mb-1.5 ${changed ? "border-blue-400 ring-2 ring-blue-100" : "border-slate-200"}`}
-                      style={{ backgroundColor: hex }}
-                    />
+                    <div className={`w-full h-12 rounded-lg border mb-1.5 ${changed ? "border-blue-400 ring-2 ring-blue-100" : "border-slate-200"}`} style={{ backgroundColor: hex }} />
                     <p className="text-[11px] text-slate-500">{s.label}</p>
                     {changed && <p className="text-[9px] text-blue-500 font-medium">Modified</p>}
                   </div>
@@ -297,34 +291,20 @@ export default function ThemePage() {
 
       {/* Presets */}
       <div>
-        <h2 className="text-sm font-semibold text-slate-800 mb-1">
-          Theme Presets
-        </h2>
-        <p className="text-xs text-slate-400 mb-4">
-          Select a preset to load its colors into the editor. You can customize
-          individual colors below, then click Save to push to the app.
-        </p>
+        <h2 className="text-sm font-semibold text-slate-800 mb-1">Theme Presets</h2>
+        <p className="text-xs text-slate-400 mb-4">Select a preset to load its colors. Customize below, then click Save.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {PRESETS.map((preset) => {
-            const p = toHex(preset.colors.primary_color);
-            const s = toHex(preset.colors.secondary_color);
-            const a = toHex(preset.colors.donation_accent);
-            return (
-              <button
-                key={preset.name}
-                onClick={() => applyPreset(preset)}
-                className="bg-white border border-slate-200 rounded-xl p-3 text-left hover:border-slate-400 hover:shadow-sm transition cursor-pointer group"
-              >
-                <div className="flex gap-1 mb-2.5">
-                  <div className="w-7 h-7 rounded-lg border border-slate-100" style={{ backgroundColor: p }} />
-                  <div className="w-7 h-7 rounded-lg border border-slate-100" style={{ backgroundColor: s }} />
-                  <div className="w-7 h-7 rounded-lg border border-slate-100" style={{ backgroundColor: a }} />
-                </div>
-                <p className="text-xs font-semibold text-slate-700">{preset.name}</p>
-                <p className="text-[10px] text-slate-400 leading-tight mt-0.5">{preset.desc}</p>
-              </button>
-            );
-          })}
+          {PRESETS.map((preset) => (
+            <button key={preset.name} onClick={() => applyPreset(preset)} className="bg-white border border-slate-200 rounded-xl p-3 text-left hover:border-slate-400 hover:shadow-sm transition cursor-pointer group">
+              <div className="flex gap-1 mb-2.5">
+                {[preset.colors.primary_color, preset.colors.secondary_color, preset.colors.donation_color].map((c, i) => (
+                  <div key={i} className="w-7 h-7 rounded-lg border border-slate-100" style={{ backgroundColor: dbToHex(c) }} />
+                ))}
+              </div>
+              <p className="text-xs font-semibold text-slate-700">{preset.name}</p>
+              <p className="text-[10px] text-slate-400 leading-tight mt-0.5">{preset.desc}</p>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -338,27 +318,19 @@ export default function ThemePage() {
           <div className="p-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {group.keys.map(({ key, label, hint }) => {
-                const hex = toHex(getColor(key));
+                const hex = dbToHex(getColor(key));
                 const changed = draft[key] !== undefined;
                 return (
                   <div key={key} className={`rounded-xl border p-3 ${changed ? "border-blue-300 bg-blue-50/30" : "border-slate-100 bg-slate-50/50"}`}>
                     <div className="flex items-center gap-3 mb-2">
-                      <div
-                        className="w-10 h-10 rounded-lg border border-slate-200 shrink-0"
-                        style={{ backgroundColor: hex.length === 7 ? hex : "#000" }}
-                      />
+                      <div className="w-10 h-10 rounded-lg border border-slate-200 shrink-0" style={{ backgroundColor: hex.length === 7 ? hex : "#000" }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-slate-700">{label}</p>
                         <p className="text-[10px] text-slate-400 leading-tight">{hint}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={hex.length === 7 ? hex : "#000000"}
-                        onChange={(e) => setColor(key, e.target.value)}
-                        className="w-8 h-8 rounded border border-slate-200 cursor-pointer p-0 shrink-0"
-                      />
+                      <input type="color" value={hex.length === 7 ? hex : "#000000"} onChange={(e) => setColor(key, e.target.value)} className="w-8 h-8 rounded border border-slate-200 cursor-pointer p-0 shrink-0" />
                       <input
                         type="text"
                         value={hex.toUpperCase()}
@@ -369,9 +341,7 @@ export default function ThemePage() {
                         className="flex-1 px-2 py-1.5 border border-slate-200 rounded text-xs font-mono text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
                     </div>
-                    {changed && (
-                      <p className="text-[10px] text-blue-500 font-medium mt-1.5">Unsaved change</p>
-                    )}
+                    {changed && <p className="text-[10px] text-blue-500 font-medium mt-1.5">Unsaved change</p>}
                   </div>
                 );
               })}
@@ -383,28 +353,16 @@ export default function ThemePage() {
       {/* Bottom Save */}
       {hasChanges && (
         <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between">
-          <p className="text-sm text-slate-600">
-            {changedCount} unsaved change{changedCount !== 1 ? "s" : ""}
-          </p>
+          <p className="text-sm text-slate-600">{changedCount} unsaved change{changedCount !== 1 ? "s" : ""}</p>
           <div className="flex items-center gap-2">
-            <button
-              onClick={discardChanges}
-              className="px-4 py-2 text-sm text-slate-500 hover:text-slate-700 cursor-pointer"
-            >
-              Discard
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="px-6 py-2.5 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-900 disabled:opacity-50 transition cursor-pointer"
-            >
+            <button onClick={discardChanges} className="px-4 py-2 text-sm text-slate-500 hover:text-slate-700 cursor-pointer">Discard</button>
+            <button onClick={handleSave} disabled={saving} className="px-6 py-2.5 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-900 disabled:opacity-50 transition cursor-pointer">
               {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
       )}
 
-      {/* Info */}
       <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
         <p className="text-xs text-slate-500">
           Pick colors using the color picker or type hex values directly. Changes

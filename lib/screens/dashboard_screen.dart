@@ -13,6 +13,7 @@ import 'tafsir_hub_screen.dart';
 import 'level_screen.dart';
 import 'impact_report_screen.dart';
 import 'profile_settings_screen.dart';
+import '../features/auth/data/qf_auth_service.dart';
 
 import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
@@ -291,7 +292,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return 'Seeker';
   }
 
-  Future<void> _signOut() async => _supabase.auth.signOut();
+  Future<void> _signOut() async => QfAuthService.performSignOut(_supabase);
+
 
   void _goToScreen(Widget screen) async {
     // Suppress popups while user is in a reading/focus screen
