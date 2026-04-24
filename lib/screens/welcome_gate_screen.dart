@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 class WelcomeGateScreen extends StatefulWidget {
   final String name;
@@ -95,13 +96,13 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen> with TickerProvid
                 const SizedBox(height: 24),
                 // Name
                 RichText(text: TextSpan(children: [
-                  TextSpan(text: 'Welcome, ', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w400, color: Colors.white70)),
+                  TextSpan(text: AppLocalizations.of(context)!.welcomeUser(widget.name).split(widget.name).first, style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w400, color: Colors.white70)),
                   TextSpan(text: widget.name, style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5)),
                   TextSpan(text: ' 🌙', style: GoogleFonts.outfit(fontSize: 26)),
                 ])),
                 const SizedBox(height: 16),
                 Text(
-                  'The gates of Noor are open.\nYour spiritual journey begins today.',
+                  AppLocalizations.of(context)!.gatesOfNoor,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(fontSize: 15, color: Colors.white54, height: 1.7),
                 ),
@@ -117,7 +118,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen> with TickerProvid
                       boxShadow: [BoxShadow(color: const Color(0xFFFFAA00).withValues(alpha: 0.45), blurRadius: 28, offset: const Offset(0, 10))],
                     ),
                     child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Text('Enter the Garden', style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.black87)),
+                      Text(AppLocalizations.of(context)!.enterTheGarden, style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.black87)),
                       const SizedBox(width: 10),
                       const Icon(Icons.arrow_forward_rounded, color: Colors.black87, size: 20),
                     ])),

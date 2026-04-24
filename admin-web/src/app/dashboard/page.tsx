@@ -55,26 +55,10 @@ export default function OverviewPage() {
     );
 
   const cards = [
-    {
-      label: "Total Users",
-      value: stats.totalUsers.toLocaleString(),
-      icon: "👥",
-    },
-    {
-      label: "Total Points Earned",
-      value: stats.totalPoints.toLocaleString(),
-      icon: "⭐",
-    },
-    {
-      label: "Active Projects",
-      value: stats.activeProjects.toString(),
-      icon: "🏗️",
-    },
-    {
-      label: "Badges Awarded",
-      value: stats.badgesAwarded.toLocaleString(),
-      icon: "🏅",
-    },
+    { label: "Total Users", value: stats.totalUsers.toLocaleString() },
+    { label: "Total Points Earned", value: stats.totalPoints.toLocaleString() },
+    { label: "Active Projects", value: stats.activeProjects.toString() },
+    { label: "Badges Awarded", value: stats.badgesAwarded.toLocaleString() },
   ];
 
   const importantKeys = [
@@ -95,12 +79,9 @@ export default function OverviewPage() {
             key={c.label}
             className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm"
           >
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{c.icon}</span>
-              <div>
-                <p className="text-2xl font-bold text-slate-800">{c.value}</p>
-                <p className="text-sm text-slate-500">{c.label}</p>
-              </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-800">{c.value}</p>
+              <p className="text-sm text-slate-500">{c.label}</p>
             </div>
           </div>
         ))}

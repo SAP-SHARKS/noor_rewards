@@ -4,43 +4,12 @@ import { useState } from "react";
 import { useConfig } from "@/lib/config-context";
 
 const FEATURE_FLAGS = [
-  {
-    key: "feature_leaderboard",
-    label: "Leaderboard",
-    desc: "Show rankings screen",
-    icon: "🏆",
-  },
-  {
-    key: "feature_challenges",
-    label: "Challenges",
-    desc: "Enable challenges system",
-    icon: "🎯",
-  },
-  {
-    key: "feature_badges",
-    label: "Badges",
-    desc: "Show badges/achievements",
-    icon: "🏅",
-  },
-  {
-    key: "feature_tafsir",
-    label: "Tafsir",
-    desc: "Enable Tafsir audio screen",
-    icon: "📖",
-  },
-  {
-    key: "feature_invite",
-    label: "Invite Friends",
-    desc: "Enable friend invites",
-    icon: "💌",
-  },
-  {
-    key: "maintenance_mode",
-    label: "Maintenance Mode",
-    desc: "Block ALL users from app (emergency only!)",
-    icon: "🚨",
-    danger: true,
-  },
+  { key: "feature_leaderboard", label: "Leaderboard", desc: "Show rankings screen" },
+  { key: "feature_challenges", label: "Challenges", desc: "Enable challenges system" },
+  { key: "feature_badges", label: "Badges", desc: "Show badges/achievements" },
+  { key: "feature_tafsir", label: "Tafsir", desc: "Enable Tafsir audio screen" },
+  { key: "feature_invite", label: "Invite Friends", desc: "Enable friend invites" },
+  { key: "maintenance_mode", label: "Maintenance Mode", desc: "Block ALL users from app (emergency only!)", danger: true },
 ];
 
 export default function FeaturesPage() {
@@ -89,7 +58,11 @@ export default function FeaturesPage() {
                   : "border-slate-200"
               }`}
             >
-              <span className="text-2xl shrink-0">{flag.icon}</span>
+              <div className={`w-9 h-9 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold ${
+                isDanger ? "bg-red-50 text-red-600" : "bg-teal-50 text-teal-600"
+              }`}>
+                {flag.label.charAt(0)}
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-slate-800">
                   {flag.label}

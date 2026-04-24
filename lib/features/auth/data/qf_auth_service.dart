@@ -148,20 +148,14 @@ class QfAuthService {
 
     if (response.status == 200) {
       final data = response.data;
-      // Store QF tokens
+      // Store QF tokens locally (same as the colleague's app)
       if (data?['access_token']  != null) await _secureStorage.write(key: _accessTokenKey,  value: data['access_token']);
       if (data?['refresh_token'] != null) await _secureStorage.write(key: _refreshTokenKey, value: data['refresh_token']);
 
-      // Create a Supabase session using the OTP token the Edge Function generated.
-      // This links the QF user to a Supabase account so AuthGate can proceed.
-      final supabaseEmail = data?['supabase_email'] as String?;
-      final supabaseToken = data?['supabase_token'] as String?;
-      if (supabaseEmail != null && supabaseToken != null) {
-        await _supabase.auth.verifyOTP(
-          email: supabaseEmail,
-          token: supabaseToken,
-          type: OtpType.magiclink,
-        );
+      // Create an anonymous Supabase session so AuthGate can proceed.
+      // QF auth and Supabase auth are independent — we just need any valid session.
+      if (_supabase.auth.currentSession == null) {
+        await _supabase.auth.signInAnonymously();
       }
     } else {
       throw Exception('Token exchange failed (${response.status}): ${response.data}');
