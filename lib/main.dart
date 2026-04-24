@@ -184,13 +184,40 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
-  bool _onboardingDone = false;
+  bool _onboardingDone   = false;
   bool _profileSetupDone = false;
-  bool _welcomeShown = false;
-  String _userName = '';
+  bool _welcomeShown     = false;
+  String _userName       = '';
+  String? _lastUserId;   // tracks which user these local flags belong to
+
+  @override
+  void initState() {
+    super.initState();
+    // Restore the persisted QF signed-out flag from secure storage.
+    QfAuthService.instance.init();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Outer builder: show _AuthLoading for the entire QF token-exchange window.
+    return ValueListenableBuilder<bool>(
+      valueListenable: QfAuthService.instance.loginInProgress,
+      builder: (context, qfLoggingIn, _) {
+        if (qfLoggingIn) return const _AuthLoading();
+
+        // Inner builder: treat QF user as logged-out when they tapped Sign Out,
+        // even though the Supabase anonymous session is kept alive.
+        return ValueListenableBuilder<bool>(
+          valueListenable: QfAuthService.instance.isQfSignedOut,
+          builder: (context, qfSignedOut, _) {
+            return _buildAuthStream(qfSignedOut);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildAuthStream(bool qfSignedOut) {
     return StreamBuilder<AuthState>(
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
@@ -198,7 +225,9 @@ class _AuthGateState extends State<AuthGate> {
             ? snapshot.data!.session
             : Supabase.instance.client.auth.currentSession;
 
-        if (session == null) {
+        // QF user explicitly signed out: show login screen even though the
+        // anonymous Supabase session is still alive (to prevent new user rows).
+        if (qfSignedOut || session == null) {
           if (!_onboardingDone) {
             return OnboardingScreen(
               onComplete: () => setState(() => _onboardingDone = true),
@@ -209,18 +238,52 @@ class _AuthGateState extends State<AuthGate> {
           );
         }
 
+        // Session verified but stream hasn't emitted full metadata yet—
+        // show loading to prevent any screen from flashing.
+        if (!snapshot.hasData) return const _AuthLoading();
+
         final user = Supabase.instance.client.auth.currentUser;
+
+        // ── Reset local flags when the signed-in user changes ────────────────
+        // _profileSetupDone and _userName belong to a specific user session.
+        // If the user ID changes (e.g. User B logs in after User A), we must
+        // clear them so User B is never treated as already having completed
+        // setup, and User A's name is never shown to User B.
+        if (user?.id != _lastUserId) {
+          _lastUserId        = user?.id;
+          _profileSetupDone  = false;
+          _userName          = '';
+          _welcomeShown      = false;
+        }
+
         final noorSetupDone = user?.userMetadata?['noor_setup_complete'] == true;
         final hasProfile = noorSetupDone || _profileSetupDone;
         final storedName = user?.userMetadata?['noor_name'] as String?;
 
         if (!hasProfile) {
           return ProfileSetupScreen(
-            onComplete: (name) => setState(() {
-              _userName = name;
-              _profileSetupDone = true;
-              _welcomeShown = false;
-            }),
+            onComplete: (name) {
+              final isQfUser = user?.userMetadata?['provider'] == 'quran_com';
+              if (isQfUser) {
+                QfAuthService.instance.storeQfName(name);
+              }
+              // Persist email to profiles table for all login methods so
+              // it's always visible in the Supabase dashboard.
+              final userEmail = user?.email                               // email/Google
+                  ?? user?.userMetadata?['qf_email'] as String?;         // QF
+              if (userEmail != null && userEmail.isNotEmpty) {
+                Supabase.instance.client.from('profiles').upsert(
+                  {'id': user!.id, 'email': userEmail},
+                  onConflict: 'id', ignoreDuplicates: false,
+                ).catchError((e) => debugPrint('[AuthGate] email upsert failed: $e'));
+              }
+              setState(() {
+                _userName = name;
+                _profileSetupDone = true;
+
+                _welcomeShown = false;
+              });
+            },
           );
         }
 
@@ -237,6 +300,26 @@ class _AuthGateState extends State<AuthGate> {
 
         return DashboardScreen(name: displayName);
       },
+    );
+  }
+}
+
+/// A minimal full-screen loader shown for the brief window (<200 ms) between
+/// app startup and the first Supabase auth stream event. Prevents any
+/// intermediate screen (e.g. ProfileSetupScreen) from flashing for users
+/// who are already registered.
+class _AuthLoading extends StatelessWidget {
+  const _AuthLoading();
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Color(0xFF0A1628),
+      body: Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF2BAE99),
+          strokeWidth: 2.5,
+        ),
+      ),
     );
   }
 }

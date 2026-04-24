@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../features/auth/data/qf_auth_service.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -286,7 +287,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         ],
       ),
     );
-    if (confirm == true) await _supabase.auth.signOut();
+    if (confirm == true) await QfAuthService.performSignOut(_supabase);
+
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────

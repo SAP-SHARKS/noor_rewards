@@ -37,11 +37,14 @@ export async function updateConfigKey(
 ) {
   const { error } = await supabase
     .from("app_config")
-    .update({
-      value,
-      updated_at: new Date().toISOString(),
-      updated_by: adminEmail,
-    })
-    .eq("key", key);
+    .upsert(
+      {
+        key,
+        value,
+        updated_at: new Date().toISOString(),
+        updated_by: adminEmail,
+      },
+      { onConflict: "key" }
+    );
   if (error) throw error;
 }
