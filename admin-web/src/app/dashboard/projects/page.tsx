@@ -291,7 +291,7 @@ export default function ProjectsPage() {
             <button
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
-              className="px-4 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700 disabled:opacity-50 cursor-pointer"
+              className="px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 disabled:opacity-50 cursor-pointer"
             >
               {uploading ? "Uploading..." : "+ Upload Images / Videos"}
             </button>
@@ -583,7 +583,7 @@ export default function ProjectsPage() {
             <button
               onClick={handleSave}
               disabled={saving || !form.title.trim()}
-              className="px-6 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 transition cursor-pointer font-medium"
+              className="px-6 py-2.5 bg-slate-800 text-white rounded-lg hover:bg-slate-900 disabled:opacity-50 transition cursor-pointer font-medium"
             >
               {saving ? "Saving..." : "Save Project"}
             </button>
@@ -605,7 +605,7 @@ export default function ProjectsPage() {
         </p>
         <button
           onClick={openCreate}
-          className="px-4 py-2.5 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700 transition cursor-pointer font-medium"
+          className="px-4 py-2.5 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 transition cursor-pointer font-medium"
         >
           + New Project
         </button>
@@ -741,7 +741,7 @@ export default function ProjectsPage() {
           <p className="text-slate-500 mb-4">No projects yet</p>
           <button
             onClick={openCreate}
-            className="px-4 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700 cursor-pointer"
+            className="px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 cursor-pointer"
           >
             Create Your First Project
           </button>

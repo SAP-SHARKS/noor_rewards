@@ -130,7 +130,7 @@ export default function RawConfigPage() {
                         <button
                           onClick={() => handleSave(row.key)}
                           disabled={!changed || saving === row.key}
-                          className="px-4 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700 disabled:opacity-30 transition cursor-pointer"
+                          className="px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 disabled:opacity-30 transition cursor-pointer"
                         >
                           {saving === row.key ? "..." : "Save"}
                         </button>

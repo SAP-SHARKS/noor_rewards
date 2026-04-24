@@ -32,6 +32,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   String _displayName  = '';
   String _email        = '';
   String _country      = '';
+  String _provider     = 'email';   // 'email' | 'google' | 'quran_com'
   int    _level        = 1;
   String _levelTitle   = 'Seeker';
   String? _avatarUrl;
@@ -58,7 +59,22 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     final user = _supabase.auth.currentUser;
     if (user == null) { setState(() => _loading = false); return; }
 
-    _email = user.email ?? '';
+    // ── Detect sign-in provider ──────────────────────────────────────────────
+    // Google sets appMetadata.provider = 'google'
+    // QF sets userMetadata.provider = 'quran_com' (we write this after userinfo)
+    final appProvider  = user.appMetadata['provider']  as String? ?? '';
+    final userProvider = user.userMetadata?['provider'] as String? ?? '';
+    if (userProvider == 'quran_com') {
+      _provider = 'quran_com';
+      // For QF users the real email lives in user metadata (not user.email)
+      _email = (user.userMetadata?['qf_email'] as String?) ?? '';
+    } else if (appProvider == 'google') {
+      _provider = 'google';
+      _email = user.email ?? '';
+    } else {
+      _provider = 'email';
+      _email = user.email ?? '';
+    }
 
     try {
       final profile = await _supabase
@@ -495,6 +511,43 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         fontSize: 10, fontWeight: FontWeight.w700, color: color, letterSpacing: 0.5)),
   );
 
+  /// Small pill showing which provider the user signed in with.
+  Widget _providerBadge() {
+    switch (_provider) {
+      case 'google':
+        return _badgePillWithIcon(
+          'Google', const Color(0xFF4285F4),
+          icon: Icons.g_mobiledata_rounded,
+        );
+      case 'quran_com':
+        return _badgePillWithIcon(
+          'Quran.com', const Color(0xFF00C875),
+          icon: Icons.menu_book_rounded,
+        );
+      default:
+        return _badgePillWithIcon(
+          'Email', const Color(0xFFFFAA00),
+          icon: Icons.email_outlined,
+        );
+    }
+  }
+
+  Widget _badgePillWithIcon(String label, Color color, {required IconData icon}) =>
+    Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, size: 10, color: color),
+        const SizedBox(width: 3),
+        Text(label, style: GoogleFonts.rajdhani(
+            fontSize: 10, fontWeight: FontWeight.w700, color: color, letterSpacing: 0.5)),
+      ]),
+    );
+
   // ── Avatar Card ───────────────────────────────────────────────────────────
   Widget _buildAvatarCard() => Container(
     padding: const EdgeInsets.all(20),
@@ -563,6 +616,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         label: 'Email',
         value: _email,
       ),
+      _divider(),
+      // Connected account row — shows provider with icon
+      _connectedAccountRow(),
       _divider(),
       _editableRow(
         icon: Icons.public_rounded,
@@ -657,6 +713,60 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   );
 
   Widget _divider() => const Divider(height: 0, indent: 66, endIndent: 16, color: Color(0xFFF0EDE8));
+
+  /// Row in the info card showing how the user signed in.
+  Widget _connectedAccountRow() {
+    final IconData icon;
+    final String sub;
+    final Color color;
+    switch (_provider) {
+      case 'google':
+        icon  = Icons.g_mobiledata_rounded;
+        sub   = 'Signed in with Google';
+        color = const Color(0xFF4285F4);
+        break;
+      case 'quran_com':
+        icon  = Icons.menu_book_rounded;
+        sub   = 'Signed in with Quran.com';
+        color = const Color(0xFF00C875);
+        break;
+      default:
+        icon  = Icons.email_outlined;
+        sub   = 'Signed in with Email';
+        color = const Color(0xFFFFAA00);
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(children: [
+        Container(
+          width: 36, height: 36,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Connected Account', style: GoogleFonts.outfit(
+              fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF8E8E93))),
+          const SizedBox(height: 2),
+          Text(sub, style: GoogleFonts.outfit(
+              fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF1C1C1E))),
+        ])),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: color.withValues(alpha: 0.35)),
+          ),
+          child: Text('Active', style: GoogleFonts.outfit(
+              fontSize: 10, fontWeight: FontWeight.w700, color: color)),
+        ),
+      ]),
+    );
+  }
 
   // ── Support Card ──────────────────────────────────────────────────────────
   Widget _buildSupportCard() => Container(
