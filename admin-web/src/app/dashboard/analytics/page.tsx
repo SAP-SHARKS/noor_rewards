@@ -15,7 +15,7 @@ type DeviceStat = {
 };
 
 function countryFlag(iso: string): string {
-  if (!iso || iso.length !== 2) return "🌍";
+  if (!iso || iso.length !== 2) return "--";
   const codePoints = [...iso.toUpperCase()].map(
     (c) => 0x1f1e6 - 65 + c.charCodeAt(0)
   );

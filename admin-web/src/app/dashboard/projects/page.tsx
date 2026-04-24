@@ -300,7 +300,7 @@ export default function ProjectsPage() {
 
         {media.length === 0 ? (
           <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-16 text-center">
-            <p className="text-4xl mb-3">📸</p>
+            <svg className="w-10 h-10 text-slate-300 mb-3 mx-auto" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
             <p className="text-slate-500 text-sm">
               No media yet. Upload images or videos for the project carousel.
             </p>
@@ -409,7 +409,7 @@ export default function ProjectsPage() {
               </div>
             ) : (
               <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center mb-3">
-                <p className="text-3xl mb-2">🖼️</p>
+                <svg className="w-8 h-8 text-slate-300 mb-2 mx-auto" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
                 <p className="text-sm text-slate-400">No cover image set</p>
               </div>
             )}
@@ -632,7 +632,7 @@ export default function ProjectsPage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-5xl opacity-30">🏗️</span>
+                    <svg className="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
                   </div>
                 )}
                 {/* Category badge */}
@@ -737,7 +737,7 @@ export default function ProjectsPage() {
 
       {projects.length === 0 && (
         <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-16 text-center">
-          <p className="text-4xl mb-3">🏗️</p>
+          <svg className="w-10 h-10 text-slate-300 mb-3 mx-auto" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
           <p className="text-slate-500 mb-4">No projects yet</p>
           <button
             onClick={openCreate}

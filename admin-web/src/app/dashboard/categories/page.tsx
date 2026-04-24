@@ -114,7 +114,9 @@ export default function CategoriesPage() {
                 : "border-slate-100 opacity-50"
             }`}
           >
-            <span className="text-xl shrink-0">{cat.icon || "📿"}</span>
+            <div className="w-9 h-9 rounded-lg shrink-0 flex items-center justify-center bg-teal-50 text-teal-600 text-xs font-bold">
+              {cat.icon || cat.label?.charAt(0) || "A"}
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-800">
                 {cat.label}

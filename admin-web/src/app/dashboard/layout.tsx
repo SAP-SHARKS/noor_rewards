@@ -7,18 +7,65 @@ import { supabase, ADMIN_EMAILS } from "@/lib/supabase";
 import { ConfigProvider } from "@/lib/config-context";
 import type { User } from "@supabase/supabase-js";
 
+// SVG icon paths (Heroicons outline style)
+const ICONS: Record<string, string> = {
+  overview:
+    "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1",
+  economy:
+    "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+  theme:
+    "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01",
+  projects:
+    "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+  users:
+    "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
+  features:
+    "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+  banners:
+    "M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z",
+  config:
+    "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+  analytics:
+    "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+  categories:
+    "M4 6h16M4 10h16M4 14h16M4 18h16",
+};
+
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Overview", icon: "📊" },
-  { href: "/dashboard/economy", label: "Economy", icon: "💰" },
-  { href: "/dashboard/theme", label: "Theme & Colors", icon: "🎨" },
-  { href: "/dashboard/projects", label: "Projects", icon: "🏗️" },
-  { href: "/dashboard/users", label: "Users", icon: "👥" },
-  { href: "/dashboard/features", label: "Feature Flags", icon: "🚀" },
-  { href: "/dashboard/banners", label: "Banners", icon: "📢" },
-  { href: "/dashboard/config", label: "Raw Config", icon: "⚙️" },
-  { href: "/dashboard/analytics", label: "Analytics", icon: "📈" },
-  { href: "/dashboard/categories", label: "Azkar Categories", icon: "📿" },
+  { href: "/dashboard", label: "Overview", icon: "overview" },
+  { href: "/dashboard/economy", label: "Economy", icon: "economy" },
+  { href: "/dashboard/theme", label: "Theme & Colors", icon: "theme" },
+  { href: "/dashboard/projects", label: "Projects", icon: "projects" },
+  { href: "/dashboard/users", label: "Users", icon: "users" },
+  { href: "/dashboard/features", label: "Feature Flags", icon: "features" },
+  { href: "/dashboard/banners", label: "Banners", icon: "banners" },
+  { href: "/dashboard/config", label: "Raw Config", icon: "config" },
+  { href: "/dashboard/analytics", label: "Analytics", icon: "analytics" },
+  { href: "/dashboard/categories", label: "Azkar Categories", icon: "categories" },
 ];
+
+function NavIcon({ name, className }: { name: string; className?: string }) {
+  const paths = ICONS[name];
+  if (!paths) return null;
+  return (
+    <svg
+      className={className ?? "w-5 h-5"}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      viewBox="0 0 24 24"
+    >
+      {paths.split(" M").map((d, i) => (
+        <path
+          key={i}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d={i === 0 ? d : "M" + d}
+        />
+      ))}
+    </svg>
+  );
+}
 
 export default function DashboardLayout({
   children,
@@ -32,6 +79,17 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [clickedHref, setClickedHref] = useState("");
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("noor-admin-dark");
+    if (saved === "true") setDark(true);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("noor-admin-dark", String(dark));
+  }, [dark]);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -61,7 +119,7 @@ export default function DashboardLayout({
     NAV_ITEMS.find((n) => n.href === pathname)?.label ?? "Dashboard";
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className={`min-h-screen flex ${dark ? "bg-slate-900" : "bg-slate-50"}`}>
       {/* Sidebar overlay for mobile */}
       {sidebarOpen && (
         <div
@@ -72,15 +130,25 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen w-[240px] bg-[#0F172A] text-white flex flex-col z-40 transition-transform lg:translate-x-0 ${
+        className={`fixed lg:sticky top-0 left-0 h-screen w-[240px] flex flex-col z-40 transition-transform lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } ${
+          dark
+            ? "bg-slate-800 border-r border-slate-700"
+            : "bg-white border-r border-slate-200"
         }`}
       >
         {/* Logo */}
-        <div className="px-6 py-5 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🌙</span>
-            <span className="text-lg font-bold tracking-tight">NoorAdmin</span>
+        <div className={`px-6 py-5 border-b ${dark ? "border-slate-700" : "border-slate-100"}`}>
+          <div className="flex items-center gap-2.5">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${dark ? "bg-teal-600" : "bg-teal-50"}`}>
+              <svg className={`w-4.5 h-4.5 ${dark ? "text-white" : "text-teal-600"}`} fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            </div>
+            <span className={`text-lg font-bold tracking-tight ${dark ? "text-white" : "text-slate-800"}`}>
+              NoorAdmin
+            </span>
           </div>
         </div>
 
@@ -104,14 +172,18 @@ export default function DashboardLayout({
                 }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
                   active || pending
-                    ? "bg-teal-600/20 text-teal-400 font-medium"
-                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                    ? dark
+                      ? "bg-teal-600/20 text-teal-400 font-medium"
+                      : "bg-teal-50 text-teal-700 font-medium"
+                    : dark
+                      ? "text-slate-400 hover:bg-slate-700 hover:text-white"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
-                <span className="text-base">{item.icon}</span>
+                <NavIcon name={item.icon} />
                 {item.label}
                 {pending && (
-                  <span className="ml-auto w-3.5 h-3.5 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+                  <span className="ml-auto w-3.5 h-3.5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
                 )}
               </Link>
             );
@@ -119,13 +191,13 @@ export default function DashboardLayout({
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-4 border-t border-white/10">
-          <p className="text-xs text-slate-500 truncate mb-2">
+        <div className={`px-4 py-4 border-t ${dark ? "border-slate-700" : "border-slate-100"}`}>
+          <p className={`text-xs truncate mb-2 ${dark ? "text-slate-500" : "text-slate-400"}`}>
             {user?.email}
           </p>
           <button
             onClick={handleLogout}
-            className="text-xs text-red-400 hover:text-red-300 cursor-pointer"
+            className="text-xs text-red-500 hover:text-red-400 cursor-pointer"
           >
             Sign out
           </button>
@@ -135,34 +207,48 @@ export default function DashboardLayout({
       {/* Main content */}
       <div className="flex-1 min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-slate-200 px-6 py-4 flex items-center gap-4">
+        <header className={`sticky top-0 z-20 backdrop-blur border-b px-6 py-4 flex items-center gap-4 ${
+          dark
+            ? "bg-slate-900/80 border-slate-700"
+            : "bg-white/80 border-slate-200"
+        }`}>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden text-slate-600 cursor-pointer"
+            className={`lg:hidden cursor-pointer ${dark ? "text-slate-400" : "text-slate-600"}`}
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-lg font-semibold text-slate-800">
+          <h1 className={`text-lg font-semibold flex-1 ${dark ? "text-white" : "text-slate-800"}`}>
             {currentLabel}
           </h1>
+          {/* Dark mode toggle */}
+          <button
+            onClick={() => setDark(!dark)}
+            className={`w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition ${
+              dark
+                ? "bg-slate-700 text-yellow-400 hover:bg-slate-600"
+                : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+            }`}
+            title={dark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {dark ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+              </svg>
+            )}
+          </button>
         </header>
 
         {/* Page content */}
         <main className="p-6">
-            <ConfigProvider>{children}</ConfigProvider>
-          </main>
+          <ConfigProvider>{children}</ConfigProvider>
+        </main>
       </div>
     </div>
   );

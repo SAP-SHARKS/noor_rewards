@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 import 'start_journey_screen.dart';
 
@@ -45,16 +46,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
-  final List<_OnboardingPage> _pages = [
+  // Pages are built in build() so AppLocalizations context is available
+  List<_OnboardingPage> _buildPages(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
     _OnboardingPage(
       bgTop: const Color(0xFF0D1B2A),
       bgBottom: const Color(0xFF1A3A4A),
       illustration: const _MoonIllustration(),
       arabicText: 'السَّلَامُ عَلَيْكُم',
       transliteration: 'As-salamu Alaykum',
-      title: 'Peace Be\nUpon You',
-      subtitle:
-          'Welcome to Noor Rewards — where every good deed is a step closer to Allah\'s mercy and light.',
+      title: l10n.onboarding1Title,
+      subtitle: l10n.onboarding1Subtitle,
     ),
     _OnboardingPage(
       bgTop:    const Color(0xFF0A0A1A),
@@ -62,9 +65,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       illustration: const _DualBenefitIllustration(),
       arabicText: 'خير الدُنيا والآخرة',
       transliteration: 'Khayr al-Dunya wal-Akhirah',
-      title: 'Two Rewards.\nOne Action.',
-      subtitle:
-          'Every word you read earns you Sawab — a light in your Akhirah.\nYour Noor Coins fund real causes that change real lives.',
+      title: l10n.onboarding2Title,
+      subtitle: l10n.onboarding2Subtitle,
     ),
     _OnboardingPage(
       bgTop: const Color(0xFF1A0A00),
@@ -72,9 +74,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       illustration: const _TasbihIllustration(),
       arabicText: 'سُبْحَانَ اللَّه',
       transliteration: 'SubhanAllah',
-      title: 'Remember\nAllah Always',
-      subtitle:
-          'A heart that remembers Allah finds peace in every breath. Track your daily zikr and let every bead count.',
+      title: l10n.onboarding3Title,
+      subtitle: l10n.onboarding3Subtitle,
     ),
     _OnboardingPage(
       bgTop: const Color(0xFF003322),
@@ -82,9 +83,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       illustration: const _QuranIllustration(),
       arabicText: 'اقْرَأْ',
       transliteration: 'Iqra — Read',
-      title: 'Reflect &\nGrow Daily',
-      subtitle:
-          'The Quran is a guide for all of mankind. Unlock verses, daily duas, and reflections tailored for your journey.',
+      title: l10n.onboarding4Title,
+      subtitle: l10n.onboarding4Subtitle,
     ),
     _OnboardingPage(
       bgTop: const Color(0xFF2D0A3A),
@@ -92,11 +92,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       illustration: const _SadaqahIllustration(),
       arabicText: 'صَدَقَة',
       transliteration: 'Sadaqah — Charity',
-      title: 'Give &\nEarn Blessings',
-      subtitle:
-          'Sadaqah extinguishes sin as water extinguishes fire. Earn rewards for every act of charity and kindness.',
+      title: l10n.onboarding5Title,
+      subtitle: l10n.onboarding5Subtitle,
     ),
-  ];
+  ];}
 
   @override
   void initState() {
@@ -118,7 +117,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _next() {
-    if (_currentPage < _pages.length - 1) {
+    final pages = _buildPages(context);
+    if (_currentPage < pages.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -151,16 +151,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           // ── Page content ──────────────────────────────────────────────────
           PageView.builder(
             controller: _pageController,
-            itemCount: _pages.length,
+            itemCount: _buildPages(context).length,
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemBuilder: (_, i) => _PageSlide(
-              page: _pages[i],
+              page: _buildPages(context)[i],
               pulseAnimation: _pulseAnimation,
             ),
           ),
 
           // ── Skip button (top right) ───────────────────────────────────────
-          if (_currentPage < _pages.length - 1)
+          if (_currentPage < _buildPages(context).length - 1)
             SafeArea(
               child: Align(
                 alignment: Alignment.topRight,
@@ -179,7 +179,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         ),
                       ),
                       child: Text(
-                        'Skip',
+                        AppLocalizations.of(context)!.skip,
                         style: GoogleFonts.outfit(
                           color: Colors.white70,
                           fontSize: 14,
@@ -203,16 +203,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   children: [
                     // Progress dots
                     _PageDots(
-                      total: _pages.length,
+                      total: _buildPages(context).length,
                       current: _currentPage,
                       activeColor: _accentColor(_currentPage),
                     ),
                     const SizedBox(height: 28),
                     // CTA button
                     _NextButton(
-                      isLast: _currentPage == _pages.length - 1,
+                      isLast: _currentPage == _buildPages(context).length - 1,
                       color: _accentColor(_currentPage),
                       onTap: _next,
+                      labelContinue: AppLocalizations.of(context)!.continue_,
+                      labelBegin: AppLocalizations.of(context)!.beginYourJourney,
                     ),
                   ],
                 ),
@@ -423,9 +425,16 @@ class _NextButton extends StatelessWidget {
   final bool isLast;
   final Color color;
   final VoidCallback onTap;
+  final String labelContinue;
+  final String labelBegin;
 
-  const _NextButton(
-      {required this.isLast, required this.color, required this.onTap});
+  const _NextButton({
+    required this.isLast,
+    required this.color,
+    required this.onTap,
+    required this.labelContinue,
+    required this.labelBegin,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +460,7 @@ class _NextButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                isLast ? 'Begin Your Journey' : 'Continue',
+                isLast ? labelBegin : labelContinue,
                 style: GoogleFonts.outfit(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,

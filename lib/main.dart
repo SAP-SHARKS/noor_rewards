@@ -1,5 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -93,9 +95,26 @@ class MyApp extends StatelessWidget {
     // Rebuild theme whenever SettingsService notifies (Realtime color change)
     final cfg = context.watch<SettingsService>().config;
     return MaterialApp(
-      title: 'NoorRewards',
+      title: 'Noor Rewards',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(cfg),
+      // Localization — auto-follows device locale
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),        // English (default)
+        Locale('ar'),        // Arabic  — RTL
+        Locale('ur'),        // Urdu    — RTL
+        Locale('tr'),        // Turkish
+        Locale('ms'),        // Malay
+        Locale('id'),        // Indonesian
+        Locale('ru'),        // Russian
+        Locale('fr'),        // French
+      ],
       // Caps the textScaler so that device accessibility font-size settings
       // cannot break gamified fixed-height layouts and cause global overflow.
       builder: (context, child) {

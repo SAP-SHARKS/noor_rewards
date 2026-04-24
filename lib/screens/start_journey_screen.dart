@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../l10n/app_localizations.dart';
 import '../features/auth/data/qf_auth_service.dart';
 
 class StartJourneyScreen extends StatefulWidget {
@@ -199,7 +200,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'LIGHT OF MERCY',
+                    AppLocalizations.of(context)!.lightOfMercy,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 10,
@@ -227,7 +228,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
                   // Subtitle
                   Text(
-                    'Track your spiritual growth, join the community, and unlock exclusive rewards for every good deed.',
+                    AppLocalizations.of(context)!.trackSpiritualGrowth,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -268,7 +269,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                             children: [
                               const _GoogleLogo(size: 22),
                               const SizedBox(width: 12),
-                              const Text('Continue with Google'),
+                              Text(AppLocalizations.of(context)!.continueWithGoogle),
                             ],
                           ),
                   ),
@@ -323,12 +324,12 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               strokeWidth: 2,
                             ),
                           )
-                        : const Row(
+                        : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.book_rounded, size: 22, color: Color(0xFF00C875)),
-                              SizedBox(width: 12),
-                              Text('Continue with Quran.com'),
+                              const Icon(Icons.book_rounded, size: 22, color: Color(0xFF00C875)),
+                              const SizedBox(width: 12),
+                              Text(AppLocalizations.of(context)!.continueWithQuran),
                             ],
                           ),
                   ),
@@ -337,7 +338,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
                   // Terms text
                   Text(
-                    'By signing up, you agree to our Terms & Privacy Policy',
+                    AppLocalizations.of(context)!.bySigningUp,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 11,

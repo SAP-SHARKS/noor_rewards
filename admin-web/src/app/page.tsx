@@ -56,7 +56,9 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-50 mb-4">
-              <span className="text-3xl">🌙</span>
+              <svg className="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
             </div>
             <h1 className="text-2xl font-bold text-slate-800">NoorAdmin</h1>
             <p className="text-slate-500 text-sm mt-1">
