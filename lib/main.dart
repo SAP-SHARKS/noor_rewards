@@ -225,9 +225,21 @@ class _AuthGateState extends State<AuthGate> {
             ? snapshot.data!.session
             : Supabase.instance.client.auth.currentSession;
 
-        // QF user explicitly signed out: show login screen even though the
-        // anonymous Supabase session is still alive (to prevent new user rows).
-        if (qfSignedOut || session == null) {
+        // QF users who explicitly signed out should see the login screen even
+        // though their Supabase session is still alive.  But only gate QF users—
+        // a Google user signing in while this flag is set must not be blocked.
+        final isCurrentUserQf = Supabase.instance.client.auth.currentUser
+            ?.userMetadata?['provider'] == 'quran_com';
+        final showLogin = (qfSignedOut && isCurrentUserQf) || session == null;
+
+        // Auto-clear a stale QF sign-out flag when a non-QF user is active,
+        // so it doesn't accidentally block a future re-login check.
+        if (qfSignedOut && !isCurrentUserQf && session != null) {
+          QfAuthService.instance.isQfSignedOut.value = false;
+          // SecureStorage will be properly cleared the next time a QF user signs in.
+        }
+
+        if (showLogin) {
           if (!_onboardingDone) {
             return OnboardingScreen(
               onComplete: () => setState(() => _onboardingDone = true),
