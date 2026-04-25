@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../l10n/app_localizations.dart';
 
 class _GoalItem {
   final IconData icon;
@@ -153,9 +154,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> with TickerProv
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('مَا اسْمُكَ؟', style: GoogleFonts.amiri(fontSize: 28, color: const Color(0xFF00C875), fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
-        Text('What should we\ncall you?', style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2)),
+        Text(AppLocalizations.of(context)?.callYou ?? 'What should we\ncall you?', style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2)),
         const SizedBox(height: 10),
-        Text('Personalise your spiritual journey with your name', style: GoogleFonts.outfit(fontSize: 14, color: Colors.white54, height: 1.5)),
+        Text(AppLocalizations.of(context)?.personaliseJourney ?? 'Personalise your spiritual journey with your name', style: GoogleFonts.outfit(fontSize: 14, color: Colors.white54, height: 1.5)),
         const SizedBox(height: 36),
         _InputField(ctrl: _nameCtrl, hint: 'Ahmad, Fatima, Yusuf…', icon: Icons.person_outline_rounded, accent: const Color(0xFF00C875), onSubmit: _next),
       ]),
@@ -168,9 +169,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> with TickerProv
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('مِنْ أَيْنَ أَنْتَ؟', style: GoogleFonts.amiri(fontSize: 28, color: const Color(0xFFFFAA00), fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
-        Text('Where are\nyou from?', style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2)),
+        Text(AppLocalizations.of(context)?.whereFrom ?? 'Where are\nyou from?', style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2)),
         const SizedBox(height: 10),
-        Text('Join Muslims from around the world on this journey', style: GoogleFonts.outfit(fontSize: 14, color: Colors.white54, height: 1.5)),
+        Text(AppLocalizations.of(context)?.joinMuslims ?? 'Join Muslims from around the world on this journey', style: GoogleFonts.outfit(fontSize: 14, color: Colors.white54, height: 1.5)),
         const SizedBox(height: 36),
         _InputField(ctrl: _countryCtrl, hint: 'Pakistan, Egypt, Malaysia…', icon: Icons.public_rounded, accent: const Color(0xFFFFAA00), onSubmit: _next),
         const SizedBox(height: 20),
@@ -200,9 +201,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> with TickerProv
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('لِمَاذَا أَنْتَ هُنَا؟', style: GoogleFonts.amiri(fontSize: 26, color: const Color(0xFFDD88FF), fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
-          Text('What brings\nyou here?', style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2)),
+          Text(AppLocalizations.of(context)?.whatBringsYou ?? 'What brings\nyou here?', style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2)),
           const SizedBox(height: 8),
-          Text('Choose your spiritual goals — you can select multiple', style: GoogleFonts.outfit(fontSize: 13, color: Colors.white54, height: 1.5)),
+          Text(AppLocalizations.of(context)?.chooseGoals ?? 'Choose your spiritual goals — you can select multiple', style: GoogleFonts.outfit(fontSize: 13, color: Colors.white54, height: 1.5)),
           const SizedBox(height: 20),
         ]),
       ),

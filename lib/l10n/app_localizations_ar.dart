@@ -205,4 +205,137 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noData => 'لا توجد بيانات بعد';
+
+  @override
+  String get callYou => 'ماذا ينبغي أن\\nنناديك؟';
+
+  @override
+  String get personaliseJourney => 'قم بتخصيص رحلتك الروحية باسمك';
+
+  @override
+  String get whereFrom => 'من أين\\nأنت؟';
+
+  @override
+  String get joinMuslims =>
+      'انضم إلى المسلمين من جميع أنحاء العالم في هذه الرحلة';
+
+  @override
+  String get whatBringsYou => 'ما الذي\\nأتى بك إلى هنا؟';
+
+  @override
+  String get chooseGoals => 'اختر أهدافك الروحية — يمكنك اختيار أكثر من هدف';
+
+  @override
+  String get navHome => 'الرئيسية';
+
+  @override
+  String get navJourney => 'الرحلة';
+
+  @override
+  String get navAkhirah => 'الآخرة';
+
+  @override
+  String get navProfile => 'الملف الشخصي';
+
+  @override
+  String get communityLeaderboard => 'لوحة صدارة المجتمع';
+
+  @override
+  String get topContributors => 'أفضل المساهمين بالنقاط';
+
+  @override
+  String get myProfile => 'ملفي الشخصي';
+
+  @override
+  String get startStreak => 'ابدأ سلسلتك اليوم!';
+
+  @override
+  String get alreadySealed => 'تم الختم اليوم بالفعل';
+
+  @override
+  String get sealTheDay => 'اختم اليوم';
+
+  @override
+  String get alhamdulillah => 'الحمد لله!';
+
+  @override
+  String get levelSeeker => 'طالب';
+
+  @override
+  String get levelBeliever => 'مؤمن';
+
+  @override
+  String get levelDevoted => 'مخلص';
+
+  @override
+  String get levelChampion => 'بطل';
+
+  @override
+  String get levelLegend => 'أسطورة';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get day => 'يوم';
+
+  @override
+  String get days => 'أيام';
+
+  @override
+  String get quran => 'القرآن';
+
+  @override
+  String get zikr => 'الذكر';
+
+  @override
+  String get dailyLogin => 'الدخول اليومي';
+
+  @override
+  String get todaysProgress => 'تقدم اليوم';
+
+  @override
+  String get versesToday => 'آيات اليوم';
+
+  @override
+  String get resumeReading => 'استئناف القراءة';
+
+  @override
+  String get continueReading => 'مواصلة القراءة';
+
+  @override
+  String get chooseWhereToStart => 'اختر من أين تبدأ';
+
+  @override
+  String get startReadingFrom => 'ابدأ القراءة من';
+
+  @override
+  String get yourLibrary => 'مكتبتك';
+
+  @override
+  String get browse => 'تصفح';
+
+  @override
+  String get listen => 'استمع';
+
+  @override
+  String get tafsir => 'تفسير';
+
+  @override
+  String get wordByWord => 'كلمة بكلمة';
+
+  @override
+  String get mushaf => 'مصحف';
+
+  @override
+  String get otherCategories => 'فئات أخرى';
+
+  @override
+  String get noCategoriesAvailable => 'لا توجد فئات';
+
+  @override
+  String get nextPts => 'التالي';
+
+  @override
+  String get prev => 'السابق';
 }

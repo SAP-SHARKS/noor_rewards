@@ -254,7 +254,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   'Set Your Target',
                   style: GoogleFonts.outfit(
                     fontSize: 18, fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                    color: isDark ? Colors.white : SettingsService.instance.config.dashText,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -283,11 +283,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF0D9488).withValues(alpha: 0.15)
+                                ? SettingsService.instance.config.azkarAccent.withValues(alpha: 0.15)
                                 : (isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF2F2F7)),
                             borderRadius: BorderRadius.circular(10),
                             border: isSelected
-                                ? Border.all(color: const Color(0xFF0D9488), width: 1.5)
+                                ? Border.all(color: SettingsService.instance.config.azkarAccent, width: 1.5)
                                 : null,
                           ),
                           child: Text(
@@ -295,8 +295,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             style: GoogleFonts.outfit(
                               fontSize: 14, fontWeight: FontWeight.w600,
                               color: isSelected
-                                  ? const Color(0xFF0D9488)
-                                  : (isDark ? Colors.white70 : const Color(0xFF1C1C1E)),
+                                  ? SettingsService.instance.config.azkarAccent
+                                  : (isDark ? Colors.white70 : SettingsService.instance.config.dashText),
                             ),
                           ),
                         ),
@@ -312,7 +312,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
                     fontSize: 22, fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                    color: isDark ? Colors.white : SettingsService.instance.config.dashText,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Enter custom count',
@@ -365,7 +365,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           Navigator.pop(ctx);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0D9488),
+                          backgroundColor: SettingsService.instance.config.azkarAccent,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -571,9 +571,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
     required int xp,
     String? countsLabel,
   }) {
-    final kText = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kText = isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kBg   = isDark ? const Color(0xFF1A1A1E) : Colors.white;
-    const kTeal  = Color(0xFF0D9488);
+    final kTeal  = SettingsService.instance.config.azkarAccent;
     const kGold  = Color(0xFFD4AF37);
 
     showDialog(
@@ -601,7 +601,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
               height: 4,
               margin: const EdgeInsets.symmetric(horizontal: 60),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [kTeal, kGold, kTeal],
                 ),
                 borderRadius: BorderRadius.circular(2),
@@ -735,7 +735,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         style: GoogleFonts.outfit(
           fontSize: 13,
           fontWeight: FontWeight.w800,
-          color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+          color: isDark ? Colors.white : SettingsService.instance.config.dashText,
         ),
       ),
       if (label != null)
@@ -759,7 +759,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         builder: (context, setModalState) {
           final isDark = _settings.darkMode;
           final sheetBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-          final txtColor = isDark ? Colors.white : const Color(0xFF1C1C1E);
+          final txtColor = isDark ? Colors.white : SettingsService.instance.config.dashText;
 
           return DraggableScrollableSheet(
             initialChildSize: 0.75,
@@ -810,13 +810,13 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         Text('Appearance',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0D9488))),
+                                color: SettingsService.instance.config.azkarAccent)),
                         const SizedBox(height: 10),
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text('Dark Mode',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          activeTrackColor: const Color(0xFF0D9488),
+                          activeTrackColor: SettingsService.instance.config.azkarAccent,
                           value: _settings.darkMode,
                           onChanged: (val) {
                             setModalState(() => _settings.darkMode = val);
@@ -829,7 +829,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           contentPadding: EdgeInsets.zero,
                           title: Text('Show Translation',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          activeTrackColor: const Color(0xFF0D9488),
+                          activeTrackColor: SettingsService.instance.config.azkarAccent,
                           value: _settings.showTranslation,
                           onChanged: (val) {
                             setModalState(() => _settings.showTranslation = val);
@@ -842,7 +842,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           contentPadding: EdgeInsets.zero,
                           title: Text('Show Transliteration',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          activeTrackColor: const Color(0xFF0D9488),
+                          activeTrackColor: SettingsService.instance.config.azkarAccent,
                           value: _settings.showTransliteration,
                           onChanged: (val) {
                             setModalState(() => _settings.showTransliteration = val);
@@ -858,7 +858,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           subtitle: Text('Hide the visual artwork area',
                               style: GoogleFonts.outfit(fontSize: 12,
                                   color: txtColor.withValues(alpha: 0.55))),
-                          activeTrackColor: const Color(0xFF0D9488),
+                          activeTrackColor: SettingsService.instance.config.azkarAccent,
                           value: _settings.showIllustration,
                           onChanged: (val) {
                             setModalState(() => _settings.showIllustration = val);
@@ -874,12 +874,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         Text('Text Size',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0D9488))),
+                                color: SettingsService.instance.config.azkarAccent)),
                         Slider(
                           value: _settings.arabicFontSize,
                           min: 20.0,
                           max: 56.0,
-                          activeColor: const Color(0xFF0D9488),
+                          activeColor: SettingsService.instance.config.azkarAccent,
                           onChanged: (val) {
                             final translationSize = 16.0 + (val - 20.0) * (12.0 / 36.0);
                             setModalState(() {
@@ -901,12 +901,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         Text('Arabic Font Style',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0D9488))),
+                                color: SettingsService.instance.config.azkarAccent)),
                         const SizedBox(height: 12),
                         ...List.generate(_kArabicFonts.length, (i) {
                           final font = _kArabicFonts[i];
                           final sel  = i == _settings.arabicFontIdx;
-                          const accent = Color(0xFF0D9488);
+                          final accent = SettingsService.instance.config.azkarAccent;
                           return GestureDetector(
                             onTap: () {
                               setModalState(() => _settings.arabicFontIdx = i);
@@ -953,8 +953,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 if (sel)
                                   Container(
                                     width: 24, height: 24,
-                                    decoration: const BoxDecoration(
-                                        color: Color(0xFF0D9488),
+                                    decoration: BoxDecoration(
+                                        color: SettingsService.instance.config.azkarAccent,
                                         shape: BoxShape.circle),
                                     child: const Icon(Icons.check_rounded,
                                         color: Colors.white, size: 15),
@@ -987,7 +987,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
             borderRadius: BorderRadius.circular(32),
-            boxShadow: [BoxShadow(color: const Color(0xFF0D9488).withValues(alpha: 0.3), blurRadius: 40, spreadRadius: 10)],
+            boxShadow: [BoxShadow(color: SettingsService.instance.config.azkarAccent.withValues(alpha: 0.3), blurRadius: 40, spreadRadius: 10)],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1000,7 +1000,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
               const SizedBox(height: 20),
               Text('Daily Azkar Complete!', 
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF1C1C1E))),
+                style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: isDark ? Colors.white : SettingsService.instance.config.dashText)),
               const SizedBox(height: 12),
               Text('Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.', 
                 textAlign: TextAlign.center,
@@ -1011,7 +1011,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0D9488),
+                    backgroundColor: SettingsService.instance.config.azkarAccent,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
@@ -1031,14 +1031,14 @@ class _DhikrScreenState extends State<DhikrScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFF0F9F4),
-        body: Center(child: CircularProgressIndicator(color: Color(0xFF0D9488))),
+      return Scaffold(
+        backgroundColor: const Color(0xFFF0F9F4),
+        body: Center(child: CircularProgressIndicator(color: SettingsService.instance.config.azkarAccent)),
       );
     }
 
     final isDark = _settings.darkMode;
-    final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kText  = isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kWhite = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F8F9); // Lighter background
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
@@ -1072,7 +1072,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       'wudu'         => const Color(0xFF0EA5E9), // sky blue
       'food_drink'   => const Color(0xFFF97316), // orange
       'home'         => const Color(0xFF10B981), // emerald
-      _              => const Color(0xFF0D9488), // default teal
+      _              => SettingsService.instance.config.azkarAccent, // default teal
     };
 
     // Banner Text Setup
@@ -1283,7 +1283,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                                color: isDark ? SettingsService.instance.config.dashText : Colors.white,
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -1338,7 +1338,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
           confettiController: _confettiController,
           blastDirectionality: BlastDirectionality.explosive,
           shouldLoop: false,
-          colors: const [Color(0xFF0D9488), Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF38BDF8)],
+          colors: [SettingsService.instance.config.azkarAccent, Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF38BDF8)],
         ),
       ),
     ]));
@@ -1498,7 +1498,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final isMorning = catId == 'morning';
               final isEvening = catId == 'evening';
               final List<Color> gradColors = isMorning
-                ? [const Color(0xFF0C4A3E), const Color(0xFF0A6B52), const Color(0xFF0D9488)]
+                ? [const Color(0xFF0C4A3E), const Color(0xFF0A6B52), SettingsService.instance.config.azkarAccent]
                 : isEvening
                   ? [const Color(0xFF1E1B4B), const Color(0xFF312E81), const Color(0xFF4338CA)]
                   : [appBarColor, appBarColor, appBarColor];
@@ -1779,7 +1779,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                               _toolbarDivider(isDark),
                               _ToolbarBtn(
                                 icon: Icons.refresh_rounded,
-                                color: const Color(0xFF0D9488),
+                                color: SettingsService.instance.config.azkarAccent,
                                 isDark: isDark,
                                 onTap: () {
                                   widget.parentState._reset(azkar.id);
@@ -1836,8 +1836,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                   onTap: () => _tryComplete(azkar, tapTarget, isSwipe: false),
                                   child: Ink(
                                     decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [Color(0xFF0D9488), Color(0xFF10B981)],
+                                      gradient: LinearGradient(
+                                        colors: [SettingsService.instance.config.azkarAccent, const Color(0xFF10B981)],
                                       ),
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -1905,12 +1905,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: _isDragging ? [
                                   BoxShadow(
-                                    color: const Color(0xFF0D9488).withValues(alpha: 0.6),
+                                    color: SettingsService.instance.config.azkarAccent.withValues(alpha: 0.6),
                                     blurRadius: 28,
                                     spreadRadius: 8,
                                   ),
                                   BoxShadow(
-                                    color: const Color(0xFF0D9488).withValues(alpha: 0.3),
+                                    color: SettingsService.instance.config.azkarAccent.withValues(alpha: 0.3),
                                     blurRadius: 50,
                                     spreadRadius: 14,
                                   ),
@@ -2240,9 +2240,9 @@ class _AzkarCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = settings.darkMode;
     final kCardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final kText  = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final kText  = isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-    final kPrimary  = const Color(0xFF0D9488);
+    final kPrimary  = SettingsService.instance.config.azkarAccent;
 
     String rawRef = azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim();
     String bottomRef = '';
@@ -2432,7 +2432,7 @@ class _AzkarCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.88)
-                            : const Color(0xFF1C1C1E),
+                            : SettingsService.instance.config.dashText,
                         height: 1.65,
                       ),
                     ),
@@ -2457,7 +2457,7 @@ class _AzkarCard extends StatelessWidget {
                 : [const Color(0xFFF1F5F9), const Color(0xFFE2E8F0)];
               final textColor = isDark ? Colors.white.withValues(alpha: 0.85) : kText;
               final subColor = isDark ? Colors.white.withValues(alpha: 0.55) : kSub.withValues(alpha: 0.90);
-              final labelColor = isDark ? const Color(0xFF5EADDB) : const Color(0xFF0D9488);
+              final labelColor = isDark ? const Color(0xFF5EADDB) : SettingsService.instance.config.azkarAccent;
               final dividerColor = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08);
 
               return Container(
@@ -13731,8 +13731,8 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration> with
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF7F4EF);
-    final textColor = isDark ? Colors.white : const Color(0xFF1C1C1E);
+    final bg = isDark ? SettingsService.instance.config.dashText : const Color(0xFFF7F4EF);
+    final textColor = isDark ? Colors.white : SettingsService.instance.config.dashText;
     final accent = widget.isComplete ? const Color(0xFF2BAE7C) : widget.accentColor;
 
     return AnimatedBuilder(
@@ -16437,7 +16437,7 @@ class _DhikrCounterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
-    const teal = Color(0xFF0D9488);
+    final teal = SettingsService.instance.config.azkarAccent;
     const green = Color(0xFF2BAE7C);
 
     // Responsive sizing based on screen width
@@ -16513,7 +16513,7 @@ class _DhikrCounterButton extends StatelessWidget {
                     backgroundColor: isDark
                         ? Colors.white.withValues(alpha: 0.07)
                         : teal.withValues(alpha: 0.12),
-                    valueColor: const AlwaysStoppedAnimation<Color>(teal),
+                    valueColor: AlwaysStoppedAnimation<Color>(teal),
                   ),
                 ),
                 // Count text

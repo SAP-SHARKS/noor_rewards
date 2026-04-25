@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 import 'tafsir_screen.dart';
 
+AppConfig get _thcfg => SettingsService.instance.config;
+
 // ── Palette ────────────────────────────────────────────────────────────────────
-const _kBg    = Color(0xFFF7F3EE);
+Color get _kBg    => _thcfg.dashBg;
 const _kWhite = Color(0xFFFFFFFF);
-const _kText  = Color(0xFF1C1C1E);
-const _kSub   = Color(0xFF8E8E93);
+Color get _kText  => _thcfg.dashText;
+Color get _kSub   => _thcfg.dashBg.computeLuminance() > 0.5
+    ? const Color(0xFF8E8E93) : const Color(0xFF9CA3AF);
 const _kGreen = Color(0xFF4A9B5F);
 
 // ── Featured Surahs ──────────────────────────────────────────────────────────

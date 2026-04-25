@@ -4,9 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dhikr_screen.dart';
 import '../utils/asset_helper.dart';
 import '../widgets/noor_icons.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 
-const _kBg = Color(0xFFF7F3EE);
-const _kText = Color(0xFF1C1C1E);
+AppConfig get _dhcfg => SettingsService.instance.config;
+Color get _kBg => _dhcfg.dashBg;
+Color get _kText => _dhcfg.dashText;
 
 class DhikrHubScreen extends StatefulWidget {
   const DhikrHubScreen({super.key});
@@ -20,6 +23,13 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
   void initState() {
     super.initState();
     _loadVisibility();
+  }
+
+  String _localTitle(String title) {
+    final l = AppLocalizations.of(context);
+    if (title == 'Morning') return l?.morning ?? title;
+    if (title == 'Evening') return l?.evening ?? title;
+    return title;
   }
 
   Future<void> _loadVisibility() async {
@@ -39,9 +49,9 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
   @override
   Widget build(BuildContext context) {
     if (_hiddenIds == null) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: _kBg,
-        body: Center(child: CircularProgressIndicator(color: Color(0xFF6B4EE6))),
+        body: const Center(child: CircularProgressIndicator(color: Color(0xFF6B4EE6))),
       );
     }
     final List<Map<String, dynamic>> essentials = [
@@ -89,7 +99,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: _kText, size: 20),
+          icon: Icon(Icons.arrow_back_ios_rounded, color: _kText, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Dhikar & Dua',
@@ -135,7 +145,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                 if (visibleEssentials.isEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
+                    child: Text(AppLocalizations.of(context)?.noCategoriesAvailable ?? 'No categories available.', style: const TextStyle(color: Colors.grey)),
                   )
                 else
                   GridView.builder(
@@ -150,19 +160,19 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   itemCount: visibleEssentials.length,
                   itemBuilder: (context, index) {
                     final item = visibleEssentials[index];
-                    return _buildGradientCard(context, item['title'], item['id'], item['icon'], item['color'], isStacked: essCols == 1);
+                    return _buildGradientCard(context, _localTitle(item['title']), item['id'], item['icon'], item['color'], isStacked: essCols == 1);
                   },
                 ),
 
                 const SizedBox(height: 32),
-                Text('Other Categories',
+                Text(AppLocalizations.of(context)?.otherCategories ?? 'Other Categories',
                     style: GoogleFonts.outfit(
                         fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
                 const SizedBox(height: 16),
                 if (visibleOthers.isEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: Text('No categories available.', style: TextStyle(color: Colors.grey)),
+                    child: Text(AppLocalizations.of(context)?.noCategoriesAvailable ?? 'No categories available.', style: const TextStyle(color: Colors.grey)),
                   )
                 else
                   GridView.builder(
@@ -177,7 +187,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   itemCount: visibleOthers.length,
                   itemBuilder: (context, index) {
                     final item = visibleOthers[index];
-                    return _buildMiniGradientCard(context, item['title'], item['id'], item['icon'], item['color']);
+                    return _buildMiniGradientCard(context, _localTitle(item['title']), item['id'], item['icon'], item['color']);
                   },
                 ),
                 const SizedBox(height: 40),

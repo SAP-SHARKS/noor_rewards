@@ -487,6 +487,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No data yet'**
   String get noData;
+
+  /// No description provided for @callYou.
+  ///
+  /// In en, this message translates to:
+  /// **'What should we\\ncall you?'**
+  String get callYou;
+
+  /// No description provided for @personaliseJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalise your spiritual journey with your name'**
+  String get personaliseJourney;
+
+  /// No description provided for @whereFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Where are\\nyou from?'**
+  String get whereFrom;
+
+  /// No description provided for @joinMuslims.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Muslims from around the world on this journey'**
+  String get joinMuslims;
+
+  /// No description provided for @whatBringsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'What brings\\nyou here?'**
+  String get whatBringsYou;
+
+  /// No description provided for @chooseGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your spiritual goals — you can select multiple'**
+  String get chooseGoals;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Journey'**
+  String get navJourney;
+
+  /// No description provided for @navAkhirah.
+  ///
+  /// In en, this message translates to:
+  /// **'Akhirah'**
+  String get navAkhirah;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @communityLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Leaderboard'**
+  String get communityLeaderboard;
+
+  /// No description provided for @topContributors.
+  ///
+  /// In en, this message translates to:
+  /// **'Top contributors by lifetime pts'**
+  String get topContributors;
+
+  /// No description provided for @myProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get myProfile;
+
+  /// No description provided for @startStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your streak today!'**
+  String get startStreak;
+
+  /// No description provided for @alreadySealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Already sealed today'**
+  String get alreadySealed;
+
+  /// No description provided for @sealTheDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal the Day'**
+  String get sealTheDay;
+
+  /// No description provided for @alhamdulillah.
+  ///
+  /// In en, this message translates to:
+  /// **'Alhamdulillah!'**
+  String get alhamdulillah;
+
+  /// No description provided for @levelSeeker.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeker'**
+  String get levelSeeker;
+
+  /// No description provided for @levelBeliever.
+  ///
+  /// In en, this message translates to:
+  /// **'Believer'**
+  String get levelBeliever;
+
+  /// No description provided for @levelDevoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Devoted'**
+  String get levelDevoted;
+
+  /// No description provided for @levelChampion.
+  ///
+  /// In en, this message translates to:
+  /// **'Champion'**
+  String get levelChampion;
+
+  /// No description provided for @levelLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Legend'**
+  String get levelLegend;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get day;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @quran.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran'**
+  String get quran;
+
+  /// No description provided for @zikr.
+  ///
+  /// In en, this message translates to:
+  /// **'Zikr'**
+  String get zikr;
+
+  /// No description provided for @dailyLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Login'**
+  String get dailyLogin;
+
+  /// No description provided for @todaysProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Progress'**
+  String get todaysProgress;
+
+  /// No description provided for @versesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'verses today'**
+  String get versesToday;
+
+  /// No description provided for @resumeReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume Reading'**
+  String get resumeReading;
+
+  /// No description provided for @continueReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue reading'**
+  String get continueReading;
+
+  /// No description provided for @chooseWhereToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Where to Start'**
+  String get chooseWhereToStart;
+
+  /// No description provided for @startReadingFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Reading from'**
+  String get startReadingFrom;
+
+  /// No description provided for @yourLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Library'**
+  String get yourLibrary;
+
+  /// No description provided for @browse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get browse;
+
+  /// No description provided for @listen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get listen;
+
+  /// No description provided for @tafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir'**
+  String get tafsir;
+
+  /// No description provided for @wordByWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Word by Word'**
+  String get wordByWord;
+
+  /// No description provided for @mushaf.
+  ///
+  /// In en, this message translates to:
+  /// **'Mushaf'**
+  String get mushaf;
+
+  /// No description provided for @otherCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Categories'**
+  String get otherCategories;
+
+  /// No description provided for @noCategoriesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories available'**
+  String get noCategoriesAvailable;
+
+  /// No description provided for @nextPts.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextPts;
+
+  /// No description provided for @prev.
+  ///
+  /// In en, this message translates to:
+  /// **'Prev'**
+  String get prev;
 }
 
 class _AppLocalizationsDelegate

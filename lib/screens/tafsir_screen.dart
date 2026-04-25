@@ -7,13 +7,17 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 
+AppConfig get _tscfg => SettingsService.instance.config;
 
 // ── Palette ────────────────────────────────────────────────────────────────────
-const _kBg    = Color(0xFFF7F3EE);
+Color get _kBg    => _tscfg.dashBg;
 const _kWhite = Color(0xFFFFFFFF);
-const _kText  = Color(0xFF1C1C1E);
-const _kSub   = Color(0xFF8E8E93);
+Color get _kText  => _tscfg.dashText;
+Color get _kSub   => _tscfg.dashBg.computeLuminance() > 0.5
+    ? const Color(0xFF8E8E93) : const Color(0xFF9CA3AF);
 const _kGreen = Color(0xFF4A9B5F);
 const _kGreenL= Color(0xFFCCE5CC);
 const _kGold  = Color(0xFFFFAA00);
@@ -111,7 +115,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
   bool   _loading       = true;
 
   // ── Settings ─────────────────────────────────────────────────────────────────
-  int    _tafsirIdx   = 0;   // which tafsir edition
+  int    _tafsirIdx   = -1;   // which tafsir edition
   int    _reciterIdx  = 0;   // which audio reciter
   double _fontSize    = 22;
   bool   _darkMode    = false;
@@ -140,13 +144,25 @@ class _TafsirScreenState extends State<TafsirScreen> {
     super.initState();
     _surah = widget.initialSurah;
     _ayah  = widget.initialAyah;
-    _initCache();
     _initAudio();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await _initCache();
     _loadAyah();
   }
 
   Future<void> _initCache() async {
     _cache = await Hive.openBox('tafsir_cache');
+    if (_cache?.get('pref_tafsir_idx') == null && mounted) {
+      final lang = Localizations.localeOf(context).languageCode;
+      if (lang == 'ur') _tafsirIdx = 2; // Urdu Ibn Kathir
+      else if (lang == 'ar') _tafsirIdx = 4; // Arabic Muyassar
+      else _tafsirIdx = 0; // English Ibn Kathir
+    } else {
+      _tafsirIdx = _cache?.get('pref_tafsir_idx', defaultValue: 0) as int;
+    }
   }
 
   Future<void> _initAudio() async {
@@ -354,7 +370,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
         onDarkMode:  (v) => setState(() => _darkMode   = v),
         onFontSize:  (v) => setState(() => _fontSize   = v),
         onArabic:    (v) => setState(() => _showArabic = v),
-        onTafsir:    (i) { setState(() => _tafsirIdx  = i); _loadAyah(); },
+        onTafsir:    (i) { setState(() => _tafsirIdx  = i); _cache?.put('pref_tafsir_idx', i); _loadAyah(); },
         onReciter:   (i) { setState(() => _reciterIdx = i); _loadAyah(); },
       ),
     );

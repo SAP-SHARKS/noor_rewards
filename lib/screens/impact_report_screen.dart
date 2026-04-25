@@ -13,19 +13,26 @@ import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/project_media_carousel.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 
-// â”€â”€ Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
+AppConfig get _icfg => SettingsService.instance.config;
+
 class _C {
-  static const bg         = Color(0xFFF0F4F0);
-  static const darkGreen  = Color(0xFF0D2B1F);
-  static const teal       = Color(0xFF2BAE99);
-  static const gold       = Color(0xFFD4AF37);
-  static const card       = Colors.white;
-  static const text       = Color(0xFF1C1C1E);
-  static const sub        = Color(0xFF8E8E93);
-  static const border     = Color(0xFFE8E8EC);
-  static const rose       = Color(0xFFE05C6A);
-  static const purple     = Color(0xFF6B4EBB);
+  static Color get bg         => _icfg.dashBg;
+  static Color get darkGreen  => _icfg.primaryColor;
+  static Color get teal       => _icfg.dashTeal;
+  static Color get gold       => _icfg.donationColor;
+  static Color get card       => _icfg.dashBg.computeLuminance() > 0.5
+      ? Colors.white : const Color(0xFF1F2937);
+  static Color get text       => _icfg.dashText;
+  static Color get sub        => _icfg.dashBg.computeLuminance() > 0.5
+      ? const Color(0xFF8E8E93) : const Color(0xFF9CA3AF);
+  static Color get border     => _icfg.dashBg.computeLuminance() > 0.5
+      ? const Color(0xFFE8E8EC) : const Color(0xFF374151);
+  static Color get rose       => const Color(0xFFE05C6A);
+  static Color get purple     => _icfg.secondaryColor;
 }
 
 class ImpactReportScreen extends StatefulWidget {
@@ -234,7 +241,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: _C.gold.withValues(alpha: 0.4))),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.workspace_premium_rounded,
+                      Icon(Icons.workspace_premium_rounded,
                           color: _C.gold, size: 14),
                       const SizedBox(width: 5),
                       Text('Lvl $_level · $_levelTitle',
@@ -269,7 +276,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                           color: _C.teal.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6)),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.trending_up_rounded,
+                        Icon(Icons.trending_up_rounded,
                             color: _C.teal, size: 13),
                         const SizedBox(width: 3),
                         Text('+${_todayPoints > 0 ? _todayPoints : 0} today',
@@ -487,7 +494,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             decoration: BoxDecoration(
                 color: _C.teal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12)),
-            child: const Icon(Icons.show_chart_rounded, color: _C.teal, size: 20),
+            child: Icon(Icons.show_chart_rounded, color: _C.teal, size: 20),
           ),
           const SizedBox(width: 12),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -776,7 +783,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
         elevation: 0,
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: _C.teal))
+          ? Center(child: CircularProgressIndicator(color: _C.teal))
           : ListView.separated(
               padding: const EdgeInsets.all(20),
               itemCount: _projects.length,
@@ -1157,7 +1164,7 @@ class _ImpactProjectCoverState extends State<_ImpactProjectCover> {
       return Container(
         width: s, height: s,
         decoration: BoxDecoration(color: const Color(0xFFF1F5F4), borderRadius: radius),
-        child: const Center(child: SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 1.5, color: _C.teal))),
+        child: Center(child: SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 1.5, color: _C.teal))),
       );
     }
     if (_cover == null) return _fallbackCover(s, radius);
@@ -1181,7 +1188,7 @@ class _ImpactProjectCoverState extends State<_ImpactProjectCover> {
   Widget _fallbackCover(double s, BorderRadius r) => Container(
         width: s, height: s,
         decoration: BoxDecoration(color: const Color(0xFFF7F4EF), borderRadius: r),
-        child: const Icon(Icons.volunteer_activism_rounded, size: 24, color: _C.teal),
+        child: Icon(Icons.volunteer_activism_rounded, size: 24, color: _C.teal),
       );
 }
 
