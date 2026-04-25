@@ -9,15 +9,20 @@ import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 
-// ── Palette ───────────────────────────────────────────────────────────────────
-const _kBg     = Color(0xFFF7F3EE);
+// ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
+AppConfig get _lcfg => SettingsService.instance.config;
+
+Color get _kBg     => _lcfg.dashBg;
 const _kWhite  = Colors.white;
-const _kText   = Color(0xFF1C1C1E);
-const _kSub    = Color(0xFF8E8E93);
-const _kGold   = Color(0xFFF5A623);
-const _kPurple = Color(0xFF6B4EBB);
-const _kGreen  = Color(0xFF2BAE99);
+Color get _kText   => _lcfg.dashText;
+Color get _kSub    => _lcfg.dashBg.computeLuminance() > 0.5
+    ? const Color(0xFF8E8E93) : const Color(0xFF9CA3AF);
+Color get _kGold   => _lcfg.donationColor;
+Color get _kPurple => _lcfg.secondaryColor;
+Color get _kGreen  => _lcfg.dashTeal;
 
 // ── Level tier colours ────────────────────────────────────────────────────────
 Color _tierColor(String title) {
@@ -141,7 +146,7 @@ class _LevelScreenState extends State<LevelScreen>
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: _kGreen))
+          ? Center(child: CircularProgressIndicator(color: _kGreen))
           : TabBarView(
               controller: _tabs,
               children: [
@@ -612,7 +617,7 @@ class _TierCard extends StatelessWidget {
                 fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white)),
           )
         else if (!isUnlocked)
-          const Icon(Icons.lock_rounded, color: _kSub, size: 20),
+          Icon(Icons.lock_rounded, color: _kSub, size: 20),
       ]),
     );
   }

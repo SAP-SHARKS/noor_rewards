@@ -416,6 +416,17 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Restore persisted reading mode
     _fullPageMode = _cache.get('pref_mushaf_mode', defaultValue: false) as bool;
     _wordByWord   = _cache.get('pref_wbw_mode', defaultValue: false) as bool;
+
+    if (_cache.get('pref_translation') == null && mounted) {
+      final lang = Localizations.localeOf(context).languageCode;
+      if (lang == 'ur') _translationEdition = 'ur.jalandhry';
+      else if (lang == 'fr') _translationEdition = 'fr.hamidullah';
+      else if (lang == 'tr') _translationEdition = 'tr.diyanet';
+      else if (lang == 'id') _translationEdition = 'id.indonesian';
+      else _translationEdition = 'en.sahih';
+    } else {
+      _translationEdition = _cache.get('pref_translation', defaultValue: 'en.sahih') as String;
+    }
     await Future.wait([_loadProgress(), _loadBookmarks(), _loadFavourites()]);
     await _fetchAyah(_surah, _ayah);
     // If user was in Mushaf mode last time, re-enter at the exact saved page
@@ -1126,7 +1137,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     });
 
     final isDark  = _darkMode;
-    final sheetBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    final sheetBg = isDark ? _kText : Colors.white;
     final lblC    = isDark ? Colors.white : _kText;
     final subC    = isDark ? const Color(0xFF6E6E73) : _kSub;
 
@@ -1387,7 +1398,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 decoration: BoxDecoration(
                     color: _darkMode
                         ? const Color(0xFF2C2C2E)
-                        : const Color(0xFFF7F3EE),
+                        : _kBg,
                     borderRadius: BorderRadius.circular(16)),
                 child: SwitchListTile(
                   value: val,
@@ -1396,7 +1407,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       fontSize: 14, fontWeight: FontWeight.w700,
                       color: _darkMode
                           ? Colors.white
-                          : const Color(0xFF1C1C1E))),
+                          : _kText)),
                   subtitle: Text(s, style: GoogleFonts.outfit(
                       fontSize: 11,
                       color: const Color(0xFF8E8E93))),
@@ -1416,11 +1427,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             );
           }
           final bgC = _darkMode
-              ? const Color(0xFF1C1C1E)
+              ? _kText
               : Colors.white;
           final lblC = _darkMode
               ? Colors.white
-              : const Color(0xFF1C1C1E);
+              : _kText;
           return DraggableScrollableSheet(
             initialChildSize: 0.88,
             minChildSize: 0.5,
@@ -1490,7 +1501,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _darkMode
                                 ? const Color(0xFF2C2C2E)
-                                : const Color(0xFFF7F3EE),
+                                : _kBg,
                             borderRadius:
                                 BorderRadius.circular(16)),
                         child: Column(
@@ -1565,7 +1576,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _darkMode
                                 ? const Color(0xFF2C2C2E)
-                                : const Color(0xFFF7F3EE),
+                                : _kBg,
                             borderRadius:
                                 BorderRadius.circular(16)),
                         child: Column(
@@ -1655,7 +1666,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _darkMode
                                 ? const Color(0xFF2C2C2E)
-                                : const Color(0xFFF7F3EE),
+                                : _kBg,
                             borderRadius: BorderRadius.circular(16)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1697,7 +1708,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     color: sel
                                         ? _accent.withValues(alpha: 0.12)
                                         : (_darkMode
-                                            ? const Color(0xFF1C1C1E)
+                                            ? _kText
                                             : Colors.white),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
@@ -1816,7 +1827,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _darkMode
                                 ? const Color(0xFF2C2C2E)
-                                : const Color(0xFFF7F3EE),
+                                : _kBg,
                             borderRadius: BorderRadius.circular(16)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1865,6 +1876,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   final newEdition = t.id;
                                   setSt(() => _translationEdition = newEdition);
                                   setState(() => _translationEdition = newEdition);
+                                  _cache.put('pref_translation', newEdition);
                                   for (int a = 1; a <= _surahLengths[_surah]; a++) {
                                     final ck = '$_surah:$a:$newEdition:${_reciters[_reciterIdx].$1}';
                                     await _cache.delete(ck);
@@ -1880,7 +1892,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     color: sel
                                         ? _accent.withValues(alpha: 0.12)
                                         : (_darkMode
-                                            ? const Color(0xFF1C1C1E)
+                                            ? _kText
                                             : Colors.white),
                                     borderRadius: BorderRadius.circular(14),
                                     border: Border.all(
@@ -1931,7 +1943,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                                     ? _accent
                                                     : (_darkMode
                                                         ? Colors.white
-                                                        : const Color(0xFF1C1C1E)))),
+                                                        : _kText))),
                                         Text(t.author,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -1985,7 +1997,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
       decoration: BoxDecoration(
-        color: _darkMode ? const Color(0xFF1C1C1E) : Colors.white,
+        color: _darkMode ? _kText : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12)],
       ),
@@ -2011,7 +2023,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   margin: EdgeInsets.only(right: i < _reciters.length - 1 ? 6 : 0),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   decoration: BoxDecoration(
-                    color: sel ? _accent : (_darkMode ? Colors.white10 : const Color(0xFFF7F3EE)),
+                    color: sel ? _accent : (_darkMode ? Colors.white10 : _kBg),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: sel ? _accent : (_darkMode ? Colors.white24 : Colors.grey.shade200)),
                   ),
@@ -2102,8 +2114,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     if (_fullPageMode) return _buildMushafPage();
 
     final bg     = _darkMode ? const Color(0xFF000000) : _kBg;
-    final cardBg = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
-    final barBg  = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
+    final cardBg = _darkMode ? _kText : _kWhite;
+    final barBg  = _darkMode ? _kText : _kWhite;
     final txt    = _darkMode ? Colors.white            : _kText;
     final sub    = _darkMode ? const Color(0xFF8E8E93) : _kSub;
 
@@ -2277,7 +2289,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
                           const Icon(Icons.list_rounded, color: Colors.white, size: 15),
                           const SizedBox(width: 4),
-                          Text('Browse',
+                          Text(AppLocalizations.of(context)?.browse ?? 'Browse',
                             style: GoogleFonts.outfit(
                               fontSize: 12, fontWeight: FontWeight.w600,
                               color: Colors.white,
@@ -2315,7 +2327,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       // 📖 Read Tafsir
                       _PillButton(
                         icon: Icons.menu_book_rounded,
-                        label: 'Tafsir',
+                        label: AppLocalizations.of(context)?.tafsir ?? 'Tafsir',
                         active: false,
                         activeColor: _accent,
                         darkMode: _darkMode,
@@ -2326,7 +2338,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         icon: _showAudioPlayer && _isPlaying
                             ? Icons.pause_circle_rounded
                             : Icons.headphones_rounded,
-                        label: _showAudioPlayer ? 'Playing' : 'Listen',
+                        label: _showAudioPlayer ? 'Playing' : (AppLocalizations.of(context)?.listen ?? 'Listen'),
                         active: _showAudioPlayer,
                         activeColor: const Color(0xFFE67E22),
                         darkMode: _darkMode,
@@ -2339,7 +2351,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     // 📖 Full Page Mushaf — always visible
                     _PillButton(
                       icon: Icons.menu_book_outlined,
-                      label: 'Mushaf',
+                      label: AppLocalizations.of(context)?.mushaf ?? 'Mushaf',
                       active: false,
                       activeColor: const Color(0xFF4CAF50),
                       darkMode: _darkMode,
@@ -2370,7 +2382,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       // 🔤 Word by Word
                       _PillButton(
                         icon: Icons.translate_rounded,
-                        label: 'Word by Word',
+                        label: AppLocalizations.of(context)?.wordByWord ?? 'Word by Word',
                         active: _wordByWord,
                         activeColor: _accent,
                         darkMode: _darkMode,
@@ -2532,7 +2544,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   ),
                   child: Column(children: [
                     Row(children: [
-                      Text("Today's Progress",
+                      Text(AppLocalizations.of(context)?.todaysProgress ?? "Today's Progress",
                           style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight: FontWeight.w800,
@@ -2650,7 +2662,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       const SizedBox(width: 6),
                       Text(
                         // Full-page mode → no points label
-                        _fullPageMode ? 'Next Page' : '+10 pts',
+                        _fullPageMode ? (AppLocalizations.of(context)?.next ?? 'Next Page') : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
                         style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -2761,7 +2773,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               ? const SizedBox(width: 16, height: 16,
                   child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
               : const Icon(Icons.arrow_back_ios_rounded, size: 14, color: Colors.white),
-          label: Text('Prev',
+          label: Text(AppLocalizations.of(context)?.prev ?? 'Prev',
               style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
                   color: Colors.white)),
           style: ElevatedButton.styleFrom(
@@ -2780,7 +2792,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               ? const SizedBox(width: 16, height: 16,
                   child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
               : const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.white),
-          label: Text('Next +10 pts',
+          label: Text('${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
               style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
                   color: Colors.white)),
           style: ElevatedButton.styleFrom(
@@ -3547,7 +3559,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   void _openMushafSettings() {
     final txtClr = _darkMode ? Colors.white : Colors.black;
     final subClr = _darkMode ? Colors.grey.shade400 : Colors.grey.shade600;
-    final bgClr = _darkMode ? const Color(0xFF1C1C1E) : Colors.white;
+    final bgClr = _darkMode ? _kText : Colors.white;
     final chipBg = _darkMode ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade100;
     final chipActiveBg = _accent.withValues(alpha: 0.15);
 

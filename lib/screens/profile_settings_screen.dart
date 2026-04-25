@@ -16,6 +16,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../features/auth/data/qf_auth_service.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
+
+AppConfig get _pcfg => SettingsService.instance.config;
+Color get _pTeal => _pcfg.dashTeal;
+Color get _pText => _pcfg.dashText;
+Color get _pBg => _pcfg.dashBg;
+Color get _pSub => _pcfg.dashBg.computeLuminance() > 0.5
+    ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF);
+Color get _pPurple => _pcfg.secondaryColor;
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -209,9 +219,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               decoration: BoxDecoration(color: const Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2))),
           const SizedBox(height: 16),
           Text('Change Profile Photo',
-              style: GoogleFonts.rajdhani(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFF1C1C1E))),
+              style: GoogleFonts.rajdhani(fontSize: 20, fontWeight: FontWeight.w800, color: _pText)),
           const SizedBox(height: 20),
-          _photoOption(Icons.camera_alt_rounded, 'Take a Photo', const Color(0xFF2BAE99),
+          _photoOption(Icons.camera_alt_rounded, 'Take a Photo', _pTeal,
               () => _pickAndUploadPhoto(ImageSource.camera)),
           const SizedBox(height: 12),
           _photoOption(Icons.photo_library_rounded, 'Choose from Library', const Color(0xFF5856D6),
@@ -266,7 +276,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg, style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-      backgroundColor: isError ? const Color(0xFFD32F2F) : const Color(0xFF2BAE99),
+      backgroundColor: isError ? const Color(0xFFD32F2F) : _pTeal,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ));
@@ -279,10 +289,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Sign Out?', style: GoogleFonts.rajdhani(fontWeight: FontWeight.w800, fontSize: 22)),
         content: Text('Your progress is safely stored. You can sign back in anytime.',
-            style: GoogleFonts.outfit(fontSize: 14, color: const Color(0xFF8E8E93))),
+            style: GoogleFonts.outfit(fontSize: 14, color: _pSub)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel', style: GoogleFonts.outfit(color: const Color(0xFF8E8E93)))),
+              child: Text('Cancel', style: GoogleFonts.outfit(color: _pSub))),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
@@ -302,7 +312,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F3EE),
+      backgroundColor: _pBg,
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF2BAE99)))
           : CustomScrollView(slivers: [
@@ -358,7 +368,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             TextButton(
               onPressed: _saveProfile,
               child: Text('Save', style: GoogleFonts.outfit(
-                  color: const Color(0xFF2BAE99), fontWeight: FontWeight.w700, fontSize: 16)),
+                  color: _pTeal, fontWeight: FontWeight.w700, fontSize: 16)),
             ),
         ],
         flexibleSpace: FlexibleSpaceBar(
@@ -395,7 +405,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       Row(children: [
                         _badgePill('LV $_level', const Color(0xFF5856D6)),
                         const SizedBox(width: 6),
-                        _badgePill(_levelTitle, const Color(0xFF2BAE99)),
+                        _badgePill(_levelTitle, _pTeal),
                       ]),
                     ],
                   )),
@@ -575,10 +585,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Profile Photo', style: GoogleFonts.outfit(
-              fontSize: 15, fontWeight: FontWeight.w700, color: const Color(0xFF1C1C1E))),
+              fontSize: 15, fontWeight: FontWeight.w700, color: _pText)),
           const SizedBox(height: 3),
           Text(_avatarUrl != null ? 'Tap Edit to change your photo' : 'Tap Edit to add a photo',
-              style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF8E8E93))),
+              style: GoogleFonts.outfit(fontSize: 12, color: _pSub)),
         ],
       )),
       GestureDetector(
@@ -586,15 +596,15 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF2BAE99).withValues(alpha: 0.1),
+            color: _pTeal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF2BAE99).withValues(alpha: 0.3)),
+            border: Border.all(color: _pTeal.withValues(alpha: 0.3)),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             const Icon(Icons.camera_alt_rounded, size: 14, color: Color(0xFF2BAE99)),
             const SizedBox(width: 5),
             Text('Edit', style: GoogleFonts.outfit(
-                fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFF2BAE99))),
+                fontSize: 13, fontWeight: FontWeight.w700, color: _pTeal)),
           ]),
         ),
       ),
@@ -658,20 +668,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       Container(
         width: 36, height: 36,
         decoration: BoxDecoration(
-          color: const Color(0xFF2BAE99).withValues(alpha: 0.1),
+          color: _pTeal.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: const Color(0xFF2BAE99), size: 18),
+        child: Icon(icon, color: _pTeal, size: 18),
       ),
       const SizedBox(width: 14),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: GoogleFonts.outfit(
-            fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF8E8E93))),
+            fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
         TextField(
           controller: controller,
           style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600,
-              color: const Color(0xFF1C1C1E)),
-          cursorColor: const Color(0xFF2BAE99),
+              color: _pText),
+          cursorColor: _pTeal,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.outfit(fontSize: 14, color: const Color(0xFFB0A898)),
@@ -695,28 +705,28 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       Container(
         width: 36, height: 36,
         decoration: BoxDecoration(
-          color: const Color(0xFF8E8E93).withValues(alpha: 0.1),
+          color: _pSub.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: const Color(0xFF8E8E93), size: 18),
+        child: Icon(icon, color: _pSub, size: 18),
       ),
       const SizedBox(width: 14),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: GoogleFonts.outfit(
-            fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF8E8E93))),
+            fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
         const SizedBox(height: 2),
         Text(value.isNotEmpty ? value : '\u2014', style: GoogleFonts.outfit(
-            fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF1C1C1E)),
+            fontSize: 15, fontWeight: FontWeight.w600, color: _pText),
             maxLines: 1, overflow: TextOverflow.ellipsis),
       ])),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: const Color(0xFF8E8E93).withValues(alpha: 0.1),
+          color: _pSub.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text('Verified', style: GoogleFonts.outfit(
-            fontSize: 10, fontWeight: FontWeight.w600, color: const Color(0xFF8E8E93))),
+            fontSize: 10, fontWeight: FontWeight.w600, color: _pSub)),
       ),
     ]),
   );
@@ -758,10 +768,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Connected Account', style: GoogleFonts.outfit(
-              fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF8E8E93))),
+              fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
           const SizedBox(height: 2),
           Text(sub, style: GoogleFonts.outfit(
-              fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF1C1C1E))),
+              fontSize: 15, fontWeight: FontWeight.w600, color: _pText)),
         ])),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -801,7 +811,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           onTap: () => _showAboutSheet()),
       _divider(),
       _supportRow(Icons.privacy_tip_outlined, 'Privacy Policy',
-          'How we protect your data', const Color(0xFF8E8E93), isLast: true,
+          'How we protect your data', _pSub, isLast: true,
           onTap: () {}),
     ]),
   );
@@ -828,9 +838,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(title, style: GoogleFonts.outfit(
-              fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFF1C1C1E))),
+              fontSize: 14, fontWeight: FontWeight.w700, color: _pText)),
           const SizedBox(height: 2),
-          Text(sub, style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF8E8E93))),
+          Text(sub, style: GoogleFonts.outfit(fontSize: 11, color: _pSub)),
         ])),
         const Icon(Icons.chevron_right_rounded, color: Color(0xFFB0A898), size: 20),
       ]),
@@ -865,7 +875,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   Widget _sectionLabel(String text) => Text(text.toUpperCase(),
       style: GoogleFonts.outfit(
           fontSize: 11, fontWeight: FontWeight.w700,
-          color: const Color(0xFF8E8E93), letterSpacing: 1));
+          color: _pSub, letterSpacing: 1));
 
   // ── Help Sheet ────────────────────────────────────────────────────────────
   void _showHelpSheet() {
@@ -895,9 +905,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     padding: const EdgeInsets.symmetric(vertical: 10),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(q, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
-          color: const Color(0xFF1C1C1E))),
+          color: _pText)),
       const SizedBox(height: 4),
-      Text(a, style: GoogleFonts.outfit(fontSize: 13, color: const Color(0xFF8E8E93), height: 1.5)),
+      Text(a, style: GoogleFonts.outfit(fontSize: 13, color: _pSub, height: 1.5)),
       const SizedBox(height: 8),
       const Divider(color: Color(0xFFF0EDE8), height: 0),
     ]),
@@ -916,7 +926,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         child: Column(children: [
           Text(
             'Found something wrong? Please email us and we\'ll fix it as soon as possible.',
-            style: GoogleFonts.outfit(fontSize: 14, color: const Color(0xFF8E8E93), height: 1.6),
+            style: GoogleFonts.outfit(fontSize: 14, color: _pSub, height: 1.6),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -960,15 +970,15 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           const SizedBox(height: 16),
           Text('Noor Rewards',
               style: GoogleFonts.rajdhani(fontSize: 26, fontWeight: FontWeight.w900,
-                  color: const Color(0xFF1C1C1E))),
+                  color: _pText)),
           const SizedBox(height: 6),
           Text('Version 1.0.0',
-              style: GoogleFonts.outfit(fontSize: 13, color: const Color(0xFF8E8E93))),
+              style: GoogleFonts.outfit(fontSize: 13, color: _pSub)),
           const SizedBox(height: 16),
           Text(
             'Built with love for the global Muslim Ummah.\nEarn Noor Points by building Islamic habits.\nDonate points to support real community projects.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(fontSize: 13, color: const Color(0xFF8E8E93), height: 1.6),
+            style: GoogleFonts.outfit(fontSize: 13, color: _pSub, height: 1.6),
           ),
         ]),
       ),
@@ -1021,7 +1031,7 @@ class _BottomSheetCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(title, style: GoogleFonts.rajdhani(
                   fontSize: 20, fontWeight: FontWeight.w800,
-                  color: const Color(0xFF1C1C1E))),
+                  color: _pText)),
             ]),
             const SizedBox(height: 20),
             child,

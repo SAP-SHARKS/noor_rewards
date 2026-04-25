@@ -5,15 +5,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'quran_screen.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 
-// ── Palette ───────────────────────────────────────────────────────────────────
-const _kBg    = Color(0xFFF7F3EE);
+// ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
+AppConfig get _qhcfg => SettingsService.instance.config;
+Color get _kBg    => _qhcfg.dashBg;
 const _kWhite = Color(0xFFFFFFFF);
-const _kText  = Color(0xFF1C1C1E);
-const _kSub   = Color(0xFF8E8E93);
-const _kTeal  = Color(0xFF2BAE99);
-const _kTealL = Color(0xFFC8ECE8);
-const _kGold  = Color(0xFFFFAA00);
+Color get _kText  => _qhcfg.dashText;
+Color get _kSub   => _qhcfg.dashBg.computeLuminance() > 0.5
+    ? const Color(0xFF8E8E93) : const Color(0xFF9CA3AF);
+Color get _kTeal  => _qhcfg.dashTeal;
+Color get _kTealL => _qhcfg.dashTeal.withValues(alpha: 0.25);
+Color get _kGold  => _qhcfg.quranGold;
 const _kRed   = Color(0xFFEF5350);
 
 // ── Surah names (1-indexed, index 0 unused) ───────────────────────────────────
@@ -242,7 +246,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                             fontWeight: FontWeight.w700, color: _kText)),
                         Text('$len verses', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
                       ])),
-                      if (sel) const Icon(Icons.check_circle_rounded, color: _kTeal, size: 22),
+                      if (sel) Icon(Icons.check_circle_rounded, color: _kTeal, size: 22),
                     ]),
                   ),
                 );
@@ -403,7 +407,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                           Text('Surah $s  •  Verse $a',
                               style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
                         ])),
-                        const Icon(Icons.chevron_right_rounded, color: _kSub, size: 20),
+                        Icon(Icons.chevron_right_rounded, color: _kSub, size: 20),
                       ]),
                     ),
                   );
@@ -420,7 +424,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
     return Scaffold(
       backgroundColor: _kBg,
       body: _loading
-          ? const Center(
+          ? Center(
               child: NoorInlineLoader(
                 height: double.infinity,
                 color: _kTeal,
@@ -480,7 +484,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           const SizedBox(height: 20),
 
           // ── Continue reading card ─────────────────────────────────────────
-          _SectionLabel(label: 'Resume Reading'),
+          _SectionLabel(label: AppLocalizations.of(context)?.resumeReading ?? 'Resume Reading'),
           const SizedBox(height: 10),
           _ContinueCard(
             surahName: _lastSurahName,
@@ -491,7 +495,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           const SizedBox(height: 24),
 
           // ── Start new position ────────────────────────────────────────────
-          _SectionLabel(label: 'Choose Where to Start'),
+          _SectionLabel(label: AppLocalizations.of(context)?.chooseWhereToStart ?? 'Choose Where to Start'),
           const SizedBox(height: 10),
 
           // Surah selector row
@@ -533,7 +537,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 22),
                 const SizedBox(width: 12),
-                Text('Start Reading from ${_surahNames[_selSurah]} : $_selAyah',
+                Text('${AppLocalizations.of(context)?.startReadingFrom ?? 'Start Reading from'} ${_surahNames[_selSurah]} : $_selAyah',
                     style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700,
                         color: Colors.white)),
               ]),
@@ -542,7 +546,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           const SizedBox(height: 28),
 
           // ── Saved / Favourites grid ───────────────────────────────────────
-          _SectionLabel(label: 'Your Library'),
+          _SectionLabel(label: AppLocalizations.of(context)?.yourLibrary ?? 'Your Library'),
           const SizedBox(height: 12),
           Row(children: [
             Expanded(child: _LibraryCard(
@@ -631,7 +635,7 @@ class _ProgressStrip extends StatelessWidget {
           Row(children: [
             NoorIcon.star(size: 14),
             const SizedBox(width: 6),
-            Text("Today's Progress",
+            Text(AppLocalizations.of(context)?.todaysProgress ?? "Today's Progress",
                 style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _kTeal)),
             const Spacer(),
             Text('+${ayahsToday * 10} pts',
@@ -641,9 +645,9 @@ class _ProgressStrip extends StatelessWidget {
           ClipRRect(borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(value: progress, minHeight: 6,
                 backgroundColor: _kTealL,
-                valueColor: const AlwaysStoppedAnimation(_kTeal))),
+                valueColor: AlwaysStoppedAnimation(_kTeal))),
           const SizedBox(height: 5),
-          Text('$ayahsToday / 50 verses today',
+          Text('\u200E$ayahsToday / 50\u200E ${AppLocalizations.of(context)?.versesToday ?? 'verses today'}',
               style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
         ])),
       ]),
@@ -696,7 +700,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                   style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800,
                       color: Colors.white)),
               const SizedBox(height: 2),
-              Text('Surah ${widget.surah}  •  Verse ${widget.ayah}  •  Continue reading',
+              Text('Surah ${widget.surah}  •  Verse ${widget.ayah}  •  ${AppLocalizations.of(context)?.continueReading ?? 'Continue reading'}',
                   style: GoogleFonts.outfit(fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.8))),
             ])),
@@ -763,7 +767,7 @@ class _PickerRowState extends State<_PickerRow> {
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Text(widget.subtitle, style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
             const SizedBox(height: 4),
-            const Icon(Icons.chevron_right_rounded, color: _kSub, size: 20),
+            Icon(Icons.chevron_right_rounded, color: _kSub, size: 20),
           ]),
         ]),
       ),

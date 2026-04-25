@@ -8,19 +8,24 @@ import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/donation_service.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 import '../widgets/project_media_carousel.dart';
+
+AppConfig get _pdcfg => SettingsService.instance.config;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Palette
 // ─────────────────────────────────────────────────────────────────────────────
 class _PD {
-  static const teal      = Color(0xFF2BAE99);
-  static const tealDark  = Color(0xFF1A9E8C);
+  static Color get teal      => _pdcfg.dashTeal;
+  static Color get tealDark  => HSLColor.fromColor(_pdcfg.dashTeal).withLightness(
+      (HSLColor.fromColor(_pdcfg.dashTeal).lightness - 0.05).clamp(0.0, 1.0)).toColor();
   static const tealBg    = Color(0xFFE8F8F5);
   static const tealText  = Color(0xFF0D6E64);
   static const amber     = Color(0xFFEA9C24);
   static const amberBg   = Color(0xFFFFF3D4);
-  static const text      = Color(0xFF1A1A2E);
+  static Color get text      => _pdcfg.dashText;
   static const sub       = Color(0xFF6B7280);
   static const bg        = Color(0xFFF8FAFB);
   static const border    = Color(0xFFEEEEF2);
@@ -334,7 +339,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                     width: 32, height: 32,
                     decoration: const BoxDecoration(
                         color: _PD.tealBg, shape: BoxShape.circle),
-                    child: const Center(child: Icon(Icons.business_rounded,
+                    child: Center(child: Icon(Icons.business_rounded,
                         color: _PD.teal, size: 16)),
                   ),
                   const SizedBox(width: 8),
@@ -358,8 +363,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF2BAE99), Color(0xFF1A9883)],
+                  gradient: LinearGradient(
+                    colors: [_PD.teal, _PD.tealDark],
                     begin: Alignment.topLeft, end: Alignment.bottomRight),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [BoxShadow(
@@ -510,9 +515,9 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
 class _HeroPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
-    decoration: const BoxDecoration(
+    decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [Color(0xFF2BAE99), Color(0xFF1A9883)],
+        colors: [_PD.teal, _PD.tealDark],
         begin: Alignment.topLeft, end: Alignment.bottomRight)),
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Icon(Icons.volunteer_activism_rounded,
@@ -737,8 +742,8 @@ class _DonateBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
                 gradient: canDonate
-                    ? const LinearGradient(
-                        colors: [Color(0xFF2BAE99), Color(0xFF1A9883)])
+                    ? LinearGradient(
+                        colors: [_PD.teal, _PD.tealDark])
                     : null,
                 color: canDonate ? null : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(16),
@@ -856,7 +861,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                   decoration: BoxDecoration(
                     color: _PD.tealBg, borderRadius: BorderRadius.circular(14)),
                   child: Row(children: [
-                    const Icon(Icons.account_balance_wallet_rounded,
+                    Icon(Icons.account_balance_wallet_rounded,
                         color: _PD.teal, size: 20),
                     const SizedBox(width: 10),
                     Text('Your balance:',

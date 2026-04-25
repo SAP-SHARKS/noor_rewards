@@ -92,6 +92,8 @@ export default function ProjectsPage() {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [mediaProject, setMediaProject] = useState<Project | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
+  const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
 
@@ -193,13 +195,15 @@ export default function ProjectsPage() {
 
   // ── Media carousel management ────────────────────────────────────────────
 
-  async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files;
-    if (!files?.length || !mediaProject) return;
+  async function uploadFiles(files: File[]) {
+    if (!files.length || !mediaProject) return;
     setUploading(true);
     let nextOrder = media.length;
+    const total = files.length;
 
-    for (const file of Array.from(files)) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      setUploadProgress(`Uploading ${i + 1} of ${total} — ${file.name}`);
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const isVideo = file.type.startsWith("video/") || ["mp4", "mov", "webm"].includes(ext);
       const mediaType = isVideo ? "video" : "image";
@@ -221,7 +225,23 @@ export default function ProjectsPage() {
 
     await loadMedia(mediaProject.id);
     setUploading(false);
+    setUploadProgress("");
     if (fileRef.current) fileRef.current.value = "";
+  }
+
+  async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files?.length) return;
+    await uploadFiles(Array.from(files));
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter(
+      (f) => f.type.startsWith("image/") || f.type.startsWith("video/")
+    );
+    if (files.length) uploadFiles(files);
   }
 
   async function deleteMedia(item: MediaItem) {
@@ -278,6 +298,7 @@ export default function ProjectsPage() {
             <h2 className="text-lg font-semibold text-slate-800">
               Media — {mediaProject.title}
             </h2>
+            <p className="text-xs text-slate-400">{media.length} item{media.length !== 1 ? "s" : ""} in carousel</p>
           </div>
           <div>
             <input
@@ -293,16 +314,45 @@ export default function ProjectsPage() {
               disabled={uploading}
               className="px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 disabled:opacity-50 cursor-pointer"
             >
-              {uploading ? "Uploading..." : "+ Upload Images / Videos"}
+              {uploading ? uploadProgress : "+ Upload Images / Videos"}
             </button>
           </div>
         </div>
 
-        {media.length === 0 ? (
-          <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-16 text-center">
-            <svg className="w-10 h-10 text-slate-300 mb-3 mx-auto" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
-            <p className="text-slate-500 text-sm">
-              No media yet. Upload images or videos for the project carousel.
+        {/* Drag & Drop Zone */}
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={handleDrop}
+          className={`rounded-xl border-2 border-dashed p-6 mb-6 text-center transition cursor-pointer ${
+            dragging
+              ? "border-blue-400 bg-blue-50"
+              : "border-slate-200 bg-white hover:border-slate-300"
+          }`}
+          onClick={() => !uploading && fileRef.current?.click()}
+        >
+          {uploading ? (
+            <div className="flex items-center justify-center gap-3">
+              <div className="animate-spin w-5 h-5 border-2 border-slate-800 border-t-transparent rounded-full" />
+              <p className="text-sm text-slate-600">{uploadProgress}</p>
+            </div>
+          ) : (
+            <>
+              <svg className="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+              <p className="text-sm text-slate-500">
+                {dragging ? "Drop files here" : "Drag and drop images or videos here, or click to browse"}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                JPG, PNG, WebP, GIF, MP4, MOV, WebM — multiple files supported
+              </p>
+            </>
+          )}
+        </div>
+
+        {media.length === 0 && !uploading ? (
+          <div className="text-center py-8">
+            <p className="text-sm text-slate-400">
+              No media uploaded yet. Use the area above to add images and videos.
             </p>
           </div>
         ) : (

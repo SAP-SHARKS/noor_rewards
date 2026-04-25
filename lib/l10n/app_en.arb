@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-
   "skip": "Skip",
   "continue_": "Continue",
   "beginYourJourney": "Begin Your Journey",
@@ -8,12 +7,10 @@
   "bySigningUp": "By signing up, you agree to our Terms & Privacy Policy",
   "lightOfMercy": "LIGHT OF MERCY",
   "noorRewards": "Noor Rewards",
-
   "startYourJourney": "Start Your Journey",
   "trackSpiritualGrowth": "Track your spiritual growth, join the community, and unlock exclusive rewards for every good deed.",
   "continueWithGoogle": "Continue with Google",
   "continueWithQuran": "Continue with Quran.com",
-
   "onboarding1Title": "Peace Be\nUpon You",
   "onboarding1Subtitle": "Welcome to Noor Rewards — where every good deed is a step closer to Allah's mercy and light.",
   "onboarding2Title": "Two Rewards.\nOne Action.",
@@ -24,15 +21,15 @@
   "onboarding4Subtitle": "The Quran is a guide for all of mankind. Unlock verses, daily duas, and reflections tailored for your journey.",
   "onboarding5Title": "Give &\nEarn Blessings",
   "onboarding5Subtitle": "Sadaqah extinguishes sin as water extinguishes fire. Earn rewards for every act of charity and kindness.",
-
   "welcomeUser": "Welcome, {name} 🌙",
   "@welcomeUser": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "gatesOfNoor": "The gates of Noor are open.\nYour spiritual journey begins today.",
-
   "earnNoorPoints": "EARN NOOR POINTS",
   "yourProgress": "YOUR PROGRESS",
   "yourTotalNoorPoints": "YOUR TOTAL NOOR POINTS",
@@ -72,5 +69,49 @@
   "evening": "Evening",
   "completed": "Completed",
   "shareMore": "Share More",
-  "noData": "No data yet"
+  "noData": "No data yet",
+  "callYou": "What should we\\ncall you?",
+  "personaliseJourney": "Personalise your spiritual journey with your name",
+  "whereFrom": "Where are\\nyou from?",
+  "joinMuslims": "Join Muslims from around the world on this journey",
+  "whatBringsYou": "What brings\\nyou here?",
+  "chooseGoals": "Choose your spiritual goals — you can select multiple",
+  "navHome": "Home",
+  "navJourney": "Journey",
+  "navAkhirah": "Akhirah",
+  "navProfile": "Profile",
+  "communityLeaderboard": "Community Leaderboard",
+  "topContributors": "Top contributors by lifetime pts",
+  "myProfile": "My Profile",
+  "startStreak": "Start your streak today!",
+  "alreadySealed": "Already sealed today",
+  "sealTheDay": "Seal the Day",
+  "alhamdulillah": "Alhamdulillah!",
+  "levelSeeker": "Seeker",
+  "levelBeliever": "Believer",
+  "levelDevoted": "Devoted",
+  "levelChampion": "Champion",
+  "levelLegend": "Legend",
+  "next": "Next",
+  "day": "day",
+  "days": "days",
+  "quran": "Quran",
+  "zikr": "Zikr",
+  "dailyLogin": "Daily Login",
+  "todaysProgress": "Today's Progress",
+  "versesToday": "verses today",
+  "resumeReading": "Resume Reading",
+  "continueReading": "Continue reading",
+  "chooseWhereToStart": "Choose Where to Start",
+  "startReadingFrom": "Start Reading from",
+  "yourLibrary": "Your Library",
+  "browse": "Browse",
+  "listen": "Listen",
+  "tafsir": "Tafsir",
+  "wordByWord": "Word by Word",
+  "mushaf": "Mushaf",
+  "otherCategories": "Other Categories",
+  "noCategoriesAvailable": "No categories available",
+  "nextPts": "Next",
+  "prev": "Prev"
 }

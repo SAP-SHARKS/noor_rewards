@@ -206,4 +206,138 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get noData => 'ابھی کوئی ڈیٹا نہیں';
+
+  @override
+  String get callYou => 'ہم آپ کو کیا کہہ کر\\nپکاریں؟';
+
+  @override
+  String get personaliseJourney =>
+      'اپنے نام کے ساتھ اپنے روحانی سفر کو ذاتی نوعیت دیں';
+
+  @override
+  String get whereFrom => 'آپ کہاں سے\\nہیں؟';
+
+  @override
+  String get joinMuslims => 'اس سفر میں دنیا بھر کے مسلمانوں کے ساتھ شامل ہوں';
+
+  @override
+  String get whatBringsYou => 'آپ کو یہاں کیا چیز\\nلائی ہے؟';
+
+  @override
+  String get chooseGoals =>
+      'اپنے روحانی اہداف منتخب کریں — آپ ایک سے زیادہ کا انتخاب کر سکتے ہیں';
+
+  @override
+  String get navHome => 'ہوم';
+
+  @override
+  String get navJourney => 'سفر';
+
+  @override
+  String get navAkhirah => 'آخرت';
+
+  @override
+  String get navProfile => 'پروفائل';
+
+  @override
+  String get communityLeaderboard => 'برادری کا لیڈر بورڈ';
+
+  @override
+  String get topContributors => 'سب سے زیادہ پوائنٹس والے افراد';
+
+  @override
+  String get myProfile => 'میرا پروفائل';
+
+  @override
+  String get startStreak => 'آج ہی اپنا سلسلہ شروع کریں!';
+
+  @override
+  String get alreadySealed => 'آج پہلے ہی مکمل ہو چکا';
+
+  @override
+  String get sealTheDay => 'دن کو مکمل کریں';
+
+  @override
+  String get alhamdulillah => 'الحمد للہ!';
+
+  @override
+  String get levelSeeker => 'تلاش کرنے والا';
+
+  @override
+  String get levelBeliever => 'مومن';
+
+  @override
+  String get levelDevoted => 'عقیدت مند';
+
+  @override
+  String get levelChampion => 'چیمپئن';
+
+  @override
+  String get levelLegend => 'لیجنڈ';
+
+  @override
+  String get next => 'اگلا';
+
+  @override
+  String get day => 'دن';
+
+  @override
+  String get days => 'دن';
+
+  @override
+  String get quran => 'قرآن';
+
+  @override
+  String get zikr => 'ذکر';
+
+  @override
+  String get dailyLogin => 'روزانہ لاگ ان';
+
+  @override
+  String get todaysProgress => 'آج کی پیشرفت';
+
+  @override
+  String get versesToday => 'آج کی آیات';
+
+  @override
+  String get resumeReading => 'پڑھنا جاری رکھیں';
+
+  @override
+  String get continueReading => 'آگے پڑھیں';
+
+  @override
+  String get chooseWhereToStart => 'کہاں سے شروع کرنا ہے منتخب کریں';
+
+  @override
+  String get startReadingFrom => 'پڑھنا شروع کریں';
+
+  @override
+  String get yourLibrary => 'آپ کی لائبریری';
+
+  @override
+  String get browse => 'تلاش کریں';
+
+  @override
+  String get listen => 'سنیں';
+
+  @override
+  String get tafsir => 'تفسیر';
+
+  @override
+  String get wordByWord => 'لفظ بہ لفظ';
+
+  @override
+  String get mushaf => 'مصحف';
+
+  @override
+  String get otherCategories => 'دیگر زمرے';
+
+  @override
+  String get noCategoriesAvailable => 'کوئی زمرہ دستیاب نہیں';
+
+  @override
+  String get nextPts => 'اگلا';
+
+  @override
+  String get prev => 'پچھلا';
 }

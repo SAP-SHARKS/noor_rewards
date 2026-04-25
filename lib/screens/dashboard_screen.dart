@@ -23,6 +23,7 @@ import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import 'package:confetti/confetti.dart';
 import 'package:share_plus/share_plus.dart';
+import '../l10n/app_localizations.dart';
 import 'streak_screen.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
@@ -37,16 +38,37 @@ AppConfig get _cfg => SettingsService.instance.config;
 class _C {
   static Color get bg          => _cfg.dashBg;
   static Color get text        => _cfg.dashText;
-  static const sub         = Color(0xFF8E8E93);
-  static const darkBtn     = Color(0xFF1C1C1E);
-  static const communityBg = Color(0xFFFEF3D4);
+  static Color get sub         => _cfg.dashBg.computeLuminance() > 0.5
+      ? const Color(0xFF8E8E93) : const Color(0xFF9CA3AF);
+  static Color get darkBtn     => _cfg.dashBg.computeLuminance() > 0.5
+      ? const Color(0xFF1C1C1E) : const Color(0xFF374151);
+  static Color get communityBg => _cfg.donationColor.withValues(alpha: 0.12);
   static Color get amber       => _cfg.donationColor;
-  static const navHome     = Color(0xFFE8643A);
+  static Color get navHome     => _cfg.primaryColor;
   static Color get navImpact   => _cfg.primaryColor;
-  static const navRanking  = Color(0xFFD4A017);
+  static Color get navRanking  => _cfg.donationColor;
   static Color get navProfile  => _cfg.secondaryColor;
   static Color get teal        => _cfg.dashTeal;
-  static const border      = Color(0xFFE8E8EC);
+  static Color get border      => _cfg.dashBg.computeLuminance() > 0.5
+      ? const Color(0xFFE8E8EC) : const Color(0xFF374151);
+}
+
+String _localizeLevel(BuildContext context, String? dbLevel) {
+  final l10n = AppLocalizations.of(context);
+  if (dbLevel == 'Seeker') return l10n?.levelSeeker ?? 'Seeker';
+  if (dbLevel == 'Believer') return l10n?.levelBeliever ?? 'Believer';
+  if (dbLevel == 'Devoted') return l10n?.levelDevoted ?? 'Devoted';
+  if (dbLevel == 'Champion') return l10n?.levelChampion ?? 'Champion';
+  if (dbLevel == 'Legend') return l10n?.levelLegend ?? 'Legend';
+  return dbLevel ?? 'Seeker';
+}
+
+String _localizeStreakType(BuildContext context, String label) {
+  final l10n = AppLocalizations.of(context);
+  if (label == 'Quran') return l10n?.quran ?? label;
+  if (label == 'Zikr') return l10n?.zikr ?? label;
+  if (label == 'Daily Login') return l10n?.dailyLogin ?? label;
+  return label;
 }
 
 class DashboardScreen extends StatefulWidget {
@@ -711,7 +733,7 @@ class _HomeTabState extends State<_HomeTab> {
                     style: GoogleFonts.rajdhani(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF2BAE99),
+                        color: _C.teal,
                         letterSpacing: 0.8,
                         height: 1.1)),
                 const SizedBox(height: 3),
@@ -723,14 +745,14 @@ class _HomeTabState extends State<_HomeTab> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+                color: _C.teal.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF2BAE99).withValues(alpha: 0.3)),
+                border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
               ),
               child: Text('${_myDonations.length} active',
                   style: GoogleFonts.rajdhani(
                       fontSize: 13, fontWeight: FontWeight.w700,
-                      color: const Color(0xFF2BAE99))),
+                      color: _C.teal)),
             ),
           ]),
           const SizedBox(height: 12),
@@ -750,7 +772,7 @@ class _HomeTabState extends State<_HomeTab> {
 
         // ── Activity grid ─────────────────────────────────────────────────
         const SizedBox(height: 24),
-        Text('EARN NOOR POINTS',
+        Text(AppLocalizations.of(context)?.earnNoorPoints.toUpperCase() ?? 'EARN NOOR POINTS',
             style: GoogleFonts.rajdhani(fontSize: 20, fontWeight: FontWeight.w700,
                 color: _C.text, letterSpacing: 1.0)),
         const SizedBox(height: 14),
@@ -759,25 +781,25 @@ class _HomeTabState extends State<_HomeTab> {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
           children: [
-            _ActivityCard('Read Quran',    NoorIcon.book(size: 28),
+            _ActivityCard(AppLocalizations.of(context)?.readQuran ?? 'Read Quran',    NoorIcon.book(size: 28),
               solid: const Color(0xFF3B72F6),
               solidDeep: const Color(0xFF1A4DC4),
               reward: '+5 pts / ayah',
               patternType: _CardPattern.arcRings,
               onTap: widget.onGoQuran),
-            _ActivityCard('Dhikar & Dua',  NoorIcon.beads(size: 28),
+            _ActivityCard(AppLocalizations.of(context)?.dailyDhikr ?? 'Dhikar & Dua',  NoorIcon.beads(size: 28),
               solid: const Color(0xFF18B97A),
               solidDeep: const Color(0xFF0A7A50),
               reward: '+10 pts / set',
               patternType: _CardPattern.floatingDots,
               onTap: widget.onGoDhikr),
-            _ActivityCard('Invite Friends', NoorIcon.handshake(size: 28),
+            _ActivityCard(AppLocalizations.of(context)?.inviteFriends ?? 'Invite Friends', NoorIcon.handshake(size: 28),
               solid: const Color(0xFFE8446A),
               solidDeep: const Color(0xFFA81A43),
               reward: '+500 Coins',
               patternType: _CardPattern.speedLines,
               onTap: widget.onGoInvite),
-            _ActivityCard('Achievements',   NoorIcon.trophy(size: 28),
+            _ActivityCard(AppLocalizations.of(context)?.achievements ?? 'Achievements',   NoorIcon.trophy(size: 28),
               solid: const Color(0xFF8B5CF6),
               solidDeep: const Color(0xFF5B21B6),
               reward: '${_fmt(widget.totalXp)} pts • Lv ${widget.level}',
@@ -996,7 +1018,7 @@ class _InviteSheetState extends State<_InviteSheet>
                     Container(
                       width: 46, height: 46,
                       decoration: BoxDecoration(
-                          color: const Color(0xFF2BAE99).withValues(alpha: 0.15),
+                          color: _C.teal.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(14)),
                       child: Center(child: NoorIcon.handshake(size: 24)),
                     ),
@@ -1025,7 +1047,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           stops: [0.0, 0.5, 1.0],
                         ),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFF2BAE99).withValues(alpha: 0.3)),
+                        border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1071,11 +1093,11 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             color: _codeCopied
-                                ? const Color(0xFF2BAE99)
-                                : const Color(0xFF2BAE99).withValues(alpha: 0.15),
+                                ? _C.teal
+                                : _C.teal.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                                color: const Color(0xFF2BAE99).withValues(alpha: 0.5)),
+                                color: _C.teal.withValues(alpha: 0.5)),
                           ),
                           child: Row(mainAxisSize: MainAxisSize.min, children: [
                             Icon(
@@ -1121,7 +1143,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
                             color: _linkCopied
-                                ? const Color(0xFF2BAE99)
+                                ? _C.teal
                                 : Colors.white10,
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -1244,8 +1266,8 @@ class _InviteSheetState extends State<_InviteSheet>
                               borderSide: BorderSide.none),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(
-                                  color: Color(0xFF2BAE99), width: 1.5)),
+                              borderSide: BorderSide(
+                                  color: _C.teal, width: 1.5)),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 16),
                         ),
@@ -1261,7 +1283,7 @@ class _InviteSheetState extends State<_InviteSheet>
                         decoration: BoxDecoration(
                           color: _loading
                               ? Colors.white10
-                              : const Color(0xFF2BAE99),
+                              : _C.teal,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: _loading
@@ -1304,18 +1326,18 @@ class _InviteSheetState extends State<_InviteSheet>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                          color: const Color(0xFF2BAE99).withValues(alpha: 0.15),
+                          color: _C.teal.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: const Color(0xFF2BAE99).withValues(alpha: 0.3))),
+                              color: _C.teal.withValues(alpha: 0.3))),
                       child: Row(children: [
-                        const Icon(Icons.check_circle_rounded,
-                            size: 16, color: Color(0xFF2BAE99)),
+                        Icon(Icons.check_circle_rounded,
+                            size: 16, color: _C.teal),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(_success!,
                               style: GoogleFonts.outfit(
-                                  color: const Color(0xFF2BAE99),
+                                  color: _C.teal,
                                   fontSize: 13, fontWeight: FontWeight.w600)),
                         ),
                       ]),
@@ -1344,7 +1366,7 @@ class _RewardPill extends StatelessWidget {
       Text(points,
           style: GoogleFonts.outfit(
               fontSize: 16, fontWeight: FontWeight.w900,
-              color: Color(0xFF2BAE99))),
+              color: _C.teal)),
       Text(label,
           style: GoogleFonts.outfit(
               fontSize: 11, color: Colors.white38)),
@@ -1416,7 +1438,7 @@ class _StreakBannerState extends State<_StreakBanner>
             Row(children: [
               NoorIcon.fire(size:16),
               const SizedBox(width: 6),
-              Text('STREAKS',
+              Text(AppLocalizations.of(context)?.streaks.toUpperCase() ?? 'STREAKS',
                   style: GoogleFonts.rajdhani(
                       fontSize: 15, fontWeight: FontWeight.w700,
                       color: const Color(0xFF3D2C1E), letterSpacing: 1.2)),
@@ -1430,7 +1452,7 @@ class _StreakBannerState extends State<_StreakBanner>
                     border: Border.all(
                         color: const Color(0xFFFF6B35).withValues(alpha: 0.35)),
                   ),
-                  child: Text('${next.emoji} Next: ${next.days}d',
+                  child: Text('${next.emoji} ${AppLocalizations.of(context)?.next ?? 'Next'}: ${next.days}d',
                       style: GoogleFonts.rajdhani(
                           fontSize: 11, fontWeight: FontWeight.w700,
                           color: const Color(0xFFFF9500))),
@@ -1442,15 +1464,16 @@ class _StreakBannerState extends State<_StreakBanner>
             const SizedBox(height: 14),
 
             // 3 streak chips — solid bold cards with sunburst rays
-            Row(children: List.generate(3, (i) {
-              final s      = streaks[i];
-              final alive  = s > 0;
-              final colors = _cardColors[i];
-              final type   = types[i];
-
-              return Expanded(child: Padding(
-                padding: EdgeInsets.only(left: i == 0 ? 0 : 10),
-                child: AnimatedBuilder(
+            Row(children: [
+              for (int i = 0; i < 3; i++) ...[
+                if (i > 0) const SizedBox(width: 10),
+                Builder(builder: (context) {
+                  final s      = streaks[i];
+                  final alive  = s > 0;
+                  final colors = _cardColors[i];
+                  final type   = types[i];
+                  return Expanded(
+                    child: AnimatedBuilder(
                   animation: _glow,
                   builder: (_, __) {
                     final decoration = BoxDecoration(
@@ -1524,7 +1547,7 @@ class _StreakBannerState extends State<_StreakBanner>
                                           offset: const Offset(0, 2),
                                         ),
                                       ] : null)),
-                              Text('day${s == 1 ? '' : 's'}',
+                              Text(s == 1 ? (AppLocalizations.of(context)?.day ?? 'day') : (AppLocalizations.of(context)?.days ?? 'days'),
                                   style: GoogleFonts.outfit(
                                       fontSize: 9,
                                       color: alive
@@ -1541,7 +1564,7 @@ class _StreakBannerState extends State<_StreakBanner>
                                       : Colors.grey.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text(type.label,
+                                child: Text(_localizeStreakType(context, type.label),
                                     style: GoogleFonts.outfit(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
@@ -1557,9 +1580,9 @@ class _StreakBannerState extends State<_StreakBanner>
                     );
                   },
                 ),
-              ));
-            })),
-          ]),
+              );
+              }),
+            ]),
         ),
       ),
     );
@@ -1641,7 +1664,7 @@ class _ProgressCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Header row: title + streak bubble
         Row(children: [
-          Text('YOUR PROGRESS',
+          Text(AppLocalizations.of(context)?.yourProgress.toUpperCase() ?? 'YOUR PROGRESS',
             style: GoogleFonts.rajdhani(
                 fontSize: 16, fontWeight: FontWeight.w700,
                 color: _C.text, letterSpacing: 1.0)),
@@ -1990,10 +2013,10 @@ class _HomeBgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final dotPaint = Paint()
-      ..color = const Color(0xFF2BAE99).withValues(alpha: 0.07)
+      ..color = _C.teal.withValues(alpha: 0.07)
       ..style = PaintingStyle.fill;
     final arcPaint = Paint()
-      ..color = const Color(0xFF2BAE99).withValues(alpha: 0.04)
+      ..color = _C.teal.withValues(alpha: 0.04)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -2021,7 +2044,7 @@ class _HomeBgPainter extends CustomPainter {
       Offset(0, size.height),
       size.width * 0.55,
       Paint()
-        ..color = const Color(0xFF2BAE99).withValues(alpha: 0.03)
+        ..color = _C.teal.withValues(alpha: 0.03)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0,
     );
@@ -2089,7 +2112,7 @@ class _ProjectCoverState extends State<_ProjectCover> {
           child: SizedBox(
             width: widget.size * 0.6,
             height: widget.size * 0.6,
-            child: const CircularProgressIndicator(
+            child: CircularProgressIndicator(
                 strokeWidth: 1.5, color: _C.teal),
           ),
         ),
@@ -2196,7 +2219,7 @@ class _MyDonationsSection extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           color: const Color(0xFFF7F4EF),
-                          child: const Center(child: Icon(Icons.volunteer_activism_rounded, size: 48, color: Color(0xFF2BAE99))),
+                          child: Center(child: Icon(Icons.volunteer_activism_rounded, size: 48, color: _C.teal)),
                         ),
                       ),
                     );
@@ -2204,7 +2227,7 @@ class _MyDonationsSection extends StatelessWidget {
                     banner = Container(
                       width: double.infinity, height: 240,
                       color: const Color(0xFFF7F4EF),
-                      child: const Icon(Icons.volunteer_activism_rounded, size: 48, color: Color(0xFF2BAE99)),
+                      child: Icon(Icons.volunteer_activism_rounded, size: 48, color: _C.teal),
                     );
                   }
 
@@ -2321,7 +2344,7 @@ class _MyDonationsSection extends StatelessWidget {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2BAE99), // matching _C.navImpact
+                              color: _C.teal, // matching _C.navImpact
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Center(
@@ -2419,11 +2442,11 @@ class _NoorCounterState extends State<_NoorCounter>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: const Color(0xFF2BAE99).withValues(alpha: 0.25), width: 1,
+                color: _C.teal.withValues(alpha: 0.25), width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+                  color: _C.teal.withValues(alpha: 0.12),
                   blurRadius: 16, offset: const Offset(0, 6),
                 ),
                 BoxShadow(
@@ -2464,7 +2487,7 @@ class _NoorCounterState extends State<_NoorCounter>
                                   child: Text(',',
                                     style: GoogleFonts.rajdhani(
                                       fontSize: 20, fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF2BAE99).withValues(alpha: 0.55),
+                                      color: _C.teal.withValues(alpha: 0.55),
                                     ),
                                   ),
                                 )
@@ -2486,20 +2509,20 @@ class _NoorCounterState extends State<_NoorCounter>
                   // ── Thin teal divider ───────────────────────────────────
                   Container(
                     height: 0.8,
-                    color: const Color(0xFF2BAE99).withValues(alpha: 0.3),
+                    color: _C.teal.withValues(alpha: 0.3),
                   ),
 
                   // ── Label strip ────────────────────────────────────────
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF1A9E8C), Color(0xFF2BAE99)],
+                        colors: [Color(0xFF1A9E8C), _C.teal],
                         begin: Alignment.centerLeft, end: Alignment.centerRight,
                       ),
                     ),
                     child: Center(
-                      child: Text('YOUR TOTAL NOOR POINTS',
+                      child: Text(AppLocalizations.of(context)?.yourTotalNoorPoints.toUpperCase() ?? 'YOUR TOTAL NOOR POINTS',
                           style: GoogleFonts.rajdhani(
                             fontSize: 13, fontWeight: FontWeight.w700,
                             color: Colors.white, letterSpacing: 2.0,
@@ -2619,7 +2642,7 @@ class _DrumDigit extends StatelessWidget {
           Center(child: Container(
             height: 0.8,
             margin: const EdgeInsets.symmetric(horizontal: 5),
-            color: const Color(0xFF2BAE99).withValues(alpha: 0.35),
+            color: _C.teal.withValues(alpha: 0.35),
           )),
         ]),
       ),
@@ -2647,11 +2670,11 @@ class _DigitCell extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF2BAE99).withValues(alpha: 0.4), width: 1.0,
+          color: _C.teal.withValues(alpha: 0.4), width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2BAE99).withValues(alpha: 0.12),
+            color: _C.teal.withValues(alpha: 0.12),
             blurRadius: 6, offset: const Offset(0, 2),
           ),
           BoxShadow(
@@ -2668,7 +2691,7 @@ class _DigitCell extends StatelessWidget {
             color: const Color(0xFF0E5040), height: 1,
             shadows: [
               Shadow(
-                color: const Color(0xFF2BAE99).withValues(alpha: 0.35),
+                color: _C.teal.withValues(alpha: 0.35),
                 blurRadius: 8,
               ),
             ],
@@ -2771,7 +2794,7 @@ class _ImpactTabState extends State<_ImpactTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator(color: _C.navImpact));
+    if (_loading) return Center(child: CircularProgressIndicator(color: _C.navImpact));
     final active    = _projects.where((p) => p['is_active'] == true).toList();
     final completed = _projects.where((p) => p['is_completed'] == true).toList();
     
@@ -2785,7 +2808,7 @@ class _ImpactTabState extends State<_ImpactTab> {
         // ── Community Impact heading only (Akhirah Balance is now the tab) ────
         // ── My personal donation history block removed (prevent repetition from Dashboard) ──
 
-        Text('Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
+        Text(AppLocalizations.of(context)?.communityImpact ?? 'Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
         const SizedBox(height: 20),
 
         for (final p in active) ...[
@@ -2812,7 +2835,7 @@ class _ImpactTabState extends State<_ImpactTab> {
         ],
 
         if (completed.isNotEmpty) ...[
-          Text('Completed Projects',
+          Text(AppLocalizations.of(context)?.completedProjects ?? 'Completed Projects',
               style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text)),
           const SizedBox(height: 12),
           for (final p in completed)
@@ -2910,9 +2933,9 @@ class _ProjectCard extends StatelessWidget {
                         Image.network(dpUrl, fit: BoxFit.cover),
                       ])
                     : Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF2BAE99), Color(0xFF1A9E8C)]),
+                            colors: [_C.teal, Color(0xFF1A9E8C)]),
                         ),
                         child: Center(child: NoorIcon.drop(size: 64)),
                       ),
@@ -2926,7 +2949,7 @@ class _ProjectCard extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Wrap(spacing: 6, children: [
                     if (category != null && category.isNotEmpty)
-                      _ImpactChip(category, const Color(0xFFE8F8F5), const Color(0xFF2BAE99)),
+                      _ImpactChip(category, const Color(0xFFE8F8F5), _C.teal),
                     if (location != null && location.isNotEmpty)
                       _ImpactChip('📍 $location', const Color(0xFFFFF3D4), _C.amber),
                   ]),
@@ -2951,7 +2974,7 @@ class _ProjectCard extends StatelessWidget {
                   value: pct,
                   minHeight: 8,
                   backgroundColor: const Color(0xFFE8F8F5),
-                  valueColor: const AlwaysStoppedAnimation(Color(0xFF2BAE99)),
+                  valueColor: AlwaysStoppedAnimation(_C.teal),
                 ),
               ),
               const SizedBox(height: 8),
@@ -2980,14 +3003,14 @@ class _ProjectCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 decoration: BoxDecoration(
                   gradient: availablePoints > 0
-                      ? const LinearGradient(
-                          colors: [Color(0xFF2BAE99), Color(0xFF1A9883)])
+                      ? LinearGradient(
+                          colors: [_C.teal, Color(0xFF1A9883)])
                       : null,
                   color: availablePoints > 0 ? null : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: availablePoints > 0
                       ? [BoxShadow(
-                          color: const Color(0xFF2BAE99).withValues(alpha: 0.28),
+                          color: _C.teal.withValues(alpha: 0.28),
                           blurRadius: 12, offset: const Offset(0, 4))]
                       : null,
                 ),
@@ -3140,7 +3163,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
               if (_success) ...[
                 // SUCCESS STATE
                 const SizedBox(height: 8),
-                const Icon(Icons.check_circle_rounded, color: _C.teal, size: 72),
+                Icon(Icons.check_circle_rounded, color: _C.teal, size: 72),
                 const SizedBox(height: 20),
                 Text('Alhamdulillah!', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
                 const SizedBox(height: 12),
@@ -3248,7 +3271,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   height: 180,
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(color: const Color(0xFFF1F5F4), borderRadius: BorderRadius.circular(20)),
-                  child: const Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: _C.teal))),
+                  child: Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: _C.teal))),
                 )
               else if (_media.isNotEmpty)
                 Padding(
@@ -3407,7 +3430,7 @@ class _RankingSheetState extends State<_RankingSheet> {
           Divider(height: 1, color: Colors.grey.shade100),
 
           Expanded(child: _loading
-            ? const NoorInlineLoader(height: double.infinity, color: _C.navRanking, label: 'Loading…')
+            ? NoorInlineLoader(height: double.infinity, color: _C.navRanking, label: 'Loading…')
             : ListView(
                 controller: scrollCtrl,
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
@@ -3456,7 +3479,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                         [const Color(0xFFCD7F32), const Color(0xFFA0522D)],
                       ];
                       final isTop3 = i < 3;
-                      final badgeGrad = isTop3 ? badgeColors[i] : [const Color(0xFF2BAE99), const Color(0xFF1A9E8C)];
+                      final badgeGrad = isTop3 ? badgeColors[i] : [_C.teal, const Color(0xFF1A9E8C)];
                       final xp    = (p['total_xp']     as num?)?.toInt() ?? 0;
                       final lv    = (p['level']        as num?)?.toInt() ?? 1;
                       final title = (p['level_title']  as String?) ?? 'Seeker';
@@ -3603,7 +3626,7 @@ class _ProfileTabState extends State<_ProfileTab> {
               Positioned(top: 40, right: 40,
                   child: _ProfileArc(70, const Color(0xFFD4AF37).withValues(alpha: 0.08))),
               Positioned(top: -10, left: 60,
-                  child: _ProfileArc(50, const Color(0xFF2BAE99).withValues(alpha: 0.06))),
+                  child: _ProfileArc(50, _C.teal.withValues(alpha: 0.06))),
 
               // Content — padded below status bar
               Padding(
@@ -3611,7 +3634,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                 child: Column(children: [
                   // Top row: "My Profile" title + level pill (mirrors Akhirah top bar)
                   Row(children: [
-                    Text('My Profile',
+                    Text(AppLocalizations.of(context)?.myProfile ?? 'My Profile',
                         style: GoogleFonts.outfit(
                             fontSize: 18, fontWeight: FontWeight.w800,
                             color: Colors.white)),
@@ -3629,7 +3652,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                           const Icon(Icons.workspace_premium_rounded,
                               color: Color(0xFFD4AF37), size: 14),
                           const SizedBox(width: 5),
-                          Flexible(child: Text('Lvl $level · $levelTitle',
+                          Flexible(child: Text('Lvl $level · ${_localizeLevel(context, levelTitle)}',
                               maxLines: 1, overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
                                   fontSize: 12, fontWeight: FontWeight.w700,
@@ -3763,11 +3786,11 @@ class _ProfileTabState extends State<_ProfileTab> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text('Community Leaderboard',
+                          Text(AppLocalizations.of(context)?.communityLeaderboard ?? 'Community Leaderboard',
                               style: GoogleFonts.outfit(
                                   fontSize: 15, fontWeight: FontWeight.w800,
                                   color: _C.text)),
-                          Text('Top contributors by lifetime pts',
+                          Text(AppLocalizations.of(context)?.topContributors ?? 'Top contributors by lifetime pts',
                               style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                         ])),
                       ]),
@@ -3809,10 +3832,10 @@ class _ProfileTabState extends State<_ProfileTab> {
 
                     // Loading indicator
                     if (_lbLoading)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(vertical: 24),
                         child: Center(child: CircularProgressIndicator(
-                            color: Color(0xFF2BAE99), strokeWidth: 2.5)),
+                            color: _C.teal, strokeWidth: 2.5)),
                       ),
 
                     // Top 10 list
@@ -3835,10 +3858,10 @@ class _ProfileTabState extends State<_ProfileTab> {
                         ];
                         final badgeGrad = isTop3
                             ? badgeColors[i]
-                            : [const Color(0xFF2BAE99), const Color(0xFF1A9E8C)];
+                            : [_C.teal, const Color(0xFF1A9E8C)];
                         final xp    = (p['total_xp']     as num?)?.toInt() ?? 0;
                         final lv    = (p['level']        as num?)?.toInt() ?? 1;
-                        final title = (p['level_title']  as String?) ?? 'Seeker';
+                        final title = _localizeLevel(context, p['level_title'] as String?);
                         final nm    = (p['display_name'] as String?)?.split(' ').first ?? 'User';
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
@@ -3934,7 +3957,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                             letterSpacing: 0.3,
                           ),
                         ),
-                        Text('Tap to view your Journey',
+                        Text(AppLocalizations.of(context)?.navJourney ?? 'Tap to view your Journey',
                             style: GoogleFonts.outfit(fontSize: 12, color: _C.sub)),
                       ])),
                       Icon(Icons.arrow_forward_ios_rounded, size: 15,
@@ -3963,7 +3986,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                         color: _C.teal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.email_outlined, color: _C.teal, size: 18),
+                      child: Icon(Icons.email_outlined, color: _C.teal, size: 18),
                     ),
                     const SizedBox(width: 12),
                     Expanded(child: Text(user?.email ?? user?.userMetadata?['qf_email'] as String? ?? 'No email',
@@ -3990,7 +4013,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                     child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.logout_rounded, color: Color(0xFFD32F2F), size: 20),
                       const SizedBox(width: 10),
-                      Text('Sign Out', style: GoogleFonts.outfit(
+                      Text(AppLocalizations.of(context)?.signOut ?? 'Sign Out', style: GoogleFonts.outfit(
                           fontSize: 16, fontWeight: FontWeight.w700,
                           color: const Color(0xFFD32F2F))),
                     ])),
@@ -4027,11 +4050,11 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      (Icons.home_rounded,                Icons.home_outlined,                'Home',    _C.navHome),
-      (Icons.trending_up_rounded,         Icons.trending_up_outlined,         'Journey', _C.navRanking),
-      (Icons.mosque_rounded,              Icons.mosque_outlined,              'Akhirah', _C.navImpact),
-      (Icons.person_rounded,              Icons.person_outline_rounded,       'Profile', _C.navProfile),
+    final navItems = [
+      (Icons.home_rounded,                Icons.home_outlined,                AppLocalizations.of(context)?.navHome ?? 'Home',    _C.navHome),
+      (Icons.trending_up_rounded,         Icons.trending_up_outlined,         AppLocalizations.of(context)?.navJourney ?? 'Journey', _C.navRanking),
+      (Icons.mosque_rounded,              Icons.mosque_outlined,              AppLocalizations.of(context)?.navAkhirah ?? 'Akhirah', _C.navImpact),
+      (Icons.person_rounded,              Icons.person_outline_rounded,       AppLocalizations.of(context)?.navProfile ?? 'Profile', _C.navProfile),
     ];
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Container(
@@ -4040,8 +4063,8 @@ class _BottomNav extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey.shade200)),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))]),
-      child: Row(children: List.generate(items.length, (i) {
-        final (filled, outline, label, color) = items[i];
+      child: Row(children: List.generate(navItems.length, (i) {
+        final (filled, outline, label, color) = navItems[i];
         final sel = i == tab;
         return Expanded(child: GestureDetector(
           onTap: () => onTap(i),
@@ -4152,12 +4175,12 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
 
   // ── Colors — app-native teal/green palette ────────────────────────────
   // Matches the Akhira/Profile header and the app's signature teal accent.
-  static const _neonGreen  = Color(0xFF2BAE99);   // app teal
+  static final _neonGreen  = _C.teal;   // app teal
   static const _neonGold   = Color(0xFFD4AF37);   // soft Islamic gold
   static const _socketRing = Color(0xFF1A9E8C);   // deeper teal ring
 
-  static const _sparkPalette = [
-    Color(0xFF2BAE99), Color(0xFF1A9E8C), Color(0xFF4ECDC4),
+  static final _sparkPalette = [
+    _C.teal, Color(0xFF1A9E8C), Color(0xFF4ECDC4),
     Color(0xFFD4AF37), Color(0xFF80E5D8), Color(0xFFFFFFFF),
   ];
 
@@ -4405,11 +4428,11 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       ),
                       borderRadius: BorderRadius.circular(radius),
                       border: Border.all(
-                        color: const Color(0xFF2BAE99).withValues(alpha: 0.5), width: 1.5,
+                        color: _C.teal.withValues(alpha: 0.5), width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF2BAE99).withValues(alpha: 0.22),
+                          color: _C.teal.withValues(alpha: 0.22),
                           blurRadius: 24, offset: const Offset(0, 8),
                         ),
                         BoxShadow(
@@ -4455,9 +4478,9 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       gradient: LinearGradient(
                         colors: [
                           const Color(0xFF1A9E8C).withValues(alpha: 0.5),
-                          const Color(0xFF2BAE99).withValues(alpha: 0.65),
+                          _C.teal.withValues(alpha: 0.65),
                           Color.lerp(
-                            const Color(0xFF2BAE99),
+                            _C.teal,
                             _neonGold,
                             (pct - 0.6).clamp(0.0, 1.0) / 0.4,
                           )!,
@@ -4505,7 +4528,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                             ],
                           ).createShader(bounds),
                           child: Text(
-                            'Seal the Day  ✨',
+                            (AppLocalizations.of(context)?.sealTheDay ?? 'Seal the Day') + '  ✨',
                             style: GoogleFonts.rajdhani(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
@@ -4524,7 +4547,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     child: Text(
                       _freshXp
                           ? 'JazakAllah!  +${XpReward.validateCoins} pts'
-                          : 'Already sealed today',
+                          : AppLocalizations.of(context)?.alreadySealed ?? 'Already sealed today',
                       style: GoogleFonts.rajdhani(
                         fontSize: 14.5, fontWeight: FontWeight.w700,
                         color: _freshXp ? _neonGold : Colors.white,

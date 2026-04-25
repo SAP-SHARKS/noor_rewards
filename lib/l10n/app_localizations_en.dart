@@ -206,4 +206,139 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noData => 'No data yet';
+
+  @override
+  String get callYou => 'What should we\\ncall you?';
+
+  @override
+  String get personaliseJourney =>
+      'Personalise your spiritual journey with your name';
+
+  @override
+  String get whereFrom => 'Where are\\nyou from?';
+
+  @override
+  String get joinMuslims =>
+      'Join Muslims from around the world on this journey';
+
+  @override
+  String get whatBringsYou => 'What brings\\nyou here?';
+
+  @override
+  String get chooseGoals =>
+      'Choose your spiritual goals — you can select multiple';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navJourney => 'Journey';
+
+  @override
+  String get navAkhirah => 'Akhirah';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get communityLeaderboard => 'Community Leaderboard';
+
+  @override
+  String get topContributors => 'Top contributors by lifetime pts';
+
+  @override
+  String get myProfile => 'My Profile';
+
+  @override
+  String get startStreak => 'Start your streak today!';
+
+  @override
+  String get alreadySealed => 'Already sealed today';
+
+  @override
+  String get sealTheDay => 'Seal the Day';
+
+  @override
+  String get alhamdulillah => 'Alhamdulillah!';
+
+  @override
+  String get levelSeeker => 'Seeker';
+
+  @override
+  String get levelBeliever => 'Believer';
+
+  @override
+  String get levelDevoted => 'Devoted';
+
+  @override
+  String get levelChampion => 'Champion';
+
+  @override
+  String get levelLegend => 'Legend';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get day => 'day';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get quran => 'Quran';
+
+  @override
+  String get zikr => 'Zikr';
+
+  @override
+  String get dailyLogin => 'Daily Login';
+
+  @override
+  String get todaysProgress => 'Today\'s Progress';
+
+  @override
+  String get versesToday => 'verses today';
+
+  @override
+  String get resumeReading => 'Resume Reading';
+
+  @override
+  String get continueReading => 'Continue reading';
+
+  @override
+  String get chooseWhereToStart => 'Choose Where to Start';
+
+  @override
+  String get startReadingFrom => 'Start Reading from';
+
+  @override
+  String get yourLibrary => 'Your Library';
+
+  @override
+  String get browse => 'Browse';
+
+  @override
+  String get listen => 'Listen';
+
+  @override
+  String get tafsir => 'Tafsir';
+
+  @override
+  String get wordByWord => 'Word by Word';
+
+  @override
+  String get mushaf => 'Mushaf';
+
+  @override
+  String get otherCategories => 'Other Categories';
+
+  @override
+  String get noCategoriesAvailable => 'No categories available';
+
+  @override
+  String get nextPts => 'Next';
+
+  @override
+  String get prev => 'Prev';
 }
