@@ -99,11 +99,23 @@ class QfAuthService {
   ///   (no more duplicate entries in the database).
   static Future<void> performSignOut(SupabaseClient supabase) async {
     final user = supabase.auth.currentUser;
-    final isQf = user?.userMetadata?['provider'] == 'quran_com';
+    // Primary check: metadata provider (fast, no I/O)
+    final metaProvider = user?.userMetadata?['provider'] as String?;
+
+    // Fallback: metadata might not be set if _fetchAndStoreUserInfo's updateUser
+    // call silently failed.  Anonymous users with a stored QF sub are QF users.
+    final isAnonymous = user?.isAnonymous ?? false;
+    String? storedSub;
+    if (metaProvider != 'quran_com' && isAnonymous) {
+      storedSub = await instance._secureStorage.read(key: _qfSubKey);
+    }
+    final isQf = metaProvider == 'quran_com'
+        || (isAnonymous && storedSub != null && storedSub.isNotEmpty);
+
     if (isQf) {
-      await instance.signOut();   // QF-aware: keeps Supabase session
+      await instance.signOut();   // QF-aware: keeps Supabase session alive
     } else {
-      await supabase.auth.signOut(); // Regular sign-out
+      await supabase.auth.signOut(); // Regular full sign-out
     }
   }
 
@@ -247,19 +259,28 @@ class QfAuthService {
         } catch (_) {}
       }
 
-      final currentUser   = _supabase.auth.currentUser;
-      final currentQfSub  = currentUser?.userMetadata?['qf_sub'] as String?;
-      final isSameSession = incomingQfSub != null && incomingQfSub == currentQfSub;
+      // ── Identity check via SecureStorage (more reliable than metadata) ────
+      // SecureStorage persists across QF sign-outs — we never clear it on
+      // sign-out, so it reliably records "same QF user, same device" without
+      // depending on user metadata (which can silently fail to write).
+      //
+      // Only create a NEW anonymous session when we can POSITIVELY CONFIRM a
+      // different QF identity (both subs known AND mismatched).  If the sub is
+      // unknown (userinfo timed out) or matches, reuse the existing session.
+      final storedSubForSession = await _secureStorage.read(key: _qfSubKey);
+      final isConfirmedDifferentUser = incomingQfSub != null
+          && incomingQfSub.isNotEmpty
+          && storedSubForSession != null
+          && storedSubForSession.isNotEmpty   // empty stored sub = first login, never "different"
+          && incomingQfSub != storedSubForSession;
 
-      if (_supabase.auth.currentSession != null && isSameSession) {
-        // Same QF user returning → reuse session, no new row created.
-        debugPrint('[QF] same sub ($incomingQfSub) → reusing existing session');
+      if (_supabase.auth.currentSession != null && !isConfirmedDifferentUser) {
+        debugPrint('[QF] reusing session '
+            '(incoming=$incomingQfSub stored=$storedSubForSession)');
       } else {
-        // No session, OR a DIFFERENT QF user on the same device.
-        // Must reset to prevent data cross-contamination.
         if (_supabase.auth.currentSession != null) {
-          debugPrint('[QF] sub mismatch or new user → '
-              'signing out old session (was $currentQfSub, now $incomingQfSub)');
+          debugPrint('[QF] confirmed different user → signing out '
+              '(was $storedSubForSession, now $incomingQfSub)');
           await _supabase.auth.signOut();
         }
         await _supabase.auth.signInAnonymously();
@@ -343,7 +364,31 @@ class QfAuthService {
           final dbName = (profile?['display_name'] as String?) ?? '';
           if (dbSetupDone && dbName.isNotEmpty) {
             displayName = dbName;
-            debugPrint('[QF] using DB display_name="$dbName" (setup_done=true)');
+            debugPrint('[QF] using DB display_name="$dbName" (setup_done=true by id)');
+          }
+
+          // ── Email-based fallback & progress recovery ────────────────────────
+          if (!dbSetupDone && email.isNotEmpty) {
+            try {
+              final result = await _supabase.rpc(
+                'link_qf_profile',
+                params: {
+                  'p_email':   email,
+                  'p_new_id':  currentUser.id,
+                  'p_name':    displayName,
+                  'p_picture': picture,
+                },
+              ) as String? ?? 'ERROR: Null response';
+
+              if (result == 'SUCCESS') {
+                dbSetupDone = true;
+                debugPrint('[QF] successfully recovered old profile and linked to new anonymous ID');
+              } else {
+                 debugPrint('[QF] RPC failed: $result');
+              }
+            } catch (e) {
+              debugPrint('[QF] profile recovery RPC failed (skipping): $e');
+            }
           }
         }
       } catch (e) {
@@ -371,18 +416,12 @@ class QfAuthService {
       };
 
       // IMPORTANT: Supabase merges metadata — it doesn't replace.
-      // If noor_setup_complete=true was set in a previous session and we simply
-      // omit it now, the old value stays, AuthGate skips ProfileSetupScreen,
-      // and the user never gets to enter their name.
-      // We MUST explicitly set it to false when setup isn't done.
       if (dbSetupDone || name.isNotEmpty) {
         meta['noor_setup_complete'] = true;
         if (displayName.isNotEmpty) meta['noor_name'] = displayName;
-        debugPrint('[QF] noor_setup_complete=true '
-            '(dbSetupDone=$dbSetupDone qfName="$name")');
+        debugPrint('[QF] noor_setup_complete=true (dbSetupDone=$dbSetupDone qfName="$name")');
       } else {
         // Explicitly overwrite any stale 'true' from previous sessions.
-        // Supabase merges — omitting this key would leave the old value.
         meta['noor_setup_complete'] = false;
         debugPrint('[QF] noor_setup_complete=false → ProfileSetupScreen will show');
       }

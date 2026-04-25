@@ -80,7 +80,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     try {
       final profile = await _supabase
           .from('profiles')
-          .select('display_name, country, level, avatar_url')
+          .select('display_name, country, level, avatar_url, email')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -88,6 +88,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       _country     = (profile?['country']      as String?) ?? '';
       _level       = (profile?['level']        as num?)?.toInt() ?? 1;
       _avatarUrl   = profile?['avatar_url']    as String?;
+
+      // For QF users: qf_email in userMetadata may be empty if the QF server
+      // only grants openid scope. Fall back to profiles.email which is always
+      // populated from the AuthGate email upsert.
+      if (_provider == 'quran_com' && _email.isEmpty) {
+        _email = (profile?['email'] as String?) ?? '';
+      }
 
       final lvlRow = await _supabase
           .from('xp_levels')

@@ -19,6 +19,8 @@ import '../services/xp_service.dart';
 import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
 import '../services/streak_service.dart';
+import '../services/settings_service.dart';
+import '../models/app_config.dart';
 import 'package:confetti/confetti.dart';
 import 'package:share_plus/share_plus.dart';
 import 'streak_screen.dart';
@@ -29,19 +31,21 @@ import '../widgets/project_media_carousel.dart';
 import 'project_detail_screen.dart';
 
 
-// ── Palette ────────────────────────────────────────────────────────────────────
+// ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
+AppConfig get _cfg => SettingsService.instance.config;
+
 class _C {
-  static const bg          = Color(0xFFF7F3EE);
-  static const text        = Color(0xFF1C1C1E);
+  static Color get bg          => _cfg.dashBg;
+  static Color get text        => _cfg.dashText;
   static const sub         = Color(0xFF8E8E93);
   static const darkBtn     = Color(0xFF1C1C1E);
   static const communityBg = Color(0xFFFEF3D4);
-  static const amber       = Color(0xFFF5A623);
+  static Color get amber       => _cfg.donationColor;
   static const navHome     = Color(0xFFE8643A);
-  static const navImpact   = Color(0xFF2BAE9B);
+  static Color get navImpact   => _cfg.primaryColor;
   static const navRanking  = Color(0xFFD4A017);
-  static const navProfile  = Color(0xFF6B4EBB);
-  static const teal        = Color(0xFF2BAE99);
+  static Color get navProfile  => _cfg.secondaryColor;
+  static Color get teal        => _cfg.dashTeal;
   static const border      = Color(0xFFE8E8EC);
 }
 
@@ -3701,8 +3705,8 @@ class _ProfileTabState extends State<_ProfileTab> {
                   const SizedBox(height: 4),
 
                   // Email / Country
-                  if (user?.email != null)
-                    Text(user!.email ?? '',
+                  if ((user?.email ?? user?.userMetadata?['qf_email']) != null)
+                    Text((user?.email ?? user?.userMetadata?['qf_email']) as String? ?? '',
                         style: GoogleFonts.outfit(
                             fontSize: 12,
                             color: Colors.white.withValues(alpha: 0.5))),
@@ -3962,7 +3966,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                       child: const Icon(Icons.email_outlined, color: _C.teal, size: 18),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(child: Text(user?.email ?? '',
+                    Expanded(child: Text(user?.email ?? user?.userMetadata?['qf_email'] as String? ?? 'No email',
                         style: GoogleFonts.outfit(fontSize: 14, color: _C.text),
                         overflow: TextOverflow.ellipsis)),
                   ]),
