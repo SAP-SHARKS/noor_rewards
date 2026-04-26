@@ -2209,6 +2209,52 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Expand "Quran 2:286" → "Al Baqarah 2:286", etc.
+// ─────────────────────────────────────────────────────────────────────────────
+String _expandQuranRef(String ref) {
+  const surahs = {
+    1: 'Al Fatihah', 2: 'Al Baqarah', 3: 'Ali Imran', 4: 'An Nisa',
+    5: 'Al Maidah', 6: 'Al Anam', 7: 'Al Araf', 8: 'Al Anfal',
+    9: 'At Tawbah', 10: 'Yunus', 11: 'Hud', 12: 'Yusuf',
+    13: 'Ar Rad', 14: 'Ibrahim', 15: 'Al Hijr', 16: 'An Nahl',
+    17: 'Al Isra', 18: 'Al Kahf', 19: 'Maryam', 20: 'Ta Ha',
+    21: 'Al Anbiya', 22: 'Al Hajj', 23: 'Al Muminun', 24: 'An Nur',
+    25: 'Al Furqan', 26: 'Ash Shuara', 27: 'An Naml', 28: 'Al Qasas',
+    29: 'Al Ankabut', 30: 'Ar Rum', 31: 'Luqman', 32: 'As Sajdah',
+    33: 'Al Ahzab', 34: 'Saba', 35: 'Fatir', 36: 'Ya Sin',
+    37: 'As Saffat', 38: 'Sad', 39: 'Az Zumar', 40: 'Ghafir',
+    41: 'Fussilat', 42: 'Ash Shura', 43: 'Az Zukhruf', 44: 'Ad Dukhan',
+    45: 'Al Jathiyah', 46: 'Al Ahqaf', 47: 'Muhammad', 48: 'Al Fath',
+    49: 'Al Hujurat', 50: 'Qaf', 51: 'Adh Dhariyat', 52: 'At Tur',
+    53: 'An Najm', 54: 'Al Qamar', 55: 'Ar Rahman', 56: 'Al Waqiah',
+    57: 'Al Hadid', 58: 'Al Mujadila', 59: 'Al Hashr', 60: 'Al Mumtahanah',
+    61: 'As Saf', 62: 'Al Jumuah', 63: 'Al Munafiqun', 64: 'At Taghabun',
+    65: 'At Talaq', 66: 'At Tahrim', 67: 'Al Mulk', 68: 'Al Qalam',
+    69: 'Al Haqqah', 70: 'Al Maarij', 71: 'Nuh', 72: 'Al Jinn',
+    73: 'Al Muzzammil', 74: 'Al Muddathir', 75: 'Al Qiyamah', 76: 'Al Insan',
+    77: 'Al Mursalat', 78: 'An Naba', 79: 'An Naziat', 80: 'Abasa',
+    81: 'At Takwir', 82: 'Al Infitar', 83: 'Al Mutaffifin', 84: 'Al Inshiqaq',
+    85: 'Al Buruj', 86: 'At Tariq', 87: 'Al Ala', 88: 'Al Ghashiyah',
+    89: 'Al Fajr', 90: 'Al Balad', 91: 'Ash Shams', 92: 'Al Layl',
+    93: 'Ad Duha', 94: 'Ash Sharh', 95: 'At Tin', 96: 'Al Alaq',
+    97: 'Al Qadr', 98: 'Al Bayyinah', 99: 'Az Zalzalah', 100: 'Al Adiyat',
+    101: 'Al Qariah', 102: 'At Takathur', 103: 'Al Asr', 104: 'Al Humazah',
+    105: 'Al Fil', 106: 'Quraysh', 107: 'Al Maun', 108: 'Al Kawthar',
+    109: 'Al Kafirun', 110: 'An Nasr', 111: 'Al Masad', 112: 'Al Ikhlas',
+    113: 'Al Falaq', 114: 'An Nas',
+  };
+  return ref.replaceAllMapped(
+    RegExp(r'Quran\s+(\d+)((?::\d[\d\-]*)?)', caseSensitive: false),
+    (m) {
+      final num = int.tryParse(m.group(1)!) ?? 0;
+      final name = surahs[num];
+      if (name == null) return m.group(0)!;
+      return 'Surah $name ${m.group(1)}${m.group(2)}';
+    },
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Beautiful Display Card for Azkaar
 // ─────────────────────────────────────────────────────────────────────────────
 class _AzkarCard extends StatelessWidget {
@@ -2484,11 +2530,7 @@ class _AzkarCard extends StatelessWidget {
                     ),
 
                     // ── Virtue/Benefit title ──
-                    if (cleanReward.isNotEmpty) ...[
-                      const SizedBox(height: 10),
-                      Text(cleanReward,
-                        style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w600, color: textColor, height: 1.5)),
-                    ],
+                    // (Removed as per user request to declutter the UI)
 
                     // ── Hadith text ──
                     if (azkar.hadithFull.isNotEmpty) ...[
@@ -2516,19 +2558,29 @@ class _AzkarCard extends StatelessWidget {
                     // ── Reference ──
                     if (rawRef.isNotEmpty || bottomRef.isNotEmpty) ...[
                       const SizedBox(height: 16),
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            rawRef.isNotEmpty ? rawRef : (bottomRef.isNotEmpty ? bottomRef : azkar.reference),
-                            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: labelColor.withValues(alpha: 0.80)),
-                          ),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Container(height: 0.5, color: dividerColor),
                       ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Icon(Icons.link_rounded, size: 13, color: labelColor.withValues(alpha: 0.70)),
+                          const SizedBox(width: 6),
+                          Text('Reference',
+                            style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: labelColor, letterSpacing: 0.5)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      if (rawRef.isNotEmpty && rawRef.contains(RegExp(r'\d')))
+                        Text(_expandQuranRef(rawRef),
+                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6)),
+                      if (bottomRef.isNotEmpty && bottomRef.contains(RegExp(r'\d')))
+                        Text(bottomRef,
+                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6)),
+                      if (rawRef.isEmpty && bottomRef.isEmpty && azkar.reference.contains(RegExp(r'\d')))
+                        Text(_expandQuranRef(azkar.reference),
+                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6)),
                     ],
                   ],
                 ),

@@ -1582,7 +1582,9 @@ class _StreakBannerState extends State<_StreakBanner>
                 ),
               );
               }),
+              ],
             ]),
+          ]),
         ),
       ),
     );
