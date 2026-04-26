@@ -14,6 +14,7 @@ import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
 import '../services/quran_api_service.dart';   // Quran Foundation authenticated API
 import '../models/app_config.dart';
+import '../l10n/app_localizations.dart';
 
 /// Shorthand to get the live AppConfig.
 AppConfig get _cfg => SettingsService.instance.config;

@@ -6,6 +6,7 @@ import '../utils/asset_helper.dart';
 import '../widgets/noor_icons.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../l10n/app_localizations.dart';
 
 AppConfig get _dhcfg => SettingsService.instance.config;
 Color get _kBg => _dhcfg.dashBg;

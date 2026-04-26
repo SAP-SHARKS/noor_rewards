@@ -7,6 +7,7 @@ import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../l10n/app_localizations.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _qhcfg => SettingsService.instance.config;

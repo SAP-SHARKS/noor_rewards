@@ -138,6 +138,8 @@ export default function ProjectsPage() {
   function openEdit(p: Project) {
     setEditing(p);
     setForm(p);
+    setMedia([]);
+    loadMedia(p.id);
     setView("form");
   }
 
@@ -196,7 +198,8 @@ export default function ProjectsPage() {
   // ── Media carousel management ────────────────────────────────────────────
 
   async function uploadFiles(files: File[]) {
-    if (!files.length || !mediaProject) return;
+    const projectId = mediaProject?.id ?? editing?.id;
+    if (!files.length || !projectId) return;
     setUploading(true);
     let nextOrder = media.length;
     const total = files.length;
@@ -207,7 +210,7 @@ export default function ProjectsPage() {
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const isVideo = file.type.startsWith("video/") || ["mp4", "mov", "webm"].includes(ext);
       const mediaType = isVideo ? "video" : "image";
-      const path = `${mediaProject.id}/${crypto.randomUUID()}.${ext}`;
+      const path = `${projectId}/${crypto.randomUUID()}.${ext}`;
 
       await supabase.storage.from(BUCKET).upload(path, file, {
         contentType: mimeFor(ext, mediaType),
@@ -216,14 +219,14 @@ export default function ProjectsPage() {
       const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
 
       await supabase.from("community_project_media").insert({
-        project_id: mediaProject.id,
+        project_id: projectId,
         media_type: mediaType,
         url: data.publicUrl,
         sort_order: nextOrder++,
       });
     }
 
-    await loadMedia(mediaProject.id);
+    await loadMedia(projectId);
     setUploading(false);
     setUploadProgress("");
     if (fileRef.current) fileRef.current.value = "";
@@ -483,10 +486,107 @@ export default function ProjectsPage() {
             )}
             {!editing && (
               <p className="text-xs text-slate-400">
-                Save the project first, then you can upload a cover image.
+                Save the project first, then you can upload images and videos.
               </p>
             )}
           </div>
+
+          {/* Media Carousel — only for existing projects */}
+          {editing && (
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-800">
+                    Images & Videos
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    These appear in the project carousel in the app. {media.length} item{media.length !== 1 ? "s" : ""} uploaded.
+                  </p>
+                </div>
+              </div>
+
+              {/* Drag & Drop Upload Zone */}
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={handleDrop}
+                className={`rounded-lg border-2 border-dashed p-5 mb-4 text-center transition cursor-pointer ${
+                  dragging
+                    ? "border-blue-400 bg-blue-50"
+                    : "border-slate-200 hover:border-slate-300"
+                }`}
+                onClick={() => !uploading && fileRef.current?.click()}
+              >
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*,video/mp4,video/quicktime,video/webm"
+                  multiple
+                  onChange={handleMediaUpload}
+                  className="hidden"
+                />
+                {uploading ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="animate-spin w-4 h-4 border-2 border-slate-700 border-t-transparent rounded-full" />
+                    <p className="text-sm text-slate-600">{uploadProgress}</p>
+                  </div>
+                ) : (
+                  <>
+                    <svg className="w-7 h-7 text-slate-300 mx-auto mb-1.5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                    <p className="text-sm text-slate-500">
+                      {dragging ? "Drop files here" : "Click or drag images/videos here"}
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      JPG, PNG, WebP, GIF, MP4, MOV, WebM — select multiple files at once
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* Media Grid */}
+              {media.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {media.map((item, i) => (
+                    <div key={item.id} className="relative group rounded-lg overflow-hidden border border-slate-200">
+                      {item.media_type === "image" ? (
+                        <img src={item.url} alt="" className="w-full h-24 object-cover" />
+                      ) : (
+                        <div className="w-full h-24 bg-slate-900 flex items-center justify-center">
+                          <video src={item.url} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-sm">▶</span>
+                          </div>
+                        </div>
+                      )}
+                      {/* Overlay controls */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); moveMedia(i, -1); }}
+                          disabled={i === 0}
+                          className="w-6 h-6 rounded bg-white/90 text-slate-600 text-xs flex items-center justify-center disabled:opacity-30 cursor-pointer"
+                        >←</button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); moveMedia(i, 1); }}
+                          disabled={i >= media.length - 1}
+                          className="w-6 h-6 rounded bg-white/90 text-slate-600 text-xs flex items-center justify-center disabled:opacity-30 cursor-pointer"
+                        >→</button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); deleteMedia(item); }}
+                          className="w-6 h-6 rounded bg-red-500 text-white text-xs flex items-center justify-center cursor-pointer"
+                        >✕</button>
+                      </div>
+                      {/* Type badge */}
+                      <div className="absolute bottom-1 left-1">
+                        <span className="text-[9px] font-medium bg-black/60 text-white px-1.5 py-0.5 rounded uppercase">
+                          {item.media_type}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Details */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">

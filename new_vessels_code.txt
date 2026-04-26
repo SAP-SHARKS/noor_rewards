@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 class _ThreeVesselsState extends State<_ThreeVessels> with TickerProviderStateMixin {
   late AnimationController _pulseCtrl, _growCtrl, _glowCtrl;
   late Animation<double> _pulse, _grow, _glow;
