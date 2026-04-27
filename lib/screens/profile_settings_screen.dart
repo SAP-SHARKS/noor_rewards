@@ -18,6 +18,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../features/auth/data/qf_auth_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../theme/y4_theme.dart';
 
 AppConfig get _pcfg => SettingsService.instance.config;
 Color get _pTeal => _pcfg.dashTeal;
@@ -224,7 +225,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _photoOption(Icons.camera_alt_rounded, 'Take a Photo', _pTeal,
               () => _pickAndUploadPhoto(ImageSource.camera)),
           const SizedBox(height: 12),
-          _photoOption(Icons.photo_library_rounded, 'Choose from Library', const Color(0xFF5856D6),
+          _photoOption(Icons.photo_library_rounded, 'Choose from Library', Y4.primaryDeep,
               () => _pickAndUploadPhoto(ImageSource.gallery)),
           if (_avatarUrl != null) ...[
             const SizedBox(height: 12),
@@ -348,13 +349,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  // ── App Bar ───────────────────────────────────────────────────────────────
+  // ── App Bar ─ honey wash hero matching dashboard ─────────────────────────
   SliverAppBar _buildAppBar() => SliverAppBar(
         pinned: true,
         expandedHeight: 180,
-        backgroundColor: const Color(0xFF0A2318),
+        backgroundColor: Y4.bg,
+        surfaceTintColor: Y4.bg,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Y4.ink, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -362,20 +364,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             const Padding(
               padding: EdgeInsets.all(16),
               child: SizedBox(width: 20, height: 20,
-                  child: CircularProgressIndicator(color: Color(0xFF2BAE99), strokeWidth: 2.5)),
+                  child: CircularProgressIndicator(color: Y4.honeyDeep, strokeWidth: 2.5)),
             )
           else
             TextButton(
               onPressed: _saveProfile,
               child: Text('Save', style: GoogleFonts.outfit(
-                  color: _pTeal, fontWeight: FontWeight.w700, fontSize: 16)),
+                  color: Y4.honeyDeep, fontWeight: FontWeight.w700, fontSize: 16)),
             ),
         ],
         flexibleSpace: FlexibleSpaceBar(
           background: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF0A2318), Color(0xFF133828), Color(0xFF1A4731)],
+                colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -391,21 +393,21 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(_displayName.isNotEmpty ? _displayName : 'Your Name',
-                          style: GoogleFonts.rajdhani(
-                            fontSize: 24, fontWeight: FontWeight.w800,
-                            color: Colors.white, letterSpacing: 0.5,
+                          style: Y4.display(
+                            fontSize: 26, fontWeight: FontWeight.w500,
+                            color: Y4.ink, letterSpacing: -0.3, height: 1.0,
                           ),
                           maxLines: 1, overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 3),
+                      const SizedBox(height: 4),
                       Text(_email,
                           style: GoogleFonts.outfit(fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.55)),
+                              color: Y4.inkSoft),
                           maxLines: 1, overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 6),
                       Row(children: [
-                        _badgePill('LV $_level', const Color(0xFF5856D6)),
+                        _badgePill('LV $_level', Y4.primaryDeep),
                         const SizedBox(width: 6),
-                        _badgePill(_levelTitle, _pTeal),
+                        _badgePill(_levelTitle, Y4.honeyDeep),
                       ]),
                     ],
                   )),
@@ -426,12 +428,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: const LinearGradient(
-            colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)],
+            colors: [Y4.honey, Y4.honeyDeep],
             begin: Alignment.topLeft, end: Alignment.bottomRight,
           ),
           border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
           boxShadow: [BoxShadow(
-            color: const Color(0xFF9B59B6).withValues(alpha: 0.4),
+            color: Y4.honeyDeep.withValues(alpha: 0.4),
             blurRadius: 16, offset: const Offset(0, 4),
           )],
           image: _avatarUrl != null
@@ -477,12 +479,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: const LinearGradient(
-            colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)],
+            colors: [Y4.honey, Y4.honeyDeep],
             begin: Alignment.topLeft, end: Alignment.bottomRight,
           ),
           border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
           boxShadow: [BoxShadow(
-            color: const Color(0xFF9B59B6).withValues(alpha: 0.4),
+            color: Y4.honeyDeep.withValues(alpha: 0.4),
             blurRadius: 16, offset: const Offset(0, 4),
           )],
           image: _avatarUrl != null

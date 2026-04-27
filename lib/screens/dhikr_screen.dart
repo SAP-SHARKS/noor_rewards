@@ -2209,7 +2209,7 @@ Widget _buildStyledArabic(String raw, TextStyle baseStyle, Color highlightColor,
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Expand "Quran 2:286" → "Al Baqarah 2:286", etc.
+// Expand "Quran 2:286" → "Surah Al Baqarah 2:286", etc.
 // ─────────────────────────────────────────────────────────────────────────────
 String _expandQuranRef(String ref) {
   const surahs = {
@@ -2252,6 +2252,157 @@ String _expandQuranRef(String ref) {
       return 'Surah $name ${m.group(1)}${m.group(2)}';
     },
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Rich hadith text — 3 semantic highlight categories
+// ─────────────────────────────────────────────────────────────────────────────
+Widget _buildRichHadithText(String text, TextStyle base, bool isDark, Color accent) {
+  // ══════════════════════════════════════════════════════════════════════════
+  // CATEGORY 1 — Quantitative Gains
+  // Specific counts of rewards earned OR sins removed/forgiven.
+  // e.g. "one hundred good deeds", "ten sins deducted", "all his sins forgiven"
+  // ══════════════════════════════════════════════════════════════════════════
+  final quantRx = RegExp(
+    // number-word or digit followed by a reward/sin noun
+    r'\b(?:one\s+hundred|thirty[-\s]?three|thirty[-\s]?four|ten|seventy|seven|'
+    r'thousand|a\s+million|\d{1,4})'
+    r'\s+(?:(?:good\s+)?deeds?|sins?|blessings?|times?\s+(?:a\s+day|per\s+day)?|slaves?)\b'
+    // sins forgiven/erased (with or without a number)
+    r'|\b(?:all|his|her|their|previous|past|minor|major)\s+sins?\s+'
+    r'(?:will\s+be\s+)?(?:forgiven|erased|wiped(?:\s+(?:out|away))?|removed|expiated|pardoned)\b'
+    // "one hundred times a day" — action phrase
+    r'|\bone\s+hundred\s+times?\s+a\s+day(?:\s+will\s+\w+)?\b',
+    caseSensitive: false,
+  );
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CATEGORY 2 — Protection & Status
+  // Active spiritual results: becoming shielded, freed, fulfilling a duty,
+  // being saved, guarded, or elevated in status.
+  // e.g. "a shield from Satan", "freed from the Fire", "fulfilled his obligation"
+  // ══════════════════════════════════════════════════════════════════════════
+  final protectRx = RegExp(
+    r'\ba\s+shield\s+(?:for\s+(?:him|her|them)\s+)?(?:from|against)\s+\w+'
+    r'|\bprotect(?:ed|ion)\s+(?:from|against)\b'
+    r'|\bguard(?:ed)?\s+(?:from|against)\b'
+    r'|\bno\s+harm\s+(?:will\s+)?(?:befall|come\s+(?:to|near)|touch)\s+(?:him|her|them)\b'
+    r'|\bnoth(?:ing|ing)\s+will\s+(?:harm|hurt|touch)\s+(?:him|her|them)\b'
+    r'|\bfulfill(?:ed|s)?\s+(?:his|her|the)\s+(?:duty|obligation|right|dhikr|remembrance)\b'
+    r'|\bunder\s+the\s+(?:shade|shadow|protection)\s+of\b'
+    r'|\bfreed?\s+from\s+the\s+(?:Fire|Hellfire|Hell)\b'
+    r'|\benter(?:s|ed)?\s+(?:Paradise|Jannah)\b'
+    r'|\bintercession\b'
+    r'|\bsaved?\s+from\s+the\s+(?:Fire|punishment|torment|Hell)\b'
+    r'|\bcounted\s+among\s+those\b'
+    r'|\bshade\s+of\s+(?:the\s+)?(?:Throne|His\s+Throne|Allah)\b'
+    r'|\bwritten\s+in\s+(?:his|her)?\s*(?:accounts?|record)\b'
+    r'|\bdeducted\s+from\s+(?:his|her)?\s*(?:accounts?|record)\b',
+    caseSensitive: false,
+  );
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CATEGORY 3 — Weight & Comparison
+  // Superlative outcomes: this deed outweighs others, is equivalent to,
+  // or is described as the best deed possible.
+  // e.g. "better than the world and what it contains", "heavier on the scales"
+  // ══════════════════════════════════════════════════════════════════════════
+  final weightRx = RegExp(
+    r'\bbetter\s+than\s+(?:the\s+world|all|what\s+the\s+sun|X)\b'
+    r'|\bheavier\s+(?:on\s+the\s+(?:scales?|balance)|in\s+weight)\b'
+    r'|\bequivalent\s+to\b'
+    r'|\bthe\s+same\s+reward\s+as(?:\s+given\s+for)?\b'
+    r'|\boutweigh(?:s|ed)?\b'
+    r'|\bmanumitting(?:\s+\w+){0,2}\s+slaves?\b'
+    r'|\bNobody\s+will\s+be\s+able\s+to\s+do\s+a\s+better\s+deed\b'
+    r'|\bno\s+(?:deed|act|prayer|action)\s+(?:is|can\s+be)\s+(?:better|greater)\b'
+    r'|\bgreater\s+(?:reward|in\s+weight)\s+than\b'
+    r'|\bworth\s+(?:more\s+than|as\s+much\s+as)\b'
+    r'|\bsurpass(?:es|ed)?\b',
+    caseSensitive: false,
+  );
+
+  final allMatches = <({int start, int end, String type})>[];
+  for (final m in quantRx.allMatches(text))
+    allMatches.add((start: m.start, end: m.end, type: 'quant'));
+  for (final m in protectRx.allMatches(text))
+    allMatches.add((start: m.start, end: m.end, type: 'protect'));
+  for (final m in weightRx.allMatches(text))
+    allMatches.add((start: m.start, end: m.end, type: 'weight'));
+  allMatches.sort((a, b) => a.start.compareTo(b.start));
+
+  // Remove overlaps — keep earlier (higher-priority) match
+  final filtered = <({int start, int end, String type})>[];
+  for (final m in allMatches) {
+    if (filtered.isEmpty || m.start >= filtered.last.end) filtered.add(m);
+  }
+
+  if (filtered.isEmpty) return Text(text, style: base);
+
+  final spans = <InlineSpan>[];
+  int pos = 0;
+
+  for (final m in filtered) {
+    if (m.start > pos)
+      spans.add(TextSpan(text: text.substring(pos, m.start), style: base));
+    final seg = text.substring(m.start, m.end);
+
+    switch (m.type) {
+      case 'quant':
+        // 🟡 Amber/gold pill — quantitative: counts of deeds, sins, rewards
+        spans.add(WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 1.5, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFD4AF37).withValues(alpha: isDark ? 0.22 : 0.15),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(seg, style: base.copyWith(
+              color: isDark ? const Color(0xFFD4AF37) : const Color(0xFF8B5D00),
+              fontWeight: FontWeight.w700,
+              height: 1.25,
+            )),
+          ),
+        ));
+
+      case 'protect':
+        // 🟢 Teal pill — protection & status: spiritual outcomes
+        spans.add(WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 1.5, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: isDark ? 0.20 : 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(seg, style: base.copyWith(
+              color: accent,
+              fontWeight: FontWeight.w700,
+              height: 1.25,
+            )),
+          ),
+        ));
+
+      default: // weight
+        // 🔵 Bold italic — weight & comparison: superlatives, equivalences
+        spans.add(TextSpan(
+          text: seg,
+          style: base.copyWith(
+            fontWeight: FontWeight.w800,
+            fontStyle: FontStyle.italic,
+          ),
+        ));
+    }
+    pos = m.end;
+  }
+
+  if (pos < text.length)
+    spans.add(TextSpan(text: text.substring(pos), style: base));
+
+  return RichText(text: TextSpan(style: base, children: spans));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2542,8 +2693,12 @@ class _AzkarCard extends StatelessWidget {
                         final parts = azkar.hadithFull.split('\n\n').where((p) => p.trim().isNotEmpty).toList();
                         final widgets = <Widget>[];
                         for (int i = 0; i < parts.length; i++) {
-                          widgets.add(Text(parts[i].trim(),
-                            style: GoogleFonts.outfit(fontSize: 15.5, color: textColor, height: 1.7)));
+                          widgets.add(_buildRichHadithText(
+                             parts[i].trim(),
+                             GoogleFonts.outfit(fontSize: 15.5, color: textColor, height: 1.7),
+                             isDark,
+                             labelColor,
+                           ));
                           if (i < parts.length - 1) {
                             widgets.add(Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -2571,16 +2726,23 @@ class _AzkarCard extends StatelessWidget {
                             style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: labelColor, letterSpacing: 0.5)),
                         ],
                       ),
+                      // Collect all ref parts from rawRef | bottomRef | azkar.reference, split on |, filter blanks + no-number entries
                       const SizedBox(height: 6),
-                      if (rawRef.isNotEmpty && rawRef.contains(RegExp(r'\d')))
-                        Text(_expandQuranRef(rawRef),
-                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6)),
-                      if (bottomRef.isNotEmpty && bottomRef.contains(RegExp(r'\d')))
-                        Text(bottomRef,
-                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6)),
-                      if (rawRef.isEmpty && bottomRef.isEmpty && azkar.reference.contains(RegExp(r'\d')))
-                        Text(_expandQuranRef(azkar.reference),
-                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6)),
+                      ...() {
+                        final allParts = <String>[];
+                        final combined = rawRef.isNotEmpty
+                            ? (bottomRef.isNotEmpty ? '$rawRef | $bottomRef' : rawRef)
+                            : (bottomRef.isNotEmpty ? bottomRef : azkar.reference);
+                        for (final part in combined.split('|')) {
+                          final t = part.trim();
+                          if (t.isNotEmpty && t.contains(RegExp(r'\d'))) {
+                            allParts.add(_expandQuranRef(t));
+                          }
+                        }
+                        return allParts.map((p) => Text(p,
+                          style: GoogleFonts.outfit(fontSize: 13.5, color: subColor, fontWeight: FontWeight.w500, height: 1.6),
+                        )).toList();
+                      }(),
                     ],
                   ],
                 ),

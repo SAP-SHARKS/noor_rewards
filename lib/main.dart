@@ -23,6 +23,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'utils/asset_helper.dart';
 
 import 'core/env/env.dart';
+import 'theme/y4_theme.dart';
 
 Future<void> main() async {
   try {
@@ -136,12 +137,17 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _buildTheme(AppConfig cfg) {
-    return ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: cfg.primaryColor,
+    // Y4 Honey + Sage — single source of truth for the entire app's
+    // palette + typography. Admin-overridable colors from AppConfig still
+    // win where present; otherwise the Y4 defaults flow through to every
+    // Material widget via the ThemeData below.
+    final base = Y4.buildTheme();
+    return base.copyWith(
+      colorScheme: base.colorScheme.copyWith(
+        // Honor admin overrides (Supabase app_config) on top of Y4 defaults
+        primary:   cfg.primaryColor,
         secondary: cfg.secondaryColor,
       ),
-      useMaterial3: true,
     );
   }
 }
@@ -325,10 +331,10 @@ class _AuthLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFF0A1628),
+      backgroundColor: Y4.bg,
       body: Center(
         child: CircularProgressIndicator(
-          color: Color(0xFF2BAE99),
+          color: Y4.honeyDeep,
           strokeWidth: 2.5,
         ),
       ),

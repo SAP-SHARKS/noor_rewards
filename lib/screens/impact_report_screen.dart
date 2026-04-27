@@ -15,6 +15,7 @@ import '../widgets/noor_offline.dart';
 import '../widgets/project_media_carousel.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../theme/y4_theme.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _icfg => SettingsService.instance.config;
@@ -195,24 +196,25 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // ── Hero / Balance Card ────────────────────────────────────────────────────
   Widget _buildHero() => SliverToBoxAdapter(
     child: Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        // Honey wash hero matching dashboard aesthetic
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF0A2318), Color(0xFF133828), Color(0xFF1A4731)],
+          colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
         ),
       ),
       child: SafeArea(
         bottom: false,
         child: Stack(
           children: [
-            // Decorative arcs
+            // Decorative arcs (subtle honey/sage on light bg)
             Positioned(top: -40, right: -40,
-                child: _Arc(160, Colors.white.withValues(alpha: 0.04))),
+                child: _Arc(160, Y4.honey.withValues(alpha: 0.18))),
             Positioned(bottom: -20, left: -30,
-                child: _Arc(120, Colors.white.withValues(alpha: 0.03))),
+                child: _Arc(120, Y4.primary.withValues(alpha: 0.08))),
             Positioned(top: 30, right: 30,
-                child: _Arc(60, _C.gold.withValues(alpha: 0.08))),
+                child: _Arc(60, Y4.honeyDeep.withValues(alpha: 0.10))),
 
             Padding(
               padding: const EdgeInsets.fromLTRB(22, 14, 22, 32),
@@ -222,7 +224,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   if (!widget.isTab)
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                          color: Colors.white70, size: 20),
+                          color: Y4.ink, size: 20),
                       onPressed: () => Navigator.pop(context),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(minWidth: 32),
@@ -232,22 +234,22 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     Text('Akhirah Balance',
                         style: GoogleFonts.outfit(
                             fontSize: 18, fontWeight: FontWeight.w800,
-                            color: Colors.white)),
+                            color: Y4.ink)),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                        color: _C.gold.withValues(alpha: 0.15),
+                        color: Y4.honey.withValues(alpha: 0.30),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: _C.gold.withValues(alpha: 0.4))),
+                        border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.5))),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(Icons.workspace_premium_rounded,
-                          color: _C.gold, size: 14),
+                      const Icon(Icons.workspace_premium_rounded,
+                          color: Y4.honeyDeep, size: 14),
                       const SizedBox(width: 5),
                       Text('Lvl $_level · $_levelTitle',
                           style: GoogleFonts.outfit(
                               fontSize: 12, fontWeight: FontWeight.w700,
-                              color: _C.gold)),
+                              color: Y4.honeyDeep)),
                     ]),
                   ),
                 ]),
@@ -258,31 +260,31 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                 Text('AKHIRAH BALANCE',
                     style: GoogleFonts.outfit(
                         fontSize: 11, fontWeight: FontWeight.w700,
-                        color: Colors.white38, letterSpacing: 1.6)),
+                        color: Y4.inkSoft, letterSpacing: 1.6)),
                 const SizedBox(height: 6),
 
-                // Main value
+                // Main value (Fraunces serif for "Priceless")
                 Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   Text('Priceless',
-                      style: GoogleFonts.outfit(
-                          fontSize: 42, fontWeight: FontWeight.w900,
-                          color: Colors.white, height: 1.0)),
+                      style: Y4.display(
+                          fontSize: 44, fontWeight: FontWeight.w500,
+                          color: Y4.ink, letterSpacing: -0.5, height: 1.0)),
                   const SizedBox(width: 10),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                          color: _C.teal.withValues(alpha: 0.2),
+                          color: Y4.primary.withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(6)),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Icon(Icons.trending_up_rounded,
-                            color: _C.teal, size: 13),
+                        const Icon(Icons.trending_up_rounded,
+                            color: Y4.primaryDeep, size: 13),
                         const SizedBox(width: 3),
                         Text('+${_todayPoints > 0 ? _todayPoints : 0} today',
                             style: GoogleFonts.outfit(
                                 fontSize: 11, fontWeight: FontWeight.w700,
-                                color: _C.teal)),
+                                color: Y4.primaryDeep)),
                       ]),
                     ),
                   ),
@@ -290,19 +292,19 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                 const SizedBox(height: 4),
                 Text('Beyond what the world can hold',
                     style: GoogleFonts.outfit(
-                        fontSize: 13, color: Colors.white54, fontStyle: FontStyle.italic)),
+                        fontSize: 13, color: Y4.inkSoft, fontStyle: FontStyle.italic)),
 
                 const SizedBox(height: 22),
 
                 // Today / this week badges
                 Wrap(spacing: 10, runSpacing: 8, children: [
                   _HeroBadge(NoorIcon.sunrise(size:14), '+${_fmt(_todayPoints)} deeds today',
-                      _C.teal.withValues(alpha: 0.25), _C.teal),
+                      Y4.primary.withValues(alpha: 0.18), Y4.primaryDeep),
                   _HeroBadge(NoorIcon.calendar(size:14), '+${_fmt(_weekPoints)} this week',
-                      Colors.white.withValues(alpha: 0.1), Colors.white70),
+                      Y4.honey.withValues(alpha: 0.30), Y4.honeyDeep),
                   if (_bestStreak > 0)
                     _HeroBadge(NoorIcon.fire(size:14), 'Best: $_bestStreak day streak',
-                        _C.gold.withValues(alpha: 0.15), _C.gold),
+                        Y4.honeyDeep.withValues(alpha: 0.18), Y4.honeyDeep),
                 ]),
 
                 const SizedBox(height: 18),
@@ -314,9 +316,12 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
+                      color: Y4.honeyDeep,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                      boxShadow: [BoxShadow(
+                        color: Y4.honeyDeep.withValues(alpha: 0.30),
+                        blurRadius: 14, offset: const Offset(0, 4),
+                      )],
                     ),
                     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       NoorIcon.globe(size: 16),
@@ -327,7 +332,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                               color: Colors.white)),
                       const SizedBox(width: 6),
                       const Icon(Icons.arrow_forward_ios_rounded,
-                          color: Colors.white70, size: 13),
+                          color: Colors.white, size: 13),
                     ]),
                   ),
                 ),
@@ -532,7 +537,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF0D2B1F), Color(0xFF1A4731)],
+        colors: [Y4.primaryDeep, Y4.primary],
       ),
       borderRadius: BorderRadius.circular(20),
       boxShadow: [BoxShadow(

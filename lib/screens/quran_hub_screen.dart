@@ -8,6 +8,7 @@ import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/y4_theme.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _qhcfg => SettingsService.instance.config;
@@ -438,22 +439,22 @@ class _QuranHubScreenState extends State<QuranHubScreen>
 
   Widget _buildBody() {
     return CustomScrollView(slivers: [
-      // ── Sticky header ─────────────────────────────────────────────────────
+      // ── Sticky header ─ honey wash hero ────────────────────────────────
       SliverAppBar(
         expandedHeight: 120,
         pinned: true,
-        backgroundColor: _kTeal,
-        surfaceTintColor: Colors.transparent,
+        backgroundColor: Y4.bg,
+        surfaceTintColor: Y4.bg,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Y4.ink, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         flexibleSpace: FlexibleSpaceBar(
           collapseMode: CollapseMode.pin,
           background: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF1A8F7A), Color(0xFF2BAE99), Color(0xFF3DCFBA)],
+                colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
                 begin: Alignment.topLeft, end: Alignment.bottomRight,
               ),
             ),
@@ -462,13 +463,13 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 // Arabic header
                 Text('القرآن الكريم',
-                    style: GoogleFonts.amiri(fontSize: 26, fontWeight: FontWeight.w700,
-                        color: Colors.white.withValues(alpha: 0.9)),
+                    style: GoogleFonts.amiri(fontSize: 28, fontWeight: FontWeight.w700,
+                        color: Y4.honeyDeep),
                     textDirection: TextDirection.rtl),
                 const SizedBox(height: 10),
                 Text('Earn +10 Noor Points per verse read',
                     style: GoogleFonts.outfit(fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.75))),
+                        color: Y4.inkSoft)),
               ]),
             )),
           ),
@@ -513,7 +514,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           // Ayah selector row
           _PickerRow(
             icon: Icons.format_list_numbered_rounded,
-            iconColor: const Color(0xFF5856D6),
+            iconColor: Y4.primaryDeep,
             label: 'Start from Verse',
             value: 'Verse $_selAyah',
             subtitle: 'of ${_surahLengths[_selSurah]}',
@@ -529,7 +530,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               height: 58,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                    colors: [Color(0xFF1A8F7A), Color(0xFF2BAE99)]),
+                    colors: [Y4.primaryDeep, Y4.honeyDeep]),
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [BoxShadow(
                     color: _kTeal.withValues(alpha: 0.4),
@@ -572,7 +573,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           Row(children: [
             Expanded(child: _QuickTile(
               icon: Icons.shuffle_rounded,
-              color: const Color(0xFF5856D6),
+              color: Y4.primaryDeep,
               label: 'Random Verse',
               onTap: () {
                 final s = 1 + (DateTime.now().millisecondsSinceEpoch % 114);
@@ -590,7 +591,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             const SizedBox(width: 10),
             Expanded(child: _QuickTile(
               icon: Icons.nights_stay_rounded,
-              color: const Color(0xFF4A9B5F),
+              color: Y4.primary,
               label: 'Al-Kahf',
               subtitle: 'Sunnah Friday',
               onTap: () => _startReading(surah: 18, ayah: 1),
@@ -679,7 +680,7 @@ class _ContinueCardState extends State<_ContinueCard> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-                colors: [Color(0xFF1A8F7A), Color(0xFF2BAE99)],
+                colors: [Y4.primaryDeep, Y4.honeyDeep],
                 begin: Alignment.centerLeft, end: Alignment.centerRight),
             borderRadius: BorderRadius.circular(22),
             boxShadow: [BoxShadow(
