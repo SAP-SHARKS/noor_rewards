@@ -1,4 +1,4 @@
-// lib/widgets/noor_offline.dart
+﻿// lib/widgets/noor_offline.dart
 //
 // NoorOffline — gorgeous "no internet / loading" widget
 // Features a tasbih bead animation: beads drop one by one onto a curved string,
@@ -103,7 +103,7 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
       widget.accentColor ??
       (widget.mode == NoorOfflineMode.error
           ? const Color(0xFFE53935)
-          : const Color(0xFF2BAE99));
+          : const Color(0xFFC9921A)); // Y4 honey-deep
 
   String get _title {
     if (widget.customMessage != null) return widget.customMessage!;
@@ -609,7 +609,7 @@ class _NoorInlineLoaderState extends State<NoorInlineLoader>
 
   @override
   Widget build(BuildContext context) {
-    final accent = widget.color ?? const Color(0xFF2BAE99);
+    final accent = widget.color ?? const Color(0xFFC9921A); // Y4 honey-deep
     return SizedBox(
       height: widget.height,
       child: Column(
@@ -672,8 +672,8 @@ class _InlineBeadPainter extends CustomPainter {
       final beadPaint = Paint()
         ..shader = RadialGradient(
           colors: isAccent
-              ? [const Color(0xFFFFEEAA), accent, accent.withValues(alpha: 0.7)]
-              : [Colors.white, const Color(0xFFE0D8CC), const Color(0xFFB0A898)],
+              ? [const Color(0xFFFFE8A0), accent, accent.withValues(alpha: 0.75)]
+              : [const Color(0xFFFFF3CC), const Color(0xFFE8D48A), const Color(0xFFC9A84C)],
           stops: const [0.0, 0.5, 1.0],
           center: const Alignment(-0.3, -0.4),
         ).createShader(Rect.fromCircle(center: Offset(x, cy - lift), radius: r));

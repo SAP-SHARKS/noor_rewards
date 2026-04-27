@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../widgets/noor_offline.dart';
 
 AppConfig get _tscfg => SettingsService.instance.config;
 
@@ -502,7 +503,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                       blurRadius: 20, offset: const Offset(0, 8))],
                 ),
                 child: _loading
-                    ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                    ? const Center(child: NoorInlineLoader())
                     : Text(_arabic,
                         textAlign: TextAlign.right,
                         textDirection: TextDirection.rtl,

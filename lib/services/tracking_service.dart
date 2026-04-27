@@ -1,4 +1,4 @@
-// lib/services/tracking_service.dart
+﻿// lib/services/tracking_service.dart
 //
 // Privacy-first analytics.
 //   • No IP addresses stored

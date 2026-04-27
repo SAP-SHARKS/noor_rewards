@@ -1,4 +1,4 @@
-// lib/models/app_config.dart
+﻿// lib/models/app_config.dart
 // Strongly-typed wrapper around the raw app_config key-value table.
 // Defaults match the seeded Supabase values; safe to call before first fetch.
 

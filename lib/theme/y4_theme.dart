@@ -1,4 +1,4 @@
-// lib/theme/y4_theme.dart
+﻿// lib/theme/y4_theme.dart
 //
 // Y4 — Honey + Sage Garden theme.
 // Single source of truth for the new app-wide palette + typography. Imported

@@ -1,4 +1,4 @@
-// lib/services/live_notification_service.dart
+﻿// lib/services/live_notification_service.dart
 //
 // Persistent "live" notification — like Sweatcoin's step counter.
 // Shows today's Quran ayat and Dhikr count in the Android notification shade.

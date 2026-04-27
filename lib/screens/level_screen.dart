@@ -118,22 +118,22 @@ class _LevelScreenState extends State<LevelScreen>
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
-        backgroundColor: Y4.primaryDeep,
-        surfaceTintColor: Y4.primaryDeep,
+        backgroundColor: Y4.bg,
+        surfaceTintColor: Y4.bg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white70, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Y4.ink, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Journey',
             style: GoogleFonts.outfit(
-                fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+                fontSize: 20, fontWeight: FontWeight.w800, color: Y4.ink)),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabs,
-          labelColor: Y4.honey,
-          unselectedLabelColor: Colors.white54,
-          indicatorColor: Y4.honey,
+          labelColor: Y4.honeyDeep,
+          unselectedLabelColor: Y4.inkSoft,
+          indicatorColor: Y4.honeyDeep,
           indicatorSize: TabBarIndicatorSize.label,
           isScrollable: true,
           tabAlignment: TabAlignment.center,
@@ -147,7 +147,7 @@ class _LevelScreenState extends State<LevelScreen>
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: _kGreen))
+          ? const Center(child: NoorInlineLoader())
           : TabBarView(
               controller: _tabs,
               children: [
@@ -347,8 +347,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                   Flexible(
                     flex: 2,
                     child: _histLoading
-                      ? const Center(child: SizedBox(width: 24, height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)))
+                      ? const Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9921A)))))
                       : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(_pLabels[_period],
                               style: GoogleFonts.outfit(
@@ -1371,7 +1370,9 @@ class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin 
           builder: (_, __) => CustomPaint(painter: _StreakAuraPainter(phase: _orbCtrl.value)),
         )),
         if (_loading)
-          const NoorInlineLoader(height: double.infinity, color: Y4.honeyDeep, label: 'Loading streaks…')
+          const Center(
+            child: NoorInlineLoader(height: 120, color: Y4.honeyDeep, label: 'Loading streaks…'),
+          )
         else
           SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),

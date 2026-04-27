@@ -1,4 +1,4 @@
-// lib/screens/qf_account_conflict_screen.dart
+﻿// lib/screens/qf_account_conflict_screen.dart
 //
 // Shown when a user tries to sign in via Quran.com but their QF email already
 // belongs to an existing Noor Rewards account created with Email or Google.

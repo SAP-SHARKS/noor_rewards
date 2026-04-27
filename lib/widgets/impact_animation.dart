@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -239,7 +239,7 @@ class _DismissCountdownBarState extends State<_DismissCountdownBar>
             minHeight: 4,
             backgroundColor: const Color(0xFFD4AF37).withValues(alpha: 0.15),
             valueColor:
-                const AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)), // Gold
+                const AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A)), // Gold
           ),
         );
       },

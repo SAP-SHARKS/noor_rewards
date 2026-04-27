@@ -7,6 +7,7 @@ import '../widgets/noor_icons.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/noor_offline.dart';
 
 AppConfig get _dhcfg => SettingsService.instance.config;
 Color get _kBg => _dhcfg.dashBg;
@@ -52,7 +53,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     if (_hiddenIds == null) {
       return Scaffold(
         backgroundColor: _kBg,
-        body: const Center(child: CircularProgressIndicator(color: Color(0xFF6B4EE6))),
+        body: const Center(child: NoorInlineLoader()),
       );
     }
     final List<Map<String, dynamic>> essentials = [

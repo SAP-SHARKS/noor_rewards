@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -1422,10 +1422,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: _loading
-                            ? const SizedBox(
-                                width: 20, height: 20,
-                                child: CircularProgressIndicator(
-                                    color: Colors.white, strokeWidth: 2))
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
                             : Text('Apply',
                                 style: GoogleFonts.outfit(
                                     fontSize: 15, fontWeight: FontWeight.w700,
@@ -2984,7 +2981,7 @@ class _ImpactTabState extends State<_ImpactTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return Center(child: CircularProgressIndicator(color: _C.navImpact));
+    if (_loading) return const Center(child: NoorInlineLoader());
     final active    = _projects.where((p) => p['is_active'] == true).toList();
     final completed = _projects.where((p) => p['is_completed'] == true).toList();
     
@@ -3461,7 +3458,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   height: 180,
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(color: const Color(0xFFF1F5F4), borderRadius: BorderRadius.circular(20)),
-                  child: Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: _C.teal))),
+                  child: Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))),
                 )
               else if (_media.isNotEmpty)
                 Padding(
@@ -3486,7 +3483,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                     elevation: 0,
                   ),
                   child: _donating
-                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
+                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
                     : Text('Donate & Earn Reward', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700)),
                 ),
               ),
@@ -4019,8 +4016,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                     if (_lbLoading)
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(child: CircularProgressIndicator(
-                            color: _C.teal, strokeWidth: 2.5)),
+                        child: const Center(child: NoorInlineLoader()),
                       ),
 
                     // Top 10 list
@@ -4603,26 +4599,26 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
               height: _trackH,
               child: Stack(clipBehavior: Clip.none, children: [
 
-                // ── Track background — deep sage→olive Y4 garden track ──
+                // ── Track background — golden amber (matches screenshot) ──
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF1F2A0F), Color(0xFF2E3D1A), Color(0xFF4D5C20)],
+                        colors: [Y4.amberY, Y4.honeyDeep],
                         begin: Alignment.topLeft, end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(radius),
                       border: Border.all(
-                        color: Y4.honeyDeep.withValues(alpha: 0.5), width: 1.5,
+                        color: Y4.butter.withValues(alpha: 0.4), width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Y4.honeyDeep.withValues(alpha: 0.22),
+                          color: Y4.amberY.withValues(alpha: 0.35),
                           blurRadius: 24, offset: const Offset(0, 8),
                         ),
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 12, offset: const Offset(0, 4),
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 10, offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -4654,7 +4650,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Progress fill (sage → honey-deep → butter on full) ──
+                // ── Progress fill (butter → bright amber → honey on full) ──
                 Positioned(
                   left: 0, top: 0, bottom: 0,
                   child: Container(
@@ -4662,13 +4658,9 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Y4.primary.withValues(alpha: 0.55),
-                          Y4.honeyDeep.withValues(alpha: 0.75),
-                          Color.lerp(
-                            Y4.honeyDeep,
-                            _neonGold, // butter on full
-                            (pct - 0.6).clamp(0.0, 1.0) / 0.4,
-                          )!,
+                          Colors.white.withValues(alpha: 0.25),
+                          Colors.white.withValues(alpha: 0.10),
+                          Colors.white.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
@@ -4692,35 +4684,18 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Centre label — glowing white on dark bg ────────────
+                // ── Centre label — white on golden amber bg ────────────
                 if (!_completed)
                   Center(
                     child: Opacity(
                       opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
-                      child: AnimatedBuilder(
-                        animation: _shimmerCtrl,
-                        builder: (_, __) => ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [
-                              Colors.white.withValues(alpha: 0.7),
-                              Y4.honey,
-                              Colors.white.withValues(alpha: 0.7),
-                            ],
-                            stops: [
-                              0.0,
-                              _shimmerCtrl.value,
-                              1.0,
-                            ],
-                          ).createShader(bounds),
-                          child: Text(
-                            (AppLocalizations.of(context)?.sealTheDay ?? 'Seal the Day') + '  ✨',
-                            style: GoogleFonts.rajdhani(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
+                      child: Text(
+                        (AppLocalizations.of(context)?.sealTheDay ?? 'Seal the Day') + '  ✨',
+                        style: GoogleFonts.rajdhani(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: 1.5,
                         ),
                       ),
                     ),

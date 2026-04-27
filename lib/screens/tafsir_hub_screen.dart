@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import 'tafsir_screen.dart';
+import '../widgets/noor_offline.dart';
 
 AppConfig get _thcfg => SettingsService.instance.config;
 
@@ -153,7 +154,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
               ),
               const SizedBox(height: 24),
             ] else ...[
-              const Center(child: CircularProgressIndicator(color: _kGreen)),
+              const Center(child: NoorInlineLoader()),
               const SizedBox(height: 24),
             ],
 

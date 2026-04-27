@@ -20,7 +20,9 @@ import 'services/quran_api_config.dart';       // Quran Foundation credentials
 import 'services/notification_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'widgets/noor_offline.dart';
 import 'utils/asset_helper.dart';
+
 
 import 'core/env/env.dart';
 import 'theme/y4_theme.dart';
@@ -333,10 +335,7 @@ class _AuthLoading extends StatelessWidget {
     return const Scaffold(
       backgroundColor: Y4.bg,
       body: Center(
-        child: CircularProgressIndicator(
-          color: Y4.honeyDeep,
-          strokeWidth: 2.5,
-        ),
+        child: NoorInlineLoader(height: 80),
       ),
     );
   }
