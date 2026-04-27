@@ -1,4 +1,4 @@
-// lib/services/streak_service.dart
+﻿// lib/services/streak_service.dart
 // Three-type streak system: login · dhikr · quran
 // Integrates with the record_streak_activity() Supabase function.
 

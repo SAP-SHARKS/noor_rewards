@@ -1,4 +1,4 @@
-// lib/widgets/project_media_carousel.dart
+﻿// lib/widgets/project_media_carousel.dart
 // Reusable carousel for project images + videos.
 // Used in donate sheet / project detail view.
 

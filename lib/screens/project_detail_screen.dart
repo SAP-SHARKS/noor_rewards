@@ -1,4 +1,4 @@
-// lib/screens/project_detail_screen.dart
+﻿// lib/screens/project_detail_screen.dart
 // LaunchGood-inspired campaign article view — v2
 
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import '../services/donation_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../widgets/project_media_carousel.dart';
+import '../widgets/noor_offline.dart';
 
 AppConfig get _pdcfg => SettingsService.instance.config;
 
@@ -276,7 +277,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
               stretchModes: const [StretchMode.zoomBackground],
               background: _loading
                   ? Container(color: _PD.tealDark,
-                      child: const Center(child: CircularProgressIndicator(color: Colors.white54)))
+                      child: const Center(child: NoorInlineLoader()))
                   : _media.isNotEmpty
                       ? ProjectMediaCarousel(media: _media, height: 300)
                       : dpUrl != null && dpUrl.isNotEmpty
@@ -921,9 +922,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                           borderRadius: BorderRadius.circular(16)),
                       elevation: 0),
                     child: _donating
-                        ? const SizedBox(width: 22, height: 22,
-                            child: CircularProgressIndicator(
-                                color: Colors.white, strokeWidth: 2.5))
+                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
                         : Text('Donate $_amount pts',
                             style: GoogleFonts.outfit(
                                 fontSize: 16, fontWeight: FontWeight.w700)),

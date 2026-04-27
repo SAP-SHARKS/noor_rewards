@@ -1,4 +1,4 @@
-// lib/services/settings_service.dart
+﻿// lib/services/settings_service.dart
 // Singleton that:
 //  1) Fetches ALL rows from app_config on startup.
 //  2) Subscribes to Supabase Realtime for instant live updates.

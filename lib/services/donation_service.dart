@@ -1,4 +1,4 @@
-// lib/services/donation_service.dart
+﻿// lib/services/donation_service.dart
 // Handles donations to community projects via Supabase
 
 import 'dart:typed_data';

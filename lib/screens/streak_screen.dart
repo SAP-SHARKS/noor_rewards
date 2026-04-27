@@ -1,10 +1,11 @@
-// lib/screens/streak_screen.dart
-// Full-page streak showcase — gamified, animated, spiritual aesthetic.
+﻿// lib/screens/streak_screen.dart
+// Full-page streak showcase — Y4 honey/cream light theme.
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/streak_service.dart';
+import '../theme/y4_theme.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 
@@ -35,7 +36,7 @@ class _StreakScreenState extends State<StreakScreen>
     _pulseCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 900))
       ..repeat(reverse: true);
-    _orbCtrl  = AnimationController(
+    _orbCtrl = AnimationController(
         vsync: this, duration: const Duration(seconds: 6))
       ..repeat();
 
@@ -68,9 +69,9 @@ class _StreakScreenState extends State<StreakScreen>
     final lastM     = lastMilestone(best);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A1628),
+      backgroundColor: Y4.bg,
       body: Stack(children: [
-        // ── Animated radial background ─────────────────────────────────────
+        // ── Subtle honey aura (light version) ─────────────────────────────
         Positioned.fill(child: AnimatedBuilder(
           animation: _orbCtrl,
           builder: (_, __) => CustomPaint(
@@ -85,14 +86,14 @@ class _StreakScreenState extends State<StreakScreen>
             child: Row(children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back_ios_rounded,
-                    color: Colors.white70, size: 20),
+                    color: Y4.ink, size: 20),
                 onPressed: () => Navigator.pop(context),
               ),
               Expanded(child: Text('YOUR STREAKS',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.rajdhani(
                       fontSize: 18, fontWeight: FontWeight.w700,
-                      color: Colors.white, letterSpacing: 1.5))),
+                      color: Y4.ink, letterSpacing: 1.5))),
               const SizedBox(width: 44),
             ]),
           ),
@@ -100,7 +101,7 @@ class _StreakScreenState extends State<StreakScreen>
           Expanded(child: _loading
               ? const NoorInlineLoader(
                   height: double.infinity,
-                  color: Color(0xFFFF6B35),
+                  color: Y4.honeyDeep,
                   label: 'Loading streaks…',
                 )
               : SingleChildScrollView(
@@ -155,7 +156,7 @@ class _StreakScreenState extends State<StreakScreen>
   }
 }
 
-// ── Background aura painter ───────────────────────────────────────────────────
+// ── Background aura painter — light honey version ─────────────────────────────
 class _AuraPainter extends CustomPainter {
   final double phase;
   const _AuraPainter({required this.phase});
@@ -165,21 +166,22 @@ class _AuraPainter extends CustomPainter {
     final cx = size.width / 2;
     final p1 = Paint()
       ..shader = RadialGradient(colors: [
-        const Color(0xFFFF6B35).withValues(alpha: 0.20),
+        Y4.honey.withValues(alpha: 0.20),
         Colors.transparent,
-      ]).createShader(Rect.fromCircle(center: Offset(cx, size.height * 0.28), radius: 260));
-    canvas.drawCircle(Offset(cx, size.height * 0.28), 260, p1);
+      ]).createShader(Rect.fromCircle(
+          center: Offset(cx, size.height * 0.25), radius: 260));
+    canvas.drawCircle(Offset(cx, size.height * 0.25), 260, p1);
 
     final ang = phase * 2 * math.pi;
     final ox  = math.cos(ang) * 60;
     final oy  = math.sin(ang) * 40;
     final p2 = Paint()
       ..shader = RadialGradient(colors: [
-        const Color(0xFFFF9500).withValues(alpha: 0.12),
+        Y4.amberY.withValues(alpha: 0.10),
         Colors.transparent,
       ]).createShader(Rect.fromCircle(
-          center: Offset(cx + ox, size.height * 0.35 + oy), radius: 180));
-    canvas.drawCircle(Offset(cx + ox, size.height * 0.35 + oy), 180, p2);
+          center: Offset(cx + ox, size.height * 0.32 + oy), radius: 180));
+    canvas.drawCircle(Offset(cx + ox, size.height * 0.32 + oy), 180, p2);
   }
 
   @override bool shouldRepaint(_AuraPainter o) => o.phase != phase;
@@ -208,7 +210,7 @@ class _HeroFlame extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFF6B35).withValues(alpha: pulse.value * 0.4),
+                color: Y4.honey.withValues(alpha: pulse.value * 0.35),
                 blurRadius: 50, spreadRadius: 12,
               ),
             ],
@@ -220,12 +222,12 @@ class _HeroFlame extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: const RadialGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFF9500), Color(0xFFFF6B35)],
+                  colors: [Color(0xFFFFE07A), Y4.honey, Y4.honeyDeep],
                   stops: [0.0, 0.55, 1.0],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF6B35).withValues(alpha: 0.55),
+                    color: Y4.honeyDeep.withValues(alpha: 0.40),
                     blurRadius: 30, spreadRadius: 4,
                   ),
                 ],
@@ -255,16 +257,16 @@ class _HeroFlame extends StatelessWidget {
                   ? 'Centurion — Masha\'Allah!'
                   : 'Current best streak',
           style: GoogleFonts.outfit(
-              fontSize: 14, color: Colors.white60,
+              fontSize: 14, color: Y4.inkSoft,
               fontWeight: FontWeight.w500),
         ),
-        if (streak > 0 && milestone != null) ...[ 
+        if (streak > 0 && milestone != null) ...[
           const SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B35), Color(0xFFFF9500)]),
+                  colors: [Y4.amberY, Y4.honeyDeep]),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text('Next: ${milestone!.label} (${milestone!.days} days)',
@@ -273,12 +275,12 @@ class _HeroFlame extends StatelessWidget {
                     color: Colors.white, letterSpacing: 0.4)),
           ),
         ],
-        if (streak >= 100) ...[ 
+        if (streak >= 100) ...[
           const SizedBox(height: 6),
           Text(label,
               style: GoogleFonts.rajdhani(
                   fontSize: 18, fontWeight: FontWeight.w800,
-                  color: const Color(0xFFFFD700))),
+                  color: Y4.honeyDeep)),
         ],
       ]),
     );
@@ -297,8 +299,8 @@ class _FlameCard extends StatelessWidget {
 
   Color get _color {
     switch (type) {
-      case StreakType.login:  return const Color(0xFFFF6B35);
-      case StreakType.dhikr: return const Color(0xFF00C875);
+      case StreakType.login:  return Y4.amberY;
+      case StreakType.dhikr: return Y4.primary;
       case StreakType.quran: return const Color(0xFF5856D6);
     }
   }
@@ -310,16 +312,16 @@ class _FlameCard extends StatelessWidget {
       builder: (_, __) => Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: Y4.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: streak > 0
-                ? _color.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.08),
+                ? _color.withValues(alpha: 0.35)
+                : Y4.border,
           ),
           boxShadow: streak > 0 ? [
             BoxShadow(
-              color: _color.withValues(alpha: pulse.value * 0.22),
+              color: _color.withValues(alpha: pulse.value * 0.12),
               blurRadius: 16, spreadRadius: 2,
             ),
           ] : [],
@@ -330,29 +332,29 @@ class _FlameCard extends StatelessWidget {
           Text('$streak',
               style: GoogleFonts.rajdhani(
                   fontSize: 28, fontWeight: FontWeight.w900,
-                  color: streak > 0 ? _color : Colors.white30,
+                  color: streak > 0 ? _color : Y4.muted,
                   height: 1.0)),
           Text('day${streak == 1 ? '' : 's'}',
               style: GoogleFonts.outfit(
-                  fontSize: 10, color: Colors.white38,
+                  fontSize: 10, color: Y4.inkSoft,
                   fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-              color: _color.withValues(alpha: 0.12),
+              color: _color.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text('Best $best',
                 style: GoogleFonts.outfit(
                     fontSize: 10, fontWeight: FontWeight.w700,
-                    color: _color.withValues(alpha: 0.9))),
+                    color: _color)),
           ),
           const SizedBox(height: 6),
           Text(type.label,
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
-                  fontSize: 10, color: Colors.white38,
+                  fontSize: 10, color: Y4.inkSoft,
                   fontWeight: FontWeight.w600),
               maxLines: 1, overflow: TextOverflow.ellipsis),
         ]),
@@ -375,15 +377,15 @@ class _SevenDayCalendar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Y4.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Y4.border),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('LAST 7 DAYS',
             style: GoogleFonts.rajdhani(
                 fontSize: 13, fontWeight: FontWeight.w700,
-                color: Colors.white54, letterSpacing: 1.2)),
+                color: Y4.inkSoft, letterSpacing: 1.2)),
         const SizedBox(height: 14),
         Row(children: days.map((day) {
           final isToday = day.day == today.day &&
@@ -392,14 +394,14 @@ class _SevenDayCalendar extends StatelessWidget {
             Text(
               ['Mo','Tu','We','Th','Fr','Sa','Su'][day.weekday - 1],
               style: GoogleFonts.outfit(
-                  fontSize: 10, color: Colors.white38,
+                  fontSize: 10, color: Y4.muted,
                   fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
             Text('${day.day}',
                 style: GoogleFonts.outfit(
                     fontSize: 11,
-                    color: isToday ? Colors.white : Colors.white38,
+                    color: isToday ? Y4.honeyDeep : Y4.inkSoft,
                     fontWeight: isToday ? FontWeight.w800 : FontWeight.w400)),
             const SizedBox(height: 8),
             _DotRow(day: day, snap: snap),
@@ -417,7 +419,7 @@ class _SevenDayCalendar extends StatelessWidget {
             const SizedBox(width: 4),
             Text(t.label,
                 style: GoogleFonts.outfit(
-                    fontSize: 10, color: Colors.white38)),
+                    fontSize: 10, color: Y4.inkSoft)),
           ]),
         )).toList()),
       ]),
@@ -426,8 +428,8 @@ class _SevenDayCalendar extends StatelessWidget {
 
   Color _dotColor(StreakType t) {
     switch (t) {
-      case StreakType.login:  return const Color(0xFFFF6B35);
-      case StreakType.dhikr: return const Color(0xFF00C875);
+      case StreakType.login:  return Y4.amberY;
+      case StreakType.dhikr: return Y4.primary;
       case StreakType.quran: return const Color(0xFF5856D6);
     }
   }
@@ -443,8 +445,8 @@ class _DotRow extends StatelessWidget {
 
   Color _col(StreakType t) {
     switch (t) {
-      case StreakType.login:  return const Color(0xFFFF6B35);
-      case StreakType.dhikr: return const Color(0xFF00C875);
+      case StreakType.login:  return Y4.amberY;
+      case StreakType.dhikr: return Y4.primary;
       case StreakType.quran: return const Color(0xFF5856D6);
     }
   }
@@ -459,9 +461,9 @@ class _DotRow extends StatelessWidget {
           width: 10, height: 10,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: on ? _col(t) : Colors.white.withValues(alpha: 0.08),
+            color: on ? _col(t) : Y4.track,
             boxShadow: on ? [BoxShadow(
-                color: _col(t).withValues(alpha: 0.5), blurRadius: 6)] : [],
+                color: _col(t).withValues(alpha: 0.35), blurRadius: 6)] : [],
           ),
         ),
       );
@@ -487,31 +489,31 @@ class _MilestoneProgress extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Y4.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Y4.border),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text('NEXT MILESTONE',
               style: GoogleFonts.rajdhani(
                   fontSize: 13, fontWeight: FontWeight.w700,
-                  color: Colors.white54, letterSpacing: 1.2)),
+                  color: Y4.inkSoft, letterSpacing: 1.2)),
           const Spacer(),
           Text('+${milestone.xpBonus} pts',
               style: GoogleFonts.rajdhani(
                   fontSize: 14, fontWeight: FontWeight.w700,
-                  color: const Color(0xFFFFD700))),
+                  color: Y4.honeyDeep)),
         ]),
         const SizedBox(height: 10),
         Row(children: [
           Expanded(child: Text(milestone.label,
               style: GoogleFonts.outfit(
                   fontSize: 15, fontWeight: FontWeight.w700,
-                  color: Colors.white))),
+                  color: Y4.ink))),
           Text('$current / ${milestone.days} days',
               style: GoogleFonts.outfit(
-                  fontSize: 12, color: Colors.white38)),
+                  fontSize: 12, color: Y4.inkSoft)),
         ]),
         const SizedBox(height: 12),
         TweenAnimationBuilder<double>(
@@ -522,8 +524,8 @@ class _MilestoneProgress extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
               value: v, minHeight: 12,
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              valueColor: const AlwaysStoppedAnimation(Color(0xFFFF6B35)),
+              backgroundColor: Y4.track,
+              valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep),
             ),
           ),
         ),
@@ -531,7 +533,7 @@ class _MilestoneProgress extends StatelessWidget {
         Text(
           '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go — keep it up!',
           style: GoogleFonts.outfit(
-              fontSize: 12, color: Colors.white38,
+              fontSize: 12, color: Y4.inkSoft,
               fontWeight: FontWeight.w500),
         ),
       ]),
@@ -549,15 +551,15 @@ class _MilestoneList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Y4.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Y4.border),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('ALL MILESTONES',
             style: GoogleFonts.rajdhani(
                 fontSize: 13, fontWeight: FontWeight.w700,
-                color: Colors.white54, letterSpacing: 1.2)),
+                color: Y4.inkSoft, letterSpacing: 1.2)),
         const SizedBox(height: 14),
         ...kStreakMilestones.map((m) {
           final done = streak >= m.days;
@@ -569,15 +571,15 @@ class _MilestoneList extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: done
-                      ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
-                      : Colors.white.withValues(alpha: 0.05),
+                      ? Y4.honey.withValues(alpha: 0.20)
+                      : Y4.track,
                   border: Border.all(
                     color: done
-                        ? const Color(0xFFFF6B35).withValues(alpha: 0.7)
-                        : Colors.white.withValues(alpha: 0.10),
+                        ? Y4.honeyDeep.withValues(alpha: 0.6)
+                        : Y4.border,
                   ),
                   boxShadow: done ? [BoxShadow(
-                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                      color: Y4.honey.withValues(alpha: 0.25),
                       blurRadius: 10)] : [],
                 ),
                 child: Center(child: done
@@ -591,26 +593,24 @@ class _MilestoneList extends StatelessWidget {
                   Text(m.label,
                       style: GoogleFonts.outfit(
                           fontSize: 14, fontWeight: FontWeight.w700,
-                          color: done ? Colors.white : Colors.white38)),
+                          color: done ? Y4.ink : Y4.muted)),
                   Text('${m.days} day streak',
                       style: GoogleFonts.outfit(
-                          fontSize: 11, color: Colors.white24)),
+                          fontSize: 11, color: Y4.inkSoft)),
                 ],
               )),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: done
-                      ? const Color(0xFFFFD700).withValues(alpha: 0.15)
-                      : Colors.white.withValues(alpha: 0.05),
+                      ? Y4.honey.withValues(alpha: 0.15)
+                      : Y4.track,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text('+${m.xpBonus} pts',
                     style: GoogleFonts.rajdhani(
                         fontSize: 13, fontWeight: FontWeight.w700,
-                        color: done
-                            ? const Color(0xFFFFD700)
-                            : Colors.white24,
+                        color: done ? Y4.honeyDeep : Y4.muted,
                         letterSpacing: 0.5)),
               ),
             ]),

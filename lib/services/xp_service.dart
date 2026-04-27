@@ -1,4 +1,4 @@
-// lib/services/xp_service.dart
+﻿// lib/services/xp_service.dart
 // Central service for XP, levels, and badges.
 // All XP-earning events in the app must call methods here.
 

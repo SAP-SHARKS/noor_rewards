@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
@@ -1236,7 +1236,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       if (_tafsirLoading)
                         Center(child: Padding(
                           padding: const EdgeInsets.all(32),
-                          child: CircularProgressIndicator(color: _accent, strokeWidth: 2),
+                          child: CircularProgressIndicator(color: const Color(0xFFC9921A), strokeWidth: 2),
                         ))
                       else if (_tafsirText.isEmpty)
                         Center(child: Padding(
@@ -2074,7 +2074,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 boxShadow: hasAudio ? [BoxShadow(color: _accent.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))] : null,
               ),
               child: _audioLoading
-                  ? const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5)))
+                  ? const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A)))))
                   : Icon(
                       !hasAudio ? Icons.hourglass_top_rounded
                           : _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
@@ -2419,7 +2419,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       Center(child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 32),
                         child: Column(children: [
-                          CircularProgressIndicator(color: _accent, strokeWidth: 2),
+                          CircularProgressIndicator(color: const Color(0xFFC9921A), strokeWidth: 2),
                           const SizedBox(height: 12),
                           Text('Loading word translations...',
                               style: GoogleFonts.outfit(fontSize: 12, color: sub)),
@@ -2771,8 +2771,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         Expanded(child: ElevatedButton.icon(
           onPressed: _saving ? null : _prevAyah,
           icon: _saving
-              ? const SizedBox(width: 16, height: 16,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
               : const Icon(Icons.arrow_back_ios_rounded, size: 14, color: Colors.white),
           label: Text(AppLocalizations.of(context)?.prev ?? 'Prev',
               style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
@@ -2790,8 +2789,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         Expanded(flex: 2, child: ElevatedButton.icon(
           onPressed: _saving ? null : _nextAyah,
           icon: _saving
-              ? const SizedBox(width: 16, height: 16,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
               : const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.white),
           label: Text('${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
               style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700,
@@ -2949,8 +2947,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           return ColoredBox(
             color: pageBg,
             child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-              SizedBox(width: 28, height: 28,
-                  child: CircularProgressIndicator(color: goldClr, strokeWidth: 1.8)),
+              SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A)))),
               const SizedBox(height: 14),
               Text('Page $pageNum',
                   style: GoogleFonts.lora(fontSize: 12,
@@ -2990,8 +2987,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       return ColoredBox(
         color: pageBg,
         child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SizedBox(width: 28, height: 28,
-              child: CircularProgressIndicator(color: goldClr, strokeWidth: 1.8)),
+          SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A)))),
           const SizedBox(height: 14),
           Text('Loading page $pageNum…',
               style: GoogleFonts.lora(fontSize: 12,

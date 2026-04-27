@@ -1,4 +1,4 @@
-// lib/theme/noor_theme.dart
+﻿// lib/theme/noor_theme.dart
 // Centralized app theme that reads all colors from AppConfig (Supabase).
 // Usage: final t = NoorTheme.of(context);
 //        Container(color: t.bg, child: Text('hi', style: TextStyle(color: t.text)));

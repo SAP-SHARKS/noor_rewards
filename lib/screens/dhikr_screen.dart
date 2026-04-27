@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
@@ -14,6 +14,7 @@ import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/noor_offline.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont = ({String name, String arabicPreview, TextStyle Function(double size, Color color, double height, FontWeight weight) style});
@@ -1033,7 +1034,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     if (_loading) {
       return Scaffold(
         backgroundColor: const Color(0xFFF0F9F4),
-        body: Center(child: CircularProgressIndicator(color: SettingsService.instance.config.azkarAccent)),
+        body: const Center(child: NoorInlineLoader()),
       );
     }
 

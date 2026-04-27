@@ -1,4 +1,4 @@
-// lib/services/quran_api_config.dart
+﻿// lib/services/quran_api_config.dart
 //
 // Central configuration for the Quran Foundation API.
 //

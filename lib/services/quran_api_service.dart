@@ -1,4 +1,4 @@
-// lib/services/quran_api_service.dart
+﻿// lib/services/quran_api_service.dart
 //
 // Authenticated HTTP client for the Quran Foundation API.
 //

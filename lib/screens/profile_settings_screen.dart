@@ -19,6 +19,7 @@ import '../features/auth/data/qf_auth_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
+import '../widgets/noor_offline.dart';
 
 AppConfig get _pcfg => SettingsService.instance.config;
 Color get _pTeal => _pcfg.dashTeal;
@@ -315,7 +316,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     return Scaffold(
       backgroundColor: _pBg,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF2BAE99)))
+          ? const Center(child: NoorInlineLoader(height: 120))
           : CustomScrollView(slivers: [
               _buildAppBar(),
               SliverToBoxAdapter(
@@ -364,7 +365,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             const Padding(
               padding: EdgeInsets.all(16),
               child: SizedBox(width: 20, height: 20,
-                  child: CircularProgressIndicator(color: Y4.honeyDeep, strokeWidth: 2.5)),
+                  child: CircularProgressIndicator(strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9921A)))),
             )
           else
             TextButton(
@@ -448,8 +450,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       if (_uploadingPhoto)
         Positioned.fill(child: Container(
           decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black38),
-          child: const Center(child: SizedBox(width: 20, height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))),
+          child: const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))),
         )),
       if (_avatarUrl != null && !_uploadingPhoto)
         Positioned(
@@ -499,8 +500,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       if (_uploadingPhoto)
         Positioned.fill(child: Container(
           decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black38),
-          child: const Center(child: SizedBox(width: 16, height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))),
+          child: const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))),
         )),
       if (_avatarUrl != null && !_uploadingPhoto)
         Positioned(
