@@ -1,4 +1,4 @@
-﻿// lib/screens/project_detail_screen.dart
+// lib/screens/project_detail_screen.dart
 // LaunchGood-inspired campaign article view — v2
 
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../services/donation_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../theme/y4_theme.dart';
 import '../widgets/project_media_carousel.dart';
 import '../widgets/noor_offline.dart';
 
@@ -744,13 +745,15 @@ class _DonateBar extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: canDonate
                     ? LinearGradient(
-                        colors: [_PD.teal, _PD.tealDark])
+                        colors: [Y4.butter, Y4.honey],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)
                     : null,
                 color: canDonate ? null : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: canDonate
                     ? [BoxShadow(
-                        color: _PD.teal.withValues(alpha: 0.35),
+                        color: Y4.honeyDeep.withValues(alpha: 0.35),
                         blurRadius: 16, offset: const Offset(0, 6))]
                     : null,
               ),
@@ -758,7 +761,7 @@ class _DonateBar extends StatelessWidget {
                 Icon(
                   isCompleted ? Icons.check_circle_rounded
                       : Icons.volunteer_activism_rounded,
-                  color: canDonate ? Colors.white : Colors.grey.shade400,
+                  color: canDonate ? Y4.ink : Colors.grey.shade400,
                   size: 20),
                 const SizedBox(width: 8),
                 Text(
@@ -767,7 +770,7 @@ class _DonateBar extends StatelessWidget {
                       : 'Donate & Earn Reward',
                   style: GoogleFonts.outfit(
                     fontSize: 15, fontWeight: FontWeight.w700,
-                    color: canDonate ? Colors.white : Colors.grey.shade500)),
+                    color: canDonate ? Y4.ink : Colors.grey.shade500)),
               ]),
             ),
           ),

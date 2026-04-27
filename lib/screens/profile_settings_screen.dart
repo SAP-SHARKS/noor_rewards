@@ -1,4 +1,4 @@
-// lib/screens/profile_settings_screen.dart
+﻿// lib/screens/profile_settings_screen.dart
 //
 // ProfileSettingsScreen — full profile & settings page
 // • Display name editable
@@ -659,41 +659,49 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     bool isFirst = false,
     bool isLast = false,
   }) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.vertical(
         top: isFirst ? const Radius.circular(20) : Radius.zero,
         bottom: isLast ? const Radius.circular(20) : Radius.zero,
       ),
     ),
-    child: Row(children: [
+    child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Container(
-        width: 36, height: 36,
+        width: 38, height: 38,
         decoration: BoxDecoration(
-          color: _pTeal.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
+          color: Y4.honey.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(11),
         ),
-        child: Icon(icon, color: _pTeal, size: 18),
+        child: Icon(icon, color: Y4.honeyDeep, size: 18),
       ),
       const SizedBox(width: 14),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: GoogleFonts.outfit(
             fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
-        TextField(
-          controller: controller,
-          style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600,
-              color: _pText),
-          cursorColor: _pTeal,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: GoogleFonts.outfit(fontSize: 14, color: const Color(0xFFB0A898)),
-            border: InputBorder.none,
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(vertical: 4),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Y4.bg,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Y4.honey.withValues(alpha: 0.4)),
+          ),
+          child: TextField(
+            controller: controller,
+            style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600,
+                color: _pText),
+            cursorColor: Y4.honeyDeep,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: GoogleFonts.outfit(fontSize: 14, color: const Color(0xFFB0A898)),
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
           ),
         ),
       ])),
-      const Icon(Icons.edit_outlined, size: 16, color: Color(0xFFB0A898)),
     ]),
   );
 

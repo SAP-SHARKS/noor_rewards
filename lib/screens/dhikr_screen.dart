@@ -1044,10 +1044,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final kBg    = isDark ? const Color(0xFF121212) : const Color(0xFFF7F8F9); // Lighter background
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
     
-    // UI Constants
-    final bannerBg = isDark ? const Color(0xFF1F4130) : const Color(0xFF285E46);
-    final bannerBtn = isDark ? const Color(0xFFE5B955) : const Color(0xFFFFD579);
-    final bannerTxt = isDark ? const Color(0xFF2B2005) : const Color(0xFF3F2A00);
+    // UI Constants — Y4 honey wash banner (matches dashboard hero feel)
+    final bannerBg  = isDark ? const Color(0xFF3D4A1A) : const Color(0xFFFFE89A); // butter
+    final bannerBtn = isDark ? const Color(0xFFFFC83D) : const Color(0xFFD89A1E); // honey-deep
+    final bannerTxt = isDark ? const Color(0xFF2A2410) : Colors.white;
     
     final chipInactiveBg = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEEEEEE);
     final chipInactiveTxt = isDark ? Colors.white70 : const Color(0xFF4A4A4A);
@@ -1129,18 +1129,28 @@ class _DhikrScreenState extends State<DhikrScreen> {
           ),
           child: Stack(
             children: [
-              // Watermark icon
+              // Watermark icon — honey-deep on light banner, white on dark banner
               Positioned(
                 right: -30,
                 bottom: -20,
-                child: Icon(waterMark, size: 120, color: Colors.white.withValues(alpha: 0.10)),
+                child: Icon(waterMark, size: 120,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.10)
+                        : const Color(0xFFD89A1E).withValues(alpha: 0.18)),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(catLabel, style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 2.0, color: Colors.white.withValues(alpha: 0.7))),
+                  Text(catLabel, style: GoogleFonts.outfit(
+                      fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 2.0,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.7)
+                          : const Color(0xFF766B47))), // Y4.inkSoft on butter
                   const SizedBox(height: 8),
-                  Text(bannerTitle, style: GoogleFonts.lora(fontSize: 18, height: 1.4, color: Colors.white, fontWeight: FontWeight.w500)),
+                  Text(bannerTitle, style: GoogleFonts.lora(
+                      fontSize: 18, height: 1.4,
+                      color: isDark ? Colors.white : const Color(0xFF2A2410), // Y4.ink
+                      fontWeight: FontWeight.w500)),
                   const SizedBox(height: 18),
                   ElevatedButton(
                      onPressed: () {

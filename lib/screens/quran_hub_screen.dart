@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -530,18 +530,20 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               height: 58,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                    colors: [Y4.primaryDeep, Y4.honeyDeep]),
+                    colors: [Y4.butter, Y4.honey],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight),
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [BoxShadow(
-                    color: _kTeal.withValues(alpha: 0.4),
+                    color: Y4.honeyDeep.withValues(alpha: 0.35),
                     blurRadius: 20, offset: const Offset(0, 8))],
               ),
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 22),
+                const Icon(Icons.auto_stories_rounded, color: Y4.ink, size: 22),
                 const SizedBox(width: 12),
                 Text('${AppLocalizations.of(context)?.startReadingFrom ?? 'Start Reading from'} ${_surahNames[_selSurah]} : $_selAyah',
                     style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700,
-                        color: Colors.white)),
+                        color: Y4.ink)),
               ]),
             ),
           ),
@@ -638,7 +640,7 @@ class _ProgressStrip extends StatelessWidget {
             NoorIcon.star(size: 14),
             const SizedBox(width: 6),
             Text(AppLocalizations.of(context)?.todaysProgress ?? "Today's Progress",
-                style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _kTeal)),
+                style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.honeyDeep)),
             const Spacer(),
             Text('+${ayahsToday * 10} pts',
                 style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: _kGold)),
@@ -646,8 +648,8 @@ class _ProgressStrip extends StatelessWidget {
           const SizedBox(height: 8),
           ClipRRect(borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(value: progress, minHeight: 6,
-                backgroundColor: _kTealL,
-                valueColor: AlwaysStoppedAnimation(_kTeal))),
+                backgroundColor: Y4.butter,
+                valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep))),
           const SizedBox(height: 5),
           Text('\u200E$ayahsToday / 50\u200E ${AppLocalizations.of(context)?.versesToday ?? 'verses today'}',
               style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
@@ -679,37 +681,41 @@ class _ContinueCardState extends State<_ContinueCard> {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
+            // Light honey gradient — matches dashboard hero
             gradient: const LinearGradient(
-                colors: [Y4.primaryDeep, Y4.honeyDeep],
+                colors: [Y4.butter, Y4.honey],
                 begin: Alignment.centerLeft, end: Alignment.centerRight),
             borderRadius: BorderRadius.circular(22),
             boxShadow: [BoxShadow(
-                color: _kTeal.withValues(alpha: 0.35),
+                color: Y4.honeyDeep.withValues(alpha: 0.30),
                 blurRadius: 20, offset: const Offset(0, 8))],
           ),
           child: Row(children: [
-            // Book icon circle
+            // Book icon circle (white on honey)
             Container(
               width: 52, height: 52,
               decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(16)),
+                  color: Y4.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [BoxShadow(
+                      color: Y4.ink.withValues(alpha: 0.06),
+                      blurRadius: 6, offset: const Offset(0, 2))]),
               child: Center(child: NoorIcon.book(size: 26)),
             ),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(widget.surahName,
                   style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800,
-                      color: Colors.white)),
+                      color: Y4.ink)),
               const SizedBox(height: 2),
               Text('Surah ${widget.surah}  •  Verse ${widget.ayah}  •  ${AppLocalizations.of(context)?.continueReading ?? 'Continue reading'}',
                   style: GoogleFonts.outfit(fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.8))),
+                      color: Y4.inkSoft)),
             ])),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Y4.honeyDeep,
                   borderRadius: BorderRadius.circular(12)),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 Text('Resume', style: GoogleFonts.outfit(fontSize: 13,
