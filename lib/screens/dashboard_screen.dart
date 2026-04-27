@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -1128,9 +1128,13 @@ class _InviteSheetState extends State<_InviteSheet>
       maxChildSize: 0.95,
       expand: false,
       builder: (ctx, scroll) => Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF0F1923),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        decoration: BoxDecoration(
+          // Honey wash gradient sheet — matches dashboard hero
+          gradient: LinearGradient(
+            begin: Alignment.topLeft, end: Alignment.bottomRight,
+            colors: [Y4.cream, Y4.bg, Y4.honey.withValues(alpha: 0.30)],
+          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         ),
         child: Column(
           children: [
@@ -1139,7 +1143,7 @@ class _InviteSheetState extends State<_InviteSheet>
             Container(
               width: 40, height: 4,
               decoration: BoxDecoration(
-                  color: Colors.white24, borderRadius: BorderRadius.circular(2)),
+                  color: Y4.muted, borderRadius: BorderRadius.circular(2)),
             ),
             Expanded(
               child: ListView(
@@ -1153,44 +1157,49 @@ class _InviteSheetState extends State<_InviteSheet>
                     Container(
                       width: 46, height: 46,
                       decoration: BoxDecoration(
-                          color: _C.teal.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(14)),
+                          color: Y4.honey.withValues(alpha: 0.30),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4))),
                       child: Center(child: NoorIcon.handshake(size: 24)),
                     ),
                     const SizedBox(width: 14),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text('Invite Friends',
-                          style: GoogleFonts.outfit(
-                              fontSize: 22, fontWeight: FontWeight.w800,
-                              color: Colors.white)),
+                          style: Y4.display(
+                              fontSize: 24, fontWeight: FontWeight.w500,
+                              color: Y4.ink, letterSpacing: -0.3, height: 1.1)),
                       Text('You both earn 500 Noor Points!',
                           style: GoogleFonts.outfit(
-                              fontSize: 13, color: Colors.white54)),
+                              fontSize: 13, color: Y4.inkSoft)),
                     ]),
                   ]),
 
                   const SizedBox(height: 22),
 
-                  // ── Reward Banner ────────────────────────────────────────────
+                  // ── Reward Banner — light honey gradient ─────────────────────
                   AnimatedBuilder(
                     animation: _shimmer,
                     builder: (_, __) => Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF1E3A34), Color(0xFF0D2B26), Color(0xFF1E3A34)],
+                          colors: [Y4.butter, Y4.honey, Y4.butter],
                           stops: [0.0, 0.5, 1.0],
                         ),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
+                        border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
+                        boxShadow: [BoxShadow(
+                          color: Y4.honeyDeep.withValues(alpha: 0.15),
+                          blurRadius: 16, offset: const Offset(0, 4),
+                        )],
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _RewardPill(icon: NoorIcon.pointing(size:20), label: 'You get', points: '+500'),
-                          Container(height: 40, width: 1, color: Colors.white12),
+                          Container(height: 40, width: 1, color: Y4.honeyDeep.withValues(alpha: 0.25)),
                           _RewardPill(icon: NoorIcon.people(size:20), label: 'Friend gets', points: '+500'),
-                          Container(height: 40, width: 1, color: Colors.white12),
+                          Container(height: 40, width: 1, color: Y4.honeyDeep.withValues(alpha: 0.25)),
                           _RewardPill(icon: NoorIcon.lightning(size:20), label: 'Instant', points: 'pts'),
                         ],
                       ),
@@ -1203,14 +1212,18 @@ class _InviteSheetState extends State<_InviteSheet>
                   Text('YOUR REFERRAL CODE',
                       style: GoogleFonts.outfit(
                           fontSize: 11, fontWeight: FontWeight.w800,
-                          color: Colors.white38, letterSpacing: 1.2)),
+                          color: Y4.inkSoft, letterSpacing: 1.2)),
                   const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C2C38),
+                      color: Y4.surface,
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: Colors.white12),
+                      border: Border.all(color: Y4.border),
+                      boxShadow: [BoxShadow(
+                        color: Y4.ink.withValues(alpha: 0.04),
+                        blurRadius: 8, offset: const Offset(0, 2),
+                      )],
                     ),
                     child: Row(children: [
                       Expanded(
@@ -1218,7 +1231,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           code.isNotEmpty ? code : '– – – – –',
                           style: GoogleFonts.outfit(
                               fontSize: 28, fontWeight: FontWeight.w900,
-                              letterSpacing: 8, color: Colors.white),
+                              letterSpacing: 8, color: Y4.ink),
                         ),
                       ),
                       GestureDetector(
@@ -1228,22 +1241,23 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             color: _codeCopied
-                                ? _C.teal
-                                : _C.teal.withValues(alpha: 0.15),
+                                ? Y4.honeyDeep
+                                : Y4.honey.withValues(alpha: 0.30),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                                color: _C.teal.withValues(alpha: 0.5)),
+                                color: Y4.honeyDeep.withValues(alpha: 0.5)),
                           ),
                           child: Row(mainAxisSize: MainAxisSize.min, children: [
                             Icon(
                               _codeCopied ? Icons.check_rounded : Icons.copy_rounded,
-                              size: 16, color: Colors.white,
+                              size: 16,
+                              color: _codeCopied ? Colors.white : Y4.honeyDeep,
                             ),
                             const SizedBox(width: 6),
                             Text(_codeCopied ? 'Copied!' : 'Copy',
                                 style: GoogleFonts.outfit(
                                     fontSize: 13, fontWeight: FontWeight.w700,
-                                    color: Colors.white)),
+                                    color: _codeCopied ? Colors.white : Y4.honeyDeep)),
                           ]),
                         ),
                       ),
@@ -1256,18 +1270,18 @@ class _InviteSheetState extends State<_InviteSheet>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C2C38),
+                      color: Y4.surface,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.white12),
+                      border: Border.all(color: Y4.border),
                     ),
                     child: Row(children: [
-                      const Icon(Icons.link_rounded, size: 18, color: Colors.white38),
+                      const Icon(Icons.link_rounded, size: 18, color: Y4.muted),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           _shareLink,
                           style: GoogleFonts.outfit(
-                              fontSize: 12, color: Colors.white54),
+                              fontSize: 12, color: Y4.inkSoft),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -1278,15 +1292,16 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
                             color: _linkCopied
-                                ? _C.teal
-                                : Colors.white10,
+                                ? Y4.honeyDeep
+                                : Y4.cream,
                             borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: _linkCopied ? Y4.honeyDeep : Y4.border),
                           ),
                           child: Text(
                             _linkCopied ? 'Copied!' : 'Copy Link',
                             style: GoogleFonts.outfit(
                                 fontSize: 12, fontWeight: FontWeight.w700,
-                                color: Colors.white),
+                                color: _linkCopied ? Colors.white : Y4.honeyDeep),
                           ),
                         ),
                       ),
@@ -1299,10 +1314,10 @@ class _InviteSheetState extends State<_InviteSheet>
                   Text('SHARE VIA',
                       style: GoogleFonts.outfit(
                           fontSize: 11, fontWeight: FontWeight.w800,
-                          color: Colors.white38, letterSpacing: 1.2)),
+                          color: Y4.inkSoft, letterSpacing: 1.2)),
                   const SizedBox(height: 12),
                   Row(children: [
-                    // WhatsApp
+                    // WhatsApp — keep brand green for recognizability
                     Expanded(
                       child: GestureDetector(
                         onTap: _shareWhatsApp,
@@ -1310,14 +1325,14 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Y4.primary, Color(0xFF128C7E)],
+                              colors: [Color(0xFF25D366), Color(0xFF128C7E)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                  color: const Color(0xFF25D366).withValues(alpha: 0.25),
+                                  color: const Color(0xFF25D366).withValues(alpha: 0.30),
                                   blurRadius: 12, offset: const Offset(0, 4))
                             ],
                           ),
@@ -1333,7 +1348,7 @@ class _InviteSheetState extends State<_InviteSheet>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // General Share
+                    // General Share — Y4 honey gradient
                     Expanded(
                       child: GestureDetector(
                         onTap: _shareGeneral,
@@ -1341,14 +1356,14 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF1A2A4A), Color(0xFF2563EB)],
+                              colors: [Y4.honey, Y4.honeyDeep],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                  color: const Color(0xFF2563EB).withValues(alpha: 0.25),
+                                  color: Y4.honeyDeep.withValues(alpha: 0.30),
                                   blurRadius: 12, offset: const Offset(0, 4))
                             ],
                           ),
@@ -1369,14 +1384,14 @@ class _InviteSheetState extends State<_InviteSheet>
 
                   // ── Divider ──────────────────────────────────────────────────
                   Row(children: [
-                    Expanded(child: Divider(color: Colors.white12)),
+                    const Expanded(child: Divider(color: Y4.border)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text('Have an invite code?',
                           style: GoogleFonts.outfit(
-                              fontSize: 12, color: Colors.white38)),
+                              fontSize: 12, color: Y4.inkSoft)),
                     ),
-                    Expanded(child: Divider(color: Colors.white12)),
+                    const Expanded(child: Divider(color: Y4.border)),
                   ]),
 
                   const SizedBox(height: 16),
@@ -1389,20 +1404,23 @@ class _InviteSheetState extends State<_InviteSheet>
                         textCapitalization: TextCapitalization.characters,
                         style: GoogleFonts.outfit(
                             fontSize: 16, fontWeight: FontWeight.w700,
-                            color: Colors.white, letterSpacing: 2),
+                            color: Y4.ink, letterSpacing: 2),
                         decoration: InputDecoration(
                           hintText: 'Enter code…',
                           hintStyle: GoogleFonts.outfit(
-                              fontSize: 15, color: Colors.white24),
+                              fontSize: 15, color: Y4.muted),
                           filled: true,
-                          fillColor: const Color(0xFF1C2C38),
+                          fillColor: Y4.surface,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide.none),
+                              borderSide: const BorderSide(color: Y4.border)),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(color: Y4.border)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                  color: _C.teal, width: 1.5)),
+                              borderSide: const BorderSide(
+                                  color: Y4.honeyDeep, width: 1.5)),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 16),
                         ),
@@ -1416,13 +1434,15 @@ class _InviteSheetState extends State<_InviteSheet>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 22, vertical: 16),
                         decoration: BoxDecoration(
-                          color: _loading
-                              ? Colors.white10
-                              : _C.teal,
+                          color: _loading ? Y4.muted : Y4.honeyDeep,
                           borderRadius: BorderRadius.circular(14),
+                          boxShadow: _loading ? [] : [BoxShadow(
+                            color: Y4.honeyDeep.withValues(alpha: 0.30),
+                            blurRadius: 10, offset: const Offset(0, 3),
+                          )],
                         ),
                         child: _loading
-                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
                             : Text('Apply',
                                 style: GoogleFonts.outfit(
                                     fontSize: 15, fontWeight: FontWeight.w700,
@@ -1437,8 +1457,9 @@ class _InviteSheetState extends State<_InviteSheet>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10)),
+                          color: Colors.red.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.red.withValues(alpha: 0.25))),
                       child: Row(children: [
                         const Icon(Icons.error_outline_rounded,
                             size: 16, color: Colors.redAccent),
@@ -1458,18 +1479,18 @@ class _InviteSheetState extends State<_InviteSheet>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                          color: _C.teal.withValues(alpha: 0.15),
+                          color: Y4.primary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: _C.teal.withValues(alpha: 0.3))),
+                              color: Y4.primary.withValues(alpha: 0.4))),
                       child: Row(children: [
-                        Icon(Icons.check_circle_rounded,
-                            size: 16, color: _C.teal),
+                        const Icon(Icons.check_circle_rounded,
+                            size: 16, color: Y4.primaryDeep),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(_success!,
                               style: GoogleFonts.outfit(
-                                  color: _C.teal,
+                                  color: Y4.primaryDeep,
                                   fontSize: 13, fontWeight: FontWeight.w600)),
                         ),
                       ]),
@@ -1485,7 +1506,7 @@ class _InviteSheetState extends State<_InviteSheet>
   }
 }
 
-// Small reward pill widget used in the banner
+// Small reward pill widget used in the banner — Y4 honey ink palette
 class _RewardPill extends StatelessWidget {
   final Widget icon;
   final String label, points;
@@ -1498,10 +1519,10 @@ class _RewardPill extends StatelessWidget {
       Text(points,
           style: GoogleFonts.outfit(
               fontSize: 16, fontWeight: FontWeight.w900,
-              color: _C.teal)),
+              color: Y4.ink)),
       Text(label,
           style: GoogleFonts.outfit(
-              fontSize: 11, color: Colors.white38)),
+              fontSize: 11, fontWeight: FontWeight.w600, color: Y4.inkSoft)),
     ]);
   }
 }
@@ -3483,7 +3504,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                     elevation: 0,
                   ),
                   child: _donating
-                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A))))
+                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9921A))))
                     : Text('Donate & Earn Reward', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700)),
                 ),
               ),
@@ -3627,21 +3648,21 @@ class _RankingSheetState extends State<_RankingSheet> {
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Y4.primaryDeep, Y4.primary],
+                          colors: [Y4.butter, Y4.honey],
                           begin: Alignment.topLeft, end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(22),
                         boxShadow: [BoxShadow(
-                            color: Y4.primary.withValues(alpha: 0.35),
+                            color: Y4.honeyDeep.withValues(alpha: 0.35),
                             blurRadius: 16, offset: const Offset(0, 6))]),
                     child: Row(children: [
                       NoorIcon.medal(size: 40),
                       const SizedBox(width: 16),
                       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text('Your Rank: #$_myRank',
-                            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white)),
+                            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: Y4.ink)),
                         Text('Out of ${_leaders.length} believers',
-                            style: GoogleFonts.outfit(fontSize: 12, color: Colors.white60)),
+                            style: GoogleFonts.outfit(fontSize: 12, color: Y4.inkSoft)),
                       ])),
                     ]),
                   ),

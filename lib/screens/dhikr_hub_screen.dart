@@ -8,10 +8,10 @@ import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/noor_offline.dart';
+import '../theme/y4_theme.dart';
 
 AppConfig get _dhcfg => SettingsService.instance.config;
 Color get _kBg => _dhcfg.dashBg;
-Color get _kText => _dhcfg.dashText;
 
 class DhikrHubScreen extends StatefulWidget {
   const DhikrHubScreen({super.key});
@@ -56,40 +56,52 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         body: const Center(child: NoorInlineLoader()),
       );
     }
+    // Y4-tuned palette: warm/sun categories use honey, night categories use sage.
+    // Per-category color identity is preserved but routed through the Y4 token set.
     final List<Map<String, dynamic>> essentials = [
-      {'title': 'Duas of Ummah', 'id': 'ummah', 'color': const Color(0xFF6B4EE6), 'icon': '🌍'},
-      {'title': 'Morning', 'id': 'morning', 'color': const Color(0xFFF59E0B), 'icon': '🌅'},
-      {'title': 'Evening', 'id': 'evening', 'color': const Color(0xFFD97706), 'icon': '🌇'},
-      {'title': 'Before Sleep', 'id': 'sleeping', 'color': const Color(0xFF312E81), 'icon': '🌌'},
-      {'title': 'Tahajjud', 'id': 'tahajjud', 'color': const Color(0xFF1E1B4B), 'icon': '🌑'},
-      {'title': 'Salah', 'id': 'post_prayer', 'color': const Color(0xFF0EA5E9), 'icon': '🕌'},
-      {'title': 'Salawat', 'id': 'salawat', 'color': const Color(0xFFEC4899), 'icon': '❤️'},
-      {'title': 'Sunnah Duas', 'id': 'sunnah', 'color': const Color(0xFF10B981), 'icon': '📖'},
-      {'title': 'Quranic Duas', 'id': 'quranic', 'color': const Color(0xFF059669), 'icon': '📗'},
-      {'title': 'Istighfar', 'id': 'istighfar', 'color': const Color(0xFF64748B), 'icon': '📿'},
-      {'title': 'Dhikar All Times', 'id': 'general', 'color': const Color(0xFF8B5CF6), 'icon': '🤲'},
-      {'title': 'Names of Allah', 'id': 'asmaul_husna', 'color': const Color(0xFFD946EF), 'icon': '✨'},
+      {'title': 'Duas of Ummah', 'id': 'ummah', 'color': Y4.primary,     'icon': '🌍'},
+      {'title': 'Morning',       'id': 'morning', 'color': Y4.honeyDeep, 'icon': '🌅'},
+      {'title': 'Evening',       'id': 'evening', 'color': Y4.amberY,    'icon': '🌇'},
+      {'title': 'Before Sleep',  'id': 'sleeping', 'color': Y4.primaryDeep, 'icon': '🌌'},
+      {'title': 'Tahajjud',      'id': 'tahajjud', 'color': Y4.primaryDeep, 'icon': '🌑'},
+      {'title': 'Salah',         'id': 'post_prayer', 'color': Y4.primary,    'icon': '🕌'},
+      {'title': 'Salawat',       'id': 'salawat', 'color': Y4.honeyDeep, 'icon': '❤️'},
+      {'title': 'Sunnah Duas',   'id': 'sunnah', 'color': Y4.primary,     'icon': '📖'},
+      {'title': 'Quranic Duas',  'id': 'quranic', 'color': Y4.primaryDeep, 'icon': '📗'},
+      {'title': 'Istighfar',     'id': 'istighfar', 'color': Y4.soil,    'icon': '📿'},
+      {'title': 'Dhikar All Times', 'id': 'general', 'color': Y4.amberY, 'icon': '🤲'},
+      {'title': 'Names of Allah', 'id': 'asmaul_husna', 'color': Y4.honeyDeep, 'icon': '✨'},
     ];
 
+    // Mini cards in "Other Categories" — Y4 palette with subtle hue variation.
+    // We rotate through a small set of Y4 tokens so each tile still feels
+    // distinct without breaking the honey/sage cohesion.
+    const altPrimary = Y4.primary;       // sage
+    const altPrimaryD = Y4.primaryDeep;  // deep sage
+    const altHoney = Y4.honeyDeep;       // honey-deep
+    const altAmber = Y4.amberY;          // soft amber
+    const altSoil = Y4.soil;             // warm earth
+    const altSoilD = Y4.soilDeep;        // deep earth
+
     final List<Map<String, dynamic>> others = [
-      {'title': 'Nightmares', 'id': 'nightmares', 'color': const Color(0xFF334155), 'icon': '🌩️'},
-      {'title': 'Waking up', 'id': 'waking_up', 'color': const Color(0xFFFCD34D), 'icon': '☀️'},
-      {'title': 'Clothes', 'id': 'clothes', 'color': const Color(0xFF38BDF8), 'icon': '👕'},
-      {'title': 'Wudu', 'id': 'wudu', 'color': const Color(0xFF2DD4BF), 'icon': '💧'},
-      {'title': 'Food & Drink', 'id': 'food_drink', 'color': const Color(0xFFF43F5E), 'icon': '🍽️'},
-      {'title': 'Home', 'id': 'home', 'color': const Color(0xFF84CC16), 'icon': '🏠'},
-      {'title': 'Istikharah', 'id': 'istikharah', 'color': const Color(0xFF0284C7), 'icon': '🧭'},
-      {'title': 'Adaan & Masjid', 'id': 'masjid', 'color': const Color(0xFF65A30D), 'icon': '🕌'},
-      {'title': 'Diff & Happy', 'id': 'difficulty', 'color': const Color(0xFFEAB308), 'icon': '⚖️'},
-      {'title': 'Iman Protect', 'id': 'iman_protection', 'color': const Color(0xFF0F766E), 'icon': '🛡️'},
-      {'title': 'Travel', 'id': 'travel', 'color': const Color(0xFF0284C7), 'icon': '✈️'},
-      {'title': 'Shopping', 'id': 'shopping', 'color': const Color(0xFF14B8A6), 'icon': '🛍️'},
-      {'title': 'Marriage', 'id': 'family', 'color': const Color(0xFFF43F5E), 'icon': '👨‍👩‍👧'},
-      {'title': 'Social', 'id': 'social', 'color': const Color(0xFFA855F7), 'icon': '🤝'},
-      {'title': 'Nature', 'id': 'nature', 'color': const Color(0xFF22C55E), 'icon': '🌿'},
-      {'title': 'Death', 'id': 'death', 'color': const Color(0xFF475569), 'icon': '🥀'},
-      {'title': 'Gatherings', 'id': 'gatherings', 'color': const Color(0xFFF59E0B), 'icon': '👥'},
-      {'title': 'Hajj & Umrah', 'id': 'hajj', 'color': const Color(0xFF000000), 'icon': '🕋'},
+      {'title': 'Nightmares', 'id': 'nightmares', 'color': altSoilD, 'icon': '🌩️'},
+      {'title': 'Waking up', 'id': 'waking_up', 'color': altHoney, 'icon': '☀️'},
+      {'title': 'Clothes', 'id': 'clothes', 'color': altPrimary, 'icon': '👕'},
+      {'title': 'Wudu', 'id': 'wudu', 'color': altPrimary, 'icon': '💧'},
+      {'title': 'Food & Drink', 'id': 'food_drink', 'color': altAmber, 'icon': '🍽️'},
+      {'title': 'Home', 'id': 'home', 'color': altPrimary, 'icon': '🏠'},
+      {'title': 'Istikharah', 'id': 'istikharah', 'color': altPrimaryD, 'icon': '🧭'},
+      {'title': 'Adaan & Masjid', 'id': 'masjid', 'color': altPrimary, 'icon': '🕌'},
+      {'title': 'Diff & Happy', 'id': 'difficulty', 'color': altHoney, 'icon': '⚖️'},
+      {'title': 'Iman Protect', 'id': 'iman_protection', 'color': altPrimaryD, 'icon': '🛡️'},
+      {'title': 'Travel', 'id': 'travel', 'color': altPrimary, 'icon': '✈️'},
+      {'title': 'Shopping', 'id': 'shopping', 'color': altAmber, 'icon': '🛍️'},
+      {'title': 'Marriage', 'id': 'family', 'color': altHoney, 'icon': '👨‍👩‍👧'},
+      {'title': 'Social', 'id': 'social', 'color': altPrimary, 'icon': '🤝'},
+      {'title': 'Nature', 'id': 'nature', 'color': altPrimary, 'icon': '🌿'},
+      {'title': 'Death', 'id': 'death', 'color': altSoil, 'icon': '🥀'},
+      {'title': 'Gatherings', 'id': 'gatherings', 'color': altHoney, 'icon': '👥'},
+      {'title': 'Hajj & Umrah', 'id': 'hajj', 'color': altPrimaryD, 'icon': '🕋'},
     ];
 
     final visibleEssentials = essentials.where((e) => !_hiddenIds!.contains(e['id'])).toList();
@@ -98,15 +110,17 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Y4.bg,
+        surfaceTintColor: Y4.bg,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, color: _kText, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Y4.ink, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Dhikar & Dua',
-            style: GoogleFonts.playfairDisplay(
-                fontSize: 24, fontWeight: FontWeight.w700, color: _kText)),
+            style: Y4.display(
+                fontSize: 22, fontWeight: FontWeight.w500,
+                color: Y4.ink, letterSpacing: -0.3)),
         centerTitle: true,
       ),
       body: LayoutBuilder(
@@ -140,9 +154,16 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Daily Essentials',
-                    style: GoogleFonts.outfit(
-                        fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
+                RichText(text: TextSpan(children: [
+                  TextSpan(text: 'Daily ',
+                    style: Y4.display(
+                        fontSize: 22, fontWeight: FontWeight.w500,
+                        color: Y4.ink, height: 1.0)),
+                  TextSpan(text: 'Essentials',
+                    style: Y4.display(
+                        fontSize: 22, fontWeight: FontWeight.w500,
+                        color: Y4.ink, fontStyle: FontStyle.italic, height: 1.0)),
+                ])),
                 const SizedBox(height: 16),
                 if (visibleEssentials.isEmpty)
                   Padding(
@@ -167,9 +188,24 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                 ),
 
                 const SizedBox(height: 32),
-                Text(AppLocalizations.of(context)?.otherCategories ?? 'Other Categories',
-                    style: GoogleFonts.outfit(
-                        fontSize: 22, fontWeight: FontWeight.w800, color: _kText)),
+                Builder(builder: (ctx) {
+                  final full = AppLocalizations.of(ctx)?.otherCategories ?? 'Other Categories';
+                  // Split on first space so localized strings still get the
+                  // italic-on-second-word treatment.
+                  final spaceIdx = full.indexOf(' ');
+                  final first = spaceIdx < 0 ? full : full.substring(0, spaceIdx + 1);
+                  final rest  = spaceIdx < 0 ? '' : full.substring(spaceIdx + 1);
+                  return RichText(text: TextSpan(children: [
+                    TextSpan(text: first,
+                      style: Y4.display(
+                          fontSize: 22, fontWeight: FontWeight.w500,
+                          color: Y4.ink, height: 1.0)),
+                    TextSpan(text: rest,
+                      style: Y4.display(
+                          fontSize: 22, fontWeight: FontWeight.w500,
+                          color: Y4.ink, fontStyle: FontStyle.italic, height: 1.0)),
+                  ]));
+                }),
                 const SizedBox(height: 16),
                 if (visibleOthers.isEmpty)
                   Padding(
