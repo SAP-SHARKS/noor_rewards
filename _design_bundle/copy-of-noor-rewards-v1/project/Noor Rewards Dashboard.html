@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Noor Rewards — Dashboard Explorations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; padding: 0; background: #f0eee9; font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    button:focus { outline: none; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="android-frame.jsx"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="shared.jsx"></script>
+  <script type="text/babel" src="v1-classic.jsx"></script>
+  <script type="text/babel" src="v2-bento.jsx"></script>
+  <script type="text/babel" src="v3-minimal.jsx"></script>
+  <script type="text/babel" src="v4-macadam.jsx"></script>
+  <script type="text/babel" src="v5-tracker.jsx"></script>
+  <script type="text/babel" src="v6-sky.jsx"></script>
+  <script type="text/babel" src="v7-manuscript.jsx"></script>
+  <script type="text/babel" src="v8-constellation.jsx"></script>
+  <script type="text/babel" src="v9-garden.jsx"></script>
+  <script type="text/babel" src="v1y-classic-yellow.jsx"></script>
+  <script type="text/babel" src="v3y-minimal-yellow.jsx"></script>
+  <script type="text/babel" src="v5y-tracker-yellow.jsx"></script>
+  <script type="text/babel" src="v9y-garden-yellow.jsx"></script>
+  <script type="text/babel" src="v3y2-minimal-neon.jsx"></script>
+  <script type="text/babel" src="v9y2-garden-neon.jsx"></script>
+  <script type="text/babel" src="celebration.jsx"></script>
+
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accent": "emerald",
+      "density": "comfortable",
+      "showDhikrPulse": true
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+      // The tweaks are demo-only; the three variations speak for themselves.
+      // A full-featured implementation would thread these through as theme props.
+
+      return (
+        <>
+          <DesignCanvas>
+            <DCSection
+              id="neon-yellow"
+              title="Neon yellow #f9f506 · two new takes"
+              subtitle="Y2-Neon (minimal) and Y4-Neon (garden) using exact neon yellow as the highlight, with regular muted/soft shades for support"
+            >
+              <DCArtboard id="v3y2" label="Y2-Neon · Minimal (cream + neon)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V3Y2Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v9y2" label="Y4-Neon · Garden (sage + neon blooms)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V9Y2Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection
+              id="yellow-directions"
+              title="Yellow palette · 4 shades to compare"
+              subtitle="Marigold · butter cream · deep amber on charcoal · honey + sage — same dashboard, four very different yellows"
+            >
+              <DCArtboard id="v1y" label="Y1 · Marigold (bright, gamified)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V1YDashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v3y" label="Y2 · Butter Cream (soft, minimal)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V3YDashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v5y" label="Y3 · Amber on Charcoal (athletic)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined} dark>
+                  <V5YDashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v9y" label="Y4 · Honey + Sage (garden)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V9YDashboard />
+                </AndroidDevice>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection
+              id="celebration"
+              title="Dhikr exit celebration · dopamine moment"
+              subtitle="Triggered when user finishes a Dhikr/Dua session — reframes count into spiritual blessings, surfaces points, prompts donation"
+            >
+              <DCArtboard id="celeb-a" label="A · Stardust Ceremony (fullscreen, dark)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined} dark>
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <V8Dashboard />
+                    <CelebA onClose={() => {}} />
+                  </div>
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="celeb-b" label="B · Garden Bloom (half-sheet, warm)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <V9Dashboard />
+                    <CelebB onClose={() => {}} />
+                  </div>
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="celeb-c" label="C · Manuscript Seal (centered card)" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <V7Dashboard />
+                    <CelebC onClose={() => {}} />
+                  </div>
+                </AndroidDevice>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection
+              id="new-directions"
+              title="Fresh directions · creative take"
+              subtitle="Manuscript · Constellation · Garden — rooted in Islamic context, each with its own metaphor"
+            >
+              <DCArtboard id="v7" label="07 · Terracotta Manuscript" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V7Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v8" label="08 · Nightsky Constellation" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined} dark>
+                  <V8Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v9" label="09 · Orchard Garden" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V9Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection
+              id="blue-directions"
+              title="Noor Rewards · Blue directions"
+              subtitle="Inspired by Macadam & step trackers · cobalt / navy / sky blue"
+            >
+              <DCArtboard id="v4" label="04 · Macadam Coin Wallet" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V4Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v5" label="05 · Step-tracker Ring" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined} dark>
+                  <V5Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v6" label="06 · Sky Card-Stack" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V6Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection
+              id="green-directions"
+              title="Original green directions (for reference)"
+              subtitle="Archived — keep, remix, or ignore"
+            >
+              <DCArtboard id="v1" label="01 · Classic Gamified" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V1Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v2" label="02 · Bento Grid" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V2Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+
+              <DCArtboard id="v3" label="03 · Spiritual Minimal" width={412} height={892}>
+                <AndroidDevice width={412} height={892} title={undefined}>
+                  <V3Dashboard />
+                </AndroidDevice>
+              </DCArtboard>
+            </DCSection>
+          </DesignCanvas>
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection title="Accent theme">
+              <TweakRadio
+                label="Accent"
+                value={tweaks.accent}
+                onChange={(v) => setTweak('accent', v)}
+                options={[
+                  { value: 'emerald', label: 'Emerald' },
+                  { value: 'teal',    label: 'Teal' },
+                  { value: 'plum',    label: 'Plum' },
+                ]}
+              />
+            </TweakSection>
+            <TweakSection title="Layout">
+              <TweakRadio
+                label="Density"
+                value={tweaks.density}
+                onChange={(v) => setTweak('density', v)}
+                options={[
+                  { value: 'compact',      label: 'Compact' },
+                  { value: 'comfortable',  label: 'Comfortable' },
+                ]}
+              />
+              <TweakToggle
+                label="Dhikr pulse"
+                value={tweaks.showDhikrPulse}
+                onChange={(v) => setTweak('showDhikrPulse', v)}
+              />
+            </TweakSection>
+            <div style={{ fontSize: 11, color: '#7a7466', lineHeight: 1.45, padding: '6px 2px 0' }}>
+              Prototype — each artboard is a full interactive screen. Tap the Dhikr card to count, tap Validate to lock points in with a confetti burst, switch the Today / Week / Month tabs.
+            </div>
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

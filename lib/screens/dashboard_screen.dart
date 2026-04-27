@@ -30,6 +30,7 @@ import '../widgets/noor_offline.dart';
 import '../widgets/motivational_popup.dart';
 import '../widgets/project_media_carousel.dart';
 import 'project_detail_screen.dart';
+import '../theme/y4_theme.dart';
 
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
@@ -52,6 +53,9 @@ class _C {
   static Color get border      => _cfg.dashBg.computeLuminance() > 0.5
       ? const Color(0xFFE8E8EC) : const Color(0xFF374151);
 }
+
+// Y4 palette is now exported from `lib/theme/y4_theme.dart` as `Y4`.
+// All `Y4.xxx` references below use that shared module.
 
 String _localizeLevel(BuildContext context, String? dbLevel) {
   final l10n = AppLocalizations.of(context);
@@ -499,11 +503,103 @@ class _HomeTabState extends State<_HomeTab> {
   List<Map<String, dynamic>> _myDonations = [];
   late final ConfettiController _confettiController;
 
+  // ── Tile sub-text "real data" (best-effort, with safe fallbacks) ───────────
+  String? _lastSurahName;     // e.g. "Al-Mulk"
+  int?    _lastAyah;          // e.g. 7
+  int     _ayahsToday  = 0;   // for Quran tile sub
+  int     _dhikrToday  = 0;   // dhikr sets done today (best-effort)
+  String? _recentBadgeName;   // most recent earned badge
+
   @override
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 3));
     _loadDonations();
+    _loadTileExtras();
+  }
+
+  /// Best-effort fetch for activity-tile sub-text. Failures fall back silently.
+  Future<void> _loadTileExtras() async {
+    final sb = Supabase.instance.client;
+    final uid = sb.auth.currentUser?.id;
+    if (uid == null) return;
+
+    // Last-read surah / ayah + today's ayah count (Quran tile)
+    try {
+      final prog = await sb.from('quran_progress')
+          .select('current_surah, current_ayah, last_read_date, ayahs_read_today')
+          .eq('user_id', uid).maybeSingle();
+      if (prog != null && mounted) {
+        final s = (prog['current_surah'] as num?)?.toInt() ?? 1;
+        final a = (prog['current_ayah']  as num?)?.toInt() ?? 1;
+        final today = DateTime.now().toIso8601String().split('T')[0];
+        final isToday = (prog['last_read_date'] ?? '') == today;
+        setState(() {
+          _lastSurahName = _surahNameFor(s);
+          _lastAyah = a;
+          _ayahsToday = isToday ? ((prog['ayahs_read_today'] as num?)?.toInt() ?? 0) : 0;
+        });
+      }
+    } catch (_) {}
+
+    // Most recent earned badge (Achievements tile)
+    try {
+      final earned = await sb.from('user_badges')
+          .select('badge_id, earned_at, badges(name)')
+          .eq('user_id', uid)
+          .order('earned_at', ascending: false)
+          .limit(1)
+          .maybeSingle();
+      if (earned != null && mounted) {
+        final badgeRow = earned['badges'];
+        final name = (badgeRow is Map ? badgeRow['name'] : null) as String?;
+        if (name != null && name.isNotEmpty) {
+          setState(() => _recentBadgeName = name);
+        }
+      }
+    } catch (_) {}
+
+    // Today's dhikr sets — count rows in user_activities for today (best-effort)
+    try {
+      final today = DateTime.now();
+      final start = DateTime(today.year, today.month, today.day).toIso8601String();
+      final rows = await sb.from('user_activities')
+          .select('id')
+          .eq('user_id', uid)
+          .eq('activity_type', 'dhikr')
+          .gte('created_at', start);
+      if (mounted) {
+        setState(() => _dhikrToday = (rows as List).length);
+      }
+    } catch (_) {}
+  }
+
+  /// Minimal surah-name lookup for the home tile sub-text. Falls back to "Surah N".
+  static String _surahNameFor(int n) {
+    const names = [
+      '', 'Al-Fatihah', 'Al-Baqarah', "Al 'Imran", 'An-Nisa', 'Al-Maidah',
+      'Al-Anam', 'Al-Araf', 'Al-Anfal', 'At-Tawbah', 'Yunus', 'Hud', 'Yusuf',
+      'Ar-Rad', 'Ibrahim', 'Al-Hijr', 'An-Nahl', 'Al-Isra', 'Al-Kahf', 'Maryam',
+      'Ta-Ha', 'Al-Anbiya', 'Al-Hajj', 'Al-Muminun', 'An-Nur', 'Al-Furqan',
+      'Ash-Shuara', 'An-Naml', 'Al-Qasas', 'Al-Ankabut', 'Ar-Rum', 'Luqman',
+      'As-Sajdah', 'Al-Ahzab', 'Saba', 'Fatir', 'Ya-Sin', 'As-Saffat', 'Sad',
+      'Az-Zumar', 'Ghafir', 'Fussilat', 'Ash-Shura', 'Az-Zukhruf', 'Ad-Dukhan',
+      'Al-Jathiya', 'Al-Ahqaf', 'Muhammad', 'Al-Fath', 'Al-Hujurat', 'Qaf',
+      'Adh-Dhariyat', 'At-Tur', 'An-Najm', 'Al-Qamar', 'Ar-Rahman', 'Al-Waqia',
+      'Al-Hadid', 'Al-Mujadila', 'Al-Hashr', 'Al-Mumtahanah', 'As-Saff',
+      'Al-Jumua', 'Al-Munafiqun', 'At-Taghabun', 'At-Talaq', 'At-Tahrim',
+      'Al-Mulk', 'Al-Qalam', 'Al-Haqqah', 'Al-Maarij', 'Nuh', 'Al-Jinn',
+      'Al-Muzzammil', 'Al-Muddaththir', 'Al-Qiyamah', 'Al-Insan', 'Al-Mursalat',
+      'An-Naba', 'An-Naziat', 'Abasa', 'At-Takwir', 'Al-Infitar', 'Al-Mutaffifin',
+      'Al-Inshiqaq', 'Al-Buruj', 'At-Tariq', 'Al-Ala', 'Al-Ghashiyah',
+      'Al-Fajr', 'Al-Balad', 'Ash-Shams', 'Al-Lail', 'Ad-Duha', 'Ash-Sharh',
+      'At-Tin', 'Al-Alaq', 'Al-Qadr', 'Al-Bayyinah', 'Az-Zalzalah',
+      'Al-Adiyat', 'Al-Qariah', 'At-Takathur', 'Al-Asr', 'Al-Humazah',
+      'Al-Fil', 'Quraish', 'Al-Maun', 'Al-Kawthar', 'Al-Kafirun', 'An-Nasr',
+      'Al-Masad', 'Al-Ikhlas', 'Al-Falaq', 'An-Nas',
+    ];
+    if (n <= 0 || n >= names.length) return 'Surah $n';
+    return names[n];
   }
 
   @override
@@ -600,257 +696,296 @@ class _HomeTabState extends State<_HomeTab> {
   @override
   Widget build(BuildContext context) {
     final firstName = widget.name.split(' ').first;
-    return SafeArea(child: Stack(
-      children: [
-        // ── Subtle home background pattern ───────────────────────────────
-        Positioned.fill(
-          child: CustomPaint(
-            painter: _HomeBgPainter(),
-          ),
-        ),
+    const greetingPrefix = 'Assalamu alaikum,';
+
+    // Sub-text per activity tile (real data; safe fallbacks)
+    final quranSub = (_lastSurahName != null && _lastAyah != null)
+        ? (_ayahsToday > 0
+            ? '${_lastSurahName!} · $_lastAyah  · +$_ayahsToday today'
+            : '${_lastSurahName!} · $_lastAyah')
+        : 'Continue reading';
+    final dhikrSub = _dhikrToday > 0
+        ? '$_dhikrToday set${_dhikrToday == 1 ? '' : 's'} today'
+        : (snapDhikrStreak() > 0
+            ? '${snapDhikrStreak()}-day streak'
+            : 'Start your daily azkar');
+    final achievementsSub = _recentBadgeName != null
+        ? 'Last: ${_recentBadgeName!}'
+        : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} XP';
+    const inviteSub = 'Earn +500 per friend';
+
+    return Container(
+      // Honey-wash background replaces _HomeBgPainter pattern
+      color: Y4.bg,
+      child: SafeArea(child: Stack(children: [
         SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 110),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const SizedBox(height: 8),
-
-        // ── Top bar ───────────────────────────────────────────────────────
-        Row(children: [
-          GestureDetector(
-            onTap: widget.onGoAchievements,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                decoration: BoxDecoration(
-                  color: _C.darkBtn,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 8, offset: const Offset(0, 2),
-                  )],
-                ),
-                child: Row(children: [
-                  Container(
-                    width: 22, height: 22,
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFFFAA00)),
-                    child: Center(child: Text('N',
-                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)))),
-                  const SizedBox(width: 7),
-                  Text(widget.hasError || widget.noorPoints == null ? '---' : _fmt(widget.noorPoints ?? 0),
-                      style: GoogleFonts.rajdhani(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5)),
-                ]),
-              ),
-              const SizedBox(height: 4),
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text('Noor Points',
-                    style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600,
-                        color: _C.sub)),
-              ),
-            ]),
-          ),
-          const Spacer(),
-          GestureDetector(
-            onTap: () => widget.onGoProfile?.call(),
-            child: Stack(clipBehavior: Clip.none, children: [
-              Container(width: 48, height: 48,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)]),
-                  image: widget.avatarUrl != null
-                      ? DecorationImage(image: NetworkImage(widget.avatarUrl!), fit: BoxFit.cover)
-                      : null,
-                ),
-                child: widget.avatarUrl == null
-                    ? Center(child: Text(
-                        firstName.isNotEmpty ? firstName[0].toUpperCase() : 'N',
-                        style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)))
-                    : null),
-              Positioned(bottom: -4, right: -4, child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(color: const Color(0xFF5856D6),
-                    borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white, width: 1.5)),
-                child: Text('LV ${widget.level}', style: GoogleFonts.rajdhani(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5)),
-              )),
-            ]),
-          ),
-        ]),
-
-        // ── Noor Counter (tasbih drum display) ────────────────────────────────
-        const SizedBox(height: 22),
-        Center(child: _NoorCounter(
-          value: widget.noorPoints ?? 0,
-          visitCount: widget.homeVisitCount,
-        )),
-
-        // ── Swipe-to-Validate button (close to Today's points) ────────────────
-        const SizedBox(height: 18),
-        _SwipeValidateButton(onValidate: () async {
-          final awarded = await widget.onValidate();
-          if (!mounted) return awarded;
-          if (awarded) {
-            // Fresh pts: play confetti + full celebration modal
-            _confettiController.play();
-            _showValidateModal(); // modal calls _triggerBoostPopup on dismiss
-          } else {
-            // Already validated today: skip the modal but still show boost nudge
-            _triggerBoostPopup();
-          }
-          return awarded;
-        }),
-
-        // ── Streak Banner ─────────────────────────────────────────────────
-        const SizedBox(height: 20),
-        _StreakBanner(snap: widget.streakSnap),
-
-        // ── Progress card (Daily / Weekly / Monthly) ──────────────────────
-        const SizedBox(height: 20),
-        _ProgressCard(
-          todayPts: widget.todayPoints,
-          weekPts:  widget.weekPoints,
-          monthPts: widget.monthPoints,
-          streak:   widget.streak,
-          hasError: widget.hasError,
-        ),
-
-
-
-
-        // ── My Donations ─────────────────────────────────────────────────
-        if (_myDonations.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [NoorIcon.target(size: 18), const SizedBox(width: 6), Text('RECITE MORE.',
-                    style: GoogleFonts.rajdhani(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: _C.text,
-                        letterSpacing: 0.8,
-                        height: 1.0))]),
-                Text('HELP REAL LIVES.',
-                    style: GoogleFonts.rajdhani(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: _C.teal,
-                        letterSpacing: 0.8,
-                        height: 1.1)),
-                const SizedBox(height: 3),
-                Text('Your Noor Points fund these projects',
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 110),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // ── Header: greeting + bell + avatar tile ───────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(children: [
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(greetingPrefix,
                     style: GoogleFonts.outfit(
-                        fontSize: 12, fontWeight: FontWeight.w500, color: _C.sub)),
+                      fontSize: 11, fontWeight: FontWeight.w600, color: Y4.inkSoft,
+                    )),
+                  const SizedBox(height: 2),
+                  Text(firstName.isEmpty ? 'Friend' : firstName,
+                    style: Y4.display(fontSize: 24, fontWeight: FontWeight.w500, height: 1.1),
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                ])),
+                // Bell button — visual only for now
+                Container(
+                  width: 38, height: 38,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: Y4.surface,
+                    border: Border.all(color: Y4.border),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.notifications_none_rounded,
+                      size: 20, color: Y4.ink),
+                ),
+                // Avatar tile — preserves user image + level badge
+                GestureDetector(
+                  onTap: () => widget.onGoProfile?.call(),
+                  child: Stack(clipBehavior: Clip.none, children: [
+                    Container(
+                      width: 38, height: 38,
+                      decoration: BoxDecoration(
+                        color: Y4.honey,
+                        borderRadius: BorderRadius.circular(12),
+                        image: widget.avatarUrl != null
+                            ? DecorationImage(
+                                image: NetworkImage(widget.avatarUrl!),
+                                fit: BoxFit.cover)
+                            : null,
+                      ),
+                      child: widget.avatarUrl == null
+                          ? Center(child: Text(
+                              firstName.isNotEmpty ? firstName[0].toUpperCase() : 'N',
+                              style: GoogleFonts.outfit(
+                                fontSize: 14, fontWeight: FontWeight.w800,
+                                color: Y4.ink,
+                              )))
+                          : null,
+                    ),
+                    Positioned(bottom: -5, right: -5, child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Y4.ink,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Y4.bg, width: 1.5),
+                      ),
+                      child: Text('LV ${widget.level}',
+                          style: GoogleFonts.rajdhani(
+                            fontSize: 9, fontWeight: FontWeight.w800,
+                            color: Y4.honey, letterSpacing: 0.3,
+                          )),
+                    )),
+                  ]),
+                ),
               ]),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: _C.teal.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
+
+            // ── Garden hero (count-up + sun + 5 plants) ─────────────────────
+            const SizedBox(height: 4),
+            _Y4HeroCard(
+              value: widget.noorPoints ?? 0,
+              visitCount: widget.homeVisitCount,
+            ),
+
+            // ── Swipe-to-validate (honey-deep palette, gesture preserved) ───
+            const SizedBox(height: 12),
+            _SwipeValidateButton(onValidate: () async {
+              final awarded = await widget.onValidate();
+              if (!mounted) return awarded;
+              if (awarded) {
+                _confettiController.play();
+                _showValidateModal();
+              } else {
+                _triggerBoostPopup();
+              }
+              return awarded;
+            }),
+
+            // ── Streak (single garden card with 7-day plant row) ────────────
+            const SizedBox(height: 16),
+            _Y4StreakCard(
+              snap: widget.streakSnap,
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const StreakScreen())),
+            ),
+
+            // ── Progress (tabbed sun-arc) ───────────────────────────────────
+            const SizedBox(height: 12),
+            _Y4ProgressCard(
+              todayPts: widget.todayPoints,
+              weekPts:  widget.weekPoints,
+              monthPts: widget.monthPoints,
+              hasError: widget.hasError,
+            ),
+
+            // ── Activity grid: Quran, Dhikr, Achievements, Invite ───────────
+            // Per Y4: keep painted patterns + light rays effect, switch to
+            // honey palette per tile.
+            const SizedBox(height: 18),
+            Padding(
+              padding: const EdgeInsets.only(left: 2, bottom: 10),
+              child: RichText(text: TextSpan(children: [
+                TextSpan(text: "Today's ",
+                  style: Y4.display(fontSize: 20, color: Y4.ink, height: 1.0)),
+                TextSpan(text: 'plots',
+                  style: Y4.display(
+                    fontSize: 20, color: Y4.ink,
+                    fontStyle: FontStyle.italic, height: 1.0,
+                  )),
+              ])),
+            ),
+            GridView.count(
+              crossAxisCount: 2, shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
+              children: [
+                _ActivityCard(AppLocalizations.of(context)?.readQuran ?? 'Quran',
+                  NoorIcon.book(size: 28),
+                  solid:     Y4.butter,
+                  solidDeep: Y4.honey,
+                  textColor: Y4.ink,
+                  reward: quranSub,
+                  patternType: _CardPattern.arcRings,
+                  onTap: widget.onGoQuran),
+                _ActivityCard(AppLocalizations.of(context)?.dailyDhikr ?? 'Dhikr',
+                  NoorIcon.beads(size: 28),
+                  solid:     Y4.honey,
+                  solidDeep: Y4.honeyDeep,
+                  textColor: Y4.ink,
+                  reward: dhikrSub,
+                  patternType: _CardPattern.floatingDots,
+                  onTap: widget.onGoDhikr),
+                _ActivityCard(AppLocalizations.of(context)?.achievements ?? 'Achievements',
+                  NoorIcon.trophy(size: 28),
+                  solid:     Y4.amberY,
+                  solidDeep: const Color(0xFFB87E1A),
+                  textColor: Colors.white,
+                  reward: achievementsSub,
+                  patternType: _CardPattern.diamondSparks,
+                  onTap: widget.onGoAchievements),
+                _ActivityCard(AppLocalizations.of(context)?.inviteFriends ?? 'Invite',
+                  NoorIcon.handshake(size: 28),
+                  solid:     Y4.primary,
+                  solidDeep: Y4.primaryDeep,
+                  textColor: Colors.white,
+                  reward: inviteSub,
+                  patternType: _CardPattern.speedLines,
+                  onTap: widget.onGoInvite),
+              ],
+            ),
+
+            // ── Donations: section header (kept) + horizontal scroll
+            //    + quick-donate row + "See Details for more Projects" row ───
+            if (_myDonations.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    NoorIcon.target(size: 18),
+                    const SizedBox(width: 6),
+                    Text('RECITE MORE.',
+                      style: GoogleFonts.rajdhani(
+                        fontSize: 22, fontWeight: FontWeight.w700,
+                        color: Y4.ink, letterSpacing: 0.8, height: 1.0,
+                      )),
+                  ]),
+                  Text('HELP REAL LIVES.',
+                    style: GoogleFonts.rajdhani(
+                      fontSize: 22, fontWeight: FontWeight.w700,
+                      color: Y4.honeyDeep, letterSpacing: 0.8, height: 1.1,
+                    )),
+                  const SizedBox(height: 3),
+                  Text('Your Noor Points fund these projects',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12, fontWeight: FontWeight.w500, color: Y4.inkSoft,
+                    )),
+                ])),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Y4.honey.withValues(alpha: 0.20),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Y4.honey.withValues(alpha: 0.5)),
+                  ),
+                  child: Text('${_myDonations.length} active',
+                      style: GoogleFonts.rajdhani(
+                          fontSize: 13, fontWeight: FontWeight.w700,
+                          color: Y4.honeyDeep)),
+                ),
+              ]),
+              const SizedBox(height: 12),
+              _MyDonationsSection(
+                donations: _myDonations,
+                availablePoints: widget.noorPoints ?? 0,
+                onDonateMore: (project) {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => CommunityImpactPage(
+                        scrollToProjectId: project['id'] as String?),
+                  ));
+                },
               ),
-              child: Text('${_myDonations.length} active',
-                  style: GoogleFonts.rajdhani(
-                      fontSize: 13, fontWeight: FontWeight.w700,
-                      color: _C.teal)),
+            ],
+
+            // ── Ad placement banner (Y4 styling) ────────────────────────────
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity, height: 80,
+              decoration: BoxDecoration(
+                color: Y4.cream,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: Y4.border),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.ad_units_rounded, color: Y4.muted, size: 24),
+                  const SizedBox(height: 4),
+                  Text('Ad Placement Banner',
+                      style: GoogleFonts.outfit(
+                          fontSize: 12, fontWeight: FontWeight.w600,
+                          color: Y4.inkSoft)),
+                ],
+              ),
             ),
           ]),
-          const SizedBox(height: 12),
-          _MyDonationsSection(
-            donations: _myDonations,
-            availablePoints: widget.noorPoints ?? 0,
-            onDonateMore: (project) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CommunityImpactPage(scrollToProjectId: project['id'] as String?),
-                ),
-              );
-            },
-          ),
-        ],
-
-        // ── Activity grid ─────────────────────────────────────────────────
-        const SizedBox(height: 24),
-        Text(AppLocalizations.of(context)?.earnNoorPoints.toUpperCase() ?? 'EARN NOOR POINTS',
-            style: GoogleFonts.rajdhani(fontSize: 20, fontWeight: FontWeight.w700,
-                color: _C.text, letterSpacing: 1.0)),
-        const SizedBox(height: 14),
-        GridView.count(
-          crossAxisCount: 2, shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
-          children: [
-            _ActivityCard(AppLocalizations.of(context)?.readQuran ?? 'Read Quran',    NoorIcon.book(size: 28),
-              solid: const Color(0xFF3B72F6),
-              solidDeep: const Color(0xFF1A4DC4),
-              reward: '+5 pts / ayah',
-              patternType: _CardPattern.arcRings,
-              onTap: widget.onGoQuran),
-            _ActivityCard(AppLocalizations.of(context)?.dailyDhikr ?? 'Dhikar & Dua',  NoorIcon.beads(size: 28),
-              solid: const Color(0xFF18B97A),
-              solidDeep: const Color(0xFF0A7A50),
-              reward: '+10 pts / set',
-              patternType: _CardPattern.floatingDots,
-              onTap: widget.onGoDhikr),
-            _ActivityCard(AppLocalizations.of(context)?.inviteFriends ?? 'Invite Friends', NoorIcon.handshake(size: 28),
-              solid: const Color(0xFFE8446A),
-              solidDeep: const Color(0xFFA81A43),
-              reward: '+500 Coins',
-              patternType: _CardPattern.speedLines,
-              onTap: widget.onGoInvite),
-            _ActivityCard(AppLocalizations.of(context)?.achievements ?? 'Achievements',   NoorIcon.trophy(size: 28),
-              solid: const Color(0xFF8B5CF6),
-              solidDeep: const Color(0xFF5B21B6),
-              reward: '${_fmt(widget.totalXp)} pts • Lv ${widget.level}',
-              patternType: _CardPattern.diamondSparks,
-              onTap: widget.onGoAchievements),
-          ],
         ),
-
-        // ── Ad Placement Placeholder ──────────────────────────────────────
-        const SizedBox(height: 32),
-        Container(
-          width: double.infinity,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[300]!, width: 2, style: BorderStyle.solid),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.ad_units_rounded, color: Colors.grey[400], size: 24),
-              const SizedBox(height: 4),
-              Text('Ad Placement Banner', 
-                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey[500])),
-            ],
-          ),
-        ),
-      ]),
-    ),
-      Align(
-        alignment: Alignment.topCenter,
-        child: ConfettiWidget(
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
             confettiController: _confettiController,
             blastDirectionality: BlastDirectionality.explosive,
             shouldLoop: false,
+            // Y4 honey/sage celebration palette
             colors: const [
-              Colors.green,
-              Colors.blue,
-              Colors.pink,
-              Colors.orange,
-              Colors.purple
+              Y4.honey,
+              Y4.honeyDeep,
+              Y4.butter,
+              Y4.primary,
+              Y4.amberY,
             ],
             createParticlePath: (size) {
               final path = Path();
               path.addOval(Rect.fromCircle(center: Offset.zero, radius: 4));
               return path;
-            }),
-      ),
-    ]));
+            },
+          ),
+        ),
+      ])),
+    );
   }
+
+  /// Convenience accessor used by tile sub-text.
+  int snapDhikrStreak() => widget.streakSnap.dhikr;
 
   String _fmt(int n) {
     if (n >= 1000) {
@@ -1175,7 +1310,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF1A4731), Color(0xFF128C7E)],
+                              colors: [Y4.primary, Color(0xFF128C7E)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
@@ -1783,6 +1918,7 @@ class _ActivityCard extends StatefulWidget {
   final String title, reward;
   final Widget icon;
   final Color solid, solidDeep;
+  final Color textColor;
   final _CardPattern patternType;
   final VoidCallback onTap;
   const _ActivityCard(this.title, this.icon, {
@@ -1791,6 +1927,7 @@ class _ActivityCard extends StatefulWidget {
     required this.reward,
     required this.patternType,
     required this.onTap,
+    this.textColor = Colors.white,
   });
   @override State<_ActivityCard> createState() => _ActivityCardState();
 }
@@ -1852,10 +1989,16 @@ class _ActivityCardState extends State<_ActivityCard> {
                     Container(
                       width: 48, height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.22),
+                        color: (widget.textColor == Colors.white
+                                ? Colors.white
+                                : Colors.black)
+                            .withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.30)),
+                            color: (widget.textColor == Colors.white
+                                    ? Colors.white
+                                    : Colors.black)
+                                .withValues(alpha: 0.25)),
                       ),
                       child: Center(child: widget.icon),
                     ),
@@ -1864,24 +2007,30 @@ class _ActivityCardState extends State<_ActivityCard> {
                         maxLines: 2, overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.rajdhani(
                             fontSize: 17, fontWeight: FontWeight.w800,
-                            color: Colors.white, letterSpacing: 0.3,
-                            shadows: [Shadow(
-                              color: Colors.black.withValues(alpha: 0.20),
-                              blurRadius: 4,
-                            )])),
+                            color: widget.textColor, letterSpacing: 0.3,
+                            shadows: widget.textColor == Colors.white
+                                ? [Shadow(
+                                    color: Colors.black.withValues(alpha: 0.20),
+                                    blurRadius: 4,
+                                  )]
+                                : null,
+                            )),
                       const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 9, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.22),
+                          color: (widget.textColor == Colors.white
+                                  ? Colors.white
+                                  : Colors.black)
+                              .withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(widget.reward,
                             maxLines: 1, overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
                                 fontSize: 11, fontWeight: FontWeight.w800,
-                                color: Colors.white)),
+                                color: widget.textColor)),
                       ),
                     ]),
                   ],
@@ -2193,179 +2342,218 @@ class _MyDonationsSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: 480,
+          height: 460,
           child: ListView.separated(
-            clipBehavior: Clip.hardEdge,   // ← cards are clipped; no peeking until swipe
+            clipBehavior: Clip.hardEdge,
             scrollDirection: Axis.horizontal,
-                itemCount: donations.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 14),
-                itemBuilder: (ctx, i) {
-                  final d = donations[i];
-                  final target  = (d['target_points']  as num).toInt();
-                  final current = (d['current_points'] as num).toInt();
-                  final myPts   = (d['my_donated'] as num).toInt();
-                  final remaining = (target - current).clamp(0, target);
-                  
-                  final pct = (current / target).clamp(0.0, 1.0);
-                  final myPct = (myPts / target).clamp(0.0, 1.0);
-                  final isCompleted = d['is_completed'] == true;
+            itemCount: donations.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 14),
+            itemBuilder: (ctx, i) {
+              final d = donations[i];
+              final target  = (d['target_points']  as num).toInt();
+              final current = (d['current_points'] as num).toInt();
+              final myPts   = (d['my_donated'] as num).toInt();
+              final pct = target == 0 ? 0.0 : (current / target).clamp(0.0, 1.0);
+              final isCompleted = d['is_completed'] == true;
 
-                  final dpUrl = d['dp_url'] as String?;
-                  Widget banner;
-                  if (dpUrl != null && dpUrl.isNotEmpty) {
-                    banner = SizedBox(
-                      width: double.infinity,
-                      height: 240,
-                      child: Image.network(
-                        dpUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: const Color(0xFFF7F4EF),
-                          child: Center(child: Icon(Icons.volunteer_activism_rounded, size: 48, color: _C.teal)),
-                        ),
-                      ),
-                    );
-                  } else {
-                    banner = Container(
-                      width: double.infinity, height: 240,
-                      color: const Color(0xFFF7F4EF),
-                      child: Icon(Icons.volunteer_activism_rounded, size: 48, color: _C.teal),
-                    );
-                  }
-
-                  String fmt(int n) => n >= 1000000 ? '${(n/1000000).toStringAsFixed(1)}M' : (n >= 1000 ? '${(n/1000).toStringAsFixed(1)}k' : '$n');
-
-                  return Container(
-                    width: donations.length == 1 ? constraints.maxWidth : 300,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(22),
-                      boxShadow: [BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 12, offset: const Offset(0, 4))],
-                      border: Border.all(color: Colors.grey.shade100, width: 1.5),
+              final dpUrl = d['dp_url'] as String?;
+              Widget banner;
+              if (dpUrl != null && dpUrl.isNotEmpty) {
+                banner = SizedBox(
+                  width: double.infinity, height: 160,
+                  child: Image.network(
+                    dpUrl, fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: Y4.cream,
+                      child: Center(child: Icon(
+                          Icons.volunteer_activism_rounded,
+                          size: 44, color: Y4.honeyDeep)),
                     ),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                      // Wide Banner
-                      banner,
-                      
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title
-                              Center(
-                                child: Text((d['title'] ?? '').toString().toUpperCase(),
-                                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: _C.text, letterSpacing: -0.2),
-                                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                );
+              } else {
+                banner = Container(
+                  width: double.infinity, height: 160,
+                  color: Y4.cream,
+                  child: Center(child: Icon(
+                      Icons.volunteer_activism_rounded,
+                      size: 44, color: Y4.honeyDeep)),
+                );
+              }
+
+              String fmt(int n) => n >= 1000000
+                  ? '${(n/1000000).toStringAsFixed(1)}M'
+                  : (n >= 1000 ? '${(n/1000).toStringAsFixed(1)}k' : '$n');
+
+              return Container(
+                width: donations.length == 1 ? constraints.maxWidth : 320,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Y4.primaryDeep,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Image banner (kept) ─────────────────────────────
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                      child: banner,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Caption
+                            Text('PLANT GOOD DEEDS',
+                              style: GoogleFonts.outfit(
+                                fontSize: 10, fontWeight: FontWeight.w700,
+                                color: Y4.honey, letterSpacing: 1.6,
+                              )),
+                            const SizedBox(height: 6),
+                            // Title (Fraunces serif, italic accent in honey)
+                            Text((d['title'] ?? '').toString(),
+                              style: Y4.display(
+                                fontSize: 20, color: Colors.white,
+                                fontWeight: FontWeight.w400, height: 1.15,
                               ),
-                              // Description snippet
-                              if ((d['description'] ?? '').toString().isNotEmpty) ...[
-                                const SizedBox(height: 6),
-                                Text(
-                                  (d['description'] ?? '').toString(),
-                                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF1A1A1A), height: 1.35),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                              maxLines: 2, overflow: TextOverflow.ellipsis),
+                            if ((d['description'] ?? '').toString().isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                (d['description'] ?? '').toString(),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11, fontWeight: FontWeight.w500,
+                                  color: Colors.white.withValues(alpha: 0.78),
+                                  height: 1.35,
                                 ),
-                              ],
-                              const Spacer(),
-                              
-                              // Chart & Stats Row
-                              Row(
-                        children: [
-                          // Circular Chart
-                          SizedBox(
-                            height: 74, width: 74,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                CircularProgressIndicator(value: 1.0, strokeWidth: 7, color: Colors.grey.shade100, strokeCap: StrokeCap.round),
-                                CircularProgressIndicator(value: pct, strokeWidth: 7, color: const Color(0xFFF59E0B), strokeCap: StrokeCap.round),
-                                CircularProgressIndicator(value: myPct, strokeWidth: 7, color: const Color(0xFF2BAE7C), strokeCap: StrokeCap.round),
-                                Center(
-                                  child: isCompleted 
-                                    ? const Icon(Icons.check_rounded, color: Color(0xFF2BAE7C), size: 28)
-                                    : Text('${(pct * 100).toInt()}%', 
-                                      style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: _C.text)),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 18),
-                          
-                          // Legends
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFF2BAE7C), shape: BoxShape.circle)),
-                                    const SizedBox(width: 8),
-                                    Flexible(child: Text('Your Contribution', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
-                                    const SizedBox(width: 4),
-                                    Text(fmt(myPts), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
-                                  ]
-                                ),
-                                const SizedBox(height: 6),
-                                Row(
-                                  children: [
-                                    Container(width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
-                                    const SizedBox(width: 8),
-                                    Flexible(child: Text("Others'", maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
-                                    const SizedBox(width: 4),
-                                    Text(fmt((current - myPts).clamp(0, current)), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
-                                  ]
-                                ),
-                                const SizedBox(height: 6),
-                                Row(
-                                  children: [
-                                    Container(width: 8, height: 8, decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle)),
-                                    const SizedBox(width: 8),
-                                    Flexible(child: Text('Needed', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
-                                    const SizedBox(width: 4),
-                                    Text(fmt(remaining), style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: _C.text)),
-                                  ]
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      
-                      // Donate More button
-                      if (!isCompleted && availablePoints > 0)
-                        GestureDetector(
-                          onTap: () => onDonateMore(d),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            decoration: BoxDecoration(
-                              color: _C.teal, // matching _C.navImpact
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Center(
-                              child: Text('See Details →',
-                                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
-                            ),
-                          ),
-                        ),
+                                maxLines: 2, overflow: TextOverflow.ellipsis,
+                              ),
                             ],
-                          ),
+                            const Spacer(),
+
+                            // Progress info row
+                            Row(children: [
+                              Text('${fmt(current)} / ${fmt(target)} pts',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11, fontWeight: FontWeight.w500,
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                )),
+                              const Spacer(),
+                              Text('${(pct * 100).round()}%',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11, fontWeight: FontWeight.w500,
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                )),
+                            ]),
+                            const SizedBox(height: 6),
+                            // Honey→butter progress bar
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(999),
+                              child: Container(
+                                height: 6,
+                                color: Colors.white.withValues(alpha: 0.15),
+                                child: FractionallySizedBox(
+                                  alignment: Alignment.centerLeft,
+                                  widthFactor: pct,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Y4.honey, Y4.butter],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // "You donated" small caption
+                            if (myPts > 0) ...[
+                              const SizedBox(height: 6),
+                              Text('You donated ${fmt(myPts)} pts',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 10, fontWeight: FontWeight.w600,
+                                  color: Y4.honey,
+                                )),
+                            ],
+                            const SizedBox(height: 12),
+
+                            // Quick donate row: 50 / 100 / 250
+                            if (!isCompleted) ...[
+                              Row(children: [
+                                _Y4DonateChip(amount: 50,  onTap: () => onDonateMore(d)),
+                                const SizedBox(width: 8),
+                                _Y4DonateChip(amount: 100, onTap: () => onDonateMore(d)),
+                                const SizedBox(width: 8),
+                                _Y4DonateChip(amount: 250, onTap: () => onDonateMore(d)),
+                              ]),
+                              const SizedBox(height: 8),
+                            ],
+
+                            // See Details → for more Projects (next row)
+                            GestureDetector(
+                              onTap: () => onDonateMore(d),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 11),
+                                decoration: BoxDecoration(
+                                  color: Y4.honey,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Center(
+                                  child: Text('See Details for more Projects →',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 12, fontWeight: FontWeight.w800,
+                                      color: Y4.primaryDeep, letterSpacing: 0.2,
+                                    )),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ]),
-                  );
-                },
-              ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
+  }
+}
+
+/// Quick-donate chip (50 / 100 / 250 pts) — Y4 ghost button style.
+class _Y4DonateChip extends StatelessWidget {
+  final int amount;
+  final VoidCallback onTap;
+  const _Y4DonateChip({required this.amount, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 9),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: 1.5),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Center(
+          child: Text('$amount pts',
+            style: GoogleFonts.outfit(
+              fontSize: 11, fontWeight: FontWeight.w600,
+              color: Colors.white,
+            )),
+        ),
+      ),
+    ));
   }
 }
 
@@ -3409,7 +3597,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                   width: 44, height: 44,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                        colors: [Color(0xFF1A1040), Color(0xFF2D1B69)]),
+                        colors: [Y4.primaryDeep, Y4.primary]),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(child: NoorIcon.trophy(size: 22)),
@@ -3442,12 +3630,12 @@ class _RankingSheetState extends State<_RankingSheet> {
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                          colors: [Y4.primaryDeep, Y4.primary],
                           begin: Alignment.topLeft, end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(22),
                         boxShadow: [BoxShadow(
-                            color: const Color(0xFF2D1B69).withValues(alpha: 0.35),
+                            color: Y4.primary.withValues(alpha: 0.35),
                             blurRadius: 16, offset: const Offset(0, 6))]),
                     child: Row(children: [
                       NoorIcon.medal(size: 40),
@@ -3476,7 +3664,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                       final p = _leaders[i];
                       final isMe = p['id'] == widget.currentUserId;
                       final badgeColors = [
-                        [const Color(0xFFFFD700), const Color(0xFFFFA500)],
+                        [Y4.butter, Y4.honey],
                         [const Color(0xFFB0BEC5), const Color(0xFF78909C)],
                         [const Color(0xFFCD7F32), const Color(0xFFA0522D)],
                       ];
@@ -3607,58 +3795,58 @@ class _ProfileTabState extends State<_ProfileTab> {
       child: SingleChildScrollView(
       child: Column(children: [
 
-        // ── Profile header — Akhirah-style deep green + arcs ──────────────
+        // ── Profile header — honey wash hero matching dashboard ──────────────
         Container(
           width: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF0A2318), Color(0xFF133828), Color(0xFF1A4731)],
+              colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
             ),
           ),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // Decorative arc circles — same as Akhirah
+              // Decorative arc circles (subtle honey/sage on light bg)
               Positioned(top: -40, right: -40,
-                  child: _ProfileArc(180, Colors.white.withValues(alpha: 0.04))),
+                  child: _ProfileArc(180, Y4.honey.withValues(alpha: 0.18))),
               Positioned(bottom: -20, left: -30,
-                  child: _ProfileArc(130, Colors.white.withValues(alpha: 0.03))),
+                  child: _ProfileArc(130, Y4.primary.withValues(alpha: 0.08))),
               Positioned(top: 40, right: 40,
-                  child: _ProfileArc(70, const Color(0xFFD4AF37).withValues(alpha: 0.08))),
+                  child: _ProfileArc(70, Y4.honeyDeep.withValues(alpha: 0.10))),
               Positioned(top: -10, left: 60,
-                  child: _ProfileArc(50, _C.teal.withValues(alpha: 0.06))),
+                  child: _ProfileArc(50, Y4.primaryDeep.withValues(alpha: 0.06))),
 
               // Content — padded below status bar
               Padding(
                 padding: EdgeInsets.fromLTRB(22, statusBarH + 18, 22, 36),
                 child: Column(children: [
-                  // Top row: "My Profile" title + level pill (mirrors Akhirah top bar)
+                  // Top row: "My Profile" title + level pill + settings
                   Row(children: [
                     Text(AppLocalizations.of(context)?.myProfile ?? 'My Profile',
                         style: GoogleFonts.outfit(
                             fontSize: 18, fontWeight: FontWeight.w800,
-                            color: Colors.white)),
+                            color: Y4.ink)),
                     const Spacer(),
-                    // Level pill — Flexible so long titles don't overflow
+                    // Level pill
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                          color: Y4.honey.withValues(alpha: 0.30),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                          border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.5)),
                         ),
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
                           const Icon(Icons.workspace_premium_rounded,
-                              color: Color(0xFFD4AF37), size: 14),
+                              color: Y4.honeyDeep, size: 14),
                           const SizedBox(width: 5),
                           Flexible(child: Text('Lvl $level · ${_localizeLevel(context, levelTitle)}',
                               maxLines: 1, overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
                                   fontSize: 12, fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFD4AF37)))),
+                                  color: Y4.honeyDeep))),
                         ]),
                       ),
                     ),
@@ -3669,39 +3857,37 @@ class _ProfileTabState extends State<_ProfileTab> {
                       child: Container(
                         width: 38, height: 38,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
+                          color: Y4.surface,
                           shape: BoxShape.circle,
-                          border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2)),
+                          border: Border.all(color: Y4.border),
+                          boxShadow: [BoxShadow(
+                            color: Y4.ink.withValues(alpha: 0.06),
+                            blurRadius: 8, offset: const Offset(0, 2),
+                          )],
                         ),
                         child: const Icon(Icons.settings_rounded,
-                            color: Colors.white, size: 18),
+                            color: Y4.ink, size: 18),
                       ),
                     ),
                   ]),
 
                   const SizedBox(height: 28),
 
-                  // Avatar
+                  // Avatar (honey gradient circle)
                   Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
                     Container(
                       width: 100, height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFDD88FF), Color(0xFF9B59B6)],
+                          colors: [Y4.honey, Y4.honeyDeep],
                           begin: Alignment.topLeft, end: Alignment.bottomRight,
                         ),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.25), width: 3),
+                        border: Border.all(color: Y4.surface, width: 3),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9B59B6).withValues(alpha: 0.5),
-                            blurRadius: 28, offset: const Offset(0, 8),
-                          ),
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.06),
-                            blurRadius: 0, spreadRadius: 4,
+                            color: Y4.honeyDeep.withValues(alpha: 0.30),
+                            blurRadius: 24, offset: const Offset(0, 6),
                           ),
                         ],
                         image: avatarUrl != null
@@ -3714,7 +3900,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                               first.isNotEmpty ? first[0].toUpperCase() : 'N',
                               style: GoogleFonts.outfit(
                                   fontSize: 44, fontWeight: FontWeight.w800,
-                                  color: Colors.white),
+                                  color: Y4.ink),
                             ))
                           : null,
                     ),
@@ -3722,29 +3908,26 @@ class _ProfileTabState extends State<_ProfileTab> {
 
                   const SizedBox(height: 18),
 
-                  // Name
+                  // Name (Fraunces serif)
                   Text(name,
-                      style: GoogleFonts.rajdhani(
-                          fontSize: 28, fontWeight: FontWeight.w800,
-                          color: Colors.white, letterSpacing: 0.5)),
+                      style: Y4.display(
+                          fontSize: 28, fontWeight: FontWeight.w500,
+                          color: Y4.ink, letterSpacing: -0.3, height: 1.0)),
                   const SizedBox(height: 4),
 
                   // Email / Country
                   if ((user?.email ?? user?.userMetadata?['qf_email']) != null)
                     Text((user?.email ?? user?.userMetadata?['qf_email']) as String? ?? '',
                         style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            color: Colors.white.withValues(alpha: 0.5))),
+                            fontSize: 12, color: Y4.inkSoft)),
                   if (country != null && country.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Row(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(Icons.public_rounded,
-                          size: 12, color: Colors.white.withValues(alpha: 0.5)),
+                      const Icon(Icons.public_rounded, size: 12, color: Y4.muted),
                       const SizedBox(width: 4),
                       Text(country,
                           style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.55))),
+                              fontSize: 12, color: Y4.inkSoft)),
                     ]),
                   ],
                 ]),
@@ -3780,7 +3963,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                           width: 40, height: 40,
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                              colors: [Y4.primaryDeep, Y4.primary],
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -3806,13 +3989,13 @@ class _ProfileTabState extends State<_ProfileTab> {
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+                              colors: [Y4.primaryDeep, Y4.primary],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [BoxShadow(
-                              color: const Color(0xFF2D1B69).withValues(alpha: 0.35),
+                              color: Y4.primary.withValues(alpha: 0.35),
                               blurRadius: 14, offset: const Offset(0, 5),
                             )],
                           ),
@@ -3854,7 +4037,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                         final isMe   = p['id'] == widget.currentUserId;
                         final isTop3 = i < 3;
                         final badgeColors = [
-                          [const Color(0xFFFFD700), const Color(0xFFFFA500)],
+                          [Y4.butter, Y4.honey],
                           [const Color(0xFFB0BEC5), const Color(0xFF78909C)],
                           [const Color(0xFFCD7F32), const Color(0xFFA0522D)],
                         ];
@@ -4175,15 +4358,15 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
   final List<_EnergyParticle> _particles = [];
   final _rng = math.Random();
 
-  // ── Colors — app-native teal/green palette ────────────────────────────
-  // Matches the Akhira/Profile header and the app's signature teal accent.
-  static final _neonGreen  = _C.teal;   // app teal
-  static const _neonGold   = Color(0xFFD4AF37);   // soft Islamic gold
-  static const _socketRing = Color(0xFF1A9E8C);   // deeper teal ring
+  // ── Colors — Y4 honey/sage palette (restyled from teal) ──────────────
+  // Track is honey-deep, glow particles are honey + butter + sage.
+  static const _neonGreen  = Y4.honeyDeep;        // primary track / arc color
+  static const _neonGold   = Y4.butter;           // accent on completion
+  static const _socketRing = Y4.honey;            // bright honey ring
 
-  static final _sparkPalette = [
-    _C.teal, Color(0xFF1A9E8C), Color(0xFF4ECDC4),
-    Color(0xFFD4AF37), Color(0xFF80E5D8), Color(0xFFFFFFFF),
+  static const _sparkPalette = [
+    Y4.honey, Y4.honeyDeep, Y4.butter,
+    Y4.primary, Y4.amberY, Color(0xFFFFFFFF),
   ];
 
   // ── Controllers ──────────────────────────────────────────────────────
@@ -4420,21 +4603,21 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
               height: _trackH,
               child: Stack(clipBehavior: Clip.none, children: [
 
-                // ── Track background ───────────────────────────────────
+                // ── Track background — deep sage→olive Y4 garden track ──
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF0A2318), Color(0xFF133828), Color(0xFF1A4731)],
+                        colors: [Color(0xFF1F2A0F), Color(0xFF2E3D1A), Color(0xFF4D5C20)],
                         begin: Alignment.topLeft, end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(radius),
                       border: Border.all(
-                        color: _C.teal.withValues(alpha: 0.5), width: 1.5,
+                        color: Y4.honeyDeep.withValues(alpha: 0.5), width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: _C.teal.withValues(alpha: 0.22),
+                          color: Y4.honeyDeep.withValues(alpha: 0.22),
                           blurRadius: 24, offset: const Offset(0, 8),
                         ),
                         BoxShadow(
@@ -4471,7 +4654,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Progress fill (teal→gold, grows with drag) ──────────
+                // ── Progress fill (sage → honey-deep → butter on full) ──
                 Positioned(
                   left: 0, top: 0, bottom: 0,
                   child: Container(
@@ -4479,11 +4662,11 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF1A9E8C).withValues(alpha: 0.5),
-                          _C.teal.withValues(alpha: 0.65),
+                          Y4.primary.withValues(alpha: 0.55),
+                          Y4.honeyDeep.withValues(alpha: 0.75),
                           Color.lerp(
-                            _C.teal,
-                            _neonGold,
+                            Y4.honeyDeep,
+                            _neonGold, // butter on full
                             (pct - 0.6).clamp(0.0, 1.0) / 0.4,
                           )!,
                         ],
@@ -4520,7 +4703,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                           shaderCallback: (bounds) => LinearGradient(
                             colors: [
                               Colors.white.withValues(alpha: 0.7),
-                              const Color(0xFFD4AF37),
+                              Y4.honey,
                               Colors.white.withValues(alpha: 0.7),
                             ],
                             stops: [
@@ -4861,6 +5044,617 @@ class _OrbWidget extends StatelessWidget {
               ),
             );
           }),
+      ]),
+    );
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Y4 — HONEY + SAGE GARDEN WIDGETS
+// Custom painters that recreate the SVG plant / sun / arc graphics used in the
+// Y4 dashboard design (Copy of Noor Rewards V1).
+// ═════════════════════════════════════════════════════════════════════════════
+
+/// A small potted plant — used in the hero garden floor.
+/// `grow` ranges 0..1; controls stem height, leaf count, and bloom presence.
+class _Y4Plant extends StatelessWidget {
+  final double grow;
+  final double size;
+  const _Y4Plant({required this.grow, this.size = 64});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size, height: size,
+      child: CustomPaint(painter: _Y4PlantPainter(grow: grow)),
+    );
+  }
+}
+
+class _Y4PlantPainter extends CustomPainter {
+  final double grow;
+  const _Y4PlantPainter({required this.grow});
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final scale = s.width / 64.0;
+    Offset p(double x, double y) => Offset(x * scale, y * scale);
+
+    final leaves = (grow * 4).ceil().clamp(0, 4);
+
+    // Pot trapezoid (16,48 -> 48,48 -> 44,60 -> 20,60)
+    final potPath = Path()
+      ..moveTo(p(16, 48).dx, p(16, 48).dy)
+      ..lineTo(p(48, 48).dx, p(48, 48).dy)
+      ..lineTo(p(44, 60).dx, p(44, 60).dy)
+      ..lineTo(p(20, 60).dx, p(20, 60).dy)
+      ..close();
+    canvas.drawPath(potPath, Paint()..color = Y4.soil..style = PaintingStyle.fill);
+
+    // Pot rim ellipse cx=32 cy=48 rx=16 ry=3
+    canvas.drawOval(
+      Rect.fromCenter(center: p(32, 48), width: 32 * scale, height: 6 * scale),
+      Paint()..color = Y4.soilDeep..style = PaintingStyle.fill,
+    );
+
+    // Stem M32 48 Q32 (48-grow*30) 32 (30-grow*10)
+    final stem = Path()
+      ..moveTo(p(32, 48).dx, p(32, 48).dy)
+      ..quadraticBezierTo(
+        p(32, 48 - grow * 30).dx, p(32, 48 - grow * 30).dy,
+        p(32, 30 - grow * 10).dx, p(32, 30 - grow * 10).dy,
+      );
+    canvas.drawPath(stem, Paint()
+      ..color = Y4.primary
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2 * scale
+      ..strokeCap = StrokeCap.round);
+
+    // Leaves (drawn progressively as grow increases)
+    Paint sageFill = Paint()..color = Y4.primary..style = PaintingStyle.fill;
+    Paint sageDeepFill = Paint()..color = Y4.primaryDeep..style = PaintingStyle.fill;
+
+    if (leaves >= 1) {
+      // M32 40 Q24 36 22 30 Q28 30 32 38
+      final leaf1 = Path()
+        ..moveTo(p(32, 40).dx, p(32, 40).dy)
+        ..quadraticBezierTo(p(24, 36).dx, p(24, 36).dy, p(22, 30).dx, p(22, 30).dy)
+        ..quadraticBezierTo(p(28, 30).dx, p(28, 30).dy, p(32, 38).dx, p(32, 38).dy)
+        ..close();
+      canvas.drawPath(leaf1, sageFill);
+    }
+    if (leaves >= 2) {
+      final leaf2 = Path()
+        ..moveTo(p(32, 36).dx, p(32, 36).dy)
+        ..quadraticBezierTo(p(40, 32).dx, p(40, 32).dy, p(42, 26).dx, p(42, 26).dy)
+        ..quadraticBezierTo(p(36, 26).dx, p(36, 26).dy, p(32, 34).dx, p(32, 34).dy)
+        ..close();
+      canvas.drawPath(leaf2, sageFill);
+    }
+    if (leaves >= 3) {
+      final leaf3 = Path()
+        ..moveTo(p(32, 28).dx, p(32, 28).dy)
+        ..quadraticBezierTo(p(26, 24).dx, p(26, 24).dy, p(24, 18).dx, p(24, 18).dy)
+        ..quadraticBezierTo(p(30, 18).dx, p(30, 18).dy, p(32, 26).dx, p(32, 26).dy)
+        ..close();
+      canvas.drawPath(leaf3, sageDeepFill);
+    }
+    if (leaves >= 4) {
+      // Honey bloom circle cx=32 cy=20 r=5
+      canvas.drawCircle(p(32, 20), 5 * scale,
+          Paint()..color = Y4.honey..style = PaintingStyle.fill);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Y4PlantPainter old) => old.grow != grow;
+}
+
+/// A miniature streak-day plant. State: `done` (filled past day),
+/// `today` (in progress), `future` (empty soil only).
+class _Y4StreakPlant extends StatelessWidget {
+  final bool done;
+  final bool today;
+  const _Y4StreakPlant({this.done = false, this.today = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 24, height: 28,
+      child: CustomPaint(painter: _Y4StreakPlantPainter(done: done, today: today)),
+    );
+  }
+}
+
+class _Y4StreakPlantPainter extends CustomPainter {
+  final bool done;
+  final bool today;
+  const _Y4StreakPlantPainter({required this.done, required this.today});
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final sx = s.width / 24.0;
+    final sy = s.height / 28.0;
+    Offset p(double x, double y) => Offset(x * sx, y * sy);
+
+    // Soil base rect x=4 y=22 w=16 h=5 rx=1
+    final soilColor = done ? Y4.soil : Y4.track;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(p(4, 22).dx, p(4, 22).dy, 16 * sx, 5 * sy),
+        Radius.circular(1 * sx),
+      ),
+      Paint()..color = soilColor..style = PaintingStyle.fill,
+    );
+
+    if (done) {
+      // Stem M12 22 Q12 14 12 10
+      final stem = Path()
+        ..moveTo(p(12, 22).dx, p(12, 22).dy)
+        ..quadraticBezierTo(p(12, 14).dx, p(12, 14).dy, p(12, 10).dx, p(12, 10).dy);
+      canvas.drawPath(stem, Paint()
+        ..color = Y4.primary
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5 * sx);
+
+      // Left leaf M12 16 Q8 14 7 10 Q11 10 12 14
+      final l1 = Path()
+        ..moveTo(p(12, 16).dx, p(12, 16).dy)
+        ..quadraticBezierTo(p(8, 14).dx, p(8, 14).dy, p(7, 10).dx, p(7, 10).dy)
+        ..quadraticBezierTo(p(11, 10).dx, p(11, 10).dy, p(12, 14).dx, p(12, 14).dy)
+        ..close();
+      canvas.drawPath(l1, Paint()..color = Y4.primary..style = PaintingStyle.fill);
+
+      // Right leaf M12 14 Q16 12 17 8 Q13 8 12 12
+      final l2 = Path()
+        ..moveTo(p(12, 14).dx, p(12, 14).dy)
+        ..quadraticBezierTo(p(16, 12).dx, p(16, 12).dy, p(17, 8).dx, p(17, 8).dy)
+        ..quadraticBezierTo(p(13, 8).dx, p(13, 8).dy, p(12, 12).dx, p(12, 12).dy)
+        ..close();
+      canvas.drawPath(l2, Paint()..color = Y4.primaryDeep..style = PaintingStyle.fill);
+    } else if (today) {
+      // Dashed honey-deep stem M12 22 L12 18
+      final dash = Paint()
+        ..color = Y4.honeyDeep
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5 * sx
+        ..strokeCap = StrokeCap.round;
+      const dashLen = 1.5;
+      const gap = 1.5;
+      double y = 22;
+      while (y > 18) {
+        final yEnd = (y - dashLen).clamp(18.0, 22.0);
+        canvas.drawLine(p(12, y), p(12, yEnd), dash);
+        y -= dashLen + gap;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Y4StreakPlantPainter old) =>
+      old.done != done || old.today != today;
+}
+
+/// The decorative honey sun used in the hero card.
+class _Y4Sun extends StatelessWidget {
+  final double size;
+  const _Y4Sun({this.size = 44});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size, height: size,
+      child: CustomPaint(painter: _Y4SunPainter()),
+    );
+  }
+}
+
+class _Y4SunPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size s) {
+    final c = Offset(s.width / 2, s.height / 2);
+    final coreR = s.width * (12 / 44);
+    final rayR  = s.width * (20 / 44);
+
+    final core = Paint()..color = Y4.honey..style = PaintingStyle.fill;
+    canvas.drawCircle(c, coreR, core);
+
+    final ray = Paint()
+      ..color = Y4.honey.withValues(alpha: 0.85)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = s.width * (2 / 44)
+      ..strokeCap = StrokeCap.round;
+    for (int i = 0; i < 8; i++) {
+      final a = (i * 45) * math.pi / 180;
+      canvas.drawLine(c, c + Offset(math.cos(a) * rayR, math.sin(a) * rayR), ray);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Y4SunPainter _) => false;
+}
+
+/// Sun-arc progress: a 180° arc from left to right with a sun-circle that
+/// travels along it as `pct` (0..1) increases.
+class _Y4SunArc extends StatelessWidget {
+  final double pct; // 0..1
+  const _Y4SunArc({required this.pct});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 100, height: 60,
+      child: CustomPaint(painter: _Y4SunArcPainter(pct: pct.clamp(0.0, 1.0))),
+    );
+  }
+}
+
+class _Y4SunArcPainter extends CustomPainter {
+  final double pct;
+  const _Y4SunArcPainter({required this.pct});
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    // Arc geometry: center (50,55) radius 40, sweeping from 180° to 360° (top half)
+    final center = Offset(s.width * 0.5, s.height * (55 / 60));
+    final radius = s.width * (40 / 100);
+
+    // Track
+    final track = Paint()
+      ..color = Y4.track
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      math.pi, math.pi, false, track,
+    );
+
+    // Filled portion
+    final fill = Paint()
+      ..color = Y4.honeyDeep
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      math.pi, math.pi * pct, false, fill,
+    );
+
+    // Travelling sun marker (matches Y4 jsx geometry)
+    final ang = math.pi - pct * math.pi;
+    final sunCx = center.dx + math.cos(ang) * radius;
+    final sunCy = center.dy - math.sin(pct * math.pi) * radius;
+    final sunPaint = Paint()..color = Y4.honey..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(sunCx, sunCy), 6, sunPaint);
+    canvas.drawCircle(
+      Offset(sunCx, sunCy), 6,
+      Paint()..color = Y4.honeyDeep..style = PaintingStyle.stroke..strokeWidth = 2,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_Y4SunArcPainter old) => old.pct != pct;
+}
+
+/// Garden hero card: sun + label + animated count-up number + "+today" pill
+/// (skipped per spec) + 5-plant garden floor.
+class _Y4HeroCard extends StatefulWidget {
+  final int value;
+  final int visitCount;
+  const _Y4HeroCard({required this.value, this.visitCount = 0});
+
+  @override
+  State<_Y4HeroCard> createState() => _Y4HeroCardState();
+}
+
+class _Y4HeroCardState extends State<_Y4HeroCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
+  int _from = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 1400),
+    );
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _ctrl.forward();
+    });
+  }
+
+  @override
+  void didUpdateWidget(_Y4HeroCard old) {
+    super.didUpdateWidget(old);
+    if (old.value != widget.value || old.visitCount != widget.visitCount) {
+      _from = old.value;
+      _ctrl..reset()..forward();
+    }
+  }
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  String _fmt(int n) {
+    final s = n.toString();
+    final buf = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+      buf.write(s[i]);
+    }
+    return buf.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: const Alignment(-0.3, -1.0), end: const Alignment(0.5, 1.0),
+          colors: [
+            Y4.cream,
+            Y4.honey.withValues(alpha: 0.20),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Y4.border),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: Stack(clipBehavior: Clip.none, children: [
+          // Sun (top-right)
+          Positioned(top: 0, right: 0, child: _Y4Sun(size: 44)),
+
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 50),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('YOUR GARDEN',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11, fontWeight: FontWeight.w700,
+                      color: Y4.inkSoft, letterSpacing: 1.5,
+                    )),
+                  const SizedBox(height: 6),
+                  AnimatedBuilder(
+                    animation: _anim,
+                    builder: (_, __) {
+                      final v = (_from + (widget.value - _from) * _anim.value).round();
+                      return Text(_fmt(v),
+                        style: Y4.display(
+                          fontSize: 56, fontWeight: FontWeight.w400,
+                          color: Y4.honeyDeep, letterSpacing: -0.02 * 56,
+                          height: 0.95,
+                        ));
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                  Text('noor points bloomed',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13, fontWeight: FontWeight.w500,
+                      color: Y4.inkSoft,
+                    )),
+                ]),
+              ),
+            ),
+
+            // Garden floor with 5 plants
+            const SizedBox(height: 14),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Y4.honey.withValues(alpha: 0.13)],
+                  stops: const [0.5, 1.0],
+                ),
+              ),
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: const [
+                  _Y4Plant(grow: 1.0,  size: 50),
+                  _Y4Plant(grow: 0.75, size: 56),
+                  _Y4Plant(grow: 0.4,  size: 48),
+                  _Y4Plant(grow: 0.9,  size: 58),
+                  _Y4Plant(grow: 0.2,  size: 42),
+                ],
+              ),
+            ),
+          ]),
+        ]),
+      ),
+    );
+  }
+}
+
+/// "Growing streak" garden card — single big number + 7-day plant row.
+/// Streak source is max(dhikr, quran). Plant row built from snap histories.
+class _Y4StreakCard extends StatelessWidget {
+  final StreakSnapshot snap;
+  final VoidCallback onTap;
+  const _Y4StreakCard({required this.snap, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final streak = snap.dhikr > snap.quran ? snap.dhikr : snap.quran;
+    final today = DateTime.now();
+
+    // Build a unified set of "active" days in the last 7 days from
+    // dhikr + quran histories.
+    final Set<int> activeDays = {};
+    for (final d in [...snap.dhikrHistory, ...snap.quranHistory]) {
+      final delta = today.difference(DateTime(d.year, d.month, d.day)).inDays;
+      if (delta >= 0 && delta < 7) activeDays.add(delta);
+    }
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Y4.surface,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Y4.border),
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('GROWING STREAK',
+                style: GoogleFonts.outfit(
+                  fontSize: 11, fontWeight: FontWeight.w700,
+                  color: Y4.inkSoft, letterSpacing: 1.3,
+                )),
+              const SizedBox(height: 4),
+              Row(crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic, children: [
+                Text('$streak day${streak == 1 ? '' : 's'}',
+                  style: Y4.display(fontSize: 28, fontWeight: FontWeight.w400, height: 1.0)),
+                const SizedBox(width: 8),
+                Text('· keep growing',
+                  style: Y4.display(
+                    fontSize: 16, fontStyle: FontStyle.italic,
+                    color: Y4.honeyDeep, height: 1.0,
+                  )),
+              ]),
+            ])),
+          ]),
+          const SizedBox(height: 14),
+
+          // 7 days: oldest (6 days ago) → today
+          Row(children: List.generate(7, (i) {
+            final daysAgo = 6 - i;
+            final isToday = daysAgo == 0;
+            final done = activeDays.contains(daysAgo);
+            const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+            // Build labels such that today aligns with the user's actual weekday.
+            final dt = today.subtract(Duration(days: daysAgo));
+            final letter = ['M','T','W','T','F','S','S'][(dt.weekday - 1) % 7];
+            final _ = labels; // suppress unused (kept for reference)
+            return Expanded(child: Column(children: [
+              Text(letter, style: GoogleFonts.outfit(
+                fontSize: 10, fontWeight: FontWeight.w700, color: Y4.muted,
+              )),
+              const SizedBox(height: 6),
+              _Y4StreakPlant(done: done, today: isToday && !done),
+            ]));
+          })),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Tabbed sun-arc progress card. Today / Week / Month with shared 50/250/800
+/// goals.
+class _Y4ProgressCard extends StatefulWidget {
+  final int? todayPts, weekPts, monthPts;
+  final bool hasError;
+  const _Y4ProgressCard({
+    required this.todayPts, required this.weekPts, required this.monthPts,
+    required this.hasError,
+  });
+
+  @override
+  State<_Y4ProgressCard> createState() => _Y4ProgressCardState();
+}
+
+class _Y4ProgressCardState extends State<_Y4ProgressCard> {
+  static const _dayGoal   = 50;
+  static const _weekGoal  = 250;
+  static const _monthGoal = 800;
+
+  String _tab = 'Week';
+
+  @override
+  Widget build(BuildContext context) {
+    final pts = switch (_tab) {
+      'Today' => widget.todayPts ?? 0,
+      'Week'  => widget.weekPts  ?? 0,
+      _       => widget.monthPts ?? 0,
+    };
+    final goal = switch (_tab) {
+      'Today' => _dayGoal,
+      'Week'  => _weekGoal,
+      _       => _monthGoal,
+    };
+    final pct = goal == 0 ? 0.0 : (pts / goal).clamp(0.0, 1.0);
+
+    String fmt(int n) {
+      final s = n.toString();
+      final buf = StringBuffer();
+      for (int i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+        buf.write(s[i]);
+      }
+      return buf.toString();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Y4.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Y4.border),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Text('Progress',
+              style: Y4.display(
+                  fontSize: 20, fontStyle: FontStyle.italic, height: 1.0)),
+          const Spacer(),
+          // Tab pill
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Y4.track,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Row(mainAxisSize: MainAxisSize.min,
+                children: ['Today', 'Week', 'Month'].map((t) {
+              final on = _tab == t;
+              return GestureDetector(
+                onTap: () => setState(() => _tab = t),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: on ? Y4.ink : Colors.transparent,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(t, style: GoogleFonts.outfit(
+                    fontSize: 10, fontWeight: FontWeight.w700,
+                    color: on ? Colors.white : Y4.inkSoft,
+                  )),
+                ),
+              );
+            }).toList()),
+          ),
+        ]),
+        const SizedBox(height: 10),
+        Row(children: [
+          _Y4SunArc(pct: pct),
+          const SizedBox(width: 16),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(widget.hasError ? '---' : fmt(pts),
+                style: Y4.display(
+                    fontSize: 30, letterSpacing: -0.02 * 30, height: 1.0)),
+            const SizedBox(height: 2),
+            Text('of ${fmt(goal)} ${_tab.toLowerCase()} goal',
+                style: GoogleFonts.outfit(
+                    fontSize: 11, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 5),
+            Text('${(pct * 100).round()}% · sun is rising',
+                style: GoogleFonts.outfit(
+                  fontSize: 10, fontWeight: FontWeight.w700,
+                  color: Y4.honeyDeep, letterSpacing: 0.5,
+                )),
+          ])),
+        ]),
       ]),
     );
   }

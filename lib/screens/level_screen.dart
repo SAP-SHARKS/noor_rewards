@@ -11,6 +11,7 @@ import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
+import '../theme/y4_theme.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _lcfg => SettingsService.instance.config;
@@ -117,8 +118,8 @@ class _LevelScreenState extends State<LevelScreen>
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2318),
-        surfaceTintColor: const Color(0xFF0A2318),
+        backgroundColor: Y4.primaryDeep,
+        surfaceTintColor: Y4.primaryDeep,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white70, size: 20),
@@ -130,9 +131,9 @@ class _LevelScreenState extends State<LevelScreen>
         centerTitle: true,
         bottom: TabBar(
           controller: _tabs,
-          labelColor: Colors.white,
+          labelColor: Y4.honey,
           unselectedLabelColor: Colors.white54,
-          indicatorColor: const Color(0xFF2BAE99),
+          indicatorColor: Y4.honey,
           indicatorSize: TabBarIndicatorSize.label,
           isScrollable: true,
           tabAlignment: TabAlignment.center,
@@ -243,7 +244,7 @@ class _ProgressTabState extends State<_ProgressTab> {
               colors: [
                 color.withValues(alpha: 0.92),
                 color.withValues(alpha: 0.65),
-                const Color(0xFF1A1040),
+                Y4.primaryDeep,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -650,10 +651,10 @@ Color _badgeColor(String emoji) {
     case '💜': return const Color(0xFF9B59B6);
     case '🤝': return const Color(0xFF10B981);
     case '🎯': return const Color(0xFFEC4899);
-    case '⚡': return const Color(0xFFFFD700);
+    case '⚡': return Y4.butter;
     case '🌱': return const Color(0xFF4CAF50);
     case '👑': return const Color(0xFFFF6B6B);
-    default:   return const Color(0xFF2BAE99);
+    default:   return Y4.honeyDeep;
   }
 }
 
@@ -692,12 +693,12 @@ class _BadgesTab extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: const RadialGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFF8C00), Color(0xFF8B4513)],
+                  colors: [Y4.butter, Color(0xFFFF8C00), Color(0xFF8B4513)],
                   stops: [0.0, 0.6, 1.0],
                 ),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFFFFD700).withValues(alpha: 0.5), blurRadius: 28, spreadRadius: 4),
-                  BoxShadow(color: const Color(0xFFFFD700).withValues(alpha: 0.2), blurRadius: 60, spreadRadius: 12),
+                  BoxShadow(color: Y4.butter.withValues(alpha: 0.5), blurRadius: 28, spreadRadius: 4),
+                  BoxShadow(color: Y4.butter.withValues(alpha: 0.2), blurRadius: 60, spreadRadius: 12),
                 ],
               ),
               child: const Center(child: Text('🏆', style: TextStyle(fontSize: 38))),
@@ -729,11 +730,11 @@ class _BadgesTab extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                        colors: [Y4.butter, Color(0xFFFF8C00)],
                       ),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [BoxShadow(
-                        color: const Color(0xFFFFD700).withValues(alpha: 0.6),
+                        color: Y4.butter.withValues(alpha: 0.6),
                         blurRadius: 8,
                       )],
                     ),
@@ -745,7 +746,7 @@ class _BadgesTab extends StatelessWidget {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('${(pct * 100).round()}% Complete',
                   style: GoogleFonts.outfit(
-                      fontSize: 11, color: const Color(0xFFFFD700),
+                      fontSize: 11, color: Y4.butter,
                       fontWeight: FontWeight.w700)),
               Text('${badges.length - earned.length} to unlock',
                   style: GoogleFonts.outfit(
@@ -763,7 +764,7 @@ class _BadgesTab extends StatelessWidget {
                 width: 6, height: 22,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                    colors: [Y4.butter, Color(0xFFFF8C00)],
                     begin: Alignment.topCenter, end: Alignment.bottomCenter,
                   ),
                   borderRadius: BorderRadius.circular(3),
@@ -778,9 +779,9 @@ class _BadgesTab extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFD700).withValues(alpha: 0.15),
+                  color: Y4.butter.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.4)),
+                  border: Border.all(color: Y4.butter.withValues(alpha: 0.4)),
                 ),
                 child: Text('${earned.length}',
                     style: GoogleFonts.rajdhani(
@@ -1033,11 +1034,11 @@ class _RamadanBanner extends StatelessWidget {
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
       gradient: const LinearGradient(
-        colors: [Color(0xFF1A1040), Color(0xFF2D1B69)],
+        colors: [Y4.primaryDeep, Y4.primary],
         begin: Alignment.topLeft, end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(24),
-      boxShadow: [BoxShadow(color: const Color(0xFF2D1B69).withValues(alpha: 0.4),
+      boxShadow: [BoxShadow(color: Y4.primary.withValues(alpha: 0.4),
           blurRadius: 20, offset: const Offset(0, 6))],
     ),
     child: Row(children: [
@@ -1172,7 +1173,7 @@ class _DonutPainter extends CustomPainter {
   _DonutPainter({required this.byType, required this.total});
 
   static const _colors = [
-    Color(0xFFFFD700), Color(0xFF4FC3F7), Color(0xFFAED581),
+    Y4.butter, Color(0xFF4FC3F7), Color(0xFFAED581),
     Color(0xFFFF8A65), Color(0xFFCE93D8), Color(0xFF80CBC4),
   ];
 
@@ -1362,15 +1363,15 @@ class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin 
     final lastM     = lastMilestone(best);
 
     return Container(
-      color: const Color(0xFF0A1628),
+      color: Y4.bg, // honey wash, matches dashboard
       child: Stack(children: [
-        // Animated aura background
+        // Animated aura background — softened for light theme
         Positioned.fill(child: AnimatedBuilder(
           animation: _orbCtrl,
           builder: (_, __) => CustomPaint(painter: _StreakAuraPainter(phase: _orbCtrl.value)),
         )),
         if (_loading)
-          const NoorInlineLoader(height: double.infinity, color: Color(0xFFFF6B35), label: 'Loading streaks…')
+          const NoorInlineLoader(height: double.infinity, color: Y4.honeyDeep, label: 'Loading streaks…')
         else
           SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
@@ -1408,6 +1409,7 @@ class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin 
 }
 
 // ── Aura background painter ───────────────────────────────────────────────────
+// On honey-wash bg we want a very subtle warm glow — not visible noise.
 class _StreakAuraPainter extends CustomPainter {
   final double phase;
   const _StreakAuraPainter({required this.phase});
@@ -1415,12 +1417,12 @@ class _StreakAuraPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final p1 = Paint()..shader = RadialGradient(colors: [
-      const Color(0xFFFF6B35).withValues(alpha: 0.20), Colors.transparent,
+      Y4.honey.withValues(alpha: 0.30), Colors.transparent,
     ]).createShader(Rect.fromCircle(center: Offset(cx, size.height * 0.25), radius: 240));
     canvas.drawCircle(Offset(cx, size.height * 0.25), 240, p1);
     final ang = phase * 2 * math.pi;
     final p2 = Paint()..shader = RadialGradient(colors: [
-      const Color(0xFFFF9500).withValues(alpha: 0.10), Colors.transparent,
+      Y4.butter.withValues(alpha: 0.25), Colors.transparent,
     ]).createShader(Rect.fromCircle(center: Offset(cx + math.cos(ang) * 50, size.height * 0.32 + math.sin(ang) * 30), radius: 160));
     canvas.drawCircle(Offset(cx + math.cos(ang) * 50, size.height * 0.32 + math.sin(ang) * 30), 160, p2);
   }
@@ -1442,13 +1444,13 @@ class _StreakHeroFlame extends StatelessWidget {
         Container(
           width: 150, height: 150,
           decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-            BoxShadow(color: const Color(0xFFFF6B35).withValues(alpha: pulse.value * 0.4), blurRadius: 50, spreadRadius: 10),
+            BoxShadow(color: Y4.honeyDeep.withValues(alpha: pulse.value * 0.4), blurRadius: 50, spreadRadius: 10),
           ]),
           child: Center(child: Transform.scale(scale: flameScale.value, child: Container(
             width: 120, height: 120,
             decoration: BoxDecoration(shape: BoxShape.circle,
-              gradient: const RadialGradient(colors: [Color(0xFFFFD700), Color(0xFFFF9500), Color(0xFFFF6B35)], stops: [0.0, 0.55, 1.0]),
-              boxShadow: [BoxShadow(color: const Color(0xFFFF6B35).withValues(alpha: 0.5), blurRadius: 28, spreadRadius: 4)],
+              gradient: const RadialGradient(colors: [Y4.butter, Y4.honey, Y4.honeyDeep], stops: [0.0, 0.55, 1.0]),
+              boxShadow: [BoxShadow(color: Y4.honeyDeep.withValues(alpha: 0.5), blurRadius: 28, spreadRadius: 4)],
             ),
             child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
               NoorIcon.fire(size: 32),
@@ -1459,13 +1461,13 @@ class _StreakHeroFlame extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(streak == 0 ? 'Start your streak today!' : streak >= 100 ? "Centurion — Masha'Allah!" : 'Current best streak',
-            style: GoogleFonts.outfit(fontSize: 13, color: Colors.white60, fontWeight: FontWeight.w500)),
+            style: GoogleFonts.outfit(fontSize: 13, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
         if (streak > 0 && milestone != null) ...[
           const SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFFFF6B35), Color(0xFFFF9500)]),
+              gradient: const LinearGradient(colors: [Y4.honeyDeep, Y4.honey]),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text('Next: ${milestone!.label} (${milestone!.days} days)',
@@ -1485,9 +1487,9 @@ class _StreakFlameCard extends StatelessWidget {
   const _StreakFlameCard({required this.type, required this.streak, required this.best, required this.pulse});
 
   Color get _color => switch (type) {
-    StreakType.login  => const Color(0xFFFF6B35),
-    StreakType.dhikr  => const Color(0xFF00C875),
-    StreakType.quran  => const Color(0xFF5856D6),
+    StreakType.login  => Y4.honeyDeep,
+    StreakType.dhikr  => Y4.primary,
+    StreakType.quran  => const Color(0xFF6B5BA8), // muted plum that fits honey/sage
   };
 
   @override
@@ -1496,24 +1498,26 @@ class _StreakFlameCard extends StatelessWidget {
     builder: (_, __) => Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Y4.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: streak > 0 ? _color.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.08)),
-        boxShadow: streak > 0 ? [BoxShadow(color: _color.withValues(alpha: pulse.value * 0.22), blurRadius: 14, spreadRadius: 2)] : [],
+        border: Border.all(color: streak > 0 ? _color.withValues(alpha: 0.5) : Y4.border),
+        boxShadow: streak > 0
+            ? [BoxShadow(color: _color.withValues(alpha: pulse.value * 0.18), blurRadius: 14, spreadRadius: 2)]
+            : [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(children: [
         Text(type.emoji, style: const TextStyle(fontSize: 22)),
         const SizedBox(height: 4),
-        Text('$streak', style: GoogleFonts.rajdhani(fontSize: 26, fontWeight: FontWeight.w900, color: streak > 0 ? _color : Colors.white30, height: 1.0)),
-        Text('day${streak == 1 ? '' : 's'}', style: GoogleFonts.outfit(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.w500)),
+        Text('$streak', style: GoogleFonts.rajdhani(fontSize: 26, fontWeight: FontWeight.w900, color: streak > 0 ? _color : Y4.muted, height: 1.0)),
+        Text('day${streak == 1 ? '' : 's'}', style: GoogleFonts.outfit(fontSize: 10, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(color: _color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-          child: Text('Best $best', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w700, color: _color.withValues(alpha: 0.9))),
+          decoration: BoxDecoration(color: _color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(8)),
+          child: Text('Best $best', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w700, color: _color)),
         ),
         const SizedBox(height: 4),
-        Text(type.label, textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 9, color: Colors.white38, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+        Text(type.label, textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 9, color: Y4.inkSoft, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
       ]),
     ),
   );
@@ -1531,31 +1535,32 @@ class _StreakCalendar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Y4.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Y4.border),
+        boxShadow: [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('LAST 7 DAYS', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white54, letterSpacing: 1.2)),
+        Text('LAST 7 DAYS', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
         const SizedBox(height: 12),
         Row(children: days.map((day) {
           final isToday = day.day == today.day && day.month == today.month && day.year == today.year;
           return Expanded(child: Column(children: [
             Text(['Mo','Tu','We','Th','Fr','Sa','Su'][day.weekday - 1],
-                style: GoogleFonts.outfit(fontSize: 9, color: Colors.white38, fontWeight: FontWeight.w600)),
+                style: GoogleFonts.outfit(fontSize: 9, color: Y4.muted, fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
-            Text('${day.day}', style: GoogleFonts.outfit(fontSize: 10, color: isToday ? Colors.white : Colors.white38,
+            Text('${day.day}', style: GoogleFonts.outfit(fontSize: 10, color: isToday ? Y4.ink : Y4.muted,
                 fontWeight: isToday ? FontWeight.w800 : FontWeight.w400)),
             const SizedBox(height: 6),
             ...StreakType.values.map((t) {
               final on = snap.historyFor(t).any((d) => d.day == day.day && d.month == day.month && d.year == day.year);
-              final col = switch (t) { StreakType.login => const Color(0xFFFF6B35), StreakType.dhikr => const Color(0xFF00C875), StreakType.quran => const Color(0xFF5856D6) };
+              final col = switch (t) { StreakType.login => Y4.honeyDeep, StreakType.dhikr => Y4.primary, StreakType.quran => const Color(0xFF6B5BA8) };
               return Padding(
                 padding: const EdgeInsets.only(bottom: 3),
                 child: Container(width: 9, height: 9, decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: on ? col : Colors.white.withValues(alpha: 0.08),
-                  boxShadow: on ? [BoxShadow(color: col.withValues(alpha: 0.5), blurRadius: 5)] : [],
+                  color: on ? col : Y4.track,
+                  boxShadow: on ? [BoxShadow(color: col.withValues(alpha: 0.4), blurRadius: 5)] : [],
                 )),
               );
             }),
@@ -1563,11 +1568,11 @@ class _StreakCalendar extends StatelessWidget {
         }).toList()),
         const SizedBox(height: 12),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: StreakType.values.map((t) {
-          final col = switch (t) { StreakType.login => const Color(0xFFFF6B35), StreakType.dhikr => const Color(0xFF00C875), StreakType.quran => const Color(0xFF5856D6) };
+          final col = switch (t) { StreakType.login => Y4.honeyDeep, StreakType.dhikr => Y4.primary, StreakType.quran => const Color(0xFF6B5BA8) };
           return Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisSize: MainAxisSize.min, children: [
             Container(width: 9, height: 9, decoration: BoxDecoration(color: col, shape: BoxShape.circle)),
             const SizedBox(width: 4),
-            Text(t.label, style: GoogleFonts.outfit(fontSize: 9, color: Colors.white38)),
+            Text(t.label, style: GoogleFonts.outfit(fontSize: 9, color: Y4.inkSoft)),
           ]));
         }).toList()),
       ]),
@@ -1589,20 +1594,21 @@ class _StreakMilestoneProgress extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Y4.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Y4.border),
+        boxShadow: [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('NEXT MILESTONE', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white54, letterSpacing: 1.2)),
+          Text('NEXT MILESTONE', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
           const Spacer(),
-          Text('+${milestone.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFFFFD700))),
+          Text('+${milestone.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.honeyDeep)),
         ]),
         const SizedBox(height: 8),
         Row(children: [
-          Expanded(child: Text(milestone.label, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white))),
-          Text('$current / ${milestone.days} days', style: GoogleFonts.outfit(fontSize: 11, color: Colors.white38)),
+          Expanded(child: Text(milestone.label, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: Y4.ink))),
+          Text('$current / ${milestone.days} days', style: GoogleFonts.outfit(fontSize: 11, color: Y4.inkSoft)),
         ]),
         const SizedBox(height: 10),
         TweenAnimationBuilder<double>(
@@ -1612,13 +1618,13 @@ class _StreakMilestoneProgress extends StatelessWidget {
           builder: (_, v, __) => ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(value: v, minHeight: 10,
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              valueColor: const AlwaysStoppedAnimation(Color(0xFFFF6B35))),
+              backgroundColor: Y4.track,
+              valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep)),
           ),
         ),
         const SizedBox(height: 6),
         Text('${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go!',
-            style: GoogleFonts.outfit(fontSize: 11, color: Colors.white38, fontWeight: FontWeight.w500)),
+            style: GoogleFonts.outfit(fontSize: 11, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
       ]),
     );
   }
@@ -1633,12 +1639,13 @@ class _StreakMilestoneList extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.06),
+      color: Y4.surface,
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      border: Border.all(color: Y4.border),
+      boxShadow: [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('ALL MILESTONES', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white54, letterSpacing: 1.2)),
+      Text('ALL MILESTONES', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
       const SizedBox(height: 12),
       ...kStreakMilestones.map((m) {
         final done = streak >= m.days;
@@ -1648,25 +1655,25 @@ class _StreakMilestoneList extends StatelessWidget {
             Container(
               width: 38, height: 38,
               decoration: BoxDecoration(shape: BoxShape.circle,
-                color: done ? const Color(0xFFFF6B35).withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.05),
-                border: Border.all(color: done ? const Color(0xFFFF6B35).withValues(alpha: 0.7) : Colors.white.withValues(alpha: 0.10)),
-                boxShadow: done ? [BoxShadow(color: const Color(0xFFFF6B35).withValues(alpha: 0.28), blurRadius: 10)] : [],
+                color: done ? Y4.honeyDeep.withValues(alpha: 0.18) : Y4.track,
+                border: Border.all(color: done ? Y4.honeyDeep.withValues(alpha: 0.7) : Y4.border),
+                boxShadow: done ? [BoxShadow(color: Y4.honeyDeep.withValues(alpha: 0.20), blurRadius: 10)] : [],
               ),
               child: Center(child: done ? NoorIcon.fromEmoji(m.emoji, size: 17) : NoorIcon.lock(size: 17)),
             ),
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(m.label, style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: done ? Colors.white : Colors.white38)),
-              Text('${m.days} day streak', style: GoogleFonts.outfit(fontSize: 11, color: Colors.white24)),
+              Text(m.label, style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: done ? Y4.ink : Y4.muted)),
+              Text('${m.days} day streak', style: GoogleFonts.outfit(fontSize: 11, color: Y4.muted)),
             ])),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
               decoration: BoxDecoration(
-                color: done ? const Color(0xFFFFD700).withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.05),
+                color: done ? Y4.honey.withValues(alpha: 0.20) : Y4.track,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text('+${m.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
-                  color: done ? const Color(0xFFFFD700) : Colors.white24, letterSpacing: 0.4)),
+                  color: done ? Y4.honeyDeep : Y4.muted, letterSpacing: 0.4)),
             ),
           ]),
         );
