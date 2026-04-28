@@ -635,7 +635,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Keep all modes in sync
     _syncReadingPosition();
 
-    // Run XP and progress saving in background (don't block UI)
+    // Run points and progress saving in background (don't block UI)
     _saveReadingProgress(nextSurah, nextAyah, earnRewards: earnRewards);
 
     // Fetch ayah (will pull instantly from cache if same surah)
@@ -649,7 +649,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (earnRewards) {
         final coins = SettingsService.instance.config.coinsPerAyah;
         await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a, 'p_coins': coins});
-        // Award XP for reading one ayah
+        // Award points for reading one ayah
         await XpService.instance.earnXp(XpReward.ayahRead);
         // Update live notification counter
         NoorLiveNotificationService.instance.recordAyah();
@@ -720,7 +720,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _cache.put('pref_mushaf_page', _currentPage);
   }
 
-  // Lightweight save: page + surah + ayah position (no XP/streaks) — called on mushaf nav
+  // Lightweight save: page + surah + ayah position (no points/streaks) — called on mushaf nav
   Future<void> _savePagePosition() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
@@ -961,7 +961,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     if (_timerShouldRun) _startPageTimer();
   }
 
-  // Scroll listener - tracks scroll activity to keep the XP timer alive,
+  // Scroll listener - tracks scroll activity to keep the points timer alive,
   // and allows fetching further pages as they lazily build.
   DateTime _lastMushafSave = DateTime(2000);
   void _onMushafScroll() {
@@ -975,7 +975,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
 
-  // ── Full-page timer: 1 XP per 30 seconds ─────────────────────────────────────
+  // ── Full-page timer: 1 point per 30 seconds ─────────────────────────────────
   // Fresh start — resets seconds (use when entering full-page or navigating pages)
   // Sets _timerShouldRun = true (user intent: timer should run).
   void _startPageTimer() {
@@ -999,7 +999,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       setState(() => _pageSeconds++);
-      // Award 1 XP every 30 seconds of reading
+      // Award 1 point every 30 seconds of reading
       if (_pageSeconds % 30 == 0) {
         _pageXpEarned++;
         _pointsToday += 1;
@@ -3466,7 +3466,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             ]),
           ),
           const Spacer(),
-          // Right: XP + Settings
+          // Right: Points + Settings
           Row(mainAxisSize: MainAxisSize.min, children: [
             if (_pageXpEarned > 0) ...[
               Container(

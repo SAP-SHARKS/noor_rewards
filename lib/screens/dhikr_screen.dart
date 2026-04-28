@@ -506,7 +506,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         isDark: _settings.darkMode,
         setsCount: count,
         noorPoints: count * 20,
-        xp: totalXp,
+        pts: totalXp,
       );
     });
   }
@@ -558,7 +558,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       isDark: _settings.darkMode,
       setsCount: pagesCount,
       noorPoints: pagesCount * 20,
-      xp: xpEarned * pagesCount,
+      pts: xpEarned * pagesCount,
       countsLabel: pagesCount == 1 ? '$target counts' : null,
     );
   }
@@ -569,7 +569,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     required bool isDark,
     required int setsCount,
     required int noorPoints,
-    required int xp,
+    required int pts,
     String? countsLabel,
   }) {
     final kText = isDark ? Colors.white : SettingsService.instance.config.dashText;
@@ -674,11 +674,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         isDark: isDark,
                       ),
                       Container(width: 1, height: 28, color: isDark ? Colors.white12 : const Color(0xFFE5E7EB)),
-                      // XP
+                      // Points
                       _statChip(
                         icon: Icons.bolt_rounded,
-                        value: '+$xp',
-                        label: 'XP',
+                        value: '+$pts',
+                        label: 'Points',
                         color: const Color(0xFF8B5CF6),
                         isDark: isDark,
                       ),

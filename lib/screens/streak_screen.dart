@@ -500,7 +500,7 @@ class _MilestoneProgress extends StatelessWidget {
                   fontSize: 13, fontWeight: FontWeight.w700,
                   color: Y4.inkSoft, letterSpacing: 1.2)),
           const Spacer(),
-          Text('+${milestone.xpBonus} pts',
+          Text('+${milestone.ptsBonus} pts',
               style: GoogleFonts.rajdhani(
                   fontSize: 14, fontWeight: FontWeight.w700,
                   color: Y4.honeyDeep)),
@@ -607,7 +607,7 @@ class _MilestoneList extends StatelessWidget {
                       : Y4.track,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('+${m.xpBonus} pts',
+                child: Text('+${m.ptsBonus} pts',
                     style: GoogleFonts.rajdhani(
                         fontSize: 13, fontWeight: FontWeight.w700,
                         color: done ? Y4.honeyDeep : Y4.muted,

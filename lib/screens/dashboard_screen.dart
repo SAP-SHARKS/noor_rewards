@@ -92,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int? _weekPoints;
   int? _monthPoints;
   int? _streak;
-  int? _totalXp;
+  int? _totalPts;
   int _level       = 1;
   String _levelTitle = 'Seeker';
   StreakSnapshot _streakSnap = StreakSnapshot.empty;
@@ -259,7 +259,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           
       if (profile != null) {
         _noorPoints = (profile['noor_points'] as num?)?.toInt() ?? 0;
-        _totalXp    = (profile['total_xp']    as num?)?.toInt() ?? 0;
+        _totalPts   = (profile['total_xp']    as num?)?.toInt() ?? 0;
         _level      = (profile['level']       as num?)?.toInt() ?? 1;
         _country    = profile['country'] as String?;
         _avatarUrl  = profile['avatar_url'] as String?;
@@ -371,7 +371,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             key: ValueKey('home_${_noorPoints}_${_streak}'),
             name: widget.name,
             noorPoints: _noorPoints,
-            totalXp: _totalXp ?? 0,
+            totalXp: _totalPts ?? 0,
             level: _level,
             levelTitle: _levelTitle,
             todayPoints: _todayPoints,
@@ -416,7 +416,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           )), // Tab 2 — Akhirah
           _buildTabNavigator(3, _ProfileTab(
               name: widget.name, noorPoints: _noorPoints ?? 0,
-              totalXp: _totalXp ?? 0, level: _level, levelTitle: _levelTitle,
+              totalXp: _totalPts ?? 0, level: _level, levelTitle: _levelTitle,
               country: _country, streak: _streak ?? 0,
               avatarUrl: _avatarUrl,
               currentUserId: _supabase.auth.currentUser?.id ?? '',
@@ -711,7 +711,7 @@ class _HomeTabState extends State<_HomeTab> {
             : 'Start your daily azkar');
     final achievementsSub = _recentBadgeName != null
         ? 'Last: ${_recentBadgeName!}'
-        : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} XP';
+        : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} pts';
     const inviteSub = 'Earn +500 per friend';
 
     return Container(
@@ -1994,8 +1994,7 @@ class _ActivityCardState extends State<_ActivityCard> {
                   ),
                 ),
               ),
-              // ── Unique decorative pattern ─────────────────────────────
-              Positioned.fill(child: CustomPaint(painter: painter)),
+              // (pattern removed — clean gradient only)
               // ── Content ──────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -3688,7 +3687,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                       ];
                       final isTop3 = i < 3;
                       final badgeGrad = isTop3 ? badgeColors[i] : [_C.teal, const Color(0xFF1A9E8C)];
-                      final xp    = (p['total_xp']     as num?)?.toInt() ?? 0;
+                      final pts   = (p['total_xp']     as num?)?.toInt() ?? 0;
                       final lv    = (p['level']        as num?)?.toInt() ?? 1;
                       final title = (p['level_title']  as String?) ?? 'Seeker';
                       final nm    = (p['display_name'] as String?)?.split(' ').first ?? 'User';
@@ -3727,7 +3726,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                 maxLines: 1, overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                           ])),
-                          Text('$xp pts',
+                          Text('$pts pts',
                               style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: _C.navRanking)),
                         ]),
                       );
@@ -4061,7 +4060,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                         final badgeGrad = isTop3
                             ? badgeColors[i]
                             : [_C.teal, const Color(0xFF1A9E8C)];
-                        final xp    = (p['total_xp']     as num?)?.toInt() ?? 0;
+                        final pts   = (p['total_xp']     as num?)?.toInt() ?? 0;
                         final lv    = (p['level']        as num?)?.toInt() ?? 1;
                         final title = _localizeLevel(context, p['level_title'] as String?);
                         final nm    = (p['display_name'] as String?)?.split(' ').first ?? 'User';
@@ -4111,7 +4110,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                               Text('$title • Lv $lv',
                                   style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
                             ])),
-                            Text('$xp pts',
+                            Text('$pts pts',
                                 style: GoogleFonts.outfit(
                                     fontSize: 13, fontWeight: FontWeight.w700,
                                     color: _C.navRanking)),
@@ -4917,11 +4916,11 @@ class _OrbWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orbColor  = Color.lerp(const Color(0xFF1A4A34), neonGold, pct * pct)!;
+    final orbColor  = Color.lerp(const Color(0xFFE8A020), const Color(0xFFFFEE66), pct * pct)!;
     final glowColor = completed
         ? (freshXp ? neonGold : neonGreen)
-        : neonGreen;
-    final glowAlpha = completed ? 0.70 : (0.15 + pct * 0.55);
+        : Color.lerp(const Color(0xFFFFB300), const Color(0xFFFFEE44), pct)!;
+    final glowAlpha = completed ? 0.80 : (0.30 + pct * 0.65);
 
     return SizedBox(
       width: size, height: size,
@@ -4981,9 +4980,13 @@ class _OrbWidget extends StatelessWidget {
                       center: Alignment(-0.25, -0.3),
                     )
                   : RadialGradient(
-                      colors: [const Color(0xFFF0F0F0), orbColor, const Color(0xFF0A1F18)],
+                      colors: [
+                        Color.lerp(const Color(0xFFFFFFCC), const Color(0xFFFFFFFF), pct)!,
+                        Color.lerp(const Color(0xFFFFB300), const Color(0xFFFFE033), pct)!,
+                        Color.lerp(const Color(0xFFCC7700), const Color(0xFFFF9500), pct)!,
+                      ],
                       stops: const [0.0, 0.5, 1.0],
-                      center: const Alignment(-0.3, -0.35),
+                      center: const Alignment(-0.25, -0.3),
                     ),
               boxShadow: [
                 BoxShadow(
@@ -5001,7 +5004,7 @@ class _OrbWidget extends StatelessWidget {
                   ? (freshXp
                       ? NoorIcon.sun(size: 26)
                       : NoorIcon.check(size: 22))
-                  : NoorIcon.moon(size: 22),
+                  : NoorIcon.sun(size: 24),
             ),
           ),
         ),
@@ -5643,12 +5646,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
             Text('of ${fmt(goal)} ${_tab.toLowerCase()} goal',
                 style: GoogleFonts.outfit(
                     fontSize: 11, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 5),
-            Text('${(pct * 100).round()}% · sun is rising',
-                style: GoogleFonts.outfit(
-                  fontSize: 10, fontWeight: FontWeight.w700,
-                  color: Y4.honeyDeep, letterSpacing: 0.5,
-                )),
+
           ])),
         ]),
       ]),
