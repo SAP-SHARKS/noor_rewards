@@ -76,20 +76,20 @@ class StreakMilestone {
   final int days;
   final String label;
   final String emoji;
-  final int xpBonus;
+  final int ptsBonus;
   const StreakMilestone({
     required this.days, required this.label,
-    required this.emoji, required this.xpBonus,
+    required this.emoji, required this.ptsBonus,
   });
 }
 
 const kStreakMilestones = <StreakMilestone>[
-  StreakMilestone(days: 3,   label: 'Warming Up',    emoji: '🌱', xpBonus: 15),
-  StreakMilestone(days: 7,   label: 'One Week',       emoji: '🔥', xpBonus: 30),
-  StreakMilestone(days: 14,  label: 'Two Weeks',      emoji: '⚡', xpBonus: 60),
-  StreakMilestone(days: 30,  label: 'One Month',      emoji: '🌟', xpBonus: 100),
-  StreakMilestone(days: 60,  label: 'Two Months',     emoji: '💎', xpBonus: 200),
-  StreakMilestone(days: 100, label: 'The Centurion',  emoji: '👑', xpBonus: 400),
+  StreakMilestone(days: 3,   label: 'Warming Up',    emoji: '🌱', ptsBonus: 15),
+  StreakMilestone(days: 7,   label: 'One Week',       emoji: '🔥', ptsBonus: 30),
+  StreakMilestone(days: 14,  label: 'Two Weeks',      emoji: '⚡', ptsBonus: 60),
+  StreakMilestone(days: 30,  label: 'One Month',      emoji: '🌟', ptsBonus: 100),
+  StreakMilestone(days: 60,  label: 'Two Months',     emoji: '💎', ptsBonus: 200),
+  StreakMilestone(days: 100, label: 'The Centurion',  emoji: '👑', ptsBonus: 400),
 ];
 
 /// Returns the next milestone the user hasn't passed yet.

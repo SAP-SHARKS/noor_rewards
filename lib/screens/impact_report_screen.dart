@@ -48,7 +48,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   final _sb = Supabase.instance.client;
 
   // Profile
-  int    _totalXp     = 0;
+  int    _totalPts    = 0;
   int    _noorPoints  = 0;
   int    _level       = 1;
   String _levelTitle  = 'Seeker';
@@ -62,10 +62,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
 
-  // Derived "Akhirah holdings" — computed from points/xp
+  // Derived "Akhirah holdings" — computed from points
   // Trees planted = every 100 noor points = 1 tree (symbolic)
   // Total Dhikr   = dhikr streak * 33 repetitions per day (symbolic)
-  // Slaves freed  = every 1000 xp = 1 equivalent reward
+  // Slaves freed  = every 1000 points = 1 equivalent reward
 
   bool _loading = true;
   late AnimationController _fadeCtrl;
@@ -106,7 +106,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       final profile   = results[0] as Map<String, dynamic>?;
       final analytics = results[1] as Map<String, dynamic>?;
 
-      _totalXp     = (profile?['total_xp']    as num?)?.toInt() ?? 0;
+      _totalPts    = (profile?['total_xp']    as num?)?.toInt() ?? 0;
       _level       = (profile?['level']       as num?)?.toInt() ?? 1;
       _noorPoints  = (profile?['noor_points'] as num?)?.toInt() ?? 0;
       _totalDonated = results[2] as int;
@@ -137,7 +137,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   }
 
   // ── Derived spiritual holdings ─────────────────────────────────────────────
-  int get _hasanaat       => _totalXp * 15 + _noorPoints * 5;
+  int get _hasanaat       => _totalPts * 15 + _noorPoints * 5;
   int get _treesPlanted   => (_snap.dhikr * 25) + (_snap.login * 2);
   int get _sinsWiped      => (_snap.dhikr * 50) + (_snap.login * 5);
   int get _treasures      => (_snap.dhikr * 5) + (_snap.quran * 2);

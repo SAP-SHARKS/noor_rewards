@@ -1,19 +1,19 @@
 ﻿// lib/services/xp_service.dart
-// Central service for XP, levels, and badges.
-// All XP-earning events in the app must call methods here.
+// Central service for points, levels, and badges.
+// All point-earning events in the app must call methods here.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'settings_service.dart';
 
-// ── XP Rewards ─────────────────────────────────────────────────────────────────
+// ── Point Rewards ──────────────────────────────────────────────────────────────
 class XpReward {
   static int get ayahRead      => SettingsService.instance.config.xpPerAyah; // per ayah read
   static const int juzComplete   = 100; // per juz completed
   static int get dailyLogin    => SettingsService.instance.config.xpDailyLogin;   // once per day
   static int get validateCoins => SettingsService.instance.config.xpValidateCoins;  // validate & support
 
-  // ── Per-dhikr XP weights ──────────────────────────────────────────────────
-  /// Returns the XP for a given dhikr ID, dynamically pulled from Admin settings.
+  // ── Per-dhikr point weights ───────────────────────────────────────────────
+  /// Returns the points for a given dhikr ID, dynamically pulled from Admin settings.
   static int dhikrXp(String dhikrId) => SettingsService.instance.config.xpPerDhikr;
 }
 
@@ -78,16 +78,16 @@ const _kFallbackLevels = <(int level, int xpRequired, String title)>[
   (51, 250000,  'Legend'),
 ];
 
-// ── XP Service ─────────────────────────────────────────────────────────────────
+// ── Points Service ─────────────────────────────────────────────────────────────
 class XpService {
   XpService._();
   static final XpService instance = XpService._();
 
   final _sb = Supabase.instance.client;
 
-  // ── Earn XP ──────────────────────────────────────────────────────────────────
-  /// Awards [amount] XP (multiplied by any active challenge multiplier) to the
-  /// current user. Returns new total_xp. Null if not logged in.
+  // ── Earn Points ──────────────────────────────────────────────────────────────
+  /// Awards [amount] points (multiplied by any active challenge multiplier) to
+  /// the current user. Returns new total points. Null if not logged in.
   Future<int?> earnXp(int amount) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return null;
@@ -112,13 +112,13 @@ class XpService {
     }
   }
 
-  // ── Per-dhikr XP ─────────────────────────────────────────────────────────────
-  /// Awards XP for a completed dhikr set, using per-dhikr weights.
+  // ── Per-dhikr points ─────────────────────────────────────────────────────────
+  /// Awards points for a completed dhikr set, using per-dhikr weights.
   Future<int?> earnDhikrXp(String dhikrId) =>
       earnXp(XpReward.dhikrXp(dhikrId));
 
   // ── Active challenge multiplier ───────────────────────────────────────────────
-  /// Returns the highest active XP multiplier for the user, or 1.0 if none.
+  /// Returns the highest active points multiplier for the user, or 1.0 if none.
   Future<double> _getActiveMultiplier(String uid) async {
     try {
       final progress = await _sb
@@ -152,10 +152,10 @@ class XpService {
   }
 
   // ── Milestone badge auto-award ────────────────────────────────────────────────
-  /// Automatically awards badges when the user crosses XP / level milestones.
+  /// Automatically awards badges when the user crosses point / level milestones.
   /// Fire-and-forget — errors are silently swallowed.
   void _checkMilestoneBadges(String uid, int totalXp) {
-    // XP milestones
+    // Point milestones
     if (totalXp >= 100)    awardBadge('first_100xp');
     if (totalXp >= 500)    awardBadge('xp_500');
     if (totalXp >= 1000)   awardBadge('xp_1000');
@@ -180,7 +180,7 @@ class XpService {
     }
   }
 
-  // ── Daily login XP ────────────────────────────────────────────────────────────
+  // ── Daily login points ────────────────────────────────────────────────────────
   Future<bool> claimDailyLoginXp() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
@@ -209,7 +209,7 @@ class XpService {
     }
   }
 
-  // ── Validate & Support XP ─────────────────────────────────────────────────────
+  // ── Validate & Support points ─────────────────────────────────────────────────
   Future<bool> claimValidateXp() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
@@ -238,7 +238,7 @@ class XpService {
     }
   }
 
-  // ── Daily Dhikr Goal XP ──────────────────────────────────────────────────────
+  // ── Daily Dhikr Goal points ──────────────────────────────────────────────────
   Future<bool> claimDailyDhikrGoal() async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
@@ -271,9 +271,9 @@ class XpService {
   }
 
   // ── Load current user profile ─────────────────────────────────────────────────
-  Future<({int xp, int level, int streak})> loadProfile() async {
+  Future<({int pts, int level, int streak})> loadProfile() async {
     final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return (xp: 0, level: 1, streak: 0);
+    if (uid == null) return (pts: 0, level: 1, streak: 0);
     try {
       final row = await _sb
           .from('profiles')
@@ -281,12 +281,12 @@ class XpService {
           .eq('id', uid)
           .single();
       return (
-        xp:     (row['total_xp']   as num?)?.toInt() ?? 0,
+        pts:    (row['total_xp']   as num?)?.toInt() ?? 0,
         level:  (row['level']      as num?)?.toInt() ?? 1,
         streak: (row['day_streak'] as num?)?.toInt() ?? 0,
       );
     } catch (_) {
-      return (xp: 0, level: 1, streak: 0);
+      return (pts: 0, level: 1, streak: 0);
     }
   }
 

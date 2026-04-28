@@ -103,7 +103,7 @@ class _LevelScreenState extends State<LevelScreen>
     final badges     = await _xp.loadBadges();
     final challenges = await _xp.loadChallenges();
 
-    _currentXp    = profile.xp;
+    _currentXp    = profile.pts;
     _currentLevel = profile.level;
     _streak       = profile.streak;
     _allLevels    = levels;
@@ -153,7 +153,7 @@ class _LevelScreenState extends State<LevelScreen>
               children: [
                 const _StreaksTab(),
                 _ProgressTab(
-                  xp:        _currentXp,
+                  pts:       _currentXp,
                   level:     _currentLevel,
                   streak:    _streak,
                   levelInfo: _levelInfo,
@@ -172,12 +172,12 @@ class _LevelScreenState extends State<LevelScreen>
 // TAB 1 — PROGRESS  (includes embedded activity history at bottom)
 // ─────────────────────────────────────────────────────────────────────────────
 class _ProgressTab extends StatefulWidget {
-  final int xp, level, streak;
+  final int pts, level, streak;
   final LevelInfo? levelInfo;
   final List<Map<String, dynamic>> allLevels;
   final SupabaseClient supabase;
   const _ProgressTab({
-    required this.xp, required this.level, required this.streak,
+    required this.pts, required this.level, required this.streak,
     required this.levelInfo, required this.allLevels, required this.supabase,
   });
   @override State<_ProgressTab> createState() => _ProgressTabState();
@@ -212,7 +212,7 @@ class _ProgressTabState extends State<_ProgressTab> {
     _loadHistory();
   }
 
-  int get _totalXp     => _rows.fold(0, (s, r) => s + ((r['points_earned'] as num?)?.toInt() ?? 0));
+  int get _totalPts     => _rows.fold(0, (s, r) => s + ((r['points_earned'] as num?)?.toInt() ?? 0));
   int get _totalActions => _rows.length;
   Map<String, int> get _byType {
     final m = <String, int>{};
@@ -227,8 +227,8 @@ class _ProgressTabState extends State<_ProgressTab> {
   Widget build(BuildContext context) {
     final info     = widget.levelInfo;
     final color    = info != null ? _tierColor(info.title) : _kPurple;
-    final lvProgress = info?.progress(widget.xp) ?? 0.0;
-    final toNext   = info?.xpToNextLevel(widget.xp) ?? 0;
+    final lvProgress = info?.progress(widget.pts) ?? 0.0;
+    final toNext   = info?.xpToNextLevel(widget.pts) ?? 0;
 
     return SingleChildScrollView(
       padding: EdgeInsets.zero,
@@ -354,7 +354,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                                   fontSize: 11, color: Colors.white60, fontWeight: FontWeight.w500)),
                           const SizedBox(height: 4),
                           TweenAnimationBuilder<int>(
-                            tween: IntTween(begin: 0, end: _totalXp),
+                            tween: IntTween(begin: 0, end: _totalPts),
                             duration: const Duration(milliseconds: 900),
                             curve: Curves.easeOut,
                             builder: (_, v, __) => Text('$v pts',
@@ -398,7 +398,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                   final meta = _activityMeta(e.key);
                   return _BreakdownChip(
                       icon: meta.icon, label: meta.label,
-                      xp: e.value, color: meta.color);
+                      pts: e.value, color: meta.color);
                 }).toList(),
               ),
             ]),
@@ -527,11 +527,11 @@ class _ProgressTabState extends State<_ProgressTab> {
   }
 
   static const _tierGroups = [
-    (title: 'Seeker',   emoji: '🌱', range: '1–5',   xp: '0–500 pts',        color: Color(0xFF78C1F3), unlocks: 'Basic features'),
-    (title: 'Believer', emoji: '🌟', range: '6–10',  xp: '500–1,500 pts',    color: Color(0xFF4CAF50), unlocks: 'Custom profile themes'),
-    (title: 'Devoted',  emoji: '💜', range: '11–20', xp: '1,500–5,000 pts',  color: Color(0xFFAB47BC), unlocks: 'Leaderboard badge'),
-    (title: 'Champion', emoji: '🏆', range: '21–50', xp: '5,000–20,000 pts', color: Color(0xFFF5A623), unlocks: 'Exclusive voting rights'),
-    (title: 'Legend',   emoji: '👑', range: '50+',   xp: '20,000+ pts',      color: Color(0xFFE53935), unlocks: 'Hall of Fame listing'),
+    (title: 'Seeker',   emoji: '🌱', range: '1–5',   pts: '0–500 pts',        color: Color(0xFF78C1F3), unlocks: 'Basic features'),
+    (title: 'Believer', emoji: '🌟', range: '6–10',  pts: '500–1,500 pts',    color: Color(0xFF4CAF50), unlocks: 'Custom profile themes'),
+    (title: 'Devoted',  emoji: '💜', range: '11–20', pts: '1,500–5,000 pts',  color: Color(0xFFAB47BC), unlocks: 'Leaderboard badge'),
+    (title: 'Champion', emoji: '🏆', range: '21–50', pts: '5,000–20,000 pts', color: Color(0xFFF5A623), unlocks: 'Exclusive voting rights'),
+    (title: 'Legend',   emoji: '👑', range: '50+',   pts: '20,000+ pts',      color: Color(0xFFE53935), unlocks: 'Hall of Fame listing'),
   ];
 }
 
@@ -563,7 +563,7 @@ class _XpRow extends StatelessWidget {
 }
 
 class _TierCard extends StatelessWidget {
-  final ({String title, String emoji, String range, String xp, Color color, String unlocks}) tier;
+  final ({String title, String emoji, String range, String pts, Color color, String unlocks}) tier;
   final int currentLevel;
   const _TierCard({required this.tier, required this.currentLevel});
 
@@ -603,7 +603,7 @@ class _TierCard extends StatelessWidget {
                 style: GoogleFonts.outfit(fontSize: 11, color: _kSub)),
           ]),
           const SizedBox(height: 2),
-          Text(tier.xp, style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+          Text(tier.pts, style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
           const SizedBox(height: 3),
           Text('Unlocks: ${tier.unlocks}',
               style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600,
@@ -1212,11 +1212,11 @@ class _DonutPainter extends CustomPainter {
 class _BreakdownChip extends StatelessWidget {
   final Widget icon;
   final String label;
-  final int xp;
+  final int pts;
   final Color color;
   const _BreakdownChip({
     required this.icon, required this.label,
-    required this.xp,    required this.color,
+    required this.pts,   required this.color,
   });
   @override
   Widget build(BuildContext context) => Container(
@@ -1235,7 +1235,7 @@ class _BreakdownChip extends StatelessWidget {
               maxLines: 1, overflow: TextOverflow.ellipsis,
               style: GoogleFonts.outfit(
                   fontSize: 11, fontWeight: FontWeight.w700, color: _kText)),
-          Text('+$xp pts',
+          Text('+$pts pts',
               style: GoogleFonts.outfit(
                   fontSize: 10, fontWeight: FontWeight.w600, color: color)),
         ]),
@@ -1548,10 +1548,10 @@ class _StreakCalendar extends StatelessWidget {
           final isToday = day.day == today.day && day.month == today.month && day.year == today.year;
           return Expanded(child: Column(children: [
             Text(['Mo','Tu','We','Th','Fr','Sa','Su'][day.weekday - 1],
-                style: GoogleFonts.outfit(fontSize: 9, color: Y4.muted, fontWeight: FontWeight.w600)),
+                style: GoogleFonts.outfit(fontSize: 9, color: Y4.inkSoft, fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
-            Text('${day.day}', style: GoogleFonts.outfit(fontSize: 10, color: isToday ? Y4.ink : Y4.muted,
-                fontWeight: isToday ? FontWeight.w800 : FontWeight.w400)),
+            Text('${day.day}', style: GoogleFonts.outfit(fontSize: 10, color: isToday ? Y4.ink : Y4.inkSoft,
+                fontWeight: isToday ? FontWeight.w800 : FontWeight.w500)),
             const SizedBox(height: 6),
             ...StreakType.values.map((t) {
               final on = snap.historyFor(t).any((d) => d.day == day.day && d.month == day.month && d.year == day.year);
@@ -1560,7 +1560,8 @@ class _StreakCalendar extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 3),
                 child: Container(width: 9, height: 9, decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: on ? col : Y4.track,
+                  color: on ? col : Y4.ink.withValues(alpha: 0.10),
+                  border: on ? null : Border.all(color: Y4.ink.withValues(alpha: 0.15), width: 0.5),
                   boxShadow: on ? [BoxShadow(color: col.withValues(alpha: 0.4), blurRadius: 5)] : [],
                 )),
               );
@@ -1573,7 +1574,7 @@ class _StreakCalendar extends StatelessWidget {
           return Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisSize: MainAxisSize.min, children: [
             Container(width: 9, height: 9, decoration: BoxDecoration(color: col, shape: BoxShape.circle)),
             const SizedBox(width: 4),
-            Text(t.label, style: GoogleFonts.outfit(fontSize: 9, color: Y4.inkSoft)),
+            Text(t.label, style: GoogleFonts.outfit(fontSize: 10, color: Y4.ink, fontWeight: FontWeight.w600)),
           ]));
         }).toList()),
       ]),
@@ -1604,7 +1605,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
         Row(children: [
           Text('NEXT MILESTONE', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
           const Spacer(),
-          Text('+${milestone.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.honeyDeep)),
+          Text('+${milestone.ptsBonus} pts', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.honeyDeep)),
         ]),
         const SizedBox(height: 8),
         Row(children: [
@@ -1673,7 +1674,7 @@ class _StreakMilestoneList extends StatelessWidget {
                 color: done ? Y4.honey.withValues(alpha: 0.20) : Y4.track,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text('+${m.xpBonus} pts', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
+              child: Text('+${m.ptsBonus} pts', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
                   color: done ? Y4.honeyDeep : Y4.muted, letterSpacing: 0.4)),
             ),
           ]),

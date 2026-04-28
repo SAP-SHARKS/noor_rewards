@@ -741,7 +741,7 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
 
                   SizedBox(height: NoorSpacing.xxl),
 
-                  // ── XP / Gamification Demo ──
+                  // ── Points / Gamification Demo ──
                   Text('Gamification', style: NoorType.titleLg),
                   SizedBox(height: NoorSpacing.md),
 
@@ -755,7 +755,7 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Level 12', style: NoorType.displayMd.copyWith(color: NoorColors.emerald)),
-                                Text('1,240 / 2,000 XP', style: NoorType.bodyMd),
+                                Text('1,240 / 2,000 pts', style: NoorType.bodyMd),
                               ],
                             ),
                             Container(
@@ -864,7 +864,7 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Dark Card', style: NoorType.titleMd.copyWith(color: NoorColors.nightText)),
-                                    Text('+50 XP earned today', style: NoorType.bodyMd.copyWith(color: NoorColors.nightText.withValues(alpha: 0.6))),
+                                    Text('+50 pts earned today', style: NoorType.bodyMd.copyWith(color: NoorColors.nightText.withValues(alpha: 0.6))),
                                   ],
                                 ),
                               ),
