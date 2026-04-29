@@ -850,7 +850,7 @@ class _HomeTabState extends State<_HomeTab> {
               mainAxisSpacing: 14, crossAxisSpacing: 14, childAspectRatio: 0.92,
               children: [
                 _ActivityCard(AppLocalizations.of(context)?.readQuran ?? 'Quran',
-                  NoorIcon.book(size: 28),
+                  NoorIcon.greenBook(size: 60),
                   solid:     Y4.butter,
                   solidDeep: Y4.honey,
                   textColor: Y4.ink,
@@ -858,26 +858,26 @@ class _HomeTabState extends State<_HomeTab> {
                   patternType: _CardPattern.arcRings,
                   onTap: widget.onGoQuran),
                 _ActivityCard(AppLocalizations.of(context)?.dailyDhikr ?? 'Dhikr',
-                  NoorIcon.beads(size: 28),
-                  solid:     Y4.honey,
-                  solidDeep: Y4.honeyDeep,
+                  NoorIcon.beads(size: 60),
+                  solid:     Y4.butter,
+                  solidDeep: Y4.honey,
                   textColor: Y4.ink,
                   reward: dhikrSub,
                   patternType: _CardPattern.floatingDots,
                   onTap: widget.onGoDhikr),
                 _ActivityCard(AppLocalizations.of(context)?.achievements ?? 'Achievements',
-                  NoorIcon.trophy(size: 28),
-                  solid:     Y4.amberY,
-                  solidDeep: const Color(0xFFB87E1A),
-                  textColor: Colors.white,
+                  NoorIcon.trophy(size: 60),
+                  solid:     Y4.butter,
+                  solidDeep: Y4.honey,
+                  textColor: Y4.ink,
                   reward: achievementsSub,
                   patternType: _CardPattern.diamondSparks,
                   onTap: widget.onGoAchievements),
                 _ActivityCard(AppLocalizations.of(context)?.inviteFriends ?? 'Invite',
-                  NoorIcon.handshake(size: 28),
-                  solid:     Y4.primary,
-                  solidDeep: Y4.primaryDeep,
-                  textColor: Colors.white,
+                  NoorIcon.handshake(size: 60),
+                  solid:     Y4.butter,
+                  solidDeep: Y4.honey,
+                  textColor: Y4.ink,
                   reward: inviteSub,
                   patternType: _CardPattern.speedLines,
                   onTap: widget.onGoInvite),
@@ -2004,18 +2004,12 @@ class _ActivityCardState extends State<_ActivityCard> {
                   children: [
                     // Emoji bubble
                     Container(
-                      width: 48, height: 48,
+                      width: 72, height: 72,
                       decoration: BoxDecoration(
-                        color: (widget.textColor == Colors.white
-                                ? Colors.white
-                                : Colors.black)
-                            .withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(14),
+                        color: Colors.white.withValues(alpha: 0.30),
+                        borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                            color: (widget.textColor == Colors.white
-                                    ? Colors.white
-                                    : Colors.black)
-                                .withValues(alpha: 0.25)),
+                            color: Colors.white.withValues(alpha: 0.50)),
                       ),
                       child: Center(child: widget.icon),
                     ),
@@ -4374,15 +4368,14 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
   final List<_EnergyParticle> _particles = [];
   final _rng = math.Random();
 
-  // ── Colors — Y4 honey/sage palette (restyled from teal) ──────────────
-  // Track is honey-deep, glow particles are honey + butter + sage.
-  static const _neonGreen  = Y4.honeyDeep;        // primary track / arc color
+  // ── Colors — Y4 honey/butter palette (matches activity cards) ──────
+  static const _neonGreen  = Y4.honey;            // primary track / arc color
   static const _neonGold   = Y4.butter;           // accent on completion
-  static const _socketRing = Y4.honey;            // bright honey ring
+  static const _socketRing = Y4.butter;           // bright butter ring
 
   static const _sparkPalette = [
-    Y4.honey, Y4.honeyDeep, Y4.butter,
-    Y4.primary, Y4.amberY, Color(0xFFFFFFFF),
+    Y4.honey, Y4.butter, Y4.honeyDeep,
+    Y4.amberY, Color(0xFFFFFFFF),
   ];
 
   // ── Controllers ──────────────────────────────────────────────────────
@@ -4619,26 +4612,26 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
               height: _trackH,
               child: Stack(clipBehavior: Clip.none, children: [
 
-                // ── Track background — golden amber (matches screenshot) ──
+                // ── Track background — butter/honey (matches activity cards) ──
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Y4.amberY, Y4.honeyDeep],
+                        colors: [Y4.butter, Y4.honey],
                         begin: Alignment.topLeft, end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(radius),
                       border: Border.all(
-                        color: Y4.butter.withValues(alpha: 0.4), width: 1.5,
+                        color: Y4.honey.withValues(alpha: 0.5), width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Y4.amberY.withValues(alpha: 0.35),
-                          blurRadius: 24, offset: const Offset(0, 8),
+                          color: Y4.honey.withValues(alpha: 0.30),
+                          blurRadius: 20, offset: const Offset(0, 6),
                         ),
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 10, offset: const Offset(0, 3),
+                          color: Colors.black.withValues(alpha: 0.10),
+                          blurRadius: 8, offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -4704,7 +4697,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                   ),
 
-                // ── Centre label — white on golden amber bg ────────────
+                // ── Centre label — ink on butter/honey bg ────────────
                 if (!_completed)
                   Center(
                     child: Opacity(
@@ -4714,7 +4707,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         style: GoogleFonts.rajdhani(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: Y4.ink,
                           letterSpacing: 1.5,
                         ),
                       ),

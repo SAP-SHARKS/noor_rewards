@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
@@ -1227,116 +1227,122 @@ class _DhikrScreenState extends State<DhikrScreen> {
           child: _filtered.isEmpty
           ? Center(child: Text('No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
           : ListView.builder(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-            itemCount: _filtered.length,
-            itemBuilder: (context, index) {
-              final azkar = _filtered[index];
-              final count = _counts[azkar.id] ?? 0;
-              final tapTarget = _getTarget(azkar.id, azkar.recommendedCount);
-              final isComplete = count >= tapTarget || _completedIds.contains(azkar.id);
-
-              String titleText = (azkar.transliteration.isNotEmpty && azkar.transliteration.trim() != '')
-                  ? azkar.transliteration
-                  : azkar.translation;
-              titleText = titleText.replaceAll('\n', ' ').trim();
-
-              return GestureDetector(
-                onTap: () async {
-                  await Navigator.push(context, MaterialPageRoute(builder: (_) => _DhikrDetailScreen(
-                    azkars: _filtered,
-                    initialIndex: index,
-                    counts: _counts,
-                    favorites: _favorites,
-                    settings: _settings,
-                    parentState: this,
-                  )));
-                  setState((){});
-                },
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+            itemCount: 1,
+            itemBuilder: (context, _) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(18),
                 child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: kWhite,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: isDark ? Colors.white10 : Colors.transparent),
+                    borderRadius: BorderRadius.circular(18),
                     boxShadow: [
-                      if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
-                    ]
+                      if (!isDark) BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))
+                    ],
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Index badge
-                      Stack(
-                        clipBehavior: Clip.none,
+                  child: Column(
+                    children: List.generate(_filtered.length, (index) {
+                      final azkar = _filtered[index];
+                      final count = _counts[azkar.id] ?? 0;
+                      final tapTarget = _getTarget(azkar.id, azkar.recommendedCount);
+                      final isComplete = count >= tapTarget || _completedIds.contains(azkar.id);
+                      final accent = catColor(azkar.category);
+
+                      String titleText = (azkar.transliteration.isNotEmpty && azkar.transliteration.trim() != '')
+                          ? azkar.transliteration
+                          : azkar.translation;
+                      titleText = titleText.replaceAll('\n', ' ').trim();
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: isComplete
-                                  ? catColor(azkar.category)
-                                  : catColor(azkar.category).withValues(alpha: isDark ? 0.15 : 0.10),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            alignment: Alignment.center,
-                            child: isComplete
-                                ? const Icon(Icons.check_rounded, color: Colors.white, size: 20)
-                                : Text('${index + 1}', style: GoogleFonts.outfit(
-                                    fontWeight: FontWeight.w800, fontSize: 15,
-                                    color: isComplete
-                                        ? Colors.white
-                                        : catColor(azkar.category).withValues(alpha: isDark ? 0.90 : 0.80))),
-                          ),
-                          Positioned(
-                            bottom: -4,
-                            right: -4,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: isDark ? SettingsService.instance.config.dashText : Colors.white,
-                                shape: BoxShape.circle,
+                          GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(context, MaterialPageRoute(builder: (_) => _DhikrDetailScreen(
+                                azkars: _filtered,
+                                initialIndex: index,
+                                counts: _counts,
+                                favorites: _favorites,
+                                settings: _settings,
+                                parentState: this,
+                              )));
+                              setState((){});
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Index badge
+                                  Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      color: isComplete
+                                          ? accent
+                                          : accent.withValues(alpha: isDark ? 0.15 : 0.10),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: isComplete
+                                        ? Icon(Icons.check_rounded, color: Colors.white, size: 18)
+                                        : Text('${index + 1}', style: GoogleFonts.outfit(
+                                            fontWeight: FontWeight.w800, fontSize: 14,
+                                            color: accent.withValues(alpha: isDark ? 0.90 : 0.80))),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  // Text
+                                  Expanded(
+                                    child: Text(
+                                      titleText,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.outfit(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                        height: 1.35,
+                                        color: isComplete
+                                            ? (isDark ? Colors.white54 : kSub)
+                                            : kText,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  // Count badge
+                                  Text(
+                                    '${azkar.recommendedCount}x',
+                                    style: GoogleFonts.outfit(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13,
+                                      color: isComplete
+                                          ? const Color(0xFF2BAE7C)
+                                          : accent,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    size: 18,
+                                    color: isDark ? Colors.white24 : Colors.black12,
+                                  ),
+                                ],
                               ),
-                              child: Icon(
-                                _categories.firstWhere((c) => c.id == azkar.category, orElse: () => _categories.first).icon,
-                                size: 16,
-                                color: catColor(azkar.category),
-                              ),
                             ),
                           ),
+                          // Divider — only between items, not after the last
+                          if (index < _filtered.length - 1)
+                            Divider(
+                              height: 1,
+                              thickness: 0.5,
+                              indent: 66,
+                              endIndent: 16,
+                              color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06),
+                            ),
                         ],
-                      ),
-                      const SizedBox(width: 16),
-                      
-                      // Text/Content
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              titleText, 
-                              maxLines: 2, 
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.lora(fontWeight: FontWeight.w700, fontSize: 16, height: 1.3, color: kText)
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      // Count/Target
-                      const SizedBox(width: 12),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text('${azkar.recommendedCount}x', 
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.w800, 
-                            fontSize: 14,
-                            color: isComplete ? const Color(0xFF2BAE7C) : const Color(0xFF1B4E3B)
-                          )
-                        ),
-                      ),
-                    ]
-                  )
+                      );
+                    }),
+                  ),
                 ),
               );
             },
