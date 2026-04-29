@@ -14,6 +14,7 @@ import 'screens/start_journey_screen.dart';
 import 'screens/profile_setup_screen.dart';
 import 'screens/welcome_gate_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/flower_splash_screen.dart';
 import 'services/settings_service.dart';
 import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart';       // Quran Foundation credentials
@@ -134,7 +135,7 @@ class MyApp extends StatelessWidget {
         );
       },
       navigatorKey: notificationNavigatorKey,
-      home: const AuthGate(),
+      home: const _SplashGate(),
     );
   }
 
@@ -183,6 +184,27 @@ void _initAppLinks() {
 
 bool _isQfCallback(Uri uri) =>
     uri.scheme == 'noorrewards' && uri.host == 'oauth2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+/// Shows the flower Lottie splash once, then hands off to [AuthGate].
+class _SplashGate extends StatelessWidget {
+  const _SplashGate();
+  @override
+  Widget build(BuildContext context) {
+    return FlowerSplashScreen(
+      onComplete: () {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const AuthGate(),
+            transitionsBuilder: (_, anim, __, child) =>
+                FadeTransition(opacity: anim, child: child),
+            transitionDuration: const Duration(milliseconds: 600),
+          ),
+        );
+      },
+    );
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 class AuthGate extends StatefulWidget {

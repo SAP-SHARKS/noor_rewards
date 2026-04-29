@@ -211,7 +211,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _dailyReminder     = true;    // daily reading reminder on
   bool   _soundAlerts       = true;    // sound alert on milestone
   // Theme accent (index into _kThemeAccents)
-  int    _themeIdx          = 0;
+  int    _themeIdx          = 2; // Default: Amber 🔥 (matches Y4 honey theme)
   // Mushaf immersive overlay (tap-to-show controls)
   bool   _showMushafControls = true;
   Timer? _controlsHideTimer;

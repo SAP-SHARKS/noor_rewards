@@ -1027,6 +1027,30 @@ class _DhikrScreenState extends State<DhikrScreen> {
     );
   }
 
+  // ── Category timing label ─────────────────────────────────────────────────
+  static String _categoryTiming(String catId) {
+    switch (catId) {
+      case 'morning':     return 'Between Subh-e-Sadiq to Sunrise';
+      case 'evening':     return 'Between Asr and Maghrib';
+      case 'sleeping':    return 'Before Sleeping';
+      case 'waking_up':   return 'Upon Waking Up';
+      case 'post_prayer': return 'After Each Prayer';
+      case 'salawat':     return 'Anytime — Especially After Prayer';
+      case 'istighfar':   return 'Anytime — Morning & Evening';
+      case 'tahajjud':    return 'During the Night';
+      case 'quranic':     return 'Anytime';
+      case 'sunnah':      return 'As per Sunnah';
+      case 'food_drink':  return 'When Eating or Drinking';
+      case 'home':        return 'Upon Entering / Leaving Home';
+      case 'wudu':        return 'Before or After Wudu';
+      case 'clothes':     return 'When Getting Dressed';
+      case 'nightmares':  return 'Upon Having a Bad Dream';
+      case 'ummah':       return 'For the Ummah — Anytime';
+      case 'general':     return 'Anytime';
+      default:            return 'Anytime';
+    }
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   @override
@@ -1292,26 +1316,60 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                             color: accent.withValues(alpha: isDark ? 0.90 : 0.80))),
                                   ),
                                   const SizedBox(width: 14),
-                                  // Text
+                                  // Text column: first line = transliteration snippet, second = reference/timing
                                   Expanded(
-                                    child: Text(
-                                      titleText,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.outfit(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15,
-                                        height: 1.35,
-                                        color: isComplete
-                                            ? (isDark ? Colors.white54 : kSub)
-                                            : kText,
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // ── Line 1 (bold): first ~35 chars of transliteration + '..' ──
+                                        Text(
+                                          () {
+                                            final id = azkar.id;
+                                            if (id.contains('ayat_kursi') || id.contains('ayatul_kursi')) {
+                                              return 'Ayatul Kursi: Allahu laa ilaaha..';
+                                            }
+                                            if (id.contains('fatiha') || id.contains('fateh') ||
+                                                id.contains('al_fat') || id.contains('alfat')) {
+                                              return 'Al Fateh : Alhamdu lilaahi..';
+                                            }
+                                            final src = titleText;
+                                            return src.length > 35
+                                                ? '${src.substring(0, 35).trimRight()}..'
+                                                : src;
+                                          }(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15,
+                                            height: 1.3,
+                                            color: isComplete
+                                                ? (isDark ? Colors.white54 : kSub)
+                                                : kText,
+                                          ),
+                                        ),
+                                        // ── Line 2 (light): when to read (by category) ──
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          _categoryTiming(azkar.category),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12,
+                                            color: isComplete
+                                                ? const Color(0xFF2BAE7C)
+                                                : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  // Count badge
+                                  // ── Count badge (restored original position) ──
                                   Text(
-                                    '${azkar.recommendedCount}x',
+                                    '${tapTarget}x',
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 13,
