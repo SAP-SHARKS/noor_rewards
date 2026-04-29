@@ -20,7 +20,6 @@ Color get _kSub   => _qhcfg.dashBg.computeLuminance() > 0.5
 Color get _kTeal  => _qhcfg.dashTeal;
 Color get _kTealL => _qhcfg.dashTeal.withValues(alpha: 0.25);
 Color get _kGold  => _qhcfg.quranGold;
-const _kRed   = Color(0xFFEF5350);
 
 // ── Surah names (1-indexed, index 0 unused) ───────────────────────────────────
 const _surahNames = [
@@ -332,7 +331,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
   void _showSavedList({required bool isFavourites}) {
     final list = isFavourites ? _favourites : _bookmarks;
     final title = isFavourites ? 'Favourites' : 'Bookmarks';
-    final color = isFavourites ? _kRed : _kTeal;
+    final color = isFavourites ? Y4.honeyDeep : Y4.primary;
     final icon  = isFavourites ? Icons.favorite_rounded : Icons.bookmark_rounded;
 
     showModalBottomSheet(
@@ -503,7 +502,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           // Surah selector row
           _PickerRow(
             icon: Icons.menu_book_rounded,
-            iconColor: _kTeal,
+            iconColor: Y4.honeyDeep,
             label: 'Surah',
             value: _surahNames[_selSurah],
             subtitle: '${_surahLengths[_selSurah]} verses',
@@ -514,7 +513,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           // Ayah selector row
           _PickerRow(
             icon: Icons.format_list_numbered_rounded,
-            iconColor: Y4.primaryDeep,
+            iconColor: Y4.honeyDeep,
             label: 'Start from Verse',
             value: 'Verse $_selAyah',
             subtitle: 'of ${_surahLengths[_selSurah]}',
@@ -555,7 +554,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           Row(children: [
             Expanded(child: _LibraryCard(
               icon: Icons.favorite_rounded,
-              color: _kRed,
+              color: Y4.honeyDeep,
               label: 'Favourites',
               count: _favouriteCount,
               onTap: () => _showSavedList(isFavourites: true),
@@ -563,7 +562,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             const SizedBox(width: 12),
             Expanded(child: _LibraryCard(
               icon: Icons.bookmark_rounded,
-              color: _kTeal,
+              color: Y4.honeyDeep,
               label: 'Bookmarks',
               count: _bookmarkCount,
               onTap: () => _showSavedList(isFavourites: false),
@@ -761,8 +760,15 @@ class _PickerRowState extends State<_PickerRow> {
           Container(
             width: 44, height: 44,
             decoration: BoxDecoration(
-                color: widget.iconColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12)),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  colors: [
+                    Y4.butter,
+                    widget.iconColor.withValues(alpha: 0.30),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: widget.iconColor.withValues(alpha: 0.40))),
             child: Icon(widget.icon, color: widget.iconColor, size: 22),
           ),
           const SizedBox(width: 14),
@@ -808,14 +814,19 @@ class _LibraryCardState extends State<_LibraryCard> {
           height: 110,
           decoration: BoxDecoration(
             color: _kWhite, borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: widget.color.withValues(alpha: 0.2)),
+            border: Border.all(color: widget.color.withValues(alpha: 0.30)),
             boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
           ),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(
               width: 48, height: 48,
               decoration: BoxDecoration(
-                  color: widget.color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft, end: Alignment.bottomRight,
+                    colors: [Y4.butter, widget.color.withValues(alpha: 0.30)],
+                  ),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: widget.color.withValues(alpha: 0.40))),
               child: Icon(widget.icon, color: widget.color, size: 24),
             ),
             const SizedBox(height: 8),

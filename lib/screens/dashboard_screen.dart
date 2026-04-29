@@ -3004,13 +3004,14 @@ class _ImpactTabState extends State<_ImpactTab> {
     final availablePoints = parentState?._noorPoints ?? 0;
 
     return SafeArea(child: SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 110),
+      padding: const EdgeInsets.only(bottom: 110),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // ── Community Impact heading only (Akhirah Balance is now the tab) ────
-        // ── My personal donation history block removed (prevent repetition from Dashboard) ──
 
-        Text(AppLocalizations.of(context)?.communityImpact ?? 'Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
-        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          child: Text(AppLocalizations.of(context)?.communityImpact ?? 'Community Impact', style: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w800, color: _C.text)),
+        ),
+        const SizedBox(height: 16),
 
         for (final p in active) ...[
           _ProjectCard(
@@ -3032,7 +3033,7 @@ class _ImpactTabState extends State<_ImpactTab> {
               _load();
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 1),  // thin divider gap between cards
         ],
 
         if (completed.isNotEmpty) ...[
@@ -3119,7 +3120,7 @@ class _ProjectCard extends StatelessWidget {
 
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,

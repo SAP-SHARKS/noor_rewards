@@ -1,4 +1,4 @@
-﻿// lib/screens/impact_report_screen.dart
+// lib/screens/impact_report_screen.dart
 //
 // Akhirah Balance — a premium Islamic banking-style dashboard showing
 // the user's spiritual portfolio: deeds, streaks, and earnings.
@@ -790,9 +790,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       body: _loading
           ? const Center(child: NoorInlineLoader())
           : ListView.separated(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.zero,
               itemCount: _projects.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, __) => const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
               itemBuilder: (ctx, i) {
                 final p = _projects[i];
                 final cur     = (p['current_points'] as num?)?.toInt() ?? 0;
@@ -806,15 +806,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 return Container(
                   key: _projectKeys[pid],
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05), blurRadius: 12)],
-                    border: done
-                        ? Border.all(color: _C.gold.withValues(alpha: 0.4))
-                        : null,
-                  ),
+                  color: Colors.white,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     // Title row
                     Row(children: [

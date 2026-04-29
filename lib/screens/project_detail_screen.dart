@@ -268,13 +268,17 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
 
           // ── Hero ──────────────────────────────────────────────────────────
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: (!_loading && _media.isEmpty &&
+                (dpUrl == null || dpUrl.isEmpty)) ? null : 300,
             pinned: true,
             stretch: true,
             backgroundColor: _PD.tealDark,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             automaticallyImplyLeading: false,
-            flexibleSpace: FlexibleSpaceBar(
+            flexibleSpace: (!_loading && _media.isEmpty &&
+                (dpUrl == null || dpUrl.isEmpty))
+                ? null
+                : FlexibleSpaceBar(
               stretchModes: const [StretchMode.zoomBackground],
               background: _loading
                   ? Container(color: _PD.tealDark,
