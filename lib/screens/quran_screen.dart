@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
@@ -2317,12 +2317,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   ],
                 ),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                   // ── Action pills row ─────────────────────────────────────────
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
+                    alignment: WrapAlignment.center,
                     children: [
                     if (!_fullPageMode) ...[
                       // 📖 Read Tafsir
@@ -2480,7 +2481,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             ),
                           ],
                         ),
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.center,
                         strutStyle: StrutStyle(
                           fontSize: _arabicFontSize,
                           height: 2.4,
@@ -2500,7 +2501,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           padding: const EdgeInsets.only(top: 10, left: 4, right: 4),
                           child: Text(
                             _translation,
-                            textAlign: def.rtl ? TextAlign.right : TextAlign.left,
+                            textAlign: TextAlign.center,
                             textDirection: def.rtl
                                 ? TextDirection.rtl
                                 : TextDirection.ltr,
@@ -2557,7 +2558,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         decoration: BoxDecoration(
                             color: _accent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10)),
-                        child: Text('+_pointsToday pts',
+                        child: Text('+$_pointsToday pts',
                             style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,

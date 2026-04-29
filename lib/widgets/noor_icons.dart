@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:ui' as ui;
 
 /// NoorIcon  3-D gradient SVG icon system.
@@ -259,11 +259,23 @@ const _kFire = [
 ];
 
 const _kTrophy = [
-  _S(type:'rect',x:0.3,y:0.82,w:0.4,h:0.08,r:0.04,c1:Color(0xFFDAA520),c2:Color(0xFF8B6914)),
-  _S(type:'rect',x:0.38,y:0.7,w:0.24,h:0.14,r:0.02,c1:Color(0xFFFFD700),c2:Color(0xFFDAA520)),
-  _S(type:'path',d:'M0.2 0.15 L0.8 0.15 Q0.85 0.15 0.85 0.2 L0.85 0.5 Q0.85 0.7 0.5 0.72 Q0.15 0.7 0.15 0.5 L0.15 0.2 Q0.15 0.15 0.2 0.15Z',c1:Color(0xFFFFEC6E),c2:Color(0xFFDAA520)),
-  _S(type:'path',d:'M0.15 0.22 Q0.05 0.25 0.05 0.4 Q0.05 0.55 0.18 0.58',c1:Color(0xFFFFD700),c2:Color(0xFFDAA520)),
-  _S(type:'path',d:'M0.85 0.22 Q0.95 0.25 0.95 0.4 Q0.95 0.55 0.82 0.58',c1:Color(0xFFFFD700),c2:Color(0xFFDAA520)),
+  // Dark base block
+  _S(type:'rect',x:0.12,y:0.84,w:0.76,h:0.12,r:0.04,c1:Color(0xFF37474F),c2:Color(0xFF263238)),
+  // Gold plaque on base
+  _S(type:'rect',x:0.28,y:0.87,w:0.44,h:0.06,r:0.02,c1:Color(0xFFDAA520),c2:Color(0xFFB8860B)),
+  // Stem
+  _S(type:'rect',x:0.40,y:0.68,w:0.20,h:0.18,r:0.03,c1:Color(0xFFDAA520),c2:Color(0xFFB8860B)),
+  // Stem base flare
+  _S(type:'rect',x:0.28,y:0.80,w:0.44,h:0.06,r:0.03,c1:Color(0xFFFFD700),c2:Color(0xFFDAA520)),
+  // Cup body
+  _S(type:'path',d:'M0.22 0.10 L0.78 0.10 Q0.84 0.10 0.84 0.18 L0.84 0.46 Q0.84 0.68 0.50 0.70 Q0.16 0.68 0.16 0.46 L0.16 0.18 Q0.16 0.10 0.22 0.10Z',c1:Color(0xFFFFEC6E),c2:Color(0xFFDAA520)),
+  // Cup highlight
+  _S(type:'path',d:'M0.24 0.12 L0.55 0.12 Q0.60 0.12 0.60 0.18 L0.60 0.44 Q0.58 0.55 0.50 0.58',c1:Color(0xFFFFFFAA),c2:Color(0xFFFFEC6E)),
+  // Left handle
+  _S(type:'path',d:'M0.16 0.22 Q0.04 0.26 0.04 0.40 Q0.04 0.54 0.16 0.56',c1:Color(0xFFFFD700),c2:Color(0xFFDAA520)),
+  _S(type:'stroke_path',d:'M0.16 0.22 Q0.03 0.27 0.03 0.40 Q0.03 0.54 0.16 0.56',sw:0.07,c1:Color(0xFFFFD700),c2:Color(0xFFFFD700)),
+  // Right handle
+  _S(type:'stroke_path',d:'M0.84 0.22 Q0.97 0.27 0.97 0.40 Q0.97 0.54 0.84 0.56',sw:0.07,c1:Color(0xFFFFD700),c2:Color(0xFFFFD700)),
 ];
 
 const _kBook = [
@@ -277,13 +289,30 @@ const _kBook = [
 ];
 
 const _kBeads = [
-  _S(type:'path',d:'M0.5 0.05 Q0.85 0.15 0.95 0.5 Q0.85 0.85 0.5 0.95 Q0.15 0.85 0.05 0.5 Q0.15 0.15 0.5 0.05Z',c1:Color(0xFF00897B),c2:Color(0xFF004D40)),
-  _S(type:'circle',x:0.5,y:0.05,w:0.22,h:0.22,r:0.1,c1:Color(0xFF4DB6AC),c2:Color(0xFF00796B)),
-  _S(type:'circle',x:0.88,y:0.3,w:0.22,h:0.22,r:0.1,c1:Color(0xFF4DB6AC),c2:Color(0xFF00796B)),
-  _S(type:'circle',x:0.88,y:0.65,w:0.22,h:0.22,r:0.1,c1:Color(0xFF4DB6AC),c2:Color(0xFF00796B)),
-  _S(type:'circle',x:0.5,y:0.82,w:0.22,h:0.22,r:0.1,c1:Color(0xFF80CBC4),c2:Color(0xFF00897B)),
-  _S(type:'circle',x:0.12,y:0.65,w:0.22,h:0.22,r:0.1,c1:Color(0xFF4DB6AC),c2:Color(0xFF00796B)),
-  _S(type:'circle',x:0.12,y:0.3,w:0.22,h:0.22,r:0.1,c1:Color(0xFF4DB6AC),c2:Color(0xFF00796B)),
+  // Strand loop — smooth closed oval
+  _S(type:'stroke_path',d:'M0.50 0.10 Q0.88 0.10 0.90 0.50 Q0.88 0.88 0.50 0.90 Q0.12 0.88 0.10 0.50 Q0.12 0.12 0.50 0.10Z',sw:0.055,c1:Color(0xFFB8860B),c2:Color(0xFFB8860B)),
+  // 9 beads — all r:0.075, evenly spaced at 40° intervals around the oval
+  // top
+  _S(type:'circle',x:0.425,y:0.04,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFD700),c2:Color(0xFFB8860B),radial:true),
+  // top-right
+  _S(type:'circle',x:0.68,y:0.10,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFEC6E),c2:Color(0xFFDAA520),radial:true),
+  // right-top
+  _S(type:'circle',x:0.845,y:0.27,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFD700),c2:Color(0xFFB8860B),radial:true),
+  // right
+  _S(type:'circle',x:0.845,y:0.50,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFEC6E),c2:Color(0xFFDAA520),radial:true),
+  // right-bottom
+  _S(type:'circle',x:0.70,y:0.76,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFD700),c2:Color(0xFFB8860B),radial:true),
+  // bottom
+  _S(type:'circle',x:0.425,y:0.82,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFEC6E),c2:Color(0xFFDAA520),radial:true),
+  // left-bottom
+  _S(type:'circle',x:0.155,y:0.73,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFD700),c2:Color(0xFFB8860B),radial:true),
+  // left
+  _S(type:'circle',x:0.055,y:0.50,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFEC6E),c2:Color(0xFFDAA520),radial:true),
+  // left-top
+  _S(type:'circle',x:0.155,y:0.24,w:0.15,h:0.15,r:0.075,c1:Color(0xFFFFD700),c2:Color(0xFFB8860B),radial:true),
+  // Tassel connector
+  _S(type:'rect',x:0.47,y:0.90,w:0.06,h:0.05,r:0.02,c1:Color(0xFFB8860B),c2:Color(0xFF8B6914)),
+  _S(type:'path',d:'M0.5 0.95 Q0.44 0.97 0.46 1.0 Q0.5 1.02 0.54 1.0 Q0.56 0.97 0.5 0.95Z',c1:Color(0xFFDAA520),c2:Color(0xFFB8860B)),
 ];
 
 const _kMoon = [
@@ -498,10 +527,22 @@ const _kBooks = [
 ];
 
 const _kGreenBook = [
-  _S(type:'rect',x:0.08,y:0.1,w:0.82,h:0.8,r:0.06,c1:Color(0xFF2E7D32),c2:Color(0xFF1B5E20)),
-  _S(type:'rect',x:0.12,y:0.14,w:0.37,h:0.72,r:0.03,c1:Color(0xFFF5F5F5),c2:Color(0xFFE0E0E0)),
-  _S(type:'rect',x:0.51,y:0.14,w:0.37,h:0.72,r:0.03,c1:Color(0xFFF5F5F5),c2:Color(0xFFE8E8E8)),
-  _S(type:'rect',x:0.465,y:0.1,w:0.07,h:0.8,r:0.02,c1:Color(0xFF66BB6A),c2:Color(0xFF2E7D32)),
+  // Spine (dark purple, left strip for 3-D feel)
+  _S(type:'rect',x:0.05,y:0.06,w:0.12,h:0.88,r:0.04,c1:Color(0xFF3A1255),c2:Color(0xFF220A38)),
+  // Main cover (purple/violet)
+  _S(type:'rect',x:0.15,y:0.04,w:0.72,h:0.92,r:0.05,c1:Color(0xFF8B45C0),c2:Color(0xFF6B28A0)),
+  // Page edges (cream, right side)
+  _S(type:'rect',x:0.85,y:0.08,w:0.10,h:0.84,r:0.02,c1:Color(0xFFF8F4EC),c2:Color(0xFFE8E0D0)),
+  // Outer decorative border on cover
+  _S(type:'stroke_path',d:'M0.22 0.12 L0.82 0.12 L0.82 0.88 L0.22 0.88 L0.22 0.12Z',sw:0.024,c1:Color(0xFFDDBBFF),c2:Color(0xFFDDBBFF)),
+  // Inner border
+  _S(type:'stroke_path',d:'M0.27 0.18 L0.77 0.18 L0.77 0.82 L0.27 0.82 L0.27 0.18Z',sw:0.013,c1:Color(0xFFCC99FF),c2:Color(0xFFCC99FF)),
+  // Centre medallion
+  _S(type:'circle',x:0.36,y:0.28,w:0.28,h:0.28,r:0.13,c1:Color(0xFFEEDDFF),c2:Color(0xFFBB88EE),radial:true),
+  // Arabic calligraphy suggestion (3 lines)
+  _S(type:'rect',x:0.41,y:0.41,w:0.18,h:0.022,r:0.01,c1:Color(0xFF6B28A0),c2:Color(0xFF4A1578)),
+  _S(type:'rect',x:0.39,y:0.46,w:0.22,h:0.022,r:0.01,c1:Color(0xFF6B28A0),c2:Color(0xFF4A1578)),
+  _S(type:'rect',x:0.43,y:0.51,w:0.14,h:0.022,r:0.01,c1:Color(0xFF6B28A0),c2:Color(0xFF4A1578)),
 ];
 
 const _kCheck = [
@@ -510,9 +551,21 @@ const _kCheck = [
 ];
 
 const _kHandshake = [
-  _S(type:'path',d:'M0.05 0.55 Q0.05 0.38 0.2 0.35 L0.42 0.42 L0.5 0.38 L0.58 0.42 L0.8 0.35 Q0.95 0.38 0.95 0.55 Q0.8 0.72 0.58 0.68 L0.5 0.72 L0.42 0.68 Q0.2 0.72 0.05 0.55Z',c1:Color(0xFFFFCC80),c2:Color(0xFFE65100)),
-  _S(type:'rect',x:0.0,y:0.42,w:0.22,h:0.36,r:0.04,c1:Color(0xFF1565C0),c2:Color(0xFF0D47A1)),
-  _S(type:'rect',x:0.78,y:0.42,w:0.22,h:0.36,r:0.04,c1:Color(0xFF1565C0),c2:Color(0xFF0D47A1)),
+  // ── Left person (blue) ───────────────────────────────────────
+  _S(type:'circle',x:0.08,y:0.04,w:0.30,h:0.30,r:0.15,
+     c1:Color(0xFF5C9EE8),c2:Color(0xFF1565C0)),
+  _S(type:'rect',x:0.02,y:0.38,w:0.46,h:0.42,r:0.14,
+     c1:Color(0xFF5C9EE8),c2:Color(0xFF1565C0)),
+  _S(type:'rect',x:0.16,y:0.32,w:0.16,h:0.12,r:0.04,
+     c1:Color(0xFF5C9EE8),c2:Color(0xFF1565C0)),
+
+  // ── Right person (teal) ───────────────────────────────────────
+  _S(type:'circle',x:0.62,y:0.04,w:0.30,h:0.30,r:0.15,
+     c1:Color(0xFF26C6A6),c2:Color(0xFF00897B)),
+  _S(type:'rect',x:0.56,y:0.38,w:0.46,h:0.42,r:0.14,
+     c1:Color(0xFF26C6A6),c2:Color(0xFF00897B)),
+  _S(type:'rect',x:0.70,y:0.32,w:0.16,h:0.12,r:0.04,
+     c1:Color(0xFF26C6A6),c2:Color(0xFF00897B)),
 ];
 
 const _kShare = [

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress Card — Empty-Space Optimization Variants</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Outfit:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF4D2;
+    --cream: #FFFAE3;
+    --surface: #FFFFFF;
+    --ink: #2A2410;
+    --inkSoft: #766B47;
+    --muted: #B8AC85;
+    --primary: #7A8C3A;
+    --primaryDeep: #4D5C20;
+    --honey: #FFC83D;
+    --honeyDeep: #D89A1E;
+    --butter: #FFE89A;
+    --amber: #E8A84A;
+    --soil: #8A5A3B;
+    --track: #F4E5B0;
+    --border: rgba(42,36,16,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    padding: 30px 20px;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 460px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--inkSoft);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .variant {
+    margin-bottom: 28px;
+  }
+  .variant-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--inkSoft);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+  .variant-label .num {
+    background: var(--ink);
+    color: var(--honey);
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-right: 8px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+  .variant-tag {
+    background: var(--honey);
+    color: var(--ink);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    margin-left: 6px;
+    letter-spacing: 0.3px;
+  }
+  .pcard {
+    background: var(--surface);
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .pcard-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .pcard-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .tab-pill {
+    display: inline-flex;
+    background: var(--track);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .tab-pill .tab {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--inkSoft);
+    cursor: pointer;
+  }
+  .tab-pill .tab.on {
+    background: var(--ink);
+    color: white;
+  }
+
+  /* Sun arc */
+  .sun-arc {
+    width: 100px;
+    height: 60px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .sun-arc.big { width: 130px; height: 78px; }
+  .sun-arc svg { width: 100%; height: 100%; }
+  .arc-bg { fill: none; stroke: var(--track); stroke-width: 8; stroke-linecap: round; }
+  .arc-fill { fill: none; stroke: var(--honeyDeep); stroke-width: 8; stroke-linecap: round; }
+  .arc-sun { fill: var(--honey); stroke: var(--honeyDeep); stroke-width: 2; }
+
+  /* Number column */
+  .num-col {
+    flex: 1;
+  }
+  .num {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    letter-spacing: -0.6px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .num.big { font-size: 36px; }
+  .goal-cap {
+    font-size: 11px;
+    color: var(--inkSoft);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .pct-cap {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--honeyDeep);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 5px;
+  }
+
+  /* === Variant 1: CURRENT (baseline) === */
+  .v1-row { display: flex; align-items: center; gap: 16px; }
+
+  /* === Variant 2: Daily 7-dot row === */
+  .day-dots {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .day-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .day-letter {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .day-circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--track);
+    border: 1.5px solid var(--border);
+  }
+  .day-dot.done .day-circle {
+    background: var(--honeyDeep);
+    border-color: var(--honeyDeep);
+    box-shadow: 0 0 0 2px rgba(216,154,30,0.18);
+  }
+  .day-dot.today .day-circle {
+    background: var(--honey);
+    border-color: var(--honeyDeep);
+  }
+
+  /* === Variant 3: Trend / comparison === */
+  .trend-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .trend-pill {
+    background: rgba(122,140,58,0.12);
+    color: var(--primaryDeep);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .trend-pill.warn {
+    background: rgba(216,154,30,0.15);
+    color: var(--honeyDeep);
+  }
+  .trend-bar-wrap {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .trend-bar-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--inkSoft);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .trend-bar-bg {
+    height: 6px;
+    background: var(--track);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .trend-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--honey), var(--honeyDeep));
+    border-radius: 3px;
+  }
+
+  /* === Variant 4: Streak + milestone === */
+  .extras-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .extra-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    width: fit-content;
+  }
+  .extra-pill.streak {
+    background: rgba(216,154,30,0.15);
+    color: var(--honeyDeep);
+  }
+  .extra-pill.milestone {
+    background: rgba(122,140,58,0.15);
+    color: var(--primaryDeep);
+  }
+
+  /* === Variant 5: Activity breakdown === */
+  .legend {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+  }
+  .legend-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .legend-dot.q { background: #5A7BB8; }
+  .legend-dot.d { background: var(--primary); }
+  .legend-dot.t { background: var(--honeyDeep); }
+  .legend-dot.v { background: var(--soil); }
+  .legend-label {
+    font-size: 9px;
+    color: var(--inkSoft);
+    font-weight: 600;
+  }
+  .legend-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  /* === Variant 6: Bigger sun-arc + balanced === */
+  .v6-row { display: flex; align-items: center; gap: 18px; }
+  .v6-aux {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Notes */
+  .note {
+    font-size: 12px;
+    color: var(--inkSoft);
+    line-height: 1.5;
+    padding: 10px 14px;
+    background: var(--cream);
+    border-radius: 12px;
+    margin-top: 10px;
+    border-left: 3px solid var(--honeyDeep);
+  }
+  .note strong { color: var(--ink); }
+
+  .header-card {
+    background: linear-gradient(145deg, var(--cream), var(--butter));
+    border: 1px solid rgba(216,154,30,0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .pick-hint {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--honeyDeep);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Progress Card · 6 Variants</h1>
+  <p class="subtitle">Same data, different ways to fill the empty space</p>
+
+  <div class="header-card">
+    <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:500;color:var(--ink);margin-bottom:6px;">The empty space</div>
+    <div style="font-size:12px;color:var(--inkSoft);line-height:1.5;">
+      Right of "of 250 week goal" and below the tab pill — currently unused.
+      Each variant adds a different element to make the card more informative
+      without crowding it.
+    </div>
+  </div>
+
+  <!-- ════════════ Variant 1: CURRENT ════════════ -->
+  <div class="variant">
+    <div class="variant-label"><span class="num">01</span>Current — baseline</div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-title">Progress</div>
+        <div class="tab-pill">
+          <div class="tab">Today</div>
+          <div class="tab on">Week</div>
+          <div class="tab">Month</div>
+        </div>
+      </div>
+      <div class="v1-row">
+        <div class="sun-arc">
+          <svg viewBox="0 0 100 60">
+            <path class="arc-bg" d="M 10 55 A 40 40 0 0 1 90 55"/>
+            <path class="arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" stroke-dasharray="126,200"/>
+            <circle class="arc-sun" cx="90" cy="55" r="6"/>
+          </svg>
+        </div>
+        <div class="num-col">
+          <div class="num">722</div>
+          <div class="goal-cap">of 250 week goal</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">What you have today. Empty right side. Nothing wrong, just under-used.</div>
+  </div>
+
+  <!-- ════════════ Variant 2: 7-day dot row ════════════ -->
+  <div class="variant">
+    <div class="variant-label"><span class="num">02</span>7-day dot row<span class="variant-tag">Recommended</span></div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-title">Progress</div>
+        <div class="tab-pill">
+          <div class="tab">Today</div>
+          <div class="tab on">Week</div>
+          <div class="tab">Month</div>
+        </div>
+      </div>
+      <div class="v1-row">
+        <div class="sun-arc">
+          <svg viewBox="0 0 100 60">
+            <path class="arc-bg" d="M 10 55 A 40 40 0 0 1 90 55"/>
+            <path class="arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" stroke-dasharray="126,200"/>
+            <circle class="arc-sun" cx="90" cy="55" r="6"/>
+          </svg>
+        </div>
+        <div class="num-col">
+          <div class="num">722</div>
+          <div class="goal-cap">of 250 week goal</div>
+          <div class="pct-cap">288% · sun is rising</div>
+        </div>
+      </div>
+      <div class="day-dots">
+        <div class="day-dot done"><span class="day-letter">M</span><div class="day-circle"></div></div>
+        <div class="day-dot done"><span class="day-letter">T</span><div class="day-circle"></div></div>
+        <div class="day-dot done"><span class="day-letter">W</span><div class="day-circle"></div></div>
+        <div class="day-dot done"><span class="day-letter">T</span><div class="day-circle"></div></div>
+        <div class="day-dot today"><span class="day-letter">F</span><div class="day-circle"></div></div>
+        <div class="day-dot"><span class="day-letter">S</span><div class="day-circle"></div></div>
+        <div class="day-dot"><span class="day-letter">S</span><div class="day-circle"></div></div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Adds:</strong> percent caption + 7-day dot row showing which days hit the daily goal.
+      Great pattern for a fitness/streak app — at-a-glance "how am I doing this week".
+      Hooks naturally into existing streak data.
+    </div>
+  </div>
+
+  <!-- ════════════ Variant 3: Trend comparison + bar ════════════ -->
+  <div class="variant">
+    <div class="variant-label"><span class="num">03</span>Trend comparison + progress bar</div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-title">Progress</div>
+        <div class="tab-pill">
+          <div class="tab">Today</div>
+          <div class="tab on">Week</div>
+          <div class="tab">Month</div>
+        </div>
+      </div>
+      <div class="v1-row">
+        <div class="sun-arc">
+          <svg viewBox="0 0 100 60">
+            <path class="arc-bg" d="M 10 55 A 40 40 0 0 1 90 55"/>
+            <path class="arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" stroke-dasharray="126,200"/>
+            <circle class="arc-sun" cx="90" cy="55" r="6"/>
+          </svg>
+        </div>
+        <div class="num-col">
+          <div class="num">722</div>
+          <div class="goal-cap">of 250 week goal</div>
+          <div class="trend-row">
+            <span class="trend-pill">▲ +18% vs last week</span>
+          </div>
+        </div>
+      </div>
+      <div class="trend-bar-wrap">
+        <div class="trend-bar-row">
+          <span>Daily average · 103 XP</span>
+          <span>Best day · 162 XP</span>
+        </div>
+        <div class="trend-bar-bg"><div class="trend-bar-fill" style="width:65%"></div></div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Adds:</strong> "▲ +18% vs last week" trend pill + a daily-average bar with best-day marker.
+      Best for users who want to track improvement over time. Slightly more numbers, more analytical feel.
+    </div>
+  </div>
+
+  <!-- ════════════ Variant 4: Streak + milestone ════════════ -->
+  <div class="variant">
+    <div class="variant-label"><span class="num">04</span>Streak chip + next milestone</div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-title">Progress</div>
+        <div class="tab-pill">
+          <div class="tab">Today</div>
+          <div class="tab on">Week</div>
+          <div class="tab">Month</div>
+        </div>
+      </div>
+      <div class="v1-row">
+        <div class="sun-arc">
+          <svg viewBox="0 0 100 60">
+            <path class="arc-bg" d="M 10 55 A 40 40 0 0 1 90 55"/>
+            <path class="arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" stroke-dasharray="126,200"/>
+            <circle class="arc-sun" cx="90" cy="55" r="6"/>
+          </svg>
+        </div>
+        <div class="num-col">
+          <div class="num">722</div>
+          <div class="goal-cap">of 250 week goal</div>
+          <div class="extras-col">
+            <span class="extra-pill streak">🔥 14-day streak</span>
+            <span class="extra-pill milestone">🏆 Next: 1,000 XP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Adds:</strong> two stacked pills next to the number — current streak + nearest milestone XP.
+      Strongest motivational pull. Shifts the card from "progress report" to "keep going" feel.
+    </div>
+  </div>
+
+  <!-- ════════════ Variant 5: Activity breakdown ════════════ -->
+  <div class="variant">
+    <div class="variant-label"><span class="num">05</span>Activity breakdown legend</div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-title">Progress</div>
+        <div class="tab-pill">
+          <div class="tab">Today</div>
+          <div class="tab on">Week</div>
+          <div class="tab">Month</div>
+        </div>
+      </div>
+      <div class="v1-row">
+        <div class="sun-arc">
+          <svg viewBox="0 0 100 60">
+            <path class="arc-bg" d="M 10 55 A 40 40 0 0 1 90 55"/>
+            <path class="arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" stroke-dasharray="126,200"/>
+            <circle class="arc-sun" cx="90" cy="55" r="6"/>
+          </svg>
+        </div>
+        <div class="num-col">
+          <div class="num">722</div>
+          <div class="goal-cap">of 250 week goal</div>
+          <div class="pct-cap">288% · goal smashed</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot q"></div><span class="legend-val">320</span><span class="legend-label">Quran</span></div>
+        <div class="legend-item"><div class="legend-dot d"></div><span class="legend-val">240</span><span class="legend-label">Dhikr</span></div>
+        <div class="legend-item"><div class="legend-dot t"></div><span class="legend-val">102</span><span class="legend-label">Tafsir</span></div>
+        <div class="legend-item"><div class="legend-dot v"></div><span class="legend-val">60</span><span class="legend-label">Validate</span></div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Adds:</strong> compact 4-column legend showing where the XP came from
+      (Quran / Dhikr / Tafsir / Validate). Best for analytical users. Reuses the
+      activity color identity already in the dashboard.
+    </div>
+  </div>
+
+  <!-- ════════════ Variant 6: Bigger sun-arc + balanced ════════════ -->
+  <div class="variant">
+    <div class="variant-label"><span class="num">06</span>Bigger sun-arc + caption stack</div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-title">Progress</div>
+        <div class="tab-pill">
+          <div class="tab">Today</div>
+          <div class="tab on">Week</div>
+          <div class="tab">Month</div>
+        </div>
+      </div>
+      <div class="v6-row">
+        <div class="sun-arc big">
+          <svg viewBox="0 0 100 60">
+            <path class="arc-bg" d="M 10 55 A 40 40 0 0 1 90 55"/>
+            <path class="arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" stroke-dasharray="126,200"/>
+            <circle class="arc-sun" cx="90" cy="55" r="6"/>
+          </svg>
+        </div>
+        <div class="num-col">
+          <div class="num big">722</div>
+          <div class="goal-cap">of 250 week goal</div>
+          <div class="v6-aux">
+            <span class="extra-pill streak">🔥 14d</span>
+            <span class="trend-pill">▲ +18%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Adds:</strong> arc grows ~30% larger to fill the left half, number
+      goes 36px, two compact pills sit under the caption. Lightest change — same
+      feel, just better proportions. Good if you want to keep the card minimal.
+    </div>
+  </div>
+
+  <div class="pick-hint">Tell me variant number(s) to implement</div>
+
+</div>
+</body>
+</html>

@@ -425,6 +425,247 @@ class _TafsirScreenState extends State<TafsirScreen> {
     );
   }
 
+  // ── Rich tafsir formatter (Quranly-style) ──────────────────────────────────
+  // Detects: Arabic Quranic verses, section headings, verse references,
+  // parenthetical translations, and inline Arabic to format like Quranly.
+
+  // Matches 3+ consecutive Arabic characters (including diacritics)
+  static final _arabicRunRe = RegExp(
+    r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]'
+    r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\s]*'
+    r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]'
+  );
+  // Matches parenthetical text like (And We delay it only...)
+  static final _parenRe = RegExp(r'\(([^)]+)\)');
+  // Matches verse references like (11:104) or (2:255)
+  static final _verseRefRe = RegExp(r'^\(\d+:\d+(?:-\d+)?\)$');
+
+  bool _isArabicLine(String line) {
+    final arabicChars = line.runes.where((c) =>
+        (c >= 0x0600 && c <= 0x06FF) || (c >= 0x0750 && c <= 0x077F) ||
+        (c >= 0xFB50 && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)).length;
+    return arabicChars > line.runes.length * 0.35;
+  }
+
+  bool _isHeading(String line) {
+    final t = line.trim();
+    if (t.length > 120 || t.length < 4) return false;
+    if (t.startsWith('(') || t.startsWith('"') || t.startsWith('`')) return false;
+    // Must start with uppercase letter
+    final firstLetter = t.codeUnitAt(0);
+    if (firstLetter < 65 || (firstLetter > 90 && firstLetter < 97) || firstLetter > 122) return false;
+    if (t[0] != t[0].toUpperCase()) return false;
+    // Headings don't end with . or , (but can end with : or nothing)
+    if (t.endsWith('.') || t.endsWith(',') || t.endsWith(')')) return false;
+    final words = t.split(RegExp(r'\s+')).length;
+    return words <= 16;
+  }
+
+  Widget _buildFormattedTafsir(String text, Color txt, Color sub) {
+    // Remove all parentheses — Arabic gets its own block, translations are italic
+    text = text.replaceAll('(', '').replaceAll(')', '');
+    final lines = text.split('\n');
+    final widgets = <Widget>[];
+    final buffer = StringBuffer();
+    // Track if next line after Arabic is a verse reference
+    bool lastWasArabic = false;
+
+    void addEngBlock(String s) {
+      if (s.trim().isEmpty) return;
+      final spans = <InlineSpan>[];
+      _addEnglishSpans(spans, s, txt, sub);
+      widgets.add(Padding(
+        padding: const EdgeInsets.only(bottom: 14),
+        child: Text.rich(TextSpan(children: spans),
+          style: GoogleFonts.notoSerif(fontSize: _fontSize - 2, color: txt, height: 1.85)),
+      ));
+    }
+
+    void addArabBlock(String s) {
+      widgets.add(Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        decoration: BoxDecoration(
+          color: txt.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(s.trim(),
+          textAlign: TextAlign.center, textDirection: TextDirection.rtl,
+          style: GoogleFonts.scheherazadeNew(
+            fontSize: _fontSize + 6, color: txt, height: 2.0, fontWeight: FontWeight.w700)),
+      ));
+    }
+
+    void flushBuffer() {
+      if (buffer.isEmpty) return;
+      final content = buffer.toString().trim();
+      buffer.clear();
+      if (content.isEmpty) return;
+
+      int last = 0;
+      for (final m in _arabicRunRe.allMatches(content)) {
+        final arabicText = m.group(0)!;
+        if (arabicText.replaceAll(RegExp(r'\s'), '').length >= 5) {
+          if (m.start > last) addEngBlock(content.substring(last, m.start));
+          addArabBlock(arabicText);
+          last = m.end;
+        }
+      }
+      if (last < content.length) {
+        addEngBlock(content.substring(last));
+      } else if (last == 0) {
+        addEngBlock(content);
+      }
+    }
+
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i].trim();
+      if (line.isEmpty) {
+        flushBuffer();
+        lastWasArabic = false;
+        continue;
+      }
+
+      // Verse reference after Arabic block — e.g. (11:104)
+      if (lastWasArabic && _verseRefRe.hasMatch(line)) {
+        lastWasArabic = false;
+        widgets.add(Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Center(child: Text(line,
+            style: GoogleFonts.outfit(
+              fontSize: _fontSize - 4,
+              fontStyle: FontStyle.italic,
+              color: sub,
+              height: 1.4,
+            ),
+          )),
+        ));
+        continue;
+      }
+
+      // Pure Arabic line — centered Quranic verse with ornamental brackets
+      if (_isArabicLine(line)) {
+        flushBuffer();
+        lastWasArabic = true;
+        widgets.add(Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+          decoration: BoxDecoration(
+            color: txt.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(line,
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+            style: GoogleFonts.scheherazadeNew(
+              fontSize: _fontSize + 6,
+              color: txt,
+              height: 2.0,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ));
+
+        // Check if the next non-empty line is a parenthetical translation
+        final nextIdx = lines.indexWhere((l) => l.trim().isNotEmpty, i + 1);
+        if (nextIdx != -1) {
+          final nextLine = lines[nextIdx].trim();
+          if (nextLine.startsWith('(') && nextLine.endsWith(')')) {
+            widgets.add(Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Center(child: Text(nextLine,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  fontSize: _fontSize - 1,
+                  fontStyle: FontStyle.italic,
+                  color: const Color(0xFF7C3AED),
+                  height: 1.6,
+                ),
+              )),
+            ));
+            // Skip that line in the main loop
+            for (int j = i + 1; j <= nextIdx; j++) {
+              lines[j] = '';
+            }
+          }
+        }
+        continue;
+      }
+      lastWasArabic = false;
+
+      // Section heading — bold, spaced
+      if (_isHeading(line)) {
+        flushBuffer();
+        widgets.add(Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 10),
+          child: Text(line,
+            style: GoogleFonts.outfit(
+              fontSize: _fontSize,
+              fontWeight: FontWeight.w800,
+              color: txt,
+              height: 1.35,
+            ),
+          ),
+        ));
+        continue;
+      }
+
+      // Regular text — accumulate
+      if (buffer.isNotEmpty) buffer.write(' ');
+      buffer.write(line);
+    }
+    flushBuffer();
+
+    if (widgets.isEmpty) {
+      return Text(text, style: GoogleFonts.outfit(
+        fontSize: _fontSize - 2, color: txt, height: 1.8));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgets,
+    );
+  }
+
+  void _addEnglishSpans(List<InlineSpan> spans, String text, Color txt, Color sub) {
+    int last = 0;
+    for (final m in _parenRe.allMatches(text)) {
+      if (m.start > last) {
+        spans.add(TextSpan(text: text.substring(last, m.start)));
+      }
+      // Check if it's a verse reference like (11:104)
+      final inner = m.group(1) ?? '';
+      if (RegExp(r'^\d+:\d+').hasMatch(inner)) {
+        // Verse reference — smaller, italic
+        spans.add(TextSpan(
+          text: m.group(0),
+          style: GoogleFonts.outfit(
+            fontSize: _fontSize - 4,
+            fontStyle: FontStyle.italic,
+            color: const Color(0xFF7C3AED),
+          ),
+        ));
+      } else {
+        // Translation in parentheses — italic, muted
+        spans.add(TextSpan(
+          text: m.group(0),
+          style: GoogleFonts.outfit(
+            fontSize: _fontSize - 2,
+            fontStyle: FontStyle.italic,
+            color: const Color(0xFF7C3AED),
+            height: 1.8,
+          ),
+        ));
+      }
+      last = m.end;
+    }
+    if (last < text.length) {
+      spans.add(TextSpan(text: text.substring(last)));
+    }
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -599,17 +840,14 @@ class _TafsirScreenState extends State<TafsirScreen> {
                                     fontSize: 10, fontWeight: FontWeight.w600,
                                     color: _kGold)),
                             ),
-                            const SizedBox(height: 10),
-                            Text(_tafsirText,
-                                textAlign: _tafsirEditions[_tafsirIdx].rtl
-                                    ? TextAlign.right : TextAlign.left,
-                                textDirection: _tafsirEditions[_tafsirIdx].rtl
-                                    ? TextDirection.rtl : TextDirection.ltr,
-                                style: _tafsirEditions[_tafsirIdx].rtl
-                                    ? GoogleFonts.amiri(
-                                        fontSize: _fontSize, color: txt, height: 1.9)
-                                    : GoogleFonts.outfit(
-                                        fontSize: _fontSize - 2, color: txt, height: 1.8)),
+                            const SizedBox(height: 14),
+                            _tafsirEditions[_tafsirIdx].rtl
+                                ? Text(_tafsirText,
+                                    textAlign: TextAlign.right,
+                                    textDirection: TextDirection.rtl,
+                                    style: GoogleFonts.amiri(
+                                        fontSize: _fontSize, color: txt, height: 1.9))
+                                : _buildFormattedTafsir(_tafsirText, txt, sub),
                           ]),
               ]),
             ),

@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/y4_theme.dart';
+import 'noor_icons.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // NoorMotivationalPopup
 // Full-screen inspiration popup, inspired by Quranly / Madacamp / SweetCoin.
 // Repeats every ~3 minutes. User can permanently silence with "Don't Disturb".
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 enum _CtaType { quran, share, dhikr, boost }
 
@@ -29,48 +30,48 @@ class _Card {
 }
 
 const _kCards = [
-  // ── Quran CTA ─────────────────────────────────────────────────────────────
+  // â”€â”€ Quran CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   _Card(
-    arabic: 'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
+    arabic: 'Ø¥ÙÙ†ÙŽÙ‘ Ù…ÙŽØ¹ÙŽ Ø§Ù„Ù’Ø¹ÙØ³Ù’Ø±Ù ÙŠÙØ³Ù’Ø±Ù‹Ø§',
     quote: 'Verily, with hardship comes ease.\nEvery trial is a door to something greater.',
-    source: 'Quran • Al-Inshirah 94:6',
+    source: 'Quran â€¢ Al-Inshirah 94:6',
     gradient: [Color(0xFF0D4F5E), Color(0xFF0D9488), Color(0xFF14B8A6)],
     cta: _CtaType.quran,
   ),
   _Card(
-    arabic: 'وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ',
-    quote: 'Whoever puts their trust in Allah —\nHe is sufficient for them.',
-    source: 'Quran • At-Talaq 65:3',
+    arabic: 'ÙˆÙŽÙ…ÙŽÙ† ÙŠÙŽØªÙŽÙˆÙŽÙƒÙŽÙ‘Ù„Ù’ Ø¹ÙŽÙ„ÙŽÙ‰ Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù ÙÙŽÙ‡ÙÙˆÙŽ Ø­ÙŽØ³Ù’Ø¨ÙÙ‡Ù',
+    quote: 'Whoever puts their trust in Allah â€”\nHe is sufficient for them.',
+    source: 'Quran â€¢ At-Talaq 65:3',
     gradient: [Color(0xFF1A1060), Color(0xFF4C35A0), Color(0xFF7C5CBF)],
     cta: _CtaType.quran,
   ),
   _Card(
-    arabic: 'وَلَذِكْرُ اللَّهِ أَكْبَرُ',
+    arabic: 'ÙˆÙŽÙ„ÙŽØ°ÙÙƒÙ’Ø±Ù Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù Ø£ÙŽÙƒÙ’Ø¨ÙŽØ±Ù',
     quote: 'The remembrance of Allah is the greatest.\nLet your heart find rest in His name.',
-    source: 'Quran • Al-Ankabut 29:45',
+    source: 'Quran â€¢ Al-Ankabut 29:45',
     gradient: [Color(0xFF0A3D2E), Color(0xFF0D7A55), Color(0xFF22C55E)],
     cta: _CtaType.dhikr,
   ),
   _Card(
-    arabic: 'فَاذْكُرُونِي أَذْكُرْكُمْ',
-    quote: 'Remember Me — I will remember you.\nYour Dhikr rises to the heavens.',
-    source: 'Quran • Al-Baqarah 2:152',
+    arabic: 'ÙÙŽØ§Ø°Ù’ÙƒÙØ±ÙÙˆÙ†ÙÙŠ Ø£ÙŽØ°Ù’ÙƒÙØ±Ù’ÙƒÙÙ…Ù’',
+    quote: 'Remember Me â€” I will remember you.\nYour Dhikr rises to the heavens.',
+    source: 'Quran â€¢ Al-Baqarah 2:152',
     gradient: [Color(0xFF3D1A0A), Color(0xFFB45309), Color(0xFFF59E0B)],
     cta: _CtaType.dhikr,
   ),
   _Card(
-    arabic: 'وَإِن تَعُدُّوا نِعْمَةَ اللَّهِ لَا تُحْصُوهَا',
+    arabic: 'ÙˆÙŽØ¥ÙÙ† ØªÙŽØ¹ÙØ¯ÙÙ‘ÙˆØ§ Ù†ÙØ¹Ù’Ù…ÙŽØ©ÙŽ Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù Ù„ÙŽØ§ ØªÙØ­Ù’ØµÙÙˆÙ‡ÙŽØ§',
     quote: 'If you count the blessings of Allah,\nyou could never enumerate them.',
-    source: 'Quran • An-Nahl 16:18',
+    source: 'Quran â€¢ An-Nahl 16:18',
     gradient: [Color(0xFF1A0A3D), Color(0xFF7C3AED), Color(0xFFEC4899)],
     cta: _CtaType.quran,
   ),
 
-  // ── Share CTA ─────────────────────────────────────────────────────────────
+  // â”€â”€ Share CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   _Card(
     arabic: '',
-    quote: 'Make your time precious.\nShare goodness with a friend today —\nevery good deed shared is a sadaqah.',
-    source: 'The Prophet ﷺ said: "Guide others to good, and you get its reward."',
+    quote: 'Make your time precious.\nShare goodness with a friend today â€”\nevery good deed shared is a sadaqah.',
+    source: 'The Prophet ï·º said: "Guide others to good, and you get its reward."',
     gradient: [Color(0xFF0F1E3A), Color(0xFF1D4ED8), Color(0xFF60A5FA)],
     cta: _CtaType.share,
   ),
@@ -82,56 +83,56 @@ const _kCards = [
     cta: _CtaType.share,
   ),
   _Card(
-    arabic: 'مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ',
+    arabic: 'Ù…ÙŽÙ†Ù’ Ø¯ÙŽÙ„ÙŽÙ‘ Ø¹ÙŽÙ„ÙŽÙ‰ Ø®ÙŽÙŠÙ’Ø±Ù ÙÙŽÙ„ÙŽÙ‡Ù Ù…ÙØ«Ù’Ù„Ù Ø£ÙŽØ¬Ù’Ø±Ù ÙÙŽØ§Ø¹ÙÙ„ÙÙ‡Ù',
     quote: 'Whoever guides someone to goodness\nwill have the same reward as the one who does it.',
     source: 'Sahih Muslim',
     gradient: [Color(0xFF0A2A1A), Color(0xFF059669), Color(0xFF34D399)],
     cta: _CtaType.share,
   ),
 
-  // ── Dhikr CTA ────────────────────────────────────────────────────────────
+  // â”€â”€ Dhikr CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   _Card(
-    arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
+    arabic: 'Ø£ÙŽÙ„ÙŽØ§ Ø¨ÙØ°ÙÙƒÙ’Ø±Ù Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù ØªÙŽØ·Ù’Ù…ÙŽØ¦ÙÙ†ÙÙ‘ Ø§Ù„Ù’Ù‚ÙÙ„ÙÙˆØ¨Ù',
     quote: 'Verily, in the remembrance of Allah\ndo hearts find rest.',
-    source: "Quran • Ar-Ra'd 13:28",
+    source: "Quran â€¢ Ar-Ra'd 13:28",
     gradient: [Color(0xFF1A1000), Color(0xFFCA8A04), Color(0xFFFBBF24)],
     cta: _CtaType.dhikr,
   ),
   _Card(
     arabic: '',
     quote: 'Your akhirah is being built\none moment of dhikr at a time.\nDon\'t let this moment pass.',
-    source: 'Remind yourself — time is the most precious sadaqah.',
+    source: 'Remind yourself â€” time is the most precious sadaqah.',
     gradient: [Color(0xFF0D1A2E), Color(0xFF0369A1), Color(0xFF38BDF8)],
     cta: _CtaType.dhikr,
   ),
   _Card(
-    arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
+    arabic: 'Ø³ÙØ¨Ù’Ø­ÙŽØ§Ù†ÙŽ Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù ÙˆÙŽØ¨ÙØ­ÙŽÙ…Ù’Ø¯ÙÙ‡Ù',
     quote: 'SubhanAllah wa bihamdih.\nA single tasbih plants a tree\nin your paradise.',
     source: 'Sahih Al-Bukhari',
     gradient: [Color(0xFF0A1F0A), Color(0xFF15803D), Color(0xFF86EFAC)],
     cta: _CtaType.dhikr,
   ),
 
-  // ── Boost CTA ────────────────────────────────────────────────────────────
+  // â”€â”€ Boost CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   _Card(
-    arabic: 'وَاعْلَمُوا أَنَّمَا أَمْوَالُكُمْ وَأَوْلَادُكُمْ فِتْنَةٌ',
+    arabic: 'ÙˆÙŽØ§Ø¹Ù’Ù„ÙŽÙ…ÙÙˆØ§ Ø£ÙŽÙ†ÙŽÙ‘Ù…ÙŽØ§ Ø£ÙŽÙ…Ù’ÙˆÙŽØ§Ù„ÙÙƒÙÙ…Ù’ ÙˆÙŽØ£ÙŽÙˆÙ’Ù„ÙŽØ§Ø¯ÙÙƒÙÙ…Ù’ ÙÙØªÙ’Ù†ÙŽØ©ÙŒ',
     quote: 'Your time is your most\nprecious asset. Invest it wisely\nin what endures forever.',
-    source: 'Quran • Al-Anfal 8:28',
+    source: 'Quran â€¢ Al-Anfal 8:28',
     gradient: [Color(0xFF1A0D00), Color(0xFFB45309), Color(0xFFFFAA00)],
     cta: _CtaType.boost,
   ),
   _Card(
     arabic: '',
     quote: 'Every minute in worship\nis a seed planted in Jannah.\nHow many have you planted today?',
-    source: 'The Prophet ﷺ said: "Take advantage of five before five."',
+    source: 'The Prophet ï·º said: "Take advantage of five before five."',
     gradient: [Color(0xFF071A0F), Color(0xFF065F46), Color(0xFF34D399)],
     cta: _CtaType.boost,
   ),
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public helper — random motivational popup (Quran / Dhikr / Share / Boost)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Public helper â€” random motivational popup (Quran / Dhikr / Share / Boost)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Future<void> showMotivationalPopup(
   BuildContext context, {
   required VoidCallback onGoQuran,
@@ -165,9 +166,9 @@ Future<void> showMotivationalPopup(
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// showValidationRewardPopup — dopamine hit shown immediately after coin seal
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// showValidationRewardPopup â€” dopamine hit shown immediately after coin seal
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Future<void> showValidationRewardPopup(
   BuildContext context, {
   required int xpEarned,
@@ -178,7 +179,7 @@ Future<void> showValidationRewardPopup(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'validation_reward',
-    // Warm brown-tinted barrier — sits softer against the honey card
+    // Warm brown-tinted barrier â€” sits softer against the honey card
     barrierColor: Y4.ink.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 420),
     transitionBuilder: (ctx, anim, _, child) {
@@ -196,9 +197,9 @@ Future<void> showValidationRewardPopup(
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// _ValidationRewardBody — celebratory popup with points & bonus breakdown
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// _ValidationRewardBody â€” celebratory popup with points & bonus breakdown
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ValidationRewardBody extends StatefulWidget {
   final int xpEarned, bonusPoints;
   final VoidCallback? onContinue;
@@ -243,7 +244,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
               opacity: _fade,
               child: Container(
                 decoration: BoxDecoration(
-                  // Y4 honey wash gradient — warm celebration card
+                  // Y4 honey wash gradient â€” warm celebration card
                   gradient: const LinearGradient(
                     colors: [Y4.cream, Y4.bg, Y4.butter],
                     begin: Alignment.topLeft,
@@ -260,7 +261,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // — Verified-seal icon (honey gradient)
+                    // â€” Verified-seal icon (honey gradient)
                     Container(
                       width: 80, height: 80,
                       decoration: BoxDecoration(
@@ -273,10 +274,10 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     ),
                     const SizedBox(height: 20),
 
-                    // — Title (Fraunces serif — matches dashboard hero)
+                    // â€” Title (Fraunces serif â€” matches dashboard hero)
                     FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text('Coins Sealed! ماشاء الله',
+                      child: Text('Coins Sealed! Ù…Ø§Ø´Ø§Ø¡ Ø§Ù„Ù„Ù‡',
                         maxLines: 1,
                         textAlign: TextAlign.center,
                         style: Y4.display(
@@ -295,7 +296,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     ),
                     const SizedBox(height: 24),
 
-                    // — Points breakdown card (white surface on honey wash)
+                    // â€” Points breakdown card (white surface on honey wash)
                     Container(
                       decoration: BoxDecoration(
                         color: Y4.surface,
@@ -308,25 +309,25 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                       child: Column(children: [
-                        _RewardRow('⚡ Validation Points', '+${widget.xpEarned} pts', Y4.honeyDeep),
+                        _RewardRow('âš¡ Validation Points', '+${widget.xpEarned} pts', Y4.honeyDeep),
                         if (widget.bonusPoints > 0) ...[
                           const SizedBox(height: 10),
-                          _RewardRow('🔥 Streak Bonus', '+${widget.bonusPoints} pts', Y4.honeyDeep),
+                          _RewardRow('ðŸ”¥ Streak Bonus', '+${widget.bonusPoints} pts', Y4.honeyDeep),
                           const SizedBox(height: 10),
                           const Divider(color: Y4.border, height: 1),
                           const SizedBox(height: 10),
-                          _RewardRow('✨ Total Earned', '+$total pts', Y4.ink, big: true),
+                          _RewardRow('âœ¨ Total Earned', '+$total pts', Y4.ink, big: true),
                         ],
                       ]),
                     ),
                     const SizedBox(height: 24),
 
-                    // — CTA (honey-deep filled button)
+                    // â€” CTA (honey-deep filled button)
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.maybePop(context);
                           widget.onContinue?.call();
                         },
                         style: ElevatedButton.styleFrom(
@@ -336,7 +337,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           elevation: 0,
                         ),
-                        child: Text('Alhamdulillah! 🤲',
+                        child: Text('Alhamdulillah! ðŸ¤²',
                           style: GoogleFonts.outfit(
                             fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white,
                           ),
@@ -377,9 +378,9 @@ class _RewardRow extends StatelessWidget {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// showNoorBoostPopup — always shows a Noor Boost card (used post-validation)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// showNoorBoostPopup â€” always shows a Noor Boost card (used post-validation)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Future<void> showNoorBoostPopup(
   BuildContext context, {
   required VoidCallback onGoQuran,
@@ -407,9 +408,9 @@ Future<void> showNoorBoostPopup(
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Body widget — standard motivational popup
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Body widget â€” standard motivational popup
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _MotivationalPopupBody extends StatefulWidget {
   final _Card card;
   final VoidCallback onGoQuran, onGoDhikr, onShare, onGoBoost, onDoNotDisturb;
@@ -475,7 +476,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
     };
 
     void onCtaTap() {
-      Navigator.of(context).pop();
+      Navigator.maybePop(context);
       switch (card.cta) {
         case _CtaType.quran: widget.onGoQuran(); break;
         case _CtaType.dhikr: widget.onGoDhikr(); break;
@@ -486,7 +487,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
 
     void onDndTap() {
       HapticFeedback.lightImpact();
-      Navigator.of(context).pop();
+      Navigator.maybePop(context);
       widget.onDoNotDisturb();
     }
 
@@ -517,7 +518,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
               borderRadius: BorderRadius.circular(32),
               child: Stack(
                 children: [
-                  // ── Particles ──────────────────────────────────────────────
+                  // â”€â”€ Particles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Positioned.fill(
                     child: AnimatedBuilder(
                       animation: _particleCtrl,
@@ -531,7 +532,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                     ),
                   ),
 
-                  // ── Decorative rings ───────────────────────────────────────
+                  // â”€â”€ Decorative rings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Positioned(
                     top: -80, right: -80,
                     child: Container(
@@ -559,7 +560,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                     ),
                   ),
 
-                  // ── Content ────────────────────────────────────────────────
+                  // â”€â”€ Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Positioned.fill(
                     child: SafeArea(
                       child: Padding(
@@ -571,7 +572,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // 🔕 Don't Disturb
+                                // ðŸ”• Don't Disturb
                                 GestureDetector(
                                   onTap: onDndTap,
                                   child: Container(
@@ -598,9 +599,9 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
                                     ]),
                                   ),
                                 ),
-                                // ✕ close
+                                // âœ• close
                                 GestureDetector(
-                                  onTap: () => Navigator.of(context).pop(),
+                                  onTap: () => Navigator.maybePop(context),
                                   child: Container(
                                     width: 34, height: 34,
                                     decoration: BoxDecoration(
@@ -771,7 +772,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
 
                             // Maybe later
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
+                              onPressed: () => Navigator.maybePop(context),
                               child: Text(
                                 'Maybe later',
                                 style: GoogleFonts.outfit(
@@ -796,9 +797,9 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Noor Boost Popup Body — shown right after coin validation
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Noor Boost Popup Body â€” shown right after coin validation
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _NoorBoostPopupBody extends StatefulWidget {
   final VoidCallback onGoQuran, onGoDhikr;
   final VoidCallback? onGoInvite;
@@ -819,7 +820,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
   late Animation<double> _contentFade;
   late Animation<Offset> _contentSlide;
 
-  // Which CTA to show — randomly quran or dhikr
+  // Which CTA to show â€” randomly quran or dhikr
   late bool _showQuran;
 
   @override
@@ -865,29 +866,29 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
     final benefitRows = [
       (
-        icon: '📖',
+        icon: NoorIcon.greenBook(size: 26),
         title: 'Read 5 Quran Pages',
-        desc: 'Complete now → earn +50 points bonus',
+        desc: 'Complete now â†’ earn +50 points bonus',
         onTap: () {
-          Navigator.of(context).pop();
+          Navigator.maybePop(context);
           widget.onGoQuran();
         },
       ),
       (
-        icon: '📿',
+        icon: NoorIcon.beads(size: 26),
         title: 'Complete a Dhikr Set',
-        desc: 'Finish your Azkaar → earn +30 points bonus',
+        desc: 'Finish your Azkaar â†’ earn +30 points bonus',
         onTap: () {
-          Navigator.of(context).pop();
+          Navigator.maybePop(context);
           widget.onGoDhikr();
         },
       ),
       (
-        icon: '🤝',
+        icon: NoorIcon.handshake(size: 26),
         title: 'Invite a Friend',
-        desc: 'Share Noor with someone → earn +100 NP',
+        desc: 'Share Noor with someone â†’ earn +100 NP',
         onTap: () {
-          Navigator.of(context).pop();
+          Navigator.maybePop(context);
           widget.onGoInvite?.call();
         },
       ),
@@ -928,7 +929,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
               borderRadius: BorderRadius.circular(32),
               child: Stack(
                 children: [
-                  // ── Rotating sunburst rays ─────────────────────────────────
+                  // â”€â”€ Rotating sunburst rays â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Positioned(
                     top: -60, left: 0, right: 0,
                     child: AnimatedBuilder(
@@ -948,7 +949,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                     ),
                   ),
 
-                  // ── Green glow orb behind emblem ──────────────────────────
+                  // â”€â”€ Green glow orb behind emblem â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Positioned(
                     top: 30, left: 0, right: 0,
                     child: AnimatedBuilder(
@@ -970,7 +971,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                     ),
                   ),
 
-                  // ── Content ────────────────────────────────────────────────
+                  // â”€â”€ Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Positioned.fill(
                     child: SafeArea(
                       child: SingleChildScrollView(
@@ -978,11 +979,11 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // ── Top: close button ────────────────────────────
+                            // â”€â”€ Top: close button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             Align(
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
-                                onTap: () => Navigator.of(context).pop(),
+                                onTap: () => Navigator.maybePop(context),
                                 child: Container(
                                   width: 34, height: 34,
                                   decoration: BoxDecoration(
@@ -999,7 +1000,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
                             const SizedBox(height: 12),
 
-                            // ── Emblem: crescent + star ──────────────────────
+                            // â”€â”€ Emblem: crescent + star â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             SlideTransition(
                               position: _contentSlide,
                               child: FadeTransition(
@@ -1065,7 +1066,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
                             const SizedBox(height: 20),
 
-                            // ── Heading ──────────────────────────────────────
+                            // â”€â”€ Heading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             SlideTransition(
                               position: _contentSlide,
                               child: FadeTransition(
@@ -1102,11 +1103,11 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
                             const SizedBox(height: 8),
 
-                            // ── Subheading ───────────────────────────────────
+                            // â”€â”€ Subheading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             FadeTransition(
                               opacity: _contentFade,
                               child: Text(
-                                'Keep your spiritual momentum going\nand watch your Noor grow ✨',
+                                'Keep your spiritual momentum going\nand watch your Noor grow âœ¨',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
@@ -1118,7 +1119,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
                             const SizedBox(height: 22),
 
-                            // ── 3 benefit rows ────────────────────────────────
+                            // â”€â”€ 3 benefit rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             FadeTransition(
                               opacity: _contentFade,
                               child: Container(
@@ -1159,10 +1160,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                                   color: gold.withValues(alpha: 0.25)),
                                             ),
                                             child: Center(
-                                              child: Text(
-                                                row.icon,
-                                                style: const TextStyle(fontSize: 22),
-                                              ),
+                                              child: row.icon,
                                             ),
                                           ),
                                           const SizedBox(width: 14),
@@ -1210,7 +1208,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
                             const SizedBox(height: 22),
 
-                            // ── Primary CTA button ────────────────────────────
+                            // â”€â”€ Primary CTA button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             FadeTransition(
                               opacity: _contentFade,
                               child: SizedBox(
@@ -1218,7 +1216,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                 child: GestureDetector(
                                   onTap: () {
                                     HapticFeedback.lightImpact();
-                                    Navigator.of(context).pop();
+                                    Navigator.maybePop(context);
                                     if (_showQuran) {
                                       widget.onGoQuran();
                                     } else {
@@ -1270,9 +1268,9 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
 
                             const SizedBox(height: 10),
 
-                            // ── Skip ─────────────────────────────────────────
+                            // â”€â”€ Skip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
+                              onPressed: () => Navigator.maybePop(context),
                               child: Text(
                                 'Maybe later',
                                 style: GoogleFonts.outfit(
@@ -1297,9 +1295,9 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Sunburst ray painter (used in boost popup background)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _SunburstRayPainter extends CustomPainter {
   final Color color;
   final int rayCount;
@@ -1334,9 +1332,9 @@ class _SunburstRayPainter extends CustomPainter {
       old.color != color || old.rayCount != rayCount;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Particle model
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _Particle {
   final double x, y, size, speed, phase;
   _Particle()
@@ -1347,9 +1345,9 @@ class _Particle {
         phase = math.Random().nextDouble() * math.pi * 2;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Particle painter
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ParticlePainter extends CustomPainter {
   final List<_Particle> particles;
   final double progress;
@@ -1381,3 +1379,4 @@ class _ParticlePainter extends CustomPainter {
   @override
   bool shouldRepaint(_ParticlePainter old) => true;
 }
+
