@@ -2143,7 +2143,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
                 key: ValueKey(_isFavourited),
-                color: _isFavourited ? Colors.red : sub, size: 24),
+                color: _isFavourited ? const Color(0xFFCC6600) : sub, size: 24),
             ),
             onPressed: _toggleFavourite, tooltip: 'Favourite',
           ),
@@ -2355,7 +2355,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       icon: Icons.menu_book_outlined,
                       label: AppLocalizations.of(context)?.mushaf ?? 'Mushaf',
                       active: false,
-                      activeColor: const Color(0xFF4CAF50),
+                      activeColor: const Color(0xFFD89A1E),
                       darkMode: _darkMode,
                       onTap: () async {
                         final page = await _resolvePageForCurrentAyah();
@@ -3411,19 +3411,19 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final pad = MediaQuery.of(context).padding;
     final isDark = _darkMode;
 
-    // Green palette — prominent, appealing, theme-aware
-    const greenDark  = Color(0xFF0B6B5C);  // deep emerald
-    const greenLight = Color(0xFF2BAE99);  // soft teal
-    const greenGlow  = Color(0xFF34D399);  // bright mint accent
+    // Honey/brown palette — Y4 theme-aware
+    const honeyBrown = Color(0xFF7A5200);  // deep honey-brown (dark bg)
+    const honeyWarm  = Color(0xFFD89A1E);  // honeyDeep amber (light pill)
+    const honeyGold  = Color(0xFFFFC83D);  // bright honey-gold (glow/accent)
 
-    final barBg = isDark ? greenDark : greenLight;
-    final barBgDarker = isDark ? const Color(0xFF064A40) : greenDark;
+    final barBg = isDark ? honeyBrown : honeyWarm;
+    final barBgDarker = isDark ? const Color(0xFF5A3C00) : honeyBrown;
 
     BoxDecoration pillDecor() => BoxDecoration(
-      color: isDark ? greenDark.withValues(alpha: 0.95) : greenLight.withValues(alpha: 0.95),
+      color: isDark ? honeyBrown.withValues(alpha: 0.95) : honeyWarm.withValues(alpha: 0.95),
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: greenGlow.withValues(alpha: 0.25)),
-      boxShadow: [BoxShadow(color: greenDark.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 3))],
+      border: Border.all(color: honeyGold.withValues(alpha: 0.30)),
+      boxShadow: [BoxShadow(color: honeyBrown.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 3))],
     );
 
     return Column(children: [
@@ -3463,7 +3463,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               const SizedBox(height: 1),
               Text('Page $_currentPage  ·  Juz ${_juzForPage(_currentPage)}',
                   style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500,
-                      color: greenGlow)),
+                      color: Colors.white.withValues(alpha: 0.80))),
             ]),
           ),
           const Spacer(),
@@ -3473,13 +3473,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 decoration: BoxDecoration(
-                  color: greenGlow.withValues(alpha: 0.2),
+                  color: honeyGold.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: greenGlow.withValues(alpha: 0.4)),
+                  border: Border.all(color: honeyGold.withValues(alpha: 0.4)),
                 ),
                 child: Text('+$_pageXpEarned',
                     style: GoogleFonts.outfit(fontSize: 12,
-                        fontWeight: FontWeight.w800, color: greenGlow)),
+                        fontWeight: FontWeight.w800, color: Colors.white)),
               ),
               const SizedBox(width: 8),
             ],
@@ -3511,8 +3511,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           decoration: BoxDecoration(
             color: barBgDarker,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: greenGlow.withValues(alpha: 0.15)),
-            boxShadow: [BoxShadow(color: greenDark.withValues(alpha: 0.5), blurRadius: 16, offset: const Offset(0, 4))],
+            border: Border.all(color: honeyGold.withValues(alpha: 0.15)),
+            boxShadow: [BoxShadow(color: honeyBrown.withValues(alpha: 0.5), blurRadius: 16, offset: const Offset(0, 4))],
           ),
           child: Column(children: [
             // Progress bar
@@ -3522,7 +3522,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 value: (_currentPage / 604).clamp(0.0, 1.0),
                 minHeight: 4,
                 backgroundColor: Colors.white.withValues(alpha: 0.12),
-                valueColor: AlwaysStoppedAnimation(greenGlow),
+                valueColor: AlwaysStoppedAnimation(honeyGold),
               ),
             ),
             const SizedBox(height: 10),
@@ -3536,15 +3536,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: greenGlow.withValues(alpha: 0.15),
+                  color: honeyGold.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.timer_outlined, color: greenGlow, size: 14),
+                  Icon(Icons.timer_outlined, color: honeyGold, size: 14),
                   const SizedBox(width: 5),
                   Text(_pageTimerLabel,
                       style: GoogleFonts.outfit(fontSize: 13,
-                          fontWeight: FontWeight.w700, color: greenGlow)),
+                          fontWeight: FontWeight.w700, color: Colors.white)),
                 ]),
               ),
             ]),

@@ -527,22 +527,22 @@ const _kBooks = [
 ];
 
 const _kGreenBook = [
-  // Spine (dark purple, left strip for 3-D feel)
-  _S(type:'rect',x:0.05,y:0.06,w:0.12,h:0.88,r:0.04,c1:Color(0xFF3A1255),c2:Color(0xFF220A38)),
-  // Main cover (purple/violet)
-  _S(type:'rect',x:0.15,y:0.04,w:0.72,h:0.92,r:0.05,c1:Color(0xFF8B45C0),c2:Color(0xFF6B28A0)),
-  // Page edges (cream, right side)
-  _S(type:'rect',x:0.85,y:0.08,w:0.10,h:0.84,r:0.02,c1:Color(0xFFF8F4EC),c2:Color(0xFFE8E0D0)),
-  // Outer decorative border on cover
-  _S(type:'stroke_path',d:'M0.22 0.12 L0.82 0.12 L0.82 0.88 L0.22 0.88 L0.22 0.12Z',sw:0.024,c1:Color(0xFFDDBBFF),c2:Color(0xFFDDBBFF)),
-  // Inner border
-  _S(type:'stroke_path',d:'M0.27 0.18 L0.77 0.18 L0.77 0.82 L0.27 0.82 L0.27 0.18Z',sw:0.013,c1:Color(0xFFCC99FF),c2:Color(0xFFCC99FF)),
-  // Centre medallion
-  _S(type:'circle',x:0.36,y:0.28,w:0.28,h:0.28,r:0.13,c1:Color(0xFFEEDDFF),c2:Color(0xFFBB88EE),radial:true),
-  // Arabic calligraphy suggestion (3 lines)
-  _S(type:'rect',x:0.41,y:0.41,w:0.18,h:0.022,r:0.01,c1:Color(0xFF6B28A0),c2:Color(0xFF4A1578)),
-  _S(type:'rect',x:0.39,y:0.46,w:0.22,h:0.022,r:0.01,c1:Color(0xFF6B28A0),c2:Color(0xFF4A1578)),
-  _S(type:'rect',x:0.43,y:0.51,w:0.14,h:0.022,r:0.01,c1:Color(0xFF6B28A0),c2:Color(0xFF4A1578)),
+  // Spine — deep honey-brown left strip for 3-D depth
+  _S(type:'rect',x:0.05,y:0.06,w:0.12,h:0.88,r:0.04,c1:Color(0xFF7A5200),c2:Color(0xFF4E3200)),
+  // Main cover — warm amber/honey gradient
+  _S(type:'rect',x:0.15,y:0.04,w:0.72,h:0.92,r:0.05,c1:Color(0xFFD89A1E),c2:Color(0xFFB87A0C)),
+  // Page edges — cream/parchment right side
+  _S(type:'rect',x:0.85,y:0.08,w:0.10,h:0.84,r:0.02,c1:Color(0xFFFFF8E8),c2:Color(0xFFEEE0C0)),
+  // Outer ornamental border — bright gold
+  _S(type:'stroke_path',d:'M0.22 0.12 L0.82 0.12 L0.82 0.88 L0.22 0.88 L0.22 0.12Z',sw:0.024,c1:Color(0xFFFFD700),c2:Color(0xFFFFD700)),
+  // Inner border — softer gold
+  _S(type:'stroke_path',d:'M0.27 0.18 L0.77 0.18 L0.77 0.82 L0.27 0.82 L0.27 0.18Z',sw:0.013,c1:Color(0xFFFFEC6E),c2:Color(0xFFFFEC6E)),
+  // Centre medallion — radial honey glow
+  _S(type:'circle',x:0.36,y:0.28,w:0.28,h:0.28,r:0.13,c1:Color(0xFFFFF4C2),c2:Color(0xFFDAA520),radial:true),
+  // Arabic calligraphy lines — dark ink on gold
+  _S(type:'rect',x:0.41,y:0.41,w:0.18,h:0.022,r:0.01,c1:Color(0xFF5A3C00),c2:Color(0xFF3A2200)),
+  _S(type:'rect',x:0.39,y:0.46,w:0.22,h:0.022,r:0.01,c1:Color(0xFF5A3C00),c2:Color(0xFF3A2200)),
+  _S(type:'rect',x:0.43,y:0.51,w:0.14,h:0.022,r:0.01,c1:Color(0xFF5A3C00),c2:Color(0xFF3A2200)),
 ];
 
 const _kCheck = [
@@ -551,21 +551,21 @@ const _kCheck = [
 ];
 
 const _kHandshake = [
-  // ── Left person (blue) ───────────────────────────────────────
+  // ── Left person — warm amber ──────────────────────────────────
   _S(type:'circle',x:0.08,y:0.04,w:0.30,h:0.30,r:0.15,
-     c1:Color(0xFF5C9EE8),c2:Color(0xFF1565C0)),
+     c1:Color(0xFFFFD27F),c2:Color(0xFFD89A1E)),
   _S(type:'rect',x:0.02,y:0.38,w:0.46,h:0.42,r:0.14,
-     c1:Color(0xFF5C9EE8),c2:Color(0xFF1565C0)),
+     c1:Color(0xFFD89A1E),c2:Color(0xFF9E6B00)),
   _S(type:'rect',x:0.16,y:0.32,w:0.16,h:0.12,r:0.04,
-     c1:Color(0xFF5C9EE8),c2:Color(0xFF1565C0)),
+     c1:Color(0xFFFFD27F),c2:Color(0xFFD89A1E)),
 
-  // ── Right person (teal) ───────────────────────────────────────
+  // ── Right person — honey-deep brown ───────────────────────────
   _S(type:'circle',x:0.62,y:0.04,w:0.30,h:0.30,r:0.15,
-     c1:Color(0xFF26C6A6),c2:Color(0xFF00897B)),
+     c1:Color(0xFFFFC83D),c2:Color(0xFFB87A0C)),
   _S(type:'rect',x:0.56,y:0.38,w:0.46,h:0.42,r:0.14,
-     c1:Color(0xFF26C6A6),c2:Color(0xFF00897B)),
+     c1:Color(0xFFFFC83D),c2:Color(0xFF9E6B00)),
   _S(type:'rect',x:0.70,y:0.32,w:0.16,h:0.12,r:0.04,
-     c1:Color(0xFF26C6A6),c2:Color(0xFF00897B)),
+     c1:Color(0xFFFFC83D),c2:Color(0xFFB87A0C)),
 ];
 
 const _kShare = [
