@@ -12,6 +12,7 @@ import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
+import '../l10n/app_localizations.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _lcfg => SettingsService.instance.config;
@@ -48,17 +49,37 @@ Widget _tierIcon(String title, {double size = 32}) {
   }
 }
 
-// Activity type → readable label + emoji + colour
-({String label, Widget icon, Color color}) _activityMeta(String type) {
-  switch (type) {
-    case 'login':    return (label: 'Daily Login',       icon: NoorIcon.sunrise(size:22),  color: const Color(0xFF00897B));
-    case 'validate': return (label: 'Validate & Support',icon: NoorIcon.check(size:22),    color: const Color(0xFF6B4EBB));
-    case 'quran':    return (label: 'Read Quran',         icon: NoorIcon.book(size:22),     color: const Color(0xFF1565C0));
-    case 'dhikr':    return (label: 'Dhikar & Dua',       icon: NoorIcon.beads(size:22),    color: const Color(0xFF558B2F));
-    case 'tafsir':   return (label: 'Listen Tafsir',      icon: NoorIcon.headphones(size:22),color: const Color(0xFFAD1457));
-    case 'challenge':return (label: 'Challenge',          icon: NoorIcon.medal(size:22),    color: const Color(0xFFF5A623));
-    default:         return (label: type,                 icon: NoorIcon.star(size:22),     color: _kSub);
+// Localize tier title from the English key stored in data
+String _localTierTitle(BuildContext context, String title) {
+  final l = AppLocalizations.of(context)!;
+  switch (title) {
+    case 'Seeker':   return l.levelSeeker;
+    case 'Believer': return l.levelBeliever;
+    case 'Devoted':  return l.levelDevoted;
+    case 'Champion': return l.levelChampion;
+    case 'Legend':   return l.levelLegend;
+    default:         return title;
   }
+}
+
+// Activity type → readable label + emoji + colour
+({String label, Widget icon, Color color}) _activityMeta(BuildContext context, String type) {
+  final l = AppLocalizations.of(context)!;
+  switch (type) {
+    case 'login':    return (label: l.dailyLogin,          icon: NoorIcon.sunrise(size:22),  color: const Color(0xFF00897B));
+    case 'validate': return (label: l.validateAndSupport,  icon: NoorIcon.check(size:22),    color: const Color(0xFF6B4EBB));
+    case 'quran':    return (label: l.readQuran,           icon: NoorIcon.book(size:22),     color: const Color(0xFF1565C0));
+    case 'dhikr':    return (label: l.dhikarAndDua,        icon: NoorIcon.beads(size:22),    color: const Color(0xFF558B2F));
+    case 'tafsir':   return (label: l.listenTafsir,        icon: NoorIcon.headphones(size:22),color: const Color(0xFFAD1457));
+    case 'challenge':return (label: l.challenge,           icon: NoorIcon.medal(size:22),    color: const Color(0xFFF5A623));
+    default:         return (label: type,                  icon: NoorIcon.star(size:22),     color: _kSub);
+  }
+}
+
+// Period labels (localized)
+List<String> _pLabels(BuildContext context) {
+  final l = AppLocalizations.of(context)!;
+  return [l.today, l.thisWeek, l.thisMonth, l.allTime];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -81,6 +102,7 @@ class _LevelScreenState extends State<LevelScreen>
   List<Map<String, dynamic>>  _allLevels   = [];
   List<BadgeInfo>             _badges      = [];
   List<Map<String, dynamic>>  _challenges  = [];
+  StreakSnapshot? _streakSnap;
   bool _loading = true;
 
   @override
@@ -98,23 +120,30 @@ class _LevelScreenState extends State<LevelScreen>
 
   Future<void> _loadAll() async {
     setState(() => _loading = true);
-    final profile    = await _xp.loadProfile();
-    final levels     = await _xp.loadLevels();
-    final badges     = await _xp.loadBadges();
-    final challenges = await _xp.loadChallenges();
+    // Run all fetches in parallel — total time = max(t1..t5) not the sum
+    final results = await Future.wait([
+      _xp.loadProfile(),
+      _xp.loadLevels(),
+      _xp.loadBadges(),
+      _xp.loadChallenges(),
+      StreakService.instance.loadSnapshot(),
+    ]);
 
+    final profile = results[0] as ({int pts, int level, int streak});
     _currentXp    = profile.pts;
     _currentLevel = profile.level;
     _streak       = profile.streak;
-    _allLevels    = levels;
-    _badges       = badges;
-    _challenges   = challenges;
-    _levelInfo    = _xp.resolveLevelInfo(_currentXp, _currentLevel, levels);
+    _allLevels    = results[1] as List<Map<String, dynamic>>;
+    _badges       = results[2] as List<BadgeInfo>;
+    _challenges   = results[3] as List<Map<String, dynamic>>;
+    _streakSnap   = results[4] as StreakSnapshot;
+    _levelInfo    = _xp.resolveLevelInfo(_currentXp, _currentLevel, _allLevels);
     if (mounted) setState(() => _loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
@@ -125,7 +154,7 @@ class _LevelScreenState extends State<LevelScreen>
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Y4.ink, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Journey',
+        title: Text(l.journey,
             style: GoogleFonts.outfit(
                 fontSize: 20, fontWeight: FontWeight.w800, color: Y4.ink)),
         centerTitle: true,
@@ -138,11 +167,11 @@ class _LevelScreenState extends State<LevelScreen>
           isScrollable: true,
           tabAlignment: TabAlignment.center,
           labelStyle: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700),
-          tabs: const [
-            Tab(text: '🔥 Streaks'),
-            Tab(text: '📈 Progress'),
-            Tab(text: '🏅 Badges'),
-            Tab(text: '⚡ Challenges'),
+          tabs: [
+            Tab(text: '🔥 ${l.tabStreaks}'),
+            Tab(text: '📈 ${l.tabProgress}'),
+            Tab(text: '🏅 ${l.tabBadges}'),
+            Tab(text: '⚡ ${l.tabChallenges}'),
           ],
         ),
       ),
@@ -151,7 +180,7 @@ class _LevelScreenState extends State<LevelScreen>
           : TabBarView(
               controller: _tabs,
               children: [
-                const _StreaksTab(),
+                _StreaksTab(initialSnap: _streakSnap),
                 _ProgressTab(
                   pts:       _currentXp,
                   level:     _currentLevel,
@@ -192,7 +221,6 @@ class _ProgressTabState extends State<_ProgressTab> {
   List<Map<String, dynamic>> _rows = [];
 
   static const _periods = ['today', 'week', 'month', 'all'];
-  static const _pLabels  = ['Today', 'This Week', 'This Month', 'All Time'];
 
   @override void initState() { super.initState(); _loadHistory(); }
 
@@ -225,10 +253,12 @@ class _ProgressTabState extends State<_ProgressTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final info     = widget.levelInfo;
     final color    = info != null ? _tierColor(info.title) : _kPurple;
     final lvProgress = info?.progress(widget.pts) ?? 0.0;
     final toNext   = info?.ptsToNextLevel(widget.pts) ?? 0;
+    final pLabels  = _pLabels(context);
 
     return SingleChildScrollView(
       padding: EdgeInsets.zero,
@@ -264,7 +294,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 padding: const EdgeInsets.all(4),
-                child: Row(children: List.generate(_pLabels.length, (i) {
+                child: Row(children: List.generate(pLabels.length, (i) {
                   final sel = _period == i;
                   return Expanded(
                     child: GestureDetector(
@@ -276,7 +306,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                           color: sel ? Colors.white : Colors.transparent,
                           borderRadius: BorderRadius.circular(11),
                         ),
-                        child: Text(_pLabels[i],
+                        child: Text(pLabels[i],
                             textAlign: TextAlign.center,
                             style: GoogleFonts.outfit(
                                 fontSize: 11, fontWeight: FontWeight.w700,
@@ -299,18 +329,18 @@ class _ProgressTabState extends State<_ProgressTab> {
                       Row(children: [
                         info != null ? _tierIcon(info.title, size: 28) : NoorIcon.seedling(size: 28),
                         const SizedBox(width: 8),
-                        Text(info?.title ?? 'Seeker',
+                        Text(info != null ? _localTierTitle(context, info.title) : l.levelSeeker,
                             style: GoogleFonts.outfit(
                                 fontSize: 13, fontWeight: FontWeight.w600,
                                 color: Colors.white70)),
                       ]),
                       const SizedBox(height: 8),
-                      Text('Level ${widget.level}',
+                      Text('${l.level} ${widget.level}',
                           style: GoogleFonts.rajdhani(
                               fontSize: 48, fontWeight: FontWeight.w900,
                               color: Colors.white, height: 1.0)),
                       const SizedBox(height: 2),
-                      Text('${widget.streak} day streak 🔥',
+                      Text('${l.dayStreak(widget.streak.toString())} 🔥',
                           style: GoogleFonts.outfit(
                               fontSize: 11, fontWeight: FontWeight.w600,
                               color: Colors.white60)),
@@ -330,7 +360,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text('$toNext pts to Level ${widget.level + 1}',
+                      Text(l.ptsToLevel(toNext.toString(), (widget.level + 1).toString()),
                           style: GoogleFonts.outfit(
                               fontSize: 10, color: Colors.white60)),
                     ]),
@@ -349,7 +379,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                     child: _histLoading
                       ? const Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9921A)))))
                       : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(_pLabels[_period],
+                          Text(pLabels[_period],
                               style: GoogleFonts.outfit(
                                   fontSize: 11, color: Colors.white60, fontWeight: FontWeight.w500)),
                           const SizedBox(height: 4),
@@ -389,13 +419,13 @@ class _ProgressTabState extends State<_ProgressTab> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Breakdown',
+              Text(l.breakdown,
                   style: GoogleFonts.outfit(
                       fontSize: 16, fontWeight: FontWeight.w800, color: _kText)),
               const SizedBox(height: 10),
               Wrap(spacing: 8, runSpacing: 8,
                 children: _byType.entries.map((e) {
-                  final meta = _activityMeta(e.key);
+                  final meta = _activityMeta(context, e.key);
                   return _BreakdownChip(
                       icon: meta.icon, label: meta.label,
                       pts: e.value, color: meta.color);
@@ -410,7 +440,7 @@ class _ProgressTabState extends State<_ProgressTab> {
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             if (!_histLoading && _rows.isNotEmpty) ...[
-              Text('Activity Log',
+              Text(l.activityLog,
                   style: GoogleFonts.outfit(
                       fontSize: 16, fontWeight: FontWeight.w800, color: _kText)),
               const SizedBox(height: 10),
@@ -440,8 +470,8 @@ class _ProgressTabState extends State<_ProgressTab> {
                       const SizedBox(width: 6),
                       Text(
                         _showAllActivity
-                            ? 'Show Less'
-                            : 'See More  (${_rows.length - 2} more)',
+                            ? l.showLess
+                            : '${l.seeMore}  (${_rows.length - 2} more)',
                         style: GoogleFonts.outfit(
                             fontSize: 13, fontWeight: FontWeight.w700,
                             color: _kPurple),
@@ -456,11 +486,11 @@ class _ProgressTabState extends State<_ProgressTab> {
                 child: Center(child: Column(children: [
                   NoorIcon.moon(size: 44),
                   const SizedBox(height: 10),
-                  Text('No activity ${_pLabels[_period].toLowerCase()}',
+                  Text(l.noActivity(pLabels[_period].toLowerCase()),
                       style: GoogleFonts.outfit(
                           fontSize: 15, fontWeight: FontWeight.w700, color: _kText)),
                   const SizedBox(height: 4),
-                  Text('Start earning pts — read Quran, do Dhikr & Dua.',
+                  Text(l.startEarningPts,
                       style: GoogleFonts.outfit(fontSize: 12, color: _kSub),
                       textAlign: TextAlign.center),
                 ])),
@@ -472,17 +502,17 @@ class _ProgressTabState extends State<_ProgressTab> {
           padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // ── How to Earn pts ─────────────────────────────────────────────
-            Text('How to Earn pts',
+            Text(l.howToEarnPts,
                 style: GoogleFonts.outfit(
                     fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 14),
-            _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${PointReward.ayahRead} pts'),
-            _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${PointReward.juzComplete} pts'),
+            _XpRow(NoorIcon.book(size:20), l.readOneAyah,           '+${PointReward.ayahRead} pts'),
+            _XpRow(NoorIcon.books(size:20), l.completeOneJuz,        '+${PointReward.juzComplete} pts'),
             if (_showAllXpGuide) ...[
               _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+${PointReward.dhikr} pts'),
               _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+${PointReward.dhikr} pts'),
-              _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${PointReward.dailyLogin} pts'),
-              _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${PointReward.validate} pts'),
+              _XpRow(NoorIcon.sunrise(size:20), l.dailyLogin,          '+${PointReward.dailyLogin} pts'),
+              _XpRow(NoorIcon.sparkles(size:20), l.validateAndSupport,  '+${PointReward.validate} pts'),
             ],
             GestureDetector(
               onTap: () => setState(() => _showAllXpGuide = !_showAllXpGuide),
@@ -503,7 +533,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    _showAllXpGuide ? 'Show Less' : 'See More  (4 more)',
+                    _showAllXpGuide ? l.showLess : '${l.seeMore}  (4 more)',
                     style: GoogleFonts.outfit(
                         fontSize: 13, fontWeight: FontWeight.w700,
                         color: _kPurple),
@@ -514,7 +544,7 @@ class _ProgressTabState extends State<_ProgressTab> {
 
             // ── Level Tiers ────────────────────────────────────────────────
             const SizedBox(height: 28),
-            Text('Level Tiers',
+            Text(l.levelTiers,
                 style: GoogleFonts.outfit(
                     fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 14),
@@ -569,6 +599,7 @@ class _TierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final levelNum  = int.tryParse(tier.range.split('–').first.replaceAll('+','')) ?? 1;
     final isActive  = _isInTier(currentLevel, tier.range);
     final isUnlocked = currentLevel >= levelNum;
@@ -595,7 +626,7 @@ class _TierCard extends StatelessWidget {
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            Text(tier.title,
+            Text(_localTierTitle(context, tier.title),
                 style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800,
                     color: isUnlocked ? tier.color : _kSub)),
             const SizedBox(width: 8),
@@ -613,7 +644,7 @@ class _TierCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: tier.color, borderRadius: BorderRadius.circular(8)),
-            child: Text('NOW', style: GoogleFonts.outfit(
+            child: Text(l.now, style: GoogleFonts.outfit(
                 fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white)),
           )
         else if (!isUnlocked)
@@ -663,6 +694,7 @@ class _BadgesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final earned  = badges.where((b) => b.earned).toList();
     final locked  = badges.where((b) => !b.earned).toList();
     final pct     = badges.isEmpty ? 0.0 : earned.length / badges.length;
@@ -703,12 +735,12 @@ class _BadgesTab extends StatelessWidget {
               child: const Center(child: Text('🏆', style: TextStyle(fontSize: 38))),
             ),
             const SizedBox(height: 16),
-            Text('Trophy Vault',
+            Text(l.trophyVault,
                 style: GoogleFonts.rajdhani(
                     fontSize: 30, fontWeight: FontWeight.w900,
                     color: Colors.white, letterSpacing: 1.5)),
             const SizedBox(height: 4),
-            Text('${earned.length} / ${badges.length} badges collected',
+            Text(l.badgesCollected(earned.length.toString(), badges.length.toString()),
                 style: GoogleFonts.outfit(
                     fontSize: 13, color: Colors.white.withValues(alpha: 0.6))),
             const SizedBox(height: 20),
@@ -743,11 +775,11 @@ class _BadgesTab extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('${(pct * 100).round()}% Complete',
+              Text(l.percentComplete((pct * 100).round().toString()),
                   style: GoogleFonts.outfit(
                       fontSize: 11, color: Y4.butter,
                       fontWeight: FontWeight.w700)),
-              Text('${badges.length - earned.length} to unlock',
+              Text(l.toUnlock((badges.length - earned.length).toString()),
                   style: GoogleFonts.outfit(
                       fontSize: 11, color: Colors.white.withValues(alpha: 0.45))),
             ]),
@@ -770,7 +802,7 @@ class _BadgesTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Text('EARNED',
+              Text(l.earned,
                   style: GoogleFonts.rajdhani(
                       fontSize: 18, fontWeight: FontWeight.w900,
                       color: const Color(0xFF1C1C1E), letterSpacing: 1.2)),
@@ -814,7 +846,7 @@ class _BadgesTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Text('LOCKED',
+              Text(l.locked,
                   style: GoogleFonts.rajdhani(
                       fontSize: 18, fontWeight: FontWeight.w900,
                       color: const Color(0xFF8E8E93), letterSpacing: 1.2)),
@@ -963,6 +995,7 @@ class _ChallengesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final weekly   = challenges.where((c) => c['type'] == 'weekly').toList();
     final seasonal = challenges.where((c) => c['type'] == 'seasonal').toList();
     final special  = challenges.where((c) => c['type'] == 'special').toList();
@@ -977,19 +1010,19 @@ class _ChallengesTab extends StatelessWidget {
           _RamadanBanner(),
           if (seasonal.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _SectionHeader('Seasonal Events', NoorIcon.kaaba(size:18)),
+            _SectionHeader(l.seasonalEvents, NoorIcon.kaaba(size:18)),
             const SizedBox(height: 12),
             for (final c in seasonal) _ChallengeCard(c),
           ],
           if (weekly.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _SectionHeader('Weekly Challenges', NoorIcon.calendar(size:18)),
+            _SectionHeader(l.weeklyChallenges, NoorIcon.calendar(size:18)),
             const SizedBox(height: 12),
             for (final c in weekly) _ChallengeCard(c),
           ],
           if (special.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _SectionHeader('Special Events', NoorIcon.star(size:18)),
+            _SectionHeader(l.specialEvents, NoorIcon.star(size:18)),
             const SizedBox(height: 12),
             for (final c in special) _ChallengeCard(c),
           ],
@@ -1000,11 +1033,11 @@ class _ChallengesTab extends StatelessWidget {
                 child: Column(children: [
                   NoorIcon.moon(size: 56),
                   const SizedBox(height: 16),
-                  Text('No active challenges right now',
+                  Text(l.noActiveChallenges,
                       style: GoogleFonts.outfit(fontSize: 16, color: _kSub),
                       textAlign: TextAlign.center),
                   const SizedBox(height: 6),
-                  Text('Check back soon — Ramadan & Dhul-Hijjah events are coming!',
+                  Text(l.checkBackChallenges,
                       style: GoogleFonts.outfit(fontSize: 13, color: _kSub),
                       textAlign: TextAlign.center),
                 ]),
@@ -1029,43 +1062,46 @@ class _SectionHeader extends StatelessWidget {
 
 class _RamadanBanner extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        colors: [Y4.primaryDeep, Y4.primary],
-        begin: Alignment.topLeft, end: Alignment.bottomRight,
-      ),
-      borderRadius: BorderRadius.circular(24),
-      boxShadow: [BoxShadow(color: Y4.primary.withValues(alpha: 0.4),
-          blurRadius: 20, offset: const Offset(0, 6))],
-    ),
-    child: Row(children: [
-      NoorIcon.moon(size: 44),
-      const SizedBox(width: 16),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Ramadan Challenge',
-            style: GoogleFonts.outfit(
-                fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
-        const SizedBox(height: 4),
-        Text('3× pts multiplier • Special badges • Community wells goal',
-            style: GoogleFonts.outfit(fontSize: 12,
-                color: Colors.white.withValues(alpha: 0.75))),
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-          decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.2))),
-          child: Text('Coming Soon — Stay Consistent!',
-              style: GoogleFonts.outfit(
-                  fontSize: 11, fontWeight: FontWeight.w700,
-                  color: Colors.white.withValues(alpha: 0.9))),
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Y4.primaryDeep, Y4.primary],
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
         ),
-      ])),
-    ]),
-  );
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: Y4.primary.withValues(alpha: 0.4),
+            blurRadius: 20, offset: const Offset(0, 6))],
+      ),
+      child: Row(children: [
+        NoorIcon.moon(size: 44),
+        const SizedBox(width: 16),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(l.ramadanChallenge,
+              style: GoogleFonts.outfit(
+                  fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
+          const SizedBox(height: 4),
+          Text(l.ramadanChallengeDesc,
+              style: GoogleFonts.outfit(fontSize: 12,
+                  color: Colors.white.withValues(alpha: 0.75))),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2))),
+            child: Text(l.comingSoonStayConsistent,
+                style: GoogleFonts.outfit(
+                    fontSize: 11, fontWeight: FontWeight.w700,
+                    color: Colors.white.withValues(alpha: 0.9))),
+          ),
+        ])),
+      ]),
+    );
+  }
 }
 
 class _ChallengeCard extends StatelessWidget {
@@ -1074,6 +1110,7 @@ class _ChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final title       = challenge['title']         as String? ?? '';
     final description = challenge['description']   as String? ?? '';
     final emoji       = challenge['emoji']         as String? ?? '⭐';
@@ -1117,7 +1154,7 @@ class _ChallengeCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(color: _kGreen, borderRadius: BorderRadius.circular(10)),
-              child: Text('Done!', style: GoogleFonts.outfit(
+              child: Text(l.done, style: GoogleFonts.outfit(
                   fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
             ),
         ]),
@@ -1254,7 +1291,7 @@ class _ActivityRow extends StatelessWidget {
     final type    = row['activity_type']  as String? ?? 'other';
     final pts     = (row['points_earned'] as num?)?.toInt() ?? 0;
     final tsRaw   = row['created_at']     as String? ?? '';
-    final meta    = _activityMeta(type);
+    final meta    = _activityMeta(context, type);
 
     DateTime? ts;
     try { ts = DateTime.parse(tsRaw).toLocal(); } catch (_) {}
@@ -1317,12 +1354,13 @@ class _ActivityRow extends StatelessWidget {
 // STREAKS TAB — embedded in Journey screen (formerly standalone StreakScreen)
 // ─────────────────────────────────────────────────────────────────────────────
 class _StreaksTab extends StatefulWidget {
-  const _StreaksTab();
+  final StreakSnapshot? initialSnap;
+  const _StreaksTab({this.initialSnap});
   @override State<_StreaksTab> createState() => _StreaksTabState();
 }
 
 class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin {
-  StreakSnapshot _snap = StreakSnapshot.empty;
+  late StreakSnapshot _snap;
   bool _loading = true;
 
   late AnimationController _flameCtrl;
@@ -1339,7 +1377,13 @@ class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin 
     _orbCtrl   = AnimationController(vsync: this, duration: const Duration(seconds: 6))..repeat();
     _flameScale = Tween<double>(begin: 0.92, end: 1.08).animate(CurvedAnimation(parent: _flameCtrl, curve: Curves.easeInOut));
     _pulse      = Tween<double>(begin: 0.7, end: 1.0).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
-    _load();
+    if (widget.initialSnap != null) {
+      // Data already loaded by parent — render immediately, no network call
+      _snap = widget.initialSnap!;
+      _loading = false;
+    } else {
+      _load();
+    }
   }
 
   Future<void> _load() async {
@@ -1357,6 +1401,7 @@ class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final best      = [_snap.login, _snap.dhikr, _snap.quran].reduce((a, b) => a > b ? a : b);
     final milestone = nextMilestone(best);
     final lastM     = lastMilestone(best);
@@ -1370,8 +1415,8 @@ class _StreaksTabState extends State<_StreaksTab> with TickerProviderStateMixin 
           builder: (_, __) => CustomPaint(painter: _StreakAuraPainter(phase: _orbCtrl.value)),
         )),
         if (_loading)
-          const Center(
-            child: NoorInlineLoader(height: 120, color: Y4.honeyDeep, label: 'Loading streaks…'),
+          Center(
+            child: NoorInlineLoader(height: 120, color: Y4.honeyDeep, label: l.loadingStreaks),
           )
         else
           SingleChildScrollView(
@@ -1439,6 +1484,7 @@ class _StreakHeroFlame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return AnimatedBuilder(
       animation: Listenable.merge([flameScale, pulse]),
       builder: (_, __) => Column(children: [
@@ -1461,7 +1507,7 @@ class _StreakHeroFlame extends StatelessWidget {
           ))),
         ),
         const SizedBox(height: 12),
-        Text(streak == 0 ? 'Start your streak today!' : streak >= 100 ? "Centurion — Masha'Allah!" : 'Current best streak',
+        Text(streak == 0 ? l.startStreak : streak >= 100 ? l.centurion : l.currentBestStreak,
             style: GoogleFonts.outfit(fontSize: 13, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
         if (streak > 0 && milestone != null) ...[
           const SizedBox(height: 6),
@@ -1531,6 +1577,7 @@ class _StreakCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final today = DateTime.now();
     final days  = List.generate(7, (i) => DateTime(today.year, today.month, today.day - (6 - i)));
     return Container(
@@ -1542,7 +1589,7 @@ class _StreakCalendar extends StatelessWidget {
         boxShadow: [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('LAST 7 DAYS', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
+        Text(l.last7Days, style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
         const SizedBox(height: 12),
         Row(children: days.map((day) {
           final isToday = day.day == today.day && day.month == today.month && day.year == today.year;
@@ -1591,6 +1638,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final start = lastM?.days ?? 0;
     final pct   = ((current - start) / (milestone.days - start)).clamp(0.0, 1.0);
     return Container(
@@ -1603,7 +1651,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('NEXT MILESTONE', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
+          Text(l.nextMilestone, style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
           const Spacer(),
           Text('+${milestone.ptsBonus} pts', style: GoogleFonts.rajdhani(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.honeyDeep)),
         ]),
@@ -1638,48 +1686,51 @@ class _StreakMilestoneList extends StatelessWidget {
   const _StreakMilestoneList({required this.streak});
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Y4.surface,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Y4.border),
-      boxShadow: [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
-    ),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('ALL MILESTONES', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
-      const SizedBox(height: 12),
-      ...kStreakMilestones.map((m) {
-        final done = streak >= m.days;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Row(children: [
-            Container(
-              width: 38, height: 38,
-              decoration: BoxDecoration(shape: BoxShape.circle,
-                color: done ? Y4.honeyDeep.withValues(alpha: 0.18) : Y4.track,
-                border: Border.all(color: done ? Y4.honeyDeep.withValues(alpha: 0.7) : Y4.border),
-                boxShadow: done ? [BoxShadow(color: Y4.honeyDeep.withValues(alpha: 0.20), blurRadius: 10)] : [],
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Y4.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Y4.border),
+        boxShadow: [BoxShadow(color: Y4.ink.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(l.allMilestones, style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700, color: Y4.inkSoft, letterSpacing: 1.2)),
+        const SizedBox(height: 12),
+        ...kStreakMilestones.map((m) {
+          final done = streak >= m.days;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(children: [
+              Container(
+                width: 38, height: 38,
+                decoration: BoxDecoration(shape: BoxShape.circle,
+                  color: done ? Y4.honeyDeep.withValues(alpha: 0.18) : Y4.track,
+                  border: Border.all(color: done ? Y4.honeyDeep.withValues(alpha: 0.7) : Y4.border),
+                  boxShadow: done ? [BoxShadow(color: Y4.honeyDeep.withValues(alpha: 0.20), blurRadius: 10)] : [],
+                ),
+                child: Center(child: done ? NoorIcon.fromEmoji(m.emoji, size: 17) : NoorIcon.lock(size: 17)),
               ),
-              child: Center(child: done ? NoorIcon.fromEmoji(m.emoji, size: 17) : NoorIcon.lock(size: 17)),
-            ),
-            const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(m.label, style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: done ? Y4.ink : Y4.muted)),
-              Text('${m.days} day streak', style: GoogleFonts.outfit(fontSize: 11, color: Y4.muted)),
-            ])),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-              decoration: BoxDecoration(
-                color: done ? Y4.honey.withValues(alpha: 0.20) : Y4.track,
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(width: 12),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(m.label, style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: done ? Y4.ink : Y4.muted)),
+                Text('${m.days} day streak', style: GoogleFonts.outfit(fontSize: 11, color: Y4.muted)),
+              ])),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: done ? Y4.honey.withValues(alpha: 0.20) : Y4.track,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text('+${m.ptsBonus} pts', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
+                    color: done ? Y4.honeyDeep : Y4.muted, letterSpacing: 0.4)),
               ),
-              child: Text('+${m.ptsBonus} pts', style: GoogleFonts.rajdhani(fontSize: 12, fontWeight: FontWeight.w700,
-                  color: done ? Y4.honeyDeep : Y4.muted, letterSpacing: 0.4)),
-            ),
-          ]),
-        );
-      }),
-    ]),
-  );
+            ]),
+          );
+        }),
+      ]),
+    );
+  }
 }

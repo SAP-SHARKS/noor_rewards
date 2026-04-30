@@ -20,6 +20,9 @@ import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/noor_offline.dart';
+import '../widgets/notifications_sheet.dart';
+import '../services/notification_center.dart';
+import '../l10n/app_localizations.dart';
 
 AppConfig get _pcfg => SettingsService.instance.config;
 Color get _pTeal => _pcfg.dashTeal;
@@ -143,6 +146,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     }
 
     setState(() => _saving = true);
+    final l = AppLocalizations.of(context)!;
     try {
       await _supabase.from('profiles').upsert({
         'id':           user.id,
@@ -154,10 +158,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       );
       _displayName = name;
       _country     = country;
-      _showSnack('Profile updated ✓');
+      _showSnack(l.profileUpdated);
       HapticFeedback.lightImpact();
     } catch (e) {
-      _showSnack('Could not save — please try again', isError: true);
+      _showSnack(l.couldNotSave, isError: true);
     }
     if (mounted) setState(() => _saving = false);
   }
@@ -165,6 +169,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // ── Photo Upload ─────────────────────────────────────────────────────────
   Future<void> _pickAndUploadPhoto(ImageSource source) async {
     Navigator.pop(context); // close bottom sheet
+    final l = AppLocalizations.of(context)!;
     try {
       final xf = await _picker.pickImage(
         source: source,
@@ -196,16 +201,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       await _supabase.from('profiles').update({'avatar_url': bustUrl}).eq('id', user.id);
 
       setState(() => _avatarUrl = bustUrl);
-      _showSnack('Photo updated ✓');
+      _showSnack(l.photoUpdated);
       HapticFeedback.lightImpact();
     } catch (e) {
-      _showSnack('Could not upload photo — please try again', isError: true);
+      _showSnack(l.couldNotUploadPhoto, isError: true);
     } finally {
       if (mounted) setState(() => _uploadingPhoto = false);
     }
   }
 
   void _showPhotoSheet() {
+    final l = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -220,17 +226,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           Container(width: 36, height: 4,
               decoration: BoxDecoration(color: const Color(0xFFDDDDDD), borderRadius: BorderRadius.circular(2))),
           const SizedBox(height: 16),
-          Text('Change Profile Photo',
+          Text(l.changeProfilePhoto,
               style: GoogleFonts.rajdhani(fontSize: 20, fontWeight: FontWeight.w800, color: _pText)),
           const SizedBox(height: 20),
-          _photoOption(Icons.camera_alt_rounded, 'Take a Photo', _pTeal,
+          _photoOption(Icons.camera_alt_rounded, l.takeAPhoto, _pTeal,
               () => _pickAndUploadPhoto(ImageSource.camera)),
           const SizedBox(height: 12),
-          _photoOption(Icons.photo_library_rounded, 'Choose from Library', Y4.primaryDeep,
+          _photoOption(Icons.photo_library_rounded, l.chooseFromLibrary, Y4.primaryDeep,
               () => _pickAndUploadPhoto(ImageSource.gallery)),
           if (_avatarUrl != null) ...[
             const SizedBox(height: 12),
-            _photoOption(Icons.delete_outline_rounded, 'Remove Photo', const Color(0xFFD32F2F),
+            _photoOption(Icons.delete_outline_rounded, l.removePhoto, const Color(0xFFD32F2F),
                 _removePhoto),
           ],
         ])),
@@ -259,15 +265,16 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   Future<void> _removePhoto() async {
     Navigator.pop(context);
+    final l = AppLocalizations.of(context)!;
     final user = _supabase.auth.currentUser;
     if (user == null) return;
     setState(() => _uploadingPhoto = true);
     try {
       await _supabase.from('profiles').update({'avatar_url': null}).eq('id', user.id);
       setState(() => _avatarUrl = null);
-      _showSnack('Photo removed');
+      _showSnack(l.photoRemoved);
     } catch (_) {
-      _showSnack('Could not remove photo', isError: true);
+      _showSnack(l.couldNotRemovePhoto, isError: true);
     } finally {
       if (mounted) setState(() => _uploadingPhoto = false);
     }
@@ -285,23 +292,24 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Future<void> _signOut() async {
+    final l = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Sign Out?', style: GoogleFonts.rajdhani(fontWeight: FontWeight.w800, fontSize: 22)),
-        content: Text('Your progress is safely stored. You can sign back in anytime.',
+        title: Text(l.signOutQuestion, style: GoogleFonts.rajdhani(fontWeight: FontWeight.w800, fontSize: 22)),
+        content: Text(l.progressSafelyStored,
             style: GoogleFonts.outfit(fontSize: 14, color: _pSub)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel', style: GoogleFonts.outfit(color: _pSub))),
+              child: Text(l.cancel, style: GoogleFonts.outfit(color: _pSub))),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFD32F2F),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: Text('Sign Out', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w700)),
+            child: Text(l.signOut, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -316,12 +324,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: _pBg,
       body: _loading
           ? const Center(child: NoorInlineLoader(height: 120))
           : CustomScrollView(slivers: [
-              _buildAppBar(),
+              _buildAppBar(l),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
@@ -329,17 +338,21 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 24),
-                      _buildAvatarCard(),
+                      _buildAvatarCard(l),
                       const SizedBox(height: 28),
-                      _sectionLabel('Account Information'),
+                      _sectionLabel(l.accountInformation),
                       const SizedBox(height: 12),
-                      _buildInfoCard(),
+                      _buildInfoCard(l),
                       const SizedBox(height: 28),
-                      _sectionLabel('Help & Support'),
+                      _sectionLabel(l.preferences),
                       const SizedBox(height: 12),
-                      _buildSupportCard(),
+                      _buildNotificationsCard(l),
                       const SizedBox(height: 28),
-                      _buildSignOutButton(),
+                      _sectionLabel(l.helpAndSupport),
+                      const SizedBox(height: 12),
+                      _buildSupportCard(l),
+                      const SizedBox(height: 28),
+                      _buildSignOutButton(l),
                       const SizedBox(height: 16),
                       Center(
                         child: Text('Noor Rewards • v1.0',
@@ -354,7 +367,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   // ── App Bar ─ honey wash hero matching dashboard ─────────────────────────
-  SliverAppBar _buildAppBar() => SliverAppBar(
+  SliverAppBar _buildAppBar(AppLocalizations l) => SliverAppBar(
         pinned: true,
         expandedHeight: 180,
         backgroundColor: Y4.bg,
@@ -374,7 +387,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           else
             TextButton(
               onPressed: _saveProfile,
-              child: Text('Save', style: GoogleFonts.outfit(
+              child: Text(l.save, style: GoogleFonts.outfit(
                   color: Y4.honeyDeep, fontWeight: FontWeight.w700, fontSize: 16)),
             ),
         ],
@@ -397,7 +410,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(_displayName.isNotEmpty ? _displayName : 'Your Name',
+                      Text(_displayName.isNotEmpty ? _displayName : l.yourName,
                           style: Y4.display(
                             fontSize: 26, fontWeight: FontWeight.w500,
                             color: Y4.ink, letterSpacing: -0.3, height: 1.0,
@@ -573,7 +586,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
 
   // ── Avatar Card ───────────────────────────────────────────────────────────
-  Widget _buildAvatarCard() => Container(
+  Widget _buildAvatarCard(AppLocalizations l) => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
       color: Colors.white,
@@ -589,10 +602,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       Expanded(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Profile Photo', style: GoogleFonts.outfit(
+          Text(l.profilePhoto, style: GoogleFonts.outfit(
               fontSize: 15, fontWeight: FontWeight.w700, color: _pText)),
           const SizedBox(height: 3),
-          Text(_avatarUrl != null ? 'Tap Edit to change your photo' : 'Tap Edit to add a photo',
+          Text(_avatarUrl != null ? l.tapEditToChange : l.tapEditToAdd,
               style: GoogleFonts.outfit(fontSize: 12, color: _pSub)),
         ],
       )),
@@ -608,7 +621,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             const Icon(Icons.camera_alt_rounded, size: 14, color: Color(0xFF2BAE99)),
             const SizedBox(width: 5),
-            Text('Edit', style: GoogleFonts.outfit(
+            Text(l.edit, style: GoogleFonts.outfit(
                 fontSize: 13, fontWeight: FontWeight.w700, color: _pTeal)),
           ]),
         ),
@@ -617,7 +630,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   );
 
   // ── Info Card ─────────────────────────────────────────────────────────────
-  Widget _buildInfoCard() => Container(
+  Widget _buildInfoCard(AppLocalizations l) => Container(
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(20),
@@ -629,26 +642,26 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     child: Column(children: [
       _editableRow(
         icon: Icons.person_outline_rounded,
-        label: 'Display Name',
+        label: l.displayName,
         controller: _nameCtrl,
-        hint: 'Your name',
+        hint: l.yourName,
         isFirst: true,
       ),
       _divider(),
       _readOnlyRow(
         icon: Icons.email_outlined,
-        label: 'Email',
+        label: l.email,
         value: _email,
       ),
       _divider(),
       // Connected account row — shows provider with icon
-      _connectedAccountRow(),
+      _connectedAccountRow(l),
       _divider(),
       _editableRow(
         icon: Icons.public_rounded,
-        label: 'Country',
+        label: l.country,
         controller: _countryCtrl,
-        hint: 'e.g. Pakistan, UK…',
+        hint: l.countryHint,
         isLast: true,
       ),
     ]),
@@ -712,42 +725,45 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     required IconData icon,
     required String label,
     required String value,
-  }) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    child: Row(children: [
-      Container(
-        width: 36, height: 36,
-        decoration: BoxDecoration(
-          color: _pSub.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
+  }) {
+    final l = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(children: [
+        Container(
+          width: 36, height: 36,
+          decoration: BoxDecoration(
+            color: _pSub.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: _pSub, size: 18),
         ),
-        child: Icon(icon, color: _pSub, size: 18),
-      ),
-      const SizedBox(width: 14),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label, style: GoogleFonts.outfit(
-            fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
-        const SizedBox(height: 2),
-        Text(value.isNotEmpty ? value : '\u2014', style: GoogleFonts.outfit(
-            fontSize: 15, fontWeight: FontWeight.w600, color: _pText),
-            maxLines: 1, overflow: TextOverflow.ellipsis),
-      ])),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        decoration: BoxDecoration(
-          color: _pSub.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+        const SizedBox(width: 14),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label, style: GoogleFonts.outfit(
+              fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
+          const SizedBox(height: 2),
+          Text(value.isNotEmpty ? value : '\u2014', style: GoogleFonts.outfit(
+              fontSize: 15, fontWeight: FontWeight.w600, color: _pText),
+              maxLines: 1, overflow: TextOverflow.ellipsis),
+        ])),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: _pSub.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(l.verified, style: GoogleFonts.outfit(
+              fontSize: 10, fontWeight: FontWeight.w600, color: _pSub)),
         ),
-        child: Text('Verified', style: GoogleFonts.outfit(
-            fontSize: 10, fontWeight: FontWeight.w600, color: _pSub)),
-      ),
-    ]),
-  );
+      ]),
+    );
+  }
 
   Widget _divider() => const Divider(height: 0, indent: 66, endIndent: 16, color: Color(0xFFF0EDE8));
 
   /// Row in the info card showing how the user signed in.
-  Widget _connectedAccountRow() {
+  Widget _connectedAccountRow(AppLocalizations l) {
     final IconData icon;
     final String sub;
     final Color color;
@@ -780,7 +796,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         ),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Connected Account', style: GoogleFonts.outfit(
+          Text(l.connectedAccount, style: GoogleFonts.outfit(
               fontSize: 11, fontWeight: FontWeight.w600, color: _pSub)),
           const SizedBox(height: 2),
           Text(sub, style: GoogleFonts.outfit(
@@ -793,15 +809,118 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: color.withValues(alpha: 0.35)),
           ),
-          child: Text('Active', style: GoogleFonts.outfit(
+          child: Text(l.active, style: GoogleFonts.outfit(
               fontSize: 10, fontWeight: FontWeight.w700, color: color)),
         ),
       ]),
     );
   }
 
+  // ── Notifications Card ────────────────────────────────────────────────────
+  // Master on/off + a shortcut to view the inbox. Lives under "Preferences"
+  // so it sits naturally between account info and help/support.
+  Widget _buildNotificationsCard(AppLocalizations l) => Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 14, offset: const Offset(0, 4))],
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Column(children: [
+      // Master toggle row
+      ValueListenableBuilder<bool>(
+        valueListenable: NotificationCenter.instance.enabled,
+        builder: (_, on, __) => Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 12, 14),
+          child: Row(children: [
+            Container(
+              width: 40, height: 40,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  colors: [Y4.butter, Y4.honey],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: Y4.honeyDeep.withValues(alpha: 0.4)),
+              ),
+              child: Icon(
+                on ? Icons.notifications_active_rounded
+                   : Icons.notifications_off_rounded,
+                size: 20, color: Y4.honeyDeep,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.notifications,
+                    style: GoogleFonts.outfit(
+                        fontSize: 14, fontWeight: FontWeight.w700,
+                        color: Y4.ink)),
+                const SizedBox(height: 2),
+                Text(on
+                        ? l.notifOnDesc
+                        : l.notifOffDesc,
+                    style: GoogleFonts.outfit(
+                        fontSize: 12, color: Y4.inkSoft,
+                        fontWeight: FontWeight.w500, height: 1.3)),
+              ],
+            )),
+            Switch(
+              value: on,
+              onChanged: NotificationCenter.instance.setEnabled,
+              activeThumbColor: Y4.honey,
+              activeTrackColor: Y4.honeyDeep,
+              inactiveThumbColor: Colors.white,
+              inactiveTrackColor: Y4.track,
+            ),
+          ]),
+        ),
+      ),
+      // View inbox row
+      const Divider(height: 1, thickness: 1, color: Y4.border),
+      InkWell(
+        onTap: () => showNotificationsSheet(context),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          child: Row(children: [
+            const Icon(Icons.inbox_rounded, size: 20, color: Y4.ink),
+            const SizedBox(width: 14),
+            Expanded(child: Text(l.viewNotificationsInbox,
+                style: GoogleFonts.outfit(
+                    fontSize: 13, fontWeight: FontWeight.w600,
+                    color: Y4.ink))),
+            ValueListenableBuilder<int>(
+              valueListenable: NotificationCenter.instance.unreadCount,
+              builder: (_, n, __) => n == 0
+                  ? const SizedBox.shrink()
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: Y4.honeyDeep,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text('$n new',
+                          style: GoogleFonts.outfit(
+                              fontSize: 10, fontWeight: FontWeight.w800,
+                              color: Colors.white)),
+                    ),
+            ),
+            const Icon(Icons.chevron_right_rounded,
+                size: 20, color: Y4.muted),
+          ]),
+        ),
+      ),
+    ]),
+  );
+
   // ── Support Card ──────────────────────────────────────────────────────────
-  Widget _buildSupportCard() => Container(
+  Widget _buildSupportCard(AppLocalizations l) => Container(
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(20),
@@ -811,20 +930,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       )],
     ),
     child: Column(children: [
-      _supportRow(Icons.help_outline_rounded, 'Help Center',
+      _supportRow(Icons.help_outline_rounded, l.helpCenter,
           'Guides, FAQs and how-tos', const Color(0xFF3B82F6), isFirst: true,
           onTap: () => _showHelpSheet()),
       _divider(),
-      _supportRow(Icons.bug_report_outlined, 'Report a Bug',
+      _supportRow(Icons.bug_report_outlined, l.reportABug,
           'Something not working? Tell us', const Color(0xFFEF4444),
           onTap: () => _showReportSheet()),
       _divider(),
-      _supportRow(Icons.info_outline_rounded, 'About Noor Rewards',
-          'Version 1.0 • Built with ❤️ for the Ummah', const Color(0xFFFFAA00),
+      _supportRow(Icons.info_outline_rounded, l.aboutNoorRewards,
+          'Version 1.0 • ${l.builtWithLove}', const Color(0xFFFFAA00),
           onTap: () => _showAboutSheet()),
       _divider(),
-      _supportRow(Icons.privacy_tip_outlined, 'Privacy Policy',
-          'How we protect your data', _pSub, isLast: true,
+      _supportRow(Icons.privacy_tip_outlined, l.privacyPolicy,
+          l.howWeProtectData, _pSub, isLast: true,
           onTap: () {}),
     ]),
   );
@@ -861,7 +980,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   );
 
   // ── Sign Out ─────────────────────────────────────────────────────────────
-  Widget _buildSignOutButton() => GestureDetector(
+  Widget _buildSignOutButton(AppLocalizations l) => GestureDetector(
     onTap: _signOut,
     child: Container(
       width: double.infinity,
@@ -878,7 +997,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.logout_rounded, color: Color(0xFFD32F2F), size: 20),
         const SizedBox(width: 10),
-        Text('Sign Out', style: GoogleFonts.outfit(
+        Text(l.signOut, style: GoogleFonts.outfit(
             fontSize: 15, fontWeight: FontWeight.w700, color: const Color(0xFFD32F2F))),
       ]),
     ),
@@ -892,23 +1011,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   // ── Help Sheet ────────────────────────────────────────────────────────────
   void _showHelpSheet() {
+    final l = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => _BottomSheetCard(
-        title: 'Help Center',
+        title: l.helpCenter,
         icon: Icons.help_outline_rounded,
         color: const Color(0xFF3B82F6),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _helpItem('How to earn Noor Points?',
-              'Complete Quran reading, Dhikr sets, and daily login to earn points.'),
-          _helpItem('What is Validate Coins?',
-              'Press the Validate button on the home page once per day to seal your coins.'),
-          _helpItem('How do streaks work?',
-              'Complete your daily activities consecutively to build your streak.'),
-          _helpItem('Can I donate my Noor Points?',
-              'Yes! Visit the Akhirah tab to donate your points to active community projects.'),
+          _helpItem(l.howToEarnQuestion, l.howToEarnAnswer),
+          _helpItem(l.whatIsValidateQuestion, l.whatIsValidateAnswer),
+          _helpItem(l.howStreaksWorkQuestion, l.howStreaksWorkAnswer),
+          _helpItem(l.canDonatQuestion, l.canDonateAnswer),
         ]),
       ),
     );
@@ -928,17 +1044,18 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   // ── Report Sheet ──────────────────────────────────────────────────────────
   void _showReportSheet() {
+    final l = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => _BottomSheetCard(
-        title: 'Report a Bug',
+        title: l.reportABug,
         icon: Icons.bug_report_outlined,
         color: const Color(0xFFEF4444),
         child: Column(children: [
           Text(
-            'Found something wrong? Please email us and we\'ll fix it as soon as possible.',
+            l.bugReportBody,
             style: GoogleFonts.outfit(fontSize: 14, color: _pSub, height: 1.6),
             textAlign: TextAlign.center,
           ),
@@ -961,11 +1078,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   // ── About Sheet ───────────────────────────────────────────────────────────
   void _showAboutSheet() {
+    final l = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => _BottomSheetCard(
-        title: 'About Noor Rewards',
+        title: l.aboutNoorRewards,
         icon: Icons.info_outline_rounded,
         color: const Color(0xFFFFAA00),
         child: Column(children: [
@@ -981,7 +1099,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     color: Colors.black87))),
           ),
           const SizedBox(height: 16),
-          Text('Noor Rewards',
+          Text(l.noorRewards,
               style: GoogleFonts.rajdhani(fontSize: 26, fontWeight: FontWeight.w900,
                   color: _pText)),
           const SizedBox(height: 6),
@@ -989,7 +1107,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               style: GoogleFonts.outfit(fontSize: 13, color: _pSub)),
           const SizedBox(height: 16),
           Text(
-            'Built with love for the global Muslim Ummah.\nEarn Noor Points by building Islamic habits.\nDonate points to support real community projects.',
+            l.aboutBody,
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 13, color: _pSub, height: 1.6),
           ),

@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 import '../main.dart' show flowerComposition;
@@ -25,58 +26,72 @@ class FlowerSplashScreen extends StatefulWidget {
 }
 
 class _FlowerSplashScreenState extends State<FlowerSplashScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _ctrl;
-  late final AnimationController _logoCtrl;
-  late final Animation<double> _logoFade;
   LottieComposition? _composition;
+  Timer? _safetyTimeout;
 
   static const _bg = Color(0xFFFFF4D2); // Y4 honey wash — matches launch_background.xml
+
+  /// Skip the first portion of the animation where the flower hasn't "grown"
+  /// yet (Lottie typically draws nothing in the very early frames). Starting
+  /// the controller at this offset means the user sees a visible flower from
+  /// frame 1 — no perceived blank gap.
+  static const _initialFrameOffset = 0.25;
+
+  /// If the Lottie composition isn't ready within this window, we give up
+  /// waiting and call [widget.onComplete] so the SplashGate can move on.
+  static const _maxLoadWait = Duration(milliseconds: 1500);
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(vsync: this);
 
-    // Logo fade-in starts immediately so the user always sees branded content
-    // from the very first Flutter frame — no perceived blank gap while the
-    // Lottie's earliest frames (where the flower hasn't "grown" yet) play.
-    _logoCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 280),
-    );
-    _logoFade = CurvedAnimation(parent: _logoCtrl, curve: Curves.easeOut);
-    _logoCtrl.forward();
-
+    // Start animation IMMEDIATELY (synchronously) if we already have it.
+    // This sets `_composition` before the first build() runs, so the very
+    // first paint shows the flower (no SizedBox.shrink frame).
     if (flowerComposition != null) {
-      // ✅ Happy path: composition already decoded in main() — start immediately.
-      _startAnimation(flowerComposition!);
+      _composition = flowerComposition;
+      _ctrl
+        ..duration = flowerComposition!.duration
+        ..value = _initialFrameOffset;
     } else {
-      // ⚠ Fallback: decode now (stays on honey background, no white flash).
       _loadAndPlay();
     }
+
+    // Belt-and-suspenders: if for any reason the animation hasn't called
+    // onComplete within 1.5s of its expected duration, fire it manually.
+    _safetyTimeout = Timer(const Duration(seconds: 5), () {
+      if (mounted) widget.onComplete();
+    });
+
+    // Kick the animation forward on the first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_composition != null) _runForward();
+    });
   }
 
-  void _startAnimation(LottieComposition composition) {
-    _composition = composition;
-    _ctrl.duration = composition.duration;
-    // Post-frame so the controller is attached to the widget tree first.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      setState(() {}); // ensure Lottie widget is built
-      _ctrl.forward().whenComplete(() {
-        if (mounted) widget.onComplete();
-      });
+  void _runForward() {
+    if (!mounted) return;
+    _ctrl.forward(from: _initialFrameOffset).whenComplete(() {
+      if (mounted) widget.onComplete();
     });
   }
 
   Future<void> _loadAndPlay() async {
     try {
-      final bytes = await rootBundle.load('assets/lottie/Flower.json');
+      final bytes = await rootBundle.load('assets/lottie/Flower.json')
+          .timeout(_maxLoadWait);
       final composition = await LottieComposition.fromByteData(bytes);
       if (!mounted) return;
-      setState(() => _composition = composition);
-      _startAnimation(composition);
+      setState(() {
+        _composition = composition;
+        _ctrl
+          ..duration = composition.duration
+          ..value = _initialFrameOffset;
+      });
+      _runForward();
     } catch (_) {
       if (mounted) widget.onComplete();
     }
@@ -84,8 +99,8 @@ class _FlowerSplashScreenState extends State<FlowerSplashScreen>
 
   @override
   void dispose() {
+    _safetyTimeout?.cancel();
     _ctrl.dispose();
-    _logoCtrl.dispose();
     super.dispose();
   }
 
@@ -94,56 +109,23 @@ class _FlowerSplashScreenState extends State<FlowerSplashScreen>
     return Scaffold(
       backgroundColor: _bg,
       body: Center(
-        // Stack so the static logo + brand always renders from frame 1,
-        // and the Lottie animates over it without ever leaving a blank gap.
-        child: Stack(alignment: Alignment.center, children: [
-          // Always-visible branded content (logo + name)
-          FadeTransition(
-            opacity: _logoFade,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  'assets/images/app_icon_padded.png',
-                  width: 132, height: 132,
-                  errorBuilder: (_, __, ___) => const SizedBox(width: 132, height: 132),
+        child: _composition == null
+            // Honey-tinted placeholder circle while Lottie decodes — never
+            // lets the screen feel "blank" even on the slowest device.
+            ? Container(
+                width: 80, height: 80,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0x33D89A1E), // honey-deep @ 20%
                 ),
-                const SizedBox(height: 14),
-                Text(
-                  'Noor Rewards',
-                  style: GoogleFonts.fraunces(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF2A2410), // Y4 ink
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Bismillah ir-Rahman ir-Raheem',
-                  style: GoogleFonts.fraunces(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.italic,
-                    color: const Color(0xFFD89A1E), // Y4 honeyDeep
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Lottie flower — animates on top once composition is ready.
-          // Wrapped in IgnorePointer so the logo behind stays the visual anchor.
-          if (_composition != null)
-            IgnorePointer(
-              child: Lottie(
+              )
+            : Lottie(
                 composition: _composition!,
                 controller: _ctrl,
                 width: 320,
                 height: 320,
                 fit: BoxFit.contain,
               ),
-            ),
-        ]),
       ),
     );
   }

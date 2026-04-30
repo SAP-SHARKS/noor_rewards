@@ -482,16 +482,28 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── Load all bookmarks for this user ─────────────────────────────────────────
   Future<void> _loadBookmarks() async {
     final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return;
+    if (uid != null) {
+      try {
+        final rows = await _sb.from('quran_bookmarks')
+            .select('surah, ayah').eq('user_id', uid);
+        setState(() {
+          _bookmarks.addAll(rows.map((r) => '${r['surah']}:${r['ayah']}'));
+        });
+      } catch (_) {}
+    }
+
+    // Quran Foundation Bookmarks
     try {
-      final rows = await _sb.from('quran_bookmarks')
-          .select('surah, ayah').eq('user_id', uid);
-      setState(() {
-        _bookmarks.addAll(rows.map((r) => '${r['surah']}:${r['ayah']}'));
-      });
+      if (await QuranApiService.instance.isUserLoggedIn()) {
+        final qfBookmarks = await QuranApiService.instance.getBookmarks();
+        if (mounted) {
+          setState(() {
+            _bookmarks.addAll(qfBookmarks.map((b) => '${b['chapterNumber'] ?? b['key']}:${b['verseNumber']}'));
+          });
+        }
+      }
     } catch (_) {}
   }
-
   // ── Load favourites for this user ─────────────────────────────────────────────
   Future<void> _loadFavourites() async {
     final uid = _sb.auth.currentUser?.id;
@@ -1031,7 +1043,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           const SizedBox(height: 12),
           Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
           Padding(padding: const EdgeInsets.all(20),
-            child: Text('Select Surah', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _kText))),
+            child: Text(AppLocalizations.of(context)?.selectSurah ?? 'Select Surah', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _kText))),
           Expanded(child: ListView.builder(
             controller: ctrl, itemCount: 114,
             itemBuilder: (_, i) {
@@ -1070,22 +1082,38 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   Future<void> _toggleBookmark() async {
     final key = '$_surah:_ayah';
     final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return;
+    
+    // Check if user is logged into Quran Foundation
+    final isQfLoggedIn = await QuranApiService.instance.isUserLoggedIn();
 
     if (_bookmarks.contains(key)) {
       setState(() => _bookmarks.remove(key));
-      try {
-        await _sb.from('quran_bookmarks')
-            .delete().eq('user_id', uid).eq('surah', _surah).eq('ayah', _ayah);
-      } catch (_) { setState(() => _bookmarks.add(key)); }
+      // Remove from QF API
+      if (isQfLoggedIn) {
+        QuranApiService.instance.removeBookmark(surahNumber: _surah, ayatNumber: _ayah);
+      }
+      // Remove from Supabase
+      if (uid != null) {
+        try {
+          await _sb.from('quran_bookmarks')
+              .delete().eq('user_id', uid).eq('surah', _surah).eq('ayah', _ayah);
+        } catch (_) { setState(() => _bookmarks.add(key)); }
+      }
     } else {
       setState(() => _bookmarks.add(key));
-      try {
-        await _sb.from('quran_bookmarks').insert({
-          'user_id': uid, 'surah': _surah, 'ayah': _ayah, 'surah_name': _surahName,
-        });
-        if (mounted) _showSnack('Bookmarked $_surahName $_surah:$_ayah');
-      } catch (_) { setState(() => _bookmarks.remove(key)); }
+      // Add to QF API
+      if (isQfLoggedIn) {
+        QuranApiService.instance.addBookmark(surahNumber: _surah, ayatNumber: _ayah);
+      }
+      // Add to Supabase
+      if (uid != null) {
+        try {
+          await _sb.from('quran_bookmarks').insert({
+            'user_id': uid, 'surah': _surah, 'ayah': _ayah, 'surah_name': _surahName,
+          });
+        } catch (_) { setState(() => _bookmarks.remove(key)); }
+      }
+      if (mounted) _showSnack('Bookmarked $_surahName $_surah:$_ayah');
     }
   }
 
@@ -1280,7 +1308,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   Future<void> _togglePlay() async {
     if (_audioUrl == null || _audioUrl!.isEmpty) {
-      _showSnack('Audio URL not loaded yet. Please wait...');
+      _showSnack(AppLocalizations.of(context)?.audioNotLoaded ?? 'Audio URL not loaded yet. Please wait...');
       return;
     }
     if (_isPlaying) {
@@ -1301,7 +1329,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } catch (_) {
       if (mounted) {
         setState(() => _audioLoading = false);
-        _showSnack('Audio unavailable — check internet connection.');
+        _showSnack(AppLocalizations.of(context)?.audioUnavailable ?? 'Audio unavailable — check internet connection.');
       }
     }
   }
@@ -1333,7 +1361,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── Toggle favourite ──────────────────────────────────────────────────────────
   Future<void> _toggleFavourite() async {
     final uid = _sb.auth.currentUser?.id;
-    if (uid == null) { _showSnack('Sign in to save favourites'); return; }
+    if (uid == null) { _showSnack(AppLocalizations.of(context)?.signInToSaveFavourites ?? 'Sign in to save favourites'); return; }
     final key = '$_surah:_ayah';
     final adding = !_isFavourited;
     setState(() {
@@ -1364,7 +1392,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         }
       });
     }
-    _showSnack(adding ? '♥️ Added to Favourites' : 'Removed from Favourites');
+    _showSnack(adding ? '♥️ Added to Favourites' : AppLocalizations.of(context)?.removedFromFavourites ?? 'Removed from Favourites');
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -1462,7 +1490,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           color: _accent, size: 22),
                     ),
                     const SizedBox(width: 12),
-                    Text('Reading Settings',
+                    Text(AppLocalizations.of(context)?.readingSettings ?? 'Reading Settings',
                         style: GoogleFonts.outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
@@ -1484,13 +1512,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       const EdgeInsets.fromLTRB(20, 0, 20, 40),
                   children: [
                     // ═ APPEARANCE
-                    sHead('APPEARANCE', Icons.palette_rounded),
-                    sTile('Dark Mode',
-                        'Comfortable night-time reading',
+                    sHead(AppLocalizations.of(context)?.appearance ?? 'APPEARANCE', Icons.palette_rounded),
+                    sTile(AppLocalizations.of(context)?.darkMode ?? 'Dark Mode',
+                        AppLocalizations.of(context)?.comfortableNightReading ?? 'Comfortable night-time reading',
                         Icons.dark_mode_rounded,
                         _darkMode, (v) => _darkMode = v),
-                    sTile('Focus Mode (Full Screen)',
-                        'Hide app bar & nav for distraction-free reading',
+                    sTile(AppLocalizations.of(context)?.focusMode ?? 'Focus Mode (Full Screen)',
+                        AppLocalizations.of(context)?.focusModeDesc ?? 'Hide app bar & nav for distraction-free reading',
                         Icons.fullscreen_rounded,
                         _fullScreenMode,
                         (v) => _fullScreenMode = v),
@@ -1524,7 +1552,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               crossAxisAlignment:
                                   CrossAxisAlignment.start,
                               children: [
-                              Text('Text Size',
+                              Text(AppLocalizations.of(context)?.textSize ?? 'Text Size',
                                   style: GoogleFonts.outfit(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
@@ -1554,12 +1582,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             mainAxisAlignment:
                                 MainAxisAlignment.spaceBetween,
                             children: [
-                            Text('Small',
+                            Text(AppLocalizations.of(context)?.small ?? 'Small',
                                 style: GoogleFonts.outfit(
                                     fontSize: 10,
                                     color: const Color(
                                         0xFF8E8E93))),
-                            Text('Large',
+                            Text(AppLocalizations.of(context)?.large ?? 'Large',
                                 style: GoogleFonts.outfit(
                                     fontSize: 10,
                                     color: const Color(
@@ -1595,7 +1623,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   size: 20, color: _accent),
                             ),
                             const SizedBox(width: 12),
-                            Text('Theme Colour',
+                            Text(AppLocalizations.of(context)?.themeColour ?? 'Theme Colour',
                                 style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -1659,7 +1687,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ),
 
                     // ═ QURAN SCRIPT
-                    sHead('QURAN SCRIPT', Icons.draw_rounded),
+                    sHead(AppLocalizations.of(context)?.quranScript ?? 'QURAN SCRIPT', Icons.draw_rounded),
                     Padding(padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -1682,7 +1710,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               ),
                               const SizedBox(width: 12),
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text('Quran Script',
+                                Text(AppLocalizations.of(context)?.quranScriptLabel ?? 'Quran Script',
                                     style: GoogleFonts.outfit(
                                         fontSize: 14, fontWeight: FontWeight.w700, color: lblC)),
                                 Text(_kQuranScripts[_quranScriptIdx].name,
@@ -1752,39 +1780,39 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ),
 
                     // ═ READING LAYOUT
-                    sHead('READING LAYOUT',
+                    sHead(AppLocalizations.of(context)?.readingLayout ?? 'READING LAYOUT',
                         Icons.view_agenda_rounded),
-                    sTile('Show Translation',
-                        'Display meaning below each verse',
+                    sTile(AppLocalizations.of(context)?.showTranslation ?? 'Show Translation',
+                        AppLocalizations.of(context)?.displayMeaningBelow ?? 'Display meaning below each verse',
                         Icons.translate_rounded,
                         _showTranslation,
                         (v) => _showTranslation = v),
-                    sTile('Show Daily Progress',
-                        'Progress bar & ayah count card',
+                    sTile(AppLocalizations.of(context)?.showDailyProgress ?? 'Show Daily Progress',
+                        AppLocalizations.of(context)?.progressBarAyahCount ?? 'Progress bar & ayah count card',
                         Icons.bar_chart_rounded,
                         _showProgressCard,
                         (v) => _showProgressCard = v),
-                    sTile('Show Points Banner',
-                        '+Noor Points notification strip',
+                    sTile(AppLocalizations.of(context)?.showPointsBanner ?? 'Show Points Banner',
+                        AppLocalizations.of(context)?.noorPointsNotificationStrip ?? '+Noor Points notification strip',
                         Icons.nights_stay_rounded,
                         _showPointsBanner,
                         (v) => _showPointsBanner = v),
-                    sTile('Show Surah Header',
-                        'Surah name banner at top of page',
+                    sTile(AppLocalizations.of(context)?.showSurahHeader ?? 'Show Surah Header',
+                        AppLocalizations.of(context)?.surahNameBanner ?? 'Surah name banner at top of page',
                         Icons.menu_book_rounded,
                         _showSurahBanner,
                         (v) => _showSurahBanner = v),
 
                     // ═ AUDIO & PLAYBACK
-                    sHead('AUDIO & PLAYBACK',
+                    sHead(AppLocalizations.of(context)?.audioPlayback ?? 'AUDIO & PLAYBACK',
                         Icons.headphones_rounded),
-                    sTile('Auto-Advance',
-                        'Move to next verse when audio ends',
+                    sTile(AppLocalizations.of(context)?.autoAdvance ?? 'Auto-Advance',
+                        AppLocalizations.of(context)?.moveToNextVerse ?? 'Move to next verse when audio ends',
                         Icons.skip_next_rounded,
                         _autoAdvance,
                         (v) => _autoAdvance = v),
-                    sTile('Repeat Current Verse',
-                        'Loop this ayah audio on repeat',
+                    sTile(AppLocalizations.of(context)?.repeatCurrentVerse ?? 'Repeat Current Verse',
+                        AppLocalizations.of(context)?.loopAyahAudio ?? 'Loop this ayah audio on repeat',
                         Icons.repeat_one_rounded,
                         _repeatAyah, (v) {
                           _repeatAyah = v;
@@ -1793,23 +1821,23 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         }),
 
                     // ═ NOTIFICATIONS
-                    sHead('NOTIFICATIONS & ALERTS',
+                    sHead(AppLocalizations.of(context)?.notificationsAlerts ?? 'NOTIFICATIONS & ALERTS',
                         Icons.notifications_rounded),
-                    sTile('Daily Reading Reminder',
-                        'Push reminder to read Quran each day',
+                    sTile(AppLocalizations.of(context)?.dailyReadingReminder ?? 'Daily Reading Reminder',
+                        AppLocalizations.of(context)?.pushReminderReadQuran ?? 'Push reminder to read Quran each day',
                         Icons.alarm_rounded,
                         _dailyReminder,
                         (v) => _dailyReminder = v),
-                    sTile('Milestone Sound Alerts',
-                        'Chime when you reach 10, 25, 50 ayahs',
+                    sTile(AppLocalizations.of(context)?.milestoneSoundAlerts ?? 'Milestone Sound Alerts',
+                        AppLocalizations.of(context)?.chimeAtMilestones ?? 'Chime when you reach 10, 25, 50 ayahs',
                         Icons.music_note_rounded,
                         _soundAlerts,
                         (v) => _soundAlerts = v),
 
                     // ═ ADVANCED
-                    sHead('ADVANCED', Icons.settings_rounded),
-                    sTile('Word-by-Word Mode',
-                        'Show each Arabic word with its English meaning',
+                    sHead(AppLocalizations.of(context)?.advanced ?? 'ADVANCED', Icons.settings_rounded),
+                    sTile(AppLocalizations.of(context)?.wordByWordMode ?? 'Word-by-Word Mode',
+                        AppLocalizations.of(context)?.showWordMeaning ?? 'Show each Arabic word with its English meaning',
                         Icons.translate_rounded,
                         _wordByWord, (v) {
                           _wordByWord = v;
@@ -1845,7 +1873,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               Expanded(child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Translation Language',
+                                  Text(AppLocalizations.of(context)?.translationLanguage ?? 'Translation Language',
                                       style: GoogleFonts.outfit(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w700,
@@ -2007,7 +2035,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         Row(children: [
           const Text('🎧', style: TextStyle(fontSize: 13)),
           const SizedBox(width: 5),
-          Text('Reciter:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _darkMode ? Colors.grey.shade400 : const Color(0xFF8E8E93))),
+          Text(AppLocalizations.of(context)?.reciterLabel ?? 'Reciter:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: _darkMode ? Colors.grey.shade400 : const Color(0xFF8E8E93))),
           const SizedBox(width: 6),
           Expanded(child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -2145,7 +2173,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 key: ValueKey(_isFavourited),
                 color: _isFavourited ? const Color(0xFFCC6600) : sub, size: 24),
             ),
-            onPressed: _toggleFavourite, tooltip: 'Favourite',
+            onPressed: _toggleFavourite, tooltip: AppLocalizations.of(context)?.favourite ?? 'Favourite',
           ),
           IconButton(
             icon: AnimatedSwitcher(
@@ -2157,7 +2185,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 key: ValueKey(_isBookmarked),
                 color: _isBookmarked ? _kGold : sub, size: 24),
             ),
-            onPressed: _toggleBookmark, tooltip: 'Bookmark',
+            onPressed: _toggleBookmark, tooltip: AppLocalizations.of(context)?.bookmark ?? 'Bookmark',
           ),
           // Tune button — glows when hint is showing
           AnimatedContainer(
@@ -2172,7 +2200,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             child: IconButton(
               icon: Icon(Icons.tune_rounded,
                   color: _showHint ? _accent : sub, size: 24),
-              onPressed: _openSettings, tooltip: 'Reading Settings',
+              onPressed: _openSettings, tooltip: AppLocalizations.of(context)?.readingSettings ?? 'Reading Settings',
             ),
           ),
         ],
@@ -2340,7 +2368,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         icon: _showAudioPlayer && _isPlaying
                             ? Icons.pause_circle_rounded
                             : Icons.headphones_rounded,
-                        label: _showAudioPlayer ? 'Playing' : (AppLocalizations.of(context)?.listen ?? 'Listen'),
+                        label: _showAudioPlayer ? AppLocalizations.of(context)?.playing ?? 'Playing' : (AppLocalizations.of(context)?.listen ?? 'Listen'),
                         active: _showAudioPlayer,
                         activeColor: const Color(0xFFE67E22),
                         darkMode: _darkMode,
@@ -2591,7 +2619,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text('Goal: 50 ayahs/day',
+                    Text(AppLocalizations.of(context)?.goalAyahs ?? 'Goal: 50 ayahs/day',
                         style: GoogleFonts.outfit(
                             fontSize: 11, color: sub)),
                   ]),
@@ -2664,7 +2692,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       const SizedBox(width: 6),
                       Text(
                         // Full-page mode → no points label
-                        _fullPageMode ? (AppLocalizations.of(context)?.next ?? 'Next Page') : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
+                        _fullPageMode ? (AppLocalizations.of(context)?.next ?? AppLocalizations.of(context)?.nextPage ?? 'Next Page') : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
                         style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -3446,7 +3474,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 14),
                 const SizedBox(width: 5),
-                Text('Exit', style: GoogleFonts.outfit(
+                Text(AppLocalizations.of(context)?.exit ?? 'Exit', style: GoogleFonts.outfit(
                     fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
               ]),
             ),
@@ -3613,14 +3641,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           color: subClr.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2)),
                     )),
-                    Center(child: Text('Mushaf Settings',
+                    Center(child: Text(AppLocalizations.of(context)?.mushafSettings ?? 'Mushaf Settings',
                         style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: txtClr))),
 
                     // ── Reading Mode ──
-                    sectionLabel('READING MODE'),
+                    sectionLabel(AppLocalizations.of(context)?.readingMode ?? 'READING MODE'),
                     Row(children: [
                       Expanded(child: optionChip(
-                        'Scroll', Icons.view_day_rounded, !_mushafPageFlip,
+                        AppLocalizations.of(context)?.scroll ?? 'Scroll', Icons.view_day_rounded, !_mushafPageFlip,
                         () {
                           setModalState(() {});
                           setState(() {
@@ -3633,7 +3661,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       )),
                       const SizedBox(width: 10),
                       Expanded(child: optionChip(
-                        'Page Flip', Icons.auto_stories_rounded, _mushafPageFlip,
+                        AppLocalizations.of(context)?.pageFlip ?? 'Page Flip', Icons.auto_stories_rounded, _mushafPageFlip,
                         () {
                           setModalState(() {});
                           setState(() {
@@ -3645,10 +3673,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ]),
 
                     // ── Translation ──
-                    sectionLabel('TRANSLATION'),
+                    sectionLabel(AppLocalizations.of(context)?.translationLabel ?? 'TRANSLATION'),
                     Row(children: [
                       Expanded(child: optionChip(
-                        'Off', Icons.visibility_off_rounded, !_mushafSplitTranslation,
+                        AppLocalizations.of(context)?.off ?? 'Off', Icons.visibility_off_rounded, !_mushafSplitTranslation,
                         () {
                           setModalState(() {});
                           setState(() => _mushafSplitTranslation = false);
@@ -3656,7 +3684,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       )),
                       const SizedBox(width: 10),
                       Expanded(child: optionChip(
-                        'Split View', Icons.vertical_split_rounded, _mushafSplitTranslation,
+                        AppLocalizations.of(context)?.splitView ?? 'Split View', Icons.vertical_split_rounded, _mushafSplitTranslation,
                         () {
                           setModalState(() {});
                           setState(() => _mushafSplitTranslation = true);
@@ -3668,7 +3696,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ]),
 
                     // ── Script ──
-                    sectionLabel('SCRIPT'),
+                    sectionLabel(AppLocalizations.of(context)?.script ?? 'SCRIPT'),
                     Row(children: List.generate(_kQuranScripts.length, (i) {
                       final script = _kQuranScripts[i];
                       final active = i == _quranScriptIdx;
@@ -3701,7 +3729,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     })),
 
                     // ── Font Size ──
-                    sectionLabel('FONT SIZE'),
+                    sectionLabel(AppLocalizations.of(context)?.fontSize ?? 'FONT SIZE'),
                     Row(children: [
                       IconButton(
                         icon: Icon(Icons.remove_circle_outline, color: _accent),
@@ -3739,19 +3767,19 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ]),
 
                     // ── Quick Actions ──
-                    sectionLabel('ACTIONS'),
+                    sectionLabel(AppLocalizations.of(context)?.actionsLabel ?? 'ACTIONS'),
                     Row(children: [
                       Expanded(child: optionChip(
-                        'Bookmark', Icons.bookmark_border_rounded, false,
+                        AppLocalizations.of(context)?.bookmark ?? 'Bookmark', Icons.bookmark_border_rounded, false,
                         () {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(this.context).showSnackBar(
-                              const SnackBar(content: Text('Page bookmarked!')));
+                              SnackBar(content: Text(AppLocalizations.of(context)?.pageBookmarked ?? 'Page bookmarked!')));
                         },
                       )),
                       const SizedBox(width: 10),
                       Expanded(child: optionChip(
-                        'Dark Mode', Icons.dark_mode_rounded, _darkMode,
+                        AppLocalizations.of(context)?.darkMode ?? 'Dark Mode', Icons.dark_mode_rounded, _darkMode,
                         () {
                           setModalState(() => _darkMode = !_darkMode);
                           setState(() {});

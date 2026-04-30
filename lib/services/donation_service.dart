@@ -4,6 +4,7 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'notification_center.dart';
 
 /// Single media item attached to a community project (image or video).
 class ProjectMedia {
@@ -60,6 +61,15 @@ class DonationService {
       });
 
       if (success == true) {
+        // ── In-app notification: donation succeeded. Tap goes to Akhirah
+        // tab where the user's giving impact is summarised.
+        NotificationCenter.instance.add(
+          kind: NoorNotifKind.donation,
+          title: 'Donation received 💝',
+          body: 'You donated $amount Noor Points · jazak Allah khair.',
+          route: '/akhirah',
+          data: {'project_id': projectId, 'amount': amount},
+        );
         return null; // Null means success
       } else {
         return "Donation could not be processed at this time.";

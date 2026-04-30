@@ -113,5 +113,709 @@
   "otherCategories": "Other Categories",
   "noCategoriesAvailable": "No categories available",
   "nextPts": "Next",
-  "prev": "Prev"
+  "prev": "Prev",
+  "reciteMore": "RECITE MORE.",
+  "helpRealLives": "HELP REAL LIVES.",
+  "yourNoorPointsFundProjects": "Your Noor Points fund these projects",
+  "youBothEarnPoints": "You both earn 500 Noor Points!",
+  "reward": "Reward",
+  "haveInviteCode": "Have an invite code?",
+  "enterCode": "Enter code…",
+  "apply": "Apply",
+  "plantGoodDeeds": "PLANT GOOD DEEDS",
+  "youDonated": "You donated",
+  "seeDetailsForMore": "See Details for more Projects →",
+  "pts": "pts",
+  "funded": "funded",
+  "bySponsor": "By {sponsor}",
+  "@bySponsor": {
+    "placeholders": {
+      "sponsor": {
+        "type": "String"
+      }
+    }
+  },
+  "viewCampaignDonate": "View Campaign & Donate",
+  "supportThisCause": "Support this Cause",
+  "availableBalance": "Available Balance:",
+  "donationAmount": "Donation Amount",
+  "points": "points",
+  "donateEarnReward": "Donate & Earn Reward",
+  "max": "MAX",
+  "leaderboard": "Leaderboard",
+  "loadingDots": "Loading…",
+  "yourRank": "Your Rank: #{rank}",
+  "@yourRank": {
+    "placeholders": {
+      "rank": {
+        "type": "String"
+      }
+    }
+  },
+  "outOf": "Out of",
+  "believers": "believers",
+  "topTenContributors": "Top 10 Contributors",
+  "ourCauses": "Our Causes",
+  "donatePointsToSupport": "Donate your Noor Points to support real-world projects",
+  "noActiveProjects": "No active projects right now",
+  "checkBackSoon": "Check back soon insha'Allah",
+  "messageCopied": "Message copied — share or paste in WhatsApp!",
+  "lvl": "Lvl",
+  "journey": "Journey",
+  "tabStreaks": "Streaks",
+  "tabProgress": "Progress",
+  "tabBadges": "Badges",
+  "tabChallenges": "Challenges",
+  "allTime": "All Time",
+  "ptsToLevel": "{pts} pts to Level {level}",
+  "@ptsToLevel": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "dayStreak": "{count} day streak",
+  "@dayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "actions": "actions",
+  "action": "action",
+  "breakdown": "Breakdown",
+  "activityLog": "Activity Log",
+  "showLess": "Show Less",
+  "seeMore": "See More",
+  "more": "more",
+  "noActivity": "No activity {period}",
+  "@noActivity": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "startEarningPts": "Start earning pts — read Quran, do Dhikr & Dua.",
+  "howToEarnPts": "How to Earn pts",
+  "readOneAyah": "Read 1 Ayah",
+  "completeOneJuz": "Complete 1 Juz",
+  "validateAndSupport": "Validate & Support",
+  "levelTiers": "Level Tiers",
+  "basicFeatures": "Basic features",
+  "customProfileThemes": "Custom profile themes",
+  "leaderboardBadge": "Leaderboard badge",
+  "exclusiveVotingRights": "Exclusive voting rights",
+  "hallOfFameListing": "Hall of Fame listing",
+  "unlocks": "Unlocks: {feature}",
+  "@unlocks": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "now": "NOW",
+  "trophyVault": "Trophy Vault",
+  "badgesCollected": "{earned} / {total} badges collected",
+  "@badgesCollected": {
+    "placeholders": {
+      "earned": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "percentComplete": "{pct}% Complete",
+  "@percentComplete": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "toUnlock": "{count} to unlock",
+  "@toUnlock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "earned": "EARNED",
+  "locked": "LOCKED",
+  "seasonalEvents": "Seasonal Events",
+  "weeklyChallenges": "Weekly Challenges",
+  "specialEvents": "Special Events",
+  "noActiveChallenges": "No active challenges right now",
+  "checkBackChallenges": "Check back soon — Ramadan & Dhul-Hijjah events are coming!",
+  "ramadanChallenge": "Ramadan Challenge",
+  "ramadanChallengeDesc": "3× pts multiplier • Special badges • Community wells goal",
+  "comingSoonStayConsistent": "Coming Soon — Stay Consistent!",
+  "done": "Done!",
+  "ptsBoost": "{multiplier}× pts Boost",
+  "@ptsBoost": {
+    "placeholders": {
+      "multiplier": {
+        "type": "String"
+      }
+    }
+  },
+  "ends": "Ends {date}",
+  "@ends": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loadingStreaks": "Loading streaks…",
+  "centurion": "Centurion — Masha'Allah!",
+  "currentBestStreak": "Current best streak",
+  "last7Days": "LAST 7 DAYS",
+  "nextMilestone": "NEXT MILESTONE",
+  "allMilestones": "ALL MILESTONES",
+  "moreDaysToGo": "{count} more day(s) to go!",
+  "@moreDaysToGo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "dayStreakLabel": "{count} day streak",
+  "@dayStreakLabel": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "best": "Best {count}",
+  "@best": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "dhikarAndDua": "Dhikar & Dua",
+  "listenTafsir": "Listen Tafsir",
+  "challenge": "Challenge",
+  "readListenTafsir": "Read & Listen Tafsir",
+  "deepUnderstanding": "Deep understanding of the Holy Quran",
+  "earnPointsTafsir": "Earn points for every 10 min of Tafsir listening",
+  "featuredSurahs": "Featured Surahs",
+  "browseAll114": "Browse All 114 Surahs",
+  "verses": "{count} verses",
+  "@verses": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "ayahN": "Ayah {n}",
+  "@ayahN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "readTafsir": "Read Tafsir",
+  "translation": "Translation",
+  "loadingTafsir": "Loading tafsir...",
+  "tafsirNotAvailable": "Tafsir not available for this ayah.",
+  "arabicScripture": "Arabic Scripture",
+  "urduScripture": "Urdu Scripture",
+  "englishCommentary": "English Commentary",
+  "previous": "Previous",
+  "nextAyah": "Next Ayah",
+  "readingSettings": "Reading Settings",
+  "tafsirSource": "TAFSIR SOURCE",
+  "reciter": "RECITER",
+  "display": "DISPLAY",
+  "showArabicText": "Show Arabic Text",
+  "darkMode": "Dark Mode",
+  "fontSize": "FONT SIZE",
+  "arabic": "Arabic",
+  "urdu": "Urdu",
+  "english": "English",
+  "selectSurah": "Select Surah",
+  "audioNotLoaded": "Audio URL not loaded yet. Please wait...",
+  "playbackError": "Playback error: {message}",
+  "@playbackError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "audioUnavailable": "Audio unavailable — check internet connection.",
+  "signInToSaveFavourites": "Sign in to save favourites",
+  "addedToFavourites": "Added to Favourites",
+  "removedFromFavourites": "Removed from Favourites",
+  "appearance": "APPEARANCE",
+  "comfortableNightReading": "Comfortable night-time reading",
+  "focusMode": "Focus Mode (Full Screen)",
+  "focusModeDesc": "Hide app bar & nav for distraction-free reading",
+  "textSize": "Text Size",
+  "small": "Small",
+  "large": "Large",
+  "themeColour": "Theme Colour",
+  "quranScript": "QURAN SCRIPT",
+  "quranScriptLabel": "Quran Script",
+  "readingLayout": "READING LAYOUT",
+  "showTranslation": "Show Translation",
+  "displayMeaningBelow": "Display meaning below each verse",
+  "showDailyProgress": "Show Daily Progress",
+  "progressBarAyahCount": "Progress bar & ayah count card",
+  "showPointsBanner": "Show Points Banner",
+  "noorPointsNotificationStrip": "+Noor Points notification strip",
+  "showSurahHeader": "Show Surah Header",
+  "surahNameBanner": "Surah name banner at top of page",
+  "audioPlayback": "AUDIO & PLAYBACK",
+  "autoAdvance": "Auto-Advance",
+  "moveToNextVerse": "Move to next verse when audio ends",
+  "repeatCurrentVerse": "Repeat Current Verse",
+  "loopAyahAudio": "Loop this ayah audio on repeat",
+  "notificationsAlerts": "NOTIFICATIONS & ALERTS",
+  "dailyReadingReminder": "Daily Reading Reminder",
+  "pushReminderReadQuran": "Push reminder to read Quran each day",
+  "milestoneSoundAlerts": "Milestone Sound Alerts",
+  "chimeAtMilestones": "Chime when you reach 10, 25, 50 ayahs",
+  "advanced": "ADVANCED",
+  "wordByWordMode": "Word-by-Word Mode",
+  "showWordMeaning": "Show each Arabic word with its English meaning",
+  "translationLanguage": "Translation Language",
+  "translationsAvailable": "{count} translations available",
+  "@translationsAvailable": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "reciterLabel": "Reciter:",
+  "playing": "Playing",
+  "favourite": "Favourite",
+  "bookmark": "Bookmark",
+  "ayahsRead": "{count} ayahs read",
+  "@ayahsRead": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "goalAyahs": "Goal: 50 ayahs/day",
+  "nextPage": "Next Page",
+  "exit": "Exit",
+  "mushafSettings": "Mushaf Settings",
+  "readingMode": "READING MODE",
+  "scroll": "Scroll",
+  "pageFlip": "Page Flip",
+  "translationLabel": "TRANSLATION",
+  "off": "Off",
+  "splitView": "Split View",
+  "script": "SCRIPT",
+  "actionsLabel": "ACTIONS",
+  "pageBookmarked": "Page bookmarked!",
+  "loadingQuran": "Loading Quran…",
+  "earnPointsPerVerse": "Earn +10 Noor Points per verse read",
+  "chooseSurah": "Choose Surah",
+  "chooseVerse": "Choose Verse",
+  "surahHasVerses": "{surah} has {count} verses",
+  "@surahHasVerses": {
+    "placeholders": {
+      "surah": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "favourites": "Favourites",
+  "bookmarks": "Bookmarks",
+  "saved": "{count} saved",
+  "@saved": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "noSavedYet": "No {title} yet",
+  "@noSavedYet": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToSaveVerses": "Tap the heart/bookmark icon while reading to save verses.",
+  "randomVerse": "Random Verse",
+  "sunnahFriday": "Sunnah Friday",
+  "resume": "Resume",
+  "loadingWordTranslations": "Loading word translations...",
+  "wordDataUnavailable": "Word data unavailable. Check your connection.",
+  "duaAzkarSettings": "Dua & Azkar Settings",
+  "showTransliteration": "Show Transliteration",
+  "showIllustration": "Show Illustration",
+  "hideIllustrationArea": "Hide the visual artwork area",
+  "arabicFontStyle": "Arabic Font Style",
+  "dailyAzkarComplete": "Daily Azkar Complete!",
+  "dailyAzkarBonusMsg": "Masha'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.",
+  "awesome": "Awesome",
+  "betweenSubhSunrise": "Between Subh-e-Sadiq to Sunrise",
+  "betweenAsrMaghrib": "Between Asr and Maghrib",
+  "beforeSleeping": "Before Sleeping",
+  "uponWakingUp": "Upon Waking Up",
+  "afterEachPrayer": "After Each Prayer",
+  "anytimeEspeciallyAfterPrayer": "Anytime — Especially After Prayer",
+  "anytimeMorningEvening": "Anytime — Morning & Evening",
+  "duringTheNight": "During the Night",
+  "anytime": "Anytime",
+  "asPerSunnah": "As per Sunnah",
+  "whenEatingDrinking": "When Eating or Drinking",
+  "enteringLeavingHome": "Upon Entering / Leaving Home",
+  "beforeAfterWudu": "Before or After Wudu",
+  "whenGettingDressed": "When Getting Dressed",
+  "uponBadDream": "Upon Having a Bad Dream",
+  "forUmmahAnytime": "For the Ummah — Anytime",
+  "all": "All",
+  "general": "General",
+  "startNow": "Start Now",
+  "markAsDone": "Mark as Done",
+  "enterCustomCount": "Enter custom count",
+  "resetToDefault": "Reset to default",
+  "noAzkarFound": "No Azkar found here.",
+  "reference": "Reference",
+  "benefit": "Benefit",
+  "continueAdhkar": "Continue your {category} Adhkar from where you left off.",
+  "@continueAdhkar": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "set": "set",
+  "sets": "sets",
+  "duasOfUmmah": "Duas of Ummah",
+  "beforeSleepCat": "Before Sleep",
+  "tahajjud": "Tahajjud",
+  "salah": "Salah",
+  "salawat": "Salawat",
+  "sunnahDuas": "Sunnah Duas",
+  "quranicDuas": "Quranic Duas",
+  "istighfar": "Istighfar",
+  "dhikarAllTimes": "Dhikar All Times",
+  "namesOfAllah": "Names of Allah",
+  "nightmares": "Nightmares",
+  "wakingUp": "Waking up",
+  "clothes": "Clothes",
+  "wudu": "Wudu",
+  "foodAndDrink": "Food & Drink",
+  "home": "Home",
+  "istikharah": "Istikharah",
+  "adaanAndMasjid": "Adaan & Masjid",
+  "diffAndHappy": "Diff & Happy",
+  "imanProtect": "Iman Protect",
+  "travel": "Travel",
+  "shopping": "Shopping",
+  "marriage": "Marriage",
+  "social": "Social",
+  "nature": "Nature",
+  "death": "Death",
+  "gatherings": "Gatherings",
+  "hajjAndUmrah": "Hajj & Umrah",
+  "dailyEssentials": "Daily Essentials",
+  "akhirahBalance": "Akhirah Balance",
+  "priceless": "Priceless",
+  "beyondWorldCanHold": "Beyond what the world can hold",
+  "deedsToday": "+{count} deeds today",
+  "@deedsToday": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "deedsThisWeek": "+{count} this week",
+  "@deedsThisWeek": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "bestDayStreak": "Best: {count} day streak",
+  "@bestDayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "donateMoreEarn": "Donate More & Earn",
+  "yourHoldings": "Your Holdings",
+  "seeAll": "See All →",
+  "hasanaatEarned": "Hasanaat Earned",
+  "recordedInBookOfDeeds": "Recorded in your Book of Deeds",
+  "treesInJannah": "Trees in Jannah",
+  "fromTasbih": "From SubhanAllah & Tasbih",
+  "sinsForgiven": "Sins Forgiven",
+  "likeTheFoamOfSea": "Like the foam of the sea",
+  "palacesBuilt": "Palaces Built",
+  "surahIkhlasAndSunnahs": "Surah Ikhlas & Sunnahs",
+  "treasuresOfJannah": "Treasures of Jannah",
+  "slavesFreedom": "Slaves Freed",
+  "equivalentReward": "Equivalent reward earned",
+  "sadaqahGiven": "Sadaqah Given",
+  "pointsDonatedToCommunity": "Points donated to community",
+  "allTimeLabel": "All time",
+  "worshipActivity": "Worship Activity",
+  "timeSpentInRemembrance": "Time spent in remembrance",
+  "noorPointsSummary": "Noor Points Summary",
+  "totalPoints": "Total Points",
+  "title": "Title",
+  "everyDeedRecorded": "Every deed is recorded. Keep going!",
+  "yourAvailable": "Your available: {pts} pts",
+  "@yourAvailable": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "jazakAllahDonated": "JazakAllah! {pts} pts donated",
+  "@jazakAllahDonated": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "insufficientPoints": "Insufficient Points",
+  "donatePoints": "Donate {pts} Points",
+  "@donatePoints": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "everyRecitationCanChange": "Every Recitation Can\nChange a Life",
+  "fullyFunded": "Fully Funded ✓",
+  "noPointsAvailable": "No Points Available",
+  "communityProgress": "Community Progress",
+  "myContribution": "My contribution: {pts} pts",
+  "@myContribution": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "ptsRaised": "pts raised",
+  "ofGoal": "of {goal} pts goal",
+  "@ofGoal": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "daysLeft": "days left",
+  "lastDay": "Last day!",
+  "deadline": "deadline",
+  "campaignStory": "Campaign Story",
+  "updates": "Updates ({count})",
+  "@updates": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "campaign": "Campaign",
+  "noStoryYet": "No story added yet.",
+  "checkAdminPanel": "Check the admin panel to add a campaign story.",
+  "noUpdatesYet": "No updates yet.",
+  "checkBackForNews": "Check back soon for campaign news.",
+  "yesterday": "Yesterday",
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCampaign": "Share Campaign",
+  "spreadTheWord": "Spread the word and help this cause reach its goal.",
+  "shareViaWhatsApp": "Share via WhatsApp",
+  "moreSharingOptions": "More sharing options…",
+  "slideToAdjust": "Slide to adjust",
+  "balance": "Balance",
+  "loadingYourReport": "Loading your report…",
+  "profileUpdated": "Profile updated ✓",
+  "couldNotSave": "Could not save — please try again",
+  "photoUpdated": "Photo updated ✓",
+  "couldNotUploadPhoto": "Could not upload photo — please try again",
+  "changeProfilePhoto": "Change Profile Photo",
+  "takeAPhoto": "Take a Photo",
+  "chooseFromLibrary": "Choose from Library",
+  "removePhoto": "Remove Photo",
+  "photoRemoved": "Photo removed",
+  "couldNotRemovePhoto": "Could not remove photo",
+  "signOutQuestion": "Sign Out?",
+  "progressSafelyStored": "Your progress is safely stored. You can sign back in anytime.",
+  "accountInformation": "Account Information",
+  "preferences": "Preferences",
+  "helpAndSupport": "Help & Support",
+  "profilePhoto": "Profile Photo",
+  "tapEditToChange": "Tap Edit to change your photo",
+  "tapEditToAdd": "Tap Edit to add a photo",
+  "edit": "Edit",
+  "displayName": "Display Name",
+  "yourName": "Your name",
+  "email": "Email",
+  "country": "Country",
+  "countryHint": "e.g. Pakistan, UK…",
+  "notifications": "Notifications",
+  "notifOnDesc": "Rewards, streak milestones, donations & more",
+  "notifOffDesc": "Turned off — no new alerts will be added",
+  "viewNotificationsInbox": "View notifications inbox",
+  "nNew": "{n} new",
+  "@nNew": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "helpCenter": "Help Center",
+  "reportABug": "Report a Bug",
+  "aboutNoorRewards": "About Noor Rewards",
+  "builtWithLove": "Built with love for the Ummah",
+  "privacyPolicy": "Privacy Policy",
+  "howWeProtectData": "How we protect your data",
+  "bugReportBody": "Found something wrong? Please email us and we'll fix it as soon as possible.",
+  "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Noor Points by building Islamic habits.\nDonate points to support real community projects.",
+  "howToEarnQuestion": "How to earn Noor Points?",
+  "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn points.",
+  "whatIsValidateQuestion": "What is Validate Coins?",
+  "whatIsValidateAnswer": "Press the Validate button on the home page once per day to seal your coins.",
+  "howStreaksWorkQuestion": "How do streaks work?",
+  "howStreaksWorkAnswer": "Complete your daily activities consecutively to build your streak.",
+  "canDonatQuestion": "Can I donate my Noor Points?",
+  "canDonateAnswer": "Yes! Visit the Akhirah tab to donate your points to active community projects.",
+  "coinsSealedMashaAllah": "Coins Sealed!",
+  "rewardedForConsistency": "You have been rewarded for\nyour consistency today!",
+  "validationPoints": "Validation Points",
+  "streakBonus": "Streak Bonus",
+  "totalEarned": "Total Earned",
+  "openQuran": "Open Quran",
+  "duaAndAzkaar": "Dua & Azkaar",
+  "shareWithFriends": "Share with Friends",
+  "earnMoreNoor": "Earn More Noor",
+  "dontDisturb": "Don't Disturb",
+  "maybeLater": "Maybe later",
+  "read5QuranPages": "Read 5 Quran Pages",
+  "completeNowBonus": "Complete now → earn +50 points bonus",
+  "completeADhikrSet": "Complete a Dhikr Set",
+  "finishAzkaarBonus": "Finish your Azkaar → earn +30 points bonus",
+  "inviteAFriend": "Invite a Friend",
+  "shareNoorBonus": "Share Noor with someone → earn +100 NP",
+  "multiplyYour": "MULTIPLY YOUR",
+  "noorPointsBang": "NOOR POINTS!",
+  "keepMomentum": "Keep your spiritual momentum going\nand watch your Noor grow",
+  "openQuranNow": "Open Quran Now",
+  "startAzkaarNow": "Start Azkaar Now",
+  "goodDeed": "Good Deed",
+  "earnSawabWithRead": "Earn Sawab\nwith every read",
+  "realImpact": "Real Impact",
+  "coinsFundCauses": "Coins fund\nnoble causes",
+  "unexpectedGoogleError": "Unexpected error during Google Sign In",
+  "authSuccessQuran": "Successfully authenticated with Quran.com!",
+  "authError": "Auth Error",
+  "ok": "OK",
+  "verified": "Verified",
+  "connectedAccount": "Connected Account",
+  "active": "Active",
+  "noorPlusPoints": "+{pts} Noor Points",
+  "@noorPlusPoints": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "yourGarden": "YOUR GARDEN",
+  "noorPointsBloomed": "noor points bloomed",
+  "growingStreakTitle": "GROWING STREAK",
+  "daySingular": "day",
+  "daysPlural": "days",
+  "keepGrowing": "keep growing",
+  "progressLabel": "Progress",
+  "weekTab": "Week",
+  "monthTab": "Month",
+  "todayTab": "Today",
+  "ofTabGoal": "of {goal} {tab} goal",
+  "@ofTabGoal": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      },
+      "tab": {
+        "type": "String"
+      }
+    }
+  },
+  "todaysPlots": "Today's plots",
+  "setsTodayCount": "sets today {count}",
+  "@setsTodayCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "earnPerFriend": "Earn +500 per friend",
+  "lastAchievement": "Last: {name}",
+  "@lastAchievement": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfBelievers": "Out of {count} believers",
+  "@outOfBelievers": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "yourRankNum": "Your Rank: #{rank}",
+  "@yourRankNum": {
+    "placeholders": {
+      "rank": {
+        "type": "String"
+      }
+    }
+  },
+  "youIndicator": "(you)"
 }

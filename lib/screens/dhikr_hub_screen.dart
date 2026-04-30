@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dhikr_screen.dart';
@@ -59,18 +60,18 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     // Y4-tuned palette: warm/sun categories use honey, night categories use sage.
     // Per-category color identity is preserved but routed through the Y4 token set.
     final List<Map<String, dynamic>> essentials = [
-      {'title': 'Duas of Ummah', 'id': 'ummah', 'color': Y4.primary,     'icon': '🌍'},
+      {'title': AppLocalizations.of(context)?.duasOfUmmah ?? 'Duas of Ummah', 'id': 'ummah', 'color': Y4.primary,     'icon': '🌍'},
       {'title': 'Morning',       'id': 'morning', 'color': Y4.honeyDeep, 'icon': '🌅'},
       {'title': 'Evening',       'id': 'evening', 'color': Y4.amberY,    'icon': '🌇'},
-      {'title': 'Before Sleep',  'id': 'sleeping', 'color': Y4.primaryDeep, 'icon': '🌌'},
-      {'title': 'Tahajjud',      'id': 'tahajjud', 'color': Y4.primaryDeep, 'icon': '🌑'},
-      {'title': 'Salah',         'id': 'post_prayer', 'color': Y4.primary,    'icon': '🕌'},
-      {'title': 'Salawat',       'id': 'salawat', 'color': Y4.honeyDeep, 'icon': '❤️'},
-      {'title': 'Sunnah Duas',   'id': 'sunnah', 'color': Y4.primary,     'icon': '📖'},
-      {'title': 'Quranic Duas',  'id': 'quranic', 'color': Y4.primaryDeep, 'icon': '📗'},
-      {'title': 'Istighfar',     'id': 'istighfar', 'color': Y4.soil,    'icon': '📿'},
-      {'title': 'Dhikar All Times', 'id': 'general', 'color': Y4.amberY, 'icon': '🤲'},
-      {'title': 'Names of Allah', 'id': 'asmaul_husna', 'color': Y4.honeyDeep, 'icon': '✨'},
+      {'title': AppLocalizations.of(context)?.beforeSleepCat ?? 'Before Sleep',  'id': 'sleeping', 'color': Y4.primaryDeep, 'icon': '🌌'},
+      {'title': AppLocalizations.of(context)?.tahajjud ?? 'Tahajjud',      'id': 'tahajjud', 'color': Y4.primaryDeep, 'icon': '🌑'},
+      {'title': AppLocalizations.of(context)?.salah ?? 'Salah',         'id': 'post_prayer', 'color': Y4.primary,    'icon': '🕌'},
+      {'title': AppLocalizations.of(context)?.salawat ?? 'Salawat',       'id': 'salawat', 'color': Y4.honeyDeep, 'icon': '❤️'},
+      {'title': AppLocalizations.of(context)?.sunnahDuas ?? 'Sunnah Duas',   'id': 'sunnah', 'color': Y4.primary,     'icon': '📖'},
+      {'title': AppLocalizations.of(context)?.quranicDuas ?? 'Quranic Duas',  'id': 'quranic', 'color': Y4.primaryDeep, 'icon': '📗'},
+      {'title': AppLocalizations.of(context)?.istighfar ?? 'Istighfar',     'id': 'istighfar', 'color': Y4.soil,    'icon': '📿'},
+      {'title': AppLocalizations.of(context)?.dhikarAllTimes ?? 'Dhikar All Times', 'id': 'general', 'color': Y4.amberY, 'icon': '🤲'},
+      {'title': AppLocalizations.of(context)?.namesOfAllah ?? 'Names of Allah', 'id': 'asmaul_husna', 'color': Y4.honeyDeep, 'icon': '✨'},
     ];
 
     // Mini cards in "Other Categories" — Y4 palette with subtle hue variation.
@@ -84,24 +85,24 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     const altSoilD = Y4.soilDeep;        // deep earth
 
     final List<Map<String, dynamic>> others = [
-      {'title': 'Nightmares', 'id': 'nightmares', 'color': altSoilD, 'icon': '🌩️'},
-      {'title': 'Waking up', 'id': 'waking_up', 'color': altHoney, 'icon': '☀️'},
-      {'title': 'Clothes', 'id': 'clothes', 'color': altPrimary, 'icon': '👕'},
-      {'title': 'Wudu', 'id': 'wudu', 'color': altPrimary, 'icon': '💧'},
-      {'title': 'Food & Drink', 'id': 'food_drink', 'color': altAmber, 'icon': '🍽️'},
-      {'title': 'Home', 'id': 'home', 'color': altPrimary, 'icon': '🏠'},
-      {'title': 'Istikharah', 'id': 'istikharah', 'color': altPrimaryD, 'icon': '🧭'},
-      {'title': 'Adaan & Masjid', 'id': 'masjid', 'color': altPrimary, 'icon': '🕌'},
-      {'title': 'Diff & Happy', 'id': 'difficulty', 'color': altHoney, 'icon': '⚖️'},
-      {'title': 'Iman Protect', 'id': 'iman_protection', 'color': altPrimaryD, 'icon': '🛡️'},
-      {'title': 'Travel', 'id': 'travel', 'color': altPrimary, 'icon': '✈️'},
-      {'title': 'Shopping', 'id': 'shopping', 'color': altAmber, 'icon': '🛍️'},
-      {'title': 'Marriage', 'id': 'family', 'color': altHoney, 'icon': '👨‍👩‍👧'},
-      {'title': 'Social', 'id': 'social', 'color': altPrimary, 'icon': '🤝'},
-      {'title': 'Nature', 'id': 'nature', 'color': altPrimary, 'icon': '🌿'},
-      {'title': 'Death', 'id': 'death', 'color': altSoil, 'icon': '🥀'},
-      {'title': 'Gatherings', 'id': 'gatherings', 'color': altHoney, 'icon': '👥'},
-      {'title': 'Hajj & Umrah', 'id': 'hajj', 'color': altPrimaryD, 'icon': '🕋'},
+      {'title': AppLocalizations.of(context)?.nightmares ?? 'Nightmares', 'id': 'nightmares', 'color': altSoilD, 'icon': '🌩️'},
+      {'title': AppLocalizations.of(context)?.wakingUp ?? 'Waking up', 'id': 'waking_up', 'color': altHoney, 'icon': '☀️'},
+      {'title': AppLocalizations.of(context)?.clothes ?? 'Clothes', 'id': 'clothes', 'color': altPrimary, 'icon': '👕'},
+      {'title': AppLocalizations.of(context)?.wudu ?? 'Wudu', 'id': 'wudu', 'color': altPrimary, 'icon': '💧'},
+      {'title': AppLocalizations.of(context)?.foodAndDrink ?? 'Food & Drink', 'id': 'food_drink', 'color': altAmber, 'icon': '🍽️'},
+      {'title': AppLocalizations.of(context)?.home ?? 'Home', 'id': 'home', 'color': altPrimary, 'icon': '🏠'},
+      {'title': AppLocalizations.of(context)?.istikharah ?? 'Istikharah', 'id': 'istikharah', 'color': altPrimaryD, 'icon': '🧭'},
+      {'title': AppLocalizations.of(context)?.adaanAndMasjid ?? 'Adaan & Masjid', 'id': 'masjid', 'color': altPrimary, 'icon': '🕌'},
+      {'title': AppLocalizations.of(context)?.diffAndHappy ?? 'Diff & Happy', 'id': 'difficulty', 'color': altHoney, 'icon': '⚖️'},
+      {'title': AppLocalizations.of(context)?.imanProtect ?? 'Iman Protect', 'id': 'iman_protection', 'color': altPrimaryD, 'icon': '🛡️'},
+      {'title': AppLocalizations.of(context)?.travel ?? 'Travel', 'id': 'travel', 'color': altPrimary, 'icon': '✈️'},
+      {'title': AppLocalizations.of(context)?.shopping ?? 'Shopping', 'id': 'shopping', 'color': altAmber, 'icon': '🛍️'},
+      {'title': AppLocalizations.of(context)?.marriage ?? 'Marriage', 'id': 'family', 'color': altHoney, 'icon': '👨‍👩‍👧'},
+      {'title': AppLocalizations.of(context)?.social ?? 'Social', 'id': 'social', 'color': altPrimary, 'icon': '🤝'},
+      {'title': AppLocalizations.of(context)?.nature ?? 'Nature', 'id': 'nature', 'color': altPrimary, 'icon': '🌿'},
+      {'title': AppLocalizations.of(context)?.death ?? 'Death', 'id': 'death', 'color': altSoil, 'icon': '🥀'},
+      {'title': AppLocalizations.of(context)?.gatherings ?? 'Gatherings', 'id': 'gatherings', 'color': altHoney, 'icon': '👥'},
+      {'title': AppLocalizations.of(context)?.hajjAndUmrah ?? 'Hajj & Umrah', 'id': 'hajj', 'color': altPrimaryD, 'icon': '🕋'},
     ];
 
     final visibleEssentials = essentials.where((e) => !_hiddenIds!.contains(e['id'])).toList();

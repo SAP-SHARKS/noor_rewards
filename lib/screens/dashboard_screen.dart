@@ -777,20 +777,21 @@ class _HomeTabState extends State<_HomeTab> {
     const greetingPrefix = 'Assalamu alaikum,';
 
     // Sub-text per activity tile (real data; safe fallbacks)
+    final l10n = AppLocalizations.of(context);
     final quranSub = (_lastSurahName != null && _lastAyah != null)
         ? (_ayahsToday > 0
             ? '${_lastSurahName!} · $_lastAyah  · +$_ayahsToday today'
             : '${_lastSurahName!} · $_lastAyah')
         : 'Continue reading';
     final dhikrSub = _dhikrToday > 0
-        ? '$_dhikrToday set${_dhikrToday == 1 ? '' : 's'} today'
+        ? (l10n?.setsTodayCount(_dhikrToday.toString()) ?? '$_dhikrToday sets today')
         : (snapDhikrStreak() > 0
             ? '${snapDhikrStreak()}-day streak'
             : 'Start your daily azkar');
     final achievementsSub = _recentBadgeName != null
-        ? 'Last: ${_recentBadgeName!}'
+        ? (l10n?.lastAchievement(_recentBadgeName!) ?? 'Last: ${_recentBadgeName!}')
         : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} pts';
-    const inviteSub = 'Earn +500 per friend';
+    final inviteSub = l10n?.earnPerFriend ?? 'Earn +500 per friend';
 
     return Container(
       // Honey-wash background replaces _HomeBgPainter pattern
@@ -912,15 +913,9 @@ class _HomeTabState extends State<_HomeTab> {
             const SizedBox(height: 18),
             Padding(
               padding: const EdgeInsets.only(left: 2, bottom: 10),
-              child: RichText(text: TextSpan(children: [
-                TextSpan(text: "Today's ",
-                  style: Y4.display(fontSize: 20, color: Y4.ink, height: 1.0)),
-                TextSpan(text: 'plots',
-                  style: Y4.display(
-                    fontSize: 20, color: Y4.ink,
-                    fontStyle: FontStyle.italic, height: 1.0,
-                  )),
-              ])),
+              child: Text(AppLocalizations.of(context)?.todaysPlots ?? "Today's plots",
+                style: Y4.display(fontSize: 20, color: Y4.ink, height: 1.0, fontStyle: FontStyle.italic),
+              ),
             ),
             GridView.count(
               crossAxisCount: 2, shrinkWrap: true,
@@ -5762,7 +5757,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
               child: Padding(
                 padding: const EdgeInsets.only(right: 50),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('YOUR GARDEN',
+                  Text(AppLocalizations.of(context)?.yourGarden ?? 'YOUR GARDEN',
                     style: GoogleFonts.outfit(
                       fontSize: 11, fontWeight: FontWeight.w700,
                       color: Y4.inkSoft, letterSpacing: 1.5,
@@ -5781,7 +5776,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                     },
                   ),
                   const SizedBox(height: 6),
-                  Text('noor points bloomed',
+                  Text(AppLocalizations.of(context)?.noorPointsBloomed ?? 'noor points bloomed',
                     style: GoogleFonts.outfit(
                       fontSize: 13, fontWeight: FontWeight.w500,
                       color: Y4.inkSoft,
@@ -5852,7 +5847,7 @@ class _Y4StreakCard extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('GROWING STREAK',
+              Text(AppLocalizations.of(context)?.growingStreakTitle ?? 'GROWING STREAK',
                 style: GoogleFonts.outfit(
                   fontSize: 11, fontWeight: FontWeight.w700,
                   color: Y4.inkSoft, letterSpacing: 1.3,
@@ -5860,10 +5855,10 @@ class _Y4StreakCard extends StatelessWidget {
               const SizedBox(height: 4),
               Row(crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic, children: [
-                Text('$streak day${streak == 1 ? '' : 's'}',
+                Text('$streak ${streak == 1 ? (AppLocalizations.of(context)?.daySingular ?? 'day') : (AppLocalizations.of(context)?.daysPlural ?? 'days')}',
                   style: Y4.display(fontSize: 28, fontWeight: FontWeight.w400, height: 1.0)),
                 const SizedBox(width: 8),
-                Text('· keep growing',
+                Text('· ${AppLocalizations.of(context)?.keepGrowing ?? 'keep growing'}',
                   style: Y4.display(
                     fontSize: 16, fontStyle: FontStyle.italic,
                     color: Y4.honeyDeep, height: 1.0,
@@ -5951,7 +5946,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('Progress',
+          Text(AppLocalizations.of(context)?.progressLabel ?? 'Progress',
               style: Y4.display(
                   fontSize: 20, fontStyle: FontStyle.italic, height: 1.0)),
           const Spacer(),
@@ -5963,7 +5958,13 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(mainAxisSize: MainAxisSize.min,
-                children: ['Today', 'Week', 'Month'].map((t) {
+                children: [
+                  {'id': 'Today', 'label': AppLocalizations.of(context)?.todayTab ?? 'Today'},
+                  {'id': 'Week', 'label': AppLocalizations.of(context)?.weekTab ?? 'Week'},
+                  {'id': 'Month', 'label': AppLocalizations.of(context)?.monthTab ?? 'Month'}
+                ].map((item) {
+              final t = item['id'] as String;
+              final label = item['label'] as String;
               final on = _tab == t;
               return GestureDetector(
                 onTap: () => setState(() => _tab = t),
@@ -5973,7 +5974,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
                     color: on ? Y4.ink : Colors.transparent,
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: Text(t, style: GoogleFonts.outfit(
+                  child: Text(label, style: GoogleFonts.outfit(
                     fontSize: 10, fontWeight: FontWeight.w700,
                     color: on ? Colors.white : Y4.inkSoft,
                   )),
@@ -5991,7 +5992,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
                 style: Y4.display(
                     fontSize: 30, letterSpacing: -0.02 * 30, height: 1.0)),
             const SizedBox(height: 2),
-            Text('of ${fmt(goal)} ${_tab.toLowerCase()} goal',
+            Text(AppLocalizations.of(context)?.ofTabGoal(fmt(goal), _tab.toLowerCase()) ?? 'of ${fmt(goal)} ${_tab.toLowerCase()} goal',
                 style: GoogleFonts.outfit(
                     fontSize: 11, color: Y4.inkSoft, fontWeight: FontWeight.w500)),
 

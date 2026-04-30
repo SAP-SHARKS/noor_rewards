@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,6 +7,7 @@ import 'quran_screen.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
+import '../services/quran_api_service.dart';
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/y4_theme.dart';
@@ -146,6 +148,21 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       } catch (_) {
         _favouriteCount = 0;
       }
+
+      // Quran Foundation API Bookmarks
+      try {
+        if (await QuranApiService.instance.isUserLoggedIn()) {
+          final qfBookmarks = await QuranApiService.instance.getBookmarks();
+          for (final b in qfBookmarks) {
+            final int s = b['chapterNumber'] ?? b['key'] ?? 1;
+            final int a = b['verseNumber'] ?? 1;
+            if (!_bookmarks.any((existing) => existing['surah'] == s && existing['ayah'] == a)) {
+              _bookmarks.add({'surah': s, 'ayah': a});
+            }
+          }
+          _bookmarkCount = _bookmarks.length;
+        }
+      } catch (_) {}
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
@@ -209,7 +226,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text('Choose Surah', style: GoogleFonts.outfit(fontSize: 20,
+              child: Text(AppLocalizations.of(context)?.chooseSurah ?? 'Choose Surah', style: GoogleFonts.outfit(fontSize: 20,
                   fontWeight: FontWeight.w800, color: _kText)),
             ),
             const SizedBox(height: 16),
@@ -280,7 +297,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text('Choose Verse', style: GoogleFonts.outfit(fontSize: 20,
+              child: Text(AppLocalizations.of(context)?.chooseVerse ?? 'Choose Verse', style: GoogleFonts.outfit(fontSize: 20,
                   fontWeight: FontWeight.w800, color: _kText)),
             ),
             const SizedBox(height: 8),
@@ -330,7 +347,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
   // ── Bookmarks / Favourites list sheet ─────────────────────────────────────────
   void _showSavedList({required bool isFavourites}) {
     final list = isFavourites ? _favourites : _bookmarks;
-    final title = isFavourites ? 'Favourites' : 'Bookmarks';
+    final title = isFavourites ? AppLocalizations.of(context)?.favourites ?? 'Favourites' : AppLocalizations.of(context)?.bookmarks ?? 'Bookmarks';
     final color = isFavourites ? Y4.honeyDeep : Y4.primary;
     final icon  = isFavourites ? Icons.favorite_rounded : Icons.bookmark_rounded;
 
@@ -555,7 +572,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             Expanded(child: _LibraryCard(
               icon: Icons.favorite_rounded,
               color: Y4.honeyDeep,
-              label: 'Favourites',
+              label: AppLocalizations.of(context)?.favourites ?? 'Favourites',
               count: _favouriteCount,
               onTap: () => _showSavedList(isFavourites: true),
             )),
@@ -563,7 +580,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             Expanded(child: _LibraryCard(
               icon: Icons.bookmark_rounded,
               color: Y4.honeyDeep,
-              label: 'Bookmarks',
+              label: AppLocalizations.of(context)?.bookmarks ?? 'Bookmarks',
               count: _bookmarkCount,
               onTap: () => _showSavedList(isFavourites: false),
             )),
@@ -575,7 +592,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             Expanded(child: _QuickTile(
               icon: Icons.shuffle_rounded,
               color: Y4.primaryDeep,
-              label: 'Random Verse',
+              label: AppLocalizations.of(context)?.randomVerse ?? 'Random Verse',
               onTap: () {
                 final s = 1 + (DateTime.now().millisecondsSinceEpoch % 114);
                 final a = 1 + (DateTime.now().microsecond % _surahLengths[s]);
@@ -594,7 +611,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
               icon: Icons.nights_stay_rounded,
               color: Y4.primary,
               label: 'Al-Kahf',
-              subtitle: 'Sunnah Friday',
+              subtitle: AppLocalizations.of(context)?.sunnahFriday ?? 'Sunnah Friday',
               onTap: () => _startReading(surah: 18, ayah: 1),
             )),
           ]),
@@ -717,7 +734,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                   color: Y4.honeyDeep,
                   borderRadius: BorderRadius.circular(12)),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Text('Resume', style: GoogleFonts.outfit(fontSize: 13,
+                Text(AppLocalizations.of(context)?.resume ?? 'Resume', style: GoogleFonts.outfit(fontSize: 13,
                     fontWeight: FontWeight.w700, color: Colors.white)),
                 const SizedBox(width: 4),
                 const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 18),
