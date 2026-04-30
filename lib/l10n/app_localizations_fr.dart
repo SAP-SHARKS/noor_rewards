@@ -1695,4 +1695,19 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get youIndicator => '(vous)';
+
+  @override
+  String get greetingPrefix => 'Assalamu alaikum,';
+
+  @override
+  String get fundProjectsText => 'Vos points Noor financent ces projets';
+
+  @override
+  String activeCount(String count) {
+    return '$count actif(s)';
+  }
+
+  @override
+  String get seeDetailsForMoreProjects =>
+      'Voir les détails pour plus de projets →';
 }

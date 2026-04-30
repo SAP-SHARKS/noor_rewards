@@ -817,5 +817,16 @@
       }
     }
   },
-  "youIndicator": "(you)"
+  "youIndicator": "(you)",
+  "greetingPrefix": "Assalamu alaikum,",
+  "fundProjectsText": "Your Noor Points fund these projects",
+  "activeCount": "{count} active",
+  "@activeCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "seeDetailsForMoreProjects": "See Details for more Projects →"
 }

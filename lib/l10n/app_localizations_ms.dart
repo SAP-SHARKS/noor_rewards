@@ -344,10 +344,10 @@ class AppLocalizationsMs extends AppLocalizations {
   String get prev => 'Sebelum';
 
   @override
-  String get reciteMore => 'BACA LEBIH BANYAK.';
+  String get reciteMore => 'RECITE MORE.';
 
   @override
-  String get helpRealLives => 'BANTU KEHIDUPAN SEBENAR.';
+  String get helpRealLives => 'HELP REAL LIVES.';
 
   @override
   String get yourNoorPointsFundProjects =>
@@ -369,7 +369,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get apply => 'Guna';
 
   @override
-  String get plantGoodDeeds => 'TANAM AMAL KEBAIKAN';
+  String get plantGoodDeeds => 'PLANT GOOD DEEDS';
 
   @override
   String get youDonated => 'Anda telah menderma';
@@ -1688,4 +1688,18 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get youIndicator => '(you)';
+
+  @override
+  String get greetingPrefix => 'Assalamu alaikum,';
+
+  @override
+  String get fundProjectsText => 'Your Noor Points fund these projects';
+
+  @override
+  String activeCount(String count) {
+    return '$count active';
+  }
+
+  @override
+  String get seeDetailsForMoreProjects => 'See Details for more Projects →';
 }

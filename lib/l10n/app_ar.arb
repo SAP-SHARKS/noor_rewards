@@ -108,14 +108,14 @@
   "nextPts": "التالي",
   "prev": "السابق",
   "reciteMore": "اقرأ المزيد.",
-  "helpRealLives": "ساعد حياة حقيقية.",
+  "helpRealLives": "ساعد أرواحاً حقيقية.",
   "yourNoorPointsFundProjects": "نقاط النور الخاصة بك تمول هذه المشاريع",
   "youBothEarnPoints": "كلاكما يكسب 500 نقطة نور!",
   "reward": "المكافأة",
   "haveInviteCode": "هل لديك رمز دعوة؟",
   "enterCode": "أدخل الرمز…",
   "apply": "تطبيق",
-  "plantGoodDeeds": "ازرع الأعمال الصالحة",
+  "plantGoodDeeds": "ازرع أعمالاً صالحة",
   "youDonated": "لقد تبرعت",
   "seeDetailsForMore": "شاهد التفاصيل لمزيد من المشاريع ←",
   "pts": "نقاط",
@@ -563,5 +563,16 @@
       }
     }
   },
-  "youIndicator": "(أنت)"
+  "youIndicator": "(أنت)",
+  "greetingPrefix": "السلام عليكم،",
+  "fundProjectsText": "نقاط نور الخاصة بك تمول هذه المشاريع",
+  "activeCount": "{count} نشط",
+  "@activeCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "seeDetailsForMoreProjects": "انظر التفاصيل لمزيد من المشاريع →"
 }

@@ -108,14 +108,14 @@
   "nextPts": "اگلا",
   "prev": "پچھلا",
   "reciteMore": "مزید تلاوت کریں۔",
-  "helpRealLives": "حقیقی زندگیاں بدلیں۔",
+  "helpRealLives": "حقیقی زندگیوں کی مدد کریں۔",
   "yourNoorPointsFundProjects": "آپ کے نور پوائنٹس ان منصوبوں کو فنڈ کرتے ہیں",
   "youBothEarnPoints": "آپ دونوں 500 نور پوائنٹس کمائیں گے!",
   "reward": "انعام",
   "haveInviteCode": "کیا آپ کے پاس دعوتی کوڈ ہے؟",
   "enterCode": "کوڈ درج کریں…",
   "apply": "لاگو کریں",
-  "plantGoodDeeds": "نیکیاں بوئیں",
+  "plantGoodDeeds": "نیک اعمال بوئیں",
   "youDonated": "آپ نے عطیہ دیا",
   "seeDetailsForMore": "مزید منصوبوں کے لیے تفصیلات دیکھیں →",
   "pts": "پوائنٹس",
@@ -563,5 +563,16 @@
       }
     }
   },
-  "youIndicator": "(آپ)"
+  "youIndicator": "(آپ)",
+  "greetingPrefix": "السلام علیکم،",
+  "fundProjectsText": "آپ کے نور پوائنٹس ان منصوبوں کی مالی اعانت کرتے ہیں",
+  "activeCount": "{count} فعال",
+  "@activeCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "seeDetailsForMoreProjects": "مزید منصوبوں کے لیے تفصیلات دیکھیں →"
 }

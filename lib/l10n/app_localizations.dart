@@ -3223,6 +3223,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'(you)'**
   String get youIndicator;
+
+  /// No description provided for @greetingPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Assalamu alaikum,'**
+  String get greetingPrefix;
+
+  /// No description provided for @fundProjectsText.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Noor Points fund these projects'**
+  String get fundProjectsText;
+
+  /// No description provided for @activeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active'**
+  String activeCount(String count);
+
+  /// No description provided for @seeDetailsForMoreProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'See Details for more Projects →'**
+  String get seeDetailsForMoreProjects;
 }
 
 class _AppLocalizationsDelegate
