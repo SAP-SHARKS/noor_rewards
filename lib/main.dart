@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +23,7 @@ import 'services/settings_service.dart';
 import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart';       // Quran Foundation credentials
 import 'services/notification_service.dart';
+import 'services/notification_center.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'widgets/noor_offline.dart';
@@ -34,76 +37,80 @@ import 'theme/y4_theme.dart';
 /// splash screen can start animating on the very first Flutter frame.
 LottieComposition? flowerComposition;
 
+/// Signals when all heavy boot-time services have finished initializing.
+/// The AuthGate waits on this before navigating to a real screen — the
+/// FlowerSplashScreen plays in front of it for the entire init window.
+final ValueNotifier<bool> appInitReady = ValueNotifier(false);
+
+/// Captures any boot-time error so we can surface it instead of a blank screen.
+String? bootError;
+
 Future<void> main() async {
+  // ── Stage 1: bare minimum BEFORE runApp — keeps gap to first paint near-zero
+  WidgetsFlutterBinding.ensureInitialized();
+
   try {
-    WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
 
-    // ── Pre-parse the Flower Lottie BEFORE runApp ────────────────────────────
-    // This runs during the same startup window as Supabase/Firebase init, so
-    // the composition is ready by the time the splash screen builds its first
-    // frame — zero blank-screen delay.
+    // In-app notification inbox — small, fast, must be ready before any
+    // service tries to enqueue a notification.
+    await NotificationCenter.instance.init();
+
     try {
       final bytes = await rootBundle.load('assets/lottie/Flower.json');
       flowerComposition = await LottieComposition.fromByteData(bytes);
-    } catch (_) {} // silent — FlowerSplashScreen falls back gracefully
-
-    // Initialize QF environment variables
-    await Env.init();
-    
-    // Initialize Firebase Configuration
-    await Firebase.initializeApp();
-
-    await Supabase.initialize(
-      url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
-      anonKey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
-    );
-
-    // Initialize FCM NotificationService (must be after Supabase init)
-    await NotificationService.instance.initialize();
-
-    // Load .env — Quran Foundation API credentials (Pre-live or Production)
-    await QuranApiConfig.load();
-
-    // Pre-load remote config (waits for first fetch, then subscribes to Realtime)
-    await SettingsService.instance.initialize();
-    
-    // Pre-load all available asset registry to automatically populate custom image cards
-    await AssetHelper.loadAssets();
-
-    // Init the live "Noor Today" notification (like Sweatcoin's step counter)
-    await NoorLiveNotificationService.instance.init();
-
-    // Wire up app_links to receive OAuth callbacks from the browser.
-    // When noorrewards://oauth2/callback arrives, hand it to QfAuthService.
-    _initAppLinks();
-
-    runApp(
-      ChangeNotifierProvider<SettingsService>.value(
-        value: SettingsService.instance,
-        child: const MyApp(),
-      ),
-    );
+    } catch (_) {} // silent — FlowerSplashScreen has its own async fallback
   } catch (e, stack) {
-    runApp(
-      MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Initialization Error:\n$e\n\n$stack',
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    bootError = '$e\n$stack';
   }
+  // ── runApp() FIRST — flower splash starts drawing immediately. ──────────────
+  runApp(
+    ChangeNotifierProvider<SettingsService>.value(
+      value: SettingsService.instance,
+      child: const MyApp(),
+    ),
+  );
+
+  // ── Stage 2: heavy init runs in parallel WHILE the splash plays ─────────────
+  unawaited(_bootHeavyInit());
+}
+
+/// Wrap a step so one failing/slow service can't block the whole boot.
+/// Each step has its own timeout. Failures are logged but don't propagate.
+Future<void> _step(String name, Future<void> Function() body,
+    {Duration timeout = const Duration(seconds: 4)}) async {
+  try {
+    await body().timeout(timeout);
+  } on TimeoutException {
+    debugPrint('[boot] $name timed out — continuing without it');
+  } catch (e) {
+    debugPrint('[boot] $name failed: $e');
+  }
+}
+
+Future<void> _bootHeavyInit() async {
+  // Critical-path: must complete before AuthGate works. Sequential because
+  // Supabase depends on Env, NotificationService depends on Supabase, etc.
+  await _step('Env', Env.init);
+  await _step('Firebase', Firebase.initializeApp);
+  await _step('Supabase', () => Supabase.initialize(
+    url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
+  ));
+  await _step('NotificationService', NotificationService.instance.initialize);
+  await _step('QuranApiConfig', QuranApiConfig.load);
+
+  // Mark ready as soon as the critical chain is done — the splash can move on.
+  appInitReady.value = true;
+
+  // Non-critical: nice-to-have, fire in background, don't block navigation.
+  unawaited(_step('SettingsService', SettingsService.instance.initialize,
+      timeout: const Duration(seconds: 8)));
+  unawaited(_step('AssetHelper', AssetHelper.loadAssets));
+  unawaited(_step('NoorLiveNotification', NoorLiveNotificationService.instance.init));
+
+  try { _initAppLinks(); } catch (_) {}
 }
 
 class MyApp extends StatelessWidget {
@@ -201,21 +208,79 @@ bool _isQfCallback(Uri uri) =>
     uri.scheme == 'noorrewards' && uri.host == 'oauth2';
 
 // ─────────────────────────────────────────────────────────────────────────────
-/// Shows the flower Lottie splash once, then hands off to [AuthGate].
-class _SplashGate extends StatelessWidget {
+/// Shows the flower Lottie splash, then hands off to [AuthGate] only when
+/// BOTH conditions are met:
+///  1. The Lottie animation has finished playing.
+///  2. All heavy boot-time services in [_bootHeavyInit] have completed.
+///
+/// If init finishes before the animation, we navigate when the animation ends.
+/// If the animation finishes before init (e.g. on a slow network for Supabase
+/// realtime), we keep the flower's last frame visible and navigate the moment
+/// init signals ready.
+class _SplashGate extends StatefulWidget {
   const _SplashGate();
+  @override
+  State<_SplashGate> createState() => _SplashGateState();
+}
+
+class _SplashGateState extends State<_SplashGate> {
+  bool _lottieDone = false;
+  bool _navigated = false;
+  Timer? _hardTimeout;
+
+  /// Absolute maximum the splash can stay on screen. If [appInitReady] hasn't
+  /// flipped to `true` by then, navigate anyway — services that aren't ready
+  /// will lazily initialise / show offline UI on the destination screen.
+  static const _maxSplashDuration = Duration(seconds: 6);
+
+  @override
+  void initState() {
+    super.initState();
+    appInitReady.addListener(_maybeNavigate);
+    // Hard timeout — guarantees we never get stuck on the splash even if a
+    // background service hangs (e.g. Supabase realtime, Firebase, Settings
+    // remote-config fetch on a slow / offline network).
+    _hardTimeout = Timer(_maxSplashDuration, _forceNavigate);
+  }
+
+  @override
+  void dispose() {
+    _hardTimeout?.cancel();
+    appInitReady.removeListener(_maybeNavigate);
+    super.dispose();
+  }
+
+  void _forceNavigate() {
+    if (_navigated || !mounted) return;
+    debugPrint('[SplashGate] hard timeout reached — navigating to AuthGate '
+        '(lottieDone=$_lottieDone, initReady=${appInitReady.value})');
+    _go();
+  }
+
+  void _maybeNavigate() {
+    if (_navigated || !mounted) return;
+    if (_lottieDone && appInitReady.value) _go();
+  }
+
+  void _go() {
+    _navigated = true;
+    _hardTimeout?.cancel();
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const AuthGate(),
+        transitionsBuilder: (_, anim, __, child) =>
+            FadeTransition(opacity: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 600),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FlowerSplashScreen(
       onComplete: () {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const AuthGate(),
-            transitionsBuilder: (_, anim, __, child) =>
-                FadeTransition(opacity: anim, child: child),
-            transitionDuration: const Duration(milliseconds: 600),
-          ),
-        );
+        _lottieDone = true;
+        _maybeNavigate();
       },
     );
   }

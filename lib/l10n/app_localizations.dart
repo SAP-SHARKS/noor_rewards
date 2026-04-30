@@ -751,6 +751,2478 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Prev'**
   String get prev;
+
+  /// No description provided for @reciteMore.
+  ///
+  /// In en, this message translates to:
+  /// **'RECITE MORE.'**
+  String get reciteMore;
+
+  /// No description provided for @helpRealLives.
+  ///
+  /// In en, this message translates to:
+  /// **'HELP REAL LIVES.'**
+  String get helpRealLives;
+
+  /// No description provided for @yourNoorPointsFundProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Noor Points fund these projects'**
+  String get yourNoorPointsFundProjects;
+
+  /// No description provided for @youBothEarnPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'You both earn 500 Noor Points!'**
+  String get youBothEarnPoints;
+
+  /// No description provided for @reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward'**
+  String get reward;
+
+  /// No description provided for @haveInviteCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Have an invite code?'**
+  String get haveInviteCode;
+
+  /// No description provided for @enterCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code…'**
+  String get enterCode;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @plantGoodDeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'PLANT GOOD DEEDS'**
+  String get plantGoodDeeds;
+
+  /// No description provided for @youDonated.
+  ///
+  /// In en, this message translates to:
+  /// **'You donated'**
+  String get youDonated;
+
+  /// No description provided for @seeDetailsForMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See Details for more Projects →'**
+  String get seeDetailsForMore;
+
+  /// No description provided for @pts.
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get pts;
+
+  /// No description provided for @funded.
+  ///
+  /// In en, this message translates to:
+  /// **'funded'**
+  String get funded;
+
+  /// No description provided for @bySponsor.
+  ///
+  /// In en, this message translates to:
+  /// **'By {sponsor}'**
+  String bySponsor(String sponsor);
+
+  /// No description provided for @viewCampaignDonate.
+  ///
+  /// In en, this message translates to:
+  /// **'View Campaign & Donate'**
+  String get viewCampaignDonate;
+
+  /// No description provided for @supportThisCause.
+  ///
+  /// In en, this message translates to:
+  /// **'Support this Cause'**
+  String get supportThisCause;
+
+  /// No description provided for @availableBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Balance:'**
+  String get availableBalance;
+
+  /// No description provided for @donationAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation Amount'**
+  String get donationAmount;
+
+  /// No description provided for @points.
+  ///
+  /// In en, this message translates to:
+  /// **'points'**
+  String get points;
+
+  /// No description provided for @donateEarnReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate & Earn Reward'**
+  String get donateEarnReward;
+
+  /// No description provided for @max.
+  ///
+  /// In en, this message translates to:
+  /// **'MAX'**
+  String get max;
+
+  /// No description provided for @leaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get leaderboard;
+
+  /// No description provided for @loadingDots.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get loadingDots;
+
+  /// No description provided for @yourRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rank: #{rank}'**
+  String yourRank(String rank);
+
+  /// No description provided for @outOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of'**
+  String get outOf;
+
+  /// No description provided for @believers.
+  ///
+  /// In en, this message translates to:
+  /// **'believers'**
+  String get believers;
+
+  /// No description provided for @topTenContributors.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 10 Contributors'**
+  String get topTenContributors;
+
+  /// No description provided for @ourCauses.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Causes'**
+  String get ourCauses;
+
+  /// No description provided for @donatePointsToSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate your Noor Points to support real-world projects'**
+  String get donatePointsToSupport;
+
+  /// No description provided for @noActiveProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'No active projects right now'**
+  String get noActiveProjects;
+
+  /// No description provided for @checkBackSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back soon insha\'Allah'**
+  String get checkBackSoon;
+
+  /// No description provided for @messageCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Message copied — share or paste in WhatsApp!'**
+  String get messageCopied;
+
+  /// No description provided for @lvl.
+  ///
+  /// In en, this message translates to:
+  /// **'Lvl'**
+  String get lvl;
+
+  /// No description provided for @journey.
+  ///
+  /// In en, this message translates to:
+  /// **'Journey'**
+  String get journey;
+
+  /// No description provided for @tabStreaks.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaks'**
+  String get tabStreaks;
+
+  /// No description provided for @tabProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get tabProgress;
+
+  /// No description provided for @tabBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get tabBadges;
+
+  /// No description provided for @tabChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get tabChallenges;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// No description provided for @ptsToLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{pts} pts to Level {level}'**
+  String ptsToLevel(String pts, String level);
+
+  /// No description provided for @dayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String dayStreak(String count);
+
+  /// No description provided for @actions.
+  ///
+  /// In en, this message translates to:
+  /// **'actions'**
+  String get actions;
+
+  /// No description provided for @action.
+  ///
+  /// In en, this message translates to:
+  /// **'action'**
+  String get action;
+
+  /// No description provided for @breakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown'**
+  String get breakdown;
+
+  /// No description provided for @activityLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Log'**
+  String get activityLog;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Less'**
+  String get showLess;
+
+  /// No description provided for @seeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See More'**
+  String get seeMore;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'more'**
+  String get more;
+
+  /// No description provided for @noActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity {period}'**
+  String noActivity(String period);
+
+  /// No description provided for @startEarningPts.
+  ///
+  /// In en, this message translates to:
+  /// **'Start earning pts — read Quran, do Dhikr & Dua.'**
+  String get startEarningPts;
+
+  /// No description provided for @howToEarnPts.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Earn pts'**
+  String get howToEarnPts;
+
+  /// No description provided for @readOneAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Read 1 Ayah'**
+  String get readOneAyah;
+
+  /// No description provided for @completeOneJuz.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete 1 Juz'**
+  String get completeOneJuz;
+
+  /// No description provided for @validateAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Validate & Support'**
+  String get validateAndSupport;
+
+  /// No description provided for @levelTiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Level Tiers'**
+  String get levelTiers;
+
+  /// No description provided for @basicFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic features'**
+  String get basicFeatures;
+
+  /// No description provided for @customProfileThemes.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom profile themes'**
+  String get customProfileThemes;
+
+  /// No description provided for @leaderboardBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard badge'**
+  String get leaderboardBadge;
+
+  /// No description provided for @exclusiveVotingRights.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclusive voting rights'**
+  String get exclusiveVotingRights;
+
+  /// No description provided for @hallOfFameListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Hall of Fame listing'**
+  String get hallOfFameListing;
+
+  /// No description provided for @unlocks.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks: {feature}'**
+  String unlocks(String feature);
+
+  /// No description provided for @now.
+  ///
+  /// In en, this message translates to:
+  /// **'NOW'**
+  String get now;
+
+  /// No description provided for @trophyVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Trophy Vault'**
+  String get trophyVault;
+
+  /// No description provided for @badgesCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'{earned} / {total} badges collected'**
+  String badgesCollected(String earned, String total);
+
+  /// No description provided for @percentComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% Complete'**
+  String percentComplete(String pct);
+
+  /// No description provided for @toUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} to unlock'**
+  String toUnlock(String count);
+
+  /// No description provided for @earned.
+  ///
+  /// In en, this message translates to:
+  /// **'EARNED'**
+  String get earned;
+
+  /// No description provided for @locked.
+  ///
+  /// In en, this message translates to:
+  /// **'LOCKED'**
+  String get locked;
+
+  /// No description provided for @seasonalEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasonal Events'**
+  String get seasonalEvents;
+
+  /// No description provided for @weeklyChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Challenges'**
+  String get weeklyChallenges;
+
+  /// No description provided for @specialEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Events'**
+  String get specialEvents;
+
+  /// No description provided for @noActiveChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'No active challenges right now'**
+  String get noActiveChallenges;
+
+  /// No description provided for @checkBackChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back soon — Ramadan & Dhul-Hijjah events are coming!'**
+  String get checkBackChallenges;
+
+  /// No description provided for @ramadanChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan Challenge'**
+  String get ramadanChallenge;
+
+  /// No description provided for @ramadanChallengeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'3× pts multiplier • Special badges • Community wells goal'**
+  String get ramadanChallengeDesc;
+
+  /// No description provided for @comingSoonStayConsistent.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon — Stay Consistent!'**
+  String get comingSoonStayConsistent;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done!'**
+  String get done;
+
+  /// No description provided for @ptsBoost.
+  ///
+  /// In en, this message translates to:
+  /// **'{multiplier}× pts Boost'**
+  String ptsBoost(String multiplier);
+
+  /// No description provided for @ends.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends {date}'**
+  String ends(String date);
+
+  /// No description provided for @loadingStreaks.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading streaks…'**
+  String get loadingStreaks;
+
+  /// No description provided for @centurion.
+  ///
+  /// In en, this message translates to:
+  /// **'Centurion — Masha\'Allah!'**
+  String get centurion;
+
+  /// No description provided for @currentBestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Current best streak'**
+  String get currentBestStreak;
+
+  /// No description provided for @last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'LAST 7 DAYS'**
+  String get last7Days;
+
+  /// No description provided for @nextMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT MILESTONE'**
+  String get nextMilestone;
+
+  /// No description provided for @allMilestones.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL MILESTONES'**
+  String get allMilestones;
+
+  /// No description provided for @moreDaysToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more day(s) to go!'**
+  String moreDaysToGo(String count);
+
+  /// No description provided for @dayStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String dayStreakLabel(String count);
+
+  /// No description provided for @best.
+  ///
+  /// In en, this message translates to:
+  /// **'Best {count}'**
+  String best(String count);
+
+  /// No description provided for @dhikarAndDua.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikar & Dua'**
+  String get dhikarAndDua;
+
+  /// No description provided for @listenTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen Tafsir'**
+  String get listenTafsir;
+
+  /// No description provided for @challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get challenge;
+
+  /// No description provided for @readListenTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Read & Listen Tafsir'**
+  String get readListenTafsir;
+
+  /// No description provided for @deepUnderstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep understanding of the Holy Quran'**
+  String get deepUnderstanding;
+
+  /// No description provided for @earnPointsTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn points for every 10 min of Tafsir listening'**
+  String get earnPointsTafsir;
+
+  /// No description provided for @featuredSurahs.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Surahs'**
+  String get featuredSurahs;
+
+  /// No description provided for @browseAll114.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse All 114 Surahs'**
+  String get browseAll114;
+
+  /// No description provided for @verses.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} verses'**
+  String verses(String count);
+
+  /// No description provided for @ayahN.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah {n}'**
+  String ayahN(String n);
+
+  /// No description provided for @readTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Tafsir'**
+  String get readTafsir;
+
+  /// No description provided for @translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get translation;
+
+  /// No description provided for @loadingTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading tafsir...'**
+  String get loadingTafsir;
+
+  /// No description provided for @tafsirNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir not available for this ayah.'**
+  String get tafsirNotAvailable;
+
+  /// No description provided for @arabicScripture.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic Scripture'**
+  String get arabicScripture;
+
+  /// No description provided for @urduScripture.
+  ///
+  /// In en, this message translates to:
+  /// **'Urdu Scripture'**
+  String get urduScripture;
+
+  /// No description provided for @englishCommentary.
+  ///
+  /// In en, this message translates to:
+  /// **'English Commentary'**
+  String get englishCommentary;
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// No description provided for @nextAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Ayah'**
+  String get nextAyah;
+
+  /// No description provided for @readingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Settings'**
+  String get readingSettings;
+
+  /// No description provided for @tafsirSource.
+  ///
+  /// In en, this message translates to:
+  /// **'TAFSIR SOURCE'**
+  String get tafsirSource;
+
+  /// No description provided for @reciter.
+  ///
+  /// In en, this message translates to:
+  /// **'RECITER'**
+  String get reciter;
+
+  /// No description provided for @display.
+  ///
+  /// In en, this message translates to:
+  /// **'DISPLAY'**
+  String get display;
+
+  /// No description provided for @showArabicText.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Arabic Text'**
+  String get showArabicText;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'FONT SIZE'**
+  String get fontSize;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// No description provided for @urdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Urdu'**
+  String get urdu;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @selectSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Surah'**
+  String get selectSurah;
+
+  /// No description provided for @audioNotLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio URL not loaded yet. Please wait...'**
+  String get audioNotLoaded;
+
+  /// No description provided for @playbackError.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback error: {message}'**
+  String playbackError(String message);
+
+  /// No description provided for @audioUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio unavailable — check internet connection.'**
+  String get audioUnavailable;
+
+  /// No description provided for @signInToSaveFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to save favourites'**
+  String get signInToSaveFavourites;
+
+  /// No description provided for @addedToFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to Favourites'**
+  String get addedToFavourites;
+
+  /// No description provided for @removedFromFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from Favourites'**
+  String get removedFromFavourites;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'APPEARANCE'**
+  String get appearance;
+
+  /// No description provided for @comfortableNightReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable night-time reading'**
+  String get comfortableNightReading;
+
+  /// No description provided for @focusMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Mode (Full Screen)'**
+  String get focusMode;
+
+  /// No description provided for @focusModeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide app bar & nav for distraction-free reading'**
+  String get focusModeDesc;
+
+  /// No description provided for @textSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Size'**
+  String get textSize;
+
+  /// No description provided for @small.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get small;
+
+  /// No description provided for @large.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get large;
+
+  /// No description provided for @themeColour.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Colour'**
+  String get themeColour;
+
+  /// No description provided for @quranScript.
+  ///
+  /// In en, this message translates to:
+  /// **'QURAN SCRIPT'**
+  String get quranScript;
+
+  /// No description provided for @quranScriptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran Script'**
+  String get quranScriptLabel;
+
+  /// No description provided for @readingLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'READING LAYOUT'**
+  String get readingLayout;
+
+  /// No description provided for @showTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Translation'**
+  String get showTranslation;
+
+  /// No description provided for @displayMeaningBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Display meaning below each verse'**
+  String get displayMeaningBelow;
+
+  /// No description provided for @showDailyProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Daily Progress'**
+  String get showDailyProgress;
+
+  /// No description provided for @progressBarAyahCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress bar & ayah count card'**
+  String get progressBarAyahCount;
+
+  /// No description provided for @showPointsBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Points Banner'**
+  String get showPointsBanner;
+
+  /// No description provided for @noorPointsNotificationStrip.
+  ///
+  /// In en, this message translates to:
+  /// **'+Noor Points notification strip'**
+  String get noorPointsNotificationStrip;
+
+  /// No description provided for @showSurahHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Surah Header'**
+  String get showSurahHeader;
+
+  /// No description provided for @surahNameBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah name banner at top of page'**
+  String get surahNameBanner;
+
+  /// No description provided for @audioPlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'AUDIO & PLAYBACK'**
+  String get audioPlayback;
+
+  /// No description provided for @autoAdvance.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Advance'**
+  String get autoAdvance;
+
+  /// No description provided for @moveToNextVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to next verse when audio ends'**
+  String get moveToNextVerse;
+
+  /// No description provided for @repeatCurrentVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat Current Verse'**
+  String get repeatCurrentVerse;
+
+  /// No description provided for @loopAyahAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Loop this ayah audio on repeat'**
+  String get loopAyahAudio;
+
+  /// No description provided for @notificationsAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'NOTIFICATIONS & ALERTS'**
+  String get notificationsAlerts;
+
+  /// No description provided for @dailyReadingReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Reading Reminder'**
+  String get dailyReadingReminder;
+
+  /// No description provided for @pushReminderReadQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Push reminder to read Quran each day'**
+  String get pushReminderReadQuran;
+
+  /// No description provided for @milestoneSoundAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestone Sound Alerts'**
+  String get milestoneSoundAlerts;
+
+  /// No description provided for @chimeAtMilestones.
+  ///
+  /// In en, this message translates to:
+  /// **'Chime when you reach 10, 25, 50 ayahs'**
+  String get chimeAtMilestones;
+
+  /// No description provided for @advanced.
+  ///
+  /// In en, this message translates to:
+  /// **'ADVANCED'**
+  String get advanced;
+
+  /// No description provided for @wordByWordMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Word-by-Word Mode'**
+  String get wordByWordMode;
+
+  /// No description provided for @showWordMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Show each Arabic word with its English meaning'**
+  String get showWordMeaning;
+
+  /// No description provided for @translationLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation Language'**
+  String get translationLanguage;
+
+  /// No description provided for @translationsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} translations available'**
+  String translationsAvailable(String count);
+
+  /// No description provided for @reciterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reciter:'**
+  String get reciterLabel;
+
+  /// No description provided for @playing.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing'**
+  String get playing;
+
+  /// No description provided for @favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite'**
+  String get favourite;
+
+  /// No description provided for @bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get bookmark;
+
+  /// No description provided for @ayahsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ayahs read'**
+  String ayahsRead(String count);
+
+  /// No description provided for @goalAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal: 50 ayahs/day'**
+  String get goalAyahs;
+
+  /// No description provided for @nextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Page'**
+  String get nextPage;
+
+  /// No description provided for @exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exit;
+
+  /// No description provided for @mushafSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Mushaf Settings'**
+  String get mushafSettings;
+
+  /// No description provided for @readingMode.
+  ///
+  /// In en, this message translates to:
+  /// **'READING MODE'**
+  String get readingMode;
+
+  /// No description provided for @scroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll'**
+  String get scroll;
+
+  /// No description provided for @pageFlip.
+  ///
+  /// In en, this message translates to:
+  /// **'Page Flip'**
+  String get pageFlip;
+
+  /// No description provided for @translationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TRANSLATION'**
+  String get translationLabel;
+
+  /// No description provided for @off.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get off;
+
+  /// No description provided for @splitView.
+  ///
+  /// In en, this message translates to:
+  /// **'Split View'**
+  String get splitView;
+
+  /// No description provided for @script.
+  ///
+  /// In en, this message translates to:
+  /// **'SCRIPT'**
+  String get script;
+
+  /// No description provided for @actionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIONS'**
+  String get actionsLabel;
+
+  /// No description provided for @pageBookmarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Page bookmarked!'**
+  String get pageBookmarked;
+
+  /// No description provided for @loadingQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading Quran…'**
+  String get loadingQuran;
+
+  /// No description provided for @earnPointsPerVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn +10 Noor Points per verse read'**
+  String get earnPointsPerVerse;
+
+  /// No description provided for @chooseSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Surah'**
+  String get chooseSurah;
+
+  /// No description provided for @chooseVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Verse'**
+  String get chooseVerse;
+
+  /// No description provided for @surahHasVerses.
+  ///
+  /// In en, this message translates to:
+  /// **'{surah} has {count} verses'**
+  String surahHasVerses(String surah, String count);
+
+  /// No description provided for @favourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get favourites;
+
+  /// No description provided for @bookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get bookmarks;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} saved'**
+  String saved(String count);
+
+  /// No description provided for @noSavedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No {title} yet'**
+  String noSavedYet(String title);
+
+  /// No description provided for @tapToSaveVerses.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart/bookmark icon while reading to save verses.'**
+  String get tapToSaveVerses;
+
+  /// No description provided for @randomVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Random Verse'**
+  String get randomVerse;
+
+  /// No description provided for @sunnahFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunnah Friday'**
+  String get sunnahFriday;
+
+  /// No description provided for @resume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
+
+  /// No description provided for @loadingWordTranslations.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading word translations...'**
+  String get loadingWordTranslations;
+
+  /// No description provided for @wordDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Word data unavailable. Check your connection.'**
+  String get wordDataUnavailable;
+
+  /// No description provided for @duaAzkarSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Dua & Azkar Settings'**
+  String get duaAzkarSettings;
+
+  /// No description provided for @showTransliteration.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Transliteration'**
+  String get showTransliteration;
+
+  /// No description provided for @showIllustration.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Illustration'**
+  String get showIllustration;
+
+  /// No description provided for @hideIllustrationArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the visual artwork area'**
+  String get hideIllustrationArea;
+
+  /// No description provided for @arabicFontStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic Font Style'**
+  String get arabicFontStyle;
+
+  /// No description provided for @dailyAzkarComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Azkar Complete!'**
+  String get dailyAzkarComplete;
+
+  /// No description provided for @dailyAzkarBonusMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.'**
+  String get dailyAzkarBonusMsg;
+
+  /// No description provided for @awesome.
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome'**
+  String get awesome;
+
+  /// No description provided for @betweenSubhSunrise.
+  ///
+  /// In en, this message translates to:
+  /// **'Between Subh-e-Sadiq to Sunrise'**
+  String get betweenSubhSunrise;
+
+  /// No description provided for @betweenAsrMaghrib.
+  ///
+  /// In en, this message translates to:
+  /// **'Between Asr and Maghrib'**
+  String get betweenAsrMaghrib;
+
+  /// No description provided for @beforeSleeping.
+  ///
+  /// In en, this message translates to:
+  /// **'Before Sleeping'**
+  String get beforeSleeping;
+
+  /// No description provided for @uponWakingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Upon Waking Up'**
+  String get uponWakingUp;
+
+  /// No description provided for @afterEachPrayer.
+  ///
+  /// In en, this message translates to:
+  /// **'After Each Prayer'**
+  String get afterEachPrayer;
+
+  /// No description provided for @anytimeEspeciallyAfterPrayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Anytime — Especially After Prayer'**
+  String get anytimeEspeciallyAfterPrayer;
+
+  /// No description provided for @anytimeMorningEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Anytime — Morning & Evening'**
+  String get anytimeMorningEvening;
+
+  /// No description provided for @duringTheNight.
+  ///
+  /// In en, this message translates to:
+  /// **'During the Night'**
+  String get duringTheNight;
+
+  /// No description provided for @anytime.
+  ///
+  /// In en, this message translates to:
+  /// **'Anytime'**
+  String get anytime;
+
+  /// No description provided for @asPerSunnah.
+  ///
+  /// In en, this message translates to:
+  /// **'As per Sunnah'**
+  String get asPerSunnah;
+
+  /// No description provided for @whenEatingDrinking.
+  ///
+  /// In en, this message translates to:
+  /// **'When Eating or Drinking'**
+  String get whenEatingDrinking;
+
+  /// No description provided for @enteringLeavingHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Upon Entering / Leaving Home'**
+  String get enteringLeavingHome;
+
+  /// No description provided for @beforeAfterWudu.
+  ///
+  /// In en, this message translates to:
+  /// **'Before or After Wudu'**
+  String get beforeAfterWudu;
+
+  /// No description provided for @whenGettingDressed.
+  ///
+  /// In en, this message translates to:
+  /// **'When Getting Dressed'**
+  String get whenGettingDressed;
+
+  /// No description provided for @uponBadDream.
+  ///
+  /// In en, this message translates to:
+  /// **'Upon Having a Bad Dream'**
+  String get uponBadDream;
+
+  /// No description provided for @forUmmahAnytime.
+  ///
+  /// In en, this message translates to:
+  /// **'For the Ummah — Anytime'**
+  String get forUmmahAnytime;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// No description provided for @startNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Now'**
+  String get startNow;
+
+  /// No description provided for @markAsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Done'**
+  String get markAsDone;
+
+  /// No description provided for @enterCustomCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom count'**
+  String get enterCustomCount;
+
+  /// No description provided for @resetToDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to default'**
+  String get resetToDefault;
+
+  /// No description provided for @noAzkarFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Azkar found here.'**
+  String get noAzkarFound;
+
+  /// No description provided for @reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get reference;
+
+  /// No description provided for @benefit.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefit'**
+  String get benefit;
+
+  /// No description provided for @continueAdhkar.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue your {category} Adhkar from where you left off.'**
+  String continueAdhkar(String category);
+
+  /// No description provided for @set.
+  ///
+  /// In en, this message translates to:
+  /// **'set'**
+  String get set;
+
+  /// No description provided for @sets.
+  ///
+  /// In en, this message translates to:
+  /// **'sets'**
+  String get sets;
+
+  /// No description provided for @duasOfUmmah.
+  ///
+  /// In en, this message translates to:
+  /// **'Duas of Ummah'**
+  String get duasOfUmmah;
+
+  /// No description provided for @beforeSleepCat.
+  ///
+  /// In en, this message translates to:
+  /// **'Before Sleep'**
+  String get beforeSleepCat;
+
+  /// No description provided for @tahajjud.
+  ///
+  /// In en, this message translates to:
+  /// **'Tahajjud'**
+  String get tahajjud;
+
+  /// No description provided for @salah.
+  ///
+  /// In en, this message translates to:
+  /// **'Salah'**
+  String get salah;
+
+  /// No description provided for @salawat.
+  ///
+  /// In en, this message translates to:
+  /// **'Salawat'**
+  String get salawat;
+
+  /// No description provided for @sunnahDuas.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunnah Duas'**
+  String get sunnahDuas;
+
+  /// No description provided for @quranicDuas.
+  ///
+  /// In en, this message translates to:
+  /// **'Quranic Duas'**
+  String get quranicDuas;
+
+  /// No description provided for @istighfar.
+  ///
+  /// In en, this message translates to:
+  /// **'Istighfar'**
+  String get istighfar;
+
+  /// No description provided for @dhikarAllTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikar All Times'**
+  String get dhikarAllTimes;
+
+  /// No description provided for @namesOfAllah.
+  ///
+  /// In en, this message translates to:
+  /// **'Names of Allah'**
+  String get namesOfAllah;
+
+  /// No description provided for @nightmares.
+  ///
+  /// In en, this message translates to:
+  /// **'Nightmares'**
+  String get nightmares;
+
+  /// No description provided for @wakingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Waking up'**
+  String get wakingUp;
+
+  /// No description provided for @clothes.
+  ///
+  /// In en, this message translates to:
+  /// **'Clothes'**
+  String get clothes;
+
+  /// No description provided for @wudu.
+  ///
+  /// In en, this message translates to:
+  /// **'Wudu'**
+  String get wudu;
+
+  /// No description provided for @foodAndDrink.
+  ///
+  /// In en, this message translates to:
+  /// **'Food & Drink'**
+  String get foodAndDrink;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @istikharah.
+  ///
+  /// In en, this message translates to:
+  /// **'Istikharah'**
+  String get istikharah;
+
+  /// No description provided for @adaanAndMasjid.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaan & Masjid'**
+  String get adaanAndMasjid;
+
+  /// No description provided for @diffAndHappy.
+  ///
+  /// In en, this message translates to:
+  /// **'Diff & Happy'**
+  String get diffAndHappy;
+
+  /// No description provided for @imanProtect.
+  ///
+  /// In en, this message translates to:
+  /// **'Iman Protect'**
+  String get imanProtect;
+
+  /// No description provided for @travel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get travel;
+
+  /// No description provided for @shopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get shopping;
+
+  /// No description provided for @marriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage'**
+  String get marriage;
+
+  /// No description provided for @social.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get social;
+
+  /// No description provided for @nature.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature'**
+  String get nature;
+
+  /// No description provided for @death.
+  ///
+  /// In en, this message translates to:
+  /// **'Death'**
+  String get death;
+
+  /// No description provided for @gatherings.
+  ///
+  /// In en, this message translates to:
+  /// **'Gatherings'**
+  String get gatherings;
+
+  /// No description provided for @hajjAndUmrah.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajj & Umrah'**
+  String get hajjAndUmrah;
+
+  /// No description provided for @dailyEssentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Essentials'**
+  String get dailyEssentials;
+
+  /// No description provided for @akhirahBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Akhirah Balance'**
+  String get akhirahBalance;
+
+  /// No description provided for @priceless.
+  ///
+  /// In en, this message translates to:
+  /// **'Priceless'**
+  String get priceless;
+
+  /// No description provided for @beyondWorldCanHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Beyond what the world can hold'**
+  String get beyondWorldCanHold;
+
+  /// No description provided for @deedsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} deeds today'**
+  String deedsToday(String count);
+
+  /// No description provided for @deedsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} this week'**
+  String deedsThisWeek(String count);
+
+  /// No description provided for @bestDayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Best: {count} day streak'**
+  String bestDayStreak(String count);
+
+  /// No description provided for @donateMoreEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate More & Earn'**
+  String get donateMoreEarn;
+
+  /// No description provided for @yourHoldings.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Holdings'**
+  String get yourHoldings;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All →'**
+  String get seeAll;
+
+  /// No description provided for @hasanaatEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Hasanaat Earned'**
+  String get hasanaatEarned;
+
+  /// No description provided for @recordedInBookOfDeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded in your Book of Deeds'**
+  String get recordedInBookOfDeeds;
+
+  /// No description provided for @treesInJannah.
+  ///
+  /// In en, this message translates to:
+  /// **'Trees in Jannah'**
+  String get treesInJannah;
+
+  /// No description provided for @fromTasbih.
+  ///
+  /// In en, this message translates to:
+  /// **'From SubhanAllah & Tasbih'**
+  String get fromTasbih;
+
+  /// No description provided for @sinsForgiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Sins Forgiven'**
+  String get sinsForgiven;
+
+  /// No description provided for @likeTheFoamOfSea.
+  ///
+  /// In en, this message translates to:
+  /// **'Like the foam of the sea'**
+  String get likeTheFoamOfSea;
+
+  /// No description provided for @palacesBuilt.
+  ///
+  /// In en, this message translates to:
+  /// **'Palaces Built'**
+  String get palacesBuilt;
+
+  /// No description provided for @surahIkhlasAndSunnahs.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah Ikhlas & Sunnahs'**
+  String get surahIkhlasAndSunnahs;
+
+  /// No description provided for @treasuresOfJannah.
+  ///
+  /// In en, this message translates to:
+  /// **'Treasures of Jannah'**
+  String get treasuresOfJannah;
+
+  /// No description provided for @slavesFreedom.
+  ///
+  /// In en, this message translates to:
+  /// **'Slaves Freed'**
+  String get slavesFreedom;
+
+  /// No description provided for @equivalentReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Equivalent reward earned'**
+  String get equivalentReward;
+
+  /// No description provided for @sadaqahGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Sadaqah Given'**
+  String get sadaqahGiven;
+
+  /// No description provided for @pointsDonatedToCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Points donated to community'**
+  String get pointsDonatedToCommunity;
+
+  /// No description provided for @allTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get allTimeLabel;
+
+  /// No description provided for @worshipActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Worship Activity'**
+  String get worshipActivity;
+
+  /// No description provided for @timeSpentInRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'Time spent in remembrance'**
+  String get timeSpentInRemembrance;
+
+  /// No description provided for @noorPointsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Noor Points Summary'**
+  String get noorPointsSummary;
+
+  /// No description provided for @totalPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Points'**
+  String get totalPoints;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @everyDeedRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Every deed is recorded. Keep going!'**
+  String get everyDeedRecorded;
+
+  /// No description provided for @yourAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your available: {pts} pts'**
+  String yourAvailable(String pts);
+
+  /// No description provided for @jazakAllahDonated.
+  ///
+  /// In en, this message translates to:
+  /// **'JazakAllah! {pts} pts donated'**
+  String jazakAllahDonated(String pts);
+
+  /// No description provided for @insufficientPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient Points'**
+  String get insufficientPoints;
+
+  /// No description provided for @donatePoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate {pts} Points'**
+  String donatePoints(String pts);
+
+  /// No description provided for @everyRecitationCanChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Recitation Can\nChange a Life'**
+  String get everyRecitationCanChange;
+
+  /// No description provided for @fullyFunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully Funded ✓'**
+  String get fullyFunded;
+
+  /// No description provided for @noPointsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No Points Available'**
+  String get noPointsAvailable;
+
+  /// No description provided for @communityProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Progress'**
+  String get communityProgress;
+
+  /// No description provided for @myContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'My contribution: {pts} pts'**
+  String myContribution(String pts);
+
+  /// No description provided for @ptsRaised.
+  ///
+  /// In en, this message translates to:
+  /// **'pts raised'**
+  String get ptsRaised;
+
+  /// No description provided for @ofGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'of {goal} pts goal'**
+  String ofGoal(String goal);
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'days left'**
+  String get daysLeft;
+
+  /// No description provided for @lastDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Last day!'**
+  String get lastDay;
+
+  /// No description provided for @deadline.
+  ///
+  /// In en, this message translates to:
+  /// **'deadline'**
+  String get deadline;
+
+  /// No description provided for @campaignStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign Story'**
+  String get campaignStory;
+
+  /// No description provided for @updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates ({count})'**
+  String updates(String count);
+
+  /// No description provided for @campaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign'**
+  String get campaign;
+
+  /// No description provided for @noStoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No story added yet.'**
+  String get noStoryYet;
+
+  /// No description provided for @checkAdminPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the admin panel to add a campaign story.'**
+  String get checkAdminPanel;
+
+  /// No description provided for @noUpdatesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No updates yet.'**
+  String get noUpdatesYet;
+
+  /// No description provided for @checkBackForNews.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back soon for campaign news.'**
+  String get checkBackForNews;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String daysAgo(String count);
+
+  /// No description provided for @shareCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Campaign'**
+  String get shareCampaign;
+
+  /// No description provided for @spreadTheWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Spread the word and help this cause reach its goal.'**
+  String get spreadTheWord;
+
+  /// No description provided for @shareViaWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share via WhatsApp'**
+  String get shareViaWhatsApp;
+
+  /// No description provided for @moreSharingOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'More sharing options…'**
+  String get moreSharingOptions;
+
+  /// No description provided for @slideToAdjust.
+  ///
+  /// In en, this message translates to:
+  /// **'Slide to adjust'**
+  String get slideToAdjust;
+
+  /// No description provided for @balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get balance;
+
+  /// No description provided for @loadingYourReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your report…'**
+  String get loadingYourReport;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated ✓'**
+  String get profileUpdated;
+
+  /// No description provided for @couldNotSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save — please try again'**
+  String get couldNotSave;
+
+  /// No description provided for @photoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo updated ✓'**
+  String get photoUpdated;
+
+  /// No description provided for @couldNotUploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not upload photo — please try again'**
+  String get couldNotUploadPhoto;
+
+  /// No description provided for @changeProfilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Profile Photo'**
+  String get changeProfilePhoto;
+
+  /// No description provided for @takeAPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a Photo'**
+  String get takeAPhoto;
+
+  /// No description provided for @chooseFromLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Library'**
+  String get chooseFromLibrary;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get removePhoto;
+
+  /// No description provided for @photoRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo removed'**
+  String get photoRemoved;
+
+  /// No description provided for @couldNotRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not remove photo'**
+  String get couldNotRemovePhoto;
+
+  /// No description provided for @signOutQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out?'**
+  String get signOutQuestion;
+
+  /// No description provided for @progressSafelyStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress is safely stored. You can sign back in anytime.'**
+  String get progressSafelyStored;
+
+  /// No description provided for @accountInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Information'**
+  String get accountInformation;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupport;
+
+  /// No description provided for @profilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Photo'**
+  String get profilePhoto;
+
+  /// No description provided for @tapEditToChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Edit to change your photo'**
+  String get tapEditToChange;
+
+  /// No description provided for @tapEditToAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Edit to add a photo'**
+  String get tapEditToAdd;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @displayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Name'**
+  String get displayName;
+
+  /// No description provided for @yourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get yourName;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @countryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Pakistan, UK…'**
+  String get countryHint;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @notifOnDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards, streak milestones, donations & more'**
+  String get notifOnDesc;
+
+  /// No description provided for @notifOffDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Turned off — no new alerts will be added'**
+  String get notifOffDesc;
+
+  /// No description provided for @viewNotificationsInbox.
+  ///
+  /// In en, this message translates to:
+  /// **'View notifications inbox'**
+  String get viewNotificationsInbox;
+
+  /// No description provided for @nNew.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} new'**
+  String nNew(String n);
+
+  /// No description provided for @helpCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Help Center'**
+  String get helpCenter;
+
+  /// No description provided for @reportABug.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a Bug'**
+  String get reportABug;
+
+  /// No description provided for @aboutNoorRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'About Noor Rewards'**
+  String get aboutNoorRewards;
+
+  /// No description provided for @builtWithLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Built with love for the Ummah'**
+  String get builtWithLove;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @howWeProtectData.
+  ///
+  /// In en, this message translates to:
+  /// **'How we protect your data'**
+  String get howWeProtectData;
+
+  /// No description provided for @bugReportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Found something wrong? Please email us and we\'ll fix it as soon as possible.'**
+  String get bugReportBody;
+
+  /// No description provided for @aboutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Built with love for the global Muslim Ummah.\nEarn Noor Points by building Islamic habits.\nDonate points to support real community projects.'**
+  String get aboutBody;
+
+  /// No description provided for @howToEarnQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How to earn Noor Points?'**
+  String get howToEarnQuestion;
+
+  /// No description provided for @howToEarnAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Quran reading, Dhikr sets, and daily login to earn points.'**
+  String get howToEarnAnswer;
+
+  /// No description provided for @whatIsValidateQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Validate Coins?'**
+  String get whatIsValidateQuestion;
+
+  /// No description provided for @whatIsValidateAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the Validate button on the home page once per day to seal your coins.'**
+  String get whatIsValidateAnswer;
+
+  /// No description provided for @howStreaksWorkQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How do streaks work?'**
+  String get howStreaksWorkQuestion;
+
+  /// No description provided for @howStreaksWorkAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your daily activities consecutively to build your streak.'**
+  String get howStreaksWorkAnswer;
+
+  /// No description provided for @canDonatQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I donate my Noor Points?'**
+  String get canDonatQuestion;
+
+  /// No description provided for @canDonateAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes! Visit the Akhirah tab to donate your points to active community projects.'**
+  String get canDonateAnswer;
+
+  /// No description provided for @coinsSealedMashaAllah.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins Sealed!'**
+  String get coinsSealedMashaAllah;
+
+  /// No description provided for @rewardedForConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been rewarded for\nyour consistency today!'**
+  String get rewardedForConsistency;
+
+  /// No description provided for @validationPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation Points'**
+  String get validationPoints;
+
+  /// No description provided for @streakBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Bonus'**
+  String get streakBonus;
+
+  /// No description provided for @totalEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earned'**
+  String get totalEarned;
+
+  /// No description provided for @openQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Quran'**
+  String get openQuran;
+
+  /// No description provided for @duaAndAzkaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Dua & Azkaar'**
+  String get duaAndAzkaar;
+
+  /// No description provided for @shareWithFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with Friends'**
+  String get shareWithFriends;
+
+  /// No description provided for @earnMoreNoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn More Noor'**
+  String get earnMoreNoor;
+
+  /// No description provided for @dontDisturb.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t Disturb'**
+  String get dontDisturb;
+
+  /// No description provided for @maybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get maybeLater;
+
+  /// No description provided for @read5QuranPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Read 5 Quran Pages'**
+  String get read5QuranPages;
+
+  /// No description provided for @completeNowBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete now → earn +50 points bonus'**
+  String get completeNowBonus;
+
+  /// No description provided for @completeADhikrSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a Dhikr Set'**
+  String get completeADhikrSet;
+
+  /// No description provided for @finishAzkaarBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish your Azkaar → earn +30 points bonus'**
+  String get finishAzkaarBonus;
+
+  /// No description provided for @inviteAFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a Friend'**
+  String get inviteAFriend;
+
+  /// No description provided for @shareNoorBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Noor with someone → earn +100 NP'**
+  String get shareNoorBonus;
+
+  /// No description provided for @multiplyYour.
+  ///
+  /// In en, this message translates to:
+  /// **'MULTIPLY YOUR'**
+  String get multiplyYour;
+
+  /// No description provided for @noorPointsBang.
+  ///
+  /// In en, this message translates to:
+  /// **'NOOR POINTS!'**
+  String get noorPointsBang;
+
+  /// No description provided for @keepMomentum.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your spiritual momentum going\nand watch your Noor grow'**
+  String get keepMomentum;
+
+  /// No description provided for @openQuranNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Quran Now'**
+  String get openQuranNow;
+
+  /// No description provided for @startAzkaarNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Azkaar Now'**
+  String get startAzkaarNow;
+
+  /// No description provided for @goodDeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Deed'**
+  String get goodDeed;
+
+  /// No description provided for @earnSawabWithRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn Sawab\nwith every read'**
+  String get earnSawabWithRead;
+
+  /// No description provided for @realImpact.
+  ///
+  /// In en, this message translates to:
+  /// **'Real Impact'**
+  String get realImpact;
+
+  /// No description provided for @coinsFundCauses.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins fund\nnoble causes'**
+  String get coinsFundCauses;
+
+  /// No description provided for @unexpectedGoogleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error during Google Sign In'**
+  String get unexpectedGoogleError;
+
+  /// No description provided for @authSuccessQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully authenticated with Quran.com!'**
+  String get authSuccessQuran;
+
+  /// No description provided for @authError.
+  ///
+  /// In en, this message translates to:
+  /// **'Auth Error'**
+  String get authError;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @verified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get verified;
+
+  /// No description provided for @connectedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected Account'**
+  String get connectedAccount;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @noorPlusPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'+{pts} Noor Points'**
+  String noorPlusPoints(String pts);
+
+  /// No description provided for @yourGarden.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR GARDEN'**
+  String get yourGarden;
+
+  /// No description provided for @noorPointsBloomed.
+  ///
+  /// In en, this message translates to:
+  /// **'noor points bloomed'**
+  String get noorPointsBloomed;
+
+  /// No description provided for @growingStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GROWING STREAK'**
+  String get growingStreakTitle;
+
+  /// No description provided for @daySingular.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get daySingular;
+
+  /// No description provided for @daysPlural.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get daysPlural;
+
+  /// No description provided for @keepGrowing.
+  ///
+  /// In en, this message translates to:
+  /// **'keep growing'**
+  String get keepGrowing;
+
+  /// No description provided for @progressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progressLabel;
+
+  /// No description provided for @weekTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get weekTab;
+
+  /// No description provided for @monthTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get monthTab;
+
+  /// No description provided for @todayTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayTab;
+
+  /// No description provided for @ofTabGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'of {goal} {tab} goal'**
+  String ofTabGoal(String goal, String tab);
+
+  /// No description provided for @todaysPlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s plots'**
+  String get todaysPlots;
+
+  /// No description provided for @setsTodayCount.
+  ///
+  /// In en, this message translates to:
+  /// **'sets today {count}'**
+  String setsTodayCount(String count);
+
+  /// No description provided for @earnPerFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn +500 per friend'**
+  String get earnPerFriend;
+
+  /// No description provided for @lastAchievement.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {name}'**
+  String lastAchievement(String name);
+
+  /// No description provided for @outOfBelievers.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of {count} believers'**
+  String outOfBelievers(String count);
+
+  /// No description provided for @yourRankNum.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rank: #{rank}'**
+  String yourRankNum(String rank);
+
+  /// No description provided for @youIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'(you)'**
+  String get youIndicator;
 }
 
 class _AppLocalizationsDelegate

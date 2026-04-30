@@ -4,6 +4,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'settings_service.dart';
+import 'notification_center.dart';
 
 // ── Point Rewards (unified — coins ARE the points) ────────────────────────────
 class PointReward {
@@ -165,10 +166,31 @@ class XpService {
         'p_user_id': uid,
         'p_badge_id': badgeId,
       });
-      return result as bool? ?? false;
+      final isNew = result as bool? ?? false;
+      if (isNew) {
+        // ── In-app notification: new badge unlocked. Tap goes to Journey
+        // tab where the user can see all their badges.
+        NotificationCenter.instance.add(
+          kind: NoorNotifKind.badge,
+          title: 'New badge unlocked 🏆',
+          body: 'You\'ve earned the "${_humanize(badgeId)}" badge.',
+          route: '/journey',
+          data: {'badge_id': badgeId},
+        );
+      }
+      return isNew;
     } catch (_) {
       return false;
     }
+  }
+
+  /// Convert a badge id like "first_100xp" → "First 100 Pts".
+  String _humanize(String id) {
+    final words = id.split('_').map((w) {
+      if (w.isEmpty) return w;
+      return w[0].toUpperCase() + w.substring(1);
+    }).toList();
+    return words.join(' ');
   }
 
   // ── Daily login points ────────────────────────────────────────────────────────
@@ -194,6 +216,13 @@ class XpService {
       });
 
       await earnPoints(PointReward.dailyLogin);
+      // ── In-app notification: daily-login reward earned
+      NotificationCenter.instance.add(
+        kind: NoorNotifKind.reward,
+        title: 'Daily login bonus',
+        body: '+${PointReward.dailyLogin} Noor Points · welcome back!',
+        route: '/journey',
+      );
       return true;
     } catch (_) {
       return false;
@@ -223,6 +252,13 @@ class XpService {
       });
 
       await earnPoints(PointReward.validate);
+      // ── In-app notification: validation seal earned
+      NotificationCenter.instance.add(
+        kind: NoorNotifKind.validation,
+        title: 'Day sealed 🌙',
+        body: '+${PointReward.validate} Noor Points for sealing today.',
+        route: '/home',
+      );
       return true;
     } catch (_) {
       return false;

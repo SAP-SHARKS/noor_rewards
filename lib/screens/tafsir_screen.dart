@@ -1,7 +1,8 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -684,7 +685,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
           icon: Icon(Icons.arrow_back_ios_rounded, color: txt, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Read Tafsir',
+        title: Text(AppLocalizations.of(context)?.readTafsir ?? 'Read Tafsir',
             style: GoogleFonts.outfit(
                 fontSize: 18, fontWeight: FontWeight.w800, color: txt)),
         centerTitle: true,
@@ -772,7 +773,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                           color: _kGreen,
                           borderRadius: BorderRadius.circular(2))),
                   const SizedBox(width: 8),
-                  Text('Translation',
+                  Text(AppLocalizations.of(context)?.translation ?? 'Translation',
                       style: GoogleFonts.outfit(
                           fontSize: 12, fontWeight: FontWeight.w700,
                           color: _kGreen, letterSpacing: 0.5)),
@@ -819,11 +820,11 @@ class _TafsirScreenState extends State<TafsirScreen> {
                     ? Column(children: [
                         const LinearProgressIndicator(),
                         const SizedBox(height: 8),
-                        Text('Loading tafsir...',
+                        Text(AppLocalizations.of(context)?.loadingTafsir ?? 'Loading tafsir...',
                             style: GoogleFonts.outfit(fontSize: 13, color: sub)),
                       ])
                     : _tafsirText.isEmpty
-                        ? Text('Tafsir not available for this ayah.',
+                        ? Text(AppLocalizations.of(context)?.tafsirNotAvailable ?? 'Tafsir not available for this ayah.',
                             style: GoogleFonts.outfit(
                                 fontSize: _fontSize - 4, color: sub, height: 1.7))
                         : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -834,8 +835,8 @@ class _TafsirScreenState extends State<TafsirScreen> {
                                   borderRadius: BorderRadius.circular(6)),
                               child: Text(
                                 _tafsirEditions[_tafsirIdx].rtl
-                                    ? (_tafsirEditions[_tafsirIdx].id.startsWith('ar') ? 'Arabic Scripture' : 'Urdu Scripture')
-                                    : 'English Commentary',
+                                    ? (_tafsirEditions[_tafsirIdx].id.startsWith('ar') ? AppLocalizations.of(context)?.arabicScripture ?? 'Arabic Scripture' : AppLocalizations.of(context)?.urduScripture ?? 'Urdu Scripture')
+                                    : AppLocalizations.of(context)?.englishCommentary ?? 'English Commentary',
                                 style: GoogleFonts.outfit(
                                     fontSize: 10, fontWeight: FontWeight.w600,
                                     color: _kGold)),
@@ -974,7 +975,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                   color: Colors.black.withValues(alpha: 0.05), blurRadius: 8)]),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.chevron_left_rounded, color: _kGreen, size: 22),
-            Text('Previous',
+            Text(AppLocalizations.of(context)?.previous ?? 'Previous',
                 style: GoogleFonts.outfit(
                     fontSize: 14, fontWeight: FontWeight.w700, color: _kGreen)),
           ]),
@@ -994,7 +995,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                 blurRadius: 12, offset: const Offset(0, 4))],
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text('Next Ayah',
+            Text(AppLocalizations.of(context)?.nextAyah ?? 'Next Ayah',
                 style: GoogleFonts.outfit(
                     fontSize: 14, fontWeight: FontWeight.w700,
                     color: Colors.white)),

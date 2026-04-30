@@ -3,6 +3,7 @@
 // Integrates with the record_streak_activity() Supabase function.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'notification_center.dart';
 
 // ── Streak type enum ──────────────────────────────────────────────────────────
 enum StreakType { login, dhikr, quran }
@@ -121,16 +122,36 @@ class StreakService {
   Future<int> recordActivity(StreakType type) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return 0;
+    int newStreak;
     try {
       final result = await _sb.rpc('record_streak_activity', params: {
         'p_user_id': uid,
         'p_type':    type.key,
       });
-      return (result as num?)?.toInt() ?? 0;
+      newStreak = (result as num?)?.toInt() ?? 0;
     } catch (e) {
       // Fallback: update profile directly if RPC not yet deployed
-      return _localFallback(uid, type);
+      newStreak = await _localFallback(uid, type);
     }
+    // ── In-app notification: milestone day hit ──────────────────────────
+    // We only notify on the EXACT milestone day so the user doesn't get
+    // a streak notification every single day — only when they cross a
+    // meaningful threshold (3, 7, 14, 30, 60, 100 days).
+    final reachedMilestone =
+        kStreakMilestones.firstWhere((m) => m.days == newStreak,
+            orElse: () => const StreakMilestone(
+                days: 0, label: '', emoji: '', ptsBonus: 0));
+    if (reachedMilestone.days > 0) {
+      NotificationCenter.instance.add(
+        kind: NoorNotifKind.streak,
+        title: '${reachedMilestone.emoji} ${reachedMilestone.label}',
+        body: '${reachedMilestone.days}-day ${type.label} streak · '
+              '+${reachedMilestone.ptsBonus} bonus pts unlocked',
+        route: '/journey',
+        data: {'streak_type': type.key, 'days': reachedMilestone.days},
+      );
+    }
+    return newStreak;
   }
 
   // Lightweight local fallback when the RPC isn't deployed yet

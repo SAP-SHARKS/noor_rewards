@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/settings_service.dart';
@@ -124,12 +125,12 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
                     children: [
                       const Text('📚', style: TextStyle(fontSize: 42)),
                       const SizedBox(height: 8),
-                      Text('Read & Listen Tafsir',
+                      Text(AppLocalizations.of(context)?.readListenTafsir ?? 'Read & Listen Tafsir',
                           style: GoogleFonts.outfit(
                               fontSize: 28, fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       const SizedBox(height: 4),
-                      Text('Deep understanding of the Holy Quran',
+                      Text(AppLocalizations.of(context)?.deepUnderstanding ?? 'Deep understanding of the Holy Quran',
                           style: GoogleFonts.outfit(
                               fontSize: 14, color: Colors.white70)),
                     ],
@@ -181,7 +182,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
                       style: GoogleFonts.outfit(
                           fontSize: 15, fontWeight: FontWeight.w800,
                           color: _kGreen)),
-                  Text('Earn points for every 10 min of Tafsir listening',
+                  Text(AppLocalizations.of(context)?.earnPointsTafsir ?? 'Earn points for every 10 min of Tafsir listening',
                       style: GoogleFonts.outfit(
                           fontSize: 12, color: _kSub)),
                 ])),
@@ -190,7 +191,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
             const SizedBox(height: 24),
 
             // ── Featured surahs ─────────────────────────────────────────
-            Text('Featured Surahs',
+            Text(AppLocalizations.of(context)?.featuredSurahs ?? 'Featured Surahs',
                 style: GoogleFonts.outfit(
                     fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 14),
@@ -236,7 +237,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
                 child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   const Icon(Icons.menu_book_rounded, color: Colors.white, size: 22),
                   const SizedBox(width: 10),
-                  Text('Browse All 114 Surahs',
+                  Text(AppLocalizations.of(context)?.browseAll114 ?? 'Browse All 114 Surahs',
                       style: GoogleFonts.outfit(
                           fontSize: 16, fontWeight: FontWeight.w700,
                           color: Colors.white)),

@@ -5,6 +5,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -162,10 +163,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     return Scaffold(
       backgroundColor: _C.bg,
       body: _loading
-          ? const Center(
+          ? Center(
               child: NoorInlineLoader(
                 height: double.infinity,
-                label: 'Loading your report…',
+                label: AppLocalizations.of(context)?.loadingYourReport ?? 'Loading your report…',
               ),
             )
           : FadeTransition(
@@ -231,7 +232,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     ),
                   if (!widget.isTab) const Spacer(),
                   if (widget.isTab)
-                    Text('Akhirah Balance',
+                    Text(AppLocalizations.of(context)?.akhirahBalance ?? 'Akhirah Balance',
                         style: GoogleFonts.outfit(
                             fontSize: 18, fontWeight: FontWeight.w800,
                             color: Y4.ink)),
@@ -265,7 +266,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
                 // Main value (Fraunces serif for "Priceless")
                 Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  Text('Priceless',
+                  Text(AppLocalizations.of(context)?.priceless ?? 'Priceless',
                       style: Y4.display(
                           fontSize: 44, fontWeight: FontWeight.w500,
                           color: Y4.ink, letterSpacing: -0.5, height: 1.0)),
@@ -290,7 +291,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   ),
                 ]),
                 const SizedBox(height: 4),
-                Text('Beyond what the world can hold',
+                Text(AppLocalizations.of(context)?.beyondWorldCanHold ?? 'Beyond what the world can hold',
                     style: GoogleFonts.outfit(
                         fontSize: 13, color: Y4.inkSoft, fontStyle: FontStyle.italic)),
 
@@ -326,7 +327,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       NoorIcon.globe(size: 16),
                       const SizedBox(width: 8),
-                      Text('Donate More & Earn',
+                      Text(AppLocalizations.of(context)?.donateMoreEarn ?? 'Donate More & Earn',
                           style: GoogleFonts.outfit(
                               fontSize: 14, fontWeight: FontWeight.w800,
                               color: Colors.white)),
@@ -358,10 +359,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Your Holdings',
+        Text(AppLocalizations.of(context)?.yourHoldings ?? 'Your Holdings',
             style: GoogleFonts.outfit(
                 fontSize: 20, fontWeight: FontWeight.w900, color: _C.text)),
-        Text('See All →',
+        Text(AppLocalizations.of(context)?.seeAll ?? 'See All →',
             style: GoogleFonts.outfit(
                 fontSize: 13, fontWeight: FontWeight.w700, color: _C.teal)),
       ]),
@@ -385,8 +386,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.sparkles(size:24),
         color: _C.gold,
         bgColor: const Color(0xFFFDF6E3),
-        title: 'Hasanaat Earned',
-        subtitle: 'Recorded in your Book of Deeds',
+        title: AppLocalizations.of(context)?.hasanaatEarned ?? 'Hasanaat Earned',
+        subtitle: AppLocalizations.of(context)?.recordedInBookOfDeeds ?? 'Recorded in your Book of Deeds',
         value: _hasanaat,
         change: '+${_todayPoints * 15} today',
         positive: true,
@@ -398,8 +399,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.tree(size:24),
         color: const Color(0xFF2D7A45),
         bgColor: const Color(0xFFE8F5EC),
-        title: 'Trees in Jannah',
-        subtitle: 'From SubhanAllah & Tasbih',
+        title: AppLocalizations.of(context)?.treesInJannah ?? 'Trees in Jannah',
+        subtitle: AppLocalizations.of(context)?.fromTasbih ?? 'From SubhanAllah & Tasbih',
         value: _treesPlanted,
         change: '+${_snap.dhikr > 0 ? 25 : 0} today',
         positive: true,
@@ -411,8 +412,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.drop(size:24),
         color: _C.teal,
         bgColor: const Color(0xFFE0F7F4),
-        title: 'Sins Forgiven',
-        subtitle: 'Like the foam of the sea',
+        title: AppLocalizations.of(context)?.sinsForgiven ?? 'Sins Forgiven',
+        subtitle: AppLocalizations.of(context)?.likeTheFoamOfSea ?? 'Like the foam of the sea',
         value: _sinsWiped,
         change: '+${_snap.dhikr > 0 ? 50 : 0} today',
         positive: true,
@@ -424,8 +425,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.mosque(size:24),
         color: const Color(0xFF4A90E2),
         bgColor: const Color(0xFFEAF2F8),
-        title: 'Palaces Built',
-        subtitle: 'Surah Ikhlas & Sunnahs',
+        title: AppLocalizations.of(context)?.palacesBuilt ?? 'Palaces Built',
+        subtitle: AppLocalizations.of(context)?.surahIkhlasAndSunnahs ?? 'Surah Ikhlas & Sunnahs',
         value: _palacesBuilt,
         change: '+${_snap.quran ~/ 3} total',
         positive: true,
@@ -437,7 +438,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.diamond(size:24),
         color: const Color(0xFF9B59B6),
         bgColor: const Color(0xFFF5EEF8),
-        title: 'Treasures of Jannah',
+        title: AppLocalizations.of(context)?.treasuresOfJannah ?? 'Treasures of Jannah',
         subtitle: 'La Hawla Wa La Quwwata',
         value: _treasures,
         change: '+${_snap.dhikr > 0 ? 5 : 0} today',
@@ -450,8 +451,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.chains(size:24),
         color: _C.purple,
         bgColor: const Color(0xFFEEEAF8),
-        title: 'Slaves Freed',
-        subtitle: 'Equivalent reward earned',
+        title: AppLocalizations.of(context)?.slavesFreedom ?? 'Slaves Freed',
+        subtitle: AppLocalizations.of(context)?.equivalentReward ?? 'Equivalent reward earned',
         value: _slavesFreed,
         change: '+${_snap.dhikr > 0 ? 2 : 0} today',
         positive: true,
@@ -463,10 +464,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         icon: NoorIcon.hands(size: 24),
         color: const Color(0xFFE67E22),
         bgColor: const Color(0xFFFEF5E7),
-        title: 'Sadaqah Given',
-        subtitle: 'Points donated to community',
+        title: AppLocalizations.of(context)?.sadaqahGiven ?? 'Sadaqah Given',
+        subtitle: AppLocalizations.of(context)?.pointsDonatedToCommunity ?? 'Points donated to community',
         value: _totalDonated,
-        change: 'All time',
+        change: AppLocalizations.of(context)?.allTimeLabel ?? 'All time',
         positive: true,
         isFirst: false,
         isLast: true,
@@ -503,10 +504,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           ),
           const SizedBox(width: 12),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Worship Activity',
+            Text(AppLocalizations.of(context)?.worshipActivity ?? 'Worship Activity',
                 style: GoogleFonts.outfit(
                     fontSize: 16, fontWeight: FontWeight.w800, color: _C.text)),
-            Text('Time spent in remembrance',
+            Text(AppLocalizations.of(context)?.timeSpentInRemembrance ?? 'Time spent in remembrance',
                 style: GoogleFonts.outfit(fontSize: 11, color: _C.sub)),
           ]),
           const Spacer(),
@@ -548,17 +549,17 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       Row(children: [
         NoorIcon.sparkles(size: 22),
         const SizedBox(width: 10),
-        Text('Noor Points Summary',
+        Text(AppLocalizations.of(context)?.noorPointsSummary ?? 'Noor Points Summary',
             style: GoogleFonts.outfit(
                 fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
       ]),
       const SizedBox(height: 18),
       Row(children: [
-        Expanded(child: _DarkStat('Total Points', _fmt(_noorPoints), NoorIcon.star(size:16))),
+        Expanded(child: _DarkStat(AppLocalizations.of(context)?.totalPoints ?? 'Total Points', _fmt(_noorPoints), NoorIcon.star(size:16))),
         Container(height: 44, width: 1, color: Colors.white12),
         Expanded(child: _DarkStat('Level', '$_level', NoorIcon.medal(size:16))),
         Container(height: 44, width: 1, color: Colors.white12),
-        Expanded(child: _DarkStat('Title', _levelTitle, NoorIcon.crown(size:16))),
+        Expanded(child: _DarkStat(AppLocalizations.of(context)?.title ?? 'Title', _levelTitle, NoorIcon.crown(size:16))),
       ]),
       const SizedBox(height: 16),
       Container(

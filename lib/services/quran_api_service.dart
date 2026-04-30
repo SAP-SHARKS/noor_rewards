@@ -1,4 +1,4 @@
-﻿// lib/services/quran_api_service.dart
+// lib/services/quran_api_service.dart
 //
 // Authenticated HTTP client for the Quran Foundation API.
 //
@@ -16,8 +16,11 @@
 //     continues to work during initial setup.
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../features/auth/data/qf_auth_service.dart';
 import 'quran_api_config.dart';
 
 class QuranApiService {
@@ -100,6 +103,192 @@ class QuranApiService {
   void invalidateToken() {
     _accessToken = null;
     _tokenExpiry = null;
+  }
+
+  // ── User Authentication (Bookmarks / Profile) ─────────────────────────────
+  static const String _kUserApiBase  = 'https://apis.quran.foundation';
+  // Use config clientId or default if missing
+  String get _kClientId => QuranApiConfig.clientId;
+
+  Future<String?> _getUserAccessToken() async {
+    return await QfAuthService.instance.accessToken;
+  }
+
+  Future<Map<String, String>?> _userAuthHeaders() async {
+    final token = await _getUserAccessToken();
+    if (token == null || token.isEmpty) {
+      debugPrint('QF_API: No user access token found!');
+      return null;
+    }
+    return {
+      'Authorization': 'Bearer $token',
+      'x-auth-token' : token,
+      'x-client-id'  : _kClientId,
+      'Content-Type' : 'application/json',
+    };
+  }
+
+  Future<bool> isUserLoggedIn() async {
+    final token = await _getUserAccessToken();
+    return token != null && token.isNotEmpty;
+  }
+
+  // ── User Profile ──
+  Future<Map<String, dynamic>?> getUserProfile() async {
+    final headers = await _userAuthHeaders();
+    if (headers == null) return null;
+    try {
+      final response = await http.get(
+        Uri.parse('$_kUserApiBase/auth/v1/users/profile'),
+        headers: headers,
+      ).timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+    } catch (e) {
+      debugPrint('QF_API: Profile error: $e');
+    }
+    return null;
+  }
+
+  // ── Get Bookmarks ──
+  Future<List<Map<String, dynamic>>> getBookmarks() async {
+    final headers = await _userAuthHeaders();
+    if (headers == null) return [];
+    try {
+      final response = await http.get(
+        Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
+        headers: headers,
+      ).timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data is List) return data.cast<Map<String, dynamic>>();
+        if (data is Map && data['bookmarks'] is List) {
+          return (data['bookmarks'] as List).cast<Map<String, dynamic>>();
+        }
+      }
+    } catch (e) {
+      debugPrint('QF_API: GetBookmarks error: $e');
+    }
+    return [];
+  }
+
+  // ── Add Bookmark ──
+  Future<bool> addBookmark({
+    required int surahNumber,
+    required int ayatNumber,
+  }) async {
+    final headers = await _userAuthHeaders();
+    if (headers == null) return false;
+
+    try {
+      final response = await http.post(
+        Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
+        headers: headers,
+        body: jsonEncode({
+          'key'        : surahNumber,
+          'type'       : 'ayah',
+          'verseNumber': ayatNumber,
+          'mushaf'     : 1,
+        }),
+      ).timeout(const Duration(seconds: 10));
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      debugPrint('QF_API: AddBookmark error: $e');
+    }
+    return false;
+  }
+
+  // ── Remove Bookmark ──
+  Future<bool> removeBookmark({
+    required int surahNumber,
+    required int ayatNumber,
+  }) async {
+    final headers = await _userAuthHeaders();
+    if (headers == null) return false;
+    try {
+      final response = await http.delete(
+        Uri.parse('$_kUserApiBase/auth/v1/bookmarks/$surahNumber:$ayatNumber'),
+        headers: headers,
+      ).timeout(const Duration(seconds: 10));
+      return response.statusCode == 200 || response.statusCode == 204;
+    } catch (e) {
+      debugPrint('QF_API: RemoveBookmark error: $e');
+    }
+    return false;
+  }
+
+  // ── Log Reading Session ──
+  Future<bool> logReadingSession({
+    required int surahNumber,
+    required int ayatNumber,
+    required int durationSeconds,
+  }) async {
+    final headers = await _userAuthHeaders();
+    if (headers == null) return false;
+    try {
+      final response = await http.post(
+        Uri.parse('$_kUserApiBase/auth/v1/reading_sessions'),
+        headers: headers,
+        body: jsonEncode({
+          'chapterNumber': surahNumber,
+          'verseNumber'  : ayatNumber,
+          'duration'     : durationSeconds,
+        }),
+      ).timeout(const Duration(seconds: 10));
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      debugPrint('QF_API: ReadingSession error: $e');
+    }
+    return false;
+  }
+
+  // ── Sync Bookmarks ──
+  Future<SyncResult> syncBookmarks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('quran_logged_in') ?? false;
+
+    if (!isLoggedIn) {
+      return SyncResult(success: false, message: 'Not connected to Quran.com');
+    }
+
+    int uploaded = 0;
+    int failed   = 0;
+
+    try {
+      final raw = prefs.getString('quran_bookmarks_local') ?? '[]';
+      final List<dynamic> localList = jsonDecode(raw);
+
+      if (localList.isEmpty) {
+        return SyncResult(
+          success: true,
+          uploaded: 0,
+          failed: 0,
+          message: 'No bookmarks to sync',
+        );
+      }
+
+      for (final item in localList) {
+        final map   = item as Map<String, dynamic>;
+        final surah = map['surahNumber'] as int? ?? 0;
+        final ayat  = map['ayatNumber']  as int? ?? 0;
+        if (surah <= 0 || ayat <= 0) continue;
+
+        final success = await addBookmark(surahNumber: surah, ayatNumber : ayat);
+        if (success) uploaded++; else failed++;
+      }
+
+      return SyncResult(
+        success : true,
+        uploaded: uploaded,
+        failed  : failed,
+        message : uploaded > 0
+            ? 'Synced $uploaded bookmarks to Quran.com'
+            : 'Sync failed — check connection',
+      );
+    } catch (e) {
+      return SyncResult(success: false, message: 'Sync failed: $e');
+    }
   }
 
   // ── API methods ─────────────────────────────────────────────────────────────
@@ -371,4 +560,18 @@ class QuranApiService {
   /// Strips simple HTML tags from translation text (quran.com wraps some text).
   static String _stripHtml(String s) =>
       s.replaceAll(RegExp(r'<[^>]+>'), '').trim();
+}
+
+class SyncResult {
+  final bool   success;
+  final String message;
+  final int    uploaded;
+  final int    failed;
+
+  SyncResult({
+    required this.success,
+    required this.message,
+    this.uploaded = 0,
+    this.failed   = 0,
+  });
 }

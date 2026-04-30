@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -433,7 +434,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     color: isDark ? Colors.white : SettingsService.instance.config.dashText,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Enter custom count',
+                    hintText: AppLocalizations.of(context)?.enterCustomCount ?? 'Enter custom count',
                     hintStyle: GoogleFonts.outfit(
                       fontSize: 15, color: isDark ? Colors.grey.shade600 : const Color(0xFFAEAEB2),
                     ),
@@ -459,7 +460,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             Navigator.pop(ctx);
                           },
                           child: Text(
-                            'Reset to default',
+                            AppLocalizations.of(context)?.resetToDefault ?? 'Reset to default',
                             style: GoogleFonts.outfit(
                               fontSize: 14, fontWeight: FontWeight.w600,
                               color: const Color(0xFFE11D48),
@@ -899,7 +900,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(child: Text('Dua & Azkar Settings',
+                        Flexible(child: Text(AppLocalizations.of(context)?.duaAzkarSettings ?? 'Dua & Azkar Settings',
                             maxLines: 1, overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
                                 fontSize: 20, fontWeight: FontWeight.w800,
@@ -951,7 +952,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         ),
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text('Show Transliteration',
+                          title: Text(AppLocalizations.of(context)?.showTransliteration ?? 'Show Transliteration',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
                           activeTrackColor: SettingsService.instance.config.azkarAccent,
                           value: _settings.showTransliteration,
@@ -964,9 +965,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         ),
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text('Show Illustration',
+                          title: Text(AppLocalizations.of(context)?.showIllustration ?? 'Show Illustration',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          subtitle: Text('Hide the visual artwork area',
+                          subtitle: Text(AppLocalizations.of(context)?.hideIllustrationArea ?? 'Hide the visual artwork area',
                               style: GoogleFonts.outfit(fontSize: 12,
                                   color: txtColor.withValues(alpha: 0.55))),
                           activeTrackColor: SettingsService.instance.config.azkarAccent,
@@ -1009,7 +1010,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         // ── Arabic Font Style Picker ───────────────────────────
                         const Divider(),
                         const SizedBox(height: 10),
-                        Text('Arabic Font Style',
+                        Text(AppLocalizations.of(context)?.arabicFontStyle ?? 'Arabic Font Style',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
                                 color: SettingsService.instance.config.azkarAccent)),
@@ -1109,11 +1110,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                 child: Center(child: NoorIcon.trophy(size: 40)),
               ),
               const SizedBox(height: 20),
-              Text('Daily Azkar Complete!', 
+              Text(AppLocalizations.of(context)?.dailyAzkarComplete ?? 'Daily Azkar Complete!', 
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w800, color: isDark ? Colors.white : SettingsService.instance.config.dashText)),
               const SizedBox(height: 12),
-              Text('Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.', 
+              Text(AppLocalizations.of(context)?.dailyAzkarBonusMsg ?? 'Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.', 
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(fontSize: 15, color: isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93))),
               const SizedBox(height: 32),
@@ -1127,7 +1128,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: Text('Awesome', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                  child: Text(AppLocalizations.of(context)?.awesome ?? 'Awesome', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
                 ),
               )
             ],
@@ -1138,26 +1139,26 @@ class _DhikrScreenState extends State<DhikrScreen> {
   }
 
   // ── Category timing label ─────────────────────────────────────────────────
-  static String _categoryTiming(String catId) {
+  static String _categoryTiming(BuildContext context, String catId) {
     switch (catId) {
-      case 'morning':     return 'Between Subh-e-Sadiq to Sunrise';
-      case 'evening':     return 'Between Asr and Maghrib';
-      case 'sleeping':    return 'Before Sleeping';
-      case 'waking_up':   return 'Upon Waking Up';
-      case 'post_prayer': return 'After Each Prayer';
-      case 'salawat':     return 'Anytime — Especially After Prayer';
-      case 'istighfar':   return 'Anytime — Morning & Evening';
-      case 'tahajjud':    return 'During the Night';
-      case 'quranic':     return 'Anytime';
-      case 'sunnah':      return 'As per Sunnah';
-      case 'food_drink':  return 'When Eating or Drinking';
-      case 'home':        return 'Upon Entering / Leaving Home';
-      case 'wudu':        return 'Before or After Wudu';
-      case 'clothes':     return 'When Getting Dressed';
-      case 'nightmares':  return 'Upon Having a Bad Dream';
-      case 'ummah':       return 'For the Ummah — Anytime';
-      case 'general':     return 'Anytime';
-      default:            return 'Anytime';
+      case 'morning':     return AppLocalizations.of(context)?.betweenSubhSunrise ?? 'Between Subh-e-Sadiq to Sunrise';
+      case 'evening':     return AppLocalizations.of(context)?.betweenAsrMaghrib ?? 'Between Asr and Maghrib';
+      case 'sleeping':    return AppLocalizations.of(context)?.beforeSleeping ?? 'Before Sleeping';
+      case 'waking_up':   return AppLocalizations.of(context)?.uponWakingUp ?? 'Upon Waking Up';
+      case 'post_prayer': return AppLocalizations.of(context)?.afterEachPrayer ?? 'After Each Prayer';
+      case 'salawat':     return AppLocalizations.of(context)?.anytimeEspeciallyAfterPrayer ?? 'Anytime — Especially After Prayer';
+      case 'istighfar':   return AppLocalizations.of(context)?.anytimeMorningEvening ?? 'Anytime — Morning & Evening';
+      case 'tahajjud':    return AppLocalizations.of(context)?.duringTheNight ?? 'During the Night';
+      case 'quranic':     return AppLocalizations.of(context)?.anytime ?? 'Anytime';
+      case 'sunnah':      return AppLocalizations.of(context)?.asPerSunnah ?? 'As per Sunnah';
+      case 'food_drink':  return AppLocalizations.of(context)?.whenEatingDrinking ?? 'When Eating or Drinking';
+      case 'home':        return AppLocalizations.of(context)?.enteringLeavingHome ?? 'Upon Entering / Leaving Home';
+      case 'wudu':        return AppLocalizations.of(context)?.beforeAfterWudu ?? 'Before or After Wudu';
+      case 'clothes':     return AppLocalizations.of(context)?.whenGettingDressed ?? 'When Getting Dressed';
+      case 'nightmares':  return AppLocalizations.of(context)?.uponBadDream ?? 'Upon Having a Bad Dream';
+      case 'ummah':       return AppLocalizations.of(context)?.forUmmahAnytime ?? 'For the Ummah — Anytime';
+      case 'general':     return AppLocalizations.of(context)?.anytime ?? 'Anytime';
+      default:            return AppLocalizations.of(context)?.anytime ?? 'Anytime';
     }
   }
 
@@ -1309,7 +1310,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                        minimumSize: const Size(0, 36),
                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                      ),
-                     child: Text('Start Now', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 13)),
+                     child: Text(AppLocalizations.of(context)?.startNow ?? 'Start Now', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 13)),
                   )
                 ]
               ),
@@ -1365,7 +1366,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         const SizedBox(height: 14),
         Expanded(
           child: _filtered.isEmpty
-          ? Center(child: Text('No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
+          ? Center(child: Text(AppLocalizations.of(context)?.noAzkarFound ?? 'No Azkar found here.', style: GoogleFonts.outfit(color: kSub)))
           : ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
             itemCount: 1,
@@ -1468,7 +1469,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                         // ── Line 2 (light): when to read (by category) ──
                                         const SizedBox(height: 3),
                                         Text(
-                                          _categoryTiming(azkar.category),
+                                          _DhikrScreenState._categoryTiming(context, azkar.category),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.outfit(
@@ -1723,7 +1724,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final catId = azkar.category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
-              final timing = _kTimingInfo[catId];
+              final timing = _DhikrScreenState._categoryTiming(context, catId);
               final isMorning = catId == 'morning';
               final readCount = widget.parentState._getTarget(azkar.id, azkar.recommendedCount);
               final String readLabel = readCount == 1
@@ -2039,7 +2040,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                         children: [
                                           const Icon(Icons.check_rounded, color: Colors.white, size: 22),
                                           const SizedBox(width: 10),
-                                          Text('Mark as Done',
+                                          Text(AppLocalizations.of(context)?.markAsDone ?? 'Mark as Done',
                                             style: GoogleFonts.outfit(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w700,
@@ -2148,10 +2149,7 @@ Color _scaffoldBgForCategory(String cat) => switch (cat) {
 };
 
 /// Timing info shown at top of azkar detail screen
-const Map<String, String> _kTimingInfo = {
-  'morning': 'Between Subh-e-Sadiq to Sunrise',
-  'evening': 'Between Asr to Maghrib',
-};
+// _kTimingInfo removed and replaced with _categoryTiming calls.
 
 const Map<String, _AyahInfo> _kQuranAyahInfo = {
   // ── Al-Fatiha (Bismillah IS ayah 1) ──
@@ -2253,8 +2251,8 @@ final _kHighlightPatterns = RegExp(
 );
 
 /// Returns a contextual section label based on the azkar content.
-String _sectionLabel(_Azkar azkar) {
-  return 'Benefit';
+String _sectionLabel(BuildContext context, _Azkar azkar) {
+  return AppLocalizations.of(context)?.benefit ?? 'Benefit';
 }
 
 /// Builds a RichText widget with Bismillah/Isti'adhah in a distinct color.
@@ -2866,7 +2864,7 @@ class _AzkarCard extends StatelessWidget {
                       children: [
                         Icon(Icons.auto_awesome_rounded, size: 15, color: labelColor.withValues(alpha: 0.70)),
                         const SizedBox(width: 8),
-                        Text(_sectionLabel(azkar),
+                        Text(_sectionLabel(context, azkar),
                           style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: labelColor, letterSpacing: 0.5)),
                       ],
                     ),
@@ -2913,7 +2911,7 @@ class _AzkarCard extends StatelessWidget {
                         children: [
                           Icon(Icons.link_rounded, size: 13, color: labelColor.withValues(alpha: 0.70)),
                           const SizedBox(width: 6),
-                          Text('Reference',
+                          Text(AppLocalizations.of(context)?.reference ?? 'Reference',
                             style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: labelColor, letterSpacing: 0.5)),
                         ],
                       ),

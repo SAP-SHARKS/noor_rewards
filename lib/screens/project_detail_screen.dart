@@ -2,6 +2,7 @@
 // LaunchGood-inspired campaign article view — v2
 
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -187,11 +188,11 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
             ),
           ),
           const SizedBox(height: 20),
-          Text('Share Campaign',
+          Text(AppLocalizations.of(context)?.shareCampaign ?? 'Share Campaign',
             style: GoogleFonts.outfit(
                 fontSize: 18, fontWeight: FontWeight.w800, color: _PD.text)),
           const SizedBox(height: 6),
-          Text('Spread the word and help this cause reach its goal.',
+          Text(AppLocalizations.of(context)?.spreadTheWord ?? 'Spread the word and help this cause reach its goal.',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 13, color: _PD.sub)),
           const SizedBox(height: 24),
@@ -199,7 +200,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
           // WhatsApp button
           _ShareBtn(
             icon: Icons.chat_rounded,
-            label: 'Share via WhatsApp',
+            label: AppLocalizations.of(context)?.shareViaWhatsApp ?? 'Share via WhatsApp',
             color: const Color(0xFF25D366),
             onTap: () { Navigator.pop(context); _shareWhatsApp(); },
           ),
@@ -208,7 +209,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
           // Other apps
           _ShareBtn(
             icon: Icons.share_rounded,
-            label: 'More sharing options…',
+            label: AppLocalizations.of(context)?.moreSharingOptions ?? 'More sharing options…',
             color: _PD.teal,
             onTap: () { Navigator.pop(context); _shareGeneric(); },
           ),
@@ -244,261 +245,103 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
   @override
   Widget build(BuildContext context) {
     final p           = widget.project;
-    final title       = p['title']        as String? ?? '';
+    final title       = p['title']        as String? ?? 'Food Packs - Palestine';
     final story       = (p['story']       as String?)?.isNotEmpty == true
         ? p['story'] as String
-        : (p['description'] as String? ?? '');
-    final location    = p['location']     as String?;
-    final category    = p['category']     as String?;
-    final sponsor     = p['sponsor']      as String? ?? '';
-    final impactQuote = p['impact_quote'] as String?;
-    final endDate     = p['end_date']     as String?;
-    final estUsd      = (p['estimated_usd'] as num?)?.toDouble() ?? 0;
+        : (p['description'] as String? ?? 'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...');
     final current     = (p['current_points'] as num?)?.toInt() ?? 0;
     final target      = (p['target_points']  as num?)?.toInt() ?? 1;
     final pct         = (current / target).clamp(0.0, 1.0);
     final dpUrl       = p['dp_url']       as String?;
     final isCompleted = p['is_completed'] == true;
-    final daysLeft    = _daysLeft(endDate);
+
+    // TODO: fetch actual user contribution, mock for now
+    final userPoints = 0;
+    final userPct = target > 0 ? (userPoints / target) * 100 : 0.0;
 
     return Scaffold(
-      backgroundColor: _PD.bg,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Y4.amberY,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text('Every Recitation Can\nChange a Life', 
+          textAlign: TextAlign.center,
+          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2),
+        ),
+      ),
       body: Stack(children: [
-        CustomScrollView(slivers: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Title + Image Row
+            Row(children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: dpUrl != null && dpUrl.isNotEmpty 
+                  ? Image.network(dpUrl, width: 56, height: 56, fit: BoxFit.cover)
+                  : Container(width: 56, height: 56, color: Colors.grey.shade200),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(title, 
+                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _PD.text)),
+              ),
+            ]),
+            const SizedBox(height: 20),
+            
+            // Story
+            Text(story, style: GoogleFonts.outfit(fontSize: 14.5, color: _PD.text, height: 1.6, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 24),
 
-          // ── Hero ──────────────────────────────────────────────────────────
-          SliverAppBar(
-            expandedHeight: (!_loading && _media.isEmpty &&
-                (dpUrl == null || dpUrl.isEmpty)) ? null : 300,
-            pinned: true,
-            stretch: true,
-            backgroundColor: _PD.tealDark,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-            automaticallyImplyLeading: false,
-            flexibleSpace: (!_loading && _media.isEmpty &&
-                (dpUrl == null || dpUrl.isEmpty))
-                ? null
-                : FlexibleSpaceBar(
-              stretchModes: const [StretchMode.zoomBackground],
-              background: _loading
-                  ? Container(color: _PD.tealDark,
-                      child: const Center(child: NoorInlineLoader()))
-                  : _media.isNotEmpty
-                      ? ProjectMediaCarousel(media: _media, height: 300)
-                      : dpUrl != null && dpUrl.isNotEmpty
-                          ? Stack(fit: StackFit.expand, children: [
-                              Image.network(dpUrl, fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => _HeroPlaceholder()),
-                              Container(decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.transparent, Color(0xCC000000)],
-                                  stops: [0.45, 1.0],
-                                ),
-                              )),
-                            ])
-                          : _HeroPlaceholder(),
+            // Carousel
+            ProjectMediaCarousel(media: _media, height: 220),
+            const SizedBox(height: 24),
+
+            // Community Progress Header
+            Row(children: [
+              Text(AppLocalizations.of(context)?.communityProgress ?? 'Community Progress', style: GoogleFonts.outfit(fontSize: 12, color: _PD.sub, fontWeight: FontWeight.w600)),
+              const Spacer(),
+              Text('${_fmtN(current)} / ${_fmtN(target)} pts • ${(pct * 100).toStringAsFixed(0)}%', 
+                style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: Y4.amberY)),
+            ]),
+            const SizedBox(height: 10),
+
+            // Progress Bar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: pct, 
+                minHeight: 8,
+                backgroundColor: Y4.amberY.withValues(alpha: 0.15),
+                valueColor: const AlwaysStoppedAnimation(Y4.amberY),
+              ),
             ),
-            // Overlay buttons
-            title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: Row(children: [
-                _CircleBtn(icon: Icons.arrow_back_rounded,
-                    onTap: () => Navigator.pop(context)),
-                const Spacer(),
-                _CircleBtn(icon: Icons.share_rounded, onTap: _openShareSheet),
+            const SizedBox(height: 24),
+
+            // My Contribution Box
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Y4.amberY.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Y4.amberY.withValues(alpha: 0.3)),
+              ),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                const Icon(Icons.workspace_premium_rounded, size: 16, color: Y4.amberY),
+                const SizedBox(width: 8),
+                Text('My contribution: ${_fmtN(userPoints)} pts (${userPct.toStringAsFixed(1)}%)',
+                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.amberY)),
               ]),
             ),
-            titleSpacing: 8,
-          ),
+          ]),
+        ),
 
-          // ── Category + Title ──────────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: Container(
-              color: _PD.card,
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                // Badges row
-                if ((category != null && category.isNotEmpty) ||
-                    (location != null && location.isNotEmpty))
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Wrap(spacing: 8, children: [
-                      if (category != null && category.isNotEmpty)
-                        _Pill(text: category, color: _PD.teal, textColor: Colors.white),
-                      if (location != null && location.isNotEmpty)
-                        _Pill(icon: Icons.location_on_rounded, text: location,
-                            color: _PD.amberBg, textColor: _PD.amber),
-                    ]),
-                  ),
-
-                Text(title,
-                  style: GoogleFonts.outfit(
-                    fontSize: 24, fontWeight: FontWeight.w800,
-                    color: _PD.text, height: 1.25)),
-                const SizedBox(height: 10),
-
-                // Organizer
-                Row(children: [
-                  Container(
-                    width: 32, height: 32,
-                    decoration: const BoxDecoration(
-                        color: _PD.tealBg, shape: BoxShape.circle),
-                    child: Center(child: Icon(Icons.business_rounded,
-                        color: _PD.teal, size: 16)),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text('Organised by $sponsor',
-                    style: GoogleFonts.outfit(
-                        fontSize: 13, color: _PD.sub, fontWeight: FontWeight.w500))),
-                  if (isCompleted)
-                    _Pill(icon: Icons.check_circle_rounded, text: 'Completed',
-                        color: _PD.tealBg, textColor: _PD.tealText),
-                ]),
-                const SizedBox(height: 20),
-              ]),
-            ),
-          ),
-
-          // ── Progress card ─────────────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: Container(
-              color: _PD.card,
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [_PD.teal, _PD.tealDark],
-                    begin: Alignment.topLeft, end: Alignment.bottomRight),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(
-                    color: _PD.teal.withValues(alpha: 0.30),
-                    blurRadius: 24, offset: const Offset(0, 8))],
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                    Text(_fmtN(current),
-                      style: GoogleFonts.outfit(
-                          fontSize: 38, fontWeight: FontWeight.w900,
-                          color: Colors.white, height: 1)),
-                    const SizedBox(width: 6),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text('pts raised',
-                        style: GoogleFonts.outfit(
-                            fontSize: 14, color: Colors.white70)),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.20),
-                        borderRadius: BorderRadius.circular(10)),
-                      child: Text('≈ \$${estUsd.toStringAsFixed(0)}',
-                        style: GoogleFonts.outfit(
-                            fontSize: 12, fontWeight: FontWeight.w700,
-                            color: Colors.white)),
-                    ),
-                  ]),
-                  const SizedBox(height: 4),
-                  Text('of ${_fmtN(target)} pts goal',
-                    style: GoogleFonts.outfit(fontSize: 13, color: Colors.white60)),
-                  const SizedBox(height: 14),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: pct, minHeight: 8,
-                      backgroundColor: Colors.white.withValues(alpha: 0.25),
-                      valueColor: const AlwaysStoppedAnimation(Colors.white)),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(children: [
-                    _StatChip(
-                        label: '${(pct * 100).toStringAsFixed(0)}%',
-                        sub: 'funded'),
-                    if (daysLeft >= 0) ...[
-                      const SizedBox(width: 14),
-                      _StatChip(
-                          label: daysLeft == 0 ? 'Last day!' : '$daysLeft',
-                          sub: daysLeft == 0 ? '' : 'days left'),
-                    ],
-                    if (endDate != null) ...[
-                      const SizedBox(width: 14),
-                      _StatChip(label: _fmtDate(endDate), sub: 'deadline'),
-                    ],
-                  ]),
-                ]),
-              ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
-          // ── Impact quote ──────────────────────────────────────────────────
-          if (impactQuote != null && impactQuote.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: _PD.amberBg,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: _PD.amber.withValues(alpha: 0.25))),
-                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    width: 4, height: 50,
-                    decoration: BoxDecoration(
-                        color: _PD.amber, borderRadius: BorderRadius.circular(2))),
-                  const SizedBox(width: 14),
-                  Expanded(child: Text('"$impactQuote"',
-                    style: GoogleFonts.outfit(
-                      fontSize: 15, fontWeight: FontWeight.w600,
-                      color: _PD.text, height: 1.55,
-                      fontStyle: FontStyle.italic))),
-                ]),
-              ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 12)),
-          ],
-
-          // ── Sticky tab bar ────────────────────────────────────────────────
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _TabBarDelegate(
-              child: Container(
-                color: Colors.white,
-                child: TabBar(
-                  controller: _tabCtrl,
-                  labelColor: _PD.teal,
-                  unselectedLabelColor: _PD.sub,
-                  indicatorColor: _PD.teal,
-                  indicatorWeight: 2.5,
-                  labelStyle: GoogleFonts.outfit(
-                      fontSize: 14, fontWeight: FontWeight.w700),
-                  unselectedLabelStyle: GoogleFonts.outfit(
-                      fontSize: 14, fontWeight: FontWeight.w500),
-                  tabs: [
-                    const Tab(text: 'Campaign Story'),
-                    Tab(text: 'Updates (${_updates.length})'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // ── Tab content (index-driven, rebuild on setState) ───────────────
-          SliverToBoxAdapter(
-            child: _tabCtrl.index == 0
-                ? _StoryTab(story: story)
-                : _UpdatesTab(updates: _updates),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 110)),
-        ]),
-
-        // ── Sticky donate bar ─────────────────────────────────────────────
+        // Sticky donate bar
         Positioned(
           bottom: 0, left: 0, right: 0,
           child: _DonateBar(
@@ -510,157 +353,6 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
             },
           ),
         ),
-      ]),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Hero placeholder (gradient + icon)
-// ─────────────────────────────────────────────────────────────────────────────
-class _HeroPlaceholder extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: [_PD.teal, _PD.tealDark],
-        begin: Alignment.topLeft, end: Alignment.bottomRight)),
-    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(Icons.volunteer_activism_rounded,
-          color: Colors.white.withValues(alpha: 0.5), size: 80),
-      const SizedBox(height: 12),
-      Text('Campaign', style: GoogleFonts.outfit(
-          color: Colors.white54, fontSize: 14)),
-    ]),
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Story tab
-// ─────────────────────────────────────────────────────────────────────────────
-class _StoryTab extends StatelessWidget {
-  final String story;
-  const _StoryTab({required this.story});
-
-  @override
-  Widget build(BuildContext context) {
-    if (story.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(40),
-        child: Center(child: Column(children: [
-          Icon(Icons.article_outlined, size: 48, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
-          Text('No story added yet.',
-              style: GoogleFonts.outfit(fontSize: 14, color: _PD.sub)),
-          const SizedBox(height: 4),
-          Text('Check the admin panel to add a campaign story.',
-              style: GoogleFonts.outfit(fontSize: 12, color: _PD.sub)),
-        ])),
-      );
-    }
-    final paragraphs = story
-        .split('\n')
-        .map((s) => s.trim())
-        .where((s) => s.isNotEmpty)
-        .toList();
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        for (final para in paragraphs) ...[
-          Text(para,
-            style: GoogleFonts.outfit(
-              fontSize: 15.5, color: _PD.text,
-              height: 1.8, fontWeight: FontWeight.w400)),
-          const SizedBox(height: 14),
-        ],
-      ]),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Updates tab
-// ─────────────────────────────────────────────────────────────────────────────
-class _UpdatesTab extends StatelessWidget {
-  final List<ProjectUpdate> updates;
-  const _UpdatesTab({required this.updates});
-
-  String _rel(DateTime d) {
-    final diff = DateTime.now().difference(d);
-    if (diff.inDays == 0) return 'Today';
-    if (diff.inDays == 1) return 'Yesterday';
-    if (diff.inDays < 7)  return '${diff.inDays} days ago';
-    const months = ['Jan','Feb','Mar','Apr','May','Jun',
-                    'Jul','Aug','Sep','Oct','Nov','Dec'];
-    return '${d.day} ${months[d.month - 1]} ${d.year}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (updates.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(40),
-        child: Center(child: Column(children: [
-          Icon(Icons.notifications_none_rounded,
-              size: 48, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
-          Text('No updates yet.',
-              style: GoogleFonts.outfit(fontSize: 14, color: _PD.sub)),
-          const SizedBox(height: 4),
-          Text('Check back soon for campaign news.',
-              style: GoogleFonts.outfit(fontSize: 12, color: _PD.sub)),
-        ])),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Column(children: [
-        for (int i = 0; i < updates.length; i++)
-          IntrinsicHeight(
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // Timeline column
-              Column(children: [
-                Container(
-                  width: 12, height: 12,
-                  decoration: BoxDecoration(
-                    color: i == 0 ? _PD.teal : _PD.border,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        color: i == 0 ? _PD.tealDark : _PD.sub.withValues(alpha: 0.3),
-                        width: 2)),
-                ),
-                if (i < updates.length - 1)
-                  Expanded(child: Container(
-                    width: 2, color: _PD.border,
-                    margin: const EdgeInsets.symmetric(vertical: 4))),
-              ]),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(_rel(updates[i].createdAt),
-                      style: GoogleFonts.outfit(
-                          fontSize: 11, color: _PD.sub,
-                          fontWeight: FontWeight.w600, letterSpacing: 0.5)),
-                    if (updates[i].title.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(updates[i].title,
-                        style: GoogleFonts.outfit(
-                            fontSize: 15, fontWeight: FontWeight.w700,
-                            color: _PD.text)),
-                    ],
-                    const SizedBox(height: 6),
-                    Text(updates[i].content,
-                      style: GoogleFonts.outfit(
-                          fontSize: 14, color: _PD.sub, height: 1.6)),
-                  ]),
-                ),
-              ),
-            ]),
-          ),
       ]),
     );
   }
@@ -699,7 +391,7 @@ class _DonateBar extends StatelessWidget {
               Expanded(child: Text('JazakAllah Khayran! $amount points donated.',
                   style: GoogleFonts.outfit(fontWeight: FontWeight.w600))),
             ]),
-            backgroundColor: _PD.teal,
+            backgroundColor: Y4.amberY,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 80),
@@ -721,65 +413,34 @@ class _DonateBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 20, offset: const Offset(0, -4))]),
-      child: Row(children: [
-        // Balance
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 20, offset: const Offset(0, -10))]),
+      child: GestureDetector(
+        onTap: canDonate ? () => _open(context) : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-              color: _PD.tealBg, borderRadius: BorderRadius.circular(12)),
-          child: Column(mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Balance',
-                style: GoogleFonts.outfit(fontSize: 10, color: _PD.sub)),
-            Text('$availablePoints pts',
-                style: GoogleFonts.outfit(
-                    fontSize: 15, fontWeight: FontWeight.w800, color: _PD.teal)),
+            color: canDonate ? Y4.honey : Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(
+              isCompleted ? Icons.check_circle_rounded
+                  : Icons.workspace_premium_rounded,
+              color: canDonate ? Y4.ink : Colors.grey.shade400,
+              size: 20),
+            const SizedBox(width: 8),
+            Text(
+              isCompleted ? AppLocalizations.of(context)?.fullyFunded ?? 'Fully Funded ✓'
+                  : !hasPoints ? AppLocalizations.of(context)?.noPointsAvailable ?? 'No Points Available'
+                  : 'Donate & Earn Reward',
+              style: GoogleFonts.outfit(
+                fontSize: 16, fontWeight: FontWeight.w800,
+                color: canDonate ? Y4.ink : Colors.grey.shade500)),
           ]),
         ),
-        const SizedBox(width: 12),
-
-        Expanded(
-          child: GestureDetector(
-            onTap: canDonate ? () => _open(context) : null,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                gradient: canDonate
-                    ? LinearGradient(
-                        colors: [Y4.butter, Y4.honey],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)
-                    : null,
-                color: canDonate ? null : Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: canDonate
-                    ? [BoxShadow(
-                        color: Y4.honeyDeep.withValues(alpha: 0.35),
-                        blurRadius: 16, offset: const Offset(0, 6))]
-                    : null,
-              ),
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Icon(
-                  isCompleted ? Icons.check_circle_rounded
-                      : Icons.volunteer_activism_rounded,
-                  color: canDonate ? Y4.ink : Colors.grey.shade400,
-                  size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  isCompleted ? 'Fully Funded ✓'
-                      : !hasPoints ? 'No Points Available'
-                      : 'Donate & Earn Reward',
-                  style: GoogleFonts.outfit(
-                    fontSize: 15, fontWeight: FontWeight.w700,
-                    color: canDonate ? Y4.ink : Colors.grey.shade500)),
-              ]),
-            ),
-          ),
-        ),
-      ]),
+      ),
     );
   }
 }
@@ -900,7 +561,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                       fontSize: 42, fontWeight: FontWeight.w900,
                       color: _PD.teal, height: 1))),
                 const SizedBox(height: 4),
-                Center(child: Text('Slide to adjust',
+                Center(child: Text(AppLocalizations.of(context)?.slideToAdjust ?? 'Slide to adjust',
                     style: GoogleFonts.outfit(fontSize: 12, color: _PD.sub))),
 
                 Slider(

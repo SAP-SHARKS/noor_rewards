@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -215,7 +215,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
                   // Title
                   Text(
-                    'Start Your Journey',
+                    AppLocalizations.of(context)?.startYourJourney ?? 'Start Your Journey',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 30,
