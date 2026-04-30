@@ -105,6 +105,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   bool _navVisible = true;
 
+  // Donation projects — shared between Home card and Cause tab
+  List<Map<String, dynamic>> _myDonations = [];
+
   // Nav Keys for nested routing
   final List<GlobalKey<NavigatorState>> _navKeys = [
     GlobalKey<NavigatorState>(),
@@ -142,8 +145,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadHomeData();
+    _loadDonations();
     // Claim daily login pts once per day (fire & forget)
-    XpService.instance.claimDailyLoginXp();
+    XpService.instance.claimDailyLogin();
     // Record login streak
     StreakService.instance.recordActivity(StreakType.login);
     // Start privacy-first analytics session
@@ -156,9 +160,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void dispose() {
     _startupPopupTimer?.cancel();
     _repeatingPopupTimer?.cancel();
-    // End session — saves accumulated time + coins to Supabase
     TrackingService.instance.endSession();
     super.dispose();
+  }
+
+  Future<void> _loadDonations() async {
+    try {
+      final projects = await _supabase
+          .from('community_projects')
+          .select()
+          .eq('is_active', true)
+          .eq('is_completed', false)
+          .order('sort_order', ascending: true, nullsFirst: false);
+
+      final data = List<Map<String, dynamic>>.from(
+        (projects as List).map((p) => Map<String, dynamic>.from(p as Map))
+      );
+
+      if (data.isEmpty) {
+        if (mounted) setState(() => _myDonations = []);
+        return;
+      }
+
+      final uid = _supabase.auth.currentUser?.id;
+      if (uid != null) {
+        final pids = data.map((d) => d['id'] as String).toList();
+        final myRows = await _supabase
+            .from('user_donations')
+            .select('project_id, points_donated')
+            .eq('user_id', uid)
+            .filter('project_id', 'in', pids);
+        final Map<String, int> myPts = {};
+        for (final r in (myRows as List)) {
+          final pid = r['project_id'] as String;
+          myPts[pid] = (myPts[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
+        }
+        for (final d in data) { d['my_donated'] = myPts[d['id']] ?? 0; }
+      } else {
+        for (final d in data) { d['my_donated'] = 0; }
+      }
+
+      // Community totals per project
+      final pids = data.map((d) => d['id'] as String).toList();
+      final sumRows = await _supabase
+          .from('user_donations')
+          .select('project_id, points_donated')
+          .filter('project_id', 'in', pids);
+      final Map<String, int> totalPts = {};
+      for (final r in (sumRows as List)) {
+        final pid = r['project_id'] as String;
+        totalPts[pid] = (totalPts[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
+      }
+      for (final d in data) { d['current_points'] = totalPts[d['id']] ?? 0; }
+
+      if (mounted) setState(() => _myDonations = data);
+    } catch (_) {
+      if (mounted) setState(() => _myDonations = []);
+    }
   }
 
   // ────────────────────────────────────────────────────────────────────────
@@ -322,7 +380,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return 'Seeker';
   }
 
-  Future<void> _signOut() async => QfAuthService.performSignOut(_supabase);
+  Future<void> _signOut() async {
+    await QfAuthService.performSignOut(_supabase);
+    // Pop all pushed routes (profile screen, settings, etc.) so AuthGate
+    // surfaces and shows the login screen.
+    if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 
 
   void _goToScreen(Widget screen) async {
@@ -385,8 +448,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onGoQuran:       () => _goToScreen(const QuranHubScreen()),
             onGoDhikr:       () => _goToScreen(const DhikrHubScreen()),
             onGoTafsir:      () => _goToScreen(const TafsirHubScreen()),
-            onGoAchievements:() => setState(() => _tab = 1),
-            onGoProfile: () => setState(() => _tab = 3),
+            onGoAchievements:() => setState(() => _tab = 2),
+            onGoProfile: () {
+                final uid = _supabase.auth.currentUser?.id ?? '';
+                final displayName = _supabase.auth.currentUser
+                    ?.userMetadata?['full_name'] as String?
+                    ?? _supabase.auth.currentUser?.email?.split('@').first
+                    ?? 'User';
+                Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                  Scaffold(
+                    body: _ProfileTab(
+                      name: displayName,
+                      noorPoints: _noorPoints ?? 0,
+                      totalXp: _totalPts ?? 0,
+                      level: _level,
+                      levelTitle: _levelTitle,
+                      country: _country,
+                      streak: _streak ?? 0,
+                      currentUserId: uid,
+                      avatarUrl: _avatarUrl,
+                      onRefresh: _loadHomeData,
+                    ),
+                  ),
+                ));
+              },
             onGoInvite: () {
               final uid = Supabase.instance.client.auth.currentUser?.id;
               if (uid == null) return;
@@ -402,26 +487,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               });
             },
             onValidate: () async {
-              final awarded = await XpService.instance.claimValidateXp();
+              final awarded = await XpService.instance.claimValidate();
               await _loadHomeData();
               return awarded;
             },
             hasError: _noorPoints == null,
           ),
-          _buildTabNavigator(1, const LevelScreen()),           // Tab 1 — Journey
-          _buildTabNavigator(2, ImpactReportScreen(
+          _buildTabNavigator(1, _CauseTab(donations: _myDonations, availablePoints: _noorPoints ?? 0, onRefresh: _loadDonations)),  // Tab 1 — Cause
+          _buildTabNavigator(2, const LevelScreen()),           // Tab 2 — Journey
+          _buildTabNavigator(3, ImpactReportScreen(
             key: const ValueKey('impact'),
             isTab: true,
             visitCount: _akhirahVisitCount,
-          )), // Tab 2 — Akhirah
-          _buildTabNavigator(3, _ProfileTab(
-              name: widget.name, noorPoints: _noorPoints ?? 0,
-              totalXp: _totalPts ?? 0, level: _level, levelTitle: _levelTitle,
-              country: _country, streak: _streak ?? 0,
-              avatarUrl: _avatarUrl,
-              currentUserId: _supabase.auth.currentUser?.id ?? '',
-              onSignOut: _signOut,
-              onRefresh: _loadHomeData)),
+          )), // Tab 3 — Akhirah
         ]),
       ),
       bottomNavigationBar: AnimatedSlide(
@@ -443,7 +521,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 if (mounted) setState(() => _counterAnimating = false);
               });
             } else {
-              if (i == 2 && _tab != 2) {
+              if (i == 3 && _tab != 3) {
                 setState(() => _akhirahVisitCount++);
               }
               // Keep on current tab: pop if not root to simulate returning to root
@@ -611,7 +689,7 @@ class _HomeTabState extends State<_HomeTab> {
   void _showValidateModal() {
     showValidationRewardPopup(
       context,
-      xpEarned: 20, // XpReward.validateCoins
+      pointsEarned: PointReward.validate,
       bonusPoints: 0, // streak bonus could be added here later
       onContinue: _triggerBoostPopup,
     );
@@ -1200,7 +1278,19 @@ class _InviteSheetState extends State<_InviteSheet>
                           Container(height: 40, width: 1, color: Y4.honeyDeep.withValues(alpha: 0.25)),
                           _RewardPill(icon: NoorIcon.people(size:20), label: 'Friend gets', points: '+500'),
                           Container(height: 40, width: 1, color: Y4.honeyDeep.withValues(alpha: 0.25)),
-                          _RewardPill(icon: NoorIcon.lightning(size:20), label: 'Instant', points: 'pts'),
+                          // "Instant" feature badge — no numeric value, just a highlight
+                          Column(mainAxisSize: MainAxisSize.min, children: [
+                            NoorIcon.lightning(size: 20),
+                            const SizedBox(height: 4),
+                            Text('Instant',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16, fontWeight: FontWeight.w900,
+                                color: Y4.ink)),
+                            Text('Reward',
+                              style: GoogleFonts.outfit(
+                                fontSize: 11, fontWeight: FontWeight.w600,
+                                color: Y4.inkSoft)),
+                          ]),
                         ],
                       ),
                     ),
@@ -3744,13 +3834,11 @@ class _ProfileTab extends StatefulWidget {
   final int noorPoints, totalXp, level, streak;
   final String? country;
   final String? avatarUrl;
-  final VoidCallback onSignOut;
   final VoidCallback onRefresh;
   const _ProfileTab({required this.name, required this.noorPoints,
       required this.totalXp, required this.level, required this.levelTitle,
       required this.country, required this.streak, required this.currentUserId,
       this.avatarUrl,
-      required this.onSignOut,
       required this.onRefresh});
   @override
   State<_ProfileTab> createState() => _ProfileTabState();
@@ -3779,16 +3867,42 @@ class _ProfileTabState extends State<_ProfileTab> {
 
   Future<void> _loadLeaderboard() async {
     try {
-      final res = await Supabase.instance.client
-          .from('leaderboard_global')
-          .select()
-          .limit(100);
-      _leaders = List<Map<String, dynamic>>.from(res);
-      _myRank  = _leaders.indexWhere((p) => p['id'] == widget.currentUserId) + 1;
-      if (_myRank == 0) _myRank = _leaders.length + 1;
+      // Fire both queries in parallel — total time = max(t1,t2) not t1+t2
+      final results = await Future.wait([
+        // Query 1: top 10 contributors
+        Supabase.instance.client
+            .from('leaderboard_global')
+            .select()
+            .order('total_xp', ascending: false)
+            .limit(10),
+        // Query 2: my own row (to get my XP for rank calculation)
+        Supabase.instance.client
+            .from('leaderboard_global')
+            .select('total_xp')
+            .eq('id', widget.currentUserId)
+            .limit(1),
+      ]);
+
+      _leaders = List<Map<String, dynamic>>.from(results[0] as List);
+      final myRows = results[1] as List;
+      final myXp   = myRows.isNotEmpty
+          ? (myRows.first['total_xp'] as num?)?.toInt() ?? 0
+          : 0;
+
+      // Rank within top-10: count how many have more XP than me + 1
+      final posInTop10 = _leaders.indexWhere((p) => p['id'] == widget.currentUserId);
+      if (posInTop10 >= 0) {
+        _myRank = posInTop10 + 1;
+      } else {
+        // Not in top 10 — count how many top-10 members beat my XP
+        final beatenBy = _leaders.where((p) =>
+            ((p['total_xp'] as num?)?.toInt() ?? 0) > myXp).length;
+        _myRank = beatenBy + 1;
+      }
     } catch (_) {}
     if (mounted) setState(() => _lbLoading = false);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -4027,11 +4141,11 @@ class _ProfileTabState extends State<_ProfileTab> {
                         ),
                       ),
 
-                    // Loading indicator
+                    // Loading indicator — fixed height to prevent layout shift
                     if (_lbLoading)
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: const Center(child: NoorInlineLoader()),
+                      const SizedBox(
+                        height: 80,
+                        child: Center(child: NoorInlineLoader()),
                       ),
 
                     // Top 10 list
@@ -4161,60 +4275,6 @@ class _ProfileTabState extends State<_ProfileTab> {
                     ]),
                   ),
                 ),
-                const SizedBox(height: 14),
-
-                // Email row — standard white card matching app style
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: _C.border),
-                    boxShadow: [BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 8,
-                    )],
-                  ),
-                  child: Row(children: [
-                    Container(
-                      width: 36, height: 36,
-                      decoration: BoxDecoration(
-                        color: _C.teal.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(Icons.email_outlined, color: _C.teal, size: 18),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(child: Text(user?.email ?? user?.userMetadata?['qf_email'] as String? ?? 'No email',
-                        style: GoogleFonts.outfit(fontSize: 14, color: _C.text),
-                        overflow: TextOverflow.ellipsis)),
-                  ]),
-                ),
-                const SizedBox(height: 14),
-
-                // Sign Out
-                GestureDetector(
-                  onTap: widget.onSignOut,
-                  child: Container(
-                    width: double.infinity, height: 54,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.white,
-                      border: Border.all(color: const Color(0xFFFFECEC)),
-                      boxShadow: [BoxShadow(
-                        color: const Color(0xFFD32F2F).withValues(alpha: 0.06),
-                        blurRadius: 12, offset: const Offset(0, 4),
-                      )],
-                    ),
-                    child: Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.logout_rounded, color: Color(0xFFD32F2F), size: 20),
-                      const SizedBox(width: 10),
-                      Text(AppLocalizations.of(context)?.signOut ?? 'Sign Out', style: GoogleFonts.outfit(
-                          fontSize: 16, fontWeight: FontWeight.w700,
-                          color: const Color(0xFFD32F2F))),
-                    ])),
-                  ),
-                ),
               ]),
             ),
           ),
@@ -4237,6 +4297,300 @@ class _ProfileArc extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// CAUSE SCREEN — self-loading, ProjectDetailScreen-style feed of all causes
+// ─────────────────────────────────────────────────────────────────────────────
+class _CauseTab extends StatefulWidget {
+  final List<Map<String, dynamic>> donations;
+  final int availablePoints;
+  final Future<void> Function() onRefresh;
+  const _CauseTab({required this.donations, required this.availablePoints, required this.onRefresh});
+  @override
+  State<_CauseTab> createState() => _CauseTabState();
+}
+
+class _CauseTabState extends State<_CauseTab> {
+  @override
+  Widget build(BuildContext context) {
+    final projects = widget.donations;
+    final avail    = widget.availablePoints;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFB),
+      body: RefreshIndicator(
+        color: Y4.honey,
+        onRefresh: widget.onRefresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // ── Header ──────────────────────────────────────────────────────
+            SliverToBoxAdapter(
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.fromLTRB(20, 52, 20, 16),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('Our Causes',
+                    style: GoogleFonts.outfit(
+                      fontSize: 26, fontWeight: FontWeight.w800,
+                      color: const Color(0xFF111827))),
+                  const SizedBox(height: 4),
+                  Text('Donate your Noor Points to support real-world projects',
+                    style: GoogleFonts.outfit(fontSize: 13, color: const Color(0xFF6B7280))),
+                ]),
+              ),
+            ),
+
+            // ── Project cards or empty state ─────────────────────────────
+            if (projects.isEmpty)
+              SliverFillRemaining(
+                child: Center(child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.volunteer_activism_outlined,
+                      size: 64, color: Colors.grey.shade300),
+                    const SizedBox(height: 14),
+                    Text('No active projects right now',
+                      style: GoogleFonts.outfit(fontSize: 15, color: const Color(0xFF6B7280))),
+                    const SizedBox(height: 6),
+                    Text("Check back soon insha'Allah",
+                      style: GoogleFonts.outfit(
+                        fontSize: 13, color: const Color(0xFF9CA3AF))),
+                  ],
+                )),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.only(bottom: 110),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (ctx, i) => _CauseCard(
+                      project: projects[i],
+                      availablePoints: avail,
+                      onDonated: () => widget.onRefresh(),
+                    ),
+                    childCount: projects.length,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Rich project card — mirrors ProjectDetailScreen look ─────────────────────
+class _CauseCard extends StatelessWidget {
+  final Map<String, dynamic> project;
+  final int availablePoints;
+  final VoidCallback onDonated;
+  const _CauseCard({required this.project, required this.availablePoints, required this.onDonated});
+
+  void _openDetail(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (_) => ProjectDetailScreen(
+        project: project,
+        availablePoints: availablePoints,
+        onDonationSuccess: onDonated,
+      ),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final title       = project['title']        as String? ?? 'Project';
+    final desc        = (project['story']       as String?)?.isNotEmpty == true
+        ? project['story'] as String
+        : (project['description'] as String? ?? '');
+    final impactQuote = project['impact_quote'] as String?;
+    final imageUrl    = (project['dp_url']      as String?)?.isNotEmpty == true
+        ? project['dp_url'] as String
+        : (project['image_url'] as String?);
+    final goal        = (project['goal_points']    as num?)?.toInt() ?? 1;
+    final current     = (project['current_points'] as num?)?.toInt() ?? 0;
+    final myDonated   = (project['my_donated']     as num?)?.toInt() ?? 0;
+    final pct         = (current / goal).clamp(0.0, 1.0);
+    final pctStr      = (pct * 100).toStringAsFixed(1);
+    final isCompleted = project['is_completed'] == true;
+    final canDonate   = !isCompleted && availablePoints > 0;
+
+    String _fmtN(num n) => n >= 1000000 ? '${(n/1000000).toStringAsFixed(1)}M'
+        : n >= 1000 ? '${(n/1000).toStringAsFixed(1)}k' : '$n';
+
+    return GestureDetector(
+      onTap: () => _openDetail(context),
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 14, offset: const Offset(0, 4))],
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+          // ── Impact quote banner (amber) ──────────────────────────────────
+          if (impactQuote != null && impactQuote.isNotEmpty)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF3D4),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Row(children: [
+                Container(width: 3, height: 36,
+                  decoration: BoxDecoration(
+                    color: Y4.honey, borderRadius: BorderRadius.circular(2))),
+                const SizedBox(width: 10),
+                Expanded(child: Text(impactQuote,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13, fontWeight: FontWeight.w600,
+                    color: const Color(0xFF92400E), height: 1.4,
+                    fontStyle: FontStyle.italic),
+                  maxLines: 2, overflow: TextOverflow.ellipsis)),
+              ]),
+            ),
+
+          // ── Hero image ───────────────────────────────────────────────────
+          if (imageUrl != null && imageUrl.isNotEmpty)
+            ClipRRect(
+              borderRadius: impactQuote != null && impactQuote.isNotEmpty
+                  ? BorderRadius.zero
+                  : const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Stack(children: [
+                Image.network(imageUrl,
+                  height: 200, width: double.infinity, fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                // Dark gradient overlay
+                Positioned.fill(child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Color(0xCC000000)],
+                      stops: [0.5, 1.0],
+                    ),
+                  ),
+                )),
+                // Title over image
+                Positioned(bottom: 12, left: 14, right: 14, child:
+                  Text(title,
+                    style: GoogleFonts.outfit(
+                      fontSize: 18, fontWeight: FontWeight.w800,
+                      color: Colors.white, height: 1.2),
+                    maxLines: 2, overflow: TextOverflow.ellipsis)),
+              ]),
+            )
+          else
+            // No image — show title in card body
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Text(title,
+                style: GoogleFonts.outfit(
+                  fontSize: 18, fontWeight: FontWeight.w800,
+                  color: const Color(0xFF111827))),
+            ),
+
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+              // Title if image was present (already shown), else skip
+              if (imageUrl == null || imageUrl.isEmpty) const SizedBox(height: 4),
+
+              // ── Description ─────────────────────────────────────────────
+              if (desc.isNotEmpty)
+                Text(desc,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13.5, color: const Color(0xFF374151), height: 1.65),
+                  maxLines: 4, overflow: TextOverflow.ellipsis),
+
+              const SizedBox(height: 14),
+
+              // ── Community progress ───────────────────────────────────────
+              Row(children: [
+                Text('Community Progress',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12, fontWeight: FontWeight.w700,
+                    color: const Color(0xFF6B7280))),
+                const Spacer(),
+                Text('${_fmtN(current)} / ${_fmtN(goal)} pts  •  $pctStr%',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12, fontWeight: FontWeight.w600,
+                    color: Y4.honey)),
+              ]),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: pct, minHeight: 8,
+                  backgroundColor: const Color(0xFFE5E7EB),
+                  valueColor: AlwaysStoppedAnimation<Color>(Y4.honey),
+                ),
+              ),
+
+              // ── My contribution ──────────────────────────────────────────
+              if (myDonated > 0) ...[
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF3D4),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.volunteer_activism_rounded,
+                      size: 14, color: Color(0xFF92400E)),
+                    const SizedBox(width: 6),
+                    Text('My contribution: ${_fmtN(myDonated)} pts '
+                         '(${(myDonated / goal * 100).toStringAsFixed(1)}%)',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12, fontWeight: FontWeight.w600,
+                        color: const Color(0xFF92400E))),
+                  ]),
+                ),
+              ],
+
+              const SizedBox(height: 14),
+
+              // ── Donate button ────────────────────────────────────────────
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () => _openDetail(context),
+                  icon: Icon(
+                    isCompleted ? Icons.check_circle_rounded
+                        : Icons.volunteer_activism_rounded,
+                    size: 18,
+                    color: canDonate ? Y4.ink : Colors.grey.shade500),
+                  label: Text(
+                    isCompleted ? 'Fully Funded ✓'
+                        : availablePoints <= 0 ? 'No Points Available'
+                        : 'Donate & Earn Reward',
+                    style: GoogleFonts.outfit(
+                      fontSize: 15, fontWeight: FontWeight.w700,
+                      color: canDonate ? Y4.ink : Colors.grey.shade500)),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: canDonate ? Y4.honey : Colors.grey.shade200,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                    elevation: canDonate ? 2 : 0,
+                    shadowColor: Y4.honeyDeep.withValues(alpha: 0.35),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+
+
+// ─────────────────────────────────────────────────────────────────────────────
 // BOTTOM NAV
 // ─────────────────────────────────────────────────────────────────────────────
 class _BottomNav extends StatelessWidget {
@@ -4247,10 +4601,10 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navItems = [
-      (Icons.home_rounded,                Icons.home_outlined,                AppLocalizations.of(context)?.navHome ?? 'Home',    _C.navHome),
-      (Icons.trending_up_rounded,         Icons.trending_up_outlined,         AppLocalizations.of(context)?.navJourney ?? 'Journey', _C.navRanking),
-      (Icons.mosque_rounded,              Icons.mosque_outlined,              AppLocalizations.of(context)?.navAkhirah ?? 'Akhirah', _C.navImpact),
-      (Icons.person_rounded,              Icons.person_outline_rounded,       AppLocalizations.of(context)?.navProfile ?? 'Profile', _C.navProfile),
+      (Icons.home_rounded,          Icons.home_outlined,          AppLocalizations.of(context)?.navHome ?? 'Home',    _C.navHome),
+      (Icons.volunteer_activism_rounded, Icons.volunteer_activism_outlined, 'Cause', _C.navRanking),
+      (Icons.trending_up_rounded,    Icons.trending_up_outlined,   AppLocalizations.of(context)?.navJourney ?? 'Journey', _C.navRanking),
+      (Icons.mosque_rounded,         Icons.mosque_outlined,        AppLocalizations.of(context)?.navAkhirah ?? 'Akhirah', _C.navImpact),
     ];
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Container(
@@ -4720,7 +5074,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                   Center(
                     child: Text(
                       _freshXp
-                          ? 'JazakAllah!  +${XpReward.validateCoins} pts'
+                          ? 'JazakAllah!  +${PointReward.validate} pts'
                           : AppLocalizations.of(context)?.alreadySealed ?? 'Already sealed today',
                       style: GoogleFonts.rajdhani(
                         fontSize: 14.5, fontWeight: FontWeight.w700,

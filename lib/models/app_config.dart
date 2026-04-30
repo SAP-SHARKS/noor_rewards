@@ -14,13 +14,9 @@ class AppConfig {
   int get coinsPerDhikr       => _int('coins_per_dhikr',        20);
   int get coinsPerTafsir10min => _int('coins_per_tafsir_10min', 50);
   int get coinsPerDua         => _int('coins_per_dua',          15);
-  int get xpPerAyah           => _int('xp_per_ayah',             5);
-  int get xpPerDhikr          => _int('xp_per_dhikr',           10);
-  int get xpPerTafsir10min    => _int('xp_per_tafsir_10min',    15);
-  int get xpDailyLogin        => _int('xp_daily_login',          5);
-  int get xpValidateCoins     => _int('xp_validate_coins',      20);
+  int get pointsDailyLogin    => _int('points_daily_login',      5);
+  int get pointsValidate      => _int('points_validate',        20);
   int get dailyFreeCap        => _int('daily_free_cap',        500);
-  int get weeklyXpCap         => _int('weekly_xp_cap',        2000);
 
   // ── Theme — Global ─────────────────────────────────────────────────────────
   // Y4 Honey + Sage Garden defaults. Admin can still override via app_config

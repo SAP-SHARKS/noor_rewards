@@ -91,7 +91,7 @@ class _DhikrSettings {
   bool darkMode = false;
   int arabicFontIdx = 0;  // index into _kArabicFonts
   bool showTranslation = false;
-  bool showTransliteration = true;
+  bool showTransliteration = false;
   bool showIllustration = true;   // show/hide the illustration area
 }
 
@@ -129,6 +129,51 @@ class _DhikrScreenState extends State<DhikrScreen> {
   int _setsCompleted = 0;
   bool _loading = true;
 
+  // ── Progress persistence helpers ──────────────────────────────────────────
+  // Key: dhikr_progress_{category}_{YYYY-MM-DD}
+  // Separate key per category so morning/evening never overlap.
+  // Auto-expires at midnight — next day the key doesn't exist and we start fresh.
+  String _progressKey(String cat) {
+    final today = DateTime.now();
+    final d = '${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}';
+    return 'dhikr_progress_${cat}_$d';
+  }
+
+  /// Persist current counts + completedIds to disk.
+  /// Call fire-and-forget (no await) so the UI never blocks.
+  Future<void> _saveProgress() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = _progressKey(_selectedCat);
+      final data = jsonEncode({
+        'counts': _counts,
+        'completed': _completedIds.toList(),
+      });
+      await prefs.setString(key, data);
+    } catch (_) {} // never crash on save failure
+  }
+
+  /// Load today's progress for [cat]. Clears stale keys from previous days.
+  Future<void> _loadProgress(SharedPreferences prefs, String cat) async {
+    final key = _progressKey(cat);
+    final raw = prefs.getString(key);
+    if (raw == null) return; // no data today — fresh session
+    try {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      final counts = (data['counts'] as Map<String, dynamic>?) ?? {};
+      final completed = (data['completed'] as List<dynamic>?) ?? [];
+      for (final e in counts.entries) {
+        _counts[e.key] = (e.value as num).toInt();
+      }
+      for (final id in completed) {
+        _completedIds.add(id as String);
+      }
+    } catch (_) {
+      // Corrupted data — silently discard
+      await prefs.remove(key);
+    }
+  }
+
   final _supabase = Supabase.instance.client;
   
   // Settings
@@ -152,12 +197,82 @@ class _DhikrScreenState extends State<DhikrScreen> {
   @override
   void dispose() {
     _confettiController.dispose();
+    // Check for incomplete session and schedule a nudge notification
+    _scheduleResumeNotificationIfNeeded();
     super.dispose();
   }
+
+  /// Schedules a local notification 30 min from now if the user left mid-session.
+  /// "Mid-session" = at least one azkar tapped but the set is not 100% complete.
+  void _scheduleResumeNotificationIfNeeded() {
+    // Only nudge for meaningful categories
+    if (_selectedCat == 'all' || _selectedCat == 'favorites') return;
+    // Has the user tapped anything?
+    final anyTapped = _counts.values.any((c) => c > 0);
+    if (!anyTapped) return;
+    // Is there still something left to do?
+    final allDone = _filtered.every((a) {
+      final target = _getTarget(a.id, a.recommendedCount);
+      final count  = _counts[a.id] ?? 0;
+      return count >= target || _completedIds.contains(a.id);
+    });
+    if (allDone) return; // nothing to remind about
+    // Schedule the nudge
+    _scheduleResumeNotification(_selectedCat);
+  }
+
+  static Future<void> _scheduleResumeNotification(String category) async {
+    // Store the incomplete-session flag so we can show an in-app nudge on next open.
+    // A separate FCM reminder is handled server-side via pg_cron (existing pipeline).
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('dhikr_incomplete_cat', category);
+      await prefs.setString('dhikr_incomplete_ts', DateTime.now().toIso8601String());
+    } catch (_) {}
+  }
+
+  /// Show in-app nudge if the user had an incomplete session last time.
+  Future<void> _checkAndShowResumeNudge() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final incompleteCat = prefs.getString('dhikr_incomplete_cat');
+      if (incompleteCat == null || !mounted) return;
+      // Clear the flag immediately so it only shows once
+      await prefs.remove('dhikr_incomplete_cat');
+      await prefs.remove('dhikr_incomplete_ts');
+      // Only nudge if the same category they left is what they opened now
+      if (incompleteCat != _selectedCat) return;
+      final catLabel = incompleteCat == 'morning' ? 'Morning'
+          : incompleteCat == 'evening'  ? 'Evening'
+          : incompleteCat == 'sleeping' ? 'Sleeping'
+          : 'Daily';
+      // Small delay so the list finishes loading first
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(children: [
+          const Text('🌟', style: TextStyle(fontSize: 18)),
+          const SizedBox(width: 10),
+          Expanded(child: Text(
+            'Continue your $catLabel Adhkar from where you left off.',
+            style: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: Colors.white),
+          )),
+        ]),
+        backgroundColor: SettingsService.instance.config.azkarAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        duration: const Duration(seconds: 4),
+      ));
+    } catch (_) {}
+  }
+
 
   Future<void> _initData() async {
     await _loadPrefs();
     await _loadDBData();
+    // Show resume nudge if user left an incomplete session last time
+    _checkAndShowResumeNudge();
     if (_isFirstTime && mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSettingsSheet();
@@ -172,7 +287,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 17.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
       _settings.showTranslation = prefs.getBool('dhikr_show_translation_v2') ?? false;
-      _settings.showTransliteration = prefs.getBool('dhikr_show_transliteration') ?? true;
+      _settings.showTransliteration = prefs.getBool('dhikr_show_transliteration') ?? false;
       _settings.showIllustration     = prefs.getBool('dhikr_show_illustration') ?? true;
       int loadFontIdx = prefs.getInt('dhikr_ar_font') ?? 0;
       if (loadFontIdx >= _kArabicFonts.length) loadFontIdx = 0;
@@ -186,6 +301,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
         if (val != null) _customTargets[key] = val;
       }
     });
+    // Restore today's tapping progress (separate per category, resets each new day)
+    await _loadProgress(prefs, _selectedCat);
     if (_isFirstTime) {
       await prefs.setBool('dhikr_first_time', false);
     }
@@ -486,6 +603,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
         }
       }
     });
+    // Persist after every tap — fire and forget
+    _saveProgress();
     return justCompleted;
   }
 
@@ -494,8 +613,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
   void _showPendingCompletions() {
     if (_pendingCompletions.isEmpty || !mounted) return;
     final count = _pendingCompletions.length;
-    final totalXp = _pendingCompletions.fold<int>(
-        0, (sum, c) => sum + XpReward.dhikrXp(c.id));
+    final totalPts = _pendingCompletions.fold<int>(
+        0, (sum, c) => sum + PointReward.dhikr);
     // Drain the queue
     _pendingCompletions.clear();
     // Small delay so the navigation animation completes first
@@ -505,8 +624,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         context: context,
         isDark: _settings.darkMode,
         setsCount: count,
-        noorPoints: count * 20,
-        pts: totalXp,
+        pts: totalPts,
       );
     });
   }
@@ -519,12 +637,13 @@ class _DhikrScreenState extends State<DhikrScreen> {
     try {
       final coins = SettingsService.instance.config.coinsPerDhikr;
       await Supabase.instance.client.rpc('earn_dhikr_points', params: {
-        'p_type': dhikrId, 
+        'p_type': dhikrId,
         'p_count': target,
         'p_coins': coins
       });
 
-      await XpService.instance.earnDhikrXp(dhikrId);
+      // Single points path — coins are the points
+      await XpService.instance.earnPoints(coins);
       // Update live notification counter
       NoorLiveNotificationService.instance.recordDhikr();
       // Record dhikr streak (idempotent — safe to call multiple times)
@@ -546,19 +665,20 @@ class _DhikrScreenState extends State<DhikrScreen> {
         _completedIds.add(dhikrId);
         _counts[dhikrId] = 0;
       });
+      // Persist the updated completion state
+      _saveProgress();
     } catch (_) {
       // Silent — never show raw DB errors to user
     }
   }
 
   void _showCompleteDialog(String dhikrId, int target, {int pagesCount = 1}) {
-    final xpEarned = XpReward.dhikrXp(dhikrId);
+    final ptsEarned = PointReward.dhikr * pagesCount;
     _showCelebrationDialog(
       context: context,
       isDark: _settings.darkMode,
       setsCount: pagesCount,
-      noorPoints: pagesCount * 20,
-      pts: xpEarned * pagesCount,
+      pts: ptsEarned,
       countsLabel: pagesCount == 1 ? '$target counts' : null,
     );
   }
@@ -568,7 +688,6 @@ class _DhikrScreenState extends State<DhikrScreen> {
     required BuildContext context,
     required bool isDark,
     required int setsCount,
-    required int noorPoints,
     required int pts,
     String? countsLabel,
   }) {
@@ -665,21 +784,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         isDark: isDark,
                       ),
                       Container(width: 1, height: 28, color: isDark ? Colors.white12 : const Color(0xFFE5E7EB)),
-                      // Noor Points
+                      // Points earned
                       _statChip(
                         icon: Icons.auto_awesome_rounded,
-                        value: '+$noorPoints',
-                        label: 'Noor',
-                        color: kGold,
-                        isDark: isDark,
-                      ),
-                      Container(width: 1, height: 28, color: isDark ? Colors.white12 : const Color(0xFFE5E7EB)),
-                      // Points
-                      _statChip(
-                        icon: Icons.bolt_rounded,
                         value: '+$pts',
                         label: 'Points',
-                        color: const Color(0xFF8B5CF6),
+                        color: kGold,
                         isDark: isDark,
                       ),
                     ],
@@ -1220,10 +1330,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
               final sel = cat.id == _selectedCat;
               final catAccent = catColor(cat.id);
               return GestureDetector(
-                onTap: () => setState(() {
-                  _selectedCat = cat.id;
-                  _applyFilter();
-                }),
+                onTap: () async {
+                  setState(() {
+                    _selectedCat = cat.id;
+                    _applyFilter();
+                  });
+                  // Load this category's today-progress from disk
+                  final prefs = await SharedPreferences.getInstance();
+                  if (mounted) await _loadProgress(prefs, cat.id);
+                  if (mounted) setState(() {});
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 0),
@@ -2848,7 +2964,7 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_7' || id == 'evening_7') return 'repelling';
   if (id == 'morning_8' || id == 'evening_8') return 'baqarah_burden';
   // Ikhlas, Falaq, Nas
-  if (id == 'morning_9' || id == 'evening_9') return 'dawn_dusk';
+  if (id == 'morning_9' || id == 'evening_9') return 'quran_complete';
   if (id == 'morning_10' || id == 'evening_10') return 'falaq_shield';
   if (id == 'morning_11' || id == 'evening_11') return 'dua_hands';
   // Sovereignty (morning) & Fitrah (morning) — sunrise scene
@@ -3032,6 +3148,7 @@ Widget _buildIllustration({
   return switch (ill) {
     'dua_scene'  => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DuaScene(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'shield'     => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _ProtectionShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
+    'quran_complete' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _QuranComplete(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'dawn_dusk'   => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DawnDusk(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'falaq_shield' => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _AlFalaqShield(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
     'dua_hands'    => w(({required progress, required isComplete, required tapCount, required pointsToday}) => _DuaHands(progress: progress, isComplete: isComplete, tapCount: tapCount, pointsToday: pointsToday)),
@@ -3137,6 +3254,7 @@ String _pickTagline(String id) {
   final ill = _pickIllustration(id);
   return switch (ill) {
     'shield'     => 'Guarded by Allah until morning comes',
+    'quran_complete' => 'Reciting 3x equals reading the entire Quran — Bukhari & Muslim',
     'dawn_dusk'  => 'Recite 3x at dawn & dusk — suffice you against all harm',
     'falaq_shield' => 'Recite 3x at dawn & dusk — it will suffice you in all respects',
     'dua_hands'    => 'Refuge from the whisperer — in the Lord of Mankind',
@@ -3186,6 +3304,7 @@ Color _pickTaglineColor(String id, bool isDark) {
   // Dark mode:  bright vivid tones (light enough on dark bg)
   return switch (ill) {
     'shield'     => isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8), // royal blue
+    'quran_complete' => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46), // deep teal-green
     'dawn_dusk'  => isDark ? const Color(0xFFFBBF24) : const Color(0xFF92400E), // amber
     'falaq_shield' => isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95), // deep violet
     'dua_hands'    => isDark ? const Color(0xFFFBBF24) : const Color(0xFF78350F), // warm amber
@@ -13108,7 +13227,7 @@ class _OceanOfForgivenessPainter extends CustomPainter {
   final double wavePhase;
 
   static const _oceanColor = Color(0xFF0EA5E9);  // sky blue — ocean
-  static const _foamColor = Color(0xFFE5E7EB);   // pale grey — foam (sins)
+  static const _foamColor = Color(0xFFB0B8C8);   // darker blue-grey — foam (sins)
   static const _clearColor = Color(0xFF06B6D4);   // cyan — purified water
 
   const _OceanOfForgivenessPainter({
@@ -13256,13 +13375,13 @@ class _OceanOfForgivenessPainter extends CustomPainter {
         // Foam still on water — dark blobs (sins) bobbing
         final bobY = baseY + math.sin(wavePhase * math.pi * 2 + i * 0.8) * 4;
         final bobX = fx + math.sin(wavePhase * math.pi * 2 + i * 1.5) * 3;
-        final foamAlpha = 0.30 + math.sin(wavePhase * math.pi * 2 + i * 1.3) * 0.08;
+        final foamAlpha = 0.72 + math.sin(wavePhase * math.pi * 2 + i * 1.3) * 0.08;
 
         // Dark smudge (sin)
         canvas.drawCircle(
           Offset(bobX, bobY), blobSize + 2,
           Paint()
-            ..color = const Color(0xFF475569).withValues(alpha: foamAlpha * 0.25)
+            ..color = const Color(0xFF2D3748).withValues(alpha: foamAlpha * 0.55)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
         );
         canvas.drawCircle(
@@ -16312,6 +16431,283 @@ class _BurdenDotPainter extends CustomPainter {
 // Dawn & Dusk â€” Surah Al-Ikhlas 3x recited at dawn and dusk (morning_9/evening_9)
 // Split screen: left half = dawn (warm sunrise), right half = dusk (cool twilight)
 // =============================================================================
+// =============================================================================
+// Quran Complete — Surah Al-Ikhlas (morning_9 / evening_9)
+// Text-based animation: open Quran book + animated ×3 counter + stars.
+// Virtue: reciting Al-Ikhlas 3× = reading the whole Quran (Bukhari & Muslim)
+// =============================================================================
+class _QuranComplete extends StatefulWidget {
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _QuranComplete({required this.progress, required this.isComplete, required this.tapCount, this.pointsToday = 0});
+  @override State<_QuranComplete> createState() => _QuranCompleteState();
+}
+
+class _QuranCompleteState extends State<_QuranComplete> with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _countCtrl;
+  late Animation<double> _pulse, _grow, _star, _punch, _shock;
+  double _prevProgress = 0.0;
+  int _tapSnapshot = 0;
+  final _rng = math.Random(42);
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
+    _growCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _starCtrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1900))..repeat(reverse: true);
+    _pCtrl     = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    _punchCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _shockCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _countCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _pulse = CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut);
+    _grow  = CurvedAnimation(parent: _growCtrl,  curve: Curves.easeOut);
+    _star  = CurvedAnimation(parent: _starCtrl,  curve: Curves.easeInOut);
+    _punch = CurvedAnimation(parent: _punchCtrl, curve: Curves.easeOutBack);
+    _shock = CurvedAnimation(parent: _shockCtrl, curve: Curves.easeOut);
+    _growCtrl.animateTo(widget.progress);
+  }
+
+  @override
+  void didUpdateWidget(_QuranComplete old) {
+    super.didUpdateWidget(old);
+    if ((widget.progress - _prevProgress).abs() > 0.001) {
+      _growCtrl.animateTo(widget.progress, duration: const Duration(milliseconds: 400));
+      _prevProgress = widget.progress;
+    }
+    if (widget.tapCount != _tapSnapshot) {
+      _tapSnapshot = widget.tapCount;
+      _pCtrl  ..reset()..forward();
+      _punchCtrl..reset()..forward();
+      _shockCtrl..reset()..forward();
+      _countCtrl..reset()..forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose(); _growCtrl.dispose(); _starCtrl.dispose();
+    _pCtrl.dispose(); _punchCtrl.dispose(); _shockCtrl.dispose(); _countCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _growCtrl, _starCtrl, _pCtrl, _punchCtrl, _shockCtrl, _countCtrl]),
+      builder: (_, __) => SizedBox(
+        height: 260,
+        child: CustomPaint(
+          painter: _QuranCompletePainter(
+            progress: _grow.value,
+            pulse: _pulse.value,
+            star: _star.value,
+            particles: _pCtrl.value,
+            punch: _punch.value,
+            shock: _shock.value,
+            countPhase: _countCtrl.value,
+            tapCount: widget.tapCount,
+            isComplete: widget.isComplete,
+            rng: _rng,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuranCompletePainter extends CustomPainter {
+  final double progress, pulse, star, particles, punch, shock, countPhase;
+  final int tapCount;
+  final bool isComplete;
+  final math.Random rng;
+  const _QuranCompletePainter({
+    required this.progress, required this.pulse, required this.star,
+    required this.particles, required this.punch, required this.shock,
+    required this.countPhase, required this.tapCount,
+    required this.isComplete, required this.rng,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final cx = w / 2, cy = h / 2;
+
+    // Background — deep indigo → dark teal
+    final bgPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topLeft, end: Alignment.bottomRight,
+        colors: [Color(0xFF0F0C2E), Color(0xFF0A2A2A), Color(0xFF0D4F3F)],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
+
+
+    // Progress ring
+    final arcRadius = 66.0 + 5.0 * pulse;
+    final trackPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..color = Colors.white.withValues(alpha: 0.08);
+    canvas.drawCircle(Offset(cx, cy - 12), arcRadius, trackPaint);
+    if (progress > 0.01) {
+      final arcPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round
+        ..shader = SweepGradient(
+          startAngle: -math.pi / 2,
+          endAngle: -math.pi / 2 + 2 * math.pi * progress,
+          colors: const [Color(0xFF34D399), Color(0xFF059669)],
+        ).createShader(Rect.fromCircle(center: Offset(cx, cy - 12), radius: arcRadius));
+      canvas.drawArc(
+        Rect.fromCircle(center: Offset(cx, cy - 12), radius: arcRadius),
+        -math.pi / 2, 2 * math.pi * progress, false, arcPaint,
+      );
+    }
+
+    // Glow behind book
+    canvas.drawCircle(
+      Offset(cx, cy - 12),
+      (45.0 + 18.0 * pulse) * (0.5 + 0.5 * progress),
+      Paint()
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 28)
+        ..color = const Color(0xFF34D399).withValues(alpha: 0.16 + 0.12 * pulse),
+    );
+
+    // Open Quran book
+    final punchScale = 1.0 + 0.10 * (1.0 - punch) * punch * 4;
+    canvas.save();
+    canvas.translate(cx, cy - 12);
+    canvas.scale(punchScale);
+
+    const bW = 58.0, bH = 48.0;
+    final bTop = -bH / 2;
+
+    // Left page
+    canvas.drawRRect(
+      RRect.fromRectAndCorners(
+        Rect.fromLTWH(-bW / 2, bTop, bW / 2 - 1.5, bH),
+        topLeft: const Radius.circular(4), bottomLeft: const Radius.circular(4),
+      ),
+      Paint()..shader = LinearGradient(
+        begin: Alignment.topLeft, end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFF0D9488).withValues(alpha: 0.88),
+          const Color(0xFF065F46).withValues(alpha: 0.88),
+        ],
+      ).createShader(Rect.fromLTWH(-bW / 2, bTop, bW / 2, bH)),
+    );
+
+    // Right page
+    canvas.drawRRect(
+      RRect.fromRectAndCorners(
+        Rect.fromLTWH(1.5, bTop, bW / 2 - 1.5, bH),
+        topRight: const Radius.circular(4), bottomRight: const Radius.circular(4),
+      ),
+      Paint()..shader = LinearGradient(
+        begin: Alignment.topRight, end: Alignment.bottomLeft,
+        colors: [
+          const Color(0xFF14B8A6).withValues(alpha: 0.88),
+          const Color(0xFF0D9488).withValues(alpha: 0.88),
+        ],
+      ).createShader(Rect.fromLTWH(1.5, bTop, bW / 2, bH)),
+    );
+
+    // Spine
+    canvas.drawRect(
+      Rect.fromLTWH(-1.5, bTop, 3, bH),
+      Paint()..color = Colors.white.withValues(alpha: 0.6),
+    );
+
+    // Page lines
+    final linePaint = Paint()..color = Colors.white.withValues(alpha: 0.22)..strokeWidth = 0.8;
+    for (int i = 1; i <= 4; i++) {
+      final ly = bTop + bH / 5 * i;
+      canvas.drawLine(Offset(-bW / 2 + 4, ly), Offset(-3, ly), linePaint);
+      canvas.drawLine(Offset(3, ly), Offset(bW / 2 - 4, ly), linePaint);
+    }
+    canvas.restore();
+
+    // Shock ring on tap
+    if (shock > 0.001) {
+      canvas.drawCircle(
+        Offset(cx, cy - 12),
+        arcRadius * 0.7 + arcRadius * 0.7 * shock,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5 * (1 - shock)
+          ..color = const Color(0xFF34D399).withValues(alpha: (1 - shock) * 0.55),
+      );
+    }
+
+
+    // ×N counter badge (top-right of ring)
+    final count = tapCount.clamp(0, 99);
+    final countAlpha = (countPhase > 0.0 ? 1.0 - (countPhase - 0.5).clamp(0.0, 0.5) * 2 : 0.85);
+    final countScale = 1.0 + 0.28 * math.sin(countPhase * math.pi);
+    canvas.save();
+    canvas.translate(cx + arcRadius * 0.74, cy - 12 - arcRadius * 0.74);
+    canvas.scale(countScale);
+    final cTp = TextPainter(
+      text: TextSpan(
+        text: '×$count',
+        style: GoogleFonts.outfit(
+          fontSize: 18, fontWeight: FontWeight.w900,
+          color: const Color(0xFF34D399).withValues(alpha: countAlpha),
+          letterSpacing: -0.5,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    cTp.paint(canvas, Offset(-cTp.width / 2, -cTp.height / 2));
+    canvas.restore();
+
+    // "×3 = reading the whole Quran" label
+    if (progress > 0.05) {
+      final eqA = ((progress - 0.05) / 0.3).clamp(0.0, 1.0);
+      final eqTp = TextPainter(
+        text: TextSpan(children: [
+          TextSpan(
+            text: '×3  ',
+            style: GoogleFonts.outfit(
+              fontSize: 11, fontWeight: FontWeight.w900,
+              color: const Color(0xFF34D399).withValues(alpha: eqA),
+            ),
+          ),
+          TextSpan(
+            text: '= reading the whole Quran',
+            style: GoogleFonts.outfit(
+              fontSize: 11, fontWeight: FontWeight.w600,
+              color: Colors.white.withValues(alpha: eqA * 0.78),
+            ),
+          ),
+        ]),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: w - 40);
+      eqTp.paint(canvas, Offset((w - eqTp.width) / 2, cy + arcRadius + 6));
+    }
+
+    // Completion glow + Arabic label
+    if (isComplete) {
+      canvas.drawCircle(
+        Offset(cx, cy - 12),
+        arcRadius + 18,
+        Paint()
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18)
+          ..color = const Color(0xFF34D399).withValues(alpha: 0.32),
+      );
+
+    }
+  }
+
+  @override
+  bool shouldRepaint(_QuranCompletePainter o) =>
+    o.progress != progress || o.pulse != pulse || o.star != star ||
+    o.particles != particles || o.punch != punch || o.shock != shock ||
+    o.countPhase != countPhase || o.tapCount != tapCount || o.isComplete != isComplete;
+}
 class _DawnDusk extends StatefulWidget {
   final double progress;
   final bool isComplete;
@@ -16496,10 +16892,10 @@ class _DawnDuskPainter extends CustomPainter {
     // â”€â”€ CENTRE TEXT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (progress > 0.10) {
       final txtAlpha = ((progress - 0.10) / 0.40).clamp(0.0, 1.0);
-      // "Suffices against all harm" text
+      // Al-Ikhlas key virtue — equals reading the whole Quran
       final tp = TextPainter(
         text: TextSpan(
-          text: 'Suffice against all harm',
+          text: 'Equals the whole Quran × 3',
           style: GoogleFonts.outfit(
             fontSize: 12.0,
             fontWeight: FontWeight.w700,

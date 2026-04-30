@@ -1,8 +1,10 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -28,11 +30,24 @@ import 'utils/asset_helper.dart';
 import 'core/env/env.dart';
 import 'theme/y4_theme.dart';
 
+/// Pre-parsed Lottie composition — loaded in [main] before [runApp] so the
+/// splash screen can start animating on the very first Flutter frame.
+LottieComposition? flowerComposition;
+
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
-    
+
+    // ── Pre-parse the Flower Lottie BEFORE runApp ────────────────────────────
+    // This runs during the same startup window as Supabase/Firebase init, so
+    // the composition is ready by the time the splash screen builds its first
+    // frame — zero blank-screen delay.
+    try {
+      final bytes = await rootBundle.load('assets/lottie/Flower.json');
+      flowerComposition = await LottieComposition.fromByteData(bytes);
+    } catch (_) {} // silent — FlowerSplashScreen falls back gracefully
+
     // Initialize QF environment variables
     await Env.init();
     
