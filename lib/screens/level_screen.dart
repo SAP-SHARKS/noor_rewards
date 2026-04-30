@@ -228,7 +228,7 @@ class _ProgressTabState extends State<_ProgressTab> {
     final info     = widget.levelInfo;
     final color    = info != null ? _tierColor(info.title) : _kPurple;
     final lvProgress = info?.progress(widget.pts) ?? 0.0;
-    final toNext   = info?.xpToNextLevel(widget.pts) ?? 0;
+    final toNext   = info?.ptsToNextLevel(widget.pts) ?? 0;
 
     return SingleChildScrollView(
       padding: EdgeInsets.zero,
@@ -476,13 +476,13 @@ class _ProgressTabState extends State<_ProgressTab> {
                 style: GoogleFonts.outfit(
                     fontSize: 18, fontWeight: FontWeight.w800, color: _kText)),
             const SizedBox(height: 14),
-            _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${XpReward.ayahRead} pts'),
-            _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${XpReward.juzComplete} pts'),
+            _XpRow(NoorIcon.book(size:20), 'Read 1 Ayah',           '+${PointReward.ayahRead} pts'),
+            _XpRow(NoorIcon.books(size:20), 'Complete 1 Juz',        '+${PointReward.juzComplete} pts'),
             if (_showAllXpGuide) ...[
-              _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+8 pts'),
-              _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+15 pts'),
-              _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${XpReward.dailyLogin} pts'),
-              _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${XpReward.validateCoins} pts'),
+              _XpRow(NoorIcon.beads(size:20), 'SubhanAllah x33',       '+${PointReward.dhikr} pts'),
+              _XpRow(NoorIcon.beads(size:20), 'La ilaha illallah x100','+${PointReward.dhikr} pts'),
+              _XpRow(NoorIcon.sunrise(size:20), 'Daily Login',          '+${PointReward.dailyLogin} pts'),
+              _XpRow(NoorIcon.sparkles(size:20),'Validate & Support',   '+${PointReward.validate} pts'),
             ],
             GestureDetector(
               onTap: () => setState(() => _showAllXpGuide = !_showAllXpGuide),
@@ -940,7 +940,7 @@ class _BadgeCard extends StatelessWidget {
                   : null,
             ),
             child: Text(
-              earned ? '+${badge.xpReward} pts ✓' : '+${badge.xpReward} pts',
+              earned ? '+${badge.ptsReward} pts ✓' : '+${badge.ptsReward} pts',
               style: GoogleFonts.rajdhani(
                   fontSize: 12, fontWeight: FontWeight.w800,
                   color: earned ? accent : const Color(0xFF8E8E93),
@@ -1077,7 +1077,7 @@ class _ChallengeCard extends StatelessWidget {
     final title       = challenge['title']         as String? ?? '';
     final description = challenge['description']   as String? ?? '';
     final emoji       = challenge['emoji']         as String? ?? '⭐';
-    final xpReward    = (challenge['xp_reward']    as num?)?.toInt() ?? 0;
+    final ptsReward   = (challenge['xp_reward']    as num?)?.toInt() ?? 0;
     final coinReward  = (challenge['coin_reward']  as num?)?.toInt() ?? 0;
     final multiplier  = (challenge['xp_multiplier'] as num?)?.toDouble() ?? 1.0;
     final endDate     = challenge['end_date']      as String? ?? '';
@@ -1137,7 +1137,7 @@ class _ChallengeCard extends StatelessWidget {
         ],
         const SizedBox(height: 12),
         Wrap(spacing: 8, children: [
-          if (xpReward > 0) _RewardChip('+$xpReward pts', cardColor),
+          if (ptsReward > 0) _RewardChip('+$ptsReward pts', cardColor),
           if (coinReward > 0) _RewardChip('+$coinReward Noor', _kGold),
           if (multiplier > 1.0)
             _RewardChip('${multiplier.toStringAsFixed(0)}× pts Boost', Colors.orange),

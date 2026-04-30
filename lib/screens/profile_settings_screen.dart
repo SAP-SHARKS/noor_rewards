@@ -1,4 +1,4 @@
-﻿// lib/screens/profile_settings_screen.dart
+// lib/screens/profile_settings_screen.dart
 //
 // ProfileSettingsScreen — full profile & settings page
 // • Display name editable
@@ -306,8 +306,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         ],
       ),
     );
-    if (confirm == true) await QfAuthService.performSignOut(_supabase);
-
+    if (confirm == true) {
+      await QfAuthService.performSignOut(_supabase);
+      // Pop all pushed routes so AuthGate surfaces and shows the login screen.
+      if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+    }
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────

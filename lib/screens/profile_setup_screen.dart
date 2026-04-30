@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -308,6 +308,8 @@ class _InputField extends StatelessWidget {
           hintStyle: GoogleFonts.outfit(fontSize: 15, color: Colors.white30),
           prefixIcon: Icon(icon, color: ctrl.text.isNotEmpty ? accent : Colors.white30, size: 22),
           border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.transparent,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
       ),

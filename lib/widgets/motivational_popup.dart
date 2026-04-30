@@ -171,7 +171,7 @@ Future<void> showMotivationalPopup(
 // ─────────────────────────────────────────────────────────────────────────────
 Future<void> showValidationRewardPopup(
   BuildContext context, {
-  required int xpEarned,
+  required int pointsEarned,
   required int bonusPoints,
   VoidCallback? onContinue,
 }) {
@@ -190,7 +190,7 @@ Future<void> showValidationRewardPopup(
       );
     },
     pageBuilder: (ctx, _, __) => _ValidationRewardBody(
-      xpEarned: xpEarned,
+      pointsEarned: pointsEarned,
       bonusPoints: bonusPoints,
       onContinue: onContinue,
     ),
@@ -201,10 +201,10 @@ Future<void> showValidationRewardPopup(
 // _ValidationRewardBody — celebratory popup with points & bonus breakdown
 // ─────────────────────────────────────────────────────────────────────────────
 class _ValidationRewardBody extends StatefulWidget {
-  final int xpEarned, bonusPoints;
+  final int pointsEarned, bonusPoints;
   final VoidCallback? onContinue;
   const _ValidationRewardBody({
-    required this.xpEarned,
+    required this.pointsEarned,
     required this.bonusPoints,
     this.onContinue,
   });
@@ -231,7 +231,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
 
   @override
   Widget build(BuildContext context) {
-    final total  = widget.xpEarned + widget.bonusPoints;
+    final total  = widget.pointsEarned + widget.bonusPoints;
 
     return Material(
       color: Colors.transparent,
@@ -309,7 +309,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                       child: Column(children: [
-                        _RewardRow('⚡ Validation Points', '+${widget.xpEarned} pts', Y4.honeyDeep),
+                        _RewardRow('⚡ Validation Points', '+${widget.pointsEarned} pts', Y4.honeyDeep),
                         if (widget.bonusPoints > 0) ...[
                           const SizedBox(height: 10),
                           _RewardRow('🔥 Streak Bonus', '+${widget.bonusPoints} pts', Y4.honeyDeep),

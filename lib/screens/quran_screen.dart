@@ -473,7 +473,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         }
         if ((row['last_read_date'] ?? '') == today) {
           _ayahsToday  = row['ayahs_read_today'] ?? 0;
-          _pointsToday = _ayahsToday * XpReward.ayahRead;
+          _pointsToday = _ayahsToday * PointReward.ayahRead;
         }
       });
     } catch (_) {}
@@ -626,7 +626,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
       _surah = nextSurah; _ayah = nextAyah; _wbwWords = [];
       if (earnRewards) {
-        _ayahsToday++; _pointsToday += XpReward.ayahRead;
+        _ayahsToday++; _pointsToday += PointReward.ayahRead;
       }
     });
     // Prefetch new surah's WBW data when crossing surah boundary
@@ -649,8 +649,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (earnRewards) {
         final coins = SettingsService.instance.config.coinsPerAyah;
         await _sb.rpc('earn_quran_points', params: {'p_surah': s, 'p_ayah': a, 'p_coins': coins});
-        // Award points for reading one ayah
-        await XpService.instance.earnXp(XpReward.ayahRead);
+        // Single points path — coins are the points
+        await XpService.instance.earnPoints(coins);
         // Update live notification counter
         NoorLiveNotificationService.instance.recordAyah();
         // Record quran streak (idempotent — only counts once per day)
@@ -1003,7 +1003,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (_pageSeconds % 30 == 0) {
         _pageXpEarned++;
         _pointsToday += 1;
-        XpService.instance.earnXp(1);
+        XpService.instance.earnPoints(1);
       }
     });
   }
