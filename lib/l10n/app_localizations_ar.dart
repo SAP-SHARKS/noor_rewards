@@ -343,7 +343,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reciteMore => 'اقرأ المزيد.';
 
   @override
-  String get helpRealLives => 'ساعد حياة حقيقية.';
+  String get helpRealLives => 'ساعد أرواحاً حقيقية.';
 
   @override
   String get yourNoorPointsFundProjects =>
@@ -365,7 +365,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get apply => 'تطبيق';
 
   @override
-  String get plantGoodDeeds => 'ازرع الأعمال الصالحة';
+  String get plantGoodDeeds => 'ازرع أعمالاً صالحة';
 
   @override
   String get youDonated => 'لقد تبرعت';
@@ -1669,4 +1669,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get youIndicator => '(أنت)';
+
+  @override
+  String get greetingPrefix => 'السلام عليكم،';
+
+  @override
+  String get fundProjectsText => 'نقاط نور الخاصة بك تمول هذه المشاريع';
+
+  @override
+  String activeCount(String count) {
+    return '$count نشط';
+  }
+
+  @override
+  String get seeDetailsForMoreProjects => 'انظر التفاصيل لمزيد من المشاريع →';
 }

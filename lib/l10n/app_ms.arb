@@ -107,15 +107,15 @@
   "noCategoriesAvailable": "Tiada kategori tersedia",
   "nextPts": "Seterusnya",
   "prev": "Sebelum",
-  "reciteMore": "BACA LEBIH BANYAK.",
-  "helpRealLives": "BANTU KEHIDUPAN SEBENAR.",
+  "reciteMore": "RECITE MORE.",
+  "helpRealLives": "HELP REAL LIVES.",
   "yourNoorPointsFundProjects": "Mata Noor anda membiayai projek-projek ini",
   "youBothEarnPoints": "Anda berdua memperoleh 500 Mata Noor!",
   "reward": "Ganjaran",
   "haveInviteCode": "Ada kod jemputan?",
   "enterCode": "Masukkan kod…",
   "apply": "Guna",
-  "plantGoodDeeds": "TANAM AMAL KEBAIKAN",
+  "plantGoodDeeds": "PLANT GOOD DEEDS",
   "youDonated": "Anda telah menderma",
   "seeDetailsForMore": "Lihat Butiran untuk lagi Projek →",
   "pts": "mata",
@@ -563,5 +563,16 @@
       }
     }
   },
-  "youIndicator": "(you)"
+  "youIndicator": "(you)",
+  "greetingPrefix": "Assalamu alaikum,",
+  "fundProjectsText": "Your Noor Points fund these projects",
+  "activeCount": "{count} active",
+  "@activeCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "seeDetailsForMoreProjects": "See Details for more Projects →"
 }

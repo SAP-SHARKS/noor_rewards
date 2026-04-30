@@ -587,7 +587,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 // ——————————————————————————————————————————————————————————————————————————
 class CommunityImpactPage extends StatefulWidget {
   final String? scrollToProjectId;
-  const CommunityImpactPage({super.key, this.scrollToProjectId});
+  final bool isTab;
+  const CommunityImpactPage({super.key, this.scrollToProjectId, this.isTab = false});
   @override State<CommunityImpactPage> createState() => _CommunityImpactPageState();
 }
 
@@ -805,7 +806,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       body: _loading
           ? const Center(child: NoorInlineLoader())
           : ListView.separated(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(bottom: widget.isTab ? 100 : 0),
               itemCount: _projects.length,
               separatorBuilder: (_, __) => const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
               itemBuilder: (ctx, i) {
