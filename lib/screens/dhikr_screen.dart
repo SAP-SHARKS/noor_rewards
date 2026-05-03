@@ -1677,7 +1677,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
           foregroundColor: Colors.white,
-          toolbarHeight: 92,
+          toolbarHeight: 72,
           flexibleSpace: Builder(
             builder: (context) {
               int ci = safeIndex;
@@ -1724,102 +1724,67 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final catId = azkar.category;
               final catObj = widget.parentState._categories.cast<_Category?>().firstWhere((c) => c?.id == catId, orElse: () => null);
               final String catLabel = catObj?.label ?? 'Dhikr & Dua';
-              final timing = _DhikrScreenState._categoryTiming(context, catId);
               final isMorning = catId == 'morning';
               final readCount = widget.parentState._getTarget(azkar.id, azkar.recommendedCount);
               final String readLabel = readCount == 1
                   ? 'Read once'
                   : 'Read $readCount times';
-              return Column(mainAxisSize: MainAxisSize.min, children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(catLabel, style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white)),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFFFFFF), Color(0xFFE8F0FE)],
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.18),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text('${ci + 1} / ${widget.azkars.length}',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          color: isMorning ? const Color(0xFF0C4A3E) : const Color(0xFF1E1B4B),
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (timing != null) ...[
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(catLabel, style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white)),
                   const SizedBox(height: 6),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 5, height: 5,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isMorning ? const Color(0xFFFFD700) : const Color(0xFF93C5FD),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFFFFFF), Color(0xFFE8F0FE)],
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.18),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(timing,
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white.withValues(alpha: 0.85),
-                          letterSpacing: 0.2,
+                        child: Text('${ci + 1} / ${widget.azkars.length}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: isMorning ? const Color(0xFF0C4A3E) : const Color(0xFF1E1B4B),
+                            letterSpacing: 0.3,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        width: 5, height: 5,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isMorning ? const Color(0xFFFFD700) : const Color(0xFF93C5FD),
+                          color: Colors.white.withValues(alpha: 0.20),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.35),
+                            width: 0.5,
+                          ),
+                        ),
+                        child: Text(readLabel,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.3,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ],
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD86B), Color(0xFFF5A623)],
-                    ),
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFF5A623).withValues(alpha: 0.45),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(readLabel,
-                    style: GoogleFonts.outfit(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w800,
-                      color: const Color(0xFF3B1F00),
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                ),
-              ]);
+              );
             }
           ),
           centerTitle: true,
