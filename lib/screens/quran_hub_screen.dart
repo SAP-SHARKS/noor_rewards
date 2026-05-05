@@ -212,67 +212,101 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.85, minChildSize: 0.5, maxChildSize: 0.95,
-        builder: (_, ctrl) => Container(
-          decoration: const BoxDecoration(
-            color: _kWhite,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          child: Column(children: [
-            const SizedBox(height: 12),
-            Container(width: 40, height: 4, decoration: BoxDecoration(
-                color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(AppLocalizations.of(context)?.chooseSurah ?? 'Choose Surah', style: GoogleFonts.outfit(fontSize: 20,
-                  fontWeight: FontWeight.w800, color: _kText)),
-            ),
-            const SizedBox(height: 16),
-            Expanded(child: ListView.builder(
-              controller: ctrl,
-              itemCount: 114,
-              itemBuilder: (_, i) {
-                final n = i + 1;
-                final name = _surahNames[n];
-                final len  = _surahLengths[n];
-                final sel  = n == _selSurah;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() { _selSurah = n; _selAyah = 1; });
-                    Navigator.pop(context);
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    color: sel ? _kTeal.withValues(alpha: 0.07) : Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                    child: Row(children: [
-                      Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(
-                          color: sel ? _kTeal : _kTealL,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(child: Text('$n',
-                            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800,
-                                color: sel ? Colors.white : _kTeal))),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(name, style: GoogleFonts.outfit(fontSize: 15,
-                            fontWeight: FontWeight.w700, color: _kText)),
-                        Text('$len verses', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-                      ])),
-                      if (sel) Icon(Icons.check_circle_rounded, color: _kTeal, size: 22),
-                    ]),
+      builder: (_) {
+        String searchQuery = '';
+        return StatefulBuilder(
+          builder: (context, setStateSheet) {
+            final filteredSurahs = List.generate(114, (i) => i + 1).where((n) {
+              if (searchQuery.isEmpty) return true;
+              final name = _surahNames[n].toLowerCase();
+              return name.contains(searchQuery.toLowerCase()) || n.toString() == searchQuery;
+            }).toList();
+
+            return DraggableScrollableSheet(
+              initialChildSize: 0.85, minChildSize: 0.5, maxChildSize: 0.95,
+              builder: (_, ctrl) => Container(
+                decoration: const BoxDecoration(
+                  color: _kWhite,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+                child: Column(children: [
+                  const SizedBox(height: 12),
+                  Container(width: 40, height: 4, decoration: BoxDecoration(
+                      color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(AppLocalizations.of(context)?.chooseSurah ?? 'Choose Surah', style: GoogleFonts.outfit(fontSize: 20,
+                        fontWeight: FontWeight.w800, color: _kText)),
                   ),
-                );
-              },
-            )),
-          ]),
-        ),
-      ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: TextField(
+                        onChanged: (val) => setStateSheet(() => searchQuery = val),
+                        style: GoogleFonts.outfit(fontSize: 15, color: _kText),
+                        decoration: InputDecoration(
+                          hintText: 'Search Surah...',
+                          hintStyle: GoogleFonts.outfit(color: Colors.grey.shade500),
+                          border: InputBorder.none,
+                          icon: Icon(Icons.search_rounded, color: Colors.grey.shade400, size: 20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(child: ListView.builder(
+                    controller: ctrl,
+                    itemCount: filteredSurahs.length,
+                    itemBuilder: (_, i) {
+                      final n = filteredSurahs[i];
+                      final name = _surahNames[n];
+                      final len  = _surahLengths[n];
+                      final sel  = n == _selSurah;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() { _selSurah = n; _selAyah = 1; });
+                          Navigator.pop(context);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          color: sel ? _kTeal.withValues(alpha: 0.07) : Colors.transparent,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          child: Row(children: [
+                            Container(
+                              width: 40, height: 40,
+                              decoration: BoxDecoration(
+                                color: sel ? _kTeal : _kTealL,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(child: Text('$n',
+                                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800,
+                                      color: sel ? Colors.white : _kTeal))),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text(name, style: GoogleFonts.outfit(fontSize: 15,
+                                  fontWeight: FontWeight.w700, color: _kText)),
+                              Text('$len verses', style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+                            ])),
+                            if (sel) Icon(Icons.check_circle_rounded, color: _kTeal, size: 22),
+                          ]),
+                        ),
+                      );
+                    },
+                  )),
+                ]),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

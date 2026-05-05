@@ -896,7 +896,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             const Text('🤲', style: TextStyle(fontSize: 12)),
                             const SizedBox(width: 5),
                             Flexible(
-                              child: Text('My contribution: ${_fmt(myPts)} pts  (${(myPct * 100).toStringAsFixed(1)}%)',
+                              child: Text('My contribution: ${_fmt(myPts)} pts',
                                   maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.outfit(
                                       fontSize: 11, fontWeight: FontWeight.w700,

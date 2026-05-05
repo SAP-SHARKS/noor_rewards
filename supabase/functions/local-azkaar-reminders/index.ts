@@ -44,7 +44,11 @@ serve(async (_req: Request) => {
         hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '-1', 10);
       }
 
-      tokensMap.set(row.user_id, row.token);
+      if (!tokensMap.has(row.user_id)) {
+        tokensMap.set(row.user_id, []);
+      }
+      tokensMap.get(row.user_id)!.push(row.token);
+
       if (hour === 8)  morningUsers.push(row.user_id);
       if (hour === 17) eveningUsers.push(row.user_id);
     }
@@ -121,39 +125,45 @@ serve(async (_req: Request) => {
 
     const sendNotification = async (
       userId: string,
-      token: string,
+      tokens: string[],
       title: string,
       body: string,
       logType: string,
     ) => {
-      const res = await fetch(
-        `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: {
-              token,
-              notification: { title, body },
-              data: { route: logType === 'morning_azkaar' ? 'morning' : 'evening' },
-              android: { priority: 'high', notification: { sound: 'default' } },
-              apns: { payload: { aps: { sound: 'default' } } },
+      let anySuccess = false;
+      for (const token of tokens) {
+        const res = await fetch(
+          `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
             },
-          }),
-        }
-      );
-      const resJson = await res.json();
-      results.push({ userId, type: logType, success: res.ok, result: resJson });
+            body: JSON.stringify({
+              message: {
+                token,
+                notification: { title, body },
+                data: { route: logType === 'morning_azkaar' ? 'morning' : 'evening' },
+                android: { priority: 'high', notification: { sound: 'default' } },
+                apns: { payload: { aps: { sound: 'default' } } },
+              },
+            }),
+          }
+        );
+        const resJson = await res.json();
+        results.push({ userId, type: logType, success: res.ok, result: resJson });
+        if (res.ok) anySuccess = true;
+      }
 
-      if (res.ok) {
-        await supabase.from('notification_log').insert({
-          user_id: userId,
-          notification_type: logType,
-          sent_at: now.toISOString(),
-        }).catch(() => {});
+      if (anySuccess) {
+        try {
+          await supabase.from('notification_log').insert({
+            user_id: userId,
+            notification_type: logType,
+            sent_at: now.toISOString(),
+          });
+        } catch (_) {}
       }
     };
 
