@@ -1697,4 +1697,44 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get seeDetailsForMoreProjects =>
       'مزید منصوبوں کے لیے تفصیلات دیکھیں →';
+
+  @override
+  String get notificationsSubtitle => 'انعامات اور سنگ میل پر نظر رکھیں';
+
+  @override
+  String get markAllAsRead => 'سب کو پڑھا ہوا نشان زد کریں';
+
+  @override
+  String get clearAll => 'سب صاف کریں';
+
+  @override
+  String get notificationsOn => 'اطلاعات آن ہیں';
+
+  @override
+  String get notificationsOff => 'اطلاعات آف ہیں';
+
+  @override
+  String get allCaughtUp => 'سب دیکھ لیا';
+
+  @override
+  String get whenYouEarnRewards =>
+      'جب آپ انعامات کمائیں گے، سلسلہ بنائیں گے، یا بیج حاصل کریں گے،\nیہ یہاں ظاہر ہوگا۔';
+
+  @override
+  String get justNow => 'ابھی';
+
+  @override
+  String mAgo(String delta) {
+    return '${delta}m پہلے';
+  }
+
+  @override
+  String hAgo(String delta) {
+    return '${delta}h پہلے';
+  }
+
+  @override
+  String dAgo(String delta) {
+    return '${delta}d پہلے';
+  }
 }
