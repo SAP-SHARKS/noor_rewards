@@ -3247,6 +3247,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See Details for more Projects →'**
   String get seeDetailsForMoreProjects;
+
+  /// No description provided for @notificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of rewards & milestones'**
+  String get notificationsSubtitle;
+
+  /// No description provided for @markAllAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllAsRead;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get clearAll;
+
+  /// No description provided for @notificationsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications on'**
+  String get notificationsOn;
+
+  /// No description provided for @notificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications off'**
+  String get notificationsOff;
+
+  /// No description provided for @allCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'All caught up'**
+  String get allCaughtUp;
+
+  /// No description provided for @whenYouEarnRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'When you earn rewards, hit a streak, or unlock a badge,\nit\'ll show up here.'**
+  String get whenYouEarnRewards;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @mAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{delta}m ago'**
+  String mAgo(String delta);
+
+  /// No description provided for @hAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{delta}h ago'**
+  String hAgo(String delta);
+
+  /// No description provided for @dAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{delta}d ago'**
+  String dAgo(String delta);
 }
 
 class _AppLocalizationsDelegate

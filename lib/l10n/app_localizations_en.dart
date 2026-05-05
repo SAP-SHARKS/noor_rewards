@@ -1694,4 +1694,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seeDetailsForMoreProjects => 'See Details for more Projects →';
+
+  @override
+  String get notificationsSubtitle => 'Stay on top of rewards & milestones';
+
+  @override
+  String get markAllAsRead => 'Mark all as read';
+
+  @override
+  String get clearAll => 'Clear all';
+
+  @override
+  String get notificationsOn => 'Notifications on';
+
+  @override
+  String get notificationsOff => 'Notifications off';
+
+  @override
+  String get allCaughtUp => 'All caught up';
+
+  @override
+  String get whenYouEarnRewards =>
+      'When you earn rewards, hit a streak, or unlock a badge,\nit\'ll show up here.';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String mAgo(String delta) {
+    return '${delta}m ago';
+  }
+
+  @override
+  String hAgo(String delta) {
+    return '${delta}h ago';
+  }
+
+  @override
+  String dAgo(String delta) {
+    return '${delta}d ago';
+  }
 }

@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../services/notification_center.dart';
 import '../theme/y4_theme.dart';
+import '../l10n/app_localizations.dart';
 
 /// Show the notifications inbox as a draggable bottom sheet.
 Future<void> showNotificationsSheet(BuildContext context) async {
@@ -84,7 +85,8 @@ class _NotificationsSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Notifications',
+                              AppLocalizations.of(context)?.notifications ??
+                                  'Notifications',
                               style: Y4.display(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w500,
@@ -95,7 +97,10 @@ class _NotificationsSheet extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Stay on top of rewards & milestones',
+                              AppLocalizations.of(
+                                    context,
+                                  )?.notificationsSubtitle ??
+                                  'Stay on top of rewards & milestones',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: Y4.inkSoft,
@@ -138,7 +143,10 @@ class _NotificationsSheet extends StatelessWidget {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                    'Mark all as read',
+                                                    AppLocalizations.of(
+                                                          context,
+                                                        )?.markAllAsRead ??
+                                                        'Mark all as read',
                                                     style: GoogleFonts.outfit(
                                                       color: Y4.ink,
                                                       fontSize: 13,
@@ -159,7 +167,10 @@ class _NotificationsSheet extends StatelessWidget {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                    'Clear all',
+                                                    AppLocalizations.of(
+                                                          context,
+                                                        )?.clearAll ??
+                                                        'Clear all',
                                                     style: GoogleFonts.outfit(
                                                       color: Y4.ink,
                                                       fontSize: 13,
@@ -218,8 +229,14 @@ class _NotificationsSheet extends StatelessWidget {
                                   children: [
                                     Text(
                                       on
-                                          ? 'Notifications on'
-                                          : 'Notifications off',
+                                          ? (AppLocalizations.of(
+                                                context,
+                                              )?.notificationsOn ??
+                                              'Notifications on')
+                                          : (AppLocalizations.of(
+                                                context,
+                                              )?.notificationsOff ??
+                                              'Notifications off'),
                                       style: GoogleFonts.outfit(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
@@ -228,8 +245,14 @@ class _NotificationsSheet extends StatelessWidget {
                                     ),
                                     Text(
                                       on
-                                          ? 'You\'ll be notified about rewards, streaks & milestones.'
-                                          : 'Inbox keeps existing items but no new ones will arrive.',
+                                          ? (AppLocalizations.of(
+                                                context,
+                                              )?.notifOnDesc ??
+                                              'You\'ll be notified about rewards, streaks & milestones.')
+                                          : (AppLocalizations.of(
+                                                context,
+                                              )?.notifOffDesc ??
+                                              'Inbox keeps existing items but no new ones will arrive.'),
                                       style: GoogleFonts.outfit(
                                         fontSize: 11,
                                         color: Y4.inkSoft,
@@ -322,7 +345,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             Text(
-              'All caught up',
+              AppLocalizations.of(context)?.allCaughtUp ?? 'All caught up',
               style: Y4.display(
                 fontSize: 22,
                 fontWeight: FontWeight.w500,
@@ -332,7 +355,8 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'When you earn rewards, hit a streak, or unlock a badge,\nit\'ll show up here.',
+              AppLocalizations.of(context)?.whenYouEarnRewards ??
+                  'When you earn rewards, hit a streak, or unlock a badge,\nit\'ll show up here.',
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
                 fontSize: 12,
@@ -452,6 +476,7 @@ class _NotificationTile extends StatelessWidget {
                         Expanded(
                           child: Text(
                             n.title,
+                            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(n.title) ? TextDirection.rtl : TextDirection.ltr,
                             style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight:
@@ -477,6 +502,7 @@ class _NotificationTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       n.body,
+                      textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(n.body) ? TextDirection.rtl : TextDirection.ltr,
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: Y4.inkSoft,
@@ -488,7 +514,7 @@ class _NotificationTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      _relTime(n.createdAt),
+                      _relTime(context, n.createdAt),
                       style: GoogleFonts.outfit(
                         fontSize: 10,
                         color: Y4.muted,
@@ -515,12 +541,17 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  String _relTime(DateTime t) {
+  String _relTime(BuildContext context, DateTime t) {
+    final l10n = AppLocalizations.of(context);
     final delta = DateTime.now().difference(t);
-    if (delta.inSeconds < 45) return 'Just now';
-    if (delta.inMinutes < 60) return '${delta.inMinutes}m ago';
-    if (delta.inHours < 24) return '${delta.inHours}h ago';
-    if (delta.inDays < 7) return '${delta.inDays}d ago';
+    if (delta.inSeconds < 45) return l10n?.justNow ?? 'Just now';
+    if (delta.inMinutes < 60)
+      return l10n?.mAgo(delta.inMinutes.toString()) ??
+          '${delta.inMinutes}m ago';
+    if (delta.inHours < 24)
+      return l10n?.hAgo(delta.inHours.toString()) ?? '${delta.inHours}h ago';
+    if (delta.inDays < 7)
+      return l10n?.dAgo(delta.inDays.toString()) ?? '${delta.inDays}d ago';
     return '${t.day}/${t.month}/${t.year}';
   }
 }

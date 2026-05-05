@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'quran_hub_screen.dart';
 import 'dhikr_hub_screen.dart';
 import 'tafsir_hub_screen.dart';
@@ -970,13 +971,148 @@ class _HomeTabState extends State<_HomeTab> {
                             ],
                           ),
                         ),
+                        // Language Selector
+                        Container(
+                          width: 38,
+                          height: 38,
+                          margin: const EdgeInsetsDirectional.only(end: 8),
+                          decoration: BoxDecoration(
+                            color: Y4.surface,
+                            border: Border.all(color: Y4.border),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: PopupMenuButton<String>(
+                            icon: const Icon(
+                              Icons.language_rounded,
+                              size: 20,
+                              color: Y4.ink,
+                            ),
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            color: Y4.surface,
+                            elevation: 4,
+                            initialValue:
+                                context.read<SettingsService>().localeCode ??
+                                'system',
+                            onSelected: (val) {
+                              final code = val == 'system' ? null : val;
+                              context.read<SettingsService>().setLocaleOverride(
+                                code,
+                              );
+                            },
+                            itemBuilder:
+                                (ctx) => [
+                                  PopupMenuItem(
+                                    value: 'system',
+                                    child: Text(
+                                      'System Default',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'en',
+                                    child: Text(
+                                      'English',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'ar',
+                                    child: Text(
+                                      'العربية',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'ur',
+                                    child: Text(
+                                      'اردو',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'tr',
+                                    child: Text(
+                                      'Türkçe',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'ms',
+                                    child: Text(
+                                      'Bahasa Melayu',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'id',
+                                    child: Text(
+                                      'Bahasa Indonesia',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'ru',
+                                    child: Text(
+                                      'Русский',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'fr',
+                                    child: Text(
+                                      'Français',
+                                      style: GoogleFonts.outfit(
+                                        color: Y4.ink,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                          ),
+                        ),
                         // Bell button — opens NotificationSheet
                         GestureDetector(
                           onTap: () => showNotificationsSheet(context),
                           child: Container(
                             width: 38,
                             height: 38,
-                            margin: const EdgeInsets.only(right: 8),
+                            margin: const EdgeInsetsDirectional.only(end: 8),
                             decoration: BoxDecoration(
                               color: Y4.surface,
                               border: Border.all(color: Y4.border),
@@ -999,9 +1135,9 @@ class _HomeTabState extends State<_HomeTab> {
                                           color: Y4.ink,
                                         ),
                                         if (unreadCount > 0)
-                                          Positioned(
+                                          PositionedDirectional(
                                             top: 6,
-                                            right: 6,
+                                            end: 6,
                                             child: Container(
                                               padding: const EdgeInsets.all(3),
                                               decoration: const BoxDecoration(
@@ -1072,9 +1208,9 @@ class _HomeTabState extends State<_HomeTab> {
                                         )
                                         : null,
                               ),
-                              Positioned(
+                              PositionedDirectional(
                                 bottom: -5,
-                                right: -5,
+                                end: -5,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 5,

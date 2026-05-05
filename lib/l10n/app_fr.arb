@@ -574,5 +574,37 @@
       }
     }
   },
-  "seeDetailsForMoreProjects": "Voir les détails pour plus de projets →"
+  "seeDetailsForMoreProjects": "Voir les détails pour plus de projets →",
+  "notificationsSubtitle": "Stay on top of rewards & milestones",
+  "markAllAsRead": "Mark all as read",
+  "clearAll": "Clear all",
+  "notificationsOn": "Notifications on",
+  "notificationsOff": "Notifications off",
+  "allCaughtUp": "All caught up",
+  "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\nit'll show up here.",
+  "justNow": "Just now",
+  "mAgo": "{delta}m ago",
+  "@mAgo": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "hAgo": "{delta}h ago",
+  "@hAgo": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "dAgo": "{delta}d ago",
+  "@dAgo": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  }
 }
