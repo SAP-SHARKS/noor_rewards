@@ -42,8 +42,8 @@ class QuranApiService {
   Future<Map<String, String>> _headers() async {
     final token = await _bearerToken();
     return {
-      'Accept':        'application/json',
-      'Content-Type':  'application/json',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
@@ -55,14 +55,16 @@ class QuranApiService {
     // If token is fresh, reuse it
     if (_accessToken != null &&
         _tokenExpiry != null &&
-        DateTime.now().isBefore(_tokenExpiry!.subtract(const Duration(seconds: 60)))) {
+        DateTime.now().isBefore(
+          _tokenExpiry!.subtract(const Duration(seconds: 60)),
+        )) {
       return _accessToken;
     }
 
     // Detect placeholder / unconfigured credentials — skip auth fetch
     String clientId, clientSecret;
     try {
-      clientId     = QuranApiConfig.clientId;
+      clientId = QuranApiConfig.clientId;
       clientSecret = QuranApiConfig.clientSecret;
     } catch (_) {
       // .env not yet filled in — run without auth
@@ -73,13 +75,12 @@ class QuranApiService {
     // Quran Foundation requires credentials in the Authorization header
     // (base64-encoded client_id:client_secret), NOT in the request body.
     try {
-      final credentials =
-          base64Encode('$clientId:$clientSecret'.codeUnits);
+      final credentials = base64Encode('$clientId:$clientSecret'.codeUnits);
       final res = await http
           .post(
             Uri.parse(QuranApiConfig.tokenEndpoint),
             headers: {
-              'Content-Type':  'application/x-www-form-urlencoded',
+              'Content-Type': 'application/x-www-form-urlencoded',
               'Authorization': 'Basic $credentials',
             },
             body: 'grant_type=client_credentials',
@@ -87,10 +88,10 @@ class QuranApiService {
           .timeout(const Duration(seconds: 10));
 
       if (res.statusCode == 200) {
-        final js       = jsonDecode(res.body);
-        _accessToken   = js['access_token'] as String?;
+        final js = jsonDecode(res.body);
+        _accessToken = js['access_token'] as String?;
         final expiresIn = (js['expires_in'] as num?)?.toInt() ?? 3600;
-        _tokenExpiry   = DateTime.now().add(Duration(seconds: expiresIn));
+        _tokenExpiry = DateTime.now().add(Duration(seconds: expiresIn));
         return _accessToken;
       }
     } catch (_) {
@@ -106,7 +107,7 @@ class QuranApiService {
   }
 
   // ── User Authentication (Bookmarks / Profile) ─────────────────────────────
-  static const String _kUserApiBase  = 'https://apis.quran.foundation';
+  static const String _kUserApiBase = 'https://apis.quran.foundation';
   // Use config clientId or default if missing
   String get _kClientId => QuranApiConfig.clientId;
 
@@ -122,9 +123,9 @@ class QuranApiService {
     }
     return {
       'Authorization': 'Bearer $token',
-      'x-auth-token' : token,
-      'x-client-id'  : _kClientId,
-      'Content-Type' : 'application/json',
+      'x-auth-token': token,
+      'x-client-id': _kClientId,
+      'Content-Type': 'application/json',
     };
   }
 
@@ -138,10 +139,12 @@ class QuranApiService {
     final headers = await _userAuthHeaders();
     if (headers == null) return null;
     try {
-      final response = await http.get(
-        Uri.parse('$_kUserApiBase/auth/v1/users/profile'),
-        headers: headers,
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse('$_kUserApiBase/auth/v1/users/profile'),
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
@@ -156,10 +159,9 @@ class QuranApiService {
     final headers = await _userAuthHeaders();
     if (headers == null) return [];
     try {
-      final response = await http.get(
-        Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
-        headers: headers,
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(Uri.parse('$_kUserApiBase/auth/v1/bookmarks'), headers: headers)
+          .timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data is List) return data.cast<Map<String, dynamic>>();
@@ -182,16 +184,18 @@ class QuranApiService {
     if (headers == null) return false;
 
     try {
-      final response = await http.post(
-        Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
-        headers: headers,
-        body: jsonEncode({
-          'key'        : surahNumber,
-          'type'       : 'ayah',
-          'verseNumber': ayatNumber,
-          'mushaf'     : 1,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
+            headers: headers,
+            body: jsonEncode({
+              'key': surahNumber,
+              'type': 'ayah',
+              'verseNumber': ayatNumber,
+              'mushaf': 1,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       debugPrint('QF_API: AddBookmark error: $e');
@@ -207,10 +211,14 @@ class QuranApiService {
     final headers = await _userAuthHeaders();
     if (headers == null) return false;
     try {
-      final response = await http.delete(
-        Uri.parse('$_kUserApiBase/auth/v1/bookmarks/$surahNumber:$ayatNumber'),
-        headers: headers,
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .delete(
+            Uri.parse(
+              '$_kUserApiBase/auth/v1/bookmarks/$surahNumber:$ayatNumber',
+            ),
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
       debugPrint('QF_API: RemoveBookmark error: $e');
@@ -227,15 +235,17 @@ class QuranApiService {
     final headers = await _userAuthHeaders();
     if (headers == null) return false;
     try {
-      final response = await http.post(
-        Uri.parse('$_kUserApiBase/auth/v1/reading_sessions'),
-        headers: headers,
-        body: jsonEncode({
-          'chapterNumber': surahNumber,
-          'verseNumber'  : ayatNumber,
-          'duration'     : durationSeconds,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse('$_kUserApiBase/auth/v1/reading_sessions'),
+            headers: headers,
+            body: jsonEncode({
+              'chapterNumber': surahNumber,
+              'verseNumber': ayatNumber,
+              'duration': durationSeconds,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       debugPrint('QF_API: ReadingSession error: $e');
@@ -253,7 +263,7 @@ class QuranApiService {
     }
 
     int uploaded = 0;
-    int failed   = 0;
+    int failed = 0;
 
     try {
       final raw = prefs.getString('quran_bookmarks_local') ?? '[]';
@@ -269,22 +279,26 @@ class QuranApiService {
       }
 
       for (final item in localList) {
-        final map   = item as Map<String, dynamic>;
+        final map = item as Map<String, dynamic>;
         final surah = map['surahNumber'] as int? ?? 0;
-        final ayat  = map['ayatNumber']  as int? ?? 0;
+        final ayat = map['ayatNumber'] as int? ?? 0;
         if (surah <= 0 || ayat <= 0) continue;
 
-        final success = await addBookmark(surahNumber: surah, ayatNumber : ayat);
-        if (success) uploaded++; else failed++;
+        final success = await addBookmark(surahNumber: surah, ayatNumber: ayat);
+        if (success)
+          uploaded++;
+        else
+          failed++;
       }
 
       return SyncResult(
-        success : true,
+        success: true,
         uploaded: uploaded,
-        failed  : failed,
-        message : uploaded > 0
-            ? 'Synced $uploaded bookmarks to Quran.com'
-            : 'Sync failed — check connection',
+        failed: failed,
+        message:
+            uploaded > 0
+                ? 'Synced $uploaded bookmarks to Quran.com'
+                : 'Sync failed — check connection',
       );
     } catch (e) {
       return SyncResult(success: false, message: 'Sync failed: $e');
@@ -311,19 +325,23 @@ class QuranApiService {
     final res = await http
         .get(url, headers: await _headers())
         .timeout(const Duration(seconds: 12));
-    if (res.statusCode == 401) { invalidateToken(); return []; }
+    if (res.statusCode == 401) {
+      invalidateToken();
+      return [];
+    }
     if (res.statusCode != 200) return [];
     final verses = (jsonDecode(res.body)['verses'] as List? ?? []);
-    final mapped = verses.map<Map<String, dynamic>>((v) {
-      final key = (v['verse_key'] as String).split(':');
-      return {
-        'surah':  int.tryParse(key[0]) ?? 1,
-        'ayah':   int.tryParse(key[1]) ?? 1,
-        'arabic': v['text_uthmani'] ?? '',
-        'arabic_indopak': v['text_indopak'] ?? v['text_uthmani'] ?? '',
-      };
-    }).toList();
-    
+    final mapped =
+        verses.map<Map<String, dynamic>>((v) {
+          final key = (v['verse_key'] as String).split(':');
+          return {
+            'surah': int.tryParse(key[0]) ?? 1,
+            'ayah': int.tryParse(key[1]) ?? 1,
+            'arabic': v['text_uthmani'] ?? '',
+            'arabic_indopak': v['text_indopak'] ?? v['text_uthmani'] ?? '',
+          };
+        }).toList();
+
     box.put(cacheKey, jsonEncode(mapped));
     return mapped;
   }
@@ -348,19 +366,25 @@ class QuranApiService {
     final res = await http
         .get(url, headers: await _headers())
         .timeout(const Duration(seconds: 10));
-    if (res.statusCode == 401) { invalidateToken(); return []; }
+    if (res.statusCode == 401) {
+      invalidateToken();
+      return [];
+    }
     if (res.statusCode != 200) return [];
     final rawWords = (jsonDecode(res.body)['verse']?['words'] as List? ?? []);
-    final mapped = rawWords
-        .where((w) => w['char_type_name'] != 'end')
-        .map<Map<String, dynamic>>((w) => {
-              'arabic':          w['text_uthmani'] ?? w['text'] ?? '',
-              'arabic_indopak':  w['text_indopak'] ?? w['text_uthmani'] ?? '',
-              'transliteration': w['transliteration']?['text'] ?? '',
-              'translation':     w['translation']?['text'] ?? '',
-            })
-        .toList();
-        
+    final mapped =
+        rawWords
+            .where((w) => w['char_type_name'] != 'end')
+            .map<Map<String, dynamic>>(
+              (w) => {
+                'arabic': w['text_uthmani'] ?? w['text'] ?? '',
+                'arabic_indopak': w['text_indopak'] ?? w['text_uthmani'] ?? '',
+                'transliteration': w['transliteration']?['text'] ?? '',
+                'translation': w['translation']?['text'] ?? '',
+              },
+            )
+            .toList();
+
     box.put(cacheKey, jsonEncode(mapped));
     return mapped;
   }
@@ -371,10 +395,12 @@ class QuranApiService {
     final cacheKey = 'wordsBySurah_$surah';
     if (box.containsKey(cacheKey)) {
       final cached = jsonDecode(box.get(cacheKey)) as Map<String, dynamic>;
-      return cached.map((k, v) => MapEntry(
-        int.parse(k),
-        (v as List).map((e) => Map<String, dynamic>.from(e)).toList(),
-      ));
+      return cached.map(
+        (k, v) => MapEntry(
+          int.parse(k),
+          (v as List).map((e) => Map<String, dynamic>.from(e)).toList(),
+        ),
+      );
     }
 
     final result = <int, List<Map<String, dynamic>>>{};
@@ -392,7 +418,10 @@ class QuranApiService {
       final res = await http
           .get(url, headers: await _headers())
           .timeout(const Duration(seconds: 20));
-      if (res.statusCode == 401) { invalidateToken(); break; }
+      if (res.statusCode == 401) {
+        invalidateToken();
+        break;
+      }
       if (res.statusCode != 200) break;
       final body = jsonDecode(res.body);
       final verses = body['verses'] as List? ?? [];
@@ -400,22 +429,29 @@ class QuranApiService {
       for (final v in verses) {
         final ayahNum = v['verse_number'] as int? ?? 0;
         final rawWords = (v['words'] as List? ?? []);
-        result[ayahNum] = rawWords
-            .where((w) => w['char_type_name'] != 'end')
-            .map<Map<String, dynamic>>((w) => {
-                  'arabic':          w['text_uthmani'] ?? w['text'] ?? '',
-                  'arabic_indopak':  w['text_indopak'] ?? w['text_uthmani'] ?? '',
-                  'transliteration': w['transliteration']?['text'] ?? '',
-                  'translation':     w['translation']?['text'] ?? '',
-                })
-            .toList();
+        result[ayahNum] =
+            rawWords
+                .where((w) => w['char_type_name'] != 'end')
+                .map<Map<String, dynamic>>(
+                  (w) => {
+                    'arabic': w['text_uthmani'] ?? w['text'] ?? '',
+                    'arabic_indopak':
+                        w['text_indopak'] ?? w['text_uthmani'] ?? '',
+                    'transliteration': w['transliteration']?['text'] ?? '',
+                    'translation': w['translation']?['text'] ?? '',
+                  },
+                )
+                .toList();
       }
       final totalPages = body['pagination']?['total_pages'] as int? ?? 1;
       if (page >= totalPages) break;
       page++;
     }
-    
-    box.put(cacheKey, jsonEncode(result.map((k, v) => MapEntry(k.toString(), v))));
+
+    box.put(
+      cacheKey,
+      jsonEncode(result.map((k, v) => MapEntry(k.toString(), v))),
+    );
     return result;
   }
 
@@ -433,10 +469,12 @@ class QuranApiService {
 
     final url = Uri.parse(
       '${QuranApiConfig.apiBase}/quran/verses/$scriptSlug'
-      '?chapter_number=$surah'
+      '?chapter_number=$surah',
     );
     try {
-      final res = await http.get(url, headers: await _headers()).timeout(const Duration(seconds: 15));
+      final res = await http
+          .get(url, headers: await _headers())
+          .timeout(const Duration(seconds: 15));
       if (res.statusCode == 401) invalidateToken();
       if (res.statusCode == 200) {
         final verses = jsonDecode(res.body)['verses'] as List? ?? [];
@@ -447,7 +485,10 @@ class QuranApiService {
           map[ayah] = v['text_$scriptSlug'] as String? ?? '';
         }
         if (map.isNotEmpty) {
-          box.put(cacheKey, jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))));
+          box.put(
+            cacheKey,
+            jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))),
+          );
           return map;
         }
       }
@@ -465,7 +506,7 @@ class QuranApiService {
   /// is available AND the edition is not in Supabase.
   Future<Map<int, String>> surahTranslation({
     required int surah,
-    required String edition,       // e.g. 'en.sahih', 'ur.jalandhry'
+    required String edition, // e.g. 'en.sahih', 'ur.jalandhry'
     required int surahLength,
     required int startVerseId,
   }) async {
@@ -494,10 +535,15 @@ class QuranApiService {
           for (final item in items) {
             final vk = (item['verse_key'] as String).split(':');
             final an = int.tryParse(vk.length > 1 ? vk[1] : '0') ?? 0;
-            map[startVerseId + an - 1] = _stripHtml(item['text'] as String? ?? '');
+            map[startVerseId + an - 1] = _stripHtml(
+              item['text'] as String? ?? '',
+            );
           }
           if (map.isNotEmpty) {
-            box.put(cacheKey, jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))));
+            box.put(
+              cacheKey,
+              jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))),
+            );
             return map;
           }
         }
@@ -506,8 +552,7 @@ class QuranApiService {
 
     // Fallback → alquran.cloud (kept only for editions not on quran.com)
     try {
-      final apiUrl =
-          'https://api.alquran.cloud/v1/surah/$surah/$edition';
+      final apiUrl = 'https://api.alquran.cloud/v1/surah/$surah/$edition';
       final res = await http
           .get(Uri.parse(apiUrl), headers: const {'Accept': 'application/json'})
           .timeout(const Duration(seconds: 15));
@@ -519,7 +564,10 @@ class QuranApiService {
           map[startVerseId + num - 1] = a['text'] as String? ?? '';
         }
         if (map.isNotEmpty) {
-          box.put(cacheKey, jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))));
+          box.put(
+            cacheKey,
+            jsonEncode(map.map((k, v) => MapEntry(k.toString(), v))),
+          );
           return map;
         }
       }
@@ -534,25 +582,25 @@ class QuranApiService {
     // Mapping: alquran.cloud slug → quran.com integer translation resource ID
     // Full list: https://api.quran.com/api/v4/resources/translations
     const map = {
-      'en.sahih':       131,  // Saheeh International
-      'en.yusufali':    37,   // Yusuf Ali
-      'en.pickthall':   38,   // Pickthall
-      'en.shakir':      21,   // Shakir
+      'en.sahih': 131, // Saheeh International
+      'en.yusufali': 37, // Yusuf Ali
+      'en.pickthall': 38, // Pickthall
+      'en.shakir': 21, // Shakir
       'en.transliteration': 57,
-      'ur.jalandhry':   54,   // Jalandhry (Urdu)
-      'ur.maududi':     97,   // Maududi (Urdu)
-      'ur.ahmedali':    158,  // Ahmed Ali (Urdu)
-      'fr.hamidullah':  31,   // Hamidullah (French)
-      'fr.montada':     136,  // Montada (French)
-      'de.aburida':     27,   // Abu Rida (German)
-      'tr.diyanet':     77,   // Diyanet (Turkish)
-      'tr.golpinarli':  82,   // Golpinarli (Turkish)
-      'es.asad':        83,   // Muhammad Asad (Spanish)
-      'id.indonesian':  33,   // Indonesian Ministry
-      'ms.basmeih':     39,   // Basmeih (Malay)
-      'bn.bengali':     161,  // Muhiuddin Khan (Bengali)
-      'ru.kuliev':      79,   // Kuliev (Russian)
-      'zh.jian':        109,  // Ma Jian (Chinese)
+      'ur.jalandhry': 54, // Jalandhry (Urdu)
+      'ur.maududi': 97, // Maududi (Urdu)
+      'ur.ahmedali': 158, // Ahmed Ali (Urdu)
+      'fr.hamidullah': 31, // Hamidullah (French)
+      'fr.montada': 136, // Montada (French)
+      'de.aburida': 27, // Abu Rida (German)
+      'tr.diyanet': 77, // Diyanet (Turkish)
+      'tr.golpinarli': 82, // Golpinarli (Turkish)
+      'es.asad': 83, // Muhammad Asad (Spanish)
+      'id.indonesian': 33, // Indonesian Ministry
+      'ms.basmeih': 39, // Basmeih (Malay)
+      'bn.bengali': 161, // Muhiuddin Khan (Bengali)
+      'ru.kuliev': 79, // Kuliev (Russian)
+      'zh.jian': 109, // Ma Jian (Chinese)
     };
     return map[edition];
   }
@@ -563,15 +611,15 @@ class QuranApiService {
 }
 
 class SyncResult {
-  final bool   success;
+  final bool success;
   final String message;
-  final int    uploaded;
-  final int    failed;
+  final int uploaded;
+  final int failed;
 
   SyncResult({
     required this.success,
     required this.message,
     this.uploaded = 0,
-    this.failed   = 0,
+    this.failed = 0,
   });
 }

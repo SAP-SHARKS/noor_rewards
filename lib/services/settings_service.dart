@@ -5,6 +5,7 @@
 //  3) Notifies listeners (via ChangeNotifier) so Provider rebuilds the tree.
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/app_config.dart';
 
@@ -17,9 +18,11 @@ class SettingsService extends ChangeNotifier {
   AppConfig _config = AppConfig.empty();
   bool _loaded = false;
   RealtimeChannel? _channel;
+  String? _localeCode;
 
   AppConfig get config => _config;
-  bool      get loaded => _loaded;
+  bool get loaded => _loaded;
+  String? get localeCode => _localeCode;
 
   // ── Supabase client ───────────────────────────────────────────────────────
   SupabaseClient get _sb => Supabase.instance.client;
@@ -28,8 +31,23 @@ class SettingsService extends ChangeNotifier {
 
   /// Call once from main() before runApp.  Subscribes to Realtime.
   Future<void> initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    _localeCode = prefs.getString('user_locale_override');
+
     await _fetch();
     _subscribeRealtime();
+  }
+
+  /// Change the user's preferred language locally.
+  Future<void> setLocaleOverride(String? code) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (code == null) {
+      await prefs.remove('user_locale_override');
+    } else {
+      await prefs.setString('user_locale_override', code);
+    }
+    _localeCode = code;
+    notifyListeners();
   }
 
   /// Update a single key (called from Admin panel). Persists to DB.
@@ -38,27 +56,36 @@ class SettingsService extends ChangeNotifier {
     _config = _config.copyWith(key, value);
     notifyListeners();
 
-    await _sb.from('app_config').update({
-      'value':      value,
-      'updated_at': DateTime.now().toIso8601String(),
-      if (adminEmail != null) 'updated_by': adminEmail,
-    }).eq('key', key);
+    await _sb
+        .from('app_config')
+        .update({
+          'value': value,
+          'updated_at': DateTime.now().toIso8601String(),
+          if (adminEmail != null) 'updated_by': adminEmail,
+        })
+        .eq('key', key);
     // Realtime will broadcast the official change back; we stay in sync.
   }
 
   /// Update multiple keys in one shot.
-  Future<void> updateKeys(Map<String, String> updates, {String? adminEmail}) async {
+  Future<void> updateKeys(
+    Map<String, String> updates, {
+    String? adminEmail,
+  }) async {
     final raw = Map<String, String>.from(_config.raw);
     raw.addAll(updates);
     _config = AppConfig(raw);
     notifyListeners();
 
     for (final entry in updates.entries) {
-      await _sb.from('app_config').update({
-        'value':      entry.value,
-        'updated_at': DateTime.now().toIso8601String(),
-        if (adminEmail != null) 'updated_by': adminEmail,
-      }).eq('key', entry.key);
+      await _sb
+          .from('app_config')
+          .update({
+            'value': entry.value,
+            'updated_at': DateTime.now().toIso8601String(),
+            if (adminEmail != null) 'updated_by': adminEmail,
+          })
+          .eq('key', entry.key);
     }
   }
 
@@ -66,9 +93,7 @@ class SettingsService extends ChangeNotifier {
 
   Future<void> _fetch() async {
     try {
-      final rows = await _sb
-          .from('app_config')
-          .select('key, value');
+      final rows = await _sb.from('app_config').select('key, value');
       final map = <String, String>{};
       for (final row in rows) {
         map[row['key'] as String] = row['value'] as String;
@@ -83,19 +108,20 @@ class SettingsService extends ChangeNotifier {
 
   void _subscribeRealtime() {
     _channel?.unsubscribe();
-    _channel = _sb
-        .channel('app_config_changes')
-        .onPostgresChanges(
-          event:  PostgresChangeEvent.all,
-          schema: 'public',
-          table:  'app_config',
-          callback: (payload) {
-            // Any INSERT / UPDATE / DELETE → re-fetch the full table
-            // (cheap: ~30 tiny rows)
-            _fetch();
-          },
-        )
-        .subscribe();
+    _channel =
+        _sb
+            .channel('app_config_changes')
+            .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'app_config',
+              callback: (payload) {
+                // Any INSERT / UPDATE / DELETE → re-fetch the full table
+                // (cheap: ~30 tiny rows)
+                _fetch();
+              },
+            )
+            .subscribe();
   }
 
   @override

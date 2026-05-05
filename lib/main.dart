@@ -21,14 +21,13 @@ import 'screens/dashboard_screen.dart';
 import 'screens/flower_splash_screen.dart';
 import 'services/settings_service.dart';
 import 'services/live_notification_service.dart';
-import 'services/quran_api_config.dart';       // Quran Foundation credentials
+import 'services/quran_api_config.dart'; // Quran Foundation credentials
 import 'services/notification_service.dart';
 import 'services/notification_center.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'widgets/noor_offline.dart';
 import 'utils/asset_helper.dart';
-
 
 import 'core/env/env.dart';
 import 'theme/y4_theme.dart';
@@ -77,8 +76,11 @@ Future<void> main() async {
 
 /// Wrap a step so one failing/slow service can't block the whole boot.
 /// Each step has its own timeout. Failures are logged but don't propagate.
-Future<void> _step(String name, Future<void> Function() body,
-    {Duration timeout = const Duration(seconds: 4)}) async {
+Future<void> _step(
+  String name,
+  Future<void> Function() body, {
+  Duration timeout = const Duration(seconds: 4),
+}) async {
   try {
     await body().timeout(timeout);
   } on TimeoutException {
@@ -93,11 +95,14 @@ Future<void> _bootHeavyInit() async {
   // Supabase depends on Env, NotificationService depends on Supabase, etc.
   await _step('Env', Env.init);
   await _step('Firebase', Firebase.initializeApp);
-  await _step('Supabase', () => Supabase.initialize(
-    url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
-  ));
+  await _step(
+    'Supabase',
+    () => Supabase.initialize(
+      url: 'https://fwjzhtcxfiendofnhyzp.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
+    ),
+  );
   await _step('NotificationService', NotificationService.instance.initialize);
   await _step('QuranApiConfig', QuranApiConfig.load);
 
@@ -105,12 +110,21 @@ Future<void> _bootHeavyInit() async {
   appInitReady.value = true;
 
   // Non-critical: nice-to-have, fire in background, don't block navigation.
-  unawaited(_step('SettingsService', SettingsService.instance.initialize,
-      timeout: const Duration(seconds: 8)));
+  unawaited(
+    _step(
+      'SettingsService',
+      SettingsService.instance.initialize,
+      timeout: const Duration(seconds: 8),
+    ),
+  );
   unawaited(_step('AssetHelper', AssetHelper.loadAssets));
-  unawaited(_step('NoorLiveNotification', NoorLiveNotificationService.instance.init));
+  unawaited(
+    _step('NoorLiveNotification', NoorLiveNotificationService.instance.init),
+  );
 
-  try { _initAppLinks(); } catch (_) {}
+  try {
+    _initAppLinks();
+  } catch (_) {}
 }
 
 class MyApp extends StatelessWidget {
@@ -124,7 +138,11 @@ class MyApp extends StatelessWidget {
       title: 'Noor Rewards',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(cfg),
-      // Localization — auto-follows device locale
+      locale:
+          context.watch<SettingsService>().localeCode != null
+              ? Locale(context.watch<SettingsService>().localeCode!)
+              : null,
+      // Localization — auto-follows device locale if locale is null
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -132,14 +150,14 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('en'),        // English (default)
-        Locale('ar'),        // Arabic  — RTL
-        Locale('ur'),        // Urdu    — RTL
-        Locale('tr'),        // Turkish
-        Locale('ms'),        // Malay
-        Locale('id'),        // Indonesian
-        Locale('ru'),        // Russian
-        Locale('fr'),        // French
+        Locale('en'), // English (default)
+        Locale('ar'), // Arabic  — RTL
+        Locale('ur'), // Urdu    — RTL
+        Locale('tr'), // Turkish
+        Locale('ms'), // Malay
+        Locale('id'), // Indonesian
+        Locale('ru'), // Russian
+        Locale('fr'), // French
       ],
       // Caps the textScaler so that device accessibility font-size settings
       // cannot break gamified fixed-height layouts and cause global overflow.
@@ -170,7 +188,7 @@ class MyApp extends StatelessWidget {
     return base.copyWith(
       colorScheme: base.colorScheme.copyWith(
         // Honor admin overrides (Supabase app_config) on top of Y4 defaults
-        primary:   cfg.primaryColor,
+        primary: cfg.primaryColor,
         secondary: cfg.secondaryColor,
       ),
     );
@@ -252,8 +270,10 @@ class _SplashGateState extends State<_SplashGate> {
 
   void _forceNavigate() {
     if (_navigated || !mounted) return;
-    debugPrint('[SplashGate] hard timeout reached — navigating to AuthGate '
-        '(lottieDone=$_lottieDone, initReady=${appInitReady.value})');
+    debugPrint(
+      '[SplashGate] hard timeout reached — navigating to AuthGate '
+      '(lottieDone=$_lottieDone, initReady=${appInitReady.value})',
+    );
     _go();
   }
 
@@ -268,8 +288,8 @@ class _SplashGateState extends State<_SplashGate> {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => const AuthGate(),
-        transitionsBuilder: (_, anim, __, child) =>
-            FadeTransition(opacity: anim, child: child),
+        transitionsBuilder:
+            (_, anim, __, child) => FadeTransition(opacity: anim, child: child),
         transitionDuration: const Duration(milliseconds: 600),
       ),
     );
@@ -294,11 +314,11 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
-  bool _onboardingDone   = false;
+  bool _onboardingDone = false;
   bool _profileSetupDone = false;
-  bool _welcomeShown     = false;
-  String _userName       = '';
-  String? _lastUserId;   // tracks which user these local flags belong to
+  bool _welcomeShown = false;
+  String _userName = '';
+  String? _lastUserId; // tracks which user these local flags belong to
 
   @override
   void initState() {
@@ -331,15 +351,22 @@ class _AuthGateState extends State<AuthGate> {
     return StreamBuilder<AuthState>(
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
-        final session = snapshot.hasData
-            ? snapshot.data!.session
-            : Supabase.instance.client.auth.currentSession;
+        final session =
+            snapshot.hasData
+                ? snapshot.data!.session
+                : Supabase.instance.client.auth.currentSession;
 
         // QF users who explicitly signed out should see the login screen even
         // though their Supabase session is still alive.  But only gate QF users—
         // a Google user signing in while this flag is set must not be blocked.
-        final isCurrentUserQf = Supabase.instance.client.auth.currentUser
-            ?.userMetadata?['provider'] == 'quran_com';
+        final isCurrentUserQf =
+            Supabase
+                .instance
+                .client
+                .auth
+                .currentUser
+                ?.userMetadata?['provider'] ==
+            'quran_com';
         final showLogin = (qfSignedOut && isCurrentUserQf) || session == null;
 
         // Auto-clear a stale QF sign-out flag when a non-QF user is active,
@@ -372,13 +399,14 @@ class _AuthGateState extends State<AuthGate> {
         // clear them so User B is never treated as already having completed
         // setup, and User A's name is never shown to User B.
         if (user?.id != _lastUserId) {
-          _lastUserId        = user?.id;
-          _profileSetupDone  = false;
-          _userName          = '';
-          _welcomeShown      = false;
+          _lastUserId = user?.id;
+          _profileSetupDone = false;
+          _userName = '';
+          _welcomeShown = false;
         }
 
-        final noorSetupDone = user?.userMetadata?['noor_setup_complete'] == true;
+        final noorSetupDone =
+            user?.userMetadata?['noor_setup_complete'] == true;
         final hasProfile = noorSetupDone || _profileSetupDone;
         final storedName = user?.userMetadata?['noor_name'] as String?;
 
@@ -391,13 +419,22 @@ class _AuthGateState extends State<AuthGate> {
               }
               // Persist email to profiles table for all login methods so
               // it's always visible in the Supabase dashboard.
-              final userEmail = user?.email                               // email/Google
-                  ?? user?.userMetadata?['qf_email'] as String?;         // QF
+              final userEmail =
+                  user
+                      ?.email // email/Google
+                      ??
+                  user?.userMetadata?['qf_email'] as String?; // QF
               if (userEmail != null && userEmail.isNotEmpty) {
-                Supabase.instance.client.from('profiles').upsert(
-                  {'id': user!.id, 'email': userEmail},
-                  onConflict: 'id', ignoreDuplicates: false,
-                ).catchError((e) => debugPrint('[AuthGate] email upsert failed: $e'));
+                Supabase.instance.client
+                    .from('profiles')
+                    .upsert(
+                      {'id': user!.id, 'email': userEmail},
+                      onConflict: 'id',
+                      ignoreDuplicates: false,
+                    )
+                    .catchError(
+                      (e) => debugPrint('[AuthGate] email upsert failed: $e'),
+                    );
               }
               setState(() {
                 _userName = name;
@@ -411,7 +448,9 @@ class _AuthGateState extends State<AuthGate> {
 
         final googleName = user?.userMetadata?['full_name'] as String?;
         final displayName =
-            _userName.isNotEmpty ? _userName : (storedName ?? googleName ?? 'Friend');
+            _userName.isNotEmpty
+                ? _userName
+                : (storedName ?? googleName ?? 'Friend');
 
         if (_profileSetupDone && !_welcomeShown) {
           return WelcomeGateScreen(
@@ -436,9 +475,7 @@ class _AuthLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Y4.bg,
-      body: Center(
-        child: NoorInlineLoader(height: 80),
-      ),
+      body: Center(child: NoorInlineLoader(height: 80)),
     );
   }
 }

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -34,13 +34,14 @@ class ImpactAnimation extends StatefulWidget {
     final overlay = Overlay.of(context);
     late OverlayEntry entry;
     entry = OverlayEntry(
-      builder: (_) => ImpactAnimation(
-        displayDuration: displayDuration,
-        onComplete: () {
-          entry.remove();
-          onComplete?.call();
-        },
-      ),
+      builder:
+          (_) => ImpactAnimation(
+            displayDuration: displayDuration,
+            onComplete: () {
+              entry.remove();
+              onComplete?.call();
+            },
+          ),
     );
     overlay.insert(entry);
   }
@@ -108,9 +109,7 @@ class _ImpactAnimationState extends State<ImpactAnimation>
             // Semi-transparent dark background
             GestureDetector(
               onTap: _dismiss,
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.55),
-              ),
+              child: Container(color: Colors.black.withValues(alpha: 0.55)),
             ),
 
             // Card container styled in Emerald & Gold theme
@@ -129,7 +128,9 @@ class _ImpactAnimationState extends State<ImpactAnimation>
                   ),
                 ],
                 border: Border.all(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.3), // Gold border
+                  color: const Color(
+                    0xFFD4AF37,
+                  ).withValues(alpha: 0.3), // Gold border
                   width: 1.5,
                 ),
               ),
@@ -150,7 +151,9 @@ class _ImpactAnimationState extends State<ImpactAnimation>
                         height: 150,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFF00A86B).withValues(alpha: 0.12),
+                          color: const Color(
+                            0xFF00A86B,
+                          ).withValues(alpha: 0.12),
                         ),
                         child: const Icon(
                           Icons.check_circle_rounded,
@@ -238,8 +241,9 @@ class _DismissCountdownBarState extends State<_DismissCountdownBar>
             value: 1.0 - _controller.value, // Counts DOWN
             minHeight: 4,
             backgroundColor: const Color(0xFFD4AF37).withValues(alpha: 0.15),
-            valueColor:
-                const AlwaysStoppedAnimation<Color>(const Color(0xFFC9921A)), // Gold
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              const Color(0xFFC9921A),
+            ), // Gold
           ),
         );
       },

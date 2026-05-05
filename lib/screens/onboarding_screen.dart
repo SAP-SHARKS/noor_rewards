@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
@@ -50,52 +50,53 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   List<_OnboardingPage> _buildPages(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return [
-    _OnboardingPage(
-      bgTop: const Color(0xFF0D1B2A),
-      bgBottom: const Color(0xFF1A3A4A),
-      illustration: const _MoonIllustration(),
-      arabicText: 'السَّلَامُ عَلَيْكُم',
-      transliteration: 'As-salamu Alaykum',
-      title: l10n.onboarding1Title,
-      subtitle: l10n.onboarding1Subtitle,
-    ),
-    _OnboardingPage(
-      bgTop:    const Color(0xFF0A0A1A),
-      bgBottom: const Color(0xFF0D1F3C),
-      illustration: const _DualBenefitIllustration(),
-      arabicText: 'خير الدُنيا والآخرة',
-      transliteration: 'Khayr al-Dunya wal-Akhirah',
-      title: l10n.onboarding2Title,
-      subtitle: l10n.onboarding2Subtitle,
-    ),
-    _OnboardingPage(
-      bgTop: const Color(0xFF1A0A00),
-      bgBottom: const Color(0xFF3D1F00),
-      illustration: const _TasbihIllustration(),
-      arabicText: 'سُبْحَانَ اللَّه',
-      transliteration: 'SubhanAllah',
-      title: l10n.onboarding3Title,
-      subtitle: l10n.onboarding3Subtitle,
-    ),
-    _OnboardingPage(
-      bgTop: const Color(0xFF003322),
-      bgBottom: const Color(0xFF005540),
-      illustration: const _QuranIllustration(),
-      arabicText: 'اقْرَأْ',
-      transliteration: 'Iqra — Read',
-      title: l10n.onboarding4Title,
-      subtitle: l10n.onboarding4Subtitle,
-    ),
-    _OnboardingPage(
-      bgTop: const Color(0xFF2D0A3A),
-      bgBottom: const Color(0xFF4A1560),
-      illustration: const _SadaqahIllustration(),
-      arabicText: 'صَدَقَة',
-      transliteration: 'Sadaqah — Charity',
-      title: l10n.onboarding5Title,
-      subtitle: l10n.onboarding5Subtitle,
-    ),
-  ];}
+      _OnboardingPage(
+        bgTop: const Color(0xFF0D1B2A),
+        bgBottom: const Color(0xFF1A3A4A),
+        illustration: const _MoonIllustration(),
+        arabicText: 'السَّلَامُ عَلَيْكُم',
+        transliteration: 'As-salamu Alaykum',
+        title: l10n.onboarding1Title,
+        subtitle: l10n.onboarding1Subtitle,
+      ),
+      _OnboardingPage(
+        bgTop: const Color(0xFF0A0A1A),
+        bgBottom: const Color(0xFF0D1F3C),
+        illustration: const _DualBenefitIllustration(),
+        arabicText: 'خير الدُنيا والآخرة',
+        transliteration: 'Khayr al-Dunya wal-Akhirah',
+        title: l10n.onboarding2Title,
+        subtitle: l10n.onboarding2Subtitle,
+      ),
+      _OnboardingPage(
+        bgTop: const Color(0xFF1A0A00),
+        bgBottom: const Color(0xFF3D1F00),
+        illustration: const _TasbihIllustration(),
+        arabicText: 'سُبْحَانَ اللَّه',
+        transliteration: 'SubhanAllah',
+        title: l10n.onboarding3Title,
+        subtitle: l10n.onboarding3Subtitle,
+      ),
+      _OnboardingPage(
+        bgTop: const Color(0xFF003322),
+        bgBottom: const Color(0xFF005540),
+        illustration: const _QuranIllustration(),
+        arabicText: 'اقْرَأْ',
+        transliteration: 'Iqra — Read',
+        title: l10n.onboarding4Title,
+        subtitle: l10n.onboarding4Subtitle,
+      ),
+      _OnboardingPage(
+        bgTop: const Color(0xFF2D0A3A),
+        bgBottom: const Color(0xFF4A1560),
+        illustration: const _SadaqahIllustration(),
+        arabicText: 'صَدَقَة',
+        transliteration: 'Sadaqah — Charity',
+        title: l10n.onboarding5Title,
+        subtitle: l10n.onboarding5Subtitle,
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -135,8 +136,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           pageBuilder: (_, animation, _) => const StartJourneyScreen(),
-          transitionsBuilder: (_, animation, _, child) =>
-              FadeTransition(opacity: animation, child: child),
+          transitionsBuilder:
+              (_, animation, _, child) =>
+                  FadeTransition(opacity: animation, child: child),
           transitionDuration: const Duration(milliseconds: 600),
         ),
       );
@@ -153,10 +155,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             controller: _pageController,
             itemCount: _buildPages(context).length,
             onPageChanged: (i) => setState(() => _currentPage = i),
-            itemBuilder: (_, i) => _PageSlide(
-              page: _buildPages(context)[i],
-              pulseAnimation: _pulseAnimation,
-            ),
+            itemBuilder:
+                (_, i) => _PageSlide(
+                  page: _buildPages(context)[i],
+                  pulseAnimation: _pulseAnimation,
+                ),
           ),
 
           // ── Skip button (top right) ───────────────────────────────────────
@@ -170,7 +173,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     onTap: _goToApp,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
@@ -214,7 +219,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       color: _accentColor(_currentPage),
                       onTap: _next,
                       labelContinue: AppLocalizations.of(context)!.continue_,
-                      labelBegin: AppLocalizations.of(context)!.beginYourJourney,
+                      labelBegin:
+                          AppLocalizations.of(context)!.beginYourJourney,
                     ),
                   ],
                 ),
@@ -274,10 +280,11 @@ class _PageSlide extends StatelessWidget {
             child: Center(
               child: AnimatedBuilder(
                 animation: pulseAnimation,
-                builder: (_, child) => Transform.scale(
-                  scale: pulseAnimation.value,
-                  child: child,
-                ),
+                builder:
+                    (_, child) => Transform.scale(
+                      scale: pulseAnimation.value,
+                      child: child,
+                    ),
                 child: Container(
                   width: 300,
                   height: 300,
@@ -306,10 +313,11 @@ class _PageSlide extends StatelessWidget {
                   child: Center(
                     child: AnimatedBuilder(
                       animation: pulseAnimation,
-                      builder: (_, child) => Transform.scale(
-                        scale: pulseAnimation.value,
-                        child: child,
-                      ),
+                      builder:
+                          (_, child) => Transform.scale(
+                            scale: pulseAnimation.value,
+                            child: child,
+                          ),
                       child: page.illustration,
                     ),
                   ),
@@ -393,8 +401,11 @@ class _PageDots extends StatelessWidget {
   final int current;
   final Color activeColor;
 
-  const _PageDots(
-      {required this.total, required this.current, required this.activeColor});
+  const _PageDots({
+    required this.total,
+    required this.current,
+    required this.activeColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -470,12 +481,18 @@ class _NextButton extends StatelessWidget {
               ),
               if (!isLast) ...[
                 const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward_rounded,
-                    color: Colors.black87, size: 20),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.black87,
+                  size: 20,
+                ),
               ] else ...[
                 const SizedBox(width: 8),
-                const Icon(Icons.explore_rounded,
-                    color: Colors.black87, size: 20),
+                const Icon(
+                  Icons.explore_rounded,
+                  color: Colors.black87,
+                  size: 20,
+                ),
               ],
             ],
           ),
@@ -491,10 +508,11 @@ class _NextButton extends StatelessWidget {
 class _IslamicPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.03)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8;
+    final paint =
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.03)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.8;
 
     const spacing = 80.0;
     for (double y = 0; y < size.height + spacing; y += spacing) {
@@ -535,7 +553,8 @@ class _IslamicPatternPainter extends CustomPainter {
 class _DualBenefitIllustration extends StatefulWidget {
   const _DualBenefitIllustration();
   @override
-  State<_DualBenefitIllustration> createState() => _DualBenefitIllustrationState();
+  State<_DualBenefitIllustration> createState() =>
+      _DualBenefitIllustrationState();
 }
 
 class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
@@ -549,16 +568,22 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
   void initState() {
     super.initState();
     _orbitCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 5))
-      ..repeat();
-    _orbit = Tween<double>(begin: 0, end: 2 * math.pi)
-        .animate(CurvedAnimation(parent: _orbitCtrl, curve: Curves.linear));
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
+    _orbit = Tween<double>(
+      begin: 0,
+      end: 2 * math.pi,
+    ).animate(CurvedAnimation(parent: _orbitCtrl, curve: Curves.linear));
 
     _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1600))
-      ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.88, end: 1.12)
-        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat(reverse: true);
+    _pulse = Tween<double>(
+      begin: 0.88,
+      end: 1.12,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -580,8 +605,8 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
         // Orbiting orb positions
         final sawabX = cx + orbitR * math.cos(_orbit.value);
         final sawabY = cy + orbitR * math.sin(_orbit.value);
-        final coinX  = cx + orbitR * math.cos(_orbit.value + math.pi);
-        final coinY  = cy + orbitR * math.sin(_orbit.value + math.pi);
+        final coinX = cx + orbitR * math.cos(_orbit.value + math.pi);
+        final coinY = cy + orbitR * math.sin(_orbit.value + math.pi);
 
         return SizedBox(
           width: 260,
@@ -626,7 +651,10 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
                     ),
                   ),
                   child: const Center(
-                    child: Text('★', style: TextStyle(fontSize: 28, color: Color(0xFFFFC94D))),
+                    child: Text(
+                      '★',
+                      style: TextStyle(fontSize: 28, color: Color(0xFFFFC94D)),
+                    ),
                   ),
                 ),
               ),
@@ -634,7 +662,7 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
               // ─ Orbiting Sawab orb (golden light)
               Positioned(
                 left: sawabX - 22,
-                top:  sawabY - 22,
+                top: sawabY - 22,
                 child: _OrbBubble(
                   size: 44,
                   emoji: '✨',
@@ -646,7 +674,7 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
               // ─ Orbiting Coins orb (neon green)
               Positioned(
                 left: coinX - 22,
-                top:  coinY - 22,
+                top: coinY - 22,
                 child: _OrbBubble(
                   size: 44,
                   emoji: '🪙',
@@ -705,7 +733,7 @@ class _OrbBubble extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width:  size,
+          width: size,
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -814,11 +842,14 @@ class _MoonIllustrationState extends State<_MoonIllustration>
   void initState() {
     super.initState();
     _twinkleCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1800))
-      ..repeat(reverse: true);
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
 
     _shootCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 900));
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
     _shootAnim = CurvedAnimation(parent: _shootCtrl, curve: Curves.easeIn);
     // Launch a shooting star every ~3.5 s
     Future.doWhile(() async {
@@ -830,7 +861,11 @@ class _MoonIllustrationState extends State<_MoonIllustration>
   }
 
   @override
-  void dispose() { _twinkleCtrl.dispose(); _shootCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _twinkleCtrl.dispose();
+    _shootCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -845,19 +880,25 @@ class _MoonIllustrationState extends State<_MoonIllustration>
             children: [
               // Outer glow rings
               Container(
-                width: 240, height: 240,
+                width: 240,
+                height: 240,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF00D4AA).withValues(alpha: 0.15), width: 1),
+                    color: const Color(0xFF00D4AA).withValues(alpha: 0.15),
+                    width: 1,
+                  ),
                 ),
               ),
               Container(
-                width: 200, height: 200,
+                width: 200,
+                height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF00D4AA).withValues(alpha: 0.08), width: 1),
+                    color: const Color(0xFF00D4AA).withValues(alpha: 0.08),
+                    width: 1,
+                  ),
                 ),
               ),
 
@@ -865,7 +906,7 @@ class _MoonIllustrationState extends State<_MoonIllustration>
               if (_shootAnim.value > 0 && _shootAnim.value < 1)
                 Positioned(
                   left: 30 + _shootAnim.value * 160,
-                  top:  40 + _shootAnim.value * 80,
+                  top: 40 + _shootAnim.value * 80,
                   child: Opacity(
                     opacity: (1 - _shootAnim.value).clamp(0.0, 1.0),
                     child: Transform.rotate(
@@ -898,10 +939,12 @@ class _MoonIllustrationState extends State<_MoonIllustration>
                 final i = e.key;
                 final s = e.value;
                 final phase = (i * 0.37) % 1.0;
-                final tw = 0.5 + 0.5 * math.sin(
-                    (_twinkleCtrl.value + phase) * 2 * math.pi);
+                final tw =
+                    0.5 +
+                    0.5 * math.sin((_twinkleCtrl.value + phase) * 2 * math.pi);
                 return Positioned(
-                  left: s.$1, top: s.$2,
+                  left: s.$1,
+                  top: s.$2,
                   child: Opacity(
                     opacity: (0.3 + 0.7 * tw).clamp(0.0, 1.0),
                     child: _StarDot(size: s.$3 * (0.7 + 0.3 * tw)),
@@ -917,10 +960,17 @@ class _MoonIllustrationState extends State<_MoonIllustration>
 
   // (left, top, size)
   static const _starData = [
-    (30.0, 40.0, 5.0), (210.0, 30.0, 4.0), (230.0, 110.0, 3.0),
-    (20.0, 160.0, 4.0), (180.0, 200.0, 5.0), (100.0, 15.0, 3.0),
-    (50.0, 220.0, 4.0), (200.0, 180.0, 3.0), (140.0, 240.0, 3.5),
-    (15.0, 80.0, 2.5), (245.0, 70.0, 3.0),
+    (30.0, 40.0, 5.0),
+    (210.0, 30.0, 4.0),
+    (230.0, 110.0, 3.0),
+    (20.0, 160.0, 4.0),
+    (180.0, 200.0, 5.0),
+    (100.0, 15.0, 3.0),
+    (50.0, 220.0, 4.0),
+    (200.0, 180.0, 3.0),
+    (140.0, 240.0, 3.5),
+    (15.0, 80.0, 2.5),
+    (245.0, 70.0, 3.0),
   ];
 }
 
@@ -955,9 +1005,10 @@ class _CrescentPainter extends CustomPainter {
     final cy = size.height / 2;
     final r = size.width * 0.46;
 
-    final shadowPaint = Paint()
-      ..color = const Color(0xFF00D4AA).withValues(alpha: 0.25)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
+    final shadowPaint =
+        Paint()
+          ..color = const Color(0xFF00D4AA).withValues(alpha: 0.25)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
 
     // Glow shadow (outside saveLayer so it's visible)
     canvas.drawCircle(Offset(cx, cy), r, shadowPaint);
@@ -996,7 +1047,7 @@ class _TasbihIllustration extends StatefulWidget {
 
 class _TasbihIllustrationState extends State<_TasbihIllustration>
     with TickerProviderStateMixin {
-  late AnimationController _loopCtrl;   // drives which bead is lit
+  late AnimationController _loopCtrl; // drives which bead is lit
   late AnimationController _pulseCtrl;
   late Animation<double> _pulse;
   static const _beadCount = 33;
@@ -1006,19 +1057,26 @@ class _TasbihIllustrationState extends State<_TasbihIllustration>
     super.initState();
     // One full revolution every 4.5 s
     _loopCtrl = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 4500))
-      ..repeat();
+      vsync: this,
+      duration: const Duration(milliseconds: 4500),
+    )..repeat();
 
     _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 900))
-      ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.85, end: 1.15)
-        .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+    _pulse = Tween<double>(
+      begin: 0.85,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
-  void dispose() { _loopCtrl.dispose(); _pulseCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _loopCtrl.dispose();
+    _pulseCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1027,7 +1085,8 @@ class _TasbihIllustrationState extends State<_TasbihIllustration>
       builder: (_, __) {
         final litUpTo = (_loopCtrl.value * _beadCount).floor();
         return SizedBox(
-          width: 260, height: 260,
+          width: 260,
+          height: 260,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -1041,14 +1100,18 @@ class _TasbihIllustrationState extends State<_TasbihIllustration>
                 children: [
                   Transform.scale(
                     scale: _pulse.value,
-                    child: const Icon(Icons.favorite_rounded,
-                        color: Color(0xFFFFAA00), size: 48),
+                    child: const Icon(
+                      Icons.favorite_rounded,
+                      color: Color(0xFFFFAA00),
+                      size: 48,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '$litUpTo×',
                     style: GoogleFonts.outfit(
-                      fontSize: 22, fontWeight: FontWeight.w800,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white,
                     ),
                   ),
@@ -1075,7 +1138,8 @@ class _TasbihPainter extends CustomPainter {
 
     // String
     canvas.drawCircle(
-      Offset(cx, cy), pathRadius,
+      Offset(cx, cy),
+      pathRadius,
       Paint()
         ..color = const Color(0xFFFFAA00).withValues(alpha: 0.18)
         ..style = PaintingStyle.stroke
@@ -1086,30 +1150,39 @@ class _TasbihPainter extends CustomPainter {
       final angle = (i / beadCount) * 2 * math.pi - math.pi / 2;
       final bx = cx + pathRadius * math.cos(angle);
       final by = cy + pathRadius * math.sin(angle);
-      final isLit     = i < litUpTo;
+      final isLit = i < litUpTo;
       final isSpecial = i % 11 == 0;
       final isCurrent = i == litUpTo - 1; // the bead that just lit
 
       if (isCurrent) {
         // Glow burst on the current bead
-        canvas.drawCircle(Offset(bx, by), 14,
+        canvas.drawCircle(
+          Offset(bx, by),
+          14,
           Paint()
             ..color = const Color(0xFFFFAA00).withValues(alpha: 0.35)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        );
       } else if (isSpecial && isLit) {
-        canvas.drawCircle(Offset(bx, by), 10,
+        canvas.drawCircle(
+          Offset(bx, by),
+          10,
           Paint()
             ..color = const Color(0xFFFFAA00).withValues(alpha: 0.28)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+        );
       }
 
       canvas.drawCircle(
         Offset(bx, by),
         isCurrent ? 9.5 : (isSpecial ? 8 : 5),
         Paint()
-          ..color = isLit
-              ? (isSpecial ? const Color(0xFFFFAA00) : const Color(0xFFFFCC55))
-              : const Color(0xFFFFAA00).withValues(alpha: 0.18),
+          ..color =
+              isLit
+                  ? (isSpecial
+                      ? const Color(0xFFFFAA00)
+                      : const Color(0xFFFFCC55))
+                  : const Color(0xFFFFAA00).withValues(alpha: 0.18),
       );
     }
   }
@@ -1129,29 +1202,36 @@ class _QuranIllustrationState extends State<_QuranIllustration>
     with TickerProviderStateMixin {
   // openProgress: 0 = fully closed, 1 = fully open
   late AnimationController _openCtrl;
-  late Animation<double>   _openAnim;
+  late Animation<double> _openAnim;
   // Glow pulse
   late AnimationController _glowCtrl;
-  late Animation<double>   _glow;
+  late Animation<double> _glow;
   // Page-line reveal
   late AnimationController _lineCtrl;
-  late Animation<double>   _lines;
+  late Animation<double> _lines;
 
   @override
   void initState() {
     super.initState();
     _openCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1800));
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    );
     _openAnim = CurvedAnimation(parent: _openCtrl, curve: Curves.easeOutCubic);
 
     _glowCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1400))
-      ..repeat(reverse: true);
-    _glow = Tween<double>(begin: 0.4, end: 1.0)
-        .animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+    _glow = Tween<double>(
+      begin: 0.4,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
 
     _lineCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1200));
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
     _lines = CurvedAnimation(parent: _lineCtrl, curve: Curves.easeOut);
 
     // Sequence: wait 0.6s, open book, then reveal lines
@@ -1190,18 +1270,22 @@ class _QuranIllustrationState extends State<_QuranIllustration>
       animation: Listenable.merge([_openAnim, _glow, _lines]),
       builder: (_, __) {
         return SizedBox(
-          width: 260, height: 260,
+          width: 260,
+          height: 260,
           child: Stack(
             alignment: Alignment.center,
             children: [
               // Radial glow
               Container(
-                width: 180, height: 180,
+                width: 180,
+                height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF00C875).withValues(alpha: 0.28 * _glow.value),
+                      const Color(
+                        0xFF00C875,
+                      ).withValues(alpha: 0.28 * _glow.value),
                       Colors.transparent,
                     ],
                   ),
@@ -1210,11 +1294,12 @@ class _QuranIllustrationState extends State<_QuranIllustration>
 
               // Floating light motes
               ..._motes.asMap().entries.map((e) {
-                final i = e.key; final m = e.value;
+                final i = e.key;
+                final m = e.value;
                 final rise = (_openAnim.value - m.$3).clamp(0.0, 1.0);
                 return Positioned(
                   left: m.$1 + math.sin(rise * 3 + i) * 6,
-                  top:  m.$2 - rise * 30,
+                  top: m.$2 - rise * 30,
                   child: Opacity(
                     opacity: (rise * (1 - rise) * 4).clamp(0.0, 0.8),
                     child: const _StarDot(size: 3),
@@ -1227,8 +1312,8 @@ class _QuranIllustrationState extends State<_QuranIllustration>
                 size: const Size(200, 150),
                 painter: _AnimatedBookPainter(
                   openProgress: _openAnim.value,
-                  lineReveal:   _lines.value,
-                  glowPulse:    _glow.value,
+                  lineReveal: _lines.value,
+                  glowPulse: _glow.value,
                 ),
               ),
 
@@ -1244,14 +1329,17 @@ class _QuranIllustrationState extends State<_QuranIllustration>
 
   // (left, top, delay 0-1)
   static const _motes = [
-    (90.0,  130.0, 0.3), (140.0, 120.0, 0.5), (115.0, 135.0, 0.6),
-    (70.0,  125.0, 0.7), (160.0, 130.0, 0.45),
+    (90.0, 130.0, 0.3),
+    (140.0, 120.0, 0.5),
+    (115.0, 135.0, 0.6),
+    (70.0, 125.0, 0.7),
+    (160.0, 130.0, 0.45),
   ];
 }
 
 class _AnimatedBookPainter extends CustomPainter {
   final double openProgress; // 0 = closed, 1 = fully open
-  final double lineReveal;   // 0-1 how many text lines are visible
+  final double lineReveal; // 0-1 how many text lines are visible
   final double glowPulse;
 
   const _AnimatedBookPainter({
@@ -1264,18 +1352,18 @@ class _AnimatedBookPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final cy = size.height / 2;
-    final w  = size.width;
-    final h  = size.height;
+    final w = size.width;
+    final h = size.height;
 
     final coverColor = const Color(0xFF00C875);
-    final pageColor  = const Color(0xFFE8F5E9);
+    final pageColor = const Color(0xFFE8F5E9);
     final spineColor = const Color(0xFF005540);
-    final lineColor  = const Color(0xFF00C875).withValues(alpha: 0.45);
+    final lineColor = const Color(0xFF00C875).withValues(alpha: 0.45);
 
     // How wide each cover is when open
     final halfOpen = (w * 0.44) * openProgress;
-    final bookTop  = cy * 0.15;
-    final bookH    = h * 0.82;
+    final bookTop = cy * 0.15;
+    final bookH = h * 0.82;
 
     // ── Spine ──
     canvas.drawRect(
@@ -1296,21 +1384,23 @@ class _AnimatedBookPainter extends CustomPainter {
     }
 
     // ── Left cover ──
-    final leftPath = Path()
-      ..moveTo(cx, bookTop)
-      ..lineTo(cx - halfOpen, bookTop + 4)
-      ..lineTo(cx - halfOpen, bookTop + bookH - 4)
-      ..lineTo(cx, bookTop + bookH)
-      ..close();
+    final leftPath =
+        Path()
+          ..moveTo(cx, bookTop)
+          ..lineTo(cx - halfOpen, bookTop + 4)
+          ..lineTo(cx - halfOpen, bookTop + bookH - 4)
+          ..lineTo(cx, bookTop + bookH)
+          ..close();
     canvas.drawPath(leftPath, Paint()..color = coverColor);
 
     // ── Right cover ──
-    final rightPath = Path()
-      ..moveTo(cx, bookTop)
-      ..lineTo(cx + halfOpen, bookTop + 4)
-      ..lineTo(cx + halfOpen, bookTop + bookH - 4)
-      ..lineTo(cx, bookTop + bookH)
-      ..close();
+    final rightPath =
+        Path()
+          ..moveTo(cx, bookTop)
+          ..lineTo(cx + halfOpen, bookTop + 4)
+          ..lineTo(cx + halfOpen, bookTop + bookH - 4)
+          ..lineTo(cx, bookTop + bookH)
+          ..close();
     canvas.drawPath(rightPath, Paint()..color = coverColor);
 
     if (openProgress > 0.3) {
@@ -1318,29 +1408,38 @@ class _AnimatedBookPainter extends CustomPainter {
       final pageW = halfOpen * 0.88;
 
       // ── Left page ──
-      final lPage = Path()
-        ..moveTo(cx - 2, bookTop + 8)
-        ..lineTo(cx - pageW, bookTop + 10)
-        ..lineTo(cx - pageW, bookTop + bookH - 10)
-        ..lineTo(cx - 2, bookTop + bookH - 8)
-        ..close();
-      canvas.drawPath(lPage, Paint()..color = pageColor.withValues(alpha: fade));
+      final lPage =
+          Path()
+            ..moveTo(cx - 2, bookTop + 8)
+            ..lineTo(cx - pageW, bookTop + 10)
+            ..lineTo(cx - pageW, bookTop + bookH - 10)
+            ..lineTo(cx - 2, bookTop + bookH - 8)
+            ..close();
+      canvas.drawPath(
+        lPage,
+        Paint()..color = pageColor.withValues(alpha: fade),
+      );
 
       // ── Right page ──
-      final rPage = Path()
-        ..moveTo(cx + 2, bookTop + 8)
-        ..lineTo(cx + pageW, bookTop + 10)
-        ..lineTo(cx + pageW, bookTop + bookH - 10)
-        ..lineTo(cx + 2, bookTop + bookH - 8)
-        ..close();
-      canvas.drawPath(rPage, Paint()..color = pageColor.withValues(alpha: fade));
+      final rPage =
+          Path()
+            ..moveTo(cx + 2, bookTop + 8)
+            ..lineTo(cx + pageW, bookTop + 10)
+            ..lineTo(cx + pageW, bookTop + bookH - 10)
+            ..lineTo(cx + 2, bookTop + bookH - 8)
+            ..close();
+      canvas.drawPath(
+        rPage,
+        Paint()..color = pageColor.withValues(alpha: fade),
+      );
 
       // ── Text lines reveal ──
       if (lineReveal > 0 && fade > 0.5) {
-        final lp = Paint()
-          ..color = lineColor.withValues(alpha: fade * lineReveal)
-          ..strokeWidth = 1.5
-          ..style = PaintingStyle.stroke;
+        final lp =
+            Paint()
+              ..color = lineColor.withValues(alpha: fade * lineReveal)
+              ..strokeWidth = 1.5
+              ..style = PaintingStyle.stroke;
 
         final visibleLines = (lineReveal * 5).ceil().clamp(0, 5);
         for (int i = 0; i < visibleLines; i++) {
@@ -1363,9 +1462,12 @@ class _AnimatedBookPainter extends CustomPainter {
         // Glow on spine when fully open
         if (openProgress > 0.9) {
           canvas.drawLine(
-            Offset(cx, bookTop + 8), Offset(cx, bookTop + bookH - 8),
+            Offset(cx, bookTop + 8),
+            Offset(cx, bookTop + bookH - 8),
             Paint()
-              ..color = const Color(0xFF00C875).withValues(alpha: 0.6 * glowPulse)
+              ..color = const Color(
+                0xFF00C875,
+              ).withValues(alpha: 0.6 * glowPulse)
               ..strokeWidth = 3
               ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
           );
@@ -1401,25 +1503,34 @@ class _SadaqahIllustrationState extends State<_SadaqahIllustration>
     super.initState();
 
     _coinCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2000))
-      ..repeat();
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
 
     _heartCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700))
-      ..repeat(reverse: true);
-    _heart = Tween<double>(begin: 0.88, end: 1.15)
-        .animate(CurvedAnimation(parent: _heartCtrl, curve: Curves.easeInOut));
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
+    _heart = Tween<double>(
+      begin: 0.88,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _heartCtrl, curve: Curves.easeInOut));
 
     _rayCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3000))
-      ..repeat();
-    _ray = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _rayCtrl, curve: Curves.linear));
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    )..repeat();
+    _ray = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _rayCtrl, curve: Curves.linear));
   }
 
   @override
   void dispose() {
-    _coinCtrl.dispose(); _heartCtrl.dispose(); _rayCtrl.dispose();
+    _coinCtrl.dispose();
+    _heartCtrl.dispose();
+    _rayCtrl.dispose();
     super.dispose();
   }
 
@@ -1435,14 +1546,13 @@ class _SadaqahIllustrationState extends State<_SadaqahIllustration>
           return _CoinParticle(
             t: t,
             startX: 100.0 + (i - 2) * 18.0,
-            color: i.isEven
-                ? const Color(0xFFDD88FF)
-                : const Color(0xFFFF99CC),
+            color: i.isEven ? const Color(0xFFDD88FF) : const Color(0xFFFF99CC),
           );
         });
 
         return SizedBox(
-          width: 260, height: 260,
+          width: 260,
+          height: 260,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -1454,17 +1564,21 @@ class _SadaqahIllustrationState extends State<_SadaqahIllustration>
 
               // Outer ring
               Container(
-                width: 160, height: 160,
+                width: 160,
+                height: 160,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFFDD88FF).withValues(alpha: 0.3), width: 1.5),
+                    color: const Color(0xFFDD88FF).withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
               ),
 
               // Inner glow
               Container(
-                width: 120, height: 120,
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -1477,35 +1591,43 @@ class _SadaqahIllustrationState extends State<_SadaqahIllustration>
               ),
 
               // Floating coins
-              ...coins.map((c) => Positioned(
-                left: c.startX - 10,
-                top:  90 - c.t * 80,
-                child: Opacity(
-                  opacity: (c.t < 0.1
-                      ? c.t * 10
-                      : c.t > 0.65
-                          ? (1 - c.t) / 0.35
-                          : 1.0).clamp(0.0, 1.0),
-                  child: Container(
-                    width: 20, height: 20,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [Colors.white, c.color],
+              ...coins.map(
+                (c) => Positioned(
+                  left: c.startX - 10,
+                  top: 90 - c.t * 80,
+                  child: Opacity(
+                    opacity: (c.t < 0.1
+                            ? c.t * 10
+                            : c.t > 0.65
+                            ? (1 - c.t) / 0.35
+                            : 1.0)
+                        .clamp(0.0, 1.0),
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [Colors.white, c.color],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: c.color.withValues(alpha: 0.6),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: c.color.withValues(alpha: 0.6),
-                          blurRadius: 8, spreadRadius: 1,
-                        )
-                      ],
-                    ),
-                    child: const Center(
-                      child: Text('✦', style: TextStyle(fontSize: 10, color: Colors.white)),
+                      child: const Center(
+                        child: Text(
+                          '✦',
+                          style: TextStyle(fontSize: 10, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              )),
+              ),
 
               // Pulsing heart + hand
               Column(
@@ -1514,13 +1636,17 @@ class _SadaqahIllustrationState extends State<_SadaqahIllustration>
                   Transform.scale(
                     scale: _heart.value,
                     child: ShaderMask(
-                      shaderCallback: (b) => const LinearGradient(
-                        colors: [Color(0xFFFF69B4), Color(0xFFDD88FF)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ).createShader(b),
-                      child: const Icon(Icons.favorite_rounded,
-                          size: 64, color: Colors.white),
+                      shaderCallback:
+                          (b) => const LinearGradient(
+                            colors: [Color(0xFFFF69B4), Color(0xFFDD88FF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(b),
+                      child: const Icon(
+                        Icons.favorite_rounded,
+                        size: 64,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1539,7 +1665,11 @@ class _CoinParticle {
   final double t;
   final double startX;
   final Color color;
-  const _CoinParticle({required this.t, required this.startX, required this.color});
+  const _CoinParticle({
+    required this.t,
+    required this.startX,
+    required this.color,
+  });
 }
 
 class _RotatingRaysPainter extends CustomPainter {
@@ -1550,21 +1680,28 @@ class _RotatingRaysPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final cy = size.height / 2;
-    final paint = Paint()
-      ..color = const Color(0xFFDD88FF).withValues(alpha: 0.07)
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = const Color(0xFFDD88FF).withValues(alpha: 0.07)
+          ..style = PaintingStyle.fill;
 
     const rayCount = 12;
     for (int i = 0; i < rayCount; i++) {
       final angle = (i / rayCount) * 2 * math.pi + phase * 2 * math.pi;
-      final nextAngle = ((i + 0.4) / rayCount) * 2 * math.pi + phase * 2 * math.pi;
-      final path = Path()
-        ..moveTo(cx, cy)
-        ..lineTo(cx + size.width * 0.7 * math.cos(angle),
-                 cy + size.height * 0.7 * math.sin(angle))
-        ..lineTo(cx + size.width * 0.7 * math.cos(nextAngle),
-                 cy + size.height * 0.7 * math.sin(nextAngle))
-        ..close();
+      final nextAngle =
+          ((i + 0.4) / rayCount) * 2 * math.pi + phase * 2 * math.pi;
+      final path =
+          Path()
+            ..moveTo(cx, cy)
+            ..lineTo(
+              cx + size.width * 0.7 * math.cos(angle),
+              cy + size.height * 0.7 * math.sin(angle),
+            )
+            ..lineTo(
+              cx + size.width * 0.7 * math.cos(nextAngle),
+              cy + size.height * 0.7 * math.sin(nextAngle),
+            )
+            ..close();
       canvas.drawPath(path, paint);
     }
   }
@@ -1572,4 +1709,3 @@ class _RotatingRaysPainter extends CustomPainter {
   @override
   bool shouldRepaint(_RotatingRaysPainter o) => o.phase != phase;
 }
-

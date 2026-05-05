@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +25,10 @@ class NotificationService {
 
     // Request notification permission
     await messaging.requestPermission(
-      alert: true, badge: true, sound: true, provisional: false,
+      alert: true,
+      badge: true,
+      sound: true,
+      provisional: false,
     );
 
     // Get FCM token
@@ -40,7 +43,8 @@ class NotificationService {
     // Re-save on token refresh
     messaging.onTokenRefresh.listen((newToken) async {
       final uid = Supabase.instance.client.auth.currentUser?.id;
-      if (uid != null) await _saveTokenWithLocation(token: newToken, userId: uid);
+      if (uid != null)
+        await _saveTokenWithLocation(token: newToken, userId: uid);
     });
 
     // ── Deep-link handling ────────────────────────────────────────────────────
@@ -68,10 +72,11 @@ class NotificationService {
     try {
       final pos = await _getLocation();
       if (pos != null) {
-        latitude  = pos.latitude;
+        latitude = pos.latitude;
         longitude = pos.longitude;
-        timezone  = await _timezoneFromCoords(pos.latitude, pos.longitude)
-                    ?? await _systemTimezone();
+        timezone =
+            await _timezoneFromCoords(pos.latitude, pos.longitude) ??
+            await _systemTimezone();
         debugPrint('📍 GPS timezone: $timezone ($latitude, $longitude)');
       } else {
         timezone = await _systemTimezone();
@@ -84,13 +89,13 @@ class NotificationService {
 
     try {
       await Supabase.instance.client.from('fcm_tokens').upsert({
-        'user_id':    userId,
-        'token':      token,
-        'timezone':   timezone,
-        'latitude':   latitude,
-        'longitude':  longitude,
+        'user_id': userId,
+        'token': token,
+        'timezone': timezone,
+        'latitude': latitude,
+        'longitude': longitude,
         'device_type': 'android',
-        'last_seen':  DateTime.now().toUtc().toIso8601String(),
+        'last_seen': DateTime.now().toUtc().toIso8601String(),
       }, onConflict: 'user_id');
     } catch (e) {
       debugPrint('Error saving FCM token: $e');
@@ -167,19 +172,25 @@ class NotificationService {
 
     switch (route) {
       case 'morning':
-        nav.push(MaterialPageRoute(
-          builder: (_) => const DhikrScreen(initialCategory: 'morning'),
-        ));
+        nav.push(
+          MaterialPageRoute(
+            builder: (_) => const DhikrScreen(initialCategory: 'morning'),
+          ),
+        );
         break;
       case 'evening':
-        nav.push(MaterialPageRoute(
-          builder: (_) => const DhikrScreen(initialCategory: 'evening'),
-        ));
+        nav.push(
+          MaterialPageRoute(
+            builder: (_) => const DhikrScreen(initialCategory: 'evening'),
+          ),
+        );
         break;
       case 'sleeping':
-        nav.push(MaterialPageRoute(
-          builder: (_) => const DhikrScreen(initialCategory: 'sleeping'),
-        ));
+        nav.push(
+          MaterialPageRoute(
+            builder: (_) => const DhikrScreen(initialCategory: 'sleeping'),
+          ),
+        );
         break;
       default:
         // Nightly check-in or unknown — just brings app to foreground

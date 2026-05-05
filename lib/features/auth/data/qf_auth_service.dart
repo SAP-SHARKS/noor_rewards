@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -18,7 +18,8 @@ class QfEmailConflictException implements Exception {
   final String email;
   const QfEmailConflictException(this.email);
   @override
-  String toString() => 'QfEmailConflictException: $email already has an account';
+  String toString() =>
+      'QfEmailConflictException: $email already has an account';
 }
 
 /// Manual PKCE OAuth2 service for Quran Foundation authentication.
@@ -32,21 +33,21 @@ class QfAuthService {
   static const String _redirectUri = 'noorrewards://oauth2/callback';
 
   // ── Session tokens (cleared on sign-out) ────────────────────────────────────
-  static const String _accessTokenKey  = 'qf_access_token';
+  static const String _accessTokenKey = 'qf_access_token';
   static const String _refreshTokenKey = 'qf_refresh_token';
   static const String _codeVerifierKey = 'qf_pkce_code_verifier';
 
   // ── Identity cache (kept across sign-outs so we can skip profile-setup) ─────
-  static const String _qfSubKey        = 'qf_user_sub';
-  static const String _qfEmailKey      = 'qf_user_email';
-  static const String _qfNameKey       = 'qf_user_name';
-  static const String _qfPictureKey    = 'qf_user_picture';
+  static const String _qfSubKey = 'qf_user_sub';
+  static const String _qfEmailKey = 'qf_user_email';
+  static const String _qfNameKey = 'qf_user_name';
+  static const String _qfPictureKey = 'qf_user_picture';
 
   // ── Persisted "QF user signed out" flag ─────────────────────────────────────
   // When a QF user taps Sign Out we keep the Supabase session alive
   // (to prevent a new anonymous user being created on next login) but set
   // this flag so the AuthGate can still show the login screen.
-  static const String _qfSignedOutKey  = 'qf_user_signed_out';
+  static const String _qfSignedOutKey = 'qf_user_signed_out';
 
   // ── Observable state for AuthGate ───────────────────────────────────────────
   /// True while the QF token exchange + userinfo fetch is in progress.
@@ -69,11 +70,12 @@ class QfAuthService {
   }
 
   // ── Public getters ──────────────────────────────────────────────────────────
-  Future<String?> get accessToken  => _secureStorage.read(key: _accessTokenKey);
-  Future<String?> get refreshToken => _secureStorage.read(key: _refreshTokenKey);
-  Future<String?> get qfEmail      => _secureStorage.read(key: _qfEmailKey);
-  Future<String?> get qfName       => _secureStorage.read(key: _qfNameKey);
-  Future<String?> get qfPicture    => _secureStorage.read(key: _qfPictureKey);
+  Future<String?> get accessToken => _secureStorage.read(key: _accessTokenKey);
+  Future<String?> get refreshToken =>
+      _secureStorage.read(key: _refreshTokenKey);
+  Future<String?> get qfEmail => _secureStorage.read(key: _qfEmailKey);
+  Future<String?> get qfName => _secureStorage.read(key: _qfNameKey);
+  Future<String?> get qfPicture => _secureStorage.read(key: _qfPictureKey);
 
   /// Called from main.dart's app_links listener.
   void handleCallback(Uri uri) {
@@ -109,11 +111,12 @@ class QfAuthService {
     if (metaProvider != 'quran_com' && isAnonymous) {
       storedSub = await instance._secureStorage.read(key: _qfSubKey);
     }
-    final isQf = metaProvider == 'quran_com'
-        || (isAnonymous && storedSub != null && storedSub.isNotEmpty);
+    final isQf =
+        metaProvider == 'quran_com' ||
+        (isAnonymous && storedSub != null && storedSub.isNotEmpty);
 
     if (isQf) {
-      await instance.signOut();   // QF-aware: keeps Supabase session alive
+      await instance.signOut(); // QF-aware: keeps Supabase session alive
     } else {
       await supabase.auth.signOut(); // Regular full sign-out
     }
@@ -121,23 +124,23 @@ class QfAuthService {
 
   // ── Sign In ─────────────────────────────────────────────────────────────────
   Future<void> signIn() async {
-    final codeVerifier  = _generateCodeVerifier();
+    final codeVerifier = _generateCodeVerifier();
     final codeChallenge = _generateCodeChallenge(codeVerifier);
 
     await _secureStorage.write(key: _codeVerifierKey, value: codeVerifier);
 
     final authUri = Uri.parse('${Env.qfAuthBase}/oauth2/auth').replace(
       queryParameters: {
-        'client_id':             Env.qfClientId,
-        'response_type':         'code',
-        'redirect_uri':          _redirectUri,
-        'scope':                 'openid',
-        'code_challenge':        codeChallenge,
+        'client_id': Env.qfClientId,
+        'response_type': 'code',
+        'redirect_uri': _redirectUri,
+        'scope': 'openid',
+        'code_challenge': codeChallenge,
         'code_challenge_method': 'S256',
-        'state':                 _generateState(),
+        'state': _generateState(),
         // prompt=login clears the cached QF browser session so the user can
         // pick their Google account — like "Continue with Google" does.
-        'prompt':                'login',
+        'prompt': 'login',
       },
     );
 
@@ -152,7 +155,8 @@ class QfAuthService {
     try {
       callbackUri = await _pendingCallback!.future.timeout(
         const Duration(minutes: 5),
-        onTimeout: () => throw TimeoutException('Login timed out — please try again.'),
+        onTimeout:
+            () => throw TimeoutException('Login timed out — please try again.'),
       );
     } finally {
       _pendingCallback = null;
@@ -160,7 +164,9 @@ class QfAuthService {
 
     final error = callbackUri.queryParameters['error'];
     if (error != null) {
-      throw Exception('QF auth error: $error — ${callbackUri.queryParameters['error_description']}');
+      throw Exception(
+        'QF auth error: $error — ${callbackUri.queryParameters['error_description']}',
+      );
     }
 
     final code = callbackUri.queryParameters['code'];
@@ -200,8 +206,16 @@ class QfAuthService {
     );
     if (response.status == 200) {
       final data = response.data;
-      if (data?['access_token']  != null) await _secureStorage.write(key: _accessTokenKey,  value: data['access_token']);
-      if (data?['refresh_token'] != null) await _secureStorage.write(key: _refreshTokenKey, value: data['refresh_token']);
+      if (data?['access_token'] != null)
+        await _secureStorage.write(
+          key: _accessTokenKey,
+          value: data['access_token'],
+        );
+      if (data?['refresh_token'] != null)
+        await _secureStorage.write(
+          key: _refreshTokenKey,
+          value: data['refresh_token'],
+        );
     } else {
       throw Exception('Token refresh failed: ${response.data}');
     }
@@ -223,23 +237,30 @@ class QfAuthService {
       final response = await _supabase.functions.invoke(
         'qf-token-exchange',
         body: {
-          'code':          code,
+          'code': code,
           'code_verifier': codeVerifier,
-          'redirect_uri':  _redirectUri,
-          'client_id':     Env.qfClientId,
+          'redirect_uri': _redirectUri,
+          'client_id': Env.qfClientId,
         },
       );
 
       if (response.status != 200) {
-        throw Exception('Token exchange failed (${response.status}): ${response.data}');
+        throw Exception(
+          'Token exchange failed (${response.status}): ${response.data}',
+        );
       }
 
-      final data            = response.data;
-      final qfAccessToken   = data?['access_token']  as String?;
-      final qfRefreshToken  = data?['refresh_token'] as String?;
+      final data = response.data;
+      final qfAccessToken = data?['access_token'] as String?;
+      final qfRefreshToken = data?['refresh_token'] as String?;
 
-      if (qfAccessToken  != null) await _secureStorage.write(key: _accessTokenKey,  value: qfAccessToken);
-      if (qfRefreshToken != null) await _secureStorage.write(key: _refreshTokenKey, value: qfRefreshToken);
+      if (qfAccessToken != null)
+        await _secureStorage.write(key: _accessTokenKey, value: qfAccessToken);
+      if (qfRefreshToken != null)
+        await _secureStorage.write(
+          key: _refreshTokenKey,
+          value: qfRefreshToken,
+        );
 
       // ── Session decision ─────────────────────────────────────────────────
       // Get the QF sub FIRST so we can verify identity before touching the
@@ -248,10 +269,12 @@ class QfAuthService {
       String? incomingQfSub;
       if (qfAccessToken != null) {
         try {
-          final res = await http.get(
-            Uri.parse('${Env.qfAuthBase}/userinfo'),
-            headers: {'Authorization': 'Bearer $qfAccessToken'},
-          ).timeout(const Duration(seconds: 8));
+          final res = await http
+              .get(
+                Uri.parse('${Env.qfAuthBase}/userinfo'),
+                headers: {'Authorization': 'Bearer $qfAccessToken'},
+              )
+              .timeout(const Duration(seconds: 8));
           if (res.statusCode == 200) {
             final info = jsonDecode(res.body) as Map<String, dynamic>;
             incomingQfSub = info['sub'] as String?;
@@ -268,19 +291,26 @@ class QfAuthService {
       // different QF identity (both subs known AND mismatched).  If the sub is
       // unknown (userinfo timed out) or matches, reuse the existing session.
       final storedSubForSession = await _secureStorage.read(key: _qfSubKey);
-      final isConfirmedDifferentUser = incomingQfSub != null
-          && incomingQfSub.isNotEmpty
-          && storedSubForSession != null
-          && storedSubForSession.isNotEmpty   // empty stored sub = first login, never "different"
-          && incomingQfSub != storedSubForSession;
+      final isConfirmedDifferentUser =
+          incomingQfSub != null &&
+          incomingQfSub.isNotEmpty &&
+          storedSubForSession != null &&
+          storedSubForSession
+              .isNotEmpty // empty stored sub = first login, never "different"
+              &&
+          incomingQfSub != storedSubForSession;
 
       if (_supabase.auth.currentSession != null && !isConfirmedDifferentUser) {
-        debugPrint('[QF] reusing session '
-            '(incoming=$incomingQfSub stored=$storedSubForSession)');
+        debugPrint(
+          '[QF] reusing session '
+          '(incoming=$incomingQfSub stored=$storedSubForSession)',
+        );
       } else {
         if (_supabase.auth.currentSession != null) {
-          debugPrint('[QF] confirmed different user → signing out '
-              '(was $storedSubForSession, now $incomingQfSub)');
+          debugPrint(
+            '[QF] confirmed different user → signing out '
+            '(was $storedSubForSession, now $incomingQfSub)',
+          );
           await _supabase.auth.signOut();
         }
         await _supabase.auth.signInAnonymously();
@@ -299,27 +329,35 @@ class QfAuthService {
 
   Future<void> _fetchAndStoreUserInfo(String accessToken) async {
     try {
-      final res = await http.get(
-        Uri.parse('${Env.qfAuthBase}/userinfo'),
-        headers: {'Authorization': 'Bearer $accessToken'},
-      ).timeout(const Duration(seconds: 10));
+      final res = await http
+          .get(
+            Uri.parse('${Env.qfAuthBase}/userinfo'),
+            headers: {'Authorization': 'Bearer $accessToken'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (res.statusCode != 200) return;
 
-      final info    = jsonDecode(res.body) as Map<String, dynamic>;
-      final email   = (info['email']   as String?) ?? '';
-      final name    = (info['name']    as String?) ?? '';
+      final info = jsonDecode(res.body) as Map<String, dynamic>;
+      final email = (info['email'] as String?) ?? '';
+      final name = (info['name'] as String?) ?? '';
       final picture = (info['picture'] as String?) ?? '';
-      final sub     = (info['sub']     as String?) ?? '';
+      final sub = (info['sub'] as String?) ?? '';
 
       debugPrint('[QF] userinfo → email=$email name=$name sub=$sub');
 
       // ── Email conflict detection ─────────────────────────────────────────
       if (email.isNotEmpty) {
         try {
-          final exists = await _supabase
-              .rpc('email_account_exists', params: {'email_param': email})
-              .single() as bool? ?? false;
+          final exists =
+              await _supabase
+                      .rpc(
+                        'email_account_exists',
+                        params: {'email_param': email},
+                      )
+                      .single()
+                  as bool? ??
+              false;
           if (exists) {
             await _supabase.auth.signOut();
             await _secureStorage.delete(key: _accessTokenKey);
@@ -334,16 +372,15 @@ class QfAuthService {
       }
 
       // ── Returning-user detection ─────────────────────────────────────────
-      final storedSub  = await _secureStorage.read(key: _qfSubKey);
+      final storedSub = await _secureStorage.read(key: _qfSubKey);
       final storedName = await _secureStorage.read(key: _qfNameKey);
 
       final isSameSub = sub.isNotEmpty && sub == storedSub;
 
       // Display name resolution — SecureStorage is only used as a hint for the
       // same identity.  Never inherit another user's cached name.
-      var displayName = name.isNotEmpty
-          ? name
-          : (isSameSub ? (storedName ?? '') : '');
+      var displayName =
+          name.isNotEmpty ? name : (isSameSub ? (storedName ?? '') : '');
 
       debugPrint('[QF] isSameSub=$isSameSub displayName="$displayName"');
 
@@ -354,37 +391,45 @@ class QfAuthService {
       try {
         final currentUser = _supabase.auth.currentUser;
         if (currentUser != null) {
-          final profile = await _supabase
-              .from('profiles')
-              .select('setup_done, display_name')
-              .eq('id', currentUser.id)
-              .maybeSingle();
+          final profile =
+              await _supabase
+                  .from('profiles')
+                  .select('setup_done, display_name')
+                  .eq('id', currentUser.id)
+                  .maybeSingle();
           dbSetupDone = profile?['setup_done'] == true;
           // If DB already has a real name (from a completed setup), prefer it.
           final dbName = (profile?['display_name'] as String?) ?? '';
           if (dbSetupDone && dbName.isNotEmpty) {
             displayName = dbName;
-            debugPrint('[QF] using DB display_name="$dbName" (setup_done=true by id)');
+            debugPrint(
+              '[QF] using DB display_name="$dbName" (setup_done=true by id)',
+            );
           }
 
           // ── Email-based fallback & progress recovery ────────────────────────
           if (!dbSetupDone && email.isNotEmpty) {
             try {
-              final result = await _supabase.rpc(
-                'link_qf_profile',
-                params: {
-                  'p_email':   email,
-                  'p_new_id':  currentUser.id,
-                  'p_name':    displayName,
-                  'p_picture': picture,
-                },
-              ) as String? ?? 'ERROR: Null response';
+              final result =
+                  await _supabase.rpc(
+                        'link_qf_profile',
+                        params: {
+                          'p_email': email,
+                          'p_new_id': currentUser.id,
+                          'p_name': displayName,
+                          'p_picture': picture,
+                        },
+                      )
+                      as String? ??
+                  'ERROR: Null response';
 
               if (result == 'SUCCESS') {
                 dbSetupDone = true;
-                debugPrint('[QF] successfully recovered old profile and linked to new anonymous ID');
+                debugPrint(
+                  '[QF] successfully recovered old profile and linked to new anonymous ID',
+                );
               } else {
-                 debugPrint('[QF] RPC failed: $result');
+                debugPrint('[QF] RPC failed: $result');
               }
             } catch (e) {
               debugPrint('[QF] profile recovery RPC failed (skipping): $e');
@@ -397,21 +442,21 @@ class QfAuthService {
 
       // Persist identity keys — update sub/email/picture always,
       // but only write displayName when we have one.
-      await _secureStorage.write(key: _qfSubKey,     value: sub);
-      await _secureStorage.write(key: _qfEmailKey,   value: email);
+      await _secureStorage.write(key: _qfSubKey, value: sub);
+      await _secureStorage.write(key: _qfEmailKey, value: email);
       await _secureStorage.write(key: _qfPictureKey, value: picture);
       if (displayName.isNotEmpty) {
-        await _secureStorage.write(key: _qfNameKey,  value: displayName);
+        await _secureStorage.write(key: _qfNameKey, value: displayName);
       }
 
       // ── Update Supabase user metadata ────────────────────────────────────
       final meta = <String, dynamic>{
-        'provider':   'quran_com',
-        'qf_email':   email,
-        'qf_name':    displayName,
+        'provider': 'quran_com',
+        'qf_email': email,
+        'qf_name': displayName,
         'qf_picture': picture,
-        'qf_sub':     sub,
-        'full_name':  displayName,
+        'qf_sub': sub,
+        'full_name': displayName,
         'avatar_url': picture,
       };
 
@@ -419,11 +464,15 @@ class QfAuthService {
       if (dbSetupDone || name.isNotEmpty) {
         meta['noor_setup_complete'] = true;
         if (displayName.isNotEmpty) meta['noor_name'] = displayName;
-        debugPrint('[QF] noor_setup_complete=true (dbSetupDone=$dbSetupDone qfName="$name")');
+        debugPrint(
+          '[QF] noor_setup_complete=true (dbSetupDone=$dbSetupDone qfName="$name")',
+        );
       } else {
         // Explicitly overwrite any stale 'true' from previous sessions.
         meta['noor_setup_complete'] = false;
-        debugPrint('[QF] noor_setup_complete=false → ProfileSetupScreen will show');
+        debugPrint(
+          '[QF] noor_setup_complete=false → ProfileSetupScreen will show',
+        );
       }
 
       await _supabase.auth.updateUser(UserAttributes(data: meta));
@@ -437,25 +486,22 @@ class QfAuthService {
       final user = _supabase.auth.currentUser;
       if (user != null) {
         final row = <String, dynamic>{'id': user.id};
-        if (email.isNotEmpty)   row['email']     = email;
+        if (email.isNotEmpty) row['email'] = email;
         if (picture.isNotEmpty) row['avatar_url'] = picture;
 
         // Authoritative name only — from QF directly or completed-setup DB row
-        final authoritativeName = name.isNotEmpty
-            ? name
-            : (dbSetupDone ? displayName : '');
-        if (authoritativeName.isNotEmpty) row['display_name'] = authoritativeName;
+        final authoritativeName =
+            name.isNotEmpty ? name : (dbSetupDone ? displayName : '');
+        if (authoritativeName.isNotEmpty)
+          row['display_name'] = authoritativeName;
 
         if (row.length > 1) {
-          await _supabase.from('profiles').upsert(
-            row,
-            onConflict: 'id',
-            ignoreDuplicates: false,
-          );
+          await _supabase
+              .from('profiles')
+              .upsert(row, onConflict: 'id', ignoreDuplicates: false);
           debugPrint('[QF] profiles upserted → ${row.keys.toList()}');
         }
       }
-
     } catch (e) {
       if (e is QfEmailConflictException) rethrow;
       debugPrint('[QF] userinfo fetch failed (non-fatal): $e');
@@ -464,7 +510,7 @@ class QfAuthService {
 
   String _generateCodeVerifier() {
     final random = Random.secure();
-    final bytes  = List<int>.generate(32, (_) => random.nextInt(256));
+    final bytes = List<int>.generate(32, (_) => random.nextInt(256));
     return base64Url.encode(bytes).replaceAll('=', '');
   }
 
@@ -475,7 +521,7 @@ class QfAuthService {
 
   String _generateState() {
     final random = Random.secure();
-    final bytes  = List<int>.generate(16, (_) => random.nextInt(256));
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
     return base64Url.encode(bytes).replaceAll('=', '');
   }
 }

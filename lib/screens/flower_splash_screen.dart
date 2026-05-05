@@ -31,7 +31,9 @@ class _FlowerSplashScreenState extends State<FlowerSplashScreen>
   LottieComposition? _composition;
   Timer? _safetyTimeout;
 
-  static const _bg = Color(0xFFFFF4D2); // Y4 honey wash — matches launch_background.xml
+  static const _bg = Color(
+    0xFFFFF4D2,
+  ); // Y4 honey wash — matches launch_background.xml
 
   /// Skip the first portion of the animation where the flower hasn't "grown"
   /// yet (Lottie typically draws nothing in the very early frames). Starting
@@ -81,7 +83,8 @@ class _FlowerSplashScreenState extends State<FlowerSplashScreen>
 
   Future<void> _loadAndPlay() async {
     try {
-      final bytes = await rootBundle.load('assets/lottie/Flower.json')
+      final bytes = await rootBundle
+          .load('assets/lottie/Flower.json')
           .timeout(_maxLoadWait);
       final composition = await LottieComposition.fromByteData(bytes);
       if (!mounted) return;
@@ -109,23 +112,25 @@ class _FlowerSplashScreenState extends State<FlowerSplashScreen>
     return Scaffold(
       backgroundColor: _bg,
       body: Center(
-        child: _composition == null
-            // Honey-tinted placeholder circle while Lottie decodes — never
-            // lets the screen feel "blank" even on the slowest device.
-            ? Container(
-                width: 80, height: 80,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0x33D89A1E), // honey-deep @ 20%
+        child:
+            _composition == null
+                // Honey-tinted placeholder circle while Lottie decodes — never
+                // lets the screen feel "blank" even on the slowest device.
+                ? Container(
+                  width: 80,
+                  height: 80,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0x33D89A1E), // honey-deep @ 20%
+                  ),
+                )
+                : Lottie(
+                  composition: _composition!,
+                  controller: _ctrl,
+                  width: 320,
+                  height: 320,
+                  fit: BoxFit.contain,
                 ),
-              )
-            : Lottie(
-                composition: _composition!,
-                controller: _ctrl,
-                width: 320,
-                height: 320,
-                fit: BoxFit.contain,
-              ),
       ),
     );
   }

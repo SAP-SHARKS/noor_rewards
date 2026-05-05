@@ -25,23 +25,25 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
       await Supabase.instance.client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: 'io.supabase.flutterquickstart://login-callback/',
-        queryParams: {
-          'prompt': 'select_account',
-        },
+        queryParams: {'prompt': 'select_account'},
       );
     } on AuthException catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(error.message),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text('Unexpected error during Google Sign In'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Unexpected error during Google Sign In'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -117,25 +119,23 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           ),
 
           // ── Floating Islamic icons in background ───────────────────────────
-          _fi(Icons.mosque_rounded,       80,  left: 16,  size: 32, op: 0.07),
-          _fi(Icons.mosque_rounded,       200, right: 14, size: 24, op: 0.06),
-          _fi(Icons.nights_stay_rounded,  55,  right: 48, size: 28, op: 0.08),
-          _fi(Icons.star_rounded,         130, left: 58,  size: 18, op: 0.09),
-          _fi(Icons.star_rounded,         310, right: 38, size: 14, op: 0.07),
-          _fi(Icons.favorite_rounded,     260, left: 20,  size: 20, op: 0.07),
-          _fi(Icons.volunteer_activism,   430, right: 22, size: 24, op: 0.06),
-          _fi(Icons.book_rounded,         510, left: 28,  size: 22, op: 0.06),
-          _fi(Icons.self_improvement,     575, right: 32, size: 24, op: 0.07),
-          _fi(Icons.nights_stay_rounded,   380, left: 12,  size: 16, op: 0.09),
-          _fi(Icons.spa_rounded,          650, left: 46,  size: 20, op: 0.06),
-          _fi(Icons.star_border_rounded,  700, right: 26, size: 22, op: 0.07),
-          _fi(Icons.circle_outlined,      460, left: 60,  size: 12, op: 0.06),
-          _fi(Icons.circle_outlined,      160, right: 70, size: 10, op: 0.07),
+          _fi(Icons.mosque_rounded, 80, left: 16, size: 32, op: 0.07),
+          _fi(Icons.mosque_rounded, 200, right: 14, size: 24, op: 0.06),
+          _fi(Icons.nights_stay_rounded, 55, right: 48, size: 28, op: 0.08),
+          _fi(Icons.star_rounded, 130, left: 58, size: 18, op: 0.09),
+          _fi(Icons.star_rounded, 310, right: 38, size: 14, op: 0.07),
+          _fi(Icons.favorite_rounded, 260, left: 20, size: 20, op: 0.07),
+          _fi(Icons.volunteer_activism, 430, right: 22, size: 24, op: 0.06),
+          _fi(Icons.book_rounded, 510, left: 28, size: 22, op: 0.06),
+          _fi(Icons.self_improvement, 575, right: 32, size: 24, op: 0.07),
+          _fi(Icons.nights_stay_rounded, 380, left: 12, size: 16, op: 0.09),
+          _fi(Icons.spa_rounded, 650, left: 46, size: 20, op: 0.06),
+          _fi(Icons.star_border_rounded, 700, right: 26, size: 22, op: 0.07),
+          _fi(Icons.circle_outlined, 460, left: 60, size: 12, op: 0.06),
+          _fi(Icons.circle_outlined, 160, right: 70, size: 10, op: 0.07),
 
           // ── Islamic geometric star tiling ──────────────────────────────────
-          Positioned.fill(
-            child: CustomPaint(painter: _IslamicBgPainter()),
-          ),
+          Positioned.fill(child: CustomPaint(painter: _IslamicBgPainter())),
 
           // ── Main content ───────────────────────────────────────────────────
           SafeArea(
@@ -156,14 +156,13 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFF1A4A2E),
-                            Color(0xFF00C875),
-                          ],
+                          colors: [Color(0xFF1A4A2E), Color(0xFF00C875)],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF00C875).withValues(alpha: 0.4),
+                            color: const Color(
+                              0xFF00C875,
+                            ).withValues(alpha: 0.4),
                             blurRadius: 48,
                             spreadRadius: 6,
                             offset: const Offset(0, 14),
@@ -174,13 +173,14 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         borderRadius: BorderRadius.circular(40),
                         child: Lottie.asset(
                           'assets/lottie/lantern.json',
-                          errorBuilder: (_, _, _) => const Center(
-                            child: Icon(
-                              Icons.local_fire_department_rounded,
-                              size: 88,
-                              color: Colors.white,
-                            ),
-                          ),
+                          errorBuilder:
+                              (_, _, _) => const Center(
+                                child: Icon(
+                                  Icons.local_fire_department_rounded,
+                                  size: 88,
+                                  color: Colors.white,
+                                ),
+                              ),
                         ),
                       ),
                     ),
@@ -215,7 +215,8 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
                   // Title
                   Text(
-                    AppLocalizations.of(context)?.startYourJourney ?? 'Start Your Journey',
+                    AppLocalizations.of(context)?.startYourJourney ??
+                        'Start Your Journey',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 30,
@@ -256,64 +257,92 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const _GoogleLogo(size: 22),
+                                const SizedBox(width: 12),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.continueWithGoogle,
+                                ),
+                              ],
                             ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const _GoogleLogo(size: 22),
-                              const SizedBox(width: 12),
-                              Text(AppLocalizations.of(context)!.continueWithGoogle),
-                            ],
-                          ),
                   ),
 
                   const SizedBox(height: 16),
 
                   // QF Sign-In Button
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () async {
-                      setState(() => _isLoading = true);
-                      try {
-                        // Assuming QfAuthService is defined globally or we can just import it
-                        await QfAuthService.instance.signIn();
-                        if (context.mounted) {
-                           // Navigate to dashboard or handle success
-                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully authenticated with Quran.com!')));
-                        }
-                      } on QfEmailConflictException catch (e) {
-                        // An existing account uses the same email — show the
-                        // dedicated conflict screen instead of a generic error.
-                        if (context.mounted) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => QfAccountConflictScreen(
-                              email: e.email,
-                              onBack: () => Navigator.of(context).pop(),
-                            ),
-                          ));
-                        }
-                      } catch (e) {
-                         if (context.mounted && !e.toString().contains('cancelled')) {
-                           showDialog(
-                             context: context,
-                             builder: (c) => AlertDialog(
-                               title: const Text('Auth Error'),
-                               content: SingleChildScrollView(child: Text(e.toString())),
-                               actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))],
-                             )
-                           );
-                         }
-                      } finally {
-                        if (mounted) setState(() => _isLoading = false);
-                      }
-                    },
+                    onPressed:
+                        _isLoading
+                            ? null
+                            : () async {
+                              setState(() => _isLoading = true);
+                              try {
+                                // Assuming QfAuthService is defined globally or we can just import it
+                                await QfAuthService.instance.signIn();
+                                if (context.mounted) {
+                                  // Navigate to dashboard or handle success
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Successfully authenticated with Quran.com!',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } on QfEmailConflictException catch (e) {
+                                // An existing account uses the same email — show the
+                                // dedicated conflict screen instead of a generic error.
+                                if (context.mounted) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => QfAccountConflictScreen(
+                                            email: e.email,
+                                            onBack:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                          ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted &&
+                                    !e.toString().contains('cancelled')) {
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (c) => AlertDialog(
+                                          title: const Text('Auth Error'),
+                                          content: SingleChildScrollView(
+                                            child: Text(e.toString()),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(c),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                }
+                              } finally {
+                                if (mounted) setState(() => _isLoading = false);
+                              }
+                            },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1A4A2E),
                       foregroundColor: Colors.white,
@@ -327,23 +356,32 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.book_rounded,
+                                  size: 22,
+                                  color: Color(0xFF00C875),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.continueWithQuran,
+                                ),
+                              ],
                             ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.book_rounded, size: 22, color: Color(0xFF00C875)),
-                              const SizedBox(width: 12),
-                              Text(AppLocalizations.of(context)!.continueWithQuran),
-                            ],
-                          ),
                   ),
 
                   const SizedBox(height: 20),
@@ -392,10 +430,11 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 class _IslamicBgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.028)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.7;
+    final paint =
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.028)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.7;
 
     const spacing = 88.0;
     for (double y = 0; y < size.height + spacing; y += spacing) {

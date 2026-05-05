@@ -27,12 +27,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 /// (per-category toggles surface in profile settings; for now we only ship a
 /// master on/off).
 enum NoorNotifKind {
-  reward,      // +XP / +pts earned
-  streak,      // streak milestone hit
-  badge,       // new achievement unlocked
-  donation,    // donation succeeded
-  validation,  // user sealed the day
-  system,      // generic info
+  reward, // +XP / +pts earned
+  streak, // streak milestone hit
+  badge, // new achievement unlocked
+  donation, // donation succeeded
+  validation, // user sealed the day
+  system, // generic info
 }
 
 extension NoorNotifKindIcon on NoorNotifKind {
@@ -40,12 +40,18 @@ extension NoorNotifKindIcon on NoorNotifKind {
   /// notification doesn't carry its own custom icon.
   String get emoji {
     switch (this) {
-      case NoorNotifKind.reward:     return '⭐';
-      case NoorNotifKind.streak:     return '🔥';
-      case NoorNotifKind.badge:      return '🏆';
-      case NoorNotifKind.donation:   return '💝';
-      case NoorNotifKind.validation: return '🌙';
-      case NoorNotifKind.system:     return '🔔';
+      case NoorNotifKind.reward:
+        return '⭐';
+      case NoorNotifKind.streak:
+        return '🔥';
+      case NoorNotifKind.badge:
+        return '🏆';
+      case NoorNotifKind.donation:
+        return '💝';
+      case NoorNotifKind.validation:
+        return '🌙';
+      case NoorNotifKind.system:
+        return '🔔';
     }
   }
 }
@@ -57,7 +63,7 @@ class NotificationItem {
   final NoorNotifKind kind;
   final String title;
   final String body;
-  final String? route;     // e.g. '/journey', '/quran', '/akhirah'
+  final String? route; // e.g. '/journey', '/quran', '/akhirah'
   final Map<String, dynamic>? data;
   final DateTime createdAt;
   final bool read;
@@ -74,41 +80,41 @@ class NotificationItem {
   });
 
   NotificationItem copyWith({bool? read}) => NotificationItem(
-        id: id,
-        kind: kind,
-        title: title,
-        body: body,
-        route: route,
-        data: data,
-        createdAt: createdAt,
-        read: read ?? this.read,
-      );
+    id: id,
+    kind: kind,
+    title: title,
+    body: body,
+    route: route,
+    data: data,
+    createdAt: createdAt,
+    read: read ?? this.read,
+  );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'kind': kind.name,
-        'title': title,
-        'body': body,
-        'route': route,
-        'data': data,
-        'createdAt': createdAt.toIso8601String(),
-        'read': read,
-      };
+    'id': id,
+    'kind': kind.name,
+    'title': title,
+    'body': body,
+    'route': route,
+    'data': data,
+    'createdAt': createdAt.toIso8601String(),
+    'read': read,
+  };
 
   static NotificationItem fromMap(Map m) => NotificationItem(
-        id: m['id'] as String,
-        kind: NoorNotifKind.values.firstWhere(
-          (k) => k.name == (m['kind'] as String?),
-          orElse: () => NoorNotifKind.system,
-        ),
-        title: m['title'] as String? ?? '',
-        body: m['body'] as String? ?? '',
-        route: m['route'] as String?,
-        data: (m['data'] as Map?)?.cast<String, dynamic>(),
-        createdAt: DateTime.tryParse(m['createdAt'] as String? ?? '') ??
-            DateTime.now(),
-        read: m['read'] as bool? ?? false,
-      );
+    id: m['id'] as String,
+    kind: NoorNotifKind.values.firstWhere(
+      (k) => k.name == (m['kind'] as String?),
+      orElse: () => NoorNotifKind.system,
+    ),
+    title: m['title'] as String? ?? '',
+    body: m['body'] as String? ?? '',
+    route: m['route'] as String?,
+    data: (m['data'] as Map?)?.cast<String, dynamic>(),
+    createdAt:
+        DateTime.tryParse(m['createdAt'] as String? ?? '') ?? DateTime.now(),
+    read: m['read'] as bool? ?? false,
+  );
 }
 
 class NotificationCenter {
@@ -124,8 +130,9 @@ class NotificationCenter {
 
   /// Live list of notifications, newest first. Listenable so widgets can
   /// rebuild via [ValueListenableBuilder] without any Provider plumbing.
-  final ValueNotifier<List<NotificationItem>> notifications =
-      ValueNotifier(const []);
+  final ValueNotifier<List<NotificationItem>> notifications = ValueNotifier(
+    const [],
+  );
 
   /// Count of unread notifications — drives the dashboard bell badge.
   final ValueNotifier<int> unreadCount = ValueNotifier(0);
@@ -157,7 +164,9 @@ class NotificationCenter {
       final list = <NotificationItem>[];
       for (final m in raw) {
         if (m is Map) {
-          try { list.add(NotificationItem.fromMap(m)); } catch (_) {}
+          try {
+            list.add(NotificationItem.fromMap(m));
+          } catch (_) {}
         }
       }
       list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -211,13 +220,14 @@ class NotificationCenter {
 
   Future<void> markRead(String id) async {
     var changed = false;
-    final next = notifications.value.map((n) {
-      if (n.id == id && !n.read) {
-        changed = true;
-        return n.copyWith(read: true);
-      }
-      return n;
-    }).toList();
+    final next =
+        notifications.value.map((n) {
+          if (n.id == id && !n.read) {
+            changed = true;
+            return n.copyWith(read: true);
+          }
+          return n;
+        }).toList();
     if (!changed) return;
     notifications.value = next;
     unreadCount.value = next.where((n) => !n.read).length;
@@ -247,7 +257,9 @@ class NotificationCenter {
 
   Future<void> setEnabled(bool on) async {
     enabled.value = on;
-    try { await _box?.put(_enabledKey, on); } catch (_) {}
+    try {
+      await _box?.put(_enabledKey, on);
+    } catch (_) {}
   }
 
   /// Trigger navigation request for a notification. The dashboard wires

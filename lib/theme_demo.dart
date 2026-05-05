@@ -1,4 +1,4 @@
-﻿// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -102,16 +102,65 @@ class NoorShadows {
 
 class NoorType {
   NoorType._();
-  static TextStyle displayLg = GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w700, height: 1.25, color: NoorColors.ink);
-  static TextStyle displayMd = GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w700, height: 1.33, color: NoorColors.ink);
-  static TextStyle titleLg = GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w600, height: 1.4, color: NoorColors.ink);
-  static TextStyle titleMd = GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w600, height: 1.41, color: NoorColors.ink);
-  static TextStyle bodyLg = GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, color: NoorColors.ink);
-  static TextStyle bodyMd = GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, color: NoorColors.slate);
-  static TextStyle caption = GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w400, height: 1.33, color: NoorColors.slate);
-  static TextStyle label = GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, height: 1.45, letterSpacing: 0.5, color: NoorColors.white);
-  static TextStyle arabicDisplay = GoogleFonts.amiri(fontSize: 28, height: 1.71, color: NoorColors.ink);
-  static TextStyle arabicBody = GoogleFonts.amiri(fontSize: 22, height: 1.82, color: NoorColors.ink);
+  static TextStyle displayLg = GoogleFonts.outfit(
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    height: 1.25,
+    color: NoorColors.ink,
+  );
+  static TextStyle displayMd = GoogleFonts.outfit(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    height: 1.33,
+    color: NoorColors.ink,
+  );
+  static TextStyle titleLg = GoogleFonts.outfit(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    height: 1.4,
+    color: NoorColors.ink,
+  );
+  static TextStyle titleMd = GoogleFonts.outfit(
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    height: 1.41,
+    color: NoorColors.ink,
+  );
+  static TextStyle bodyLg = GoogleFonts.outfit(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: NoorColors.ink,
+  );
+  static TextStyle bodyMd = GoogleFonts.outfit(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.43,
+    color: NoorColors.slate,
+  );
+  static TextStyle caption = GoogleFonts.outfit(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.33,
+    color: NoorColors.slate,
+  );
+  static TextStyle label = GoogleFonts.outfit(
+    fontSize: 11,
+    fontWeight: FontWeight.w600,
+    height: 1.45,
+    letterSpacing: 0.5,
+    color: NoorColors.white,
+  );
+  static TextStyle arabicDisplay = GoogleFonts.amiri(
+    fontSize: 28,
+    height: 1.71,
+    color: NoorColors.ink,
+  );
+  static TextStyle arabicBody = GoogleFonts.amiri(
+    fontSize: 22,
+    height: 1.82,
+    color: NoorColors.ink,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -123,21 +172,33 @@ class NoorPrimaryButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final IconData? icon;
 
-  const NoorPrimaryButton({super.key, required this.text, this.onPressed, this.icon});
+  const NoorPrimaryButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.icon,
+  });
 
   @override
   State<NoorPrimaryButton> createState() => _NoorPrimaryButtonState();
 }
 
-class _NoorPrimaryButtonState extends State<NoorPrimaryButton> with SingleTickerProviderStateMixin {
+class _NoorPrimaryButtonState extends State<NoorPrimaryButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: Duration(milliseconds: 150));
-    _scale = Tween(begin: 1.0, end: 0.96).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 150),
+    );
+    _scale = Tween(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
   }
 
   @override
@@ -154,7 +215,13 @@ class _NoorPrimaryButtonState extends State<NoorPrimaryButton> with SingleTicker
       builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
       child: GestureDetector(
         onTapDown: enabled ? (_) => _ctrl.forward() : null,
-        onTapUp: enabled ? (_) { _ctrl.reverse(); widget.onPressed?.call(); } : null,
+        onTapUp:
+            enabled
+                ? (_) {
+                  _ctrl.reverse();
+                  widget.onPressed?.call();
+                }
+                : null,
         onTapCancel: enabled ? () => _ctrl.reverse() : null,
         child: AnimatedOpacity(
           opacity: enabled ? 1.0 : 0.4,
@@ -219,19 +286,28 @@ class NoorGoldButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final IconData? icon;
 
-  const NoorGoldButton({super.key, required this.text, this.onPressed, this.icon});
+  const NoorGoldButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.icon,
+  });
 
   @override
   State<NoorGoldButton> createState() => _NoorGoldButtonState();
 }
 
-class _NoorGoldButtonState extends State<NoorGoldButton> with SingleTickerProviderStateMixin {
+class _NoorGoldButtonState extends State<NoorGoldButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _shimmer;
 
   @override
   void initState() {
     super.initState();
-    _shimmer = AnimationController(vsync: this, duration: Duration(milliseconds: 3000))..repeat();
+    _shimmer = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 3000),
+    )..repeat();
   }
 
   @override
@@ -287,7 +363,10 @@ class _NoorGoldButtonState extends State<NoorGoldButton> with SingleTickerProvid
                       Icon(widget.icon, color: NoorColors.ink, size: 18),
                       SizedBox(width: NoorSpacing.sm),
                     ],
-                    Text(widget.text.toUpperCase(), style: NoorType.label.copyWith(color: NoorColors.ink)),
+                    Text(
+                      widget.text.toUpperCase(),
+                      style: NoorType.label.copyWith(color: NoorColors.ink),
+                    ),
                   ],
                 ),
               ],
@@ -313,7 +392,10 @@ class NoorGhostButton extends StatelessWidget {
         foregroundColor: NoorColors.slate,
         textStyle: NoorType.bodyMd.copyWith(fontWeight: FontWeight.w500),
         shape: RoundedRectangleBorder(borderRadius: NoorRadius.lg),
-        padding: EdgeInsets.symmetric(horizontal: NoorSpacing.md, vertical: NoorSpacing.sm),
+        padding: EdgeInsets.symmetric(
+          horizontal: NoorSpacing.md,
+          vertical: NoorSpacing.sm,
+        ),
       ),
       child: Text(text),
     );
@@ -348,7 +430,11 @@ class NoorElevatedCard extends StatelessWidget {
   final Widget child;
   final Color accentColor;
 
-  const NoorElevatedCard({super.key, required this.child, this.accentColor = NoorColors.emerald});
+  const NoorElevatedCard({
+    super.key,
+    required this.child,
+    this.accentColor = NoorColors.emerald,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -393,7 +479,12 @@ class NoorTierBadge extends StatelessWidget {
   final Color color;
   final IconData icon;
 
-  const NoorTierBadge({super.key, required this.tier, required this.color, required this.icon});
+  const NoorTierBadge({
+    super.key,
+    required this.tier,
+    required this.color,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -409,7 +500,13 @@ class NoorTierBadge extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: color),
           SizedBox(width: 6),
-          Text(tier, style: NoorType.caption.copyWith(color: color, fontWeight: FontWeight.w600)),
+          Text(
+            tier,
+            style: NoorType.caption.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -423,10 +520,11 @@ class NoorTierBadge extends StatelessWidget {
 class _IslamicPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = NoorColors.sand.withValues(alpha: 0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8;
+    final paint =
+        Paint()
+          ..color = NoorColors.sand.withValues(alpha: 0.4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.8;
 
     const spacing = 48.0;
 
@@ -437,7 +535,12 @@ class _IslamicPatternPainter extends CustomPainter {
     }
   }
 
-  void _drawEightPointStar(Canvas canvas, Offset center, double radius, Paint paint) {
+  void _drawEightPointStar(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Paint paint,
+  ) {
     final path = Path();
     for (int i = 0; i < 8; i++) {
       final angle = (i * pi / 4) - pi / 2;
@@ -516,7 +619,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
           ),
           SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: NoorSpacing.xl, vertical: NoorSpacing.lg),
+              padding: EdgeInsets.symmetric(
+                horizontal: NoorSpacing.xl,
+                vertical: NoorSpacing.lg,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -530,7 +636,11 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                           gradient: NoorColors.emeraldGradient,
                           borderRadius: NoorRadius.full,
                         ),
-                        child: Icon(Icons.auto_awesome, color: NoorColors.white, size: 22),
+                        child: Icon(
+                          Icons.auto_awesome,
+                          color: NoorColors.white,
+                          size: 22,
+                        ),
                       ),
                       SizedBox(width: NoorSpacing.md),
                       Expanded(
@@ -538,7 +648,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Noor Rewards', style: NoorType.displayMd),
-                            Text('Modern Islamic Minimalist', style: NoorType.bodyMd),
+                            Text(
+                              'Modern Islamic Minimalist',
+                              style: NoorType.bodyMd,
+                            ),
                           ],
                         ),
                       ),
@@ -588,15 +701,29 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                         SizedBox(height: NoorSpacing.xs),
                         Text('Title Medium', style: NoorType.titleMd),
                         SizedBox(height: NoorSpacing.xs),
-                        Text('Body Large — The quick brown fox', style: NoorType.bodyLg),
+                        Text(
+                          'Body Large — The quick brown fox',
+                          style: NoorType.bodyLg,
+                        ),
                         SizedBox(height: NoorSpacing.xs),
-                        Text('Body Medium — Secondary text', style: NoorType.bodyMd),
+                        Text(
+                          'Body Medium — Secondary text',
+                          style: NoorType.bodyMd,
+                        ),
                         SizedBox(height: NoorSpacing.xs),
                         Text('Caption — 12px details', style: NoorType.caption),
                         Divider(height: NoorSpacing.lg, color: NoorColors.sand),
-                        Text('بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ', style: NoorType.arabicDisplay, textAlign: TextAlign.right),
+                        Text(
+                          'بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ',
+                          style: NoorType.arabicDisplay,
+                          textAlign: TextAlign.right,
+                        ),
                         SizedBox(height: NoorSpacing.sm),
-                        Text('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', style: NoorType.arabicBody, textAlign: TextAlign.right),
+                        Text(
+                          'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
+                          style: NoorType.arabicBody,
+                          textAlign: TextAlign.right,
+                        ),
                       ],
                     ),
                   ),
@@ -610,7 +737,11 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                     spacing: NoorSpacing.md,
                     runSpacing: NoorSpacing.md,
                     children: [
-                      NoorPrimaryButton(text: 'Start Journey', icon: Icons.play_arrow_rounded, onPressed: () {}),
+                      NoorPrimaryButton(
+                        text: 'Start Journey',
+                        icon: Icons.play_arrow_rounded,
+                        onPressed: () {},
+                      ),
                       NoorSecondaryButton(text: 'Learn More', onPressed: () {}),
                     ],
                   ),
@@ -619,7 +750,11 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                     spacing: NoorSpacing.md,
                     runSpacing: NoorSpacing.md,
                     children: [
-                      NoorGoldButton(text: 'Claim Reward', icon: Icons.star_rounded, onPressed: () {}),
+                      NoorGoldButton(
+                        text: 'Claim Reward',
+                        icon: Icons.star_rounded,
+                        onPressed: () {},
+                      ),
                       NoorGhostButton(text: 'Skip for now', onPressed: () {}),
                     ],
                   ),
@@ -643,7 +778,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                             color: NoorColors.mint,
                             borderRadius: NoorRadius.sm,
                           ),
-                          child: Icon(Icons.menu_book_rounded, color: NoorColors.emerald),
+                          child: Icon(
+                            Icons.menu_book_rounded,
+                            color: NoorColors.emerald,
+                          ),
                         ),
                         SizedBox(width: NoorSpacing.md),
                         Expanded(
@@ -651,7 +789,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Standard Card', style: NoorType.titleMd),
-                              Text('Subtle shadow, clean surface', style: NoorType.bodyMd),
+                              Text(
+                                'Subtle shadow, clean surface',
+                                style: NoorType.bodyMd,
+                              ),
                             ],
                           ),
                         ),
@@ -672,7 +813,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                             gradient: NoorColors.goldGradient,
                             borderRadius: NoorRadius.sm,
                           ),
-                          child: Icon(Icons.emoji_events_rounded, color: NoorColors.ink),
+                          child: Icon(
+                            Icons.emoji_events_rounded,
+                            color: NoorColors.ink,
+                          ),
                         ),
                         SizedBox(width: NoorSpacing.md),
                         Expanded(
@@ -680,7 +824,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Elevated Card', style: NoorType.titleMd),
-                              Text('Emerald accent border + deep shadow', style: NoorType.bodyMd),
+                              Text(
+                                'Emerald accent border + deep shadow',
+                                style: NoorType.bodyMd,
+                              ),
                             ],
                           ),
                         ),
@@ -698,13 +845,20 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.local_fire_department_rounded, color: NoorColors.coral, size: 28),
+                            Icon(
+                              Icons.local_fire_department_rounded,
+                              color: NoorColors.coral,
+                              size: 28,
+                            ),
                             SizedBox(width: NoorSpacing.sm),
                             Text('7-Day Streak!', style: NoorType.titleLg),
                           ],
                         ),
                         SizedBox(height: NoorSpacing.sm),
-                        Text('You\'ve been consistent for a whole week. Keep going!', style: NoorType.bodyMd),
+                        Text(
+                          'You\'ve been consistent for a whole week. Keep going!',
+                          style: NoorType.bodyMd,
+                        ),
                         SizedBox(height: NoorSpacing.md),
                         _ProgressBar(value: 0.7, color: NoorColors.coral),
                       ],
@@ -723,14 +877,30 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                     child: NoorGlassCard(
                       child: Row(
                         children: [
-                          Icon(Icons.auto_awesome, color: NoorColors.white, size: 32),
+                          Icon(
+                            Icons.auto_awesome,
+                            color: NoorColors.white,
+                            size: 32,
+                          ),
                           SizedBox(width: NoorSpacing.md),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Glass Card', style: NoorType.titleMd.copyWith(color: NoorColors.white)),
-                                Text('Frosted overlay on gradient backgrounds', style: NoorType.bodyMd.copyWith(color: NoorColors.white.withValues(alpha: 0.8))),
+                                Text(
+                                  'Glass Card',
+                                  style: NoorType.titleMd.copyWith(
+                                    color: NoorColors.white,
+                                  ),
+                                ),
+                                Text(
+                                  'Frosted overlay on gradient backgrounds',
+                                  style: NoorType.bodyMd.copyWith(
+                                    color: NoorColors.white.withValues(
+                                      alpha: 0.8,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -754,8 +924,16 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Level 12', style: NoorType.displayMd.copyWith(color: NoorColors.emerald)),
-                                Text('1,240 / 2,000 pts', style: NoorType.bodyMd),
+                                Text(
+                                  'Level 12',
+                                  style: NoorType.displayMd.copyWith(
+                                    color: NoorColors.emerald,
+                                  ),
+                                ),
+                                Text(
+                                  '1,240 / 2,000 pts',
+                                  style: NoorType.bodyMd,
+                                ),
                               ],
                             ),
                             Container(
@@ -767,7 +945,12 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                                 boxShadow: NoorShadows.emeraldGlow,
                               ),
                               child: Center(
-                                child: Text('12', style: NoorType.titleLg.copyWith(color: NoorColors.white)),
+                                child: Text(
+                                  '12',
+                                  style: NoorType.titleLg.copyWith(
+                                    color: NoorColors.white,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -781,11 +964,31 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                           spacing: NoorSpacing.sm,
                           runSpacing: NoorSpacing.sm,
                           children: [
-                            NoorTierBadge(tier: 'Seeker', color: NoorColors.sky, icon: Icons.eco_rounded),
-                            NoorTierBadge(tier: 'Believer', color: Color(0xFF4CAF50), icon: Icons.park_rounded),
-                            NoorTierBadge(tier: 'Devoted', color: NoorColors.amethyst, icon: Icons.nightlight_rounded),
-                            NoorTierBadge(tier: 'Champion', color: NoorColors.gold, icon: Icons.workspace_premium_rounded),
-                            NoorTierBadge(tier: 'Legend', color: NoorColors.ruby, icon: Icons.auto_awesome),
+                            NoorTierBadge(
+                              tier: 'Seeker',
+                              color: NoorColors.sky,
+                              icon: Icons.eco_rounded,
+                            ),
+                            NoorTierBadge(
+                              tier: 'Believer',
+                              color: Color(0xFF4CAF50),
+                              icon: Icons.park_rounded,
+                            ),
+                            NoorTierBadge(
+                              tier: 'Devoted',
+                              color: NoorColors.amethyst,
+                              icon: Icons.nightlight_rounded,
+                            ),
+                            NoorTierBadge(
+                              tier: 'Champion',
+                              color: NoorColors.gold,
+                              icon: Icons.workspace_premium_rounded,
+                            ),
+                            NoorTierBadge(
+                              tier: 'Legend',
+                              color: NoorColors.ruby,
+                              icon: Icons.auto_awesome,
+                            ),
                           ],
                         ),
                       ],
@@ -800,12 +1003,26 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                   NoorCard(
                     child: Column(
                       children: [
-                        for (final s in [('xs', 4.0), ('sm', 8.0), ('md', 16.0), ('lg', 24.0), ('xl', 32.0)])
+                        for (final s in [
+                          ('xs', 4.0),
+                          ('sm', 8.0),
+                          ('md', 16.0),
+                          ('lg', 24.0),
+                          ('xl', 32.0),
+                        ])
                           Padding(
                             padding: EdgeInsets.only(bottom: 8),
                             child: Row(
                               children: [
-                                SizedBox(width: 32, child: Text(s.$1, style: NoorType.caption.copyWith(fontWeight: FontWeight.w600))),
+                                SizedBox(
+                                  width: 32,
+                                  child: Text(
+                                    s.$1,
+                                    style: NoorType.caption.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
                                 Container(
                                   width: s.$2 * 3,
                                   height: 12,
@@ -815,7 +1032,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                                   ),
                                 ),
                                 SizedBox(width: 8),
-                                Text('${s.$2.toInt()}px', style: NoorType.caption),
+                                Text(
+                                  '${s.$2.toInt()}px',
+                                  style: NoorType.caption,
+                                ),
                               ],
                             ),
                           ),
@@ -837,9 +1057,19 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Noor Rewards', style: NoorType.displayMd.copyWith(color: NoorColors.nightText)),
+                        Text(
+                          'Noor Rewards',
+                          style: NoorType.displayMd.copyWith(
+                            color: NoorColors.nightText,
+                          ),
+                        ),
                         SizedBox(height: NoorSpacing.sm),
-                        Text('Dark mode uses deep navy tones with warm text.', style: NoorType.bodyLg.copyWith(color: NoorColors.nightText.withValues(alpha: 0.7))),
+                        Text(
+                          'Dark mode uses deep navy tones with warm text.',
+                          style: NoorType.bodyLg.copyWith(
+                            color: NoorColors.nightText.withValues(alpha: 0.7),
+                          ),
+                        ),
                         SizedBox(height: NoorSpacing.md),
                         Container(
                           padding: EdgeInsets.all(NoorSpacing.md),
@@ -856,15 +1086,31 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                                   gradient: NoorColors.goldGradient,
                                   borderRadius: NoorRadius.sm,
                                 ),
-                                child: Icon(Icons.star_rounded, color: NoorColors.ink, size: 22),
+                                child: Icon(
+                                  Icons.star_rounded,
+                                  color: NoorColors.ink,
+                                  size: 22,
+                                ),
                               ),
                               SizedBox(width: NoorSpacing.md),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Dark Card', style: NoorType.titleMd.copyWith(color: NoorColors.nightText)),
-                                    Text('+50 pts earned today', style: NoorType.bodyMd.copyWith(color: NoorColors.nightText.withValues(alpha: 0.6))),
+                                    Text(
+                                      'Dark Card',
+                                      style: NoorType.titleMd.copyWith(
+                                        color: NoorColors.nightText,
+                                      ),
+                                    ),
+                                    Text(
+                                      '+50 pts earned today',
+                                      style: NoorType.bodyMd.copyWith(
+                                        color: NoorColors.nightText.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -888,7 +1134,11 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
         decoration: BoxDecoration(
           color: NoorColors.white,
           boxShadow: [
-            BoxShadow(color: NoorColors.ink.withValues(alpha: 0.06), blurRadius: 12, offset: Offset(0, -2)),
+            BoxShadow(
+              color: NoorColors.ink.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: Offset(0, -2),
+            ),
           ],
         ),
         child: SafeArea(
@@ -907,7 +1157,10 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                     curve: Curves.easeInOut,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: selected ? item.activeColor.withValues(alpha: 0.12) : Colors.transparent,
+                      color:
+                          selected
+                              ? item.activeColor.withValues(alpha: 0.12)
+                              : Colors.transparent,
                       borderRadius: NoorRadius.full,
                     ),
                     child: Column(
@@ -926,14 +1179,19 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                         Icon(
                           item.icon,
                           size: 24,
-                          color: selected ? NoorColors.emerald : NoorColors.slate,
+                          color:
+                              selected ? NoorColors.emerald : NoorColors.slate,
                         ),
                         SizedBox(height: 2),
                         Text(
                           item.label,
                           style: NoorType.caption.copyWith(
-                            color: selected ? NoorColors.emerald : NoorColors.slate,
-                            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                            color:
+                                selected
+                                    ? NoorColors.emerald
+                                    : NoorColors.slate,
+                            fontWeight:
+                                selected ? FontWeight.w600 : FontWeight.w400,
                             fontSize: 10,
                           ),
                         ),
@@ -975,31 +1233,42 @@ class _ColorRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: NoorType.caption.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: NoorType.caption.copyWith(fontWeight: FontWeight.w600),
+        ),
         SizedBox(height: NoorSpacing.xs),
         Row(
-          children: swatches.map((s) {
-            final isLight = s.color.computeLuminance() > 0.5;
-            return Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(right: 6),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: s.color,
-                        borderRadius: NoorRadius.sm,
-                        border: isLight ? Border.all(color: NoorColors.sand) : null,
-                      ),
+          children:
+              swatches.map((s) {
+                final isLight = s.color.computeLuminance() > 0.5;
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 6),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: s.color,
+                            borderRadius: NoorRadius.sm,
+                            border:
+                                isLight
+                                    ? Border.all(color: NoorColors.sand)
+                                    : null,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          s.name,
+                          style: NoorType.caption.copyWith(fontSize: 9),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 4),
-                    Text(s.name, style: NoorType.caption.copyWith(fontSize: 9), overflow: TextOverflow.ellipsis),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
+                  ),
+                );
+              }).toList(),
         ),
       ],
     );
@@ -1024,7 +1293,9 @@ class _ProgressBar extends StatelessWidget {
         widthFactor: value.clamp(0.0, 1.0),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.7)]),
+            gradient: LinearGradient(
+              colors: [color, color.withValues(alpha: 0.7)],
+            ),
             borderRadius: NoorRadius.full,
           ),
         ),

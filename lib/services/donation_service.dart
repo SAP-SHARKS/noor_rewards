@@ -1,4 +1,4 @@
-﻿// lib/services/donation_service.dart
+// lib/services/donation_service.dart
 // Handles donations to community projects via Supabase
 
 import 'dart:typed_data';
@@ -30,14 +30,14 @@ class ProjectMedia {
   bool get isImage => mediaType == 'image';
 
   factory ProjectMedia.fromJson(Map<String, dynamic> j) => ProjectMedia(
-        id: j['id'] as String,
-        projectId: j['project_id'] as String,
-        mediaType: j['media_type'] as String? ?? 'image',
-        url: j['url'] as String? ?? '',
-        thumbnailUrl: j['thumbnail_url'] as String?,
-        caption: j['caption'] as String?,
-        sortOrder: (j['sort_order'] as num?)?.toInt() ?? 0,
-      );
+    id: j['id'] as String,
+    projectId: j['project_id'] as String,
+    mediaType: j['media_type'] as String? ?? 'image',
+    url: j['url'] as String? ?? '',
+    thumbnailUrl: j['thumbnail_url'] as String?,
+    caption: j['caption'] as String?,
+    sortOrder: (j['sort_order'] as num?)?.toInt() ?? 0,
+  );
 }
 
 class DonationService {
@@ -54,11 +54,14 @@ class DonationService {
     if (uid == null) return "You must be logged in to donate.";
 
     try {
-      final success = await _sb.rpc('donate_to_project', params: {
-        'p_user_id': uid,
-        'p_project_id': projectId,
-        'p_amount': amount,
-      });
+      final success = await _sb.rpc(
+        'donate_to_project',
+        params: {
+          'p_user_id': uid,
+          'p_project_id': projectId,
+          'p_amount': amount,
+        },
+      );
 
       if (success == true) {
         // ── In-app notification: donation succeeded. Tap goes to Akhirah
@@ -140,7 +143,8 @@ class DonationService {
 
   /// Loads media for many projects at once. Returns a map keyed by project id.
   Future<Map<String, List<ProjectMedia>>> getMediaForProjects(
-      List<String> projectIds) async {
+    List<String> projectIds,
+  ) async {
     if (projectIds.isEmpty) return {};
     try {
       final res = await _sb
@@ -175,13 +179,16 @@ class DonationService {
       final storagePath = '$projectId/$fileName';
       final contentType = _contentTypeFor(mediaType, fileExt);
 
-      await _sb.storage.from(_mediaBucket).uploadBinary(
+      await _sb.storage
+          .from(_mediaBucket)
+          .uploadBinary(
             storagePath,
             bytes,
             fileOptions: FileOptions(contentType: contentType, upsert: false),
           );
-      final publicUrl =
-          _sb.storage.from(_mediaBucket).getPublicUrl(storagePath);
+      final publicUrl = _sb.storage
+          .from(_mediaBucket)
+          .getPublicUrl(storagePath);
 
       // Compute next sort_order
       final existing = await _sb
@@ -190,21 +197,23 @@ class DonationService {
           .eq('project_id', projectId)
           .order('sort_order', ascending: false)
           .limit(1);
-      final nextOrder = existing.isEmpty
-          ? 0
-          : ((existing.first['sort_order'] as num?)?.toInt() ?? 0) + 1;
+      final nextOrder =
+          existing.isEmpty
+              ? 0
+              : ((existing.first['sort_order'] as num?)?.toInt() ?? 0) + 1;
 
-      final inserted = await _sb
-          .from('community_project_media')
-          .insert({
-            'project_id': projectId,
-            'media_type': mediaType,
-            'url': publicUrl,
-            'caption': caption,
-            'sort_order': nextOrder,
-          })
-          .select()
-          .single();
+      final inserted =
+          await _sb
+              .from('community_project_media')
+              .insert({
+                'project_id': projectId,
+                'media_type': mediaType,
+                'url': publicUrl,
+                'caption': caption,
+                'sort_order': nextOrder,
+              })
+              .select()
+              .single();
 
       return ProjectMedia.fromJson(inserted);
     } catch (_) {
@@ -219,19 +228,26 @@ class DonationService {
     required String fileExt,
   }) async {
     try {
-      final fileName = 'dp_${const Uuid().v4()}.${fileExt.toLowerCase().replaceAll(".", "")}';
+      final fileName =
+          'dp_${const Uuid().v4()}.${fileExt.toLowerCase().replaceAll(".", "")}';
       final storagePath = '$projectId/$fileName';
       final contentType = _contentTypeFor('image', fileExt);
 
-      await _sb.storage.from(_mediaBucket).uploadBinary(
+      await _sb.storage
+          .from(_mediaBucket)
+          .uploadBinary(
             storagePath,
             bytes,
             fileOptions: FileOptions(contentType: contentType, upsert: false),
           );
-      final publicUrl =
-          _sb.storage.from(_mediaBucket).getPublicUrl(storagePath);
+      final publicUrl = _sb.storage
+          .from(_mediaBucket)
+          .getPublicUrl(storagePath);
 
-      await _sb.from('community_projects').update({'dp_url': publicUrl}).eq('id', projectId);
+      await _sb
+          .from('community_projects')
+          .update({'dp_url': publicUrl})
+          .eq('id', projectId);
 
       return publicUrl;
     } catch (_) {
@@ -249,10 +265,7 @@ class DonationService {
         final path = media.url.substring(idx + marker.length);
         await _sb.storage.from(_mediaBucket).remove([path]);
       }
-      await _sb
-          .from('community_project_media')
-          .delete()
-          .eq('id', media.id);
+      await _sb.from('community_project_media').delete().eq('id', media.id);
       return true;
     } catch (_) {
       return false;
@@ -265,7 +278,8 @@ class DonationService {
       try {
         await _sb
             .from('community_project_media')
-            .update({'sort_order': i}).eq('id', orderedIds[i]);
+            .update({'sort_order': i})
+            .eq('id', orderedIds[i]);
       } catch (_) {}
     }
   }

@@ -1,4 +1,4 @@
-﻿// lib/services/xp_service.dart
+// lib/services/xp_service.dart
 // Central service for points, levels, and badges.
 // All point-earning events in the app must call methods here.
 
@@ -8,11 +8,11 @@ import 'notification_center.dart';
 
 // ── Point Rewards (unified — coins ARE the points) ────────────────────────────
 class PointReward {
-  static int get ayahRead      => SettingsService.instance.config.coinsPerAyah;
-  static const int juzComplete   = 100;
-  static int get dailyLogin    => SettingsService.instance.config.pointsDailyLogin;
-  static int get validate      => SettingsService.instance.config.pointsValidate;
-  static int get dhikr         => SettingsService.instance.config.coinsPerDhikr;
+  static int get ayahRead => SettingsService.instance.config.coinsPerAyah;
+  static const int juzComplete = 100;
+  static int get dailyLogin => SettingsService.instance.config.pointsDailyLogin;
+  static int get validate => SettingsService.instance.config.pointsValidate;
+  static int get dhikr => SettingsService.instance.config.coinsPerDhikr;
 }
 
 // ── Level info ─────────────────────────────────────────────────────────────────
@@ -34,10 +34,14 @@ class LevelInfo {
 
   double progress(int currentPts) {
     if (nextPts <= ptsRequired) return 1.0;
-    return ((currentPts - ptsRequired) / (nextPts - ptsRequired)).clamp(0.0, 1.0);
+    return ((currentPts - ptsRequired) / (nextPts - ptsRequired)).clamp(
+      0.0,
+      1.0,
+    );
   }
 
-  int ptsToNextLevel(int currentPts) => (nextPts - currentPts).clamp(0, nextPts);
+  int ptsToNextLevel(int currentPts) =>
+      (nextPts - currentPts).clamp(0, nextPts);
 }
 
 // ── Badge model ────────────────────────────────────────────────────────────────
@@ -58,22 +62,22 @@ class BadgeInfo {
 // ── Strict level thresholds (in-app fallback — mirrors DB xp_levels table) ────
 // These kick in when the DB is unreachable.
 const _kFallbackLevels = <(int level, int ptsRequired, String title)>[
-  (1,       0,  'Seeker'),
-  (2,     150,  'Seeker'),
-  (3,     400,  'Seeker'),
-  (4,     800,  'Believer'),
-  (5,    1400,  'Believer'),
-  (6,    2200,  'Believer'),
-  (7,    3200,  'Devoted'),
-  (8,    4500,  'Devoted'),
-  (9,    6000,  'Devoted'),
-  (10,   8000,  'Devoted'),
-  (11,  10500,  'Champion'),
-  (15,  20000,  'Champion'),
-  (20,  40000,  'Champion'),
-  (21,  55000,  'Legend'),
-  (30, 100000,  'Legend'),
-  (51, 250000,  'Legend'),
+  (1, 0, 'Seeker'),
+  (2, 150, 'Seeker'),
+  (3, 400, 'Seeker'),
+  (4, 800, 'Believer'),
+  (5, 1400, 'Believer'),
+  (6, 2200, 'Believer'),
+  (7, 3200, 'Devoted'),
+  (8, 4500, 'Devoted'),
+  (9, 6000, 'Devoted'),
+  (10, 8000, 'Devoted'),
+  (11, 10500, 'Champion'),
+  (15, 20000, 'Champion'),
+  (20, 40000, 'Champion'),
+  (21, 55000, 'Legend'),
+  (30, 100000, 'Legend'),
+  (51, 250000, 'Legend'),
 ];
 
 // ── Points Service ─────────────────────────────────────────────────────────────
@@ -94,10 +98,10 @@ class XpService {
       final multiplier = await _getActiveMultiplier(uid);
       final effective = (amount * multiplier).round();
 
-      final result = await _sb.rpc('earn_xp', params: {
-        'p_user_id': uid,
-        'p_amount':  effective,
-      });
+      final result = await _sb.rpc(
+        'earn_xp',
+        params: {'p_user_id': uid, 'p_amount': effective},
+      );
       final newPts = result as int?;
 
       // Check and auto-award milestone badges
@@ -148,11 +152,11 @@ class XpService {
   /// Automatically awards badges when the user crosses point / level milestones.
   /// Fire-and-forget — errors are silently swallowed.
   void _checkMilestoneBadges(String uid, int totalPts) {
-    if (totalPts >= 100)    awardBadge('first_100xp');
-    if (totalPts >= 500)    awardBadge('xp_500');
-    if (totalPts >= 1000)   awardBadge('xp_1000');
-    if (totalPts >= 5000)   awardBadge('xp_5000');
-    if (totalPts >= 10000)  awardBadge('xp_10000');
+    if (totalPts >= 100) awardBadge('first_100xp');
+    if (totalPts >= 500) awardBadge('xp_500');
+    if (totalPts >= 1000) awardBadge('xp_1000');
+    if (totalPts >= 5000) awardBadge('xp_5000');
+    if (totalPts >= 10000) awardBadge('xp_10000');
   }
 
   // ── Award badge ───────────────────────────────────────────────────────────────
@@ -162,10 +166,10 @@ class XpService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
     try {
-      final result = await _sb.rpc('award_badge', params: {
-        'p_user_id': uid,
-        'p_badge_id': badgeId,
-      });
+      final result = await _sb.rpc(
+        'award_badge',
+        params: {'p_user_id': uid, 'p_badge_id': badgeId},
+      );
       final isNew = result as bool? ?? false;
       if (isNew) {
         // ── In-app notification: new badge unlocked. Tap goes to Journey
@@ -186,10 +190,11 @@ class XpService {
 
   /// Convert a badge id like "first_100xp" → "First 100 Pts".
   String _humanize(String id) {
-    final words = id.split('_').map((w) {
-      if (w.isEmpty) return w;
-      return w[0].toUpperCase() + w.substring(1);
-    }).toList();
+    final words =
+        id.split('_').map((w) {
+          if (w.isEmpty) return w;
+          return w[0].toUpperCase() + w.substring(1);
+        }).toList();
     return words.join(' ');
   }
 
@@ -210,7 +215,7 @@ class XpService {
       if ((rows as List).isNotEmpty) return false;
 
       await _sb.from('user_activities').insert({
-        'user_id':       uid,
+        'user_id': uid,
         'activity_type': 'login',
         'points_earned': PointReward.dailyLogin,
       });
@@ -246,7 +251,7 @@ class XpService {
       if ((existing as List).isNotEmpty) return false;
 
       await _sb.from('user_activities').insert({
-        'user_id':       uid,
+        'user_id': uid,
         'activity_type': 'validate',
         'points_earned': PointReward.validate,
       });
@@ -284,8 +289,8 @@ class XpService {
       if ((existing as List).isNotEmpty) return false;
 
       await _sb.from('user_activities').insert({
-        'user_id':       uid,
-        'activity_type': 'dhikr',   // 'dhikr' is within the DB check constraint
+        'user_id': uid,
+        'activity_type': 'dhikr', // 'dhikr' is within the DB check constraint
         'points_earned': 50,
       });
 
@@ -302,14 +307,15 @@ class XpService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return (pts: 0, level: 1, streak: 0);
     try {
-      final row = await _sb
-          .from('profiles')
-          .select('total_xp, level, day_streak')
-          .eq('id', uid)
-          .single();
+      final row =
+          await _sb
+              .from('profiles')
+              .select('total_xp, level, day_streak')
+              .eq('id', uid)
+              .single();
       return (
-        pts:    (row['total_xp']   as num?)?.toInt() ?? 0,
-        level:  (row['level']      as num?)?.toInt() ?? 1,
+        pts: (row['total_xp'] as num?)?.toInt() ?? 0,
+        level: (row['level'] as num?)?.toInt() ?? 1,
         streak: (row['day_streak'] as num?)?.toInt() ?? 0,
       );
     } catch (_) {
@@ -347,15 +353,16 @@ class XpService {
         idx >= 0 && idx + 1 < sorted.length ? sorted[idx + 1] : null;
 
     // If DB next level exists, use it; otherwise use strict fallback gap
-    final nextPts = (nextRow?['xp_required'] as int?) ??
+    final nextPts =
+        (nextRow?['xp_required'] as int?) ??
         _nextPtsFromFallback((row['level'] as int? ?? 1));
 
     return LevelInfo(
-      level:       (row['level']       as int?)    ?? 1,
-      title:       (row['title']       as String?) ?? 'Seeker',
-      ptsRequired: (row['xp_required'] as int?)    ?? 0,
-      nextPts:     nextPts,
-      unlocks:     (row['unlocks']     as String?) ?? '',
+      level: (row['level'] as int?) ?? 1,
+      title: (row['title'] as String?) ?? 'Seeker',
+      ptsRequired: (row['xp_required'] as int?) ?? 0,
+      nextPts: nextPts,
+      unlocks: (row['unlocks'] as String?) ?? '',
     );
   }
 
@@ -368,7 +375,7 @@ class XpService {
     }
     // Beyond the last defined level — use a steep curve
     final last = _kFallbackLevels.last;
-    final gap  = currentLevel - last.$1;
+    final gap = currentLevel - last.$1;
     return last.$2 + gap * 15000;
   }
 
@@ -380,11 +387,11 @@ class XpService {
       if (e.$1 <= level) entry = e;
     }
     return LevelInfo(
-      level:       entry.$1,
-      title:       entry.$3,
+      level: entry.$1,
+      title: entry.$3,
       ptsRequired: entry.$2,
-      nextPts:     _nextPtsFromFallback(entry.$1),
-      unlocks:     '',
+      nextPts: _nextPtsFromFallback(entry.$1),
+      unlocks: '',
     );
   }
 
@@ -400,19 +407,22 @@ class XpService {
             .from('user_badges')
             .select('badge_id')
             .eq('user_id', uid);
-        earnedIds = (earned as List)
-            .map((e) => e['badge_id'] as String)
-            .toSet();
+        earnedIds =
+            (earned as List).map((e) => e['badge_id'] as String).toSet();
       }
 
-      return (allBadges as List).map((b) => BadgeInfo(
-        id:          b['id']          ?? '',
-        name:        b['name']        ?? '',
-        description: b['description'] ?? '',
-        emoji:       b['emoji']       ?? '🏅',
-        ptsReward:   (b['xp_reward'] as num?)?.toInt() ?? 0,
-        earned:      earnedIds.contains(b['id']),
-      )).toList();
+      return (allBadges as List)
+          .map(
+            (b) => BadgeInfo(
+              id: b['id'] ?? '',
+              name: b['name'] ?? '',
+              description: b['description'] ?? '',
+              emoji: b['emoji'] ?? '🏅',
+              ptsReward: (b['xp_reward'] as num?)?.toInt() ?? 0,
+              earned: earnedIds.contains(b['id']),
+            ),
+          )
+          .toList();
     } catch (_) {
       return [];
     }
@@ -428,7 +438,8 @@ class XpService {
           .eq('is_active', true)
           .order('end_date');
 
-      if (uid == null) return List<Map<String, dynamic>>.from(challenges as List);
+      if (uid == null)
+        return List<Map<String, dynamic>>.from(challenges as List);
 
       final progress = await _sb
           .from('user_challenge_progress')
@@ -444,8 +455,8 @@ class XpService {
         return {
           ...Map<String, dynamic>.from(c),
           'user_progress': (p?['progress'] as num?)?.toInt() ?? 0,
-          'completed':     p?['completed'] as bool? ?? false,
-          'claimed':       p?['claimed']   as bool? ?? false,
+          'completed': p?['completed'] as bool? ?? false,
+          'claimed': p?['claimed'] as bool? ?? false,
         };
       }).toList();
     } catch (_) {
@@ -454,12 +465,11 @@ class XpService {
   }
 
   // ── Global leaderboard ───────────────────────────────────────────────────────
-  Future<List<Map<String, dynamic>>> loadLeaderboard({String type = 'global'}) async {
+  Future<List<Map<String, dynamic>>> loadLeaderboard({
+    String type = 'global',
+  }) async {
     try {
-      final rows = await _sb
-          .from('leaderboard_global')
-          .select()
-          .limit(100);
+      final rows = await _sb.from('leaderboard_global').select().limit(100);
       return List<Map<String, dynamic>>.from(rows as List);
     } catch (_) {
       return [];
