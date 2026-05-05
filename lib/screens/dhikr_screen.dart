@@ -259,7 +259,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
             style: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: Colors.white),
           )),
         ]),
-        backgroundColor: SettingsService.instance.config.azkarAccent,
+        backgroundColor: const Color(0xFFD89A1E),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -402,11 +402,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? SettingsService.instance.config.azkarAccent.withValues(alpha: 0.15)
+                                ? const Color(0xFFD89A1E).withValues(alpha: 0.15)
                                 : (isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF2F2F7)),
                             borderRadius: BorderRadius.circular(10),
                             border: isSelected
-                                ? Border.all(color: SettingsService.instance.config.azkarAccent, width: 1.5)
+                                ? Border.all(color: const Color(0xFFD89A1E), width: 1.5)
                                 : null,
                           ),
                           child: Text(
@@ -414,7 +414,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             style: GoogleFonts.outfit(
                               fontSize: 14, fontWeight: FontWeight.w600,
                               color: isSelected
-                                  ? SettingsService.instance.config.azkarAccent
+                                  ? const Color(0xFFD89A1E)
                                   : (isDark ? Colors.white70 : SettingsService.instance.config.dashText),
                             ),
                           ),
@@ -484,7 +484,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           Navigator.pop(ctx);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: SettingsService.instance.config.azkarAccent,
+                          backgroundColor: const Color(0xFFD89A1E),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -694,7 +694,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   }) {
     final kText = isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kBg   = isDark ? const Color(0xFF1A1A1E) : Colors.white;
-    final kTeal  = SettingsService.instance.config.azkarAccent;
+    final kTeal  = const Color(0xFFD89A1E);
     const kGold  = Color(0xFFD4AF37);
 
     showDialog(
@@ -922,13 +922,13 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         Text('Appearance',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
-                                color: SettingsService.instance.config.azkarAccent)),
+                                color: const Color(0xFFD89A1E))),
                         const SizedBox(height: 10),
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text('Dark Mode',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          activeTrackColor: SettingsService.instance.config.azkarAccent,
+                          activeTrackColor: const Color(0xFFD89A1E),
                           value: _settings.darkMode,
                           onChanged: (val) {
                             setModalState(() => _settings.darkMode = val);
@@ -941,7 +941,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           contentPadding: EdgeInsets.zero,
                           title: Text('Show Translation',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          activeTrackColor: SettingsService.instance.config.azkarAccent,
+                          activeTrackColor: const Color(0xFFD89A1E),
                           value: _settings.showTranslation,
                           onChanged: (val) {
                             setModalState(() => _settings.showTranslation = val);
@@ -954,7 +954,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           contentPadding: EdgeInsets.zero,
                           title: Text(AppLocalizations.of(context)?.showTransliteration ?? 'Show Transliteration',
                               style: GoogleFonts.outfit(fontSize: 16, color: txtColor)),
-                          activeTrackColor: SettingsService.instance.config.azkarAccent,
+                          activeTrackColor: const Color(0xFFD89A1E),
                           value: _settings.showTransliteration,
                           onChanged: (val) {
                             setModalState(() => _settings.showTransliteration = val);
@@ -970,7 +970,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           subtitle: Text(AppLocalizations.of(context)?.hideIllustrationArea ?? 'Hide the visual artwork area',
                               style: GoogleFonts.outfit(fontSize: 12,
                                   color: txtColor.withValues(alpha: 0.55))),
-                          activeTrackColor: SettingsService.instance.config.azkarAccent,
+                          activeTrackColor: const Color(0xFFD89A1E),
                           value: _settings.showIllustration,
                           onChanged: (val) {
                             setModalState(() => _settings.showIllustration = val);
@@ -986,12 +986,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         Text('Text Size',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
-                                color: SettingsService.instance.config.azkarAccent)),
+                                color: const Color(0xFFD89A1E))),
                         Slider(
                           value: _settings.arabicFontSize,
                           min: 20.0,
                           max: 56.0,
-                          activeColor: SettingsService.instance.config.azkarAccent,
+                          activeColor: const Color(0xFFD89A1E),
                           onChanged: (val) {
                             final translationSize = 16.0 + (val - 20.0) * (12.0 / 36.0);
                             setModalState(() {
@@ -1013,12 +1013,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                         Text(AppLocalizations.of(context)?.arabicFontStyle ?? 'Arabic Font Style',
                             style: GoogleFonts.outfit(
                                 fontSize: 14, fontWeight: FontWeight.w700,
-                                color: SettingsService.instance.config.azkarAccent)),
+                                color: const Color(0xFFD89A1E))),
                         const SizedBox(height: 12),
                         ...List.generate(_kArabicFonts.length, (i) {
                           final font = _kArabicFonts[i];
                           final sel  = i == _settings.arabicFontIdx;
-                          final accent = SettingsService.instance.config.azkarAccent;
+                          final accent = const Color(0xFFD89A1E);
                           return GestureDetector(
                             onTap: () {
                               setModalState(() => _settings.arabicFontIdx = i);
@@ -1066,7 +1066,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                   Container(
                                     width: 24, height: 24,
                                     decoration: BoxDecoration(
-                                        color: SettingsService.instance.config.azkarAccent,
+                                        color: const Color(0xFFD89A1E),
                                         shape: BoxShape.circle),
                                     child: const Icon(Icons.check_rounded,
                                         color: Colors.white, size: 15),
@@ -1099,7 +1099,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
             borderRadius: BorderRadius.circular(32),
-            boxShadow: [BoxShadow(color: SettingsService.instance.config.azkarAccent.withValues(alpha: 0.3), blurRadius: 40, spreadRadius: 10)],
+            boxShadow: [BoxShadow(color: const Color(0xFFD89A1E).withValues(alpha: 0.3), blurRadius: 40, spreadRadius: 10)],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1123,7 +1123,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: SettingsService.instance.config.azkarAccent,
+                    backgroundColor: const Color(0xFFD89A1E),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
@@ -1168,7 +1168,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   Widget build(BuildContext context) {
     if (_loading) {
       return Scaffold(
-        backgroundColor: const Color(0xFFF0F9F4),
+        backgroundColor: const Color(0xFFFFF4D2),
         body: const Center(child: NoorInlineLoader()),
       );
     }
@@ -1191,13 +1191,13 @@ class _DhikrScreenState extends State<DhikrScreen> {
     Color catColor(String catId) => switch (catId) {
       'all'          => const Color(0xFF6366F1), // indigo
       'favorites'    => const Color(0xFFEF4444), // red
-      'general'      => const Color(0xFF10B981), // emerald
+      'general'      => const Color(0xFFD89A1E), // emerald
       'morning'      => const Color(0xFFF59E0B), // amber
       'evening'      => const Color(0xFF6366F1), // indigo
       'sleeping'     => const Color(0xFF8B5CF6), // violet
       'waking_up'    => const Color(0xFFF97316), // orange
       'post_prayer'  => const Color(0xFF0EA5E9), // sky blue
-      'salawat'      => const Color(0xFF10B981), // emerald
+      'salawat'      => const Color(0xFFD89A1E), // emerald
       'istighfar'    => const Color(0xFF8B5CF6), // violet
       'tahajjud'     => const Color(0xFF3B82F6), // blue
       'sunnah'       => const Color(0xFF14B8A6), // teal
@@ -1207,8 +1207,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       'clothes'      => const Color(0xFF14B8A6), // teal
       'wudu'         => const Color(0xFF0EA5E9), // sky blue
       'food_drink'   => const Color(0xFFF97316), // orange
-      'home'         => const Color(0xFF10B981), // emerald
-      _              => SettingsService.instance.config.azkarAccent, // default teal
+      'home'         => const Color(0xFFD89A1E), // emerald
+      _              => const Color(0xFFD89A1E), // default teal
     };
 
     // Banner Text Setup
@@ -1476,7 +1476,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                             fontWeight: FontWeight.w400,
                                             fontSize: 12,
                                             color: isComplete
-                                                ? const Color(0xFF2BAE7C)
+                                                ? const Color(0xFFD89A1E)
                                                 : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
                                           ),
                                         ),
@@ -1491,7 +1491,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       fontWeight: FontWeight.w700,
                                       fontSize: 13,
                                       color: isComplete
-                                          ? const Color(0xFF2BAE7C)
+                                          ? const Color(0xFFD89A1E)
                                           : accent,
                                     ),
                                   ),
@@ -1530,7 +1530,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
           confettiController: _confettiController,
           blastDirectionality: BlastDirectionality.explosive,
           shouldLoop: false,
-          colors: [SettingsService.instance.config.azkarAccent, Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF38BDF8)],
+          colors: [const Color(0xFFD89A1E), Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF38BDF8)],
         ),
       ),
     ]));
@@ -1689,11 +1689,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final catId = widget.azkars[ci].category;
               final isMorning = catId == 'morning';
               final isEvening = catId == 'evening';
-              final List<Color> gradColors = isMorning
-                ? [const Color(0xFF0C4A3E), const Color(0xFF0A6B52), SettingsService.instance.config.azkarAccent]
-                : isEvening
-                  ? [const Color(0xFF1E1B4B), const Color(0xFF312E81), const Color(0xFF4338CA)]
-                  : [appBarColor, appBarColor, appBarColor];
+              final List<Color> gradColors = (isMorning || isEvening)
+                ? [const Color(0xFF7A5C13), const Color(0xFFB57E10), const Color(0xFFD89A1E)]
+                : [appBarColor, appBarColor, appBarColor];
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -1741,7 +1739,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFFFFFFFF), Color(0xFFE8F0FE)],
+                            colors: [Color(0xFFFFFFFF), Color(0xFFFFF4D2)],
                           ),
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
@@ -1756,7 +1754,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: isMorning ? const Color(0xFF0C4A3E) : const Color(0xFF1E1B4B),
+                            color: const Color(0xFF7A5C13),
                             letterSpacing: 0.3,
                           ),
                         ),
@@ -1894,7 +1892,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                   icon: _audioPlayer.playing && _currentlyLoadedAudio == azkar.audioUrl
                                       ? Icons.pause_rounded
                                       : Icons.play_arrow_rounded,
-                                  color: const Color(0xFF10B981),
+                                  color: const Color(0xFFD89A1E),
                                   isDark: isDark,
                                   onTap: () => _toggleAudio(azkar.audioUrl!),
                                 ),
@@ -1936,7 +1934,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                               _toolbarDivider(isDark),
                               _ToolbarBtn(
                                 icon: Icons.refresh_rounded,
-                                color: SettingsService.instance.config.azkarAccent,
+                                color: const Color(0xFFD89A1E),
                                 isDark: isDark,
                                 onTap: () {
                                   widget.parentState._reset(azkar.id);
@@ -1994,7 +1992,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                   child: Ink(
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
-                                        colors: [SettingsService.instance.config.azkarAccent, const Color(0xFF10B981)],
+                                        colors: [const Color(0xFFD89A1E), const Color(0xFFD89A1E)],
                                       ),
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -2062,12 +2060,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: _isDragging ? [
                                   BoxShadow(
-                                    color: SettingsService.instance.config.azkarAccent.withValues(alpha: 0.6),
+                                    color: const Color(0xFFD89A1E).withValues(alpha: 0.6),
                                     blurRadius: 28,
                                     spreadRadius: 8,
                                   ),
                                   BoxShadow(
-                                    color: SettingsService.instance.config.azkarAccent.withValues(alpha: 0.3),
+                                    color: const Color(0xFFD89A1E).withValues(alpha: 0.3),
                                     blurRadius: 50,
                                     spreadRadius: 14,
                                   ),
@@ -2108,9 +2106,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
 /// Scaffold bg color matching bottom gradient for each category
 Color _scaffoldBgForCategory(String cat) => switch (cat) {
-  'morning' => const Color(0xFF0C4A3E),
-  'evening' => const Color(0xFF1E1B4B),
-  _         => const Color(0xFF065F53),
+  'morning' => const Color(0xFF7A5C13),
+  'evening' => const Color(0xFF7A5C13),
+  _         => const Color(0xFF8B6B17),
 };
 
 /// Timing info shown at top of azkar detail screen
@@ -2593,7 +2591,7 @@ class _AzkarCard extends StatelessWidget {
     final kCardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final kText  = isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub   = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-    final kPrimary  = SettingsService.instance.config.azkarAccent;
+    final kPrimary  = const Color(0xFFD89A1E);
 
     String rawRef = azkar.reference.replaceAll('Hisnul Muslim, Chapter: ', '').replaceAll('Hisnul Muslim, ', '').trim();
     String bottomRef = '';
@@ -2756,7 +2754,7 @@ class _AzkarCard extends StatelessWidget {
                     azkar.arabic,
                     _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)]
                         .style(settings.arabicFontSize, kText, 2.2, FontWeight.w700),
-                    isDark ? const Color(0xFF5EADDB) : const Color(0xFF1A7A5C),
+                    isDark ? const Color(0xFFFFC83D) : const Color(0xFFD89A1E),
                     azkarId: azkar.id,
                     fontName: _kArabicFonts[settings.arabicFontIdx.clamp(0, _kArabicFonts.length - 1)].name,
                   ),
@@ -2808,7 +2806,7 @@ class _AzkarCard extends StatelessWidget {
                 : [const Color(0xFFF1F5F9), const Color(0xFFE2E8F0)];
               final textColor = isDark ? Colors.white.withValues(alpha: 0.85) : kText;
               final subColor = isDark ? Colors.white.withValues(alpha: 0.55) : kSub.withValues(alpha: 0.90);
-              final labelColor = isDark ? const Color(0xFF5EADDB) : SettingsService.instance.config.azkarAccent;
+              final labelColor = isDark ? const Color(0xFF5EADDB) : const Color(0xFFD89A1E);
               final dividerColor = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08);
 
               return Container(
@@ -3261,50 +3259,7 @@ String _pickTagline(String id) {
 
 /// Per-illustration tagline color — distinct for each category, always readable.
 Color _pickTaglineColor(String id, bool isDark) {
-  final ill = _pickIllustration(id);
-
-  // Light mode: deep saturated tones (dark enough on white bg)
-  // Dark mode:  bright vivid tones (light enough on dark bg)
-  return switch (ill) {
-    'shield'     => isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8), // royal blue
-    'quran_complete' => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46), // deep teal-green
-    'dawn_dusk'  => isDark ? const Color(0xFFFBBF24) : const Color(0xFF92400E), // amber
-    'falaq_shield' => isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95), // deep violet
-    'dua_hands'    => isDark ? const Color(0xFFFBBF24) : const Color(0xFF78350F), // warm amber
-    'gratitude_tree' => isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), // emerald
-    'three_quls'   => isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9), // violet
-    'gates'      => isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), // emerald green
-    'chains'     => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46), // deep teal
-    'six_wards'  => isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534), // forest green
-    'repelling'  => isDark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B), // deep red
-    'blinking_eyes' => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E40AF), // deep blue
-    'heart'      => isDark ? const Color(0xFFF9A8D4) : const Color(0xFF9D174D), // rose/pink
-    'six_dir_shield' => isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3), // indigo
-    'gratitude_bowl' => isDark ? const Color(0xFFFFD700) : const Color(0xFFB45309), // gold
-    'vessel'     => isDark ? const Color(0xFF7DD3FC) : const Color(0xFF0369A1), // sky blue
-    'dawn'       => isDark ? const Color(0xFFFCD34D) : const Color(0xFF92400E), // amber
-    'ripples'    => isDark ? const Color(0xFF67E8F9) : const Color(0xFF0E7490), // cyan
-    'path'       => isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3), // indigo
-    'invincible' => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E3A8A), // navy
-    'flame'      => isDark ? const Color(0xFFFDA4AF) : const Color(0xFF9F1239), // crimson
-    'doors'      => isDark ? const Color(0xFFC4B5FD) : const Color(0xFF5B21B6), // purple
-    'vessels'    => isDark ? const Color(0xFF5EEAD4) : const Color(0xFF0F766E), // teal
-    'pillars'    => isDark ? const Color(0xFFD8B4FE) : const Color(0xFF7E22CE), // deep violet
-    'blessings'  => isDark ? const Color(0xFFFBBF24) : const Color(0xFF92400E), // golden amber
-    'scales'     => isDark ? const Color(0xFF86EFAC) : const Color(0xFF14532D), // forest
-    'ocean'      => isDark ? const Color(0xFF38BDF8) : const Color(0xFF075985), // ocean blue
-    'salawat'    => isDark ? const Color(0xFFFDA4AF) : const Color(0xFF881337), // deep rose
-    'glory'      => isDark ? const Color(0xFFFCD34D) : const Color(0xFF713F12), // golden
-    'cycle'      => isDark ? const Color(0xFFA3E635) : const Color(0xFF3F6212), // lime green
-    'hand'       => isDark ? const Color(0xFF6EE7B7) : const Color(0xFF134E4A), // teal-green
-    'cosmic'     => isDark ? const Color(0xFFBAFA60) : const Color(0xFF1E1B4B), // deep indigo
-    'dua_scene'      => isDark ? const Color(0xFFA7F3D0) : const Color(0xFF064E3B),
-    'baqarah_shield' => isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
-    'baqarah_close'  => isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
-    'night_peace'    => isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E3A5F),
-    'baqarah_burden' => isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534),
-    _            => isDark ? const Color(0xFF34D399) : const Color(0xFF065F46),
-  };
+  return isDark ? const Color(0xFFFFC83D) : const Color(0xFF7A5200);
 }
 
 /// Arabic calligraphy text style used inside illustration canvases.
@@ -3855,7 +3810,7 @@ class _GratitudeTreeState extends State<_GratitudeTree> with TickerProviderState
     final visible = p >= line.threshold;
     final chipA = visible ? (((p - line.threshold) / 0.25).clamp(0.0, 1.0)) : 0.0;
 
-    final accent = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+    final accent = isDark ? const Color(0xFFFFC83D) : const Color(0xFF5E3F00);
     final textCol = line.big
         ? Color.lerp(accent.withValues(alpha: 0.35), accent, chipA)!
         : (isDark ? Colors.white : const Color(0xFF1E4028)).withValues(alpha: chipA * 0.82);
@@ -4207,7 +4162,7 @@ class _NoorTreePainter extends CustomPainter {
       Paint()
         ..shader = LinearGradient(colors: [
           Colors.transparent,
-          const Color(0xFF34D399).withValues(alpha: 0.25),
+          const Color(0xFFFFC83D).withValues(alpha: 0.25),
           Colors.transparent,
         ]).createShader(Rect.fromLTWH(cx - w * 0.32, groundY, w * 0.64, 1))
         ..strokeWidth = 0.8);
@@ -4275,17 +4230,17 @@ class _NoorTreePainter extends CustomPainter {
       // Positioned to align with branch endpoints
       const leafDefs = [
         // Crown top cluster
-        (0.0,  -0.05, 24.0, 0.10, Color(0xFF34D399)),  // emerald
-        (-0.15, 0.06, 18.0, 0.15, Color(0xFF6EE7B7)),  // mint
+        (0.0,  -0.05, 24.0, 0.10, Color(0xFFFFC83D)),  // emerald
+        (-0.15, 0.06, 18.0, 0.15, Color(0xFFFFC83D)),  // mint
         (0.18,  0.04, 17.0, 0.18, Color(0xFFFBBF24)),  // amber
         // Left branch cluster
         (-0.45, 0.16, 20.0, 0.22, Color(0xFF818CF8)),  // indigo
         (-0.62, 0.28, 16.0, 0.30, Color(0xFFA78BFA)),  // violet
-        (-0.38, 0.32, 14.0, 0.35, Color(0xFF2DD4BF)),  // teal
+        (-0.38, 0.32, 14.0, 0.35, Color(0xFFFFC83D)),  // teal
         // Right branch cluster
         (0.48,  0.18, 19.0, 0.25, Color(0xFFF472B6)),  // pink
         (0.65,  0.30, 15.0, 0.32, Color(0xFFFB923C)),  // orange
-        (0.42,  0.34, 13.0, 0.38, Color(0xFF34D399)),  // emerald
+        (0.42,  0.34, 13.0, 0.38, Color(0xFFFFC83D)),  // emerald
         // Lower left sub-branch
         (-0.72, 0.42, 14.0, 0.45, Color(0xFF38BDF8)),  // sky blue
         (-0.50, 0.48, 12.0, 0.52, Color(0xFFA78BFA)),  // violet
@@ -4293,12 +4248,12 @@ class _NoorTreePainter extends CustomPainter {
         (0.75,  0.44, 13.0, 0.50, Color(0xFFFBBF24)),  // amber
         (0.55,  0.50, 11.0, 0.55, Color(0xFFF472B6)),  // pink
         // Mid fills
-        (0.0,   0.30, 15.0, 0.60, Color(0xFF6EE7B7)),  // mint
-        (-0.22, 0.20, 13.0, 0.65, Color(0xFF34D399)),  // emerald
+        (0.0,   0.30, 15.0, 0.60, Color(0xFFFFC83D)),  // mint
+        (-0.22, 0.20, 13.0, 0.65, Color(0xFFFFC83D)),  // emerald
         (0.25,  0.22, 12.0, 0.70, Color(0xFF38BDF8)),  // sky blue
         // Top crown extras
         (0.0,  -0.12, 16.0, 0.80, Color(0xFFFFD97D)),  // gold
-        (-0.10, 0.50, 10.0, 0.88, Color(0xFF2DD4BF)),  // teal
+        (-0.10, 0.50, 10.0, 0.88, Color(0xFFFFC83D)),  // teal
         (0.12,  0.52, 10.0, 0.94, Color(0xFFFB923C)),  // orange
       ];
       final halfW = w * 0.28;
@@ -4353,16 +4308,16 @@ class _NoorTreePainter extends CustomPainter {
       const plants = [
         // Left side
         (-0.30, 18.0, 4.5, 0.08, Color(0xFF4ADE80), Color(0xFFF472B6)),  // green stem, pink bloom
-        (-0.22, 12.0, 3.5, 0.20, Color(0xFF34D399), Color(0xFFFBBF24)),  // emerald stem, amber bloom
+        (-0.22, 12.0, 3.5, 0.20, Color(0xFFFFC83D), Color(0xFFFBBF24)),  // emerald stem, amber bloom
         (-0.38, 15.0, 4.0, 0.35, Color(0xFF2DD4BF), Color(0xFF818CF8)),  // teal stem, indigo bloom
         (-0.18, 10.0, 3.0, 0.55, Color(0xFF4ADE80), Color(0xFFFF6B6B)),  // green stem, coral bloom
-        (-0.34, 8.0,  2.5, 0.72, Color(0xFF34D399), Color(0xFFFCD34D)),  // emerald stem, yellow bloom
+        (-0.30, 18.0, 4.5, 0.08, Color(0xFFFFC83D), Color(0xFFF472B6)),  // green stem, pink bloom
         // Right side
-        (0.28,  16.0, 4.2, 0.12, Color(0xFF34D399), Color(0xFFFBBF24)),  // emerald stem, amber bloom
+        (0.28,  16.0, 4.2, 0.12, Color(0xFFFFC83D), Color(0xFFFBBF24)),  // emerald stem, amber bloom
         (0.20,  11.0, 3.3, 0.28, Color(0xFF4ADE80), Color(0xFFA78BFA)),  // green stem, violet bloom
         (0.36,  14.0, 3.8, 0.42, Color(0xFF2DD4BF), Color(0xFFF472B6)),  // teal stem, pink bloom
-        (0.16,  9.0,  2.8, 0.62, Color(0xFF34D399), Color(0xFF38BDF8)),  // emerald stem, sky bloom
-        (0.32,  7.0,  2.3, 0.78, Color(0xFF4ADE80), Color(0xFFFF9F43)),  // green stem, orange bloom
+        (0.16,  9.0,  2.8, 0.62, Color(0xFFFFC83D), Color(0xFF38BDF8)),  // emerald stem, sky bloom
+        (0.28,  16.0, 4.2, 0.12, Color(0xFFFFC83D), Color(0xFFFBBF24)),  // emerald stem, amber bloom
       ];
 
       for (final (xOff, maxH, bloomR, minP, stemCol, bloomCol) in plants) {
@@ -6215,7 +6170,7 @@ class _BreakingChainsPainter extends CustomPainter {
         canvas.drawCircle(
           Offset(startX, startY), 5 * (1.0 - chainProgress * 0.5),
           Paint()
-            ..color = const Color(0xFF10B981).withValues(alpha: sparkA)
+            ..color = const Color(0xFFD89A1E).withValues(alpha: sparkA)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
         );
         canvas.drawCircle(
@@ -6645,7 +6600,7 @@ class _SixWardsPainter extends CustomPainter {
     Color(0xFFF59E0B), // right — amber
     Color(0xFF8B5CF6), // left — violet
     Color(0xFFD4AF37), // above — gold
-    Color(0xFF10B981), // below — emerald
+    Color(0xFFD89A1E), // below — emerald
   ];
 
   static const _wardLabels = ['أمام', 'خلف', 'يمين', 'شمال', 'فوق', 'تحت'];
@@ -8093,7 +8048,7 @@ class _SixDirShieldPainter extends CustomPainter {
   static const List<Color> _shieldColors = [
     Color(0xFF818CF8),  // indigo  — Above
     Color(0xFF38BDF8),  // sky     — Front-right
-    Color(0xFF34D399),  // emerald — Front
+    Color(0xFFFFC83D),  // emerald — Front
     Color(0xFFFBBF24),  // amber   — Below
     Color(0xFFF87171),  // coral   — Back
     Color(0xFFC084FC),  // violet  — Back-left
@@ -8976,12 +8931,12 @@ class _OverflowingVesselPainter extends CustomPainter {
   // Blessing orb colors (diverse ni'mah)
   static const _blessingColors = [
     Color(0xFFD4AF37), // gold
-    Color(0xFF34D399), // emerald
+    Color(0xFFFFC83D), // emerald
     Color(0xFF38BDF8), // sky
     Color(0xFFFBBF24), // amber
     Color(0xFFA78BFA), // violet
     Color(0xFFF472B6), // pink
-    Color(0xFF2DD4BF), // teal
+    Color(0xFFFFC83D), // teal
     Color(0xFFFF9F43), // orange
   ];
 
@@ -10466,7 +10421,7 @@ class _GlowingPathPainter extends CustomPainter {
     // 5 milestones: victory, help, light, barakah, guidance
     const milestoneColors = [
       Color(0xFFD4AF37), // victory (fath)
-      Color(0xFF34D399), // help (nasr)
+      Color(0xFFFFC83D), // help (nasr)
       Color(0xFF38BDF8), // light (noor)
       Color(0xFFFBBF24), // barakah
       Color(0xFFA78BFA), // guidance (huda)
@@ -11198,7 +11153,7 @@ class _CycleOfReturnPainter extends CustomPainter {
   // Journey phases: dawn → life → dusk → resurrection
   static const _phaseColors = [
     Color(0xFFF59E0B), // dawn — amber sunrise
-    Color(0xFF10B981), // life — emerald vitality
+    Color(0xFFD89A1E), // life — emerald vitality
     Color(0xFF6366F1), // dusk — indigo twilight
     Color(0xFFD4AF37), // nushur — golden resurrection
   ];
@@ -11711,7 +11666,7 @@ class _SevenPillarsState extends State<_SevenPillars> with TickerProviderStateMi
     } else {
       textColor = isDark
           ? Colors.white.withValues(alpha: lineProgress * 0.85)
-          : const Color(0xFF0C4A3E).withValues(alpha: lineProgress * 0.85);
+          : const Color(0xFF7A5200).withValues(alpha: lineProgress * 0.85);
       fontSize = isBig ? 19 : 15;
     }
 
@@ -12244,8 +12199,8 @@ class _GuidingHandPainter extends CustomPainter {
   final double shockPhase;
   final double glowPhase;
 
-  static const _handColor = Color(0xFF10B981);   // emerald — prophetic noor
-  static const _pathColor = Color(0xFF34D399);    // light emerald — path of light
+  static const _handColor = Color(0xFFD89A1E);   // emerald — prophetic noor
+  static const _pathColor = Color(0xFFFFC83D);    // light emerald — path of light
   static const _gateColor = Color(0xFFD4AF37);    // golden — gates of Jannah
 
   const _GuidingHandPainter({
@@ -12937,7 +12892,7 @@ class _InvincibleNamePainter extends CustomPainter {
     final startX = manX + w * 0.42;
     final snakeX = startX - (startX - shieldEdge - 18) * (0.35 + 0.65 * threatPhase);
     final snakeY = groundY - 4;
-    final c = const Color(0xFF10B981); // green snake
+    final c = const Color(0xFFD89A1E); // green snake
 
     // Snake body — S-curve path
     final bodyPath = Path()
@@ -13700,7 +13655,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
 
 
     // ── All figures green ──
-    const green = Color(0xFF10B981);
+    const green = Color(0xFFD89A1E);
 
     // ── 6 positions in a 2-column x 3-row grid inside cage ──
     final col0 = cx - 20.0; // left column
@@ -13904,7 +13859,7 @@ class _SunriseGloryPainter extends CustomPainter {
   final bool isComplete;
   final int pointsToday;
 
-  static const _ringColors = [Color(0xFFF59E0B), Color(0xFF10B981), Color(0xFFEF4444)]; // SubhanAllah amber, Alhamdulillah emerald, Allahu Akbar ruby
+  static const _ringColors = [Color(0xFFF59E0B), Color(0xFFD89A1E), Color(0xFFEF4444)]; // SubhanAllah amber, Alhamdulillah emerald, Allahu Akbar ruby
   static const _ringLabels = ['سُبْحَان الله', 'الحَمْدُ لله', 'الله أَكْبَر'];
 
   const _SunriseGloryPainter({required this.progress, required this.pulse, required this.starPhase,
@@ -14104,7 +14059,7 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration> with
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? SettingsService.instance.config.dashText : const Color(0xFFF7F4EF);
     final textColor = isDark ? Colors.white : SettingsService.instance.config.dashText;
-    final accent = widget.isComplete ? const Color(0xFF2BAE7C) : widget.accentColor;
+    final accent = widget.isComplete ? const Color(0xFFD89A1E) : widget.accentColor;
 
     return AnimatedBuilder(
       animation: _ctrl,
@@ -14240,9 +14195,9 @@ class _TenSalawatState extends State<_TenSalawat> with TickerProviderStateMixin 
 class _TenSalawatPainter extends CustomPainter {
   final double progress, pulse, starPhase, particlePhase, punchScale, shockPhase, orbitPhase;
   final List<_Particle> particles; final bool isComplete; final int pointsToday;
-  static const _crescentColor = Color(0xFF10B981);
+  static const _crescentColor = Color(0xFFD89A1E);
   static const _domeColor = Color(0xFFD4AF37);
-  static const _beamColor = Color(0xFF34D399);
+  static const _beamColor = Color(0xFFFFC83D);
 
   const _TenSalawatPainter({required this.progress, required this.pulse, required this.starPhase, required this.particlePhase, required this.particles, required this.isComplete, this.pointsToday = 0, this.punchScale = 1.0, this.shockPhase = 1.0, this.orbitPhase = 0.0});
 
@@ -14813,7 +14768,7 @@ class _HeavyScalesPainter extends CustomPainter {
 
     const giftColors = [
       Color(0xFFFFCC44), // gold
-      Color(0xFF2DD4BF), // teal
+      Color(0xFFFFC83D), // teal
       Color(0xFFA78BFA), // violet
     ];
     const ribbonColors = [
@@ -14981,7 +14936,7 @@ class _CosmicWeightPainter extends CustomPainter {
   final double progress, pulse, starPhase, particlePhase, punchScale, shockPhase, cosmicPhase;
   final List<_Particle> particles; final bool isComplete; final int pointsToday;
 
-  static const _phraseColors = [Color(0xFFD4AF37), Color(0xFF10B981), Color(0xFF3B82F6), Color(0xFF8B5CF6)]; // عدد خلقه, رضا نفسه, زنة عرشه, مداد كلماته
+  static const _phraseColors = [Color(0xFFD4AF37), Color(0xFFD89A1E), Color(0xFF3B82F6), Color(0xFF8B5CF6)]; // عدد خلقه, رضا نفسه, زنة عرشه, مداد كلماته
   static const _phraseLabels = ['عَدَد خَلْقِه', 'رِضَا نَفْسِه', 'زِنَة عَرْشِه', 'مِدَاد كَلِمَاتِه'];
 
   const _CosmicWeightPainter({required this.progress, required this.pulse, required this.starPhase, required this.particlePhase, required this.particles, required this.isComplete, this.pointsToday = 0, this.punchScale = 1.0, this.shockPhase = 1.0, this.cosmicPhase = 0.0});
@@ -16264,7 +16219,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden> with TickerProviderState
             Center(child: Container(
               width: 200 * _pulse.value, height: 200 * _pulse.value,
               decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [
-                const Color(0xFF22C55E).withValues(alpha: 0.06 * _glow.value), Colors.transparent,
+                const Color(0xFFD89A1E).withValues(alpha: 0.06 * _glow.value), Colors.transparent,
               ])),
             )),
             // Star specks
@@ -16273,7 +16228,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden> with TickerProviderState
             Positioned(top: 18, left: 0, right: 0, child: Center(child: SizedBox(
               width: 44, height: 32,
               child: CustomPaint(painter: _ScaleIconPainter(
-                color: (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
+                color: (isDark ? const Color(0xFFFFC83D) : const Color(0xFF7A5200))
                     .withValues(alpha: (0.20 + progress * 0.75).clamp(0.0, 1.0)),
               )),
             ))),
@@ -16293,7 +16248,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden> with TickerProviderState
             // Completion bar
             if (widget.isComplete) Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 3,
               decoration: BoxDecoration(gradient: LinearGradient(colors: [
-                Colors.transparent, const Color(0xFF22C55E).withValues(alpha: _glow.value * 0.70), Colors.transparent,
+                Colors.transparent, const Color(0xFFD89A1E).withValues(alpha: _glow.value * 0.70), Colors.transparent,
               ])))),
           ]),
         );
@@ -16316,7 +16271,9 @@ class _BaqarahBurdenState extends State<_BaqarahBurden> with TickerProviderState
       // "I have done so" â€” green accent, larger, pulsing
       color = Color.lerp(
         (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)).withValues(alpha: 0.35),
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D), segP)!;
+        (isDark ? const Color(0xFFFFC83D) : const Color(0xFF7A5200)).withValues(alpha: 0.35),
+        segP
+      )!;
       fontSize = 22.0 * _pulse.value; weight = FontWeight.w900; letterSpacing = 0.8;
     } else if (seg.color == 1) {
       // Transition text â€” muted green/teal
@@ -16383,7 +16340,7 @@ class _BurdenDotPainter extends CustomPainter {
     for (int i = 0; i < _pts.length; i++) {
       final (rx, ry, r) = _pts[i];
       final tw = (math.sin((phase + i * 0.22) * math.pi * 2) * 0.5 + 0.5);
-      p.color = const Color(0xFF22C55E).withValues(alpha: tw * 0.10);
+      p.color = const Color(0xFFD89A1E).withValues(alpha: tw * 0.10);
       canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
     }
   }
@@ -16522,7 +16479,7 @@ class _QuranCompletePainter extends CustomPainter {
         ..shader = SweepGradient(
           startAngle: -math.pi / 2,
           endAngle: -math.pi / 2 + 2 * math.pi * progress,
-          colors: const [Color(0xFF34D399), Color(0xFF059669)],
+          colors: const [Color(0xFFFFC83D), Color(0xFF7A5200)],
         ).createShader(Rect.fromCircle(center: Offset(cx, cy - 12), radius: arcRadius));
       canvas.drawArc(
         Rect.fromCircle(center: Offset(cx, cy - 12), radius: arcRadius),
@@ -16536,7 +16493,7 @@ class _QuranCompletePainter extends CustomPainter {
       (45.0 + 18.0 * pulse) * (0.5 + 0.5 * progress),
       Paint()
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 28)
-        ..color = const Color(0xFF34D399).withValues(alpha: 0.16 + 0.12 * pulse),
+        ..color = const Color(0xFFFFC83D).withValues(alpha: 0.16 + 0.12 * pulse),
     );
 
     // Open Quran book
@@ -16557,8 +16514,8 @@ class _QuranCompletePainter extends CustomPainter {
       Paint()..shader = LinearGradient(
         begin: Alignment.topLeft, end: Alignment.bottomRight,
         colors: [
-          const Color(0xFF0D9488).withValues(alpha: 0.88),
-          const Color(0xFF065F46).withValues(alpha: 0.88),
+          const Color(0xFFFFC83D).withValues(alpha: 0.88),
+          const Color(0xFFD89A1E).withValues(alpha: 0.88),
         ],
       ).createShader(Rect.fromLTWH(-bW / 2, bTop, bW / 2, bH)),
     );
@@ -16601,7 +16558,7 @@ class _QuranCompletePainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.5 * (1 - shock)
-          ..color = const Color(0xFF34D399).withValues(alpha: (1 - shock) * 0.55),
+          ..color = const Color(0xFFFFC83D).withValues(alpha: (1 - shock) * 0.55),
       );
     }
 
@@ -16618,7 +16575,7 @@ class _QuranCompletePainter extends CustomPainter {
         text: '×$count',
         style: GoogleFonts.outfit(
           fontSize: 18, fontWeight: FontWeight.w900,
-          color: const Color(0xFF34D399).withValues(alpha: countAlpha),
+          color: const Color(0xFFFFC83D).withValues(alpha: countAlpha),
           letterSpacing: -0.5,
         ),
       ),
@@ -16636,7 +16593,7 @@ class _QuranCompletePainter extends CustomPainter {
             text: '×3  ',
             style: GoogleFonts.outfit(
               fontSize: 11, fontWeight: FontWeight.w900,
-              color: const Color(0xFF34D399).withValues(alpha: eqA),
+              color: const Color(0xFFFFC83D).withValues(alpha: eqA),
             ),
           ),
           TextSpan(
@@ -16659,7 +16616,7 @@ class _QuranCompletePainter extends CustomPainter {
         arcRadius + 18,
         Paint()
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18)
-          ..color = const Color(0xFF34D399).withValues(alpha: 0.32),
+          ..color = const Color(0xFFFFC83D).withValues(alpha: 0.32),
       );
 
     }
@@ -16997,15 +16954,15 @@ class _ProgressLinePainter extends CustomPainter {
 
   // Vibrant palette for completed segments — bright enough on dark AppBar
   static const _doneColors = [
-    Color(0xFF34D399), // emerald
+    Color(0xFFFFC83D), // emerald
     Color(0xFFFBBF24), // amber
     Color(0xFFF87171), // coral red
     Color(0xFF60A5FA), // sky blue
     Color(0xFFA78BFA), // violet
-    Color(0xFF2DD4BF), // teal
+    Color(0xFFFFC83D), // teal
     Color(0xFFFB923C), // orange
     Color(0xFFF472B6), // pink
-    Color(0xFF4ADE80), // green
+    Color(0xFFFFC83D), // green
     Color(0xFF38BDF8), // light blue
     Color(0xFFE879F9), // fuchsia
     Color(0xFFFCD34D), // yellow
@@ -17085,8 +17042,8 @@ class _DhikrCounterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
-    final teal = SettingsService.instance.config.azkarAccent;
-    const green = Color(0xFF2BAE7C);
+    final teal = const Color(0xFFD89A1E);
+    final green = const Color(0xFFD89A1E);
 
     // Responsive sizing based on screen width
     final sw = MediaQuery.of(context).size.width;

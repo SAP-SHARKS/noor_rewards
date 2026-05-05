@@ -334,7 +334,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const Icon(Icons.workspace_premium_rounded, size: 16, color: Y4.amberY),
                 const SizedBox(width: 8),
-                Text('My contribution: ${_fmtN(userPoints)} pts (${userPct.toStringAsFixed(1)}%)',
+                Text('My contribution: ${_fmtN(userPoints)} pts',
                   style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w700, color: Y4.amberY)),
               ]),
             ),

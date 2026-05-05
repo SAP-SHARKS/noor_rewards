@@ -211,7 +211,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool   _dailyReminder     = true;    // daily reading reminder on
   bool   _soundAlerts       = true;    // sound alert on milestone
   // Theme accent (index into _kThemeAccents)
-  int    _themeIdx          = 2; // Default: Amber 🔥 (matches Y4 honey theme)
+  int    _themeIdx          = 5; // Default: Honey 🍯 (matches Y4 honey theme)
   // Mushaf immersive overlay (tap-to-show controls)
   bool   _showMushafControls = true;
   Timer? _controlsHideTimer;
@@ -271,6 +271,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     (Color(0xFFE67E22), 'Amber',  '🔥'),
     (Color(0xFFE91E63), 'Rose',   '🌸'),
     (Color(0xFF2196F3), 'Blue',   '💧'),
+    (Color(0xFFFFC83D), 'Honey',  '🍯'),
   ];
   Color get _accent => _kThemeAccents[_themeIdx.clamp(0, _kThemeAccents.length - 1)].$1;
 
@@ -417,6 +418,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Restore persisted reading mode
     _fullPageMode = _cache.get('pref_mushaf_mode', defaultValue: false) as bool;
     _wordByWord   = _cache.get('pref_wbw_mode', defaultValue: false) as bool;
+    _themeIdx     = _cache.get('pref_theme_idx', defaultValue: 5) as int;
 
     if (_cache.get('pref_translation') == null && mounted) {
       final lang = Localizations.localeOf(context).languageCode;
@@ -1037,44 +1039,78 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       context: context, isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
-      builder: (_) => DraggableScrollableSheet(
-        expand: false, initialChildSize: 0.7, maxChildSize: 0.92,
-        builder: (_, ctrl) => Column(children: [
-          const SizedBox(height: 12),
-          Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
-          Padding(padding: const EdgeInsets.all(20),
-            child: Text(AppLocalizations.of(context)?.selectSurah ?? 'Select Surah', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _kText))),
-          Expanded(child: ListView.builder(
-            controller: ctrl, itemCount: 114,
-            itemBuilder: (_, i) {
-              final n = i + 1;
-              final isCurrent = n == _surah;
-              return ListTile(
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() { _surah = n; _ayah = 1; });
-                  _fetchAyah(n, 1);
-                  // Sync _currentPage so Mushaf opens at the correct page
-                  _currentPage = _kSurahStartPage[n.clamp(1, 114)];
-                  _syncReadingPosition();
-                  _savePagePosition();
-                },
-                leading: Container(width: 36, height: 36,
-                  decoration: BoxDecoration(shape: BoxShape.circle,
-                      color: isCurrent ? _kTeal : const Color(0xFFF0FBF9)),
-                  child: Center(child: Text('$n', style: GoogleFonts.outfit(fontSize: 13,
-                      fontWeight: FontWeight.w700, color: isCurrent ? Colors.white : _kTeal)))),
-                title: Text(_surahNames[i],
-                    style: GoogleFonts.outfit(fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
-                        color: isCurrent ? _kTeal : _kText)),
-                subtitle: Text('${_surahLengths[n]} ayahs',
-                    style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
-                trailing: isCurrent ? Icon(Icons.check_circle_rounded, color: _kTeal) : null,
-              );
-            },
-          )),
-        ]),
-      ),
+      builder: (_) {
+        String searchQuery = '';
+        return StatefulBuilder(
+          builder: (context, setStateSheet) {
+            final filteredSurahs = List.generate(114, (i) => i + 1).where((n) {
+              if (searchQuery.isEmpty) return true;
+              final name = _surahNames[n - 1].toLowerCase();
+              return name.contains(searchQuery.toLowerCase()) || n.toString() == searchQuery;
+            }).toList();
+
+            return DraggableScrollableSheet(
+              expand: false, initialChildSize: 0.7, maxChildSize: 0.92,
+              builder: (_, ctrl) => Column(children: [
+                const SizedBox(height: 12),
+                Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+                Padding(padding: const EdgeInsets.all(20),
+                  child: Text(AppLocalizations.of(context)?.selectSurah ?? 'Select Surah', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w800, color: _kText))),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: TextField(
+                      onChanged: (val) => setStateSheet(() => searchQuery = val),
+                      style: GoogleFonts.outfit(fontSize: 15, color: _kText),
+                      decoration: InputDecoration(
+                        hintText: 'Search Surah...',
+                        hintStyle: GoogleFonts.outfit(color: Colors.grey.shade500),
+                        border: InputBorder.none,
+                        icon: Icon(Icons.search_rounded, color: Colors.grey.shade400, size: 20),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Expanded(child: ListView.builder(
+                  controller: ctrl, itemCount: filteredSurahs.length,
+                  itemBuilder: (_, i) {
+                    final n = filteredSurahs[i];
+                    final isCurrent = n == _surah;
+                    return ListTile(
+                      onTap: () {
+                        Navigator.pop(context);
+                        setState(() { _surah = n; _ayah = 1; });
+                        _fetchAyah(n, 1);
+                        // Sync _currentPage so Mushaf opens at the correct page
+                        _currentPage = _kSurahStartPage[n.clamp(1, 114)];
+                        _syncReadingPosition();
+                        _savePagePosition();
+                      },
+                      leading: Container(width: 36, height: 36,
+                        decoration: BoxDecoration(shape: BoxShape.circle,
+                            color: isCurrent ? _kTeal : const Color(0xFFF0FBF9)),
+                        child: Center(child: Text('$n', style: GoogleFonts.outfit(fontSize: 13,
+                            fontWeight: FontWeight.w700, color: isCurrent ? Colors.white : _kTeal)))),
+                      title: Text(_surahNames[n - 1],
+                          style: GoogleFonts.outfit(fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                              color: isCurrent ? _kTeal : _kText)),
+                      subtitle: Text('${_surahLengths[n]} ayahs',
+                          style: GoogleFonts.outfit(fontSize: 12, color: _kSub)),
+                      trailing: isCurrent ? Icon(Icons.check_circle_rounded, color: _kTeal) : null,
+                    );
+                  },
+                )),
+              ]),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1117,6 +1153,276 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
   }
 
+  // ── Tafsir Formatter ────────────────────────────────────────────────────────
+  static final _arabicRunRe = RegExp(
+    r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]'
+    r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\s]*'
+    r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]'
+  );
+  static final _parenRe = RegExp(r'\(([^)]+)\)');
+  static final _verseRefRe = RegExp(r'^\(\d+:\d+(?:-\d+)?\)$');
+  static final _vowelledWordRe = RegExp(r'((?:[^\s]*[\u064B-\u065F\u0670\u06D6-\u06ED][^\s]*(?:\s+|$))+)');
+
+  bool _isArabicLine(String line) {
+    final arabicChars = line.runes.where((c) =>
+        (c >= 0x0600 && c <= 0x06FF) || (c >= 0x0750 && c <= 0x077F) ||
+        (c >= 0xFB50 && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)).length;
+    return arabicChars > line.runes.length * 0.35;
+  }
+
+  bool _isHeading(String line, {bool isUrdu = false}) {
+    final t = line.trim();
+    if (t.length > 120 || t.length < 4) return false;
+    if (t.startsWith('(') || t.startsWith('"') || t.startsWith('`')) return false;
+    if (isUrdu) {
+      if (t.endsWith('۔') || t.endsWith('،') || t.endsWith('؟')) return false;
+    } else {
+      final firstLetter = t.codeUnitAt(0);
+      if (firstLetter < 65 || (firstLetter > 90 && firstLetter < 97) || firstLetter > 122) return false;
+      if (t[0] != t[0].toUpperCase()) return false;
+      if (t.endsWith('.') || t.endsWith(',') || t.endsWith(')')) return false;
+    }
+    final words = t.split(RegExp(r'\s+')).length;
+    return words <= 16;
+  }
+
+  Widget _buildFormattedTafsir(String text, Color txt, Color sub, {bool isUrdu = false}) {
+    final lines = text.split('\n');
+    final widgets = <Widget>[];
+    final buffer = StringBuffer();
+    bool lastWasArabic = false;
+
+    void addEngBlock(String s) {
+      if (s.trim().isEmpty) return;
+      final spans = <InlineSpan>[];
+      _addSpans(spans, s, txt, sub, isUrdu: isUrdu);
+      widgets.add(Padding(
+        padding: const EdgeInsets.only(bottom: 14),
+        child: Text.rich(TextSpan(children: spans),
+          textAlign: isUrdu ? TextAlign.right : TextAlign.left,
+          textDirection: isUrdu ? TextDirection.rtl : TextDirection.ltr,
+          style: isUrdu 
+              ? GoogleFonts.amiri(fontSize: _translationFontSize + 2, color: txt, height: 1.9)
+              : GoogleFonts.notoSerif(fontSize: _translationFontSize, color: txt, height: 1.85)),
+      ));
+    }
+
+    void addArabBlock(String s) {
+      String trimmed = s.trim();
+      if (!trimmed.contains('﴿') && !trimmed.contains('﴾')) {
+        trimmed = '﴿ $trimmed ﴾';
+      }
+      widgets.add(Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        child: Text(trimmed,
+          textAlign: TextAlign.center, textDirection: TextDirection.rtl,
+          style: GoogleFonts.scheherazadeNew(
+            fontSize: _arabicFontSize, color: txt, height: 2.0, fontWeight: FontWeight.w700)),
+      ));
+    }
+
+    void flushBuffer() {
+      if (buffer.isEmpty) return;
+      final content = buffer.toString().trim();
+      buffer.clear();
+      if (content.isEmpty) return;
+
+      if (isUrdu) {
+        addEngBlock(content);
+        return;
+      }
+
+      int last = 0;
+      for (final m in _arabicRunRe.allMatches(content)) {
+        final arabicText = m.group(0)!;
+        final isHonorific = arabicText.contains('عليه السلام') || 
+                            arabicText.contains('علیہ السلام') || 
+                            arabicText.contains('صلى الله') || 
+                            arabicText.contains('صلی اللہ') ||
+                            arabicText.contains('رضي الله') || 
+                            arabicText.contains('رضی اللہ') || 
+                            arabicText.contains('رحمه الله') || 
+                            arabicText.contains('رحمہ اللہ') || 
+                            arabicText.contains('عز وجل') || 
+                            arabicText.contains('سبحانه وتعالى');
+        
+        if (arabicText.replaceAll(RegExp(r'\s'), '').length >= 25 && !isHonorific) {
+          if (m.start > last) addEngBlock(content.substring(last, m.start));
+          addArabBlock(arabicText);
+          last = m.end;
+        }
+      }
+      if (last < content.length) {
+        addEngBlock(content.substring(last));
+      } else if (last == 0) {
+        addEngBlock(content);
+      }
+    }
+
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i].trim();
+      if (line.isEmpty) {
+        flushBuffer();
+        lastWasArabic = false;
+        continue;
+      }
+
+      if (lastWasArabic && _verseRefRe.hasMatch(line)) {
+        lastWasArabic = false;
+        widgets.add(Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Text(line,
+            textAlign: isUrdu ? TextAlign.right : TextAlign.left,
+            textDirection: isUrdu ? TextDirection.rtl : TextDirection.ltr,
+            style: GoogleFonts.outfit(
+              fontSize: _translationFontSize - 1,
+              color: sub,
+              height: 1.4,
+            ),
+          ),
+        ));
+        continue;
+      }
+
+      if (!isUrdu && _isArabicLine(line)) {
+        flushBuffer();
+        lastWasArabic = true;
+        
+        String trimmed = line.trim();
+        if (!trimmed.contains('﴿') && !trimmed.contains('﴾')) {
+          trimmed = '﴿ $trimmed ﴾';
+        }
+        
+        widgets.add(Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+          child: Text(trimmed,
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+            style: GoogleFonts.scheherazadeNew(
+              fontSize: _arabicFontSize,
+              color: txt,
+              height: 2.0,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ));
+
+        final nextIdx = lines.indexWhere((l) => l.trim().isNotEmpty, i + 1);
+        if (nextIdx != -1) {
+          final nextLine = lines[nextIdx].trim();
+          if (nextLine.startsWith('(') && nextLine.endsWith(')')) {
+            widgets.add(Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(nextLine,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.outfit(
+                  fontSize: _translationFontSize + 1,
+                  fontWeight: FontWeight.w600,
+                  color: txt,
+                  height: 1.6,
+                ),
+              ),
+            ));
+            for (int j = i + 1; j <= nextIdx; j++) {
+              lines[j] = '';
+            }
+          }
+        }
+        continue;
+      }
+      lastWasArabic = false;
+
+      if (_isHeading(line, isUrdu: isUrdu)) {
+        flushBuffer();
+        widgets.add(Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 10),
+          child: Text(line,
+            textAlign: isUrdu ? TextAlign.right : TextAlign.left,
+            textDirection: isUrdu ? TextDirection.rtl : TextDirection.ltr,
+            style: isUrdu 
+                ? GoogleFonts.amiri(fontSize: _translationFontSize + 6, fontWeight: FontWeight.w700, color: txt, height: 1.5)
+                : GoogleFonts.outfit(fontSize: _translationFontSize + 2, fontWeight: FontWeight.w800, color: txt, height: 1.35),
+          ),
+        ));
+        continue;
+      }
+
+      if (buffer.isNotEmpty) buffer.write(' ');
+      buffer.write(line);
+    }
+    flushBuffer();
+
+    if (widgets.isEmpty) {
+      return Directionality(
+        textDirection: isUrdu ? TextDirection.rtl : TextDirection.ltr,
+        child: Text(text, 
+          textAlign: isUrdu ? TextAlign.right : TextAlign.left,
+          style: isUrdu 
+            ? GoogleFonts.amiri(fontSize: _translationFontSize + 2, color: txt, height: 1.9)
+            : GoogleFonts.outfit(fontSize: _translationFontSize, color: txt, height: 1.8)),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgets,
+    );
+  }
+
+  void _addSpans(List<InlineSpan> spans, String text, Color txt, Color sub, {bool isUrdu = false}) {
+    int last = 0;
+    for (final m in _parenRe.allMatches(text)) {
+      if (m.start > last) {
+        _addUrduArabicSpans(spans, text.substring(last, m.start), txt, sub, isUrdu: isUrdu);
+      }
+      final inner = m.group(1) ?? '';
+      if (RegExp(r'^\d+:\d+').hasMatch(inner)) {
+        spans.add(TextSpan(
+          text: m.group(0),
+          style: isUrdu
+              ? GoogleFonts.amiri(fontSize: _translationFontSize, color: sub)
+              : GoogleFonts.outfit(fontSize: _translationFontSize - 1, color: sub),
+        ));
+      } else {
+        spans.add(TextSpan(
+          text: m.group(0),
+          style: isUrdu
+              ? GoogleFonts.amiri(fontSize: _translationFontSize + 2, fontWeight: FontWeight.w700, color: txt, height: 1.9)
+              : GoogleFonts.outfit(fontSize: _translationFontSize, fontWeight: FontWeight.w600, color: txt, height: 1.8),
+        ));
+      }
+      last = m.end;
+    }
+    if (last < text.length) {
+      _addUrduArabicSpans(spans, text.substring(last), txt, sub, isUrdu: isUrdu);
+    }
+  }
+
+  void _addUrduArabicSpans(List<InlineSpan> spans, String text, Color txt, Color sub, {bool isUrdu = false}) {
+    if (!isUrdu) {
+      spans.add(TextSpan(text: text));
+      return;
+    }
+    
+    int last = 0;
+    for (final m in _vowelledWordRe.allMatches(text)) {
+      if (m.start > last) {
+        spans.add(TextSpan(text: text.substring(last, m.start)));
+      }
+      spans.add(TextSpan(
+        text: m.group(0),
+        style: GoogleFonts.amiri(fontSize: _translationFontSize + 4, fontWeight: FontWeight.w700, color: txt, height: 1.9),
+      ));
+      last = m.end;
+    }
+    if (last < text.length) {
+      spans.add(TextSpan(text: text.substring(last)));
+    }
+  }
   // ── Inline Tafsir ────────────────────────────────────────────────────────────
   Future<void> _fetchTafsirText({required int editionIdx, void Function()? onDone}) async {
     final def = _qTafsirEditions[editionIdx];
@@ -1280,16 +1586,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       else ...[
                         () {
                           final def = _qTafsirEditions[_tafsirEditionIdx];
-                          return Directionality(
-                            textDirection: def.rtl ? TextDirection.rtl : TextDirection.ltr,
-                            child: Text(
-                              _tafsirText,
-                              textAlign: def.rtl ? TextAlign.right : TextAlign.left,
-                              style: def.rtl
-                                  ? GoogleFonts.amiri(fontSize: 18, color: lblC, height: 2.0)
-                                  : GoogleFonts.outfit(fontSize: 15, color: lblC, height: 1.75),
-                            ),
-                          );
+                          return _buildFormattedTafsir(_tafsirText, lblC, subC, isUrdu: def.rtl);
                         }(),
                       ],
                     ],
@@ -1637,6 +1934,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               return GestureDetector(
                                 onTap: () {
                                   setSt(() => _themeIdx = i);
+                                  _cache.put('pref_theme_idx', i);
                                   setState(() {});
                                 },
                                 child: AnimatedContainer(
@@ -2239,7 +2537,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                      color: _accent.withValues(alpha: 0.15),
+                      color: _accent,
                       borderRadius: BorderRadius.circular(14)),
                   child: Row(children: [
                     const Text('🌟', style: TextStyle(fontSize: 16)),
@@ -2248,7 +2546,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: _accent)),
+                            color: Colors.white)),
                   ]),
                 ),
                 const SizedBox(height: 16),
@@ -3398,11 +3696,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          // Subtle gold-tinted panel — like Quran Majeed's Bismillah banner
-          color: goldClr.withValues(alpha: 0.07),
-          border: Border.symmetric(
-            horizontal: BorderSide(color: goldClr.withValues(alpha: 0.35), width: 0.8),
-          ),
+          color: goldClr,
+          borderRadius: BorderRadius.circular(12),
         ),
         // Ensures the Bismillah never overflows the screen horizontally on big font sizes
         child: FittedBox(
@@ -3411,7 +3706,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           // Left ornament
           Text('﴾', style: _kQuranScripts[_quranScriptIdx].style(
               _arabicFontSize * 0.8,
-              goldClr.withValues(alpha: 0.6), null, FontWeight.normal)),
+              Colors.white.withValues(alpha: 0.8), null, FontWeight.normal)),
           const SizedBox(width: 10),
           // Bismillah text — centered, gold, slightly larger than body
           Text(
@@ -3420,14 +3715,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             textDirection: TextDirection.rtl,
             style: _kQuranScripts[_quranScriptIdx].style(
                 _arabicFontSize * 0.96,
-                goldClr,
+                Colors.white,
                 1.8, FontWeight.w700),
           ),
           const SizedBox(width: 10),
           // Right ornament
           Text('﴿', style: _kQuranScripts[_quranScriptIdx].style(
               _arabicFontSize * 0.8,
-              goldClr.withValues(alpha: 0.6), null, FontWeight.normal)),
+              Colors.white.withValues(alpha: 0.8), null, FontWeight.normal)),
         ]),
         ),
       ),
