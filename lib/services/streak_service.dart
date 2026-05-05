@@ -1,4 +1,4 @@
-﻿// lib/services/streak_service.dart
+// lib/services/streak_service.dart
 // Three-type streak system: login · dhikr · quran
 // Integrates with the record_streak_activity() Supabase function.
 
@@ -12,16 +12,23 @@ extension StreakTypeX on StreakType {
   String get key => name; // 'login' | 'dhikr' | 'quran'
   String get label {
     switch (this) {
-      case StreakType.login:  return 'Daily Login';
-      case StreakType.dhikr: return 'Zikr';
-      case StreakType.quran: return 'Quran';
+      case StreakType.login:
+        return 'Daily Login';
+      case StreakType.dhikr:
+        return 'Zikr';
+      case StreakType.quran:
+        return 'Quran';
     }
   }
+
   String get emoji {
     switch (this) {
-      case StreakType.login:  return '☀️';
-      case StreakType.dhikr: return '📿';
-      case StreakType.quran: return '📖';
+      case StreakType.login:
+        return '☀️';
+      case StreakType.dhikr:
+        return '📿';
+      case StreakType.quran:
+        return '📖';
     }
   }
 }
@@ -30,13 +37,17 @@ extension StreakTypeX on StreakType {
 class StreakSnapshot {
   final int login, dhikr, quran;
   final int bestLogin, bestDhikr, bestQuran;
-  final List<DateTime> loginHistory;  // dates active in last 7 days
+  final List<DateTime> loginHistory; // dates active in last 7 days
   final List<DateTime> dhikrHistory;
   final List<DateTime> quranHistory;
 
   const StreakSnapshot({
-    required this.login,  required this.dhikr,  required this.quran,
-    required this.bestLogin, required this.bestDhikr, required this.bestQuran,
+    required this.login,
+    required this.dhikr,
+    required this.quran,
+    required this.bestLogin,
+    required this.bestDhikr,
+    required this.bestQuran,
     required this.loginHistory,
     required this.dhikrHistory,
     required this.quranHistory,
@@ -45,30 +56,47 @@ class StreakSnapshot {
   int get combined => login + dhikr + quran;
   int streakFor(StreakType t) {
     switch (t) {
-      case StreakType.login:  return login;
-      case StreakType.dhikr: return dhikr;
-      case StreakType.quran: return quran;
+      case StreakType.login:
+        return login;
+      case StreakType.dhikr:
+        return dhikr;
+      case StreakType.quran:
+        return quran;
     }
   }
+
   int bestFor(StreakType t) {
     switch (t) {
-      case StreakType.login:  return bestLogin;
-      case StreakType.dhikr: return bestDhikr;
-      case StreakType.quran: return bestQuran;
+      case StreakType.login:
+        return bestLogin;
+      case StreakType.dhikr:
+        return bestDhikr;
+      case StreakType.quran:
+        return bestQuran;
     }
   }
+
   List<DateTime> historyFor(StreakType t) {
     switch (t) {
-      case StreakType.login:  return loginHistory;
-      case StreakType.dhikr: return dhikrHistory;
-      case StreakType.quran: return quranHistory;
+      case StreakType.login:
+        return loginHistory;
+      case StreakType.dhikr:
+        return dhikrHistory;
+      case StreakType.quran:
+        return quranHistory;
     }
   }
 
   static const empty = StreakSnapshot(
-    login: 0, dhikr: 0, quran: 0,
-    bestLogin: 0, bestDhikr: 0, bestQuran: 0,
-    loginHistory: [], dhikrHistory: [], quranHistory: [],
+    login: 0,
+    dhikr: 0,
+    quran: 0,
+    bestLogin: 0,
+    bestDhikr: 0,
+    bestQuran: 0,
+    loginHistory: [],
+    dhikrHistory: [],
+    quranHistory: [],
   );
 }
 
@@ -79,18 +107,25 @@ class StreakMilestone {
   final String emoji;
   final int ptsBonus;
   const StreakMilestone({
-    required this.days, required this.label,
-    required this.emoji, required this.ptsBonus,
+    required this.days,
+    required this.label,
+    required this.emoji,
+    required this.ptsBonus,
   });
 }
 
 const kStreakMilestones = <StreakMilestone>[
-  StreakMilestone(days: 3,   label: 'Warming Up',    emoji: '🌱', ptsBonus: 15),
-  StreakMilestone(days: 7,   label: 'One Week',       emoji: '🔥', ptsBonus: 30),
-  StreakMilestone(days: 14,  label: 'Two Weeks',      emoji: '⚡', ptsBonus: 60),
-  StreakMilestone(days: 30,  label: 'One Month',      emoji: '🌟', ptsBonus: 100),
-  StreakMilestone(days: 60,  label: 'Two Months',     emoji: '💎', ptsBonus: 200),
-  StreakMilestone(days: 100, label: 'The Centurion',  emoji: '👑', ptsBonus: 400),
+  StreakMilestone(days: 3, label: 'Warming Up', emoji: '🌱', ptsBonus: 15),
+  StreakMilestone(days: 7, label: 'One Week', emoji: '🔥', ptsBonus: 30),
+  StreakMilestone(days: 14, label: 'Two Weeks', emoji: '⚡', ptsBonus: 60),
+  StreakMilestone(days: 30, label: 'One Month', emoji: '🌟', ptsBonus: 100),
+  StreakMilestone(days: 60, label: 'Two Months', emoji: '💎', ptsBonus: 200),
+  StreakMilestone(
+    days: 100,
+    label: 'The Centurion',
+    emoji: '👑',
+    ptsBonus: 400,
+  ),
 ];
 
 /// Returns the next milestone the user hasn't passed yet.
@@ -124,10 +159,10 @@ class StreakService {
     if (uid == null) return 0;
     int newStreak;
     try {
-      final result = await _sb.rpc('record_streak_activity', params: {
-        'p_user_id': uid,
-        'p_type':    type.key,
-      });
+      final result = await _sb.rpc(
+        'record_streak_activity',
+        params: {'p_user_id': uid, 'p_type': type.key},
+      );
       newStreak = (result as num?)?.toInt() ?? 0;
     } catch (e) {
       // Fallback: update profile directly if RPC not yet deployed
@@ -137,16 +172,19 @@ class StreakService {
     // We only notify on the EXACT milestone day so the user doesn't get
     // a streak notification every single day — only when they cross a
     // meaningful threshold (3, 7, 14, 30, 60, 100 days).
-    final reachedMilestone =
-        kStreakMilestones.firstWhere((m) => m.days == newStreak,
-            orElse: () => const StreakMilestone(
-                days: 0, label: '', emoji: '', ptsBonus: 0));
+    final reachedMilestone = kStreakMilestones.firstWhere(
+      (m) => m.days == newStreak,
+      orElse:
+          () =>
+              const StreakMilestone(days: 0, label: '', emoji: '', ptsBonus: 0),
+    );
     if (reachedMilestone.days > 0) {
       NotificationCenter.instance.add(
         kind: NoorNotifKind.streak,
         title: '${reachedMilestone.emoji} ${reachedMilestone.label}',
-        body: '${reachedMilestone.days}-day ${type.label} streak · '
-              '+${reachedMilestone.ptsBonus} bonus pts unlocked',
+        body:
+            '${reachedMilestone.days}-day ${type.label} streak · '
+            '+${reachedMilestone.ptsBonus} bonus pts unlocked',
         route: '/journey',
         data: {'streak_type': type.key, 'days': reachedMilestone.days},
       );
@@ -158,12 +196,14 @@ class StreakService {
   Future<int> _localFallback(String uid, StreakType type) async {
     try {
       final today = DateTime.now().toIso8601String().substring(0, 10);
-      final col   = '${type.key}_streak';
+      final col = '${type.key}_streak';
       final datCol = '${type.key}_streak_updated_at';
-      final row = await _sb.from('profiles')
-          .select('$col, $datCol')
-          .eq('id', uid)
-          .single();
+      final row =
+          await _sb
+              .from('profiles')
+              .select('$col, $datCol')
+              .eq('id', uid)
+              .single();
 
       final current = (row[col] as num?)?.toInt() ?? 0;
       final lastStr = row[datCol] as String?;
@@ -175,15 +215,20 @@ class StreakService {
         final last = DateTime.parse(lastStr);
         final todayDt = DateTime.parse(today);
         final diff = todayDt.difference(last).inDays;
-        if (diff == 0) { return current; }      // already done today
-        if (diff == 1) { newStreak = current + 1; }
-        else           { newStreak = 1; }         // missed a day
+        if (diff == 0) {
+          return current;
+        } // already done today
+        if (diff == 1) {
+          newStreak = current + 1;
+        } else {
+          newStreak = 1;
+        } // missed a day
       }
 
-      await _sb.from('profiles').update({
-        col:    newStreak,
-        datCol: today,
-      }).eq('id', uid);
+      await _sb
+          .from('profiles')
+          .update({col: newStreak, datCol: today})
+          .eq('id', uid);
       return newStreak;
     } catch (_) {
       return 0;
@@ -195,12 +240,15 @@ class StreakService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return StreakSnapshot.empty;
     try {
-      final profile = await _sb.from('profiles')
-          .select(
-            'login_streak, dhikr_streak, quran_streak,'
-            'best_login_streak, best_dhikr_streak, best_quran_streak')
-          .eq('id', uid)
-          .single();
+      final profile =
+          await _sb
+              .from('profiles')
+              .select(
+                'login_streak, dhikr_streak, quran_streak,'
+                'best_login_streak, best_dhikr_streak, best_quran_streak',
+              )
+              .eq('id', uid)
+              .single();
 
       // History for each type (last 7 days)
       final histories = await Future.wait(
@@ -208,12 +256,12 @@ class StreakService {
       );
 
       return StreakSnapshot(
-        login:  (profile['login_streak']  as num?)?.toInt() ?? 0,
-        dhikr:  (profile['dhikr_streak']  as num?)?.toInt() ?? 0,
-        quran:  (profile['quran_streak']  as num?)?.toInt() ?? 0,
-        bestLogin:  (profile['best_login_streak']  as num?)?.toInt() ?? 0,
-        bestDhikr:  (profile['best_dhikr_streak']  as num?)?.toInt() ?? 0,
-        bestQuran:  (profile['best_quran_streak']  as num?)?.toInt() ?? 0,
+        login: (profile['login_streak'] as num?)?.toInt() ?? 0,
+        dhikr: (profile['dhikr_streak'] as num?)?.toInt() ?? 0,
+        quran: (profile['quran_streak'] as num?)?.toInt() ?? 0,
+        bestLogin: (profile['best_login_streak'] as num?)?.toInt() ?? 0,
+        bestDhikr: (profile['best_dhikr_streak'] as num?)?.toInt() ?? 0,
+        bestQuran: (profile['best_quran_streak'] as num?)?.toInt() ?? 0,
         loginHistory: histories[0],
         dhikrHistory: histories[1],
         quranHistory: histories[2],
@@ -223,21 +271,25 @@ class StreakService {
     }
   }
 
-  Future<List<DateTime>> _loadHistory(String uid, StreakType t, int days) async {
+  Future<List<DateTime>> _loadHistory(
+    String uid,
+    StreakType t,
+    int days,
+  ) async {
     try {
       // Try the RPC first
-      final rows = await _sb.rpc('get_streak_history', params: {
-        'p_user_id': uid,
-        'p_type':    t.key,
-        'p_days':    days,
-      });
-      return (rows as List)
-          .map((r) => DateTime.parse(r.toString()))
-          .toList();
+      final rows = await _sb.rpc(
+        'get_streak_history',
+        params: {'p_user_id': uid, 'p_type': t.key, 'p_days': days},
+      );
+      return (rows as List).map((r) => DateTime.parse(r.toString())).toList();
     } catch (_) {
       // Fallback: query streak_history table directly
       try {
-        final cutoff = DateTime.now().subtract(Duration(days: days)).toIso8601String().substring(0, 10);
+        final cutoff = DateTime.now()
+            .subtract(Duration(days: days))
+            .toIso8601String()
+            .substring(0, 10);
         final rows = await _sb
             .from('streak_history')
             .select('activity_date')

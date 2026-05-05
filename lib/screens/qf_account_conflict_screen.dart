@@ -1,4 +1,4 @@
-﻿// lib/screens/qf_account_conflict_screen.dart
+// lib/screens/qf_account_conflict_screen.dart
 //
 // Shown when a user tries to sign in via Quran.com but their QF email already
 // belongs to an existing Noor Rewards account created with Email or Google.
@@ -22,7 +22,8 @@ class QfAccountConflictScreen extends StatefulWidget {
   });
 
   @override
-  State<QfAccountConflictScreen> createState() => _QfAccountConflictScreenState();
+  State<QfAccountConflictScreen> createState() =>
+      _QfAccountConflictScreenState();
 }
 
 class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
@@ -58,22 +59,29 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
           // ── Pulsing glow behind icon ─────────────────────────────────────
           AnimatedBuilder(
             animation: _pulseAnim,
-            builder: (_, __) => Positioned(
-              top: MediaQuery.of(context).size.height * 0.18,
-              left: 0, right: 0,
-              child: Center(
-                child: Container(
-                  width: 280, height: 280,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(colors: [
-                      const Color(0xFFFFAA00).withValues(alpha: 0.10 + _pulseAnim.value * 0.08),
-                      Colors.transparent,
-                    ]),
+            builder:
+                (_, __) => Positioned(
+                  top: MediaQuery.of(context).size.height * 0.18,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      width: 280,
+                      height: 280,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            const Color(
+                              0xFFFFAA00,
+                            ).withValues(alpha: 0.10 + _pulseAnim.value * 0.08),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
           ),
 
           // ── Content ──────────────────────────────────────────────────────
@@ -86,7 +94,8 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
 
                   // Icon
                   Container(
-                    width: 96, height: 96,
+                    width: 96,
+                    height: 96,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: const Color(0xFFFFAA00).withValues(alpha: 0.12),
@@ -120,27 +129,39 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
 
                   // Email chip
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-                    ),
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.email_outlined, size: 15, color: Color(0xFFFFAA00)),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          widget.email,
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFFFAA00),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12),
                       ),
-                    ]),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.email_outlined,
+                          size: 15,
+                          color: Color(0xFFFFAA00),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            widget.email,
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFFAA00),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                   const SizedBox(height: 20),
@@ -164,27 +185,32 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.08),
+                      ),
                     ),
-                    child: Column(children: [
-                      _StepRow(
-                        number: '1',
-                        text: 'Go back to the login screen',
-                        color: const Color(0xFF2BAE99),
-                      ),
-                      const SizedBox(height: 14),
-                      _StepRow(
-                        number: '2',
-                        text: 'Sign in with Email or Google using\n${widget.email}',
-                        color: const Color(0xFF5856D6),
-                      ),
-                      const SizedBox(height: 14),
-                      _StepRow(
-                        number: '3',
-                        text: 'All your progress will be right there',
-                        color: const Color(0xFFFFAA00),
-                      ),
-                    ]),
+                    child: Column(
+                      children: [
+                        _StepRow(
+                          number: '1',
+                          text: 'Go back to the login screen',
+                          color: const Color(0xFF2BAE99),
+                        ),
+                        const SizedBox(height: 14),
+                        _StepRow(
+                          number: '2',
+                          text:
+                              'Sign in with Email or Google using\n${widget.email}',
+                          color: const Color(0xFF5856D6),
+                        ),
+                        const SizedBox(height: 14),
+                        _StepRow(
+                          number: '3',
+                          text: 'All your progress will be right there',
+                          color: const Color(0xFFFFAA00),
+                        ),
+                      ],
+                    ),
                   ),
 
                   const Spacer(flex: 3),
@@ -202,25 +228,34 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF2BAE99).withValues(alpha: 0.4),
+                            color: const Color(
+                              0xFF2BAE99,
+                            ).withValues(alpha: 0.4),
                             blurRadius: 24,
                             offset: const Offset(0, 8),
                           ),
                         ],
                       ),
                       child: Center(
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Back to Sign In',
-                            style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.arrow_back_rounded,
                               color: Colors.white,
+                              size: 20,
                             ),
-                          ),
-                        ]),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Back to Sign In',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -241,38 +276,59 @@ class _StepRow extends StatelessWidget {
   final String number;
   final String text;
   final Color color;
-  const _StepRow({required this.number, required this.text, required this.color});
+  const _StepRow({
+    required this.number,
+    required this.text,
+    required this.color,
+  });
 
   @override
-  Widget build(BuildContext context) => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    Container(
-      width: 26, height: 26,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color.withValues(alpha: 0.15),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Container(
+        width: 26,
+        height: 26,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color.withValues(alpha: 0.15),
+          border: Border.all(color: color.withValues(alpha: 0.4)),
+        ),
+        child: Center(
+          child: Text(
+            number,
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
+          ),
+        ),
       ),
-      child: Center(
-        child: Text(number, style: GoogleFonts.outfit(
-            fontSize: 12, fontWeight: FontWeight.w800, color: color)),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Text(
+          text,
+          style: GoogleFonts.outfit(
+            fontSize: 13,
+            color: Colors.white70,
+            height: 1.5,
+          ),
+        ),
       ),
-    ),
-    const SizedBox(width: 12),
-    Expanded(
-      child: Text(text, style: GoogleFonts.outfit(
-          fontSize: 13, color: Colors.white70, height: 1.5)),
-    ),
-  ]);
+    ],
+  );
 }
 
 // ── Background painter (same pattern as profile_setup_screen) ─────────────────
 class _GeoBgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.025)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.7;
+    final paint =
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.025)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.7;
     const sp = 88.0;
     for (double y = 0; y < size.height + sp; y += sp) {
       for (double x = 0; x < size.width + sp; x += sp) {
@@ -281,12 +337,17 @@ class _GeoBgPainter extends CustomPainter {
           final a = (i * math.pi / 8) - math.pi / 2;
           final r = i.isEven ? 26.0 : 11.0;
           final p = Offset(x + r * math.cos(a), y + r * math.sin(a));
-          if (i == 0) path.moveTo(p.dx, p.dy); else path.lineTo(p.dx, p.dy);
+          if (i == 0)
+            path.moveTo(p.dx, p.dy);
+          else
+            path.lineTo(p.dx, p.dy);
         }
         path.close();
         canvas.drawPath(path, paint);
       }
     }
   }
-  @override bool shouldRepaint(_) => false;
+
+  @override
+  bool shouldRepaint(_) => false;
 }

@@ -1,4 +1,4 @@
-﻿// lib/widgets/project_media_carousel.dart
+// lib/widgets/project_media_carousel.dart
 // Reusable carousel for project images + videos.
 // Used in donate sheet / project detail view.
 
@@ -111,9 +111,10 @@ class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
                       width: selected ? 22 : 6,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: selected
-                            ? Colors.white
-                            : Colors.white.withValues(alpha: 0.5),
+                        color:
+                            selected
+                                ? Colors.white
+                                : Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     );
@@ -127,8 +128,10 @@ class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
                 top: 12,
                 right: 12,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.45),
                     borderRadius: BorderRadius.circular(12),
@@ -152,41 +155,52 @@ class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
                 bottom: 0,
                 child: Center(
                   child: GestureDetector(
-                    onTap: () => _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
+                    onTap:
+                        () => _pageController.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        ),
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.45),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ),
               ),
 
             // Right arrow
-            if (widget.media.length > 1 && _currentIndex < widget.media.length - 1)
+            if (widget.media.length > 1 &&
+                _currentIndex < widget.media.length - 1)
               Positioned(
                 right: 8,
                 top: 0,
                 bottom: 0,
                 child: Center(
                   child: GestureDetector(
-                    onTap: () => _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
+                    onTap:
+                        () => _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        ),
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.45),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
+                      child: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ),
@@ -208,12 +222,15 @@ class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.image_outlined,
-                  size: 36, color: Colors.grey.shade400),
+              Icon(Icons.image_outlined, size: 36, color: Colors.grey.shade400),
               const SizedBox(height: 8),
-              Text('No media yet',
-                  style: GoogleFonts.outfit(
-                      fontSize: 12, color: Colors.grey.shade500)),
+              Text(
+                'No media yet',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  color: Colors.grey.shade500,
+                ),
+              ),
             ],
           ),
         ),
@@ -230,34 +247,37 @@ class _ImageSlide extends StatelessWidget {
   void _openFullScreen(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => Scaffold(
-          backgroundColor: Colors.black,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            iconTheme: const IconThemeData(color: Colors.white),
-            elevation: 0,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
+        builder:
+            (ctx) => Scaffold(
+              backgroundColor: Colors.black,
+              extendBodyBehindAppBar: true,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                iconTheme: const IconThemeData(color: Colors.white),
+                elevation: 0,
+                leading: IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                  onPressed: () => Navigator.of(ctx).pop(),
                 ),
-                child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 22),
               ),
-              onPressed: () => Navigator.of(ctx).pop(),
+              body: InteractiveViewer(
+                panEnabled: true,
+                minScale: 1.0,
+                maxScale: 4.0,
+                child: Center(child: Image.network(url, fit: BoxFit.contain)),
+              ),
             ),
-          ),
-          body: InteractiveViewer(
-            panEnabled: true,
-            minScale: 1.0,
-            maxScale: 4.0,
-            child: Center(
-              child: Image.network(url, fit: BoxFit.contain),
-            ),
-          ),
-        ),
         fullscreenDialog: true,
       ),
     );
@@ -286,10 +306,14 @@ class _ImageSlide extends StatelessWidget {
                   ),
                 );
               },
-              errorBuilder: (_, __, ___) => const Center(
-                child: Icon(Icons.broken_image_outlined,
-                    color: Colors.white54, size: 40),
-              ),
+              errorBuilder:
+                  (_, __, ___) => const Center(
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      color: Colors.white54,
+                      size: 40,
+                    ),
+                  ),
             ),
           ),
           Positioned(
@@ -301,7 +325,11 @@ class _ImageSlide extends StatelessWidget {
                 color: Colors.black.withValues(alpha: 0.45),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.fullscreen_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.fullscreen_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ),
         ],
@@ -333,8 +361,9 @@ class _VideoSlideState extends State<_VideoSlide> {
 
   Future<void> _init() async {
     try {
-      _videoController =
-          VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+      );
       await _videoController!.initialize();
       _chewieController = ChewieController(
         videoPlayerController: _videoController!,
@@ -388,12 +417,16 @@ class _VideoSlideState extends State<_VideoSlide> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.videocam_off_outlined,
-                  color: Colors.white54, size: 40),
+              const Icon(
+                Icons.videocam_off_outlined,
+                color: Colors.white54,
+                size: 40,
+              ),
               const SizedBox(height: 8),
-              Text(_error ?? 'Video error',
-                  style: GoogleFonts.outfit(
-                      color: Colors.white60, fontSize: 12)),
+              Text(
+                _error ?? 'Video error',
+                style: GoogleFonts.outfit(color: Colors.white60, fontSize: 12),
+              ),
             ],
           ),
         ),

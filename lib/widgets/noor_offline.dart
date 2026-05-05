@@ -1,4 +1,4 @@
-﻿// lib/widgets/noor_offline.dart
+// lib/widgets/noor_offline.dart
 //
 // NoorOffline — gorgeous "no internet / loading" widget
 // Features a tasbih bead animation: beads drop one by one onto a curved string,
@@ -12,9 +12,9 @@ import 'package:google_fonts/google_fonts.dart';
 // ── Public API ────────────────────────────────────────────────────────────────
 
 enum NoorOfflineMode {
-  noInternet,   // "No internet connection"
-  loading,      // "Loading…"  — used for slow / delayed data fetch
-  error,        // "Something went wrong"
+  noInternet, // "No internet connection"
+  loading, // "Loading…"  — used for slow / delayed data fetch
+  error, // "Something went wrong"
 }
 
 class NoorOfflineWidget extends StatefulWidget {
@@ -141,16 +141,17 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
             height: 220,
             child: AnimatedBuilder(
               animation: Listenable.merge([_beadCtrl, _swayCtrl, _glowCtrl]),
-              builder: (_, __) => CustomPaint(
-                painter: _TasbihPainter(
-                  beadProgress: _beadCtrl.value,
-                  swayProgress: _swayCtrl.value,
-                  glowPulse: _glowCtrl.value,
-                  accent: _accent,
-                  totalBeads: _totalBeads,
-                ),
-                size: const Size(double.infinity, 220),
-              ),
+              builder:
+                  (_, __) => CustomPaint(
+                    painter: _TasbihPainter(
+                      beadProgress: _beadCtrl.value,
+                      swayProgress: _swayCtrl.value,
+                      glowPulse: _glowCtrl.value,
+                      accent: _accent,
+                      totalBeads: _totalBeads,
+                    ),
+                    size: const Size(double.infinity, 220),
+                  ),
             ),
           ),
           const SizedBox(height: 24),
@@ -162,32 +163,33 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
               position: Tween<Offset>(
                 begin: const Offset(0, 0.3),
                 end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: _textCtrl,
-                curve: Curves.easeOut,
-              )),
-              child: Column(children: [
-                Text(
-                  _title,
-                  style: GoogleFonts.rajdhani(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF1C1C1E),
-                    letterSpacing: 0.5,
+              ).animate(
+                CurvedAnimation(parent: _textCtrl, curve: Curves.easeOut),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    _title,
+                    style: GoogleFonts.rajdhani(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF1C1C1E),
+                      letterSpacing: 0.5,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  _subtitle,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    color: const Color(0xFF8E8E93),
-                    height: 1.6,
+                  const SizedBox(height: 10),
+                  Text(
+                    _subtitle,
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      color: const Color(0xFF8E8E93),
+                      height: 1.6,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ]),
+                ],
+              ),
             ),
           ),
 
@@ -197,21 +199,21 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
               opacity: _textCtrl,
               child: AnimatedBuilder(
                 animation: _btnCtrl,
-                builder: (_, child) => Transform.scale(
-                  scale: 1.0 + _btnCtrl.value * 0.03,
-                  child: child,
-                ),
+                builder:
+                    (_, child) => Transform.scale(
+                      scale: 1.0 + _btnCtrl.value * 0.03,
+                      child: child,
+                    ),
                 child: GestureDetector(
                   onTap: widget.onRetry,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 36, vertical: 14),
+                      horizontal: 36,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          _accent,
-                          _accent.withValues(alpha: 0.75),
-                        ],
+                        colors: [_accent, _accent.withValues(alpha: 0.75)],
                       ),
                       borderRadius: BorderRadius.circular(30),
                       boxShadow: [
@@ -225,8 +227,11 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.refresh_rounded,
-                            color: Colors.white, size: 18),
+                        const Icon(
+                          Icons.refresh_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Try Again',
@@ -254,7 +259,7 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
 class _TasbihPainter extends CustomPainter {
   final double beadProgress; // 0.0 → 1.0  (drives bead drop sequencing)
   final double swayProgress; // 0.0 → 1.0  (pendulum sway after drop)
-  final double glowPulse;    // 0.0 → 1.0  (aura pulsing)
+  final double glowPulse; // 0.0 → 1.0  (aura pulsing)
   final Color accent;
   final int totalBeads;
 
@@ -273,8 +278,7 @@ class _TasbihPainter extends CustomPainter {
 
     // ── Sway angle ─────────────────────────────────────────────────────
     // Damped pendulum: amplitude fades as beadProgress was completed
-    final swayAngle =
-        math.sin(swayProgress * math.pi) * 0.06;
+    final swayAngle = math.sin(swayProgress * math.pi) * 0.06;
 
     canvas.save();
     // Pivot at the crown tip
@@ -294,23 +298,25 @@ class _TasbihPainter extends CustomPainter {
   void _drawCrown(Canvas canvas, Size size, double cx, double topY) {
     final glowR = 18.0 + glowPulse * 6;
     // Outer glow
-    final glowPaint = Paint()
-      ..color = accent.withValues(alpha: 0.15 + glowPulse * 0.12)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+    final glowPaint =
+        Paint()
+          ..color = accent.withValues(alpha: 0.15 + glowPulse * 0.12)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
     canvas.drawCircle(Offset(cx, topY + 4), glowR, glowPaint);
 
     // Main circle (gold/teal gradient)
     final centerOval = Offset(cx, topY + 4);
-    final circlePaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFFFFE08A),
-          accent,
-          accent.withValues(alpha: 0.7),
-        ],
-        stops: const [0.0, 0.55, 1.0],
-        center: const Alignment(-0.3, -0.4),
-      ).createShader(Rect.fromCircle(center: centerOval, radius: 14));
+    final circlePaint =
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              const Color(0xFFFFE08A),
+              accent,
+              accent.withValues(alpha: 0.7),
+            ],
+            stops: const [0.0, 0.55, 1.0],
+            center: const Alignment(-0.3, -0.4),
+          ).createShader(Rect.fromCircle(center: centerOval, radius: 14));
     canvas.drawCircle(centerOval, 13, circlePaint);
 
     // Crescent cutout (white filled slightly offset circle)
@@ -318,35 +324,33 @@ class _TasbihPainter extends CustomPainter {
     canvas.drawCircle(Offset(cx + 5, topY + 1), 10, cutPaint);
 
     // Star dot
-    final starPaint = Paint()
-      ..color = const Color(0xFFFFE08A)
-      ..style = PaintingStyle.fill;
+    final starPaint =
+        Paint()
+          ..color = const Color(0xFFFFE08A)
+          ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset(cx + 9, topY + 7), 2.5, starPaint);
 
     // Hook line connecting crown to string
-    final hookPaint = Paint()
-      ..color = accent.withValues(alpha: 0.5)
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-    canvas.drawLine(
-      Offset(cx, topY + 17),
-      Offset(cx, topY + 30),
-      hookPaint,
-    );
+    final hookPaint =
+        Paint()
+          ..color = accent.withValues(alpha: 0.5)
+          ..strokeWidth = 2.5
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke;
+    canvas.drawLine(Offset(cx, topY + 17), Offset(cx, topY + 30), hookPaint);
   }
 
   // ── Curved string/thread ────────────────────────────────────────────
   void _drawString(Canvas canvas, Size size, double cx, double topY) {
-
     // How many beads have arrived — used to draw string only as far as dropped
     final beadsDone = (beadProgress * totalBeads).floor();
     final partialFrac = (beadProgress * totalBeads) - beadsDone;
 
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round;
+    final paint =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0
+          ..strokeCap = StrokeCap.round;
 
     for (int i = 0; i < beadsDone; i++) {
       final t0 = i / totalBeads;
@@ -356,10 +360,7 @@ class _TasbihPainter extends CustomPainter {
 
       // Gradient thread color
       paint.shader = LinearGradient(
-        colors: [
-          accent.withValues(alpha: 0.6),
-          accent.withValues(alpha: 0.3),
-        ],
+        colors: [accent.withValues(alpha: 0.6), accent.withValues(alpha: 0.3)],
       ).createShader(Rect.fromPoints(p0, p1));
 
       canvas.drawLine(p0, p1, paint);
@@ -379,7 +380,6 @@ class _TasbihPainter extends CustomPainter {
 
   // ── Individual beads ────────────────────────────────────────────────
   void _drawBeads(Canvas canvas, Size size, double cx, double topY) {
-
     for (int i = 0; i < totalBeads; i++) {
       // Each bead starts dropping when its "slot" opens
       final beadStart = i / totalBeads;
@@ -387,8 +387,10 @@ class _TasbihPainter extends CustomPainter {
       if (beadProgress < beadStart) break;
 
       // Local progress of this bead's drop (0→1)
-      final local =
-          ((beadProgress - beadStart) / (beadEnd - beadStart)).clamp(0.0, 1.0);
+      final local = ((beadProgress - beadStart) / (beadEnd - beadStart)).clamp(
+        0.0,
+        1.0,
+      );
 
       // Ease-out bounce for each bead
       final eased = _bounceOut(local);
@@ -407,49 +409,66 @@ class _TasbihPainter extends CustomPainter {
     }
   }
 
-  void _drawSingleBead(Canvas canvas, Offset center, double r, int index, double alpha) {
+  void _drawSingleBead(
+    Canvas canvas,
+    Offset center,
+    double r,
+    int index,
+    double alpha,
+  ) {
     // Glow
-    final glowPaint = Paint()
-      ..color = accent.withValues(alpha: 0.18 * alpha)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    final glowPaint =
+        Paint()
+          ..color = accent.withValues(alpha: 0.18 * alpha)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
     canvas.drawCircle(center, r + 4, glowPaint);
 
     // Shadow
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.18)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+    final shadowPaint =
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.18)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
     canvas.drawOval(
-        Rect.fromCenter(
-            center: center.translate(0, r * 0.7),
-            width: r * 1.4,
-            height: r * 0.5),
-        shadowPaint);
+      Rect.fromCenter(
+        center: center.translate(0, r * 0.7),
+        width: r * 1.4,
+        height: r * 0.5,
+      ),
+      shadowPaint,
+    );
 
     // Bead body — alternating warm pearl and accent
     final isAccent = (index % 3 == 0);
-    final beadPaint = Paint()
-      ..shader = RadialGradient(
-        colors: isAccent
-            ? [
-                const Color(0xFFFFEEAA),
-                accent,
-                accent.withValues(alpha: 0.85),
-              ]
-            : [
-                const Color(0xFFFFFFFF),
-                const Color(0xFFE8DECC),
-                const Color(0xFFB8A898),
-              ],
-        stops: const [0.0, 0.5, 1.0],
-        center: const Alignment(-0.4, -0.45),
-      ).createShader(Rect.fromCircle(center: center, radius: r));
+    final beadPaint =
+        Paint()
+          ..shader = RadialGradient(
+            colors:
+                isAccent
+                    ? [
+                      const Color(0xFFFFEEAA),
+                      accent,
+                      accent.withValues(alpha: 0.85),
+                    ]
+                    : [
+                      const Color(0xFFFFFFFF),
+                      const Color(0xFFE8DECC),
+                      const Color(0xFFB8A898),
+                    ],
+            stops: const [0.0, 0.5, 1.0],
+            center: const Alignment(-0.4, -0.45),
+          ).createShader(Rect.fromCircle(center: center, radius: r));
     canvas.drawCircle(center, r, beadPaint);
 
     // Specular highlight
-    final hiPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.55 * alpha)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
-    canvas.drawCircle(center.translate(-r * 0.28, -r * 0.28), r * 0.22, hiPaint);
+    final hiPaint =
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.55 * alpha)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+    canvas.drawCircle(
+      center.translate(-r * 0.28, -r * 0.28),
+      r * 0.22,
+      hiPaint,
+    );
   }
 
   // ── The decorative large oval bead at the knot (bottom) ─────────────
@@ -462,29 +481,30 @@ class _TasbihPainter extends CustomPainter {
     // Oval (wider than tall)
     final rect = Rect.fromCenter(center: pos, width: r * 2.2, height: r * 1.5);
 
-    final glowPaint = Paint()
-      ..color = accent.withValues(alpha: 0.3 * alpha + glowPulse * 0.1)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+    final glowPaint =
+        Paint()
+          ..color = accent.withValues(alpha: 0.3 * alpha + glowPulse * 0.1)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
     canvas.drawOval(rect.inflate(6), glowPaint);
 
-    final beadPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFFFFEEAA),
-          accent,
-          accent.withValues(alpha: 0.7),
-        ],
-        stops: const [0.0, 0.45, 1.0],
-        center: const Alignment(-0.3, -0.35),
-      ).createShader(rect);
+    final beadPaint =
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              const Color(0xFFFFEEAA),
+              accent,
+              accent.withValues(alpha: 0.7),
+            ],
+            stops: const [0.0, 0.45, 1.0],
+            center: const Alignment(-0.3, -0.35),
+          ).createShader(rect);
     canvas.drawOval(rect, beadPaint);
 
     // Calligraphy-style line pattern (simplified dots)
-    final dotPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.5 * alpha);
+    final dotPaint =
+        Paint()..color = Colors.white.withValues(alpha: 0.5 * alpha);
     for (int d = 0; d < 3; d++) {
-      canvas.drawCircle(
-          pos.translate(-8.0 + d * 8.0, 0), 1.8, dotPaint);
+      canvas.drawCircle(pos.translate(-8.0 + d * 8.0, 0), 1.8, dotPaint);
     }
   }
 
@@ -499,8 +519,7 @@ class _TasbihPainter extends CustomPainter {
     // t=0 → top of loop, t=0.5 → bottom, t=1 → back to top (knot bead)
     final angle = (t * math.pi * 2) - math.pi / 2;
     final x = cx + loopWidth * math.cos(angle);
-    final y = originY + loopHeight * 0.5 * math.sin(angle) +
-        loopHeight * 0.35;
+    final y = originY + loopHeight * 0.5 * math.sin(angle) + loopHeight * 0.35;
 
     return Offset(x, y);
   }
@@ -617,10 +636,14 @@ class _NoorInlineLoaderState extends State<NoorInlineLoader>
         children: [
           AnimatedBuilder(
             animation: _ctrl,
-            builder: (_, __) => CustomPaint(
-              painter: _InlineBeadPainter(progress: _ctrl.value, accent: accent),
-              size: const Size(160, 40),
-            ),
+            builder:
+                (_, __) => CustomPaint(
+                  painter: _InlineBeadPainter(
+                    progress: _ctrl.value,
+                    accent: accent,
+                  ),
+                  size: const Size(160, 40),
+                ),
           ),
           if (widget.label != null) ...[
             const SizedBox(height: 12),
@@ -664,19 +687,36 @@ class _InlineBeadPainter extends CustomPainter {
 
       // Shadow
       canvas.drawOval(
-        Rect.fromCenter(center: Offset(x, cy + r * 0.9), width: r * 1.2, height: r * 0.4),
-        Paint()..color = Colors.black.withValues(alpha: 0.10)
-               ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+        Rect.fromCenter(
+          center: Offset(x, cy + r * 0.9),
+          width: r * 1.2,
+          height: r * 0.4,
+        ),
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.10)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
       );
 
-      final beadPaint = Paint()
-        ..shader = RadialGradient(
-          colors: isAccent
-              ? [const Color(0xFFFFE8A0), accent, accent.withValues(alpha: 0.75)]
-              : [const Color(0xFFFFF3CC), const Color(0xFFE8D48A), const Color(0xFFC9A84C)],
-          stops: const [0.0, 0.5, 1.0],
-          center: const Alignment(-0.3, -0.4),
-        ).createShader(Rect.fromCircle(center: Offset(x, cy - lift), radius: r));
+      final beadPaint =
+          Paint()
+            ..shader = RadialGradient(
+              colors:
+                  isAccent
+                      ? [
+                        const Color(0xFFFFE8A0),
+                        accent,
+                        accent.withValues(alpha: 0.75),
+                      ]
+                      : [
+                        const Color(0xFFFFF3CC),
+                        const Color(0xFFE8D48A),
+                        const Color(0xFFC9A84C),
+                      ],
+              stops: const [0.0, 0.5, 1.0],
+              center: const Alignment(-0.3, -0.4),
+            ).createShader(
+              Rect.fromCircle(center: Offset(x, cy - lift), radius: r),
+            );
 
       canvas.drawCircle(Offset(x, cy - lift), r, beadPaint);
       // Highlight

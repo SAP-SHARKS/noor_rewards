@@ -1,4 +1,4 @@
-﻿// lib/services/tracking_service.dart
+// lib/services/tracking_service.dart
 //
 // Privacy-first analytics.
 //   • No IP addresses stored
@@ -45,11 +45,14 @@ class TrackingService {
 
     try {
       // Accumulate session time into the existing row
-      await _sb.rpc('analytics_add_session', params: {
-        'p_user_id':    uid,
-        'p_duration':   durationSec,
-        'p_coins':      _coinsThisSession,
-      });
+      await _sb.rpc(
+        'analytics_add_session',
+        params: {
+          'p_user_id': uid,
+          'p_duration': durationSec,
+          'p_coins': _coinsThisSession,
+        },
+      );
     } catch (_) {
       // Fail silently — analytics must never crash the app
     }
@@ -67,14 +70,14 @@ class TrackingService {
     if (uid == null) return;
 
     try {
-      final country    = await _resolveCountryCode();
+      final country = await _resolveCountryCode();
       final deviceInfo = await _resolveDevice();
 
       await _sb.from('user_analytics').upsert({
-        'user_id':      uid,
+        'user_id': uid,
         'country_code': country,
         'device_model': deviceInfo.$1,
-        'device_type':  deviceInfo.$2,
+        'device_type': deviceInfo.$2,
         'last_active_at': DateTime.now().toIso8601String(),
       }, onConflict: 'user_id');
     } catch (_) {}

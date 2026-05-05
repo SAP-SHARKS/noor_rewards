@@ -1,4 +1,4 @@
-﻿// lib/services/quran_api_config.dart
+// lib/services/quran_api_config.dart
 //
 // Central configuration for the Quran Foundation API.
 //
@@ -29,13 +29,15 @@ class QuranApiConfig {
   }
 
   // ── Credentials ─────────────────────────────────────────────────────────────
-  static String get clientId => isDev
-      ? _require('QURAN_PRELIVE_CLIENT_ID')
-      : _require('QURAN_PROD_CLIENT_ID');
+  static String get clientId =>
+      isDev
+          ? _require('QURAN_PRELIVE_CLIENT_ID')
+          : _require('QURAN_PROD_CLIENT_ID');
 
-  static String get clientSecret => isDev
-      ? _require('QURAN_PRELIVE_CLIENT_SECRET')
-      : _require('QURAN_PROD_CLIENT_SECRET');
+  static String get clientSecret =>
+      isDev
+          ? _require('QURAN_PRELIVE_CLIENT_SECRET')
+          : _require('QURAN_PROD_CLIENT_SECRET');
 
   // ── Base URLs ───────────────────────────────────────────────────────────────
   /// Quran Foundation public API (used for page-fetch and word-by-word).
@@ -43,8 +45,7 @@ class QuranApiConfig {
   static const String apiBase = 'https://api.quran.com/api/v4';
 
   /// OAuth2 token endpoint — confirmed from Quran Foundation docs.
-  static const String tokenEndpoint =
-      'https://api.quran.com/oauth2/token';
+  static const String tokenEndpoint = 'https://api.quran.com/oauth2/token';
 
   // ── Helper ──────────────────────────────────────────────────────────────────
   static String _require(String key) {

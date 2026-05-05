@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,7 +35,11 @@ class _AuthScreenState extends State<AuthScreen> {
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Sign up successful! Please check your email for confirmation.')),
+            const SnackBar(
+              content: Text(
+                'Sign up successful! Please check your email for confirmation.',
+              ),
+            ),
           );
         }
       } else {
@@ -103,7 +107,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                   const SizedBox(height: 64),
-                  
+
                   // Email Field
                   TextFormField(
                     controller: _emailController,
@@ -116,7 +120,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                       focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF6C63FF), width: 2),
+                        borderSide: BorderSide(
+                          color: Color(0xFF6C63FF),
+                          width: 2,
+                        ),
                       ),
                     ),
                     validator: (value) {
@@ -127,7 +134,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Password Field
                   TextFormField(
                     controller: _passwordController,
@@ -140,7 +147,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                       focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF6C63FF), width: 2),
+                        borderSide: BorderSide(
+                          color: Color(0xFF6C63FF),
+                          width: 2,
+                        ),
                       ),
                     ),
                     validator: (value) {
@@ -153,49 +163,57 @@ class _AuthScreenState extends State<AuthScreen> {
                       return null;
                     },
                   ),
-                  
+
                   const SizedBox(height: 48),
-                  
+
                   // Action Button
                   SizedBox(
                     height: 56,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _submit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF3E5F5), // Light purple background
-                        foregroundColor: const Color(0xFF4A148C), // Dark purple text
+                        backgroundColor: const Color(
+                          0xFFF3E5F5,
+                        ), // Light purple background
+                        foregroundColor: const Color(
+                          0xFF4A148C,
+                        ), // Dark purple text
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2.5),
-                            )
-                          : Text(
-                              _isSignUp ? 'Sign Up' : 'Sign In',
-                              style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                      child:
+                          _isLoading
+                              ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                              : Text(
+                                _isSignUp ? 'Sign Up' : 'Sign In',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Toggle Button
                   TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            setState(() {
-                              _isSignUp = !_isSignUp;
-                            });
-                          },
+                    onPressed:
+                        _isLoading
+                            ? null
+                            : () {
+                              setState(() {
+                                _isSignUp = !_isSignUp;
+                              });
+                            },
                     child: Text(
                       _isSignUp
                           ? 'Already have an account? Sign In'
