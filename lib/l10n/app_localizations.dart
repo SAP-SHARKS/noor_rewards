@@ -2934,7 +2934,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Streak Bonus'**
-  String get streakBonus;
+  String streakBonus(String days, String type, String points);
 
   /// No description provided for @totalEarned.
   ///
@@ -3313,6 +3313,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{delta}d ago'**
   String dAgo(String delta);
+
+  /// No description provided for @newBadgeUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'New badge unlocked'**
+  String get newBadgeUnlocked;
+
+  /// No description provided for @daySealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Day sealed'**
+  String get daySealed;
+
+  /// No description provided for @dailyLoginBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily login bonus'**
+  String get dailyLoginBonus;
+
+  /// No description provided for @oneWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'One Week'**
+  String get oneWeek;
+
+  /// No description provided for @twoWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Two Weeks'**
+  String get twoWeeks;
+
+  /// No description provided for @badgeEarnedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve earned the \"{badge}\" badge.'**
+  String badgeEarnedDesc(String badge);
+
+  /// No description provided for @pointsForSealing.
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} Noor Points for sealing today.'**
+  String pointsForSealing(String points);
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} Noor Points · welcome back!'**
+  String welcomeBack(String points);
 }
 
 class _AppLocalizationsDelegate

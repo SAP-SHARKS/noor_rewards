@@ -88,6 +88,13 @@ class AppConfig {
   String get appStoreUrl => _str('app_store_url', '');
   String get playStoreUrl => _str('play_store_url', '');
 
+  // ── Ad Placement ───────────────────────────────────────────────────────────
+  bool get adBannerEnabled => _bool('ad_banner_enabled', false);
+  String get adBannerText => _str('ad_banner_text', 'Ad Placement Banner');
+  String get adBannerSubtitle => _str('ad_banner_subtitle', '');
+  String get adBannerLink => _str('ad_banner_link', '');
+  String get adBannerIconUrl => _str('ad_banner_icon_url', '');
+
   // ── Raw access (for admin panel dynamic rows) ──────────────────────────────
   Map<String, String> get raw => Map.unmodifiable(_raw);
   String rawValue(String key) => _raw[key] ?? '';

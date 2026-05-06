@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
@@ -1455,31 +1456,62 @@ class _HomeTabState extends State<_HomeTab> {
                   ],
 
                   // ── Ad placement banner (Y4 styling) ────────────────────────────
-                  const SizedBox(height: 24),
-                  Container(
-                    width: double.infinity,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Y4.cream,
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(color: Y4.border),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.ad_units_rounded, color: Y4.muted, size: 24),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Ad Placement Banner',
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Y4.inkSoft,
+                  if (config.adBannerEnabled)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: GestureDetector(
+                        onTap: () async {
+                          if (config.adBannerLink.isNotEmpty) {
+                            final uri = Uri.parse(config.adBannerLink);
+                            if (await url_launcher.canLaunchUrl(uri)) {
+                              await url_launcher.launchUrl(uri, mode: url_launcher.LaunchMode.externalApplication);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          constraints: const BoxConstraints(minHeight: 80),
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Y4.cream,
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(color: Y4.border),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (config.adBannerIconUrl.isNotEmpty)
+                                Image.network(config.adBannerIconUrl, height: 32)
+                              else
+                                Icon(Icons.ad_units_rounded, color: Y4.muted, size: 24),
+                              const SizedBox(height: 6),
+                              Text(
+                                config.adBannerText,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Y4.inkSoft,
+                                ),
+                              ),
+                              if (config.adBannerSubtitle.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    config.adBannerSubtitle,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Y4.muted,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

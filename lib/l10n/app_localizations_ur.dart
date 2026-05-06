@@ -1522,7 +1522,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get validationPoints => 'تصدیقی پوائنٹس';
 
   @override
-  String get streakBonus => 'سلسلے کا بونس';
+  String streakBonus(String days, String type, String points) {
+    return '$days دن کا $type سلسلہ · +$points بونس پوائنٹس ملے۔';
+  }
 
   @override
   String get totalEarned => 'کل حاصل شدہ';
@@ -1736,5 +1738,35 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String dAgo(String delta) {
     return '${delta}d پہلے';
+  }
+
+  @override
+  String get newBadgeUnlocked => 'نئا بیج مل گیا';
+
+  @override
+  String get daySealed => 'دن مکمل';
+
+  @override
+  String get dailyLoginBonus => 'روزانہ لاگ ان بونس';
+
+  @override
+  String get oneWeek => 'ایک ہفتہ';
+
+  @override
+  String get twoWeeks => 'دو ہفتے';
+
+  @override
+  String badgeEarnedDesc(String badge) {
+    return 'آپ نے \"$badge\" بیج حاصل کر لیا ہے۔';
+  }
+
+  @override
+  String pointsForSealing(String points) {
+    return 'آج مکمل کرنے پر +$points نور پوائنٹس۔';
+  }
+
+  @override
+  String welcomeBack(String points) {
+    return '+$points نور پوائنٹس · خوش آمدید!';
   }
 }

@@ -14,6 +14,11 @@ const BANNER_FIELDS = [
     label: "Android Play Store URL",
     type: "text" as const,
   },
+  { key: "ad_banner_enabled", label: "Ad Placement Enabled", type: "toggle" as const },
+  { key: "ad_banner_text", label: "Ad Banner Title", type: "text" as const },
+  { key: "ad_banner_subtitle", label: "Ad Banner Subtitle", type: "text" as const },
+  { key: "ad_banner_link", label: "Ad Banner URL Link", type: "text" as const },
+  { key: "ad_banner_icon_url", label: "Ad Banner Image URL", type: "text" as const },
 ];
 
 function flutterToHex(fc: string): string {
@@ -85,15 +90,15 @@ export default function BannersPage() {
               {field.type === "toggle" ? (
                 <button
                   onClick={() =>
-                    handleSave(field.key, bannerOn ? "false" : "true")
+                    handleSave(field.key, config[field.key] === "true" ? "false" : "true")
                   }
                   className={`relative w-[52px] h-[28px] rounded-full transition-colors cursor-pointer ${
-                    bannerOn ? "bg-teal-500" : "bg-slate-200"
+                    config[field.key] === "true" ? "bg-teal-500" : "bg-slate-200"
                   }`}
                 >
                   <span
                     className={`absolute top-[2px] left-[2px] w-6 h-6 bg-white rounded-full shadow transition-transform ${
-                      bannerOn ? "translate-x-6" : "translate-x-0"
+                      (config[field.key] === "true") ? "translate-x-6" : "translate-x-0"
                     }`}
                   />
                 </button>

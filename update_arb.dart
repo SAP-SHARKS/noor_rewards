@@ -4,30 +4,35 @@ import 'dart:io';
 void main() async {
   final keysJson = '''
   {
-    "notificationsSubtitle": "Stay on top of rewards & milestones",
-    "markAllAsRead": "Mark all as read",
-    "clearAll": "Clear all",
-    "notificationsOn": "Notifications on",
-    "notificationsOff": "Notifications off",
-    "allCaughtUp": "All caught up",
-    "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\\nit'll show up here.",
-    "justNow": "Just now",
-    "mAgo": "{delta}m ago",
-    "@mAgo": {
+    "newBadgeUnlocked": "New badge unlocked",
+    "daySealed": "Day sealed",
+    "dailyLoginBonus": "Daily login bonus",
+    "oneWeek": "One Week",
+    "twoWeeks": "Two Weeks",
+    "badgeEarnedDesc": "You've earned the \\"{badge}\\" badge.",
+    "@badgeEarnedDesc": {
       "placeholders": {
-        "delta": {"type": "String"}
+        "badge": {"type": "String"}
       }
     },
-    "hAgo": "{delta}h ago",
-    "@hAgo": {
+    "pointsForSealing": "+{points} Noor Points for sealing today.",
+    "@pointsForSealing": {
       "placeholders": {
-        "delta": {"type": "String"}
+        "points": {"type": "String"}
       }
     },
-    "dAgo": "{delta}d ago",
-    "@dAgo": {
+    "welcomeBack": "+{points} Noor Points · welcome back!",
+    "@welcomeBack": {
       "placeholders": {
-        "delta": {"type": "String"}
+        "points": {"type": "String"}
+      }
+    },
+    "streakBonus": "{days}-day {type} streak · +{points} bonus pts unlocked",
+    "@streakBonus": {
+      "placeholders": {
+        "days": {"type": "String"},
+        "type": {"type": "String"},
+        "points": {"type": "String"}
       }
     }
   }
@@ -35,30 +40,35 @@ void main() async {
 
   final urKeysJson = '''
   {
-    "notificationsSubtitle": "انعامات اور سنگ میل پر نظر رکھیں",
-    "markAllAsRead": "سب کو پڑھا ہوا نشان زد کریں",
-    "clearAll": "سب صاف کریں",
-    "notificationsOn": "اطلاعات آن ہیں",
-    "notificationsOff": "اطلاعات آف ہیں",
-    "allCaughtUp": "سب دیکھ لیا",
-    "whenYouEarnRewards": "جب آپ انعامات کمائیں گے، سلسلہ بنائیں گے، یا بیج حاصل کریں گے،\\nیہ یہاں ظاہر ہوگا۔",
-    "justNow": "ابھی",
-    "mAgo": "{delta}m پہلے",
-    "@mAgo": {
+    "newBadgeUnlocked": "نئا بیج مل گیا",
+    "daySealed": "دن مکمل",
+    "dailyLoginBonus": "روزانہ لاگ ان بونس",
+    "oneWeek": "ایک ہفتہ",
+    "twoWeeks": "دو ہفتے",
+    "badgeEarnedDesc": "آپ نے \\"{badge}\\" بیج حاصل کر لیا ہے۔",
+    "@badgeEarnedDesc": {
       "placeholders": {
-        "delta": {"type": "String"}
+        "badge": {"type": "String"}
       }
     },
-    "hAgo": "{delta}h پہلے",
-    "@hAgo": {
+    "pointsForSealing": "آج مکمل کرنے پر +{points} نور پوائنٹس۔",
+    "@pointsForSealing": {
       "placeholders": {
-        "delta": {"type": "String"}
+        "points": {"type": "String"}
       }
     },
-    "dAgo": "{delta}d پہلے",
-    "@dAgo": {
+    "welcomeBack": "+{points} نور پوائنٹس · خوش آمدید!",
+    "@welcomeBack": {
       "placeholders": {
-        "delta": {"type": "String"}
+        "points": {"type": "String"}
+      }
+    },
+    "streakBonus": "{days} دن کا {type} سلسلہ · +{points} بونس پوائنٹس ملے۔",
+    "@streakBonus": {
+      "placeholders": {
+        "days": {"type": "String"},
+        "type": {"type": "String"},
+        "points": {"type": "String"}
       }
     }
   }

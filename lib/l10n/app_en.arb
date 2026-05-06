@@ -860,5 +860,47 @@
         "type": "String"
       }
     }
+  },
+  "newBadgeUnlocked": "New badge unlocked",
+  "daySealed": "Day sealed",
+  "dailyLoginBonus": "Daily login bonus",
+  "oneWeek": "One Week",
+  "twoWeeks": "Two Weeks",
+  "badgeEarnedDesc": "You've earned the \"{badge}\" badge.",
+  "@badgeEarnedDesc": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsForSealing": "+{points} Noor Points for sealing today.",
+  "@pointsForSealing": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeBack": "+{points} Noor Points · welcome back!",
+  "@welcomeBack": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakBonus": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
   }
 }
