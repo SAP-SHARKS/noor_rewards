@@ -470,7 +470,7 @@
   "coinsSealedMashaAllah": "سکے محفوظ ہو گئے!",
   "rewardedForConsistency": "آج آپ کی مستقل مزاجی پر\nآپ کو انعام دیا گیا!",
   "validationPoints": "تصدیقی پوائنٹس",
-  "streakBonus": "سلسلے کا بونس",
+  "streakBonus": "{days} دن کا {type} سلسلہ · +{points} بونس پوائنٹس ملے۔",
   "totalEarned": "کل حاصل شدہ",
   "openQuran": "قرآن کھولیں",
   "duaAndAzkaar": "دعا اور اذکار",
@@ -603,6 +603,48 @@
   "@dAgo": {
     "placeholders": {
       "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "newBadgeUnlocked": "نئا بیج مل گیا",
+  "daySealed": "دن مکمل",
+  "dailyLoginBonus": "روزانہ لاگ ان بونس",
+  "oneWeek": "ایک ہفتہ",
+  "twoWeeks": "دو ہفتے",
+  "badgeEarnedDesc": "آپ نے \"{badge}\" بیج حاصل کر لیا ہے۔",
+  "@badgeEarnedDesc": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsForSealing": "آج مکمل کرنے پر +{points} نور پوائنٹس۔",
+  "@pointsForSealing": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeBack": "+{points} نور پوائنٹس · خوش آمدید!",
+  "@welcomeBack": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakBonus": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "points": {
         "type": "String"
       }
     }

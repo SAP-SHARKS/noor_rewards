@@ -401,8 +401,51 @@ class _NotificationTile extends StatelessWidget {
     }
   }
 
+  String _localizeTitle(BuildContext context, String rawTitle) {
+    if (rawTitle.startsWith('New badge unlocked')) {
+      return '${AppLocalizations.of(context)?.newBadgeUnlocked ?? "New badge unlocked"} 🏆';
+    }
+    if (rawTitle.startsWith('Day sealed')) {
+      return '${AppLocalizations.of(context)?.daySealed ?? "Day sealed"} 🌙';
+    }
+    if (rawTitle.startsWith('Daily login')) {
+      return AppLocalizations.of(context)?.dailyLoginBonus ?? 'Daily login bonus';
+    }
+    if (rawTitle.contains('One Week')) return rawTitle.replaceFirst('One Week', AppLocalizations.of(context)?.oneWeek ?? 'One Week');
+    if (rawTitle.contains('Two Weeks')) return rawTitle.replaceFirst('Two Weeks', AppLocalizations.of(context)?.twoWeeks ?? 'Two Weeks');
+    return rawTitle;
+  }
+
+  String _localizeBody(BuildContext context, String rawBody) {
+    if (rawBody.contains('Noor Points for sealing today')) {
+      final pts = RegExp(r'\+(\d+)').firstMatch(rawBody)?.group(1) ?? '20';
+      return AppLocalizations.of(context)?.pointsForSealing(pts) ?? '+$pts Noor Points for sealing today.';
+    }
+    if (rawBody.contains('welcome back')) {
+      final pts = RegExp(r'\+(\d+)').firstMatch(rawBody)?.group(1) ?? '10';
+      return AppLocalizations.of(context)?.welcomeBack(pts) ?? '+$pts Noor Points · welcome back!';
+    }
+    if (rawBody.contains('badge.')) {
+      final badge = RegExp(r'"([^"]+)"').firstMatch(rawBody)?.group(1) ?? '';
+      return AppLocalizations.of(context)?.badgeEarnedDesc(badge) ?? 'You have earned the "' + badge + '" badge.';
+    }
+    if (rawBody.contains('streak')) {
+      final parts = RegExp(r'(\d+)-day (.*?) streak · \+(\d+)').firstMatch(rawBody);
+      if (parts != null) {
+         final days = parts.group(1)!;
+         final type = parts.group(2)!;
+         final pts = parts.group(3)!;
+         return AppLocalizations.of(context)?.streakBonus(days, type, pts) ?? rawBody;
+      }
+    }
+    return rawBody;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final String localTitle = _localizeTitle(context, n.title);
+    final String localBody = _localizeBody(context, n.body);
+
     return Dismissible(
       key: ValueKey(n.id),
       direction: DismissDirection.endToStart,
@@ -475,8 +518,8 @@ class _NotificationTile extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            n.title,
-                            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(n.title) ? TextDirection.rtl : TextDirection.ltr,
+                            localTitle,
+                            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(localTitle) ? TextDirection.rtl : TextDirection.ltr,
                             style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight:
@@ -501,7 +544,7 @@ class _NotificationTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      n.body,
+                      localBody,
                       textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(n.body) ? TextDirection.rtl : TextDirection.ltr,
                       style: GoogleFonts.outfit(
                         fontSize: 12,

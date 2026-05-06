@@ -1522,7 +1522,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationPoints => 'Validation Points';
 
   @override
-  String get streakBonus => 'Streak Bonus';
+  String streakBonus(String days, String type, String points) {
+    return 'Streak Bonus';
+  }
 
   @override
   String get totalEarned => 'Total Earned';
@@ -1733,5 +1735,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String dAgo(String delta) {
     return '${delta}d ago';
+  }
+
+  @override
+  String get newBadgeUnlocked => 'New badge unlocked';
+
+  @override
+  String get daySealed => 'Day sealed';
+
+  @override
+  String get dailyLoginBonus => 'Daily login bonus';
+
+  @override
+  String get oneWeek => 'One Week';
+
+  @override
+  String get twoWeeks => 'Two Weeks';
+
+  @override
+  String badgeEarnedDesc(String badge) {
+    return 'You\'ve earned the \"$badge\" badge.';
+  }
+
+  @override
+  String pointsForSealing(String points) {
+    return '+$points Noor Points for sealing today.';
+  }
+
+  @override
+  String welcomeBack(String points) {
+    return '+$points Noor Points · welcome back!';
   }
 }
