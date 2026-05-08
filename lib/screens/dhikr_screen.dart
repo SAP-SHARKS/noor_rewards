@@ -3936,7 +3936,8 @@ String _pickIllustration(String rawId) {
 
   // ── New morning/evening IDs (by content) ──
   // Al-Fateha & opening of Baqarah — dua scene
-  if (id == 'morning_1' || id == 'evening_1') return 'dua_scene';
+  if (id == 'morning_1') return 'benefit_morning_1';
+  if (id == 'evening_1') return 'benefit_evening_1';
   if (id == 'morning_2' || id == 'evening_2') return 'baqarah_shield';
   // Ayat al-Kursi
   if (id == 'morning_3' || id == 'evening_3') return 'shield';
@@ -4160,7 +4161,7 @@ String _pickIllustration(String rawId) {
     return 'cosmic';
   }
 
-  return 'tree'; // Default
+  return 'none'; // No illustration for unmapped azkar
 }
 
 /// Returns the top gradient color of each illustration to fill behind the app bar.
@@ -4202,11 +4203,49 @@ Widget _buildIllustration({
         required isComplete,
         required tapCount,
         required pointsToday,
-      }) => _DuaScene(
+      }) => _BenefitTextIllustration(
         progress: progress,
         isComplete: isComplete,
         tapCount: tapCount,
         pointsToday: pointsToday,
+        benefitText: 'Begin your day in surrender to Allah — nothing else matters more',
+        subtitle: 'Daily Devotion',
+        completedSubtitle: 'May Allah accept your devotion',
+        accentColor: const Color(0xFF14B8A6),
+      ),
+    ),
+    'benefit_morning_1' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Allah responds to every verse you recite — "This is for My servant, and My servant shall have what he has asked for"',
+        subtitle: 'Sahih Muslim 395',
+        completedSubtitle: 'Allah has answered your call',
+        accentColor: const Color(0xFFD4A843),
+      ),
+    ),
+    'benefit_evening_1' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Allah responds to every verse you recite — "This is for My servant, and My servant shall have what he has asked for"',
+        subtitle: 'Sahih Muslim 395',
+        completedSubtitle: 'Allah has answered your call',
+        accentColor: const Color(0xFF6366F1),
       ),
     ),
     'shield' => w(
@@ -4744,19 +4783,8 @@ Widget _buildIllustration({
         pointsToday: pointsToday,
       ),
     ),
-    _ => w(
-      ({
-        required progress,
-        required isComplete,
-        required tapCount,
-        required pointsToday,
-      }) => _NoorTree(
-        progress: progress,
-        isComplete: isComplete,
-        tapCount: tapCount,
-        pointsToday: pointsToday,
-      ),
-    ),
+    'none' => const SizedBox.shrink(),
+    _ => const SizedBox.shrink(),
   };
 }
 

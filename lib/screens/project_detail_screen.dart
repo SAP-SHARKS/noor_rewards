@@ -2,6 +2,7 @@
 // LaunchGood-inspired campaign article view — v2
 
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -347,11 +348,32 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                       borderRadius: BorderRadius.circular(12),
                       child:
                           dpUrl != null && dpUrl.isNotEmpty
-                              ? Image.network(
-                                dpUrl,
+                              ? CachedNetworkImage(
+                                imageUrl: dpUrl,
                                 width: 56,
                                 height: 56,
                                 fit: BoxFit.cover,
+                                placeholder: (_, __) => Container(
+                                  width: 56,
+                                  height: 56,
+                                  color: Colors.grey.shade200,
+                                  child: const Center(
+                                    child: SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 1.5,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (_, __, ___) => Container(
+                                  width: 56,
+                                  height: 56,
+                                  color: Colors.grey.shade200,
+                                  child: const Icon(Icons.image_outlined, color: Colors.grey),
+                                ),
                               )
                               : Container(
                                 width: 56,
