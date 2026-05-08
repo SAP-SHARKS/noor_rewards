@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
@@ -275,7 +276,23 @@ class _ImageSlide extends StatelessWidget {
                 panEnabled: true,
                 minScale: 1.0,
                 maxScale: 4.0,
-                child: Center(child: Image.network(url, fit: BoxFit.contain)),
+                child: Center(
+                  child: CachedNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.contain,
+                    placeholder: (_, __) => const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white70,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    errorWidget: (_, __, ___) => const Icon(
+                      Icons.broken_image_outlined,
+                      color: Colors.white54,
+                      size: 40,
+                    ),
+                  ),
+                ),
               ),
             ),
         fullscreenDialog: true,
@@ -292,28 +309,32 @@ class _ImageSlide extends StatelessWidget {
         children: [
           Container(
             color: Colors.black,
-            child: Image.network(
-              url,
+            child: CachedNetworkImage(
+              imageUrl: url,
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
-              loadingBuilder: (_, child, progress) {
-                if (progress == null) return child;
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white70,
-                    strokeWidth: 2,
-                  ),
-                );
-              },
-              errorBuilder:
-                  (_, __, ___) => const Center(
-                    child: Icon(
-                      Icons.broken_image_outlined,
-                      color: Colors.white54,
-                      size: 40,
+              fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (_, __) => Container(
+                color: Colors.grey.shade900,
+                child: Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white38,
+                      strokeWidth: 2,
                     ),
                   ),
+                ),
+              ),
+              errorWidget: (_, __, ___) => const Center(
+                child: Icon(
+                  Icons.broken_image_outlined,
+                  color: Colors.white54,
+                  size: 40,
+                ),
+              ),
             ),
           ),
           Positioned(

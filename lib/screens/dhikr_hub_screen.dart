@@ -464,7 +464,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     Color baseColor, {
     bool isStacked = false,
   }) {
-    String? customImagePath = AssetHelper.getCustomImagePath(title);
+    String? customImagePath = AssetHelper.getCustomImagePath(id);
     bool isCustomCard = customImagePath != null;
     Color? customTextColor;
 
@@ -483,6 +483,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     final double imgBottom = isStacked ? 10 : 30;
     final double titleSize = isStacked ? 26 : 18;
     final double emojiSize = isStacked ? 130 : 90;
+
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return GestureDetector(
       onTap:
@@ -517,7 +519,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
               if (isCustomCard)
                 Positioned(
                   top: 0,
-                  right: -10,
+                  right: isRtl ? null : -10,
+                  left: isRtl ? -10 : null,
                   bottom: imgBottom,
                   width: imgWidth,
                   child: Padding(
@@ -525,7 +528,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                     child: Image.asset(
                       customImagePath,
                       fit: BoxFit.contain,
-                      alignment: Alignment.centerRight,
+                      alignment: isRtl ? Alignment.centerLeft : Alignment.centerRight,
                     ),
                   ),
                 )

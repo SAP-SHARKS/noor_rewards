@@ -57,13 +57,13 @@ class AssetHelper {
         _availableMap.containsKey('evening_header.png')) {
       return _availableMap['evening_header.png'];
     }
-    if (searchOrig == 'before sleep' &&
-        _availableMap.containsKey('sleeping_header.png')) {
-      return _availableMap['sleeping_header.png'];
-    }
     if (searchOrig == 'morning' &&
         _availableMap.containsKey('morning_header.png')) {
       return _availableMap['morning_header.png'];
+    }
+    if ((searchOrig == 'sleeping' || searchOrig == 'before sleep') &&
+        _availableMap.containsKey('sleeping_header.png')) {
+      return _availableMap['sleeping_header.png'];
     }
 
     return null;

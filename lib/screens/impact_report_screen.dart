@@ -5,6 +5,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -1720,12 +1721,12 @@ class _ImpactProjectCoverState extends State<_ImpactProjectCover> {
     if (dpUrl != null && dpUrl.isNotEmpty) {
       return ClipRRect(
         borderRadius: radius,
-        child: Image.network(
-          dpUrl,
+        child: CachedNetworkImage(
+          imageUrl: dpUrl,
           width: s,
           height: s,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallbackCover(s, radius),
+          errorWidget: (_, __, ___) => _fallbackCover(s, radius),
         ),
       );
     }
@@ -1768,12 +1769,12 @@ class _ImpactProjectCoverState extends State<_ImpactProjectCover> {
     }
     return ClipRRect(
       borderRadius: radius,
-      child: Image.network(
-        _cover!.url,
+      child: CachedNetworkImage(
+        imageUrl: _cover!.url,
         width: s,
         height: s,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _fallbackCover(s, radius),
+        errorWidget: (_, __, ___) => _fallbackCover(s, radius),
       ),
     );
   }

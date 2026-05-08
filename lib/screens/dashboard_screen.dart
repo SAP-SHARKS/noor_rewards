@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:google_fonts/google_fonts.dart';
@@ -1482,7 +1483,7 @@ class _HomeTabState extends State<_HomeTab> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               if (context.watch<SettingsService>().config.adBannerIconUrl.isNotEmpty)
-                                Image.network(context.watch<SettingsService>().config.adBannerIconUrl, height: 32)
+                                CachedNetworkImage(imageUrl: context.watch<SettingsService>().config.adBannerIconUrl, height: 32)
                               else
                                 Icon(Icons.ad_units_rounded, color: Y4.muted, size: 24),
                               const SizedBox(height: 6),
@@ -3426,12 +3427,12 @@ class _ProjectCoverState extends State<_ProjectCover> {
     }
     return ClipRRect(
       borderRadius: radius,
-      child: Image.network(
-        _cover!.url,
+      child: CachedNetworkImage(
+        imageUrl: _cover!.url,
         width: s,
         height: s,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => NoorIcon.image(size: widget.size),
+        errorWidget: (_, __, ___) => NoorIcon.image(size: widget.size),
       ),
     );
   }
@@ -3443,12 +3444,12 @@ Widget _buildProjIcon(Map<String, dynamic> project, double size) {
   if (dpUrl != null && dpUrl.isNotEmpty) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(size * 0.3),
-      child: Image.network(
-        dpUrl,
+      child: CachedNetworkImage(
+        imageUrl: dpUrl,
         width: size,
         height: size,
         fit: BoxFit.contain,
-        errorBuilder:
+        errorWidget:
             (_, __, ___) =>
                 _ProjectCover(projectId: project['id'] as String, size: size),
       ),
@@ -3497,10 +3498,10 @@ class _MyDonationsSection extends StatelessWidget {
                 banner = SizedBox(
                   width: double.infinity,
                   height: 160,
-                  child: Image.network(
-                    dpUrl,
+                  child: CachedNetworkImage(
+                    imageUrl: dpUrl,
                     fit: BoxFit.cover,
-                    errorBuilder:
+                    errorWidget:
                         (_, __, ___) => Container(
                           color: Y4.cream,
                           child: Center(
@@ -4453,7 +4454,7 @@ class _ProjectCard extends StatelessWidget {
                       : dpUrl != null && dpUrl.isNotEmpty
                       ? Stack(
                         fit: StackFit.expand,
-                        children: [Image.network(dpUrl, fit: BoxFit.cover)],
+                        children: [CachedNetworkImage(imageUrl: dpUrl, fit: BoxFit.cover, width: double.infinity, height: double.infinity)],
                       )
                       : Container(
                         decoration: BoxDecoration(
@@ -5605,22 +5606,27 @@ class _ProfileTabState extends State<_ProfileTab> {
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
                               behavior: HitTestBehavior.opaque,
-                              child: const Padding(
-                                padding: EdgeInsets.only(right: 12),
-                                child: Icon(
-                                  Icons.arrow_back_rounded,
-                                  color: Y4.ink,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              AppLocalizations.of(context)?.myProfile ??
-                                  'My Profile',
-                              style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: Y4.ink,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(right: 12),
+                                    child: Icon(
+                                      Icons.arrow_back_rounded,
+                                      color: Y4.ink,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)?.myProfile ??
+                                        'My Profile',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800,
+                                      color: Y4.ink,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const Spacer(),
