@@ -1456,11 +1456,12 @@ class _HomeTabState extends State<_HomeTab> {
                   ],
 
                   // ── Ad placement banner (Y4 styling) ────────────────────────────
-                  if (config.adBannerEnabled)
+                  if (context.watch<SettingsService>().config.adBannerEnabled)
                     Padding(
                       padding: const EdgeInsets.only(top: 24),
                       child: GestureDetector(
                         onTap: () async {
+                          final config = context.read<SettingsService>().config;
                           if (config.adBannerLink.isNotEmpty) {
                             final uri = Uri.parse(config.adBannerLink);
                             if (await url_launcher.canLaunchUrl(uri)) {
@@ -1480,13 +1481,13 @@ class _HomeTabState extends State<_HomeTab> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (config.adBannerIconUrl.isNotEmpty)
-                                Image.network(config.adBannerIconUrl, height: 32)
+                              if (context.watch<SettingsService>().config.adBannerIconUrl.isNotEmpty)
+                                Image.network(context.watch<SettingsService>().config.adBannerIconUrl, height: 32)
                               else
                                 Icon(Icons.ad_units_rounded, color: Y4.muted, size: 24),
                               const SizedBox(height: 6),
                               Text(
-                                config.adBannerText,
+                                context.watch<SettingsService>().config.adBannerText,
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.outfit(
                                   fontSize: 14,
@@ -1494,11 +1495,11 @@ class _HomeTabState extends State<_HomeTab> {
                                   color: Y4.inkSoft,
                                 ),
                               ),
-                              if (config.adBannerSubtitle.isNotEmpty)
+                              if (context.watch<SettingsService>().config.adBannerSubtitle.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 2),
                                   child: Text(
-                                    config.adBannerSubtitle,
+                                    context.watch<SettingsService>().config.adBannerSubtitle,
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
@@ -2758,13 +2759,13 @@ class _ProgressCard extends StatelessWidget {
     this.hasError = false,
   });
 
-  // Target goals — gamification benchmarks
-  static const int _dayGoal = 50;
-  static const int _weekGoal = 250;
-  static const int _monthGoal = 800;
-
   @override
   Widget build(BuildContext context) {
+    final ss = context.watch<SettingsService>();
+    final dayGoal = ss.dayGoal;
+    final weekGoal = ss.weekGoal;
+    final monthGoal = ss.monthGoal;
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -2843,7 +2844,7 @@ class _ProgressCard extends StatelessWidget {
           _ProgBar(
             label: 'Today',
             pts: todayPts,
-            goal: _dayGoal,
+            goal: dayGoal,
             color: const Color(0xFF00897B),
             icon: NoorIcon.sunrise(size: 16),
             hasError: hasError,
@@ -2852,7 +2853,7 @@ class _ProgressCard extends StatelessWidget {
           _ProgBar(
             label: 'This Week',
             pts: weekPts,
-            goal: _weekGoal,
+            goal: weekGoal,
             color: const Color(0xFF5C6BC0),
             icon: NoorIcon.calendar(size: 16),
             hasError: hasError,
@@ -2861,7 +2862,7 @@ class _ProgressCard extends StatelessWidget {
           _ProgBar(
             label: 'This Month',
             pts: monthPts,
-            goal: _monthGoal,
+            goal: monthGoal,
             color: const Color(0xFFE91E8C),
             icon: NoorIcon.calendar(size: 16),
             hasError: hasError,
@@ -7888,23 +7889,20 @@ class _Y4ProgressCard extends StatefulWidget {
 }
 
 class _Y4ProgressCardState extends State<_Y4ProgressCard> {
-  static const _dayGoal = 50;
-  static const _weekGoal = 250;
-  static const _monthGoal = 800;
-
   String _tab = 'Week';
 
   @override
   Widget build(BuildContext context) {
+    final ss = context.watch<SettingsService>();
     final pts = switch (_tab) {
       'Today' => widget.todayPts ?? 0,
       'Week' => widget.weekPts ?? 0,
       _ => widget.monthPts ?? 0,
     };
     final goal = switch (_tab) {
-      'Today' => _dayGoal,
-      'Week' => _weekGoal,
-      _ => _monthGoal,
+      'Today' => ss.dayGoal,
+      'Week' => ss.weekGoal,
+      _ => ss.monthGoal,
     };
     final pct = goal == 0 ? 0.0 : (pts / goal).clamp(0.0, 1.0);
 

@@ -300,9 +300,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool _soundAlerts = true; // sound alert on milestone
   // Theme accent (index into _kThemeAccents)
   int _themeIdx = 5; // Default: Honey 🍯 (matches Y4 honey theme)
-  // Mushaf immersive overlay (tap-to-show controls)
+  // Mushaf immersive overlay (scroll-up-to-show controls)
   bool _showMushafControls = true;
   Timer? _controlsHideTimer;
+  double _lastScrollOffset = 0.0; // tracks scroll position for direction detection
 
   // ── Stats ─────────────────────────────────────────────────────────────────────
   int _ayahsToday = 0, _pointsToday = 0;
@@ -1191,6 +1192,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         UniqueKey(); // Resets CustomScrollView to center on this newly opened page
 
     _fullPageScrollController = ScrollController();
+    _lastScrollOffset = 0.0;
     _fullPageScrollController!.addListener(_onMushafScroll);
 
     // Pre-load this page FIRST (await so it's ready before build), then neighbors
@@ -1202,9 +1204,32 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
   // Scroll listener - tracks scroll activity to keep the points timer alive,
-  // and allows fetching further pages as they lazily build.
+  // detects scroll direction to show/hide controls, and allows fetching
+  // further pages as they lazily build.
   DateTime _lastMushafSave = DateTime(2000);
   void _onMushafScroll() {
+    final sc = _fullPageScrollController;
+    if (sc != null && sc.hasClients) {
+      final currentOffset = sc.offset;
+      final delta = currentOffset - _lastScrollOffset;
+
+      // Scrolling UP (finger drags down, content moves up) → show controls
+      if (delta < -5.0 && !_showMushafControls) {
+        setState(() => _showMushafControls = true);
+        _controlsHideTimer?.cancel();
+        _controlsHideTimer = Timer(const Duration(seconds: 4), () {
+          if (mounted) setState(() => _showMushafControls = false);
+        });
+      }
+      // Scrolling DOWN (reading direction) → hide controls
+      else if (delta > 5.0 && _showMushafControls) {
+        _controlsHideTimer?.cancel();
+        setState(() => _showMushafControls = false);
+      }
+
+      _lastScrollOffset = currentOffset;
+    }
+
     _syncReadingPosition();
     // Throttle Supabase save to once per 3 seconds
     final now = DateTime.now();
@@ -4706,9 +4731,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return Scaffold(
       backgroundColor: pageBg,
       body: GestureDetector(
-        // Single tap: toggle the overlay controls
+        // Page-flip mode: tap to toggle (no vertical scroll available)
+        // Continuous scroll mode: controls are driven by scroll direction
         behavior: HitTestBehavior.opaque,
-        onTap: _toggleMushafControls,
+        onTap: _mushafPageFlip ? _toggleMushafControls : null,
         child: Stack(
           children: [
             // ── Choose between page-flip and infinite scroll ──
@@ -5488,17 +5514,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       children: [
         // ── Top bar ──────────────────────────────────────────────────────────
         Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                barBg.withValues(alpha: 0.95),
-                barBg.withValues(alpha: 0),
-              ],
-            ),
-          ),
-          padding: EdgeInsets.fromLTRB(14, pad.top + 6, 14, 28),
+          padding: EdgeInsets.fromLTRB(14, pad.top, 14, 10),
           child: Row(
             children: [
               // Exit pill
@@ -5612,17 +5628,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
         // ── Bottom bar ───────────────────────────────────────────────────────
         Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                barBg.withValues(alpha: 0.95),
-                barBg.withValues(alpha: 0),
-              ],
-            ),
-          ),
-          padding: EdgeInsets.fromLTRB(16, 28, 16, pad.bottom + 10),
+          padding: EdgeInsets.fromLTRB(16, 10, 16, pad.bottom + 10),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(

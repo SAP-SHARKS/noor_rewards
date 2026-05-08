@@ -440,6 +440,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           const SizedBox(height: 12),
                           _buildNotificationsCard(l),
                           const SizedBox(height: 28),
+                          _sectionLabel('POINTS GOALS'),
+                          const SizedBox(height: 12),
+                          _buildGoalsCard(l),
+                          const SizedBox(height: 28),
                           _sectionLabel(l.helpAndSupport),
                           const SizedBox(height: 12),
                           _buildSupportCard(l),
@@ -1378,6 +1382,285 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       ],
     ),
   );
+
+  // ── Goals Card ───────────────────────────────────────────────────────────
+  Widget _buildGoalsCard(AppLocalizations l) {
+    final ss = context.watch<SettingsService>();
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          _goalRow(
+            icon: Icons.wb_sunny_rounded,
+            label: 'Daily Goal',
+            value: '${ss.dayGoal} pts',
+            color: const Color(0xFF00897B),
+            isFirst: true,
+            onTap: () => _showGoalEditor(
+              title: 'Daily Goal',
+              current: ss.dayGoal,
+              defaultVal: SettingsService.defaultDayGoal,
+              onSave: (v) => ss.setGoals(day: v),
+            ),
+          ),
+          const Divider(height: 1, thickness: 1, color: Y4.border),
+          _goalRow(
+            icon: Icons.date_range_rounded,
+            label: 'Weekly Goal',
+            value: '${ss.weekGoal} pts',
+            color: const Color(0xFF5C6BC0),
+            onTap: () => _showGoalEditor(
+              title: 'Weekly Goal',
+              current: ss.weekGoal,
+              defaultVal: SettingsService.defaultWeekGoal,
+              onSave: (v) => ss.setGoals(week: v),
+            ),
+          ),
+          const Divider(height: 1, thickness: 1, color: Y4.border),
+          _goalRow(
+            icon: Icons.calendar_month_rounded,
+            label: 'Monthly Goal',
+            value: '${ss.monthGoal} pts',
+            color: const Color(0xFFE91E8C),
+            isLast: true,
+            onTap: () => _showGoalEditor(
+              title: 'Monthly Goal',
+              current: ss.monthGoal,
+              defaultVal: SettingsService.defaultMonthGoal,
+              onSave: (v) => ss.setGoals(month: v),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _goalRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+    required VoidCallback onTap,
+    bool isFirst = false,
+    bool isLast = false,
+  }) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.vertical(
+      top: isFirst ? const Radius.circular(20) : Radius.zero,
+      bottom: isLast ? const Radius.circular(20) : Radius.zero,
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: _pText,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: GoogleFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: _pSub,
+            ),
+          ),
+          const SizedBox(width: 6),
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: Color(0xFFB0A898),
+            size: 20,
+          ),
+        ],
+      ),
+    ),
+  );
+
+  void _showGoalEditor({
+    required String title,
+    required int current,
+    required int defaultVal,
+    required ValueChanged<int> onSave,
+  }) {
+    final ctrl = TextEditingController(text: current.toString());
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+        ),
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDDDDDD),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  title,
+                  style: GoogleFonts.rajdhani(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: _pText,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Set your target points (default: $defaultVal)',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    color: _pSub,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Y4.bg,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Y4.honey.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: TextField(
+                    controller: ctrl,
+                    keyboardType: TextInputType.number,
+                    autofocus: true,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.rajdhani(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: _pText,
+                    ),
+                    cursorColor: Y4.honeyDeep,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          ctrl.text = defaultVal.toString();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: _pSub.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: _pSub.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Reset',
+                              style: GoogleFonts.outfit(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: _pSub,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          final val = int.tryParse(ctrl.text.trim());
+                          if (val != null && val > 0) {
+                            onSave(val);
+                            Navigator.pop(ctx);
+                            _showSnack('Goal updated');
+                            HapticFeedback.lightImpact();
+                          } else {
+                            _showSnack(
+                              'Enter a valid number',
+                              isError: true,
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Y4.honey, Y4.honeyDeep],
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Save',
+                              style: GoogleFonts.outfit(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   // ── Support Card ──────────────────────────────────────────────────────────
   Widget _buildSupportCard(AppLocalizations l) => Container(
