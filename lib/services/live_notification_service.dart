@@ -102,23 +102,20 @@ class NoorLiveNotificationService {
 
     final lines = <String>[];
 
-    // Quran line — combine ayah count + time into one line
-    if (_ayahCount > 0 && _quranTimeSec >= 60) {
-      lines.add('📖  $_ayahCount ayat · ${_formatTime(_quranTimeSec)} in Quran');
-    } else if (_ayahCount > 0) {
-      lines.add('📖  $_ayahCount ayat read today');
-    } else if (_quranTimeSec >= 60) {
-      lines.add('📖  ${_formatTime(_quranTimeSec)} browsing Quran');
+    // Quran lines
+    if (_ayahCount > 0) {
+      lines.add('$_ayahCount Ayat Read today 📖');
+    }
+    if (_quranTimeSec >= 60) {
+      lines.add('${_formatTime(_quranTimeSec)} Read Quran today ⏱️');
+    }
+    if (_ayahCount == 0 && _quranTimeSec < 60) {
+      lines.add('Nothing Read from Quran today 📖');
     }
 
     // Dhikr line
     if (_dhikrCount > 0) {
-      lines.add('📿  $_dhikrCount Dhikr completed today');
-    }
-
-    // Fallback if nothing tracked yet
-    if (lines.isEmpty) {
-      lines.add('Start your day with Quran & Dhikr');
+      lines.add('$_dhikrCount Dhikr completed today 📿');
     }
 
     final ticker =
