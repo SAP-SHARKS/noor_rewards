@@ -426,7 +426,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                     ),
                     const Spacer(),
                     Text(
-                      '${_fmtN(current)} / ${_fmtN(target)} pts • ${(pct * 100).toStringAsFixed(0)}%',
+                      '${_fmtN(current)} / ${_fmtN(target)} pts',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,

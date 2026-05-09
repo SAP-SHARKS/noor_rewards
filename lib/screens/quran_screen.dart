@@ -356,20 +356,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool _tafsirLoading = false;
   bool _showAudioPlayer = false; // hidden until user taps Listen
 
-  // ── Feature-discovery hint tooltip ───────────────────────────────────────────
-  static const _kHints = [
-    (icon: '🌙', text: 'Want Dark mode?'),
-    (icon: '🔡', text: 'Adjust font size'),
-    (icon: '🌍', text: 'Change translation'),
-    (icon: '⛶', text: 'Try full screen!'),
-    (icon: '🎨', text: 'Change colour theme'),
-    (icon: '🔤', text: 'Arabic font size'),
-  ];
-  bool _showHint = false; // for tune-button glow only
-  int _hintIdx = 0;
-  Timer? _hintTimer;
-  OverlayEntry? _hintOverlay;
-
   // ── Audio ─────────────────────────────────────────────────────────────────────
   final _player = AudioPlayer();
   Duration _pos = Duration.zero, _dur = Duration.zero;
@@ -419,87 +405,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _player.durationStream.listen((d) {
       if (d != null && mounted) setState(() => _dur = d);
     });
-
-    // Show feature-discovery hint once per page visit (via Overlay so it overlaps AppBar)
-    _hintIdx = DateTime.now().millisecond % _kHints.length;
-    _hintTimer = Timer(const Duration(milliseconds: 2500), () {
-      if (!mounted) return;
-      setState(() => _showHint = true);
-      _insertHintOverlay();
-      _hintTimer = Timer(const Duration(milliseconds: 1700), () {
-        if (mounted) setState(() => _showHint = false);
-        _hintOverlay?.remove();
-        _hintOverlay = null;
-      });
-    });
   }
 
-  void _insertHintOverlay() {
-    _hintOverlay?.remove();
-    final statusH = MediaQuery.of(context).padding.top;
-    final hint = _kHints[_hintIdx];
-    final isDark = _darkMode;
-    final accent = _accent;
-
-    _hintOverlay = OverlayEntry(
-      builder:
-          (_) => Positioned(
-            // Sit inside the AppBar, just to the left of the action icons
-            top: statusH + 10,
-            right: 52,
-            child: IgnorePointer(
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accent.withValues(alpha: 0.30),
-                        blurRadius: 18,
-                        offset: const Offset(0, 4),
-                        spreadRadius: 1,
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 6,
-                      ),
-                    ],
-                    border: Border.all(color: accent.withValues(alpha: 0.22)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(hint.icon, style: const TextStyle(fontSize: 14)),
-                      const SizedBox(width: 6),
-                      Text(
-                        hint.text,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : _kText,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 12,
-                        color: accent,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-    );
-    Overlay.of(context).insert(_hintOverlay!);
-  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -539,8 +446,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _syncReadingPosition();
     _savePagePosition();
     WidgetsBinding.instance.removeObserver(this);
-    _hintTimer?.cancel();
-    _hintOverlay?.remove();
     _pageTimer?.cancel();
     _controlsHideTimer?.cancel();
     _fullPageScrollController?.dispose();
@@ -2165,7 +2070,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                         child: Padding(
                                           padding: const EdgeInsets.all(32),
                                           child: CircularProgressIndicator(
-                                            color: const Color(0xFFC9921A),
+                                            color: const Color(0xFFFFC83D),
                                             strokeWidth: 2,
                                           ),
                                         ),
@@ -3569,7 +3474,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 ? Colors.white12
                                 : Colors.grey.shade200)
                             : _isPlaying
-                            ? const Color(0xFF1FA882)
+                            ? const Color(0xFFD89A1E) // honeyWarm (active playing)
                             : _accent,
                     boxShadow:
                         hasAudio
@@ -3591,7 +3496,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  const Color(0xFFC9921A),
+                                  const Color(0xFFFFC83D),
                                 ),
                               ),
                             ),
@@ -3725,34 +3630,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     tooltip:
                         AppLocalizations.of(context)?.bookmark ?? 'Bookmark',
                   ),
-                  // Tune button — glows when hint is showing
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.only(right: 4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow:
-                          _showHint
-                              ? [
-                                BoxShadow(
-                                  color: _accent.withValues(alpha: 0.55),
-                                  blurRadius: 14,
-                                  spreadRadius: 2,
-                                ),
-                              ]
-                              : [],
-                    ),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.tune_rounded,
-                        color: _showHint ? _accent : sub,
-                        size: 24,
-                      ),
-                      onPressed: _openSettings,
-                      tooltip:
-                          AppLocalizations.of(context)?.readingSettings ??
-                          'Reading Settings',
-                    ),
+                  IconButton(
+                    icon: Icon(Icons.tune_rounded, color: sub, size: 24),
+                    onPressed: _openSettings,
+                    tooltip:
+                        AppLocalizations.of(context)?.readingSettings ??
+                        'Reading Settings',
                   ),
                 ],
               ),
@@ -4000,7 +3883,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       AppLocalizations.of(context)?.mushaf ??
                                       'Mushaf',
                                   active: false,
-                                  activeColor: const Color(0xFFD89A1E),
+                                  activeColor: const Color(0xFFFFC83D),
                                   darkMode: _darkMode,
                                   onTap: () async {
                                     final page =
@@ -4092,7 +3975,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     child: Column(
                                       children: [
                                         CircularProgressIndicator(
-                                          color: const Color(0xFFC9921A),
+                                          color: const Color(0xFFFFC83D),
                                           strokeWidth: 2,
                                         ),
                                         const SizedBox(height: 12),
@@ -4600,7 +4483,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            const Color(0xFFC9921A),
+                            const Color(0xFFFFC83D),
                           ),
                         ),
                       )
@@ -4648,7 +4531,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            const Color(0xFFC9921A),
+                            const Color(0xFFFFC83D),
                           ),
                         ),
                       )
@@ -4841,7 +4724,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFFC9921A),
+                        const Color(0xFFFFC83D),
                       ),
                     ),
                   ),
@@ -4913,7 +4796,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    const Color(0xFFC9921A),
+                    const Color(0xFFFFC83D),
                   ),
                 ),
               ),
@@ -5430,7 +5313,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: goldClr,
+          color: _darkMode ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D),
           borderRadius: BorderRadius.circular(12),
         ),
         // Ensures the Bismillah never overflows the screen horizontally on big font sizes
@@ -5487,12 +5370,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final isDark = _darkMode;
 
     // Honey/brown palette — Y4 theme-aware
-    const honeyBrown = Color(0xFF7A5200); // deep honey-brown (dark bg)
-    const honeyWarm = Color(0xFFD89A1E); // honeyDeep amber (light pill)
+    const honeyBrown = Color(0xFFFFC83D); // honey-gold (dark bg)
+    const honeyWarm = Color(0xFFFFC83D); // honeyDeep amber (light pill)
     const honeyGold = Color(0xFFFFC83D); // bright honey-gold (glow/accent)
 
     final barBg = isDark ? honeyBrown : honeyWarm;
-    final barBgDarker = isDark ? const Color(0xFF5A3C00) : honeyBrown;
+    final barBgDarker = isDark ? honeyBrown : honeyWarm;
 
     BoxDecoration pillDecor() => BoxDecoration(
       color:
@@ -5585,16 +5468,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   if (_pageXpEarned > 0) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 7,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                      decoration: BoxDecoration(
-                        color: honeyGold.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: honeyGold.withValues(alpha: 0.4),
-                        ),
-                      ),
+                      decoration: pillDecor(),
                       child: Text(
                         '+$_pageXpEarned',
                         style: GoogleFonts.outfit(

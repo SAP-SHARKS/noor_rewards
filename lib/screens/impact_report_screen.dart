@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
+import '../services/xp_service.dart';
 import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
@@ -75,10 +76,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
 
-  // Derived "Akhirah holdings" — computed from points
-  // Trees planted = every 100 noor points = 1 tree (symbolic)
-  // Total Dhikr   = dhikr streak * 33 repetitions per day (symbolic)
-  // Slaves freed  = every 1000 points = 1 equivalent reward
+  // Derived "Akhirah holdings" — symbolic estimates from activity data
 
   bool _loading = true;
   late AnimationController _fadeCtrl;
@@ -164,12 +162,54 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   }
 
   // ── Derived spiritual holdings ─────────────────────────────────────────────
-  int get _hasanaat => _totalPts * 15 + _noorPoints * 5;
-  int get _treesPlanted => (_snap.dhikr * 25) + (_snap.login * 2);
-  int get _sinsWiped => (_snap.dhikr * 50) + (_snap.login * 5);
-  int get _treasures => (_snap.dhikr * 5) + (_snap.quran * 2);
-  int get _slavesFreed => _snap.dhikr * 2;
-  int get _palacesBuilt => _snap.quran > 0 ? math.max(1, _snap.quran ~/ 3) : 0;
+  // ── Hadith-based reward calculations ────────────────────────────────────
+  //
+  // Hasanaat: Every good deed = 10 hasanaat minimum (Sahih Muslim 131).
+  //   We use total points as a proxy for good deeds done.
+  int get _hasanaat => _totalPts * 10;
+  //
+  // Trees in Jannah: "SubhanAllah, Alhamdulillah, La ilaha illallah,
+  //   Allahu Akbar" — each plants a tree in Jannah (Tirmidhi 3464).
+  //   Dhikr points earned ÷ points-per-dhikr ≈ number of dhikr said.
+  int get _treesPlanted {
+    final perDhikr = math.max(1, PointReward.dhikr);
+    // Estimate dhikr count from total points (dhikr is ~40% of activity)
+    return (_totalPts * 0.4 ~/ perDhikr);
+  }
+  //
+  // Sins Forgiven: "Whoever says SubhanAllahi wa bihamdihi 100 times,
+  //   his sins are forgiven even if they were like the foam of the sea"
+  //   (Bukhari 6405). Each set of 100 dhikr = 1 forgiveness cycle.
+  int get _sinsWiped {
+    final perDhikr = math.max(1, PointReward.dhikr);
+    final estimatedDhikr = (_totalPts * 0.4 ~/ perDhikr);
+    return estimatedDhikr ~/ 100; // each 100 = 1 forgiveness cycle
+  }
+  //
+  // Treasures of Jannah: "La hawla wa la quwwata illa billah is a
+  //   treasure from the treasures of Jannah" (Bukhari 4205, Muslim 2704).
+  //   Estimate from dhikr variety.
+  int get _treasures {
+    final perDhikr = math.max(1, PointReward.dhikr);
+    return (_totalPts * 0.1 ~/ perDhikr);
+  }
+  //
+  // Slaves Freed: "Whoever says La ilaha illallah wahdahu la sharika
+  //   lahu … 10 times, it is as if he freed 4 slaves" (Bukhari 6403).
+  int get _slavesFreed {
+    final perDhikr = math.max(1, PointReward.dhikr);
+    final estimatedDhikr = (_totalPts * 0.4 ~/ perDhikr);
+    return (estimatedDhikr ~/ 10) * 4;
+  }
+  //
+  // Palaces Built: "Whoever reads Surah Ikhlas 10 times, Allah builds
+  //   a palace for him in Jannah" (Ahmad). Quran ayahs ÷ ~4 ayahs per
+  //   Ikhlas reading ÷ 10 = palaces.
+  int get _palacesBuilt {
+    final perAyah = math.max(1, PointReward.ayahRead);
+    final estimatedAyahs = (_totalPts * 0.3 ~/ perAyah);
+    return math.max(0, estimatedAyahs ~/ 40); // ~4 ayahs × 10 readings
+  }
   int get _bestStreak => [
     _snap.bestLogin,
     _snap.bestDhikr,
@@ -534,12 +574,15 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               color: _C.text,
             ),
           ),
-          Text(
-            AppLocalizations.of(context)?.seeAll ?? 'See All →',
-            style: GoogleFonts.outfit(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: _C.teal,
+          GestureDetector(
+            onTap: () => _showHoldingsSheet(),
+            child: Text(
+              AppLocalizations.of(context)?.seeAll ?? 'See All →',
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: _C.teal,
+              ),
             ),
           ),
         ],
@@ -548,6 +591,167 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       _buildHoldingsCard(),
     ],
   );
+
+  void _showHoldingsSheet() {
+    final items = [
+      (
+        'Hasanaat Earned',
+        _hasanaat,
+        'Every good deed is multiplied by at least 10 hasanaat.',
+        'Sahih Muslim 131',
+      ),
+      (
+        'Trees in Jannah',
+        _treesPlanted,
+        'SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar — each plants a tree in Jannah.',
+        'Tirmidhi 3464',
+      ),
+      (
+        'Sins Forgiven',
+        _sinsWiped,
+        'Whoever says SubhanAllahi wa bihamdihi 100 times, his sins are forgiven even if they were like the foam of the sea.',
+        'Bukhari 6405',
+      ),
+      (
+        'Palaces Built',
+        _palacesBuilt,
+        'Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah.',
+        'Musnad Ahmad',
+      ),
+      (
+        'Treasures of Jannah',
+        _treasures,
+        'La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah.',
+        'Bukhari 4205',
+      ),
+      (
+        'Slaves Freed',
+        _slavesFreed,
+        'Whoever says La ilaha illallahu wahdahu la sharika lahu … 10 times, it is as if he freed 4 slaves from the children of Ismail.',
+        'Bukhari 6403',
+      ),
+      (
+        'Sadaqah Given',
+        _totalDonated,
+        'Points donated to community projects.',
+        '',
+      ),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFDDDDDD),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Your Akhirah Holdings',
+              style: GoogleFonts.rajdhani(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: _C.text,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Based on authentic hadith sources',
+              style: GoogleFonts.outfit(
+                fontSize: 12,
+                color: _C.sub,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                padding: EdgeInsets.fromLTRB(
+                  20, 0, 20,
+                  MediaQuery.of(context).padding.bottom + 32,
+                ),
+                itemCount: items.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (_, i) {
+                  final (title, value, desc, ref) = items[i];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: _C.text,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              _fmt(value),
+                              style: GoogleFonts.outfit(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                                color: _C.teal,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          desc,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            color: _C.sub,
+                            height: 1.5,
+                          ),
+                        ),
+                        if (ref.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            '— $ref',
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: _C.teal,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildHoldingsCard() => Container(
     key: ValueKey(widget.visitCount),
@@ -571,11 +775,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           bgColor: const Color(0xFFFDF6E3),
           title:
               AppLocalizations.of(context)?.hasanaatEarned ?? 'Hasanaat Earned',
-          subtitle:
-              AppLocalizations.of(context)?.recordedInBookOfDeeds ??
-              'Recorded in your Book of Deeds',
+          subtitle: 'Each deed × 10 — Sahih Muslim 131',
           value: _hasanaat,
-          change: '+${_todayPoints * 15} today',
+          change: '+${_todayPoints * 10} today',
           positive: true,
           isFirst: true,
           isLast: false,
@@ -587,11 +789,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           bgColor: const Color(0xFFE8F5EC),
           title:
               AppLocalizations.of(context)?.treesInJannah ?? 'Trees in Jannah',
-          subtitle:
-              AppLocalizations.of(context)?.fromTasbih ??
-              'From SubhanAllah & Tasbih',
+          subtitle: 'Each tasbih plants a tree — Tirmidhi 3464',
           value: _treesPlanted,
-          change: '+${_snap.dhikr > 0 ? 25 : 0} today',
+          change: '+${_fmt(_todayPoints * 4 ~/ math.max(1, PointReward.dhikr * 10))} today',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -602,11 +802,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: _C.teal,
           bgColor: const Color(0xFFE0F7F4),
           title: AppLocalizations.of(context)?.sinsForgiven ?? 'Sins Forgiven',
-          subtitle:
-              AppLocalizations.of(context)?.likeTheFoamOfSea ??
-              'Like the foam of the sea',
+          subtitle: '100 SubhanAllahi wa bihamdihi — Bukhari 6405',
           value: _sinsWiped,
-          change: '+${_snap.dhikr > 0 ? 50 : 0} today',
+          change: 'like foam of the sea',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -617,11 +815,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: const Color(0xFF4A90E2),
           bgColor: const Color(0xFFEAF2F8),
           title: AppLocalizations.of(context)?.palacesBuilt ?? 'Palaces Built',
-          subtitle:
-              AppLocalizations.of(context)?.surahIkhlasAndSunnahs ??
-              'Surah Ikhlas & Sunnahs',
+          subtitle: 'Surah Ikhlas 10× — Musnad Ahmad',
           value: _palacesBuilt,
-          change: '+${_snap.quran ~/ 3} total',
+          change: '${_fmt(_palacesBuilt)} total',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -634,9 +830,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           title:
               AppLocalizations.of(context)?.treasuresOfJannah ??
               'Treasures of Jannah',
-          subtitle: 'La Hawla Wa La Quwwata',
+          subtitle: 'La Hawla Wa La Quwwata — Bukhari 4205',
           value: _treasures,
-          change: '+${_snap.dhikr > 0 ? 5 : 0} today',
+          change: '${_fmt(_treasures)} total',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -647,11 +843,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: _C.purple,
           bgColor: const Color(0xFFEEEAF8),
           title: AppLocalizations.of(context)?.slavesFreedom ?? 'Slaves Freed',
-          subtitle:
-              AppLocalizations.of(context)?.equivalentReward ??
-              'Equivalent reward earned',
+          subtitle: '10× La ilaha illallah = 4 freed — Bukhari 6403',
           value: _slavesFreed,
-          change: '+${_snap.dhikr > 0 ? 2 : 0} today',
+          change: '${_fmt(_slavesFreed)} total',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -774,15 +968,16 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   Widget _buildRewardsCard() => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Y4.primaryDeep, Y4.primary],
+        colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
       ),
       borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: Y4.honey.withValues(alpha: 0.35)),
       boxShadow: [
         BoxShadow(
-          color: _C.darkGreen.withValues(alpha: 0.4),
+          color: Y4.honey.withValues(alpha: 0.2),
           blurRadius: 20,
           offset: const Offset(0, 6),
         ),
@@ -801,7 +996,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               style: GoogleFonts.outfit(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: Y4.ink,
               ),
             ),
           ],
@@ -816,11 +1011,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                 NoorIcon.star(size: 16),
               ),
             ),
-            Container(height: 44, width: 1, color: Colors.white12),
+            Container(height: 44, width: 1, color: Y4.honey.withValues(alpha: 0.4)),
             Expanded(
               child: _DarkStat('Level', '$_level', NoorIcon.medal(size: 16)),
             ),
-            Container(height: 44, width: 1, color: Colors.white12),
+            Container(height: 44, width: 1, color: Y4.honey.withValues(alpha: 0.4)),
             Expanded(
               child: _DarkStat(
                 AppLocalizations.of(context)?.title ?? 'Title',
@@ -835,9 +1030,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: _C.teal.withValues(alpha: 0.15),
+            color: Y4.honey.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: _C.teal.withValues(alpha: 0.3)),
+            border: Border.all(color: Y4.honey.withValues(alpha: 0.3)),
           ),
           child: Center(
             child: Text(
@@ -845,7 +1040,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.white70,
+                color: Y4.inkSoft,
               ),
             ),
           ),
@@ -1273,7 +1468,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             const Spacer(),
                             Flexible(
                               child: Text(
-                                '${_fmt(cur)} / ${_fmt(tgt)} pts  •  ${(pct * 100).toStringAsFixed(0)}%',
+                                '${_fmt(cur)} / ${_fmt(tgt)} pts',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(
@@ -1606,7 +1801,7 @@ class _DarkStat extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: Y4.ink,
             ),
           )
           : Text(
@@ -1614,12 +1809,12 @@ class _DarkStat extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: Y4.ink,
             ),
           ),
       Text(
         label,
-        style: GoogleFonts.outfit(fontSize: 10, color: Colors.white38),
+        style: GoogleFonts.outfit(fontSize: 10, color: Y4.inkSoft),
         textAlign: TextAlign.center,
       ),
     ],

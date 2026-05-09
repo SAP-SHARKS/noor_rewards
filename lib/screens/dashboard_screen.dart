@@ -403,18 +403,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Scaffold(
         backgroundColor: _C.bg,
         extendBody: true,
-        body: NotificationListener<UserScrollNotification>(
-          onNotification: (notif) {
-            if (notif.metrics.axis == Axis.vertical) {
-              if (notif.direction == ScrollDirection.reverse) {
-                if (_navVisible) setState(() => _navVisible = false);
-              } else if (notif.direction == ScrollDirection.forward) {
-                if (!_navVisible) setState(() => _navVisible = true);
-              }
-            }
-            return false;
-          },
-          child: IndexedStack(
+        body: IndexedStack(
             index: _tab,
             children: [
               _HomeTab(
@@ -506,12 +495,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ), // Tab 3 — Akhirah
             ],
           ),
-        ),
-        bottomNavigationBar: AnimatedSlide(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.fastOutSlowIn,
-          offset: _navVisible ? Offset.zero : const Offset(0, 1.2),
-          child: _BottomNav(
+        bottomNavigationBar: _BottomNav(
             tab: _tab,
             onTap: (i) {
               if (i == 0 && _tab != 0) {
@@ -539,7 +523,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
             },
           ),
-        ),
       ),
     );
   }
