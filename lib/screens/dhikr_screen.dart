@@ -2986,7 +2986,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           ),
         ),
         // ── Play-All control bar ──────────────────────────────────────────
-        bottomNavigationBar: _playAllMode || _audioPlayer.playing
+        bottomNavigationBar: _playAllMode || _currentlyLoadedAudio != null
             ? _buildPlayBar(isDark)
             : null,
       ),
@@ -3087,7 +3087,10 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           _playBarBtn(
             icon: Icons.stop_rounded,
             onTap: () {
-              setState(() => _playAllMode = false);
+              setState(() {
+                _playAllMode = false;
+                _currentlyLoadedAudio = null;
+              });
               _audioPlayer.stop();
             },
           ),
@@ -4245,8 +4248,8 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_31' || id == 'evening_30') return 'scales';
   // SubhanAllah wa bihamdihi 100x — ocean of forgiveness
   if (id == 'morning_32' || id == 'evening_31') return 'ocean';
-  // Durood Ibrahim (evening #32) — ten salawat
-  if (id == 'evening_32' || id == 'morning_33') return 'salawat';
+  // Durood Ibrahim (evening #32) — intercession
+  if (id == 'evening_32' || id == 'morning_33') return 'salawat_intercession';
 
   // ── Old IDs (morning_lwa_*, evening_lwa_*, general categories) ──
   if (id == 'morning_lwa_1' ||
@@ -4895,6 +4898,23 @@ Widget _buildIllustration({
             '10 blessings descend upon you from Allah for every single Salawat',
         subtitle: 'Prophet Muhammad \uFDFA',
         completedSubtitle: 'May Allah accept your Salawat',
+        accentColor: const Color(0xFFEC4899),
+      ),
+    ),
+    'salawat_intercession' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'My intercession will reach him on the Day of Judgment',
+        subtitle: 'At-Tabarani, Sahih Al-Jaami 6357',
+        completedSubtitle: 'May you receive his \uFDFA intercession',
         accentColor: const Color(0xFFEC4899),
       ),
     ),

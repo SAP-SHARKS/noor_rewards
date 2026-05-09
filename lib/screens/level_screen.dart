@@ -818,7 +818,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                 const SizedBox(height: 14),
                 for (final tier in _tierGroups)
                   _TierCard(tier: tier, currentLevel: widget.level),
-                const SizedBox(height: 40),
+                const SizedBox(height: 110),
               ],
             ),
           ),
@@ -1344,7 +1344,7 @@ class _BadgesTab extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: 40),
+          const SizedBox(height: 110),
         ],
       ),
     );
@@ -1499,7 +1499,7 @@ class _ChallengesTab extends StatelessWidget {
       color: _kPurple,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 110),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -2106,7 +2106,7 @@ class _StreaksTabState extends State<_StreaksTab>
             )
           else
             SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 110),
               child: Column(
                 children: [
                   // ── Hero flame ───────────────────────────────────────────────

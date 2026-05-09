@@ -1702,7 +1702,7 @@ class _InviteSheetState extends State<_InviteSheet>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Y4.cream, Y4.bg, Y4.honey.withValues(alpha: 0.30)],
+                colors: [Y4.cream, Y4.bg, Y4.bg],
               ),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(30),
@@ -1737,10 +1737,10 @@ class _InviteSheetState extends State<_InviteSheet>
                             width: 46,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: Y4.honey.withValues(alpha: 0.30),
+                              color: Y4.honey,
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: Y4.honeyDeep.withValues(alpha: 0.4),
+                                color: Y4.honeyDeep.withValues(alpha: 0.6),
                               ),
                             ),
                             child: Center(child: NoorIcon.handshake(size: 24)),
@@ -1786,7 +1786,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Y4.honeyDeep.withValues(alpha: 0.4),
+                                  color: Y4.honeyDeep.withValues(alpha: 0.6),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
@@ -2306,9 +2306,9 @@ class _RewardPill extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Y4.honey.withValues(alpha: 0.30),
+            color: Y4.honey,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
+            border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.6)),
           ),
           child: Center(child: icon),
         ),
@@ -3054,10 +3054,10 @@ class _ActivityCardState extends State<_ActivityCard> {
                         width: 72,
                         height: 72,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.30),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.50),
+                            color: Colors.white,
                           ),
                         ),
                         child: Center(child: widget.icon),
@@ -7640,7 +7640,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
         gradient: LinearGradient(
           begin: const Alignment(-0.3, -1.0),
           end: const Alignment(0.5, 1.0),
-          colors: [Y4.cream, Y4.honey.withValues(alpha: 0.20)],
+          colors: [Y4.cream, Y4.honey.withValues(alpha: 0.85)],
         ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Y4.border),
