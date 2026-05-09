@@ -16,6 +16,7 @@ import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
+import '../theme/y4_theme.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont =
@@ -319,7 +320,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
               ),
             ],
           ),
-          backgroundColor: const Color(0xFFD89A1E),
+          backgroundColor: const Color(0xFFFFC83D),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -504,7 +505,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             color:
                                 isSelected
                                     ? const Color(
-                                      0xFFD89A1E,
+                                      0xFFFFC83D,
                                     ).withValues(alpha: 0.15)
                                     : (isDark
                                         ? Colors.white.withValues(alpha: 0.06)
@@ -513,7 +514,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             border:
                                 isSelected
                                     ? Border.all(
-                                      color: const Color(0xFFD89A1E),
+                                      color: const Color(0xFFFFC83D),
                                       width: 1.5,
                                     )
                                     : null,
@@ -525,7 +526,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                               fontWeight: FontWeight.w600,
                               color:
                                   isSelected
-                                      ? const Color(0xFFD89A1E)
+                                      ? const Color(0xFFFFC83D)
                                       : (isDark
                                           ? Colors.white70
                                           : SettingsService
@@ -619,7 +620,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                           Navigator.pop(ctx);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD89A1E),
+                          backgroundColor: const Color(0xFFFFC83D),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -864,7 +865,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final kText =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kBg = isDark ? const Color(0xFF1A1A1E) : Colors.white;
-    final kTeal = const Color(0xFFD89A1E);
+    final kTeal = const Color(0xFFFFC83D);
     const kGold = Color(0xFFD4AF37);
 
     showDialog(
@@ -1150,7 +1151,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFFD89A1E),
+                                    color: const Color(0xFFFFC83D),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -1163,7 +1164,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor,
                                     ),
                                   ),
-                                  activeTrackColor: const Color(0xFFD89A1E),
+                                  activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.darkMode,
                                   onChanged: (val) {
                                     setModalState(
@@ -1183,7 +1184,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor,
                                     ),
                                   ),
-                                  activeTrackColor: const Color(0xFFD89A1E),
+                                  activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.showTranslation,
                                   onChanged: (val) {
                                     setModalState(
@@ -1208,7 +1209,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor,
                                     ),
                                   ),
-                                  activeTrackColor: const Color(0xFFD89A1E),
+                                  activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.showTransliteration,
                                   onChanged: (val) {
                                     setModalState(
@@ -1243,7 +1244,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor.withValues(alpha: 0.55),
                                     ),
                                   ),
-                                  activeTrackColor: const Color(0xFFD89A1E),
+                                  activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.showIllustration,
                                   onChanged: (val) {
                                     setModalState(
@@ -1265,14 +1266,14 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFFD89A1E),
+                                    color: const Color(0xFFFFC83D),
                                   ),
                                 ),
                                 Slider(
                                   value: _settings.arabicFontSize,
                                   min: 20.0,
                                   max: 56.0,
-                                  activeColor: const Color(0xFFD89A1E),
+                                  activeColor: const Color(0xFFFFC83D),
                                   onChanged: (val) {
                                     final translationSize =
                                         16.0 + (val - 20.0) * (12.0 / 36.0);
@@ -1302,14 +1303,14 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFFD89A1E),
+                                    color: const Color(0xFFFFC83D),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
                                 ...List.generate(_kArabicFonts.length, (i) {
                                   final font = _kArabicFonts[i];
                                   final sel = i == _settings.arabicFontIdx;
-                                  final accent = const Color(0xFFD89A1E);
+                                  final accent = const Color(0xFFFFC83D);
                                   return GestureDetector(
                                     onTap: () {
                                       setModalState(
@@ -1382,7 +1383,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                               width: 24,
                                               height: 24,
                                               decoration: BoxDecoration(
-                                                color: const Color(0xFFD89A1E),
+                                                color: const Color(0xFFFFC83D),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: const Icon(
@@ -1423,7 +1424,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFD89A1E).withValues(alpha: 0.3),
+                    color: const Color(0xFFFFC83D).withValues(alpha: 0.3),
                     blurRadius: 40,
                     spreadRadius: 10,
                   ),
@@ -1474,7 +1475,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD89A1E),
+                        backgroundColor: const Color(0xFFFFC83D),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -1580,7 +1581,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final bannerBtn =
         isDark
             ? const Color(0xFFFFC83D)
-            : const Color(0xFFD89A1E); // honey-deep
+            : const Color(0xFFFFC83D); // honey-deep
     final bannerTxt = isDark ? const Color(0xFF2A2410) : Colors.white;
 
     final chipInactiveBg =
@@ -1591,13 +1592,13 @@ class _DhikrScreenState extends State<DhikrScreen> {
     Color catColor(String catId) => switch (catId) {
       'all' => const Color(0xFF6366F1), // indigo
       'favorites' => const Color(0xFFEF4444), // red
-      'general' => const Color(0xFFD89A1E), // emerald
+      'general' => const Color(0xFFFFC83D), // emerald
       'morning' => const Color(0xFFF59E0B), // amber
       'evening' => const Color(0xFF6366F1), // indigo
       'sleeping' => const Color(0xFF8B5CF6), // violet
       'waking_up' => const Color(0xFFF97316), // orange
       'post_prayer' => const Color(0xFF0EA5E9), // sky blue
-      'salawat' => const Color(0xFFD89A1E), // emerald
+      'salawat' => const Color(0xFFFFC83D), // emerald
       'istighfar' => const Color(0xFF8B5CF6), // violet
       'tahajjud' => const Color(0xFF3B82F6), // blue
       'sunnah' => const Color(0xFF14B8A6), // teal
@@ -1607,8 +1608,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       'clothes' => const Color(0xFF14B8A6), // teal
       'wudu' => const Color(0xFF0EA5E9), // sky blue
       'food_drink' => const Color(0xFFF97316), // orange
-      'home' => const Color(0xFFD89A1E), // emerald
-      _ => const Color(0xFFD89A1E), // default teal
+      'home' => const Color(0xFFFFC83D), // emerald
+      _ => const Color(0xFFFFC83D), // default teal
     };
 
     // Banner Text Setup
@@ -1691,7 +1692,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                               isDark
                                   ? Colors.white.withValues(alpha: 0.10)
                                   : const Color(
-                                    0xFFD89A1E,
+                                    0xFFFFC83D,
                                   ).withValues(alpha: 0.18),
                         ),
                       ),
@@ -1724,48 +1725,110 @@ class _DhikrScreenState extends State<DhikrScreen> {
                             ),
                           ),
                           const SizedBox(height: 18),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_filtered.isNotEmpty) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => _DhikrDetailScreen(
-                                          azkars: _filtered,
-                                          initialIndex: 0,
-                                          counts: _counts,
-                                          favorites: _favorites,
-                                          settings: _settings,
-                                          parentState: this,
-                                        ),
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_filtered.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => _DhikrDetailScreen(
+                                              azkars: _filtered,
+                                              initialIndex: 0,
+                                              counts: _counts,
+                                              favorites: _favorites,
+                                              settings: _settings,
+                                              parentState: this,
+                                            ),
+                                      ),
+                                    ).then((_) {
+                                      setState(() {});
+                                    });
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: bannerBtn,
+                                  foregroundColor: bannerTxt,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 0,
                                   ),
-                                ).then((_) {
-                                  setState(() {});
-                                });
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: bannerBtn,
-                              foregroundColor: bannerTxt,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 0,
+                                  minimumSize: const Size(0, 36),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)?.startNow ??
+                                      'Start Now',
+                                  style: GoogleFonts.outfit(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ),
-                              minimumSize: const Size(0, 36),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                              const SizedBox(width: 10),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  // Filter to only azkar that have audio
+                                  final withAudio = _filtered
+                                      .where((a) =>
+                                          a.audioUrl != null &&
+                                          a.audioUrl!.isNotEmpty)
+                                      .toList();
+                                  if (withAudio.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => _DhikrDetailScreen(
+                                              azkars: withAudio,
+                                              initialIndex: 0,
+                                              counts: _counts,
+                                              favorites: _favorites,
+                                              settings: _settings,
+                                              parentState: this,
+                                              autoPlayAll: true,
+                                            ),
+                                      ),
+                                    ).then((_) {
+                                      setState(() {});
+                                    });
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.play_circle_filled_rounded,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  'Play All',
+                                  style: GoogleFonts.outfit(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      isDark
+                                          ? Colors.white.withValues(alpha: 0.15)
+                                          : const Color(0xFF2A2410),
+                                  foregroundColor:
+                                      isDark ? Colors.white : Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 0,
+                                  ),
+                                  minimumSize: const Size(0, 36),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)?.startNow ??
-                                  'Start Now',
-                              style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13,
-                              ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
@@ -2038,15 +2101,23 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                     : kText,
                                                           ),
                                                         ),
-                                                        // ── Line 2 (light): when to read (by category) ──
+                                                        // ── Line 2 (light): benefit / reward snippet ──
                                                         const SizedBox(
                                                           height: 3,
                                                         ),
                                                         Text(
-                                                          _DhikrScreenState._categoryTiming(
-                                                            context,
-                                                            azkar.category,
-                                                          ),
+                                                          () {
+                                                            // Clean reward: strip references, pipes, hadith citations
+                                                            String raw = azkar.reward.trim();
+                                                            if (raw.isEmpty) raw = azkar.translation.trim();
+                                                            raw = raw.replaceAll('\n', ' ');
+                                                            // Remove bracketed refs like (Sahih Muslim 123)
+                                                            raw = raw.replaceAll(RegExp(r'\([^)]*(?:Muslim|Bukhari|Tirmidhi|Dawud|Majah|Nasai|Ahmad|Quran)[^)]*\)', caseSensitive: false), '');
+                                                            // Remove pipe-separated refs
+                                                            if (raw.contains('|')) raw = raw.split('|').first;
+                                                            raw = raw.replaceAll(RegExp(r'\s+'), ' ').trim();
+                                                            return raw;
+                                                          }(),
                                                           maxLines: 1,
                                                           overflow:
                                                               TextOverflow
@@ -2058,7 +2129,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                             color:
                                                                 isComplete
                                                                     ? const Color(
-                                                                      0xFFD89A1E,
+                                                                      0xFFFFC83D,
                                                                     )
                                                                     : (isDark
                                                                         ? Colors
@@ -2069,22 +2140,6 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                           ),
                                                         ),
                                                       ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  // ── Count badge (restored original position) ──
-                                                  Text(
-                                                    '${tapTarget}x',
-                                                    style: GoogleFonts.outfit(
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      fontSize: 13,
-                                                      color:
-                                                          isComplete
-                                                              ? const Color(
-                                                                0xFFD89A1E,
-                                                              )
-                                                              : accent,
                                                     ),
                                                   ),
                                                   const SizedBox(width: 4),
@@ -2133,7 +2188,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
               colors: [
-                const Color(0xFFD89A1E),
+                const Color(0xFFFFC83D),
                 Color(0xFFF59E0B),
                 Color(0xFFEC4899),
                 Color(0xFF38BDF8),
@@ -2158,6 +2213,7 @@ class _DhikrDetailScreen extends StatefulWidget {
   final List<String> favorites;
   final _DhikrSettings settings;
   final _DhikrScreenState parentState;
+  final bool autoPlayAll;
 
   const _DhikrDetailScreen({
     required this.azkars,
@@ -2166,6 +2222,7 @@ class _DhikrDetailScreen extends StatefulWidget {
     required this.favorites,
     required this.settings,
     required this.parentState,
+    this.autoPlayAll = false,
   });
 
   @override
@@ -2176,6 +2233,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   late PageController _pageController;
   final AudioPlayer _audioPlayer = AudioPlayer();
   String? _currentlyLoadedAudio;
+  late bool _playAllMode;
+  StreamSubscription<PlayerState>? _playerSub;
+  bool _isAdvancing = false; // guard against double-skip
 
   bool _showToolbar = false;
   Timer? _hideTimer;
@@ -2199,11 +2259,16 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   void initState() {
     super.initState();
     _sessionStart = DateTime.now();
+    _playAllMode = widget.autoPlayAll;
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
-    _audioPlayer.playerStateStream.listen((state) {
+    _playerSub = _audioPlayer.playerStateStream.listen((state) {
       if (mounted) setState(() {});
     });
+    // Start sequential play-all loop
+    if (_playAllMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _runPlayAllLoop());
+    }
   }
 
   void _toggleToolbar() {
@@ -2223,6 +2288,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
   @override
   void dispose() {
+    _playerSub?.cancel();
     _audioPlayer.dispose();
     _hideTimer?.cancel();
     _pageController.dispose();
@@ -2243,6 +2309,53 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     } catch (e) {
       debugPrint("Audio Error: $e");
     }
+  }
+
+  /// Sequential play-all loop — plays each azkar one by one.
+  Future<void> _runPlayAllLoop() async {
+    for (int i = _currentIndex; i < widget.azkars.length; i++) {
+      if (!_playAllMode || !mounted) break;
+
+      // Navigate to this azkar's page
+      if (i != _currentIndex) {
+        _isAdvancing = true;
+        await _pageController.animateToPage(
+          i,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+        await Future.delayed(const Duration(milliseconds: 300));
+        _isAdvancing = false;
+        if (!mounted || !_playAllMode) break;
+      }
+
+      final azkar = widget.azkars[i];
+      final url = azkar.audioUrl;
+      if (url == null || url.isEmpty) continue; // skip azkar without audio
+
+      try {
+        _currentlyLoadedAudio = url;
+        await _audioPlayer.stop();
+        await _audioPlayer.setUrl(url);
+        await _audioPlayer.seek(Duration.zero);
+        await _audioPlayer.play();
+
+        // Wait until this track finishes or is stopped/skipped
+        await _audioPlayer.processingStateStream.firstWhere(
+          (s) => s == ProcessingState.completed || s == ProcessingState.idle,
+        );
+      } catch (e) {
+        debugPrint("Play All Audio Error at index $i: $e");
+      }
+
+      if (!mounted || !_playAllMode) break;
+
+      // Brief pause between tracks
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    // Done — end play-all mode
+    if (mounted) setState(() => _playAllMode = false);
   }
 
   void _tryComplete(_Azkar azkar, int tapTarget, {bool isSwipe = false}) {
@@ -2317,9 +2430,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final List<Color> gradColors =
                   (isMorning || isEvening)
                       ? [
-                        const Color(0xFF7A5C13),
-                        const Color(0xFFB57E10),
-                        const Color(0xFFD89A1E),
+                        const Color(0xFFFFC83D),
+                        const Color(0xFFFFC83D),
+                        const Color(0xFFFFC83D),
                       ]
                       : [appBarColor, appBarColor, appBarColor];
               return Container(
@@ -2343,7 +2456,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_rounded,
-              color: Colors.white.withValues(alpha: 0.90),
+              color: isDark ? Colors.white.withValues(alpha: 0.90) : Y4.ink,
               size: 20,
             ),
             onPressed: () => Navigator.pop(context),
@@ -2381,7 +2494,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Y4.ink,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -2411,7 +2524,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: const Color(0xFF7A5C13),
+                            color: Y4.ink,
                             letterSpacing: 0.3,
                           ),
                         ),
@@ -2423,10 +2536,14 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.20),
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.20)
+                              : Y4.ink.withValues(alpha: 0.10),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.35),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.35)
+                                : Y4.ink.withValues(alpha: 0.20),
                             width: 0.5,
                           ),
                         ),
@@ -2435,7 +2552,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : Y4.ink,
                             letterSpacing: 0.3,
                           ),
                         ),
@@ -2466,13 +2583,15 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: (nextIndex) {
-              if (_audioPlayer.playing) {
+              // Only stop audio if user manually swiped (not auto-advancing)
+              if (!_isAdvancing && _audioPlayer.playing) {
                 _audioPlayer.stop();
               }
-              if (mounted)
+              if (mounted) {
                 setState(() {
                   _currentIndex = nextIndex;
                 });
+              }
             },
             itemCount: widget.azkars.length,
             itemBuilder: (context, index) {
@@ -2583,7 +2702,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                                     azkar.audioUrl
                                             ? Icons.pause_rounded
                                             : Icons.play_arrow_rounded,
-                                    color: const Color(0xFFD89A1E),
+                                    color: const Color(0xFFFFC83D),
                                     isDark: isDark,
                                     onTap: () => _toggleAudio(azkar.audioUrl!),
                                   ),
@@ -2638,7 +2757,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                 _toolbarDivider(isDark),
                                 _ToolbarBtn(
                                   icon: Icons.refresh_rounded,
-                                  color: const Color(0xFFD89A1E),
+                                  color: const Color(0xFFFFC83D),
                                   isDark: isDark,
                                   onTap: () {
                                     widget.parentState._reset(azkar.id);
@@ -2675,8 +2794,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
                                           colors: [
-                                            Color(0xFFC9A87C),
-                                            Color(0xFFB8956A),
+                                            Color(0xFFFFD966),
+                                            Color(0xFFFFC83D),
                                           ],
                                         ),
                                         borderRadius: BorderRadius.circular(30),
@@ -2716,8 +2835,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(
                                               colors: [
-                                                const Color(0xFFD89A1E),
-                                                const Color(0xFFD89A1E),
+                                                const Color(0xFFFFC83D),
+                                                const Color(0xFFFFC83D),
                                               ],
                                             ),
                                             borderRadius: BorderRadius.circular(
@@ -2824,14 +2943,14 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                             ? [
                                               BoxShadow(
                                                 color: const Color(
-                                                  0xFFD89A1E,
+                                                  0xFFFFC83D,
                                                 ).withValues(alpha: 0.6),
                                                 blurRadius: 28,
                                                 spreadRadius: 8,
                                               ),
                                               BoxShadow(
                                                 color: const Color(
-                                                  0xFFD89A1E,
+                                                  0xFFFFC83D,
                                                 ).withValues(alpha: 0.3),
                                                 blurRadius: 50,
                                                 spreadRadius: 14,
@@ -2861,6 +2980,132 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             },
           ),
         ),
+        // ── Play-All control bar ──────────────────────────────────────────
+        bottomNavigationBar: _playAllMode || _audioPlayer.playing
+            ? _buildPlayBar(isDark)
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildPlayBar(bool isDark) {
+    final azkar = widget.azkars[_currentIndex.clamp(0, widget.azkars.length - 1)];
+    final title = azkar.transliteration.isNotEmpty
+        ? azkar.transliteration
+        : azkar.translation;
+    final isPlaying = _audioPlayer.playing;
+    final barBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFC83D);
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        16, 12, 16,
+        MediaQuery.of(context).padding.bottom + 12,
+      ),
+      decoration: BoxDecoration(
+        color: barBg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Track info
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title.length > 30
+                      ? '${title.substring(0, 30).trimRight()}..'
+                      : title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : Y4.ink,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _playAllMode
+                      ? '${_currentIndex + 1} of ${widget.azkars.length}'
+                      : 'Now playing',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    color: isDark ? Colors.white54 : Y4.ink.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Pause / Resume
+          _playBarBtn(
+            icon: isPlaying
+                ? Icons.pause_rounded
+                : Icons.play_arrow_rounded,
+            onTap: () {
+              if (isPlaying) {
+                _audioPlayer.pause();
+              } else {
+                _audioPlayer.play();
+              }
+            },
+          ),
+          const SizedBox(width: 8),
+          // Next
+          _playBarBtn(
+            icon: Icons.skip_next_rounded,
+            onTap: () {
+              if (_playAllMode) {
+                // Stop current track — the loop will pick up
+                _audioPlayer.stop();
+              } else {
+                // Manual single-track mode — just go next page
+                if (_currentIndex < widget.azkars.length - 1) {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              }
+            },
+          ),
+          const SizedBox(width: 8),
+          // Stop
+          _playBarBtn(
+            icon: Icons.stop_rounded,
+            onTap: () {
+              setState(() => _playAllMode = false);
+              _audioPlayer.stop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _playBarBtn({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    final isDark = widget.settings.darkMode;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFFFFC83D) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: Y4.ink, size: 22),
       ),
     );
   }
@@ -2876,9 +3121,9 @@ typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
 
 /// Scaffold bg color matching bottom gradient for each category
 Color _scaffoldBgForCategory(String cat) => switch (cat) {
-  'morning' => const Color(0xFF7A5C13),
-  'evening' => const Color(0xFF7A5C13),
-  _ => const Color(0xFF8B6B17),
+  'morning' => const Color(0xFFFFC83D),
+  'evening' => const Color(0xFFFFC83D),
+  _ => const Color(0xFFFFC83D),
 };
 
 /// Timing info shown at top of azkar detail screen
@@ -3496,7 +3741,7 @@ class _AzkarCard extends StatelessWidget {
     final kText =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-    final kPrimary = const Color(0xFFD89A1E);
+    final kPrimary = const Color(0xFFFFC83D);
 
     String rawRef =
         azkar.reference
@@ -3704,7 +3949,7 @@ class _AzkarCard extends StatelessWidget {
                           ),
                       isDark
                           ? const Color(0xFFFFC83D)
-                          : const Color(0xFFD89A1E),
+                          : const Color(0xFFFFC83D),
                       azkarId: azkar.id,
                       fontName:
                           _kArabicFonts[settings.arabicFontIdx.clamp(
@@ -3771,7 +4016,7 @@ class _AzkarCard extends StatelessWidget {
                       ? Colors.white.withValues(alpha: 0.55)
                       : kSub.withValues(alpha: 0.90);
               final labelColor =
-                  isDark ? const Color(0xFF5EADDB) : const Color(0xFFD89A1E);
+                  isDark ? const Color(0xFF5EADDB) : const Color(0xFFFFC83D);
               final dividerColor =
                   isDark
                       ? Colors.white.withValues(alpha: 0.08)
@@ -4899,7 +5144,7 @@ String _pickTagline(String id) {
 
 /// Per-illustration tagline color — distinct for each category, always readable.
 Color _pickTaglineColor(String id, bool isDark) {
-  return isDark ? const Color(0xFFFFC83D) : const Color(0xFF7A5200);
+  return isDark ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D);
 }
 
 /// Arabic calligraphy text style used inside illustration canvases.
@@ -5735,7 +5980,7 @@ class _GratitudeTreeState extends State<_GratitudeTree>
     final chipA =
         visible ? (((p - line.threshold) / 0.25).clamp(0.0, 1.0)) : 0.0;
 
-    final accent = isDark ? const Color(0xFFFFC83D) : const Color(0xFF5E3F00);
+    final accent = isDark ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D);
     final textCol =
         line.big
             ? Color.lerp(accent.withValues(alpha: 0.35), accent, chipA)!
@@ -8807,7 +9052,7 @@ class _BreakingChainsPainter extends CustomPainter {
           Offset(startX, startY),
           5 * (1.0 - chainProgress * 0.5),
           Paint()
-            ..color = const Color(0xFFD89A1E).withValues(alpha: sparkA)
+            ..color = const Color(0xFFFFC83D).withValues(alpha: sparkA)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
         );
         canvas.drawCircle(
@@ -9380,7 +9625,7 @@ class _SixWardsPainter extends CustomPainter {
     Color(0xFFF59E0B), // right — amber
     Color(0xFF8B5CF6), // left — violet
     Color(0xFFD4AF37), // above — gold
-    Color(0xFFD89A1E), // below — emerald
+    Color(0xFFFFC83D), // below — emerald
   ];
 
   static const _wardLabels = ['أمام', 'خلف', 'يمين', 'شمال', 'فوق', 'تحت'];
@@ -14468,7 +14713,7 @@ class _CycleOfReturnPainter extends CustomPainter {
   // Journey phases: dawn → life → dusk → resurrection
   static const _phaseColors = [
     Color(0xFFF59E0B), // dawn — amber sunrise
-    Color(0xFFD89A1E), // life — emerald vitality
+    Color(0xFFFFC83D), // life — emerald vitality
     Color(0xFF6366F1), // dusk — indigo twilight
     Color(0xFFD4AF37), // nushur — golden resurrection
   ];
@@ -15204,7 +15449,7 @@ class _SevenPillarsState extends State<_SevenPillars>
       textColor =
           isDark
               ? Colors.white.withValues(alpha: lineProgress * 0.85)
-              : const Color(0xFF7A5200).withValues(alpha: lineProgress * 0.85);
+              : const Color(0xFFFFC83D).withValues(alpha: lineProgress * 0.85);
       fontSize = isBig ? 19 : 15;
     }
 
@@ -15861,7 +16106,7 @@ class _GuidingHandPainter extends CustomPainter {
   final double shockPhase;
   final double glowPhase;
 
-  static const _handColor = Color(0xFFD89A1E); // emerald — prophetic noor
+  static const _handColor = Color(0xFFFFC83D); // emerald — prophetic noor
   static const _pathColor = Color(0xFFFFC83D); // light emerald — path of light
   static const _gateColor = Color(0xFFD4AF37); // golden — gates of Jannah
 
@@ -16793,7 +17038,7 @@ class _InvincibleNamePainter extends CustomPainter {
     final snakeX =
         startX - (startX - shieldEdge - 18) * (0.35 + 0.65 * threatPhase);
     final snakeY = groundY - 4;
-    final c = const Color(0xFFD89A1E); // green snake
+    final c = const Color(0xFFFFC83D); // green snake
 
     // Snake body — S-curve path
     final bodyPath =
@@ -17717,7 +17962,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
     canvas.restore();
 
     // ── All figures green ──
-    const green = Color(0xFFD89A1E);
+    const green = Color(0xFFFFC83D);
 
     // ── 6 positions in a 2-column x 3-row grid inside cage ──
     final col0 = cx - 20.0; // left column
@@ -18108,7 +18353,7 @@ class _SunriseGloryPainter extends CustomPainter {
 
   static const _ringColors = [
     Color(0xFFF59E0B),
-    Color(0xFFD89A1E),
+    Color(0xFFFFC83D),
     Color(0xFFEF4444),
   ]; // SubhanAllah amber, Alhamdulillah emerald, Allahu Akbar ruby
   static const _ringLabels = ['سُبْحَان الله', 'الحَمْدُ لله', 'الله أَكْبَر'];
@@ -18418,7 +18663,7 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
     final textColor =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final accent =
-        widget.isComplete ? const Color(0xFFD89A1E) : widget.accentColor;
+        widget.isComplete ? const Color(0xFFFFC83D) : widget.accentColor;
 
     return AnimatedBuilder(
       animation: _ctrl,
@@ -18685,7 +18930,7 @@ class _TenSalawatPainter extends CustomPainter {
   final List<_Particle> particles;
   final bool isComplete;
   final int pointsToday;
-  static const _crescentColor = Color(0xFFD89A1E);
+  static const _crescentColor = Color(0xFFFFC83D);
   static const _domeColor = Color(0xFFD4AF37);
   static const _beamColor = Color(0xFFFFC83D);
 
@@ -19971,7 +20216,7 @@ class _CosmicWeightPainter extends CustomPainter {
 
   static const _phraseColors = [
     Color(0xFFD4AF37),
-    Color(0xFFD89A1E),
+    Color(0xFFFFC83D),
     Color(0xFF3B82F6),
     Color(0xFF8B5CF6),
   ]; // عدد خلقه, رضا نفسه, زنة عرشه, مداد كلماته
@@ -22392,7 +22637,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
                     gradient: RadialGradient(
                       colors: [
                         const Color(
-                          0xFFD89A1E,
+                          0xFFFFC83D,
                         ).withValues(alpha: 0.06 * _glow.value),
                         Colors.transparent,
                       ],
@@ -22420,7 +22665,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
                       painter: _ScaleIconPainter(
                         color: (isDark
                                 ? const Color(0xFFFFC83D)
-                                : const Color(0xFF7A5200))
+                                : const Color(0xFFFFC83D))
                             .withValues(
                               alpha: (0.20 + progress * 0.75).clamp(0.0, 1.0),
                             ),
@@ -22461,7 +22706,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
                         colors: [
                           Colors.transparent,
                           const Color(
-                            0xFFD89A1E,
+                            0xFFFFC83D,
                           ).withValues(alpha: _glow.value * 0.70),
                           Colors.transparent,
                         ],
@@ -22493,7 +22738,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
           Color.lerp(
             (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
                 .withValues(alpha: 0.35),
-            (isDark ? const Color(0xFFFFC83D) : const Color(0xFF7A5200))
+            (isDark ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D))
                 .withValues(alpha: 0.35),
             segP,
           )!;
@@ -22623,7 +22868,7 @@ class _BurdenDotPainter extends CustomPainter {
     for (int i = 0; i < _pts.length; i++) {
       final (rx, ry, r) = _pts[i];
       final tw = (math.sin((phase + i * 0.22) * math.pi * 2) * 0.5 + 0.5);
-      p.color = const Color(0xFFD89A1E).withValues(alpha: tw * 0.10);
+      p.color = const Color(0xFFFFC83D).withValues(alpha: tw * 0.10);
       canvas.drawCircle(Offset(rx * size.width, ry * size.height), r, p);
     }
   }
@@ -22832,7 +23077,7 @@ class _QuranCompletePainter extends CustomPainter {
             ..shader = SweepGradient(
               startAngle: -math.pi / 2,
               endAngle: -math.pi / 2 + 2 * math.pi * progress,
-              colors: const [Color(0xFFFFC83D), Color(0xFF7A5200)],
+              colors: const [Color(0xFFFFC83D), Color(0xFFFFC83D)],
             ).createShader(
               Rect.fromCircle(center: Offset(cx, cy - 12), radius: arcRadius),
             );
@@ -22878,7 +23123,7 @@ class _QuranCompletePainter extends CustomPainter {
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFFFFC83D).withValues(alpha: 0.88),
-            const Color(0xFFD89A1E).withValues(alpha: 0.88),
+            const Color(0xFFFFC83D).withValues(alpha: 0.88),
           ],
         ).createShader(Rect.fromLTWH(-bW / 2, bTop, bW / 2, bH)),
     );
@@ -23579,8 +23824,8 @@ class _DhikrCounterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
-    final teal = const Color(0xFFD89A1E);
-    final green = const Color(0xFFD89A1E);
+    final teal = const Color(0xFFFFC83D);
+    final green = const Color(0xFFFFC83D);
 
     // Responsive sizing based on screen width
     final sw = MediaQuery.of(context).size.width;
