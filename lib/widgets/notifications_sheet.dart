@@ -36,7 +36,7 @@ class _NotificationsSheet extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Y4.cream, Y4.bg, Y4.honey.withValues(alpha: 0.20)],
+                colors: [Y4.cream, Y4.bg, Y4.bg],
               ),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(28),
@@ -70,7 +70,7 @@ class _NotificationsSheet extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Y4.honeyDeep.withValues(alpha: 0.40),
+                            color: Y4.honeyDeep.withValues(alpha: 0.70),
                           ),
                         ),
                         child: const Icon(
@@ -495,10 +495,10 @@ class _NotificationTile extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Y4.butter, _accent.withValues(alpha: 0.30)],
+                    colors: [Y4.butter, _accent.withValues(alpha: 0.80)],
                   ),
                   shape: BoxShape.circle,
-                  border: Border.all(color: _accent.withValues(alpha: 0.40)),
+                  border: Border.all(color: _accent.withValues(alpha: 0.80)),
                 ),
                 child: Center(
                   child: Text(

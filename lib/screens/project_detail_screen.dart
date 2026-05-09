@@ -158,7 +158,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     final pct = ((current / target) * 100).toStringAsFixed(0);
     return '🤲 Support "$title"\n\n'
         'Organised by $sponsor\n\n'
-        '$pct% funded so far — every point counts!\n\n'
+        'Funded so far — every point counts!\n\n'
         'Open Noor Rewards app to donate your points and earn reward.\n'
         '#NoorRewards #Sadaqah #IslamicCharity';
   }
@@ -311,7 +311,6 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
 
     // TODO: fetch actual user contribution, mock for now
     final userPoints = 0;
-    final userPct = target > 0 ? (userPoints / target) * 100 : 0.0;
 
     return Scaffold(
       backgroundColor: Colors.white,

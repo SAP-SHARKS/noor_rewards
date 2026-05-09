@@ -21,6 +21,7 @@ class NoorLiveNotificationService {
   // SharedPreferences keys (auto-reset at midnight)
   static const String _kAyahKey = 'noor_today_ayah';
   static const String _kDhikrKey = 'noor_today_dhikr';
+  static const String _kQuranTimeKey = 'noor_today_quran_sec';
   static const String _kDateKey = 'noor_stat_date';
 
   final _plugin = FlutterLocalNotificationsPlugin();
@@ -28,6 +29,8 @@ class NoorLiveNotificationService {
 
   int _ayahCount = 0;
   int _dhikrCount = 0;
+  int _quranTimeSec = 0;
+  DateTime? _quranScreenEnteredAt;
 
   // ── Init ───────────────────────────────────────────────────────────────────
   Future<void> init() async {
@@ -62,6 +65,24 @@ class NoorLiveNotificationService {
     await _refresh();
   }
 
+  /// Call when user enters Quran reader screen.
+  void enterQuranScreen() {
+    _quranScreenEnteredAt = DateTime.now();
+  }
+
+  /// Call when user leaves Quran reader screen — accumulates time.
+  Future<void> exitQuranScreen() async {
+    if (_quranScreenEnteredAt == null) return;
+    await _ensureInit();
+    await _maybeSyncDate();
+    final sec = DateTime.now().difference(_quranScreenEnteredAt!).inSeconds;
+    _quranScreenEnteredAt = null;
+    if (sec < 2) return;
+    _quranTimeSec += sec;
+    await _saveCounts();
+    await _refresh();
+  }
+
   /// Call after each Dhikr set is completed.
   Future<void> recordDhikr({int count = 1}) async {
     await _ensureInit();
@@ -79,14 +100,26 @@ class NoorLiveNotificationService {
   Future<void> _refresh() async {
     if (kIsWeb) return;
 
-    final ayahMsg =
-        _ayahCount == 0
-            ? 'No ayat read yet today'
-            : '$_ayahCount ayat read today 📖';
-    final dhikrMsg =
-        _dhikrCount == 0
-            ? 'No Dhikr yet today'
-            : '$_dhikrCount Dhikr completed today 📿';
+    final lines = <String>[];
+
+    // Quran line — combine ayah count + time into one line
+    if (_ayahCount > 0 && _quranTimeSec >= 60) {
+      lines.add('📖  $_ayahCount ayat · ${_formatTime(_quranTimeSec)} in Quran');
+    } else if (_ayahCount > 0) {
+      lines.add('📖  $_ayahCount ayat read today');
+    } else if (_quranTimeSec >= 60) {
+      lines.add('📖  ${_formatTime(_quranTimeSec)} browsing Quran');
+    }
+
+    // Dhikr line
+    if (_dhikrCount > 0) {
+      lines.add('📿  $_dhikrCount Dhikr completed today');
+    }
+
+    // Fallback if nothing tracked yet
+    if (lines.isEmpty) {
+      lines.add('Start your day with Quran & Dhikr');
+    }
 
     final ticker =
         _ayahCount > 0
@@ -97,25 +130,24 @@ class NoorLiveNotificationService {
       _channelId,
       _channelName,
       channelDescription: "Live today's Quran and Dhikr progress",
-      importance: Importance.low, // No sound/vibration on update
+      importance: Importance.low,
       priority: Priority.low,
-      ongoing: true, // Pinned — can't be swiped away
+      ongoing: true,
       autoCancel: false,
-      onlyAlertOnce: true, // Silent on repeat updates
+      onlyAlertOnce: true,
       ticker: ticker,
       styleInformation: BigTextStyleInformation(
-        '$ayahMsg\n$dhikrMsg',
+        lines.join('\n'),
         contentTitle: 'Your Noor Today ✨',
         summaryText: 'Tap to open Noor Rewards',
       ),
       color: const Color(0xFF6B4EBB),
     );
 
-    // v21: show() uses named params (id, title, body, notificationDetails)
     await _plugin.show(
       id: _notifId,
       title: 'Your Noor Today ✨',
-      body: '$ayahMsg  •  $dhikrMsg',
+      body: lines.join('  •  '),
       notificationDetails: NotificationDetails(android: androidDetails),
     );
   }
@@ -128,12 +160,15 @@ class NoorLiveNotificationService {
       if (savedDate != _todayStr()) {
         _ayahCount = 0;
         _dhikrCount = 0;
+        _quranTimeSec = 0;
         await prefs.setString(_kDateKey, _todayStr());
         await prefs.setInt(_kAyahKey, 0);
         await prefs.setInt(_kDhikrKey, 0);
+        await prefs.setInt(_kQuranTimeKey, 0);
       } else {
         _ayahCount = prefs.getInt(_kAyahKey) ?? 0;
         _dhikrCount = prefs.getInt(_kDhikrKey) ?? 0;
+        _quranTimeSec = prefs.getInt(_kQuranTimeKey) ?? 0;
       }
     } catch (_) {}
   }
@@ -143,6 +178,7 @@ class NoorLiveNotificationService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_kAyahKey, _ayahCount);
       await prefs.setInt(_kDhikrKey, _dhikrCount);
+      await prefs.setInt(_kQuranTimeKey, _quranTimeSec);
       await prefs.setString(_kDateKey, _todayStr());
     } catch (_) {}
   }
@@ -153,6 +189,13 @@ class NoorLiveNotificationService {
       final saved = prefs.getString(_kDateKey) ?? '';
       if (saved != _todayStr()) await _loadCounts();
     } catch (_) {}
+  }
+
+  String _formatTime(int sec) {
+    final h = sec ~/ 3600;
+    final m = (sec % 3600) ~/ 60;
+    if (h > 0) return '${h}h ${m}m';
+    return '${m}m';
   }
 
   String _todayStr() {

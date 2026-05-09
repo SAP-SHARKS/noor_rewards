@@ -387,6 +387,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _surah = widget.initialSurah;
     _ayah = widget.initialAyah;
     StatsService.instance.enterScreen('quran');
+    NoorLiveNotificationService.instance.enterQuranScreen();
     _init();
     // Configure audio session so other apps yield to us
     AudioSession.instance.then((session) {
@@ -445,6 +446,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     StatsService.instance.exitScreen();
+    NoorLiveNotificationService.instance.exitQuranScreen();
     // Persist position locally (instant) + remotely (fire-and-forget)
     _syncReadingPosition();
     _savePagePosition();

@@ -1129,7 +1129,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _QuickTile(
                         icon: Icons.shuffle_rounded,
-                        color: Y4.primaryDeep,
+                        color: Y4.honeyDeep,
                         label:
                             AppLocalizations.of(context)?.randomVerse ??
                             'Random Verse',
@@ -1150,7 +1150,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _QuickTile(
                         icon: Icons.water_drop_rounded,
-                        color: _kGold,
+                        color: Y4.honey,
                         label: 'Al-Fatihah',
                         onTap: () => _startReading(surah: 1, ayah: 1),
                       ),
