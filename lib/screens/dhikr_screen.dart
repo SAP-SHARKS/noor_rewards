@@ -17,6 +17,7 @@ import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../theme/y4_theme.dart';
+import '../services/stats_service.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont =
@@ -817,6 +818,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       NoorLiveNotificationService.instance.recordDhikr();
       // Record dhikr streak (idempotent — safe to call multiple times)
       StreakService.instance.recordActivity(StreakType.dhikr);
+      // Record stats for monthly tracking
+      StatsService.instance.recordDhikrActivity(count: target);
       if (_setsCompleted == 0)
         await XpService.instance.awardBadge('first_dhikr');
       if (_setsCompleted + 1 >= 7)
@@ -2262,6 +2265,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _playAllMode = widget.autoPlayAll;
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
+    StatsService.instance.enterScreen('dhikr');
     _playerSub = _audioPlayer.playerStateStream.listen((state) {
       if (mounted) setState(() {});
     });
@@ -2288,6 +2292,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
   @override
   void dispose() {
+    StatsService.instance.exitScreen();
     _playerSub?.cancel();
     _audioPlayer.dispose();
     _hideTimer?.cancel();

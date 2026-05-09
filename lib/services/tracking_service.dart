@@ -12,6 +12,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
+import 'stats_service.dart';
 
 class TrackingService {
   TrackingService._();
@@ -42,6 +43,9 @@ class TrackingService {
 
     final durationSec = DateTime.now().difference(_sessionStart!).inSeconds;
     _sessionStart = null;
+
+    // Flush any pending screen time before ending session
+    await StatsService.instance.exitScreen();
 
     try {
       // Accumulate session time into the existing row
