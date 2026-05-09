@@ -23,6 +23,7 @@ import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
 import '../services/streak_service.dart';
 import '../services/settings_service.dart';
+import '../services/stats_service.dart';
 import '../models/app_config.dart';
 import 'package:confetti/confetti.dart';
 import 'package:share_plus/share_plus.dart';
@@ -264,6 +265,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadHomeData() async {
     final uid = _supabase.auth.currentUser?.id;
     if (uid == null) return;
+    // Record daily active user (once per session)
+    StatsService.instance.recordDailyActive();
     try {
       final profile =
           await _supabase
@@ -3523,8 +3526,15 @@ class _MyDonationsSection extends StatelessWidget {
                 width: donations.length == 1 ? constraints.maxWidth : 320,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: Y4.primaryDeep,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Y4.ink.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -3550,7 +3560,7 @@ class _MyDonationsSection extends StatelessWidget {
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.honey,
+                                color: Y4.honeyDeep,
                                 letterSpacing: 1.6,
                               ),
                             ),
@@ -3560,7 +3570,7 @@ class _MyDonationsSection extends StatelessWidget {
                               (d['title'] ?? '').toString(),
                               style: Y4.display(
                                 fontSize: 20,
-                                color: Colors.white,
+                                color: Y4.ink,
                                 fontWeight: FontWeight.w400,
                                 height: 1.15,
                               ),
@@ -3576,10 +3586,10 @@ class _MyDonationsSection extends StatelessWidget {
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.white.withValues(alpha: 0.78),
+                                  color: Y4.inkSoft,
                                   height: 1.35,
                                 ),
-                                maxLines: 2,
+                                maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -3593,16 +3603,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.white.withValues(alpha: 0.85),
-                                  ),
-                                ),
-                                const Spacer(),
-                                Text(
-                                  '${(pct * 100).round()}%',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white.withValues(alpha: 0.85),
+                                    color: Y4.ink,
                                   ),
                                 ),
                               ],
@@ -3613,7 +3614,7 @@ class _MyDonationsSection extends StatelessWidget {
                               borderRadius: BorderRadius.circular(999),
                               child: Container(
                                 height: 6,
-                                color: Colors.white.withValues(alpha: 0.15),
+                                color: Y4.track,
                                 child: FractionallySizedBox(
                                   alignment: Alignment.centerLeft,
                                   widthFactor: pct,
@@ -3635,7 +3636,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 style: GoogleFonts.outfit(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: Y4.honey,
+                                  color: Y4.honeyDeep,
                                 ),
                               ),
                             ],
@@ -3685,7 +3686,7 @@ class _MyDonationsSection extends StatelessWidget {
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w800,
-                                      color: Y4.primaryDeep,
+                                      color: Y4.ink,
                                       letterSpacing: 0.2,
                                     ),
                                   ),
@@ -3723,7 +3724,7 @@ class _Y4DonateChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.transparent,
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.25),
+              color: Y4.border,
               width: 1.5,
             ),
             borderRadius: BorderRadius.circular(999),
@@ -3734,7 +3735,7 @@ class _Y4DonateChip extends StatelessWidget {
               style: GoogleFonts.outfit(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: Y4.ink,
               ),
             ),
           ),

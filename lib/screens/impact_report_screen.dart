@@ -12,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
 import '../services/xp_service.dart';
+import '../services/stats_service.dart';
 import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
@@ -75,6 +76,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
+
+  // Monthly stats
+  MonthlyStats? _currentMonth;
+  MonthlyStats? _previousMonth;
+  GlobalStats _globalStats = const GlobalStats();
 
   // Derived "Akhirah holdings" — symbolic estimates from activity data
 
@@ -148,6 +154,14 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       } catch (_) {
         _levelTitle = _fallbackTitle(_level);
       }
+    } catch (_) {}
+
+    // Load monthly stats (fire-and-forget, non-blocking)
+    try {
+      final comparison = await StatsService.instance.loadComparison();
+      _currentMonth = comparison.current;
+      _previousMonth = comparison.previous;
+      _globalStats = await StatsService.instance.loadGlobalStats();
     } catch (_) {}
 
     if (mounted) setState(() => _loading = false);
@@ -258,6 +272,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                           _buildHoldingsSection(),
                           const SizedBox(height: 24),
                           _buildActivityCard(),
+                          const SizedBox(height: 24),
+                          _buildMonthlyStatsCard(),
                           const SizedBox(height: 24),
                           _buildRewardsCard(),
                           const SizedBox(height: 30),
@@ -870,6 +886,175 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   );
 
   // ── Activity card (session time) ───────────────────────────────────────────
+  // ── Monthly stats card ──────────────────────────────────────────────────
+  Widget _buildMonthlyStatsCard() {
+    final cur = _currentMonth;
+    final prev = _previousMonth;
+
+    String delta(int current, int? previous) {
+      if (previous == null || previous == 0) return '';
+      final diff = current - previous;
+      if (diff == 0) return '';
+      return diff > 0 ? ' ↑${_fmt(diff)}' : ' ↓${_fmt(diff.abs())}';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _C.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _C.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Y4.honey.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.calendar_month_rounded,
+                  color: Y4.honeyDeep,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Your Month',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: _C.text,
+                    ),
+                  ),
+                  Text(
+                    'This month vs last month',
+                    style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Stats grid
+          Row(
+            children: [
+              Expanded(
+                child: _MonthStat(
+                  label: 'Ayahs Read',
+                  value: _fmt(cur?.ayahsRead ?? 0),
+                  delta: delta(cur?.ayahsRead ?? 0, prev?.ayahsRead),
+                  icon: Icons.menu_book_rounded,
+                  color: const Color(0xFF2BAE99),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _MonthStat(
+                  label: 'Dhikr Sets',
+                  value: _fmt(cur?.dhikrSets ?? 0),
+                  delta: delta(cur?.dhikrSets ?? 0, prev?.dhikrSets),
+                  icon: Icons.spa_rounded,
+                  color: const Color(0xFF6366F1),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _MonthStat(
+                  label: 'Quran Time',
+                  value: MonthlyStats.formatDuration(cur?.quranTimeSec ?? 0),
+                  delta: '',
+                  icon: Icons.timer_outlined,
+                  color: const Color(0xFFE67E22),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _MonthStat(
+                  label: 'Dhikr Time',
+                  value: MonthlyStats.formatDuration(cur?.dhikrTimeSec ?? 0),
+                  delta: '',
+                  icon: Icons.access_time_rounded,
+                  color: const Color(0xFF9B59B6),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _MonthStat(
+                  label: 'Active Days',
+                  value: '${cur?.activeDays ?? 0}',
+                  delta: delta(cur?.activeDays ?? 0, prev?.activeDays),
+                  icon: Icons.check_circle_outline_rounded,
+                  color: const Color(0xFF2D7A45),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _MonthStat(
+                  label: 'Total Points',
+                  value: _fmt(cur?.totalPoints ?? 0),
+                  delta: delta(cur?.totalPoints ?? 0, prev?.totalPoints),
+                  icon: Icons.star_rounded,
+                  color: Y4.honeyDeep,
+                ),
+              ),
+            ],
+          ),
+          // Community stat
+          if (_globalStats.todayReaders > 0 || _globalStats.todayActive > 0) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Y4.honey.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Y4.honey.withValues(alpha: 0.25)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.people_rounded, size: 16, color: Y4.honeyDeep),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${_globalStats.todayReaders} reading Quran today · ${_fmt(_globalStats.todayAyahs)} ayahs',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Y4.inkSoft,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildActivityCard() {
     final hours = _sessionSec ~/ 3600;
     final mins = (_sessionSec % 3600) ~/ 60;
@@ -1819,6 +2004,74 @@ class _DarkStat extends StatelessWidget {
       ),
     ],
   );
+}
+
+class _MonthStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final String delta;
+  final IconData icon;
+  final Color color;
+
+  const _MonthStat({
+    required this.label,
+    required this.value,
+    required this.delta,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isUp = delta.contains('↑');
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text(
+                value,
+                style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: color,
+                ),
+              ),
+              if (delta.isNotEmpty) ...[
+                const SizedBox(width: 4),
+                Text(
+                  delta,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: isUp ? const Color(0xFF2D7A45) : const Color(0xFFEF4444),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: GoogleFonts.outfit(
+              fontSize: 11,
+              color: Y4.inkSoft,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _DayBar extends StatelessWidget {

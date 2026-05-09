@@ -12,6 +12,7 @@ import '../services/xp_service.dart';
 import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
+import '../services/stats_service.dart';
 import '../services/quran_api_service.dart'; // Quran Foundation authenticated API
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
@@ -385,6 +386,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _surah = widget.initialSurah;
     _ayah = widget.initialAyah;
+    StatsService.instance.enterScreen('quran');
     _init();
     // Configure audio session so other apps yield to us
     AudioSession.instance.then((session) {
@@ -442,6 +444,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    StatsService.instance.exitScreen();
     // Persist position locally (instant) + remotely (fire-and-forget)
     _syncReadingPosition();
     _savePagePosition();
@@ -766,6 +769,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         NoorLiveNotificationService.instance.recordAyah();
         // Record quran streak (idempotent — only counts once per day)
         StreakService.instance.recordActivity(StreakType.quran);
+        // Record stats for monthly tracking
+        StatsService.instance.recordQuranActivity();
         // Award first-read badge on the very first ayah
         if (_ayahsToday == 1) {
           await XpService.instance.awardBadge('first_quran');
