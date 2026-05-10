@@ -241,7 +241,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   double _mushafFontSize = 32.0; // 16-48 (for full page mode)
   double _translationFontSize = 15.0; // 12-22
   int _quranScriptIdx = 0; // index into _kQuranScripts
-  bool _showTranslation = false; // show/hide translation block
+  bool _showTranslation = true; // show/hide translation block
   bool _showProgressCard = true; // show/hide daily progress card
   bool _showPointsBanner = true; // show/hide +points banner
   bool _showSurahBanner = true; // show/hide surah header banner

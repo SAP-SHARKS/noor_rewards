@@ -158,8 +158,8 @@ serve(async (req: Request) => {
         message: {
           token: token,
           notification: {
-            title: '🌙 Nightly Check-in',
-            body: "Don't forget to validate today's coins! Claim them now before they expire at midnight."
+            title: '🌙 Points expiring at midnight!',
+            body: "You have unclaimed points from today's deeds. Seal the Day now or they'll expire!"
           },
           android: {
             priority: 'high',

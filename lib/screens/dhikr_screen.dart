@@ -2317,26 +2317,31 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   }
 
   /// Sequential play-all loop — plays each azkar one by one.
+  /// Respects user swipes by always reading _currentIndex.
   Future<void> _runPlayAllLoop() async {
-    for (int i = _currentIndex; i < widget.azkars.length; i++) {
-      if (!_playAllMode || !mounted) break;
-
-      // Navigate to this azkar's page
-      if (i != _currentIndex) {
-        _isAdvancing = true;
-        await _pageController.animateToPage(
-          i,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-        );
-        await Future.delayed(const Duration(milliseconds: 300));
-        _isAdvancing = false;
-        if (!mounted || !_playAllMode) break;
-      }
+    while (_playAllMode && mounted) {
+      final i = _currentIndex;
+      if (i >= widget.azkars.length) break;
 
       final azkar = widget.azkars[i];
       final url = azkar.audioUrl;
-      if (url == null || url.isEmpty) continue; // skip azkar without audio
+
+      if (url == null || url.isEmpty) {
+        // Skip to next azkar without audio
+        if (i + 1 < widget.azkars.length) {
+          _isAdvancing = true;
+          await _pageController.animateToPage(
+            i + 1,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+          );
+          await Future.delayed(const Duration(milliseconds: 300));
+          _isAdvancing = false;
+        } else {
+          break; // end of list
+        }
+        continue;
+      }
 
       try {
         _currentlyLoadedAudio = url;
@@ -2355,8 +2360,24 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
       if (!mounted || !_playAllMode) break;
 
-      // Brief pause between tracks
+      // If user swiped during playback, continue from wherever they are now
+      if (_currentIndex != i) continue;
+
+      // Advance to next
+      final next = i + 1;
+      if (next >= widget.azkars.length) break;
+
       await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted || !_playAllMode) break;
+
+      _isAdvancing = true;
+      await _pageController.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+      await Future.delayed(const Duration(milliseconds: 300));
+      _isAdvancing = false;
     }
 
     // Done — end play-all mode
@@ -2379,8 +2400,10 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         final nextIndex = currentGlobalIndex + 1;
         if (nextIndex > 0 && nextIndex < widget.azkars.length) {
           // Let the user enjoy the completed illustration before auto-swiping
+          // Only advance if user is still on the same page (didn't swipe away)
           Future.delayed(const Duration(milliseconds: 2000), () {
             if (!mounted) return;
+            if (_currentIndex != currentGlobalIndex) return; // user already moved
             _pageController.animateToPage(
               nextIndex,
               duration: const Duration(milliseconds: 500),
@@ -2435,9 +2458,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final List<Color> gradColors =
                   (isMorning || isEvening)
                       ? [
-                        const Color(0xFFFFC83D),
-                        const Color(0xFFFFC83D),
-                        const Color(0xFFFFC83D),
+                        Y4.cream,
+                        Y4.bg,
+                        Y4.bg,
                       ]
                       : [appBarColor, appBarColor, appBarColor];
               return Container(
@@ -2589,8 +2612,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             controller: _pageController,
             onPageChanged: (nextIndex) {
               // Only stop audio if user manually swiped (not auto-advancing)
-              if (!_isAdvancing && _audioPlayer.playing) {
-                _audioPlayer.stop();
+              if (!_isAdvancing) {
+                if (_audioPlayer.playing) _audioPlayer.stop();
+                _currentlyLoadedAudio = null; // force reload on next play
               }
               if (mounted) {
                 setState(() {
@@ -3055,10 +3079,18 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             icon: isPlaying
                 ? Icons.pause_rounded
                 : Icons.play_arrow_rounded,
-            onTap: () {
+            onTap: () async {
               if (isPlaying) {
                 _audioPlayer.pause();
               } else {
+                // Check if we need to load the current azkar's audio
+                final current = widget.azkars[_currentIndex.clamp(0, widget.azkars.length - 1)];
+                final url = current.audioUrl;
+                if (url != null && url.isNotEmpty && _currentlyLoadedAudio != url) {
+                  _currentlyLoadedAudio = url;
+                  await _audioPlayer.stop();
+                  await _audioPlayer.setUrl(url);
+                }
                 _audioPlayer.play();
               }
             },
@@ -3129,9 +3161,9 @@ typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
 
 /// Scaffold bg color matching bottom gradient for each category
 Color _scaffoldBgForCategory(String cat) => switch (cat) {
-  'morning' => const Color(0xFFFFC83D),
-  'evening' => const Color(0xFFFFC83D),
-  _ => const Color(0xFFFFC83D),
+  'morning' => Y4.bg,
+  'evening' => Y4.bg,
+  _ => Y4.bg,
 };
 
 /// Timing info shown at top of azkar detail screen
@@ -3745,7 +3777,7 @@ class _AzkarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = settings.darkMode;
-    final kCardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final kCardBg = isDark ? const Color(0xFF1E1E1E) : Y4.bg;
     final kText =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
@@ -4016,7 +4048,7 @@ class _AzkarCard extends StatelessWidget {
               final List<Color> sectionGrad =
                   isDark
                       ? [const Color(0xFF1A1A1A), const Color(0xFF1E1E1E)]
-                      : [const Color(0xFFF1F5F9), const Color(0xFFE2E8F0)];
+                      : [Y4.bg, Y4.bg];
               final textColor =
                   isDark ? Colors.white.withValues(alpha: 0.85) : kText;
               final subColor =
@@ -4420,7 +4452,7 @@ String _pickIllustration(String rawId) {
 /// Returns the top gradient color of each illustration to fill behind the app bar.
 Color _illustrationTopColor(String azkarId, bool isDark) {
   if (isDark) return const Color(0xFF121212);
-  return const Color(0xFFF0F5F2);
+  return Y4.bg;
 }
 
 // =============================================================================
