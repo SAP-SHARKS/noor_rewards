@@ -155,6 +155,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadHomeData();
+    // Load pending points from yesterday (expires if not sealed)
+    XpService.instance.loadPending();
     // Claim daily login pts once per day (fire & forget)
     XpService.instance.claimDailyLogin();
     // Record login streak
@@ -262,11 +264,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (_) {}
   }
 
+  Future<void> _checkPendingReminder() async {
+    final pending = XpService.instance.pendingPoints;
+    if (pending <= 0) return;
+    final hour = DateTime.now().hour;
+    if (hour < 20) return; // Only after 8 PM
+
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    final lastReminder = prefs.getString('pending_reminder_date') ?? '';
+    if (lastReminder == today) return; // Already reminded today
+
+    await prefs.setString('pending_reminder_date', today);
+    NotificationCenter.instance.add(
+      kind: NoorNotifKind.validation,
+      title: 'Points expiring at midnight!',
+      body: 'You have $pending points pending. Seal the Day now or they expire!',
+      route: '/home',
+    );
+  }
+
   Future<void> _loadHomeData() async {
     final uid = _supabase.auth.currentUser?.id;
     if (uid == null) return;
     // Record daily active user (once per session)
     StatsService.instance.recordDailyActive();
+    // Evening reminder: if pending points exist and it's after 8 PM
+    _checkPendingReminder();
     try {
       final profile =
           await _supabase
@@ -1234,6 +1258,7 @@ class _HomeTabState extends State<_HomeTab> {
                   const SizedBox(height: 4),
                   _Y4HeroCard(
                     value: widget.noorPoints ?? 0,
+                    pendingPoints: XpService.instance.pendingPoints,
                     visitCount: widget.homeVisitCount,
                   ),
 
@@ -7580,8 +7605,9 @@ class _Y4SunArcPainter extends CustomPainter {
 /// (skipped per spec) + 5-plant garden floor.
 class _Y4HeroCard extends StatefulWidget {
   final int value;
+  final int pendingPoints;
   final int visitCount;
-  const _Y4HeroCard({required this.value, this.visitCount = 0});
+  const _Y4HeroCard({required this.value, this.pendingPoints = 0, this.visitCount = 0});
 
   @override
   State<_Y4HeroCard> createState() => _Y4HeroCardState();
@@ -7703,6 +7729,41 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                             color: Y4.inkSoft,
                           ),
                         ),
+                        if (widget.pendingPoints > 0) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Y4.honeyDeep.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Y4.honeyDeep.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.hourglass_bottom_rounded,
+                                  size: 14,
+                                  color: Y4.honeyDeep,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '+${widget.pendingPoints} pts pending — seal to keep',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Y4.honeyDeep,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

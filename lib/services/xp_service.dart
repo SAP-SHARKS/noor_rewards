@@ -2,6 +2,8 @@
 // Central service for points, levels, and badges.
 // All point-earning events in the app must call methods here.
 
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'settings_service.dart';
 import 'notification_center.dart';
@@ -87,29 +89,85 @@ class XpService {
 
   final _sb = Supabase.instance.client;
 
+  // ── Pending points (accumulate locally, flush on Seal the Day) ────────────
+  static const _kPendingPts = 'pending_points';
+  static const _kPendingDate = 'pending_date';
+
+  int _pendingPoints = 0;
+
+  /// Current pending (unvalidated) points for today.
+  int get pendingPoints => _pendingPoints;
+
+  /// Load pending points from SharedPreferences. Call once on app start.
+  Future<void> loadPending() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedDate = prefs.getString(_kPendingDate) ?? '';
+    if (savedDate != _todayStr()) {
+      // New day — any unvalidated points from yesterday are lost
+      _pendingPoints = 0;
+      await prefs.setInt(_kPendingPts, 0);
+      await prefs.setString(_kPendingDate, _todayStr());
+    } else {
+      _pendingPoints = prefs.getInt(_kPendingPts) ?? 0;
+    }
+  }
+
+  Future<void> _savePending() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kPendingPts, _pendingPoints);
+    await prefs.setString(_kPendingDate, _todayStr());
+  }
+
+  String _todayStr() {
+    final n = DateTime.now();
+    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')}';
+  }
+
   // ── Earn Points ──────────────────────────────────────────────────────────────
-  /// Awards [amount] points (multiplied by any active challenge multiplier) to
-  /// the current user. Returns new total points. Null if not logged in.
+  /// Accumulates [amount] points (with challenge multiplier) as pending.
+  /// Points are NOT committed to the server until the user seals the day.
   Future<int?> earnPoints(int amount) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return null;
     try {
-      // Apply active challenge multiplier if any
       final multiplier = await _getActiveMultiplier(uid);
       final effective = (amount * multiplier).round();
 
+      // Accumulate locally — do NOT call earn_xp yet
+      _pendingPoints += effective;
+      await _savePending();
+
+      return _pendingPoints;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Flush all pending points to the server via earn_xp RPC.
+  /// Called only by claimValidate() when user seals the day.
+  Future<int?> _flushPendingToServer() async {
+    if (_pendingPoints <= 0) return null;
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return null;
+
+    final toFlush = _pendingPoints;
+    try {
       final result = await _sb.rpc(
         'earn_xp',
-        params: {'p_user_id': uid, 'p_amount': effective},
+        params: {'p_user_id': uid, 'p_amount': toFlush},
       );
       final newPts = result as int?;
 
-      // Check and auto-award milestone badges
+      // Reset pending
+      _pendingPoints = 0;
+      await _savePending();
+
       if (newPts != null) {
         _checkMilestoneBadges(uid, newPts);
       }
       return newPts;
     } catch (e) {
+      debugPrint('XpService._flushPendingToServer error: $e');
       return null;
     }
   }
@@ -250,18 +308,25 @@ class XpService {
 
       if ((existing as List).isNotEmpty) return false;
 
+      // Add validation bonus to pending before flushing
+      final bonus = PointReward.validate;
+      _pendingPoints += bonus;
+
+      // Flush ALL pending points (earned today + validation bonus) to server
+      final flushed = _pendingPoints;
+      await _flushPendingToServer();
+
+      // Record the validation activity
       await _sb.from('user_activities').insert({
         'user_id': uid,
         'activity_type': 'validate',
-        'points_earned': PointReward.validate,
+        'points_earned': flushed,
       });
 
-      await earnPoints(PointReward.validate);
-      // ── In-app notification: validation seal earned
       NotificationCenter.instance.add(
         kind: NoorNotifKind.validation,
         title: 'Day sealed 🌙',
-        body: '+${PointReward.validate} Noor Points for sealing today.',
+        body: '+$flushed Noor Points confirmed! ($bonus bonus for sealing)',
         route: '/home',
       );
       return true;
