@@ -413,34 +413,36 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (!_fullPageMode) return;
-
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden) {
-      // Stop the physical timer but DO NOT touch _timerShouldRun.
-      // _timerShouldRun is user intent — only explicit play/pause changes it.
-      // If we wrote it here, any intermediate paused event (e.g. lock screen
-      // transition on some Android versions) would destroy the intent.
-      if (_pageTimer != null) {
-        _stopPageTimer();
-        if (mounted) setState(() {});
+      // Pause reading-time trackers so background time isn't counted
+      NoorLiveNotificationService.instance.pauseQuranTimer();
+      StatsService.instance.pauseScreenTimer();
+
+      if (_fullPageMode) {
+        if (_pageTimer != null) {
+          _stopPageTimer();
+          if (mounted) setState(() {});
+        }
       }
     } else if (state == AppLifecycleState.resumed) {
-      // Screen is back. Restart physical timer if user wanted it running.
-      // _timerShouldRun was never cleared by paused, so it reliably holds
-      // whatever the user last chose — even through multiple lock/unlock cycles.
-      if (_timerShouldRun && _pageTimer == null) {
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted &&
-              _fullPageMode &&
-              _timerShouldRun &&
-              _pageTimer == null) {
-            _resumePageTimer();
-          }
-        });
+      // Resume reading-time trackers
+      NoorLiveNotificationService.instance.resumeQuranTimer();
+      StatsService.instance.resumeScreenTimer();
+
+      if (_fullPageMode) {
+        if (_timerShouldRun && _pageTimer == null) {
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted &&
+                _fullPageMode &&
+                _timerShouldRun &&
+                _pageTimer == null) {
+              _resumePageTimer();
+            }
+          });
+        }
       }
     }
-    // `inactive` intentionally ignored.
   }
 
   @override

@@ -115,6 +115,35 @@ class StatsService {
     _screenEnteredAt = DateTime.now();
   }
 
+  /// Call when app goes to background — flush accumulated time, pause tracking.
+  Future<void> pauseScreenTimer() async {
+    if (_currentScreen == null || _screenEnteredAt == null) return;
+    final duration = DateTime.now().difference(_screenEnteredAt!).inSeconds;
+    _screenEnteredAt = null; // pause
+
+    if (duration < 2) return;
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return;
+
+    try {
+      await _sb.rpc('record_activity_stats', params: {
+        'p_user_id': uid,
+        'p_type': _currentScreen!,
+        'p_count': 0,
+        'p_duration_sec': duration,
+      });
+    } catch (e) {
+      debugPrint('StatsService.pauseScreenTimer error: $e');
+    }
+  }
+
+  /// Call when app resumes from background — restart time counting.
+  void resumeScreenTimer() {
+    if (_currentScreen != null) {
+      _screenEnteredAt = DateTime.now();
+    }
+  }
+
   /// Call in dispose — computes duration and flushes to DB.
   Future<void> exitScreen() async {
     if (_currentScreen == null || _screenEnteredAt == null) return;

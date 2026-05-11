@@ -83,6 +83,26 @@ class NoorLiveNotificationService {
     await _refresh();
   }
 
+  /// Call when app goes to background — pause time accumulation.
+  Future<void> pauseQuranTimer() async {
+    if (_quranScreenEnteredAt == null) return;
+    final sec = DateTime.now().difference(_quranScreenEnteredAt!).inSeconds;
+    _quranScreenEnteredAt = null; // stop counting
+    if (sec < 2) return;
+    await _ensureInit();
+    await _maybeSyncDate();
+    _quranTimeSec += sec;
+    await _saveCounts();
+    await _refresh();
+  }
+
+  /// Call when app resumes from background — restart time counting.
+  void resumeQuranTimer() {
+    // Only restart if we were tracking before (enterQuranScreen was called)
+    // The caller should guard this — only call if Quran screen is active
+    _quranScreenEnteredAt = DateTime.now();
+  }
+
   /// Call after each Dhikr set is completed.
   Future<void> recordDhikr({int count = 1}) async {
     await _ensureInit();
