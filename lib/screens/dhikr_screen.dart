@@ -3616,7 +3616,10 @@ Widget _buildRichHadithText(
     r'|\bunder\s+the\s+(?:shade|shadow|protection)\s+of\b'
     r'|\bfreed?\s+from\s+the\s+(?:Fire|Hellfire|Hell)\b'
     r'|\benter(?:s|ed)?\s+(?:Paradise|Jannah)\b'
+    r'|\bmy\s+intercession\s+will\s+reach\s+him\s+on\s+the\s+Day\s+of\s+Judg(?:e)?ment\b'
     r'|\bintercession\b'
+    r'|\bDay\s+of\s+Judg(?:e)?ment\b'
+    r'|\bDay\s+of\s+Resurrection\b'
     r'|\bsaved?\s+from\s+the\s+(?:Fire|punishment|torment|Hell)\b'
     r'|\bcounted\s+among\s+those\b'
     r'|\bshade\s+of\s+(?:the\s+)?(?:Throne|His\s+Throne|Allah)\b'
@@ -3749,6 +3752,114 @@ Widget _buildRichHadithText(
 // ─────────────────────────────────────────────────────────────────────────────
 // Beautiful Display Card for Azkaar
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Reward Counters — floating overlay showing hasanaat, sins, slaves
+// ─────────────────────────────────────────────────────────────────────────────
+class _RewardCounters extends StatelessWidget {
+  final int tapCount;
+  final int pointsToday;
+
+  const _RewardCounters({required this.tapCount, required this.pointsToday});
+
+  @override
+  Widget build(BuildContext context) {
+    // Hadith-based rewards per tap:
+    // - Hasanaat: 10 per good deed (Sahih Muslim 131)
+    // - Sins removed: 1 per dhikr rep (SubhanAllahi wa bihamdihi — Bukhari 6405)
+    // - Slaves freed: 1 per 10 reps of La ilaha illallah (Bukhari 6403)
+    final hasanaat = tapCount * 10;
+    final sinsRemoved = tapCount;
+    final slavesFreed = tapCount ~/ 10;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Reward pills on the left
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _rewardPill(
+              icon: Icons.star_rounded,
+              value: '+$hasanaat',
+              color: const Color(0xFFD4AF37),
+            ),
+            const SizedBox(width: 6),
+            _rewardPill(
+              icon: Icons.remove_circle_outline_rounded,
+              value: '-$sinsRemoved',
+              color: const Color(0xFF2BAE99),
+            ),
+            if (slavesFreed > 0) ...[
+              const SizedBox(width: 6),
+              _rewardPill(
+                icon: Icons.broken_image_outlined,
+                value: '$slavesFreed',
+                color: const Color(0xFF9B59B6),
+              ),
+            ],
+          ],
+        ),
+        // Points badge on the right
+        if (pointsToday > 0)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFD4AF37).withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color(0xFFD4AF37).withValues(alpha: 0.55),
+                width: 1.2,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.star_rounded, size: 11, color: Color(0xFFB8860B)),
+                const SizedBox(width: 3),
+                Text(
+                  '+$pointsToday pts',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF92620A),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _rewardPill({
+    required IconData icon,
+    required String value,
+    required Color color,
+  }) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.15),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: color),
+        const SizedBox(width: 3),
+        Text(
+          value,
+          style: GoogleFonts.outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 class _AzkarCard extends StatelessWidget {
   final _Azkar azkar;
   final int currentCount;
@@ -3885,9 +3996,7 @@ class _AzkarCard extends StatelessWidget {
                         color: const Color(0xFFD4AF37).withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(
-                            0xFFD4AF37,
-                          ).withValues(alpha: 0.55),
+                          color: const Color(0xFFD4AF37).withValues(alpha: 0.55),
                           width: 1.2,
                         ),
                       ),
@@ -3897,9 +4006,7 @@ class _AzkarCard extends StatelessWidget {
                           Icon(
                             Icons.star_rounded,
                             size: 12,
-                            color: const Color(
-                              0xFFB8860B,
-                            ).withValues(alpha: 0.90),
+                            color: const Color(0xFFB8860B).withValues(alpha: 0.90),
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -4096,11 +4203,68 @@ class _AzkarCard extends StatelessWidget {
                       ],
                     ),
 
-                    // ── Virtue/Benefit title ──
-                    // (Removed as per user request to declutter the UI)
+                    // ── Benefit/Reward text ──
+                    if (cleanReward.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Builder(builder: (_) {
+                        // Highlight key phrases
+                        const highlights = [
+                          'Day of Judgment',
+                          'Day of Resurrection',
+                          'Jannah',
+                          'Paradise',
+                          'Hellfire',
+                          'forgiven',
+                          'protection',
+                        ];
+                        String? match;
+                        for (final h in highlights) {
+                          if (cleanReward.contains(h)) { match = h; break; }
+                        }
+                        if (match != null) {
+                          final idx = cleanReward.indexOf(match);
+                          final before = cleanReward.substring(0, idx);
+                          final after = cleanReward.substring(idx + match.length);
+                          return RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.lora(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: textColor,
+                                height: 1.5,
+                              ),
+                              children: [
+                                TextSpan(text: before),
+                                TextSpan(
+                                  text: match,
+                                  style: GoogleFonts.lora(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w800,
+                                    color: labelColor,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                TextSpan(text: after),
+                              ],
+                            ),
+                          );
+                        }
+                        return Text(
+                          cleanReward,
+                          style: GoogleFonts.lora(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                            height: 1.5,
+                          ),
+                        );
+                      }),
+                    ],
 
-                    // ── Hadith text ──
-                    if (azkar.hadithFull.isNotEmpty) ...[
+                    // ── Hadith text (skip for azkar where reward already covers it) ──
+                    if (azkar.hadithFull.isNotEmpty &&
+                        azkar.id != 'morning_4' && azkar.id != 'morning_5' &&
+                        azkar.id != 'evening_4' && azkar.id != 'evening_5') ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Container(height: 0.5, color: dividerColor),
@@ -4226,8 +4390,8 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_2' || id == 'evening_2') return 'baqarah_shield';
   // Ayat al-Kursi
   if (id == 'morning_3' || id == 'evening_3') return 'shield';
-  if (id == 'morning_4' || id == 'evening_4') return 'baqarah_close';
-  if (id == 'morning_5' || id == 'evening_5') return 'baqarah_close';
+  if (id == 'morning_4' || id == 'evening_4') return 'dua_scene';
+  if (id == 'morning_5' || id == 'evening_5') return 'dua_scene';
   if (id == 'morning_6' || id == 'evening_6') return 'night_peace';
   // Last verses of Baqarah — protection from evils
   if (id == 'morning_7' || id == 'evening_7') return 'repelling';
@@ -4945,6 +5109,7 @@ Widget _buildIllustration({
         tapCount: tapCount,
         pointsToday: pointsToday,
         benefitText: 'My intercession will reach him on the Day of Judgment',
+        highlightPhrase: 'Day of Judgment',
         subtitle: 'At-Tabarani, Sahih Al-Jaami 6357',
         completedSubtitle: 'May you receive his \uFDFA intercession',
         accentColor: const Color(0xFFEC4899),
@@ -5142,7 +5307,7 @@ String _pickTagline(String id) {
       id == 'morning_5' ||
       id == 'evening_4' ||
       id == 'evening_5')
-    return 'They are enough for you - recite before sleep';
+    return '';
   if (id == 'morning_6' || id == 'evening_6')
     return 'Reading last 2 verses of al-Baqarah will suffice you';
   if (id == 'morning_8' || id == 'evening_8')
@@ -5201,7 +5366,9 @@ String _pickTagline(String id) {
 
 /// Per-illustration tagline color — distinct for each category, always readable.
 Color _pickTaglineColor(String id, bool isDark) {
-  return isDark ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D);
+  // Dark mode: bright honey for contrast on dark bg
+  // Light mode: warm brown-gold — readable on cream/white cards
+  return isDark ? const Color(0xFFFFC83D) : const Color(0xFF8B6914);
 }
 
 /// Arabic calligraphy text style used inside illustration canvases.
@@ -15494,7 +15661,7 @@ class _SevenPillarsState extends State<_SevenPillars>
     final double fontSize;
 
     if (isHighlight || isComplete) {
-      textColor = const Color(0xFFFFD700);
+      textColor = isDark ? const Color(0xFFFFD700) : const Color(0xFF2A2410);
       fontSize = isBig ? 20 : 17;
     } else if (lineIndex == 0) {
       textColor =
@@ -15506,7 +15673,7 @@ class _SevenPillarsState extends State<_SevenPillars>
       textColor =
           isDark
               ? Colors.white.withValues(alpha: lineProgress * 0.85)
-              : const Color(0xFFFFC83D).withValues(alpha: lineProgress * 0.85);
+              : const Color(0xFF2A2410).withValues(alpha: lineProgress * 0.85);
       fontSize = isBig ? 19 : 15;
     }
 
@@ -17549,11 +17716,16 @@ class _OceanOfForgivenessPainter extends CustomPainter {
     }
   }
 
-  /// Foam particles representing sins — dissolve as progress increases
+  /// Foam particles representing sins — only fully dissolve at 100% completion
   void _drawFoam(Canvas canvas, double cx, double cy, double w, double h) {
     final horizonY = cy + 10;
     final foamCount = 25;
-    final remainingFoam = ((1.0 - progress) * foamCount).round();
+    // Foam stays mostly intact until near completion:
+    // 0-80% progress → all 25 foam blobs remain
+    // 80-100% progress → foam starts dissolving
+    // 100% → all foam gone
+    final dissolveProgress = ((progress - 0.8) / 0.2).clamp(0.0, 1.0);
+    final remainingFoam = ((1.0 - dissolveProgress) * foamCount).round();
 
     for (int i = 0; i < foamCount; i++) {
       final rng = math.Random(i * 997);
@@ -17563,7 +17735,7 @@ class _OceanOfForgivenessPainter extends CustomPainter {
 
       if (i >= remainingFoam) {
         // Foam dissolved — rises as white light (sin forgiven)
-        final riseT = ((progress - i / foamCount) * foamCount).clamp(0.0, 1.0);
+        final riseT = ((dissolveProgress - i / foamCount) * foamCount).clamp(0.0, 1.0);
         if (riseT < 0.01 || riseT > 0.95) continue;
 
         final riseY = baseY - riseT * 60;
@@ -17818,24 +17990,126 @@ class _UnparalleledScalesState extends State<_UnparalleledScales>
         _shockCtrl,
         _rainCtrl,
       ]),
-      builder:
-          (_, __) => SizedBox(
-            height: 290,
-            child: CustomPaint(
-              painter: _UnparalleledScalesPainter(
-                progress: _grow.value,
-                pulse: _pulse.value,
-                starPhase: _starCtrl.value,
-                particlePhase: _pAnim.value,
-                particles: _particles,
-                isComplete: widget.isComplete,
-                pointsToday: widget.pointsToday,
-                punchScale: _punch.value,
-                shockPhase: _shock.value,
-                rainPhase: _rainCtrl.value,
+      builder: (_, __) {
+        final taps = widget.tapCount;
+        // Rewards scale proportionally: reach max only at 100 taps (full completion)
+        final hasanaat = (taps * 100 ~/ 100).clamp(0, 100);   // +1 per tap, max 100
+        final sinsRemoved = (taps * 100 ~/ 100).clamp(0, 100); // +1 per tap, max 100
+        final slavesFreed = (taps * 10 ~/ 100).clamp(0, 10);   // +1 per 10 taps, max 10
+
+        return SizedBox(
+          height: 290,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  const Color(0xFFFFF8E7),
+                  const Color(0xFFFFF4D2).withValues(alpha: 0.6),
+                ],
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _ScalesBigCounter(
+                    icon: Icons.auto_awesome_rounded,
+                    value: hasanaat,
+                    maxValue: 100,
+                    label: 'Hasanaat',
+                    prefix: '+',
+                    color: const Color(0xFFD4AF37),
+                  ),
+                  const SizedBox(height: 20),
+                  _ScalesBigCounter(
+                    icon: Icons.water_drop_outlined,
+                    value: sinsRemoved,
+                    maxValue: 100,
+                    label: 'Sins Washed Away',
+                    prefix: '-',
+                    color: const Color(0xFF2BAE99),
+                  ),
+                  const SizedBox(height: 20),
+                  _ScalesBigCounter(
+                    icon: Icons.diversity_1_rounded,
+                    value: slavesFreed,
+                    maxValue: 10,
+                    label: 'Slaves Freed',
+                    prefix: '',
+                    color: const Color(0xFF9B59B6),
+                  ),
+                ],
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class _ScalesBigCounter extends StatelessWidget {
+  final IconData icon;
+  final int value;
+  final int maxValue;
+  final String label;
+  final String prefix;
+  final Color color;
+
+  const _ScalesBigCounter({
+    required this.icon,
+    required this.value,
+    required this.maxValue,
+    required this.label,
+    required this.prefix,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final clamped = value.clamp(0, maxValue);
+    return SizedBox(
+      width: 180,
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 24, color: color),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$prefix$clamped',
+                  style: GoogleFonts.rajdhani(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                    height: 1.0,
+                  ),
+                ),
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Y4.inkSoft,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -18665,6 +18939,7 @@ class _BenefitTextIllustration extends StatefulWidget {
   final int tapCount;
   final int pointsToday;
   final String benefitText;
+  final String? highlightPhrase;
   final String subtitle;
   final String completedSubtitle;
   final Color accentColor;
@@ -18674,6 +18949,7 @@ class _BenefitTextIllustration extends StatefulWidget {
     required this.tapCount,
     required this.pointsToday,
     required this.benefitText,
+    this.highlightPhrase,
     this.subtitle = '',
     this.completedSubtitle = '',
     required this.accentColor,
@@ -18763,19 +19039,51 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
                       ),
                       const SizedBox(height: 10),
                       // Benefit text
-                      Text(
-                        widget.isComplete
-                            ? 'MashaAllah! Reward Secured'
-                            : widget.benefitText,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.lora(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: textColor,
-                          height: 1.35,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
+                      if (widget.isComplete || widget.highlightPhrase == null || !widget.benefitText.contains(widget.highlightPhrase!))
+                        Text(
+                          widget.isComplete
+                              ? 'MashaAllah! Reward Secured'
+                              : widget.benefitText,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lora(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                            height: 1.35,
+                            letterSpacing: -0.3,
+                          ),
+                        )
+                      else
+                        Builder(builder: (_) {
+                          final phrase = widget.highlightPhrase!;
+                          final idx = widget.benefitText.indexOf(phrase);
+                          final before = widget.benefitText.substring(0, idx);
+                          final after = widget.benefitText.substring(idx + phrase.length);
+                          final baseStyle = GoogleFonts.lora(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                            height: 1.35,
+                            letterSpacing: -0.3,
+                          );
+                          return RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: baseStyle,
+                              children: [
+                                TextSpan(text: before),
+                                TextSpan(
+                                  text: phrase,
+                                  style: baseStyle.copyWith(
+                                    color: accent,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                TextSpan(text: after),
+                              ],
+                            ),
+                          );
+                        }),
                       const SizedBox(height: 8),
                       // Subtitle
                       Text(
@@ -21716,6 +22024,7 @@ class _EveningSovereigntyState extends State<_EveningSovereignty>
         _revealCtrl,
       ]),
       builder: (context, _) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         final pulse = _pulseCtrl.value;
         final star = _starCtrl.value;
         final reveal = _revealCtrl.value;
@@ -21751,7 +22060,7 @@ class _EveningSovereigntyState extends State<_EveningSovereignty>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (int i = 0; i < segments.length; i++) ...[
-                      _buildLine(segments[i], reveal, i, segments.length),
+                      _buildLine(segments[i], reveal, i, segments.length, isDark),
                       if (i < segments.length - 1) const SizedBox(height: 4),
                     ],
                   ],
@@ -21769,10 +22078,11 @@ class _EveningSovereigntyState extends State<_EveningSovereignty>
     double reveal,
     int idx,
     int total,
+    bool isDark,
   ) {
     final segReveal = ((reveal - (idx / total) * 0.55) / 0.45).clamp(0.0, 1.0);
-    final accent = const Color(0xFFD4AF37);
-    final bodyColor = const Color(0xFFB8C8D8);
+    final accent = isDark ? const Color(0xFFD4AF37) : const Color(0xFF2A2410);
+    final bodyColor = isDark ? const Color(0xFFB8C8D8) : const Color(0xFF1E293B);
 
     return AnimatedOpacity(
       opacity: segReveal.clamp(0.0, 1.0),
