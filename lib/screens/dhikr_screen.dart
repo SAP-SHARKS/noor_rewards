@@ -820,6 +820,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
       StreakService.instance.recordActivity(StreakType.dhikr);
       // Record stats for monthly tracking
       StatsService.instance.recordDhikrActivity(count: target);
+      // Record per-phrase lifetime count so Akhirah holdings
+      // (Treasures of Jannah, Slaves Freed, etc.) can be derived
+      // from the actual phrases recited.
+      StatsService.instance.recordDhikrPhrase(dhikrId, count: target);
       if (_setsCompleted == 0)
         await XpService.instance.awardBadge('first_dhikr');
       if (_setsCompleted + 1 >= 7)
@@ -18000,16 +18004,7 @@ class _UnparalleledScalesState extends State<_UnparalleledScales>
         return SizedBox(
           height: 290,
           child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFFFFF8E7),
-                  const Color(0xFFFFF4D2).withValues(alpha: 0.6),
-                ],
-              ),
-            ),
+            color: Colors.white,
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
