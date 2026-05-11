@@ -105,6 +105,44 @@ class StatsService {
   String? _currentScreen; // 'quran' | 'dhikr'
   bool _globalActiveRecordedThisSession = false;
 
+  // ── In-memory caches for instant Akhirah-tab reflection ─────────────────
+  // Each recordDhikr*/recordQuran* call bumps these synchronously, so the
+  // Akhirah holdings reflect the change before the RPC has committed.
+  // Caches are keyed by user id; switching users clears them.
+  String? _cachedUid;
+  final Map<String, int> _phraseCache = {};
+  int _cachedLifetimeAyahs = 0;
+  int _cachedLifetimeDhikr = 0;
+  int _cachedLifetimeDhikrSets = 0;
+
+  /// Increments any time the cached counts change. UI surfaces (e.g. the
+  /// Akhirah holdings screen) listen to this so they refresh the moment
+  /// a new dhikr is recorded — even while they're mounted offstage in an
+  /// IndexedStack.
+  final ValueNotifier<int> revision = ValueNotifier<int>(0);
+
+  // Read-only snapshots of the cache for UI consumers.
+  Map<String, int> get phraseCountsSnapshot => Map.unmodifiable(_phraseCache);
+  int get lifetimeAyahsSnapshot => _cachedLifetimeAyahs;
+  int get lifetimeDhikrSnapshot => _cachedLifetimeDhikr;
+  int get lifetimeDhikrSetsSnapshot => _cachedLifetimeDhikrSets;
+
+  void _ensureCacheFor(String? uid) {
+    if (uid == null) return;
+    if (_cachedUid != uid) {
+      _cachedUid = uid;
+      _phraseCache.clear();
+      _cachedLifetimeAyahs = 0;
+      _cachedLifetimeDhikr = 0;
+      _cachedLifetimeDhikrSets = 0;
+      revision.value++;
+    }
+  }
+
+  void _bumpRevision() {
+    revision.value++;
+  }
+
   /// Call in initState of Quran reader or Dhikr detail screen.
   void enterScreen(String screenType) {
     // Flush any previous unfinished screen time
@@ -176,6 +214,11 @@ class StatsService {
   Future<void> recordQuranActivity({int ayahs = 1}) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
+    _ensureCacheFor(uid);
+    if (ayahs > 0) {
+      _cachedLifetimeAyahs += ayahs;
+      _bumpRevision();
+    }
 
     try {
       await _sb.rpc('record_activity_stats', params: {
@@ -193,6 +236,12 @@ class StatsService {
   Future<void> recordDhikrActivity({int count = 1}) async {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
+    _ensureCacheFor(uid);
+    if (count > 0) {
+      _cachedLifetimeDhikr += count;
+      _cachedLifetimeDhikrSets += 1;
+      _bumpRevision();
+    }
 
     try {
       await _sb.rpc('record_activity_stats', params: {
@@ -204,6 +253,109 @@ class StatsService {
     } catch (e) {
       debugPrint('StatsService.recordDhikrActivity error: $e');
     }
+  }
+
+  /// Record which phrase the user just recited and how many times.
+  /// Powers the Akhirah holdings that depend on specific phrases
+  /// (Treasures of Jannah ← La hawla; Slaves Freed ← La ilaha illallahu
+  /// wahdahu la sharika lahu; etc.). Safe to call even if the RPC is
+  /// not yet deployed — failures are swallowed.
+  Future<void> recordDhikrPhrase(String phraseId, {int count = 1}) async {
+    if (phraseId.isEmpty || count <= 0) return;
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return;
+    _ensureCacheFor(uid);
+    // Optimistic local bump — Akhirah tab sees this immediately even if the
+    // RPC is still in flight.
+    _phraseCache[phraseId] = (_phraseCache[phraseId] ?? 0) + count;
+    _bumpRevision();
+
+    try {
+      await _sb.rpc('record_dhikr_phrase', params: {
+        'p_user_id': uid,
+        'p_phrase_id': phraseId,
+        'p_count': count,
+      });
+    } catch (e) {
+      debugPrint('StatsService.recordDhikrPhrase error: $e');
+    }
+  }
+
+  /// Load per-phrase lifetime counts for the current user.
+  /// Returns the cache merged with the server (taking the max per phrase),
+  /// so values from in-flight RPCs aren't lost.
+  Future<Map<String, int>> loadPhraseCounts() async {
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return const {};
+    _ensureCacheFor(uid);
+
+    try {
+      final rows = await _sb.rpc(
+        'get_user_phrase_counts',
+        params: {'p_user_id': uid},
+      ) as List;
+      var changed = false;
+      for (final row in rows) {
+        final m = row as Map<String, dynamic>;
+        final id = m['phrase_id'] as String?;
+        final serverCount = (m['count'] as num?)?.toInt() ?? 0;
+        if (id == null) continue;
+        final cached = _phraseCache[id] ?? 0;
+        final merged = cached > serverCount ? cached : serverCount;
+        if (merged != cached) {
+          _phraseCache[id] = merged;
+          changed = true;
+        }
+      }
+      if (changed) _bumpRevision();
+    } catch (e) {
+      debugPrint('StatsService.loadPhraseCounts error: $e');
+    }
+    return Map.of(_phraseCache);
+  }
+
+  /// Lifetime totals (sum of every recorded month) — drives the Akhirah
+  /// holding values that depend on aggregate dhikr and ayah counts.
+  Future<({int ayahsRead, int dhikrCount, int dhikrSets})>
+      loadLifetimeActivity() async {
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return (ayahsRead: 0, dhikrCount: 0, dhikrSets: 0);
+    _ensureCacheFor(uid);
+
+    try {
+      final rows = await _sb.rpc(
+        'get_user_lifetime_activity',
+        params: {'p_user_id': uid},
+      ) as List;
+      if (rows.isNotEmpty) {
+        final r = rows.first as Map<String, dynamic>;
+        final serverAyahs = (r['total_ayahs_read'] as num?)?.toInt() ?? 0;
+        final serverDhikr = (r['total_dhikr'] as num?)?.toInt() ?? 0;
+        final serverSets = (r['total_dhikr_sets'] as num?)?.toInt() ?? 0;
+        var changed = false;
+        // Max-merge so in-flight increments are never lost
+        if (serverAyahs > _cachedLifetimeAyahs) {
+          _cachedLifetimeAyahs = serverAyahs;
+          changed = true;
+        }
+        if (serverDhikr > _cachedLifetimeDhikr) {
+          _cachedLifetimeDhikr = serverDhikr;
+          changed = true;
+        }
+        if (serverSets > _cachedLifetimeDhikrSets) {
+          _cachedLifetimeDhikrSets = serverSets;
+          changed = true;
+        }
+        if (changed) _bumpRevision();
+      }
+    } catch (e) {
+      debugPrint('StatsService.loadLifetimeActivity error: $e');
+    }
+    return (
+      ayahsRead: _cachedLifetimeAyahs,
+      dhikrCount: _cachedLifetimeDhikr,
+      dhikrSets: _cachedLifetimeDhikrSets,
+    );
   }
 
   /// Record daily active user. Call once per app session from dashboard.

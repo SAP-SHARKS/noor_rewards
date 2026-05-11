@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
-import '../services/xp_service.dart';
 import '../services/stats_service.dart';
 import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
@@ -63,7 +62,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   final _sb = Supabase.instance.client;
 
   // Profile
-  int _totalPts = 0;
   int _noorPoints = 0;
   int _level = 1;
   String _levelTitle = 'Seeker';
@@ -82,7 +80,106 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   MonthlyStats? _previousMonth;
   GlobalStats _globalStats = const GlobalStats();
 
-  // Derived "Akhirah holdings" — symbolic estimates from activity data
+  // Real lifetime activity (sum of every recorded month) — drives holdings
+  int _lifetimeAyahs = 0;
+  int _lifetimeDhikr = 0;
+  // Per-phrase lifetime counts keyed by azkar id
+  Map<String, int> _phraseCounts = const {};
+
+  // ── Phrase groups for hadith-grounded holdings ──────────────────────────
+  // Trees in Jannah — Tirmidhi 3464: SubhanAllah, Alhamdulillah, La ilaha
+  // illallah, Allahu Akbar — each plants a tree in Jannah. Any azkar item
+  // whose recitation is exactly one of these four phrases contributes.
+  static const List<String> _kTreePhraseIds = [
+    'subhanallah',
+    'alhamdulillah',
+    'allahu_akbar',
+    'la_ilaha_illallah',
+    'post_prayer_subhanallah',
+    'post_prayer_alhamdulillah',
+    'post_prayer_allahu_akbar',
+    'sleeping_tasbih_1',
+    'sleeping_tasbih_2',
+    'sleeping_tasbih_3',
+    'morning_20',
+    'evening_20',
+    'hajj_tawaf',
+  ];
+
+  // Sins Forgiven — Bukhari 6405: "SubhanAllahi wa bihamdihi 100×" = 1 cycle.
+  // morning_32 and evening_31 reference the same phrase + hadith.
+  static const List<String> _kForgivenessPhraseIds = [
+    'subhanallahi_wabihamdih',
+    'morning_32',
+    'evening_31',
+  ];
+
+  // Treasures of Jannah — Bukhari 4205: each "La hawla wa la quwwata illa
+  // billah" is a treasure.
+  static const List<String> _kTreasurePhraseIds = [
+    'la_hawla',
+    'iman_tawakkul',
+  ];
+
+  // Slaves Freed — Bukhari 6403: "La ilaha illallahu wahdahu la sharika
+  // lahu..." 10× ≡ freeing 4 slaves. morning_31 and evening_30 reference
+  // the same phrase + hadith.
+  static const List<String> _kSlavesPhraseIds = [
+    'post_prayer_la_ilaha',
+    'waking_up_2',
+    'morning_31',
+    'evening_30',
+  ];
+
+  // Palaces Built — Bukhari 5017 cluster: Surah Al-Ikhlas 10× = 1 palace.
+  // Each azkar item below is one full Ikhlas recitation per completion.
+  static const List<String> _kIkhlasPhraseIds = [
+    'sleeping_ikhlas',
+    'morning_9',
+    'evening_9',
+  ];
+
+  // Gates of Paradise Opened — Sahih Muslim 234: shahadah after wudu opens
+  // all 8 gates of Jannah.
+  static const String _kGatesPhraseId = 'wudu_shahada';
+
+  // Blessings from Allah — Sahih Muslim 408: 1 salawat sent = 10 returned.
+  static const List<String> _kSalawatPhraseIds = [
+    'salawat_ibrahimiyya',
+    'salawat_simple',
+    'salawat_friday',
+    'evening_32',
+  ];
+
+  // Times Protected — combined hadith references for divine protection:
+  //   Ayat al-Kursi at sleep (Bukhari 2311) and after prayer (Nasai),
+  //   Muawwidhatayn morning/evening (Abu Dawud 5082),
+  //   "A'udhu bi-kalimatillah" (Muslim 2708 — home_protection),
+  //   morning_21/evening_21 "Protect from all harm" (Tirmidhi 3388),
+  //   morning_23/evening_23 "Protection from all evil" (Muslim 2709),
+  //   morning_28/evening_28 "Good health & protection" (Abu Dawud 5090).
+  static const List<String> _kProtectionPhraseIds = [
+    'sleeping_ayat_kursi',
+    'post_prayer_ayat_kursi',
+    'home_protection',
+    'iman_falaq_nas',
+    'morning_21',
+    'evening_21',
+    'morning_23',
+    'evening_23',
+    'morning_28',
+    'evening_28',
+  ];
+
+  // Bonus Million Hasanaat — Ibn Majah 2235: marketplace dua = 1,000,000
+  // good deeds written, 1,000,000 sins erased, raised 1,000,000 levels.
+  static const String _kMillionPhraseId = 'shopping_dua';
+
+  // Whether the user has tapped "See All" to reveal the full holdings list.
+  // When false, only the first 5 rows render; "See All" / "Show less" toggles
+  // this inline (no separate bottom sheet).
+  bool _holdingsExpanded = false;
+  static const int _kHoldingsPreviewCount = 5;
 
   bool _loading = true;
   late AnimationController _fadeCtrl;
@@ -96,13 +193,41 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       duration: const Duration(milliseconds: 700),
     )..forward();
     _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
+    // Listen for any new dhikr / ayah recorded in this session.
+    // StatsService bumps `revision` synchronously after each record(),
+    // so this fires the instant the user completes a set — even while the
+    // Akhirah tab is offstage in the IndexedStack.
+    StatsService.instance.revision.addListener(_onStatsChanged);
     _load();
   }
 
   @override
+  void didUpdateWidget(ImpactReportScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-fetch holdings whenever the user returns to the Akhirah tab so
+    // freshly recited dhikr / read ayahs are reflected immediately.
+    if (widget.visitCount != oldWidget.visitCount) {
+      _load();
+    }
+  }
+
+  @override
   void dispose() {
+    StatsService.instance.revision.removeListener(_onStatsChanged);
     _fadeCtrl.dispose();
     super.dispose();
+  }
+
+  void _onStatsChanged() {
+    if (!mounted) return;
+    // Pull the latest snapshot from StatsService's in-memory cache.
+    // No DB round-trip required — the cache is authoritative for the
+    // current session and survives the offstage IndexedStack child.
+    setState(() {
+      _phraseCounts = StatsService.instance.phraseCountsSnapshot;
+      _lifetimeAyahs = StatsService.instance.lifetimeAyahsSnapshot;
+      _lifetimeDhikr = StatsService.instance.lifetimeDhikrSnapshot;
+    });
   }
 
   Future<void> _load() async {
@@ -133,7 +258,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       final profile = results[0] as Map<String, dynamic>?;
       final analytics = results[1] as Map<String, dynamic>?;
 
-      _totalPts = (profile?['total_xp'] as num?)?.toInt() ?? 0;
       _level = (profile?['level'] as num?)?.toInt() ?? 1;
       _noorPoints = (profile?['noor_points'] as num?)?.toInt() ?? 0;
       _totalDonated = results[2] as int;
@@ -164,7 +288,26 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       _globalStats = await StatsService.instance.loadGlobalStats();
     } catch (_) {}
 
+    // Load lifetime activity + per-phrase counts for hadith-grounded holdings
+    try {
+      final lifetime = await StatsService.instance.loadLifetimeActivity();
+      _lifetimeAyahs = lifetime.ayahsRead;
+      _lifetimeDhikr = lifetime.dhikrCount;
+    } catch (_) {}
+
+    try {
+      _phraseCounts = await StatsService.instance.loadPhraseCounts();
+    } catch (_) {}
+
     if (mounted) setState(() => _loading = false);
+  }
+
+  int _sumPhrases(List<String> ids) {
+    var total = 0;
+    for (final id in ids) {
+      total += _phraseCounts[id] ?? 0;
+    }
+    return total;
   }
 
   String _fallbackTitle(int lv) {
@@ -175,55 +318,50 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     return 'Seeker';
   }
 
-  // ── Derived spiritual holdings ─────────────────────────────────────────────
-  // ── Hadith-based reward calculations ────────────────────────────────────
-  //
-  // Hasanaat: Every good deed = 10 hasanaat minimum (Sahih Muslim 131).
-  //   We use total points as a proxy for good deeds done.
-  int get _hasanaat => _totalPts * 10;
-  //
-  // Trees in Jannah: "SubhanAllah, Alhamdulillah, La ilaha illallah,
-  //   Allahu Akbar" — each plants a tree in Jannah (Tirmidhi 3464).
-  //   Dhikr points earned ÷ points-per-dhikr ≈ number of dhikr said.
-  int get _treesPlanted {
-    final perDhikr = math.max(1, PointReward.dhikr);
-    // Estimate dhikr count from total points (dhikr is ~40% of activity)
-    return (_totalPts * 0.4 ~/ perDhikr);
-  }
-  //
-  // Sins Forgiven: "Whoever says SubhanAllahi wa bihamdihi 100 times,
-  //   his sins are forgiven even if they were like the foam of the sea"
-  //   (Bukhari 6405). Each set of 100 dhikr = 1 forgiveness cycle.
-  int get _sinsWiped {
-    final perDhikr = math.max(1, PointReward.dhikr);
-    final estimatedDhikr = (_totalPts * 0.4 ~/ perDhikr);
-    return estimatedDhikr ~/ 100; // each 100 = 1 forgiveness cycle
-  }
-  //
-  // Treasures of Jannah: "La hawla wa la quwwata illa billah is a
-  //   treasure from the treasures of Jannah" (Bukhari 4205, Muslim 2704).
-  //   Estimate from dhikr variety.
-  int get _treasures {
-    final perDhikr = math.max(1, PointReward.dhikr);
-    return (_totalPts * 0.1 ~/ perDhikr);
-  }
-  //
-  // Slaves Freed: "Whoever says La ilaha illallah wahdahu la sharika
-  //   lahu … 10 times, it is as if he freed 4 slaves" (Bukhari 6403).
-  int get _slavesFreed {
-    final perDhikr = math.max(1, PointReward.dhikr);
-    final estimatedDhikr = (_totalPts * 0.4 ~/ perDhikr);
-    return (estimatedDhikr ~/ 10) * 4;
-  }
-  //
-  // Palaces Built: "Whoever reads Surah Ikhlas 10 times, Allah builds
-  //   a palace for him in Jannah" (Ahmad). Quran ayahs ÷ ~4 ayahs per
-  //   Ikhlas reading ÷ 10 = palaces.
-  int get _palacesBuilt {
-    final perAyah = math.max(1, PointReward.ayahRead);
-    final estimatedAyahs = (_totalPts * 0.3 ~/ perAyah);
-    return math.max(0, estimatedAyahs ~/ 40); // ~4 ayahs × 10 readings
-  }
+  // ── Hadith-grounded holdings ────────────────────────────────────────────
+  // Each value is derived from actual recorded activity (per-phrase dhikr
+  // counts + lifetime ayahs read), not a fraction of total points.
+
+  // Hasanaat — Sahih Muslim 131: every good deed is multiplied by 10.
+  // Every recited dhikr and every ayah read counts as a good deed.
+  int get _hasanaat => (_lifetimeDhikr + _lifetimeAyahs) * 10;
+
+  // Trees in Jannah — Tirmidhi 3464.
+  int get _treesPlanted => _sumPhrases(_kTreePhraseIds);
+
+  // Sins Forgiven — Bukhari 6405.
+  int get _forgivenessPhraseCount => _sumPhrases(_kForgivenessPhraseIds);
+  int get _sinsWiped => _forgivenessPhraseCount ~/ 100;
+
+  // Treasures of Jannah — Bukhari 4205.
+  int get _treasures => _sumPhrases(_kTreasurePhraseIds);
+
+  // Slaves Freed — Bukhari 6403: 10 recitations ≡ 4 slaves freed.
+  int get _slavesPhraseCount => _sumPhrases(_kSlavesPhraseIds);
+  int get _slavesFreed => (_slavesPhraseCount ~/ 10) * 4;
+
+  // Palaces Built — Bukhari 5017 cluster: Surah Ikhlas 10× = 1 palace.
+  int get _ikhlasCount => _sumPhrases(_kIkhlasPhraseIds);
+  int get _palacesBuilt => _ikhlasCount ~/ 10;
+
+  // Gates of Paradise Opened — Sahih Muslim 234: shahadah after wudu
+  // opens all 8 gates.
+  int get _wuduShahadaCount => _phraseCounts[_kGatesPhraseId] ?? 0;
+  int get _gatesOpened => _wuduShahadaCount * 8;
+
+  // Blessings from Allah — Sahih Muslim 408: 1 salawat = 10 blessings back.
+  int get _salawatCount => _sumPhrases(_kSalawatPhraseIds);
+  int get _blessingsReceived => _salawatCount * 10;
+
+  // Times Protected — combined protection hadith.
+  int get _protectionInvocations => _sumPhrases(_kProtectionPhraseIds);
+
+  // Bonus Million Hasanaat — Ibn Majah 2235.
+  int get _shoppingDuaCount => _phraseCounts[_kMillionPhraseId] ?? 0;
+  int get _millionHasanaat => _shoppingDuaCount * 1000000;
+
+  // Quran Completions via Ikhlas — Bukhari 5017: Surah Ikhlas 3× ≡ whole Quran.
+  int get _quranCompletionsViaIkhlas => _ikhlasCount ~/ 3;
   int get _bestStreak => [
     _snap.bestLogin,
     _snap.bestDhikr,
@@ -591,13 +729,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             ),
           ),
           GestureDetector(
-            onTap: () => _showHoldingsSheet(),
-            child: Text(
-              AppLocalizations.of(context)?.seeAll ?? 'See All →',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: _C.teal,
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(
+              () => _holdingsExpanded = !_holdingsExpanded,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Text(
+                _holdingsExpanded
+                    ? 'Show Less ←'
+                    : (AppLocalizations.of(context)?.seeAll ?? 'See All →'),
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: _C.teal,
+                ),
               ),
             ),
           ),
@@ -608,282 +754,453 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     ],
   );
 
-  void _showHoldingsSheet() {
-    final items = [
-      (
-        'Hasanaat Earned',
-        _hasanaat,
-        'Every good deed is multiplied by at least 10 hasanaat.',
-        'Sahih Muslim 131',
-      ),
-      (
-        'Trees in Jannah',
-        _treesPlanted,
-        'SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar — each plants a tree in Jannah.',
-        'Tirmidhi 3464',
-      ),
-      (
-        'Sins Forgiven',
-        _sinsWiped,
-        'Whoever says SubhanAllahi wa bihamdihi 100 times, his sins are forgiven even if they were like the foam of the sea.',
-        'Bukhari 6405',
-      ),
-      (
-        'Palaces Built',
-        _palacesBuilt,
-        'Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah.',
-        'Musnad Ahmad',
-      ),
-      (
-        'Treasures of Jannah',
-        _treasures,
-        'La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah.',
-        'Bukhari 4205',
-      ),
-      (
-        'Slaves Freed',
-        _slavesFreed,
-        'Whoever says La ilaha illallahu wahdahu la sharika lahu … 10 times, it is as if he freed 4 slaves from the children of Ismail.',
-        'Bukhari 6403',
-      ),
-      (
-        'Sadaqah Given',
-        _totalDonated,
-        'Points donated to community projects.',
-        '',
-      ),
-    ];
-
+  void _showHoldingDetail({
+    required String title,
+    required int value,
+    required Color color,
+    required String hadith,
+    required String breakdown,
+  }) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 12),
-            Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: const Color(0xFFDDDDDD),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Your Akhirah Holdings',
-              style: GoogleFonts.rajdhani(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: _C.text,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Based on authentic hadith sources',
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                color: _C.sub,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                padding: EdgeInsets.fromLTRB(
-                  20, 0, 20,
-                  MediaQuery.of(context).padding.bottom + 32,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            24, 20, 24,
+            MediaQuery.of(context).padding.bottom + 28,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDDDDDD),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-                itemCount: items.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (_, i) {
-                  final (title, value, desc, ref) = items[i];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              const SizedBox(height: 20),
+              // Title + value
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: GoogleFonts.rajdhani(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: _C.text,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    _fmt(value),
+                    style: GoogleFonts.rajdhani(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Hadith reference
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: color.withValues(alpha: 0.2)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                title,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: _C.text,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              _fmt(value),
-                              style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: _C.teal,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
+                        Icon(Icons.menu_book_rounded, size: 16, color: color),
+                        const SizedBox(width: 8),
                         Text(
-                          desc,
+                          'Hadith Reference',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
-                            color: _C.sub,
-                            height: 1.5,
+                            fontWeight: FontWeight.w700,
+                            color: color,
                           ),
                         ),
-                        if (ref.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            '— $ref',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: _C.teal,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ],
                       ],
                     ),
-                  );
-                },
+                    const SizedBox(height: 10),
+                    Text(
+                      hadith,
+                      style: GoogleFonts.lora(
+                        fontSize: 14,
+                        color: _C.text,
+                        height: 1.6,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              // Breakdown
+              Text(
+                'How you earned this',
+                style: GoogleFonts.outfit(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: _C.text,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                breakdown,
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  color: _C.sub,
+                  height: 1.6,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHoldingsCard() => Container(
-    key: ValueKey(widget.visitCount),
-    decoration: BoxDecoration(
-      color: _C.card,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: _C.border),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 16,
-          offset: const Offset(0, 4),
-        ),
-      ],
-    ),
-    child: Column(
-      children: [
+
+  Widget _buildHoldingsCard() {
+    final allRows = _buildAllHoldingRows();
+    final visibleRows = _holdingsExpanded
+        ? allRows
+        : allRows.take(_kHoldingsPreviewCount).toList();
+    final children = <Widget>[];
+    for (var i = 0; i < visibleRows.length; i++) {
+      if (i > 0) {
+        children.add(
+          const Divider(height: 1, indent: 70, endIndent: 20),
+        );
+      }
+      children.add(visibleRows[i]);
+    }
+    return Container(
+      key: ValueKey('holdings-${widget.visitCount}-$_holdingsExpanded'),
+      decoration: BoxDecoration(
+        color: _C.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _C.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  List<Widget> _buildAllHoldingRows() => [
         _HoldingRow(
           icon: NoorIcon.sparkles(size: 24),
           color: _C.gold,
           bgColor: const Color(0xFFFDF6E3),
-          title:
-              AppLocalizations.of(context)?.hasanaatEarned ?? 'Hasanaat Earned',
-          subtitle: 'Each deed × 10 — Sahih Muslim 131',
+          title: AppLocalizations.of(context)?.hasanaatEarned ?? 'Hasanaat Earned',
+          subtitle: 'Recorded in your Book of Deeds',
           value: _hasanaat,
-          change: '+${_todayPoints * 10} today',
+          change: 'All time',
           positive: true,
           isFirst: true,
           isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Hasanaat Earned',
+            value: _hasanaat,
+            color: _C.gold,
+            hadith: '"Whoever does a good deed shall have ten times the like thereof." — Sahih Muslim 131',
+            breakdown: 'Every dhikr you recited and every ayah you read is counted as a good deed, then multiplied by 10 as hasanaat in your record.\n\n'
+                'Dhikr recited (lifetime): ${_fmt(_lifetimeDhikr)}\n'
+                'Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
+                'Good deeds: ${_fmt(_lifetimeDhikr + _lifetimeAyahs)}\n'
+                'Multiplier: ×10\n'
+                'Total hasanaat: ${_fmt(_hasanaat)}',
+          ),
         ),
-        const Divider(height: 1, indent: 70, endIndent: 20),
         _HoldingRow(
           icon: NoorIcon.tree(size: 24),
           color: const Color(0xFF2D7A45),
           bgColor: const Color(0xFFE8F5EC),
-          title:
-              AppLocalizations.of(context)?.treesInJannah ?? 'Trees in Jannah',
-          subtitle: 'Each tasbih plants a tree — Tirmidhi 3464',
+          title: AppLocalizations.of(context)?.treesInJannah ?? 'Trees in Jannah',
+          subtitle: 'From SubhanAllah & Tasbih',
           value: _treesPlanted,
-          change: '+${_fmt(_todayPoints * 4 ~/ math.max(1, PointReward.dhikr * 10))} today',
+          change: '${_fmt(_treesPlanted)} planted',
           positive: true,
           isFirst: false,
           isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Trees in Jannah',
+            value: _treesPlanted,
+            color: const Color(0xFF2D7A45),
+            hadith: '"SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar — each one plants a tree for you in Jannah." — Tirmidhi 3464',
+            breakdown: 'One tree is planted for every recitation of these four phrases (including post-prayer tasbih, bedtime tasbih, morning/evening tasbih, and tawaf):\n\n'
+                '• SubhanAllah (all sources): ${_fmt((_phraseCounts['subhanallah'] ?? 0) + (_phraseCounts['post_prayer_subhanallah'] ?? 0) + (_phraseCounts['sleeping_tasbih_1'] ?? 0))}\n'
+                '• Alhamdulillah (all sources): ${_fmt((_phraseCounts['alhamdulillah'] ?? 0) + (_phraseCounts['post_prayer_alhamdulillah'] ?? 0) + (_phraseCounts['sleeping_tasbih_2'] ?? 0))}\n'
+                '• Allahu Akbar (all sources): ${_fmt((_phraseCounts['allahu_akbar'] ?? 0) + (_phraseCounts['post_prayer_allahu_akbar'] ?? 0) + (_phraseCounts['sleeping_tasbih_3'] ?? 0))}\n'
+                '• La ilaha illallah: ${_fmt(_phraseCounts['la_ilaha_illallah'] ?? 0)}\n'
+                '• Morning/evening tasbih (×2) & Tawaf: ${_fmt((_phraseCounts['morning_20'] ?? 0) + (_phraseCounts['evening_20'] ?? 0) + (_phraseCounts['hajj_tawaf'] ?? 0))}\n\n'
+                'Total trees planted: ${_fmt(_treesPlanted)}',
+          ),
         ),
-        const Divider(height: 1, indent: 70, endIndent: 20),
         _HoldingRow(
           icon: NoorIcon.drop(size: 24),
           color: _C.teal,
           bgColor: const Color(0xFFE0F7F4),
           title: AppLocalizations.of(context)?.sinsForgiven ?? 'Sins Forgiven',
-          subtitle: '100 SubhanAllahi wa bihamdihi — Bukhari 6405',
+          subtitle: 'Like the foam of the sea',
           value: _sinsWiped,
-          change: 'like foam of the sea',
+          change: '${_fmt(_sinsWiped)} cycles',
           positive: true,
           isFirst: false,
           isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Sins Forgiven',
+            value: _sinsWiped,
+            color: _C.teal,
+            hadith: '"Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea." — Bukhari 6405',
+            breakdown: 'Each set of 100 recitations of "SubhanAllahi wa bihamdihi" counts as one cycle of forgiveness.\n\n'
+                'Standalone: ${_fmt(_phraseCounts['subhanallahi_wabihamdih'] ?? 0)}\n'
+                'In morning azkar (item 32): ${_fmt(_phraseCounts['morning_32'] ?? 0)}\n'
+                'In evening azkar (item 31): ${_fmt(_phraseCounts['evening_31'] ?? 0)}\n'
+                'Total recitations: ${_fmt(_forgivenessPhraseCount)}\n'
+                'Divided by 100 → forgiveness cycles: ${_fmt(_sinsWiped)}',
+          ),
         ),
-        const Divider(height: 1, indent: 70, endIndent: 20),
         _HoldingRow(
           icon: NoorIcon.mosque(size: 24),
           color: const Color(0xFF4A90E2),
           bgColor: const Color(0xFFEAF2F8),
           title: AppLocalizations.of(context)?.palacesBuilt ?? 'Palaces Built',
-          subtitle: 'Surah Ikhlas 10× — Musnad Ahmad',
+          subtitle: 'From Surah Ikhlas recitation',
           value: _palacesBuilt,
-          change: '${_fmt(_palacesBuilt)} total',
+          change: '${_fmt(_palacesBuilt)} built',
           positive: true,
           isFirst: false,
           isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Palaces Built',
+            value: _palacesBuilt,
+            color: const Color(0xFF4A90E2),
+            hadith: '"Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah." — Musnad Ahmad',
+            breakdown: 'Each 10 recitations of Surah Al-Ikhlas earns one palace.\n\n'
+                'Before sleep (Ikhlas ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n'
+                'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n'
+                'Evening Ikhlas: ${_fmt(_phraseCounts['evening_9'] ?? 0)}\n'
+                'Total Ikhlas recitations: ${_fmt(_ikhlasCount)}\n'
+                'Divided by 10 → palaces: ${_fmt(_palacesBuilt)}',
+          ),
         ),
-        const Divider(height: 1, indent: 70, endIndent: 20),
         _HoldingRow(
           icon: NoorIcon.diamond(size: 24),
           color: const Color(0xFF9B59B6),
           bgColor: const Color(0xFFF5EEF8),
-          title:
-              AppLocalizations.of(context)?.treasuresOfJannah ??
-              'Treasures of Jannah',
-          subtitle: 'La Hawla Wa La Quwwata — Bukhari 4205',
+          title: AppLocalizations.of(context)?.treasuresOfJannah ?? 'Treasures of Jannah',
+          subtitle: 'La Hawla Wa La Quwwata',
           value: _treasures,
-          change: '${_fmt(_treasures)} total',
+          change: '${_fmt(_treasures)} earned',
           positive: true,
           isFirst: false,
           isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Treasures of Jannah',
+            value: _treasures,
+            color: const Color(0xFF9B59B6),
+            hadith: '"La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah." — Bukhari 4205, Muslim 2704',
+            breakdown: 'Each recitation of "La hawla wa la quwwata illa billah" earns one treasure.\n\n'
+                '"La hawla" (standalone): ${_fmt(_phraseCounts['la_hawla'] ?? 0)}\n'
+                '"Tawakkaltu... wa la hawla": ${_fmt(_phraseCounts['iman_tawakkul'] ?? 0)}\n'
+                'Total treasures: ${_fmt(_treasures)}',
+          ),
         ),
-        const Divider(height: 1, indent: 70, endIndent: 20),
         _HoldingRow(
           icon: NoorIcon.chains(size: 24),
           color: _C.purple,
           bgColor: const Color(0xFFEEEAF8),
           title: AppLocalizations.of(context)?.slavesFreedom ?? 'Slaves Freed',
-          subtitle: '10× La ilaha illallah = 4 freed — Bukhari 6403',
+          subtitle: 'Equivalent reward earned',
           value: _slavesFreed,
-          change: '${_fmt(_slavesFreed)} total',
+          change: '${_fmt(_slavesFreed)} equivalent',
           positive: true,
           isFirst: false,
           isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Slaves Freed',
+            value: _slavesFreed,
+            color: _C.purple,
+            hadith: '"Whoever says La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay\'in qadir 10 times, it is as if he freed 4 slaves from the children of Ismail." — Bukhari 6403',
+            breakdown: 'Every 10 recitations of "La ilaha illallahu wahdahu la sharika lahu..." equals freeing 4 slaves.\n\n'
+                'Post-prayer: ${_fmt(_phraseCounts['post_prayer_la_ilaha'] ?? 0)}\n'
+                'Upon waking: ${_fmt(_phraseCounts['waking_up_2'] ?? 0)}\n'
+                'Morning azkar (item 31): ${_fmt(_phraseCounts['morning_31'] ?? 0)}\n'
+                'Evening azkar (item 30): ${_fmt(_phraseCounts['evening_30'] ?? 0)}\n'
+                'Total recitations: ${_fmt(_slavesPhraseCount)}\n'
+                'Sets of 10 → ${_fmt(_slavesPhraseCount ~/ 10)} sets × 4 slaves = ${_fmt(_slavesFreed)}',
+          ),
         ),
-        const Divider(height: 1, indent: 70, endIndent: 20),
+        _HoldingRow(
+          icon: NoorIcon.kaaba(size: 24),
+          color: const Color(0xFFD4A017),
+          bgColor: const Color(0xFFFFF8E1),
+          title: 'Gates of Paradise',
+          subtitle: 'After perfect wudu',
+          value: _gatesOpened,
+          change: '${_fmt(_gatesOpened)} opened',
+          positive: true,
+          isFirst: false,
+          isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Gates of Paradise Opened',
+            value: _gatesOpened,
+            color: const Color(0xFFD4A017),
+            hadith: '"None of you performs wudu and completes it perfectly, then says: Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh — except that all eight gates of Paradise will be opened for him, and he may enter from whichever one he wishes." — Sahih Muslim 234',
+            breakdown: 'Each post-wudu shahadah opens all 8 gates of Paradise.\n\n'
+                'Post-wudu shahadah recited: ${_fmt(_wuduShahadaCount)}\n'
+                'Multiplied by 8 gates → ${_fmt(_gatesOpened)} openings',
+          ),
+        ),
+        _HoldingRow(
+          icon: NoorIcon.heart(size: 24),
+          color: const Color(0xFFE91E63),
+          bgColor: const Color(0xFFFCE4EC),
+          title: 'Blessings from Allah',
+          subtitle: 'Salawat × 10 returned',
+          value: _blessingsReceived,
+          change: '${_fmt(_blessingsReceived)} received',
+          positive: true,
+          isFirst: false,
+          isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Blessings from Allah',
+            value: _blessingsReceived,
+            color: const Color(0xFFE91E63),
+            hadith: '"Whoever sends one blessing upon me, Allah sends ten blessings upon him." — Sahih Muslim 408',
+            breakdown: 'For every salawat (durood) you send upon the Prophet ﷺ, Allah returns ten upon you.\n\n'
+                'Salawat Ibrahimiyya: ${_fmt(_phraseCounts['salawat_ibrahimiyya'] ?? 0)}\n'
+                'Short salawat: ${_fmt(_phraseCounts['salawat_simple'] ?? 0)}\n'
+                'Friday salawat: ${_fmt(_phraseCounts['salawat_friday'] ?? 0)}\n'
+                'Evening durood (item 32): ${_fmt(_phraseCounts['evening_32'] ?? 0)}\n'
+                'Total salawat sent: ${_fmt(_salawatCount)}\n'
+                'Multiplied by 10 → ${_fmt(_blessingsReceived)} blessings received',
+          ),
+        ),
+        _HoldingRow(
+          icon: NoorIcon.shield(size: 24),
+          color: const Color(0xFF455A64),
+          bgColor: const Color(0xFFECEFF1),
+          title: 'Times Protected',
+          subtitle: 'Refuge invoked from harm',
+          value: _protectionInvocations,
+          change: '${_fmt(_protectionInvocations)} invocations',
+          positive: true,
+          isFirst: false,
+          isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Times Protected',
+            value: _protectionInvocations,
+            color: const Color(0xFF455A64),
+            hadith: '"Whoever recites Ayat al-Kursi before sleeping — a guardian from Allah will protect him and Shaytan will not come near him until morning." — Bukhari 2311\n\n'
+                '"Whoever says A\'udhu bi-kalimatillahit-tammati min sharri ma khalaq three times when arriving at a place — nothing will harm him until he leaves." — Muslim 2708\n\n'
+                '"Recite Qul Huwa Allahu Ahad and the Mu\'awwidhatayn three times morning and evening — they will suffice you against everything." — Abu Dawud 5082',
+            breakdown: 'Each protection-invoking azkar adds one to your shield.\n\n'
+                'Ayat al-Kursi before sleep: ${_fmt(_phraseCounts['sleeping_ayat_kursi'] ?? 0)}\n'
+                'Ayat al-Kursi after prayer: ${_fmt(_phraseCounts['post_prayer_ayat_kursi'] ?? 0)}\n'
+                'Home protection (A\'udhu bi-kalimat): ${_fmt(_phraseCounts['home_protection'] ?? 0)}\n'
+                'Mu\'awwidhatayn (Falaq + Nas): ${_fmt(_phraseCounts['iman_falaq_nas'] ?? 0)}\n'
+                'Morning/Evening "Protect from harm" (21): ${_fmt((_phraseCounts['morning_21'] ?? 0) + (_phraseCounts['evening_21'] ?? 0))}\n'
+                'Morning/Evening "Protection from evil" (23): ${_fmt((_phraseCounts['morning_23'] ?? 0) + (_phraseCounts['evening_23'] ?? 0))}\n'
+                'Morning/Evening "Good health & protection" (28): ${_fmt((_phraseCounts['morning_28'] ?? 0) + (_phraseCounts['evening_28'] ?? 0))}\n\n'
+                'Total invocations: ${_fmt(_protectionInvocations)}',
+          ),
+        ),
+        _HoldingRow(
+          icon: NoorIcon.greenBook(size: 24),
+          color: const Color(0xFF2E7D32),
+          bgColor: const Color(0xFFE8F5E9),
+          title: 'Quran Completions',
+          subtitle: 'Via Surah Al-Ikhlas ×3',
+          value: _quranCompletionsViaIkhlas,
+          change: '${_fmt(_quranCompletionsViaIkhlas)} equivalent',
+          positive: true,
+          isFirst: false,
+          isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Quran Completions',
+            value: _quranCompletionsViaIkhlas,
+            color: const Color(0xFF2E7D32),
+            hadith: '"Reciting Qul Huwa Allahu Ahad (Surah Al-Ikhlas) three times equals reciting the entire Quran." — Sahih Bukhari 5017',
+            breakdown: 'Every three Ikhlas recitations equal one complete recitation of the Qur\'an.\n\n'
+                'Before sleep (item recites ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n'
+                'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n'
+                'Evening Ikhlas: ${_fmt(_phraseCounts['evening_9'] ?? 0)}\n'
+                'Total Ikhlas recitations: ${_fmt(_ikhlasCount)}\n'
+                'Divided by 3 → ${_fmt(_quranCompletionsViaIkhlas)} Quran completions',
+          ),
+        ),
+        if (_shoppingDuaCount > 0)
+          _HoldingRow(
+            icon: NoorIcon.trophy(size: 24),
+            color: const Color(0xFFB8860B),
+            bgColor: const Color(0xFFFFFBE6),
+            title: 'Bonus Hasanaat',
+            subtitle: 'Marketplace du\'a',
+            value: _millionHasanaat,
+            change: '${_fmt(_shoppingDuaCount)} recitations',
+            positive: true,
+            isFirst: false,
+            isLast: false,
+            onTap: () => _showHoldingDetail(
+              title: 'Bonus Million Hasanaat',
+              value: _millionHasanaat,
+              color: const Color(0xFFB8860B),
+              hadith: '"Whoever enters the marketplace and says: La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa ala kulli shay\'in Qadir — Allah will write for him a million good deeds, erase a million of his bad deeds, and raise him a million levels." — Ibn Majah 2235',
+              breakdown: 'Each recitation of the marketplace du\'a writes 1,000,000 good deeds.\n\n'
+                  'Times recited: ${_fmt(_shoppingDuaCount)}\n'
+                  'Bonus hasanaat: ${_fmt(_millionHasanaat)}',
+            ),
+          ),
         _HoldingRow(
           icon: NoorIcon.hands(size: 24),
           color: const Color(0xFFE67E22),
           bgColor: const Color(0xFFFEF5E7),
           title: AppLocalizations.of(context)?.sadaqahGiven ?? 'Sadaqah Given',
-          subtitle:
-              AppLocalizations.of(context)?.pointsDonatedToCommunity ??
-              'Points donated to community',
+          subtitle: 'Points donated to community',
           value: _totalDonated,
           change: AppLocalizations.of(context)?.allTimeLabel ?? 'All time',
           positive: true,
           isFirst: false,
           isLast: true,
+          onTap: () => _showHoldingDetail(
+            title: 'Sadaqah Given',
+            value: _totalDonated,
+            color: const Color(0xFFE67E22),
+            hadith: '"Sadaqah does not decrease wealth." — Muslim 2588',
+            breakdown: 'Points you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} pts',
+          ),
         ),
-      ],
-    ),
-  );
+      ];
 
   // ── Activity card (session time) ───────────────────────────────────────────
   // ── Monthly stats card ──────────────────────────────────────────────────
@@ -1898,6 +2215,7 @@ class _HoldingRow extends StatelessWidget {
   final int value;
   final Color color, bgColor;
   final bool positive, isFirst, isLast;
+  final VoidCallback? onTap;
   const _HoldingRow({
     required this.icon,
     required this.color,
@@ -1909,63 +2227,70 @@ class _HoldingRow extends StatelessWidget {
     required this.positive,
     required this.isFirst,
     required this.isLast,
+    this.onTap,
   });
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    child: Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(12),
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    behavior: HitTestBehavior.opaque,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(child: icon),
           ),
-          child: Center(child: icon),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: _C.text,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                title,
+              _AnimatedNumText(
+                value,
                 style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
                   color: _C.text,
                 ),
               ),
               Text(
-                subtitle,
-                style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
+                change,
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: positive ? const Color(0xFF2D7A45) : _C.rose,
+                ),
               ),
             ],
           ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            _AnimatedNumText(
-              value,
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                color: _C.text,
-              ),
-            ),
-            Text(
-              change,
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: positive ? const Color(0xFF2D7A45) : _C.rose,
-              ),
-            ),
-          ],
-        ),
-      ],
+          const SizedBox(width: 4),
+          Icon(Icons.chevron_right_rounded, size: 16, color: _C.sub),
+        ],
+      ),
     ),
   );
 }
