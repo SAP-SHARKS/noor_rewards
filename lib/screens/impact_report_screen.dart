@@ -184,6 +184,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   bool _loading = true;
   late AnimationController _fadeCtrl;
   late Animation<double> _fade;
+  final ScrollController _scrollCtrl = ScrollController();
 
   @override
   void initState() {
@@ -215,6 +216,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   void dispose() {
     StatsService.instance.revision.removeListener(_onStatsChanged);
     _fadeCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -310,6 +312,30 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     return total;
   }
 
+  void _toggleHoldings() {
+    final wasExpanded = _holdingsExpanded;
+    setState(() => _holdingsExpanded = !_holdingsExpanded);
+    if (!wasExpanded) {
+      // Expanding: after the new rows lay out, scroll down so the user
+      // sees the additional holdings. Rough estimate of one row height ×
+      // the number of newly revealed rows.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_scrollCtrl.hasClients) return;
+        final viewport =
+            _scrollCtrl.position.viewportDimension.clamp(0.0, 600.0);
+        final target = (_scrollCtrl.offset + viewport * 0.55).clamp(
+          _scrollCtrl.position.minScrollExtent,
+          _scrollCtrl.position.maxScrollExtent,
+        );
+        _scrollCtrl.animateTo(
+          target,
+          duration: const Duration(milliseconds: 380),
+          curve: Curves.easeOutCubic,
+        );
+      });
+    }
+  }
+
   String _fallbackTitle(int lv) {
     if (lv >= 51) return 'Legend';
     if (lv >= 21) return 'Champion';
@@ -398,6 +424,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               : FadeTransition(
                 opacity: _fade,
                 child: CustomScrollView(
+                  controller: _scrollCtrl,
                   slivers: [
                     _buildHero(),
                     SliverPadding(
@@ -493,10 +520,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Y4.honey.withValues(alpha: 0.30),
+                          color: Colors.white.withValues(alpha: 0.85),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: Y4.honeyDeep.withValues(alpha: 0.5),
+                            color: Y4.honeyDeep,
+                            width: 1.2,
                           ),
                         ),
                         child: Row(
@@ -512,8 +540,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                               'Lvl $_level · $_levelTitle',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Y4.honeyDeep,
+                                fontWeight: FontWeight.w800,
+                                color: Y4.ink,
                               ),
                             ),
                           ],
@@ -559,8 +587,12 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: Y4.primary.withValues(alpha: 0.18),
+                            color: Colors.white.withValues(alpha: 0.85),
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Y4.primaryDeep.withValues(alpha: 0.6),
+                              width: 1,
+                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -575,8 +607,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                                 '+${_todayPoints > 0 ? _todayPoints : 0} today',
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Y4.primaryDeep,
+                                  fontWeight: FontWeight.w800,
+                                  color: Y4.ink,
                                 ),
                               ),
                             ],
@@ -606,21 +638,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       _HeroBadge(
                         NoorIcon.sunrise(size: 14),
                         '+${_fmt(_todayPoints)} deeds today',
-                        Y4.primary.withValues(alpha: 0.18),
+                        Colors.white.withValues(alpha: 0.78),
                         Y4.primaryDeep,
                       ),
                       _HeroBadge(
                         NoorIcon.calendar(size: 14),
                         '+${_fmt(_weekPoints)} this week',
-                        Y4.honey.withValues(alpha: 0.30),
+                        Colors.white.withValues(alpha: 0.78),
                         Y4.honeyDeep,
                       ),
                       if (_bestStreak > 0)
                         _HeroBadge(
                           NoorIcon.fire(size: 14),
                           'Best: $_bestStreak day streak',
-                          Y4.honeyDeep.withValues(alpha: 0.18),
-                          Y4.honeyDeep,
+                          Colors.white.withValues(alpha: 0.78),
+                          const Color(0xFFB45309),
                         ),
                     ],
                   ),
@@ -730,9 +762,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           ),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => setState(
-              () => _holdingsExpanded = !_holdingsExpanded,
-            ),
+            onTap: _toggleHoldings,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
               child: Text(
@@ -898,7 +928,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       children.add(visibleRows[i]);
     }
     return Container(
-      key: ValueKey('holdings-${widget.visitCount}-$_holdingsExpanded'),
+      // Key is intentionally independent of `_holdingsExpanded` — toggling
+      // See All / Show Less must not destroy the row subtree, otherwise the
+      // _AnimatedNumText counters re-roll every time. Re-keys only when the
+      // user re-enters the tab so the entry roll-up still plays.
+      key: ValueKey('holdings-${widget.visitCount}'),
       decoration: BoxDecoration(
         color: _C.card,
         borderRadius: BorderRadius.circular(20),
@@ -1669,6 +1703,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     int selected = 50;
     showModalBottomSheet(
       context: context,
+      // Use the root navigator so the sheet overlays the dashboard's bottom
+      // navigation bar. Without this, the Cause-tab navigator clips the
+      // sheet and the Donate CTA hides behind the bottom nav.
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder:
@@ -2114,6 +2152,9 @@ class _Arc extends StatelessWidget {
 class _HeroBadge extends StatelessWidget {
   final Widget icon;
   final String label;
+  // [bg] paints the pill surface; [fg] colors the border so each badge
+  // stays visually distinct. Text is always rendered in [Y4.ink] for
+  // strong contrast against the honey hero gradient.
   final Color bg, fg;
   const _HeroBadge(this.icon, this.label, this.bg, this.fg);
   @override
@@ -2122,6 +2163,7 @@ class _HeroBadge extends StatelessWidget {
     decoration: BoxDecoration(
       color: bg,
       borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: fg.withValues(alpha: 0.55), width: 1),
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
@@ -2132,8 +2174,8 @@ class _HeroBadge extends StatelessWidget {
           label,
           style: GoogleFonts.outfit(
             fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: fg,
+            fontWeight: FontWeight.w800,
+            color: Y4.ink,
           ),
         ),
       ],

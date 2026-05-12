@@ -6,6 +6,41 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'notification_center.dart';
 
+/// A single donation made by a user to a community project, including the
+/// donor's display name and avatar — surfaced on the Project Detail page's
+/// donor list.
+class ProjectDonation {
+  final String userId;
+  final String displayName;
+  final String? avatarUrl;
+  final int amount;
+  final DateTime donatedAt;
+
+  const ProjectDonation({
+    required this.userId,
+    required this.displayName,
+    required this.amount,
+    required this.donatedAt,
+    this.avatarUrl,
+  });
+
+  factory ProjectDonation.fromJson(Map<String, dynamic> j) => ProjectDonation(
+        userId: j['user_id'] as String? ?? '',
+        displayName:
+            (j['display_name'] as String?)?.trim().isNotEmpty == true
+                ? (j['display_name'] as String).trim()
+                : 'A generous soul',
+        avatarUrl: (j['avatar_url'] as String?)?.trim().isNotEmpty == true
+            ? j['avatar_url'] as String
+            : null,
+        amount: (j['amount'] as num?)?.toInt() ?? 0,
+        donatedAt: j['donated_at'] != null
+            ? DateTime.tryParse(j['donated_at'] as String)?.toLocal() ??
+                DateTime.now()
+            : DateTime.now(),
+      );
+}
+
 /// Single media item attached to a community project (image or video).
 class ProjectMedia {
   final String id;
@@ -120,6 +155,44 @@ class DonationService {
       return data.cast<Map<String, dynamic>>();
     } catch (_) {
       return [];
+    }
+  }
+
+  /// Returns a map of project id → distinct donor count (contributors).
+  /// Used to surface "X contributors" on the dashboard donation cards.
+  Future<Map<String, int>> getProjectDonorCounts() async {
+    try {
+      final List<dynamic> rows = await _sb.rpc('get_project_donor_counts');
+      final out = <String, int>{};
+      for (final row in rows) {
+        final m = row as Map<String, dynamic>;
+        final id = m['project_id'] as String?;
+        final c = (m['donor_count'] as num?)?.toInt() ?? 0;
+        if (id != null) out[id] = c;
+      }
+      return out;
+    } catch (_) {
+      return const {};
+    }
+  }
+
+  /// Returns the most recent donations for [projectId], joined with each
+  /// donor's display name and avatar. Used to render the donor list on
+  /// the Project Detail page.
+  Future<List<ProjectDonation>> getProjectDonors(
+    String projectId, {
+    int limit = 20,
+  }) async {
+    try {
+      final List<dynamic> rows = await _sb.rpc(
+        'get_project_recent_donors',
+        params: {'p_project_id': projectId, 'p_limit': limit},
+      );
+      return rows
+          .map((e) => ProjectDonation.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return const [];
     }
   }
 

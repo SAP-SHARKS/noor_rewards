@@ -94,7 +94,10 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     with SingleTickerProviderStateMixin {
   List<ProjectMedia> _media = [];
   List<ProjectUpdate> _updates = [];
+  List<ProjectDonation> _donors = const [];
+  int _donorCount = 0;
   bool _loading = true;
+  bool _aboutExpanded = false;
   late TabController _tabCtrl;
   int _availablePoints = 0;
 
@@ -124,11 +127,16 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     final results = await Future.wait([
       DonationService.instance.getProjectMedia(id),
       _loadUpdates(id),
+      DonationService.instance.getProjectDonors(id, limit: 50),
+      DonationService.instance.getProjectDonorCounts(),
     ]);
     if (!mounted) return;
     setState(() {
       _media = results[0] as List<ProjectMedia>;
       _updates = results[1] as List<ProjectUpdate>;
+      _donors = results[2] as List<ProjectDonation>;
+      final counts = results[3] as Map<String, int>;
+      _donorCount = counts[id] ?? _donors.length;
       _loading = false;
     });
   }
@@ -395,57 +403,135 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                 ),
                 const SizedBox(height: 20),
 
-                // Story
-                Text(
-                  story,
-                  style: GoogleFonts.outfit(
-                    fontSize: 14.5,
-                    color: _PD.text,
-                    height: 1.6,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
                 // Carousel
                 ProjectMediaCarousel(media: _media, height: 220),
                 const SizedBox(height: 24),
 
-                // Community Progress Header
+                // ── Given / Goal split header ──────────────────────────
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      AppLocalizations.of(context)?.communityProgress ??
-                          'Community Progress',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: _PD.sub,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'GIVEN',
+                            style: GoogleFonts.outfit(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: _PD.sub,
+                              letterSpacing: 1.6,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  '${_fmtN(current)} pts',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Y4.display(
+                                    fontSize: 26,
+                                    color: Y4.honeyDeep,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.0,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const Spacer(),
-                    Text(
-                      '${_fmtN(current)} / ${_fmtN(target)} pts',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Y4.amberY,
-                      ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'GOAL',
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: _PD.sub,
+                            letterSpacing: 1.6,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${_fmtN(target)} pts',
+                          style: GoogleFonts.outfit(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: _PD.text,
+                            height: 1.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
+                // Bigger honey gradient progress bar with % on the right.
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: Container(
+                          height: 12,
+                          color: Y4.honey.withValues(alpha: 0.18),
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: pct,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Y4.honey, Y4.honeyDeep],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      '${(pct * 100).round()}%',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: _PD.text,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
 
-                // Progress Bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: pct,
-                    minHeight: 8,
-                    backgroundColor: Y4.amberY.withValues(alpha: 0.15),
-                    valueColor: const AlwaysStoppedAnimation(Y4.amberY),
+                // ── About this Cause (with Read more / Show less) ───────
+                Text(
+                  'About this Cause',
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: _PD.text,
                   ),
                 ),
+                const SizedBox(height: 8),
+                _AboutText(
+                  text: story,
+                  expanded: _aboutExpanded,
+                  onToggle: () => setState(
+                    () => _aboutExpanded = !_aboutExpanded,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // ── Donors / Contributors section ───────────────────────
+                _DonorsSection(donors: _donors, donorCount: _donorCount),
                 const SizedBox(height: 24),
 
                 // My Contribution Box
@@ -521,15 +607,20 @@ class _DonateBar extends StatelessWidget {
     HapticFeedback.mediumImpact();
     showModalBottomSheet(
       context: context,
+      // Use the root navigator so the sheet renders above the dashboard's
+      // bottom navigation bar — otherwise, when reached via the Cause tab,
+      // the nested tab navigator clips the sheet and the CTA button hides
+      // behind the bottom nav.
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder:
-          (_) => _DonateSheet(
+          (sheetCtx) => _DonateSheet(
             project: project,
             availablePoints: availablePoints,
             onSuccess: (amount) {
               onDonated(amount);
-              Navigator.pop(context);
+              Navigator.of(sheetCtx).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Row(
@@ -887,6 +978,312 @@ class _DonateSheetState extends State<_DonateSheet> {
               ],
             ),
           ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// About-this-Cause body with Read more / Show less toggle.
+// Collapsed = first 4 lines + ellipsis. Toggle is inline, in honey-deep.
+// ─────────────────────────────────────────────────────────────────────────────
+class _AboutText extends StatelessWidget {
+  final String text;
+  final bool expanded;
+  final VoidCallback onToggle;
+  const _AboutText({
+    required this.text,
+    required this.expanded,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final style = GoogleFonts.outfit(
+      fontSize: 14.5,
+      color: _PD.text,
+      height: 1.6,
+      fontWeight: FontWeight.w500,
+    );
+
+    // Decide whether the text actually needs a toggle by measuring it
+    // against the available width at 4 lines.
+    return LayoutBuilder(
+      builder: (ctx, constraints) {
+        final tp = TextPainter(
+          text: TextSpan(text: text, style: style),
+          maxLines: 4,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+        final overflows = tp.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AnimatedSize(
+              duration: const Duration(milliseconds: 220),
+              alignment: Alignment.topLeft,
+              curve: Curves.easeOut,
+              child: Text(
+                text,
+                style: style,
+                maxLines: expanded ? null : 4,
+                overflow: expanded ? TextOverflow.clip : TextOverflow.ellipsis,
+              ),
+            ),
+            if (overflows) ...[
+              const SizedBox(height: 6),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onToggle,
+                child: Text(
+                  expanded ? 'Show less' : 'Read more',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.honeyDeep,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Donors section — "X contributors" heading + recent donations list.
+// Honey-tinted amount pills, soft cream avatar fallback, relative time.
+// ─────────────────────────────────────────────────────────────────────────────
+class _DonorsSection extends StatefulWidget {
+  final List<ProjectDonation> donors;
+  final int donorCount;
+  const _DonorsSection({required this.donors, required this.donorCount});
+
+  @override
+  State<_DonorsSection> createState() => _DonorsSectionState();
+}
+
+class _DonorsSectionState extends State<_DonorsSection> {
+  static const int _kPreview = 5;
+  bool _expanded = false;
+
+  String _fmtCount(int n) {
+    if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
+    if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}k';
+    return '$n';
+  }
+
+  String _timeAgo(DateTime d) {
+    final diff = DateTime.now().difference(d);
+    if (diff.inSeconds < 60) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
+    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()}mo ago';
+    return '${(diff.inDays / 365).floor()}y ago';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final donors = widget.donors;
+    final count = widget.donorCount > 0 ? widget.donorCount : donors.length;
+    final visible = _expanded ? donors : donors.take(_kPreview).toList();
+    final hasMore = donors.length > _kPreview;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.people_alt_rounded, size: 18, color: Y4.honeyDeep),
+            const SizedBox(width: 6),
+            Text(
+              '${_fmtCount(count)} ${count == 1 ? 'contributor' : 'contributors'}',
+              style: GoogleFonts.outfit(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: _PD.text,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (donors.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            decoration: BoxDecoration(
+              color: Y4.cream,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: _PD.border),
+            ),
+            child: Text(
+              'Be the first to contribute.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: _PD.sub,
+              ),
+            ),
+          )
+        else
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: _PD.border),
+            ),
+            child: Column(
+              children: [
+                for (var i = 0; i < visible.length; i++) ...[
+                  if (i > 0)
+                    const Divider(
+                      height: 1,
+                      indent: 64,
+                      endIndent: 16,
+                      color: Color(0xFFF1EFE6),
+                    ),
+                  _DonorRow(
+                    donor: visible[i],
+                    timeAgo: _timeAgo(visible[i].donatedAt),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        if (hasMore) ...[
+          const SizedBox(height: 10),
+          Center(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: Text(
+                  _expanded
+                      ? 'Show fewer ↑'
+                      : 'View all ${donors.length} →',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.honeyDeep,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DonorRow extends StatelessWidget {
+  final ProjectDonation donor;
+  final String timeAgo;
+  const _DonorRow({required this.donor, required this.timeAgo});
+
+  @override
+  Widget build(BuildContext context) {
+    final initials = donor.displayName.trim().isEmpty
+        ? '?'
+        : donor.displayName.trim().substring(0, 1).toUpperCase();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          // Avatar (cached network image with cream initial fallback)
+          ClipOval(
+            child: SizedBox(
+              width: 36,
+              height: 36,
+              child: donor.avatarUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: donor.avatarUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => _AvatarFallback(initial: initials),
+                      errorWidget: (_, __, ___) =>
+                          _AvatarFallback(initial: initials),
+                    )
+                  : _AvatarFallback(initial: initials),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  donor.displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: _PD.text,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  timeAgo,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: _PD.sub,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Amount pill
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Y4.honey.withValues(alpha: 0.22),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
+            ),
+            child: Text(
+              donor.amount.toString(),
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: Y4.honeyDeep,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvatarFallback extends StatelessWidget {
+  final String initial;
+  const _AvatarFallback({required this.initial});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Y4.cream,
+      alignment: Alignment.center,
+      child: Text(
+        initial,
+        style: GoogleFonts.outfit(
+          fontSize: 14,
+          fontWeight: FontWeight.w800,
+          color: Y4.honeyDeep,
+        ),
+      ),
     );
   }
 }
