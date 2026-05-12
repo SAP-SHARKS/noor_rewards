@@ -30,15 +30,15 @@
     }
   },
   "gatesOfNoor": "The gates of Noor are open.\nYour spiritual journey begins today.",
-  "earnNoorPoints": "EARN NOOR POINTS",
+  "earnNoorPoints": "EARN SABIQ SEEDS",
   "yourProgress": "YOUR PROGRESS",
-  "yourTotalNoorPoints": "YOUR TOTAL NOOR POINTS",
+  "yourTotalNoorPoints": "YOUR TOTAL SABIQ SEEDS",
   "achievements": "Achievements",
   "today": "Today",
   "thisWeek": "This Week",
   "thisMonth": "This Month",
   "streaks": "STREAKS",
-  "noorPoints": "Noor Points",
+  "noorPoints": "Sabiq Seeds",
   "readQuran": "Read Quran",
   "inviteFriends": "Invite Friends",
   "communityImpact": "Community Impact",
@@ -81,7 +81,7 @@
   "navAkhirah": "Akhirah",
   "navProfile": "Profile",
   "communityLeaderboard": "Community Leaderboard",
-  "topContributors": "Top contributors by lifetime pts",
+  "topContributors": "Top contributors by lifetime Seeds",
   "myProfile": "My Profile",
   "startStreak": "Start your streak today!",
   "alreadySealed": "Already sealed today",
@@ -116,8 +116,8 @@
   "prev": "Prev",
   "reciteMore": "RECITE MORE.",
   "helpRealLives": "HELP REAL LIVES.",
-  "yourNoorPointsFundProjects": "Your Noor Points fund these projects",
-  "youBothEarnPoints": "You both earn 500 Noor Points!",
+  "yourNoorPointsFundProjects": "Your Sabiq Seeds fund these projects",
+  "youBothEarnPoints": "You both earn 500 Sabiq Seeds!",
   "reward": "Reward",
   "haveInviteCode": "Have an invite code?",
   "enterCode": "Enter code…",
@@ -125,7 +125,7 @@
   "plantGoodDeeds": "PLANT GOOD DEEDS",
   "youDonated": "You donated",
   "seeDetailsForMore": "See Details for more Projects →",
-  "pts": "pts",
+  "pts": "Seeds",
   "funded": "funded",
   "bySponsor": "By {sponsor}",
   "@bySponsor": {
@@ -139,7 +139,7 @@
   "supportThisCause": "Support this Cause",
   "availableBalance": "Available Balance:",
   "donationAmount": "Donation Amount",
-  "points": "points",
+  "points": "Seeds",
   "donateEarnReward": "Donate & Earn Reward",
   "max": "MAX",
   "leaderboard": "Leaderboard",
@@ -156,7 +156,7 @@
   "believers": "believers",
   "topTenContributors": "Top 10 Contributors",
   "ourCauses": "Our Causes",
-  "donatePointsToSupport": "Donate your Noor Points to support real-world projects",
+  "donatePointsToSupport": "Donate your Sabiq Seeds to support real-world projects",
   "noActiveProjects": "No active projects right now",
   "checkBackSoon": "Check back soon insha'Allah",
   "messageCopied": "Message copied — share or paste in WhatsApp!",
@@ -167,7 +167,7 @@
   "tabBadges": "Badges",
   "tabChallenges": "Challenges",
   "allTime": "All Time",
-  "ptsToLevel": "{pts} pts to Level {level}",
+  "ptsToLevel": "{pts} Seeds to Level {level}",
   "@ptsToLevel": {
     "placeholders": {
       "pts": {
@@ -201,8 +201,8 @@
       }
     }
   },
-  "startEarningPts": "Start earning pts — read Quran, do Dhikr & Dua.",
-  "howToEarnPts": "How to Earn pts",
+  "startEarningPts": "Start earning Seeds — read Quran, do Dhikr & Dua.",
+  "howToEarnPts": "How to Earn Seeds",
   "readOneAyah": "Read 1 Ayah",
   "completeOneJuz": "Complete 1 Juz",
   "validateAndSupport": "Validate & Support",
@@ -257,10 +257,10 @@
   "noActiveChallenges": "No active challenges right now",
   "checkBackChallenges": "Check back soon — Ramadan & Dhul-Hijjah events are coming!",
   "ramadanChallenge": "Ramadan Challenge",
-  "ramadanChallengeDesc": "3× pts multiplier • Special badges • Community wells goal",
+  "ramadanChallengeDesc": "3× Seeds multiplier • Special badges • Community wells goal",
   "comingSoonStayConsistent": "Coming Soon — Stay Consistent!",
   "done": "Done!",
-  "ptsBoost": "{multiplier}× pts Boost",
+  "ptsBoost": "{multiplier}× Seeds Boost",
   "@ptsBoost": {
     "placeholders": {
       "multiplier": {
@@ -311,7 +311,7 @@
   "challenge": "Challenge",
   "readListenTafsir": "Read & Listen Tafsir",
   "deepUnderstanding": "Deep understanding of the Holy Quran",
-  "earnPointsTafsir": "Earn points for every 10 min of Tafsir listening",
+  "earnPointsTafsir": "Earn Seeds for every 10 min of Tafsir listening",
   "featuredSurahs": "Featured Surahs",
   "browseAll114": "Browse All 114 Surahs",
   "verses": "{count} verses",
@@ -378,8 +378,8 @@
   "displayMeaningBelow": "Display meaning below each verse",
   "showDailyProgress": "Show Daily Progress",
   "progressBarAyahCount": "Progress bar & ayah count card",
-  "showPointsBanner": "Show Points Banner",
-  "noorPointsNotificationStrip": "+Noor Points notification strip",
+  "showPointsBanner": "Show Seeds Banner",
+  "noorPointsNotificationStrip": "+Sabiq Seeds notification strip",
   "showSurahHeader": "Show Surah Header",
   "surahNameBanner": "Surah name banner at top of page",
   "audioPlayback": "AUDIO & PLAYBACK",
@@ -430,7 +430,7 @@
   "actionsLabel": "ACTIONS",
   "pageBookmarked": "Page bookmarked!",
   "loadingQuran": "Loading Quran…",
-  "earnPointsPerVerse": "Earn +10 Noor Points per verse read",
+  "earnPointsPerVerse": "Earn +10 Sabiq Seeds per verse read",
   "chooseSurah": "Choose Surah",
   "chooseVerse": "Choose Verse",
   "surahHasVerses": "{surah} has {count} verses",
@@ -474,7 +474,7 @@
   "hideIllustrationArea": "Hide the visual artwork area",
   "arabicFontStyle": "Arabic Font Style",
   "dailyAzkarComplete": "Daily Azkar Complete!",
-  "dailyAzkarBonusMsg": "Masha'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.",
+  "dailyAzkarBonusMsg": "Masha'Allah! You tracked your daily Azkar and earned a bonus +50 Sabiq Seeds.",
   "awesome": "Awesome",
   "betweenSubhSunrise": "Between Subh-e-Sadiq to Sunrise",
   "betweenAsrMaghrib": "Between Asr and Maghrib",
@@ -582,15 +582,15 @@
   "slavesFreedom": "Slaves Freed",
   "equivalentReward": "Equivalent reward earned",
   "sadaqahGiven": "Sadaqah Given",
-  "pointsDonatedToCommunity": "Points donated to community",
+  "pointsDonatedToCommunity": "Seeds donated to community",
   "allTimeLabel": "All time",
   "worshipActivity": "Worship Activity",
   "timeSpentInRemembrance": "Time spent in remembrance",
-  "noorPointsSummary": "Noor Points Summary",
-  "totalPoints": "Total Points",
+  "noorPointsSummary": "Sabiq Seeds Summary",
+  "totalPoints": "Total Seeds",
   "title": "Title",
   "everyDeedRecorded": "Every deed is recorded. Keep going!",
-  "yourAvailable": "Your available: {pts} pts",
+  "yourAvailable": "Your available: {pts} Seeds",
   "@yourAvailable": {
     "placeholders": {
       "pts": {
@@ -598,7 +598,7 @@
       }
     }
   },
-  "jazakAllahDonated": "JazakAllah! {pts} pts donated",
+  "jazakAllahDonated": "JazakAllah! {pts} Seeds donated",
   "@jazakAllahDonated": {
     "placeholders": {
       "pts": {
@@ -606,8 +606,8 @@
       }
     }
   },
-  "insufficientPoints": "Insufficient Points",
-  "donatePoints": "Donate {pts} Points",
+  "insufficientPoints": "Insufficient Seeds",
+  "donatePoints": "Donate {pts} Seeds",
   "@donatePoints": {
     "placeholders": {
       "pts": {
@@ -617,7 +617,7 @@
   },
   "everyRecitationCanChange": "Every Recitation Can\nChange a Life",
   "fullyFunded": "Fully Funded ✓",
-  "noPointsAvailable": "No Points Available",
+  "noPointsAvailable": "No Seeds Available",
   "communityProgress": "Community Progress",
   "myContribution": "My contribution: {pts} pts",
   "@myContribution": {
@@ -712,15 +712,15 @@
   "privacyPolicy": "Privacy Policy",
   "howWeProtectData": "How we protect your data",
   "bugReportBody": "Found something wrong? Please email us and we'll fix it as soon as possible.",
-  "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Noor Points by building Islamic habits.\nDonate points to support real community projects.",
-  "howToEarnQuestion": "How to earn Noor Points?",
-  "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn points.",
+  "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.",
+  "howToEarnQuestion": "How to earn Sabiq Seeds?",
+  "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn Seeds.",
   "whatIsValidateQuestion": "What is Validate Coins?",
   "whatIsValidateAnswer": "Press the Validate button on the home page once per day to seal your coins.",
   "howStreaksWorkQuestion": "How do streaks work?",
   "howStreaksWorkAnswer": "Complete your daily activities consecutively to build your streak.",
-  "canDonatQuestion": "Can I donate my Noor Points?",
-  "canDonateAnswer": "Yes! Visit the Akhirah tab to donate your points to active community projects.",
+  "canDonatQuestion": "Can I donate my Sabiq Seeds?",
+  "canDonateAnswer": "Yes! Visit the Akhirah tab to donate your Seeds to active community projects.",
   "coinsSealedMashaAllah": "Coins Sealed!",
   "rewardedForConsistency": "You have been rewarded for\nyour consistency today!",
   "validationPoints": "Validation Points",
@@ -739,7 +739,7 @@
   "inviteAFriend": "Invite a Friend",
   "shareNoorBonus": "Share Noor with someone → earn +100 NP",
   "multiplyYour": "MULTIPLY YOUR",
-  "noorPointsBang": "NOOR POINTS!",
+  "noorPointsBang": "SABIQ SEEDS!",
   "keepMomentum": "Keep your spiritual momentum going\nand watch your Noor grow",
   "openQuranNow": "Open Quran Now",
   "startAzkaarNow": "Start Azkaar Now",
@@ -754,7 +754,7 @@
   "verified": "Verified",
   "connectedAccount": "Connected Account",
   "active": "Active",
-  "noorPlusPoints": "+{pts} Noor Points",
+  "noorPlusPoints": "+{pts} Sabiq Seeds",
   "@noorPlusPoints": {
     "placeholders": {
       "pts": {
@@ -763,7 +763,7 @@
     }
   },
   "yourGarden": "YOUR GARDEN",
-  "noorPointsBloomed": "noor points bloomed",
+  "noorPointsBloomed": "Sabiq Seeds bloomed",
   "growingStreakTitle": "GROWING STREAK",
   "daySingular": "day",
   "daysPlural": "days",
@@ -819,7 +819,7 @@
   },
   "youIndicator": "(you)",
   "greetingPrefix": "Assalamu alaikum,",
-  "fundProjectsText": "Your Noor Points fund these projects",
+  "fundProjectsText": "Your Sabiq Seeds fund these projects",
   "activeCount": "{count} active",
   "@activeCount": {
     "placeholders": {
@@ -874,7 +874,7 @@
       }
     }
   },
-  "pointsForSealing": "+{points} Noor Points for sealing today.",
+  "pointsForSealing": "+{points} Sabiq Seeds for sealing today.",
   "@pointsForSealing": {
     "placeholders": {
       "points": {
@@ -882,7 +882,7 @@
       }
     }
   },
-  "welcomeBack": "+{points} Noor Points · welcome back!",
+  "welcomeBack": "+{points} Sabiq Seeds · welcome back!",
   "@welcomeBack": {
     "placeholders": {
       "points": {

@@ -34,9 +34,16 @@ import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/motivational_popup.dart';
 import '../widgets/project_media_carousel.dart';
+import '../widgets/sabiq_coin.dart';
+import '../widgets/seal_coin_animation.dart';
 import 'project_detail_screen.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
+
+/// Global key on the top-right profile/avatar tile. After sealing the day,
+/// the celebration coin flies to this widget so the user sees the Seeds
+/// arrive at their wallet (the profile icon doubles as the Seeds wallet).
+final GlobalKey sabiqProfileIconKey = GlobalKey();
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _cfg => SettingsService.instance.config;
@@ -1048,8 +1055,11 @@ class _HomeTabState extends State<_HomeTab> {
                                 ),
                           ),
                         ),
-                        // Avatar tile — preserves user image + level badge
+                        // Avatar tile — preserves user image + level badge.
+                        // Doubles as the Sabiq Seeds wallet target — the seal
+                        // animation flies the coin into this widget.
                         GestureDetector(
+                          key: sabiqProfileIconKey,
                           onTap: () => widget.onGoProfile?.call(),
                           child: Stack(
                             clipBehavior: Clip.none,
@@ -1131,6 +1141,7 @@ class _HomeTabState extends State<_HomeTab> {
                   // ── Swipe-to-validate (honey-deep palette, gesture preserved) ───
                   const SizedBox(height: 12),
                   _SwipeValidateButton(
+                    pendingPoints: XpService.instance.pendingPoints,
                     onValidate: () async {
                       final awarded = await widget.onValidate();
                       if (!mounted) return awarded;
@@ -3469,7 +3480,7 @@ class _MyDonationsSection extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const Spacer(),
+                            const SizedBox(height: 10),
 
                             // ── Raised + % row (LaunchGood-style headline) ──
                             Row(
@@ -3477,7 +3488,7 @@ class _MyDonationsSection extends StatelessWidget {
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  '${fmt(current)} pts',
+                                  '${fmt(current)} Seeds',
                                   style: Y4.display(
                                     fontSize: 22,
                                     color: Y4.honeyDeep,
@@ -3496,7 +3507,12 @@ class _MyDonationsSection extends StatelessWidget {
                                 ),
                                 const Spacer(),
                                 Text(
-                                  '${(pct * 100).round()}%',
+                                  // Show "<1%" instead of "0%" when there's
+                                  // any progress at all — even a single
+                                  // donation shouldn't read as zero.
+                                  (pct > 0 && pct * 100 < 1)
+                                      ? '<1%'
+                                      : '${(pct * 100).round()}%',
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w800,
@@ -3505,7 +3521,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             // ── Bigger honey→butter progress bar ──
                             ClipRRect(
                               borderRadius: BorderRadius.circular(999),
@@ -3530,11 +3546,11 @@ class _MyDonationsSection extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  'Goal: ${fmt(target)} pts',
+                                  'Goal: ${fmt(target)} Seeds',
                                   style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: Y4.inkSoft,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: Y4.ink,
                                   ),
                                 ),
                                 const Spacer(),
@@ -3558,7 +3574,7 @@ class _MyDonationsSection extends StatelessWidget {
                             if (myPts > 0) ...[
                               const SizedBox(height: 6),
                               Text(
-                                '${AppLocalizations.of(context)?.youDonated ?? 'You donated'} ${fmt(myPts)} pts',
+                                '${AppLocalizations.of(context)?.youDonated ?? 'You donated'} ${fmt(myPts)} ${myPts == 1 ? 'Seed' : 'Seeds'}',
                                 style: GoogleFonts.outfit(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
@@ -3657,7 +3673,7 @@ class _Y4DonateChip extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              '$amount pts',
+              '$amount Seeds',
               style: GoogleFonts.outfit(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -4449,7 +4465,7 @@ class _ProjectCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${fmtM(current)} / ${fmtM(target)} pts',
+                        '${fmtM(current)} / ${fmtM(target)} Seeds',
                         style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
                       ),
                       const Spacer(),
@@ -4744,7 +4760,8 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '${widget.availablePoints} pts',
+                        '${widget.availablePoints} '
+                        '${widget.availablePoints == 1 ? 'Seed' : 'Seeds'}',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -6285,7 +6302,11 @@ class _ArcPainter extends CustomPainter {
 // ── Main widget ───────────────────────────────────────────────────────────────
 class _SwipeValidateButton extends StatefulWidget {
   final Future<bool> Function() onValidate;
-  const _SwipeValidateButton({required this.onValidate});
+  final int pendingPoints;
+  const _SwipeValidateButton({
+    required this.onValidate,
+    this.pendingPoints = 0,
+  });
   @override
   State<_SwipeValidateButton> createState() => _SwipeValidateButtonState();
 }
@@ -6535,6 +6556,27 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     widget.onValidate().then((awarded) {
       if (!mounted) return;
       setState(() => _freshXp = awarded);
+      // Sabiq Seed celebration — spin the coin, then fly it to the
+      // top-right profile icon (the Seeds wallet). Best-effort; never
+      // blocks the existing burst/snap/fill animation.
+      if (awarded) {
+        final pts = widget.pendingPoints;
+        if (pts > 0) {
+          // Resolve the avatar's centre in global screen coordinates so
+          // the coin lands exactly on it.
+          Offset? target;
+          final box = sabiqProfileIconKey.currentContext
+              ?.findRenderObject() as RenderBox?;
+          if (box != null && box.attached) {
+            target = box.localToGlobal(box.size.center(Offset.zero));
+          }
+          playSealCoinAnimation(
+            context,
+            pointsSealed: pts,
+            targetPosition: target,
+          );
+        }
+      }
       // Hold completed state, then reset
       Future.delayed(const Duration(milliseconds: 2200), () async {
         if (!mounted) return;
@@ -7617,28 +7659,39 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                           ),
                         ),
                         const SizedBox(height: 6),
-                        AnimatedBuilder(
-                          animation: _anim,
-                          builder: (_, __) {
-                            final v =
-                                (_from + (widget.value - _from) * _anim.value)
-                                    .round();
-                            return Text(
-                              _fmt(v),
-                              style: Y4.display(
-                                fontSize: 56,
-                                fontWeight: FontWeight.w400,
-                                color: Y4.honeyDeep,
-                                letterSpacing: -0.02 * 56,
-                                height: 0.95,
-                              ),
-                            );
-                          },
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Sabiq Seed coin — the currency mark next to
+                            // the big balance number.
+                            const SabiqCoin(size: 44, sprouting: true),
+                            const SizedBox(width: 10),
+                            AnimatedBuilder(
+                              animation: _anim,
+                              builder: (_, __) {
+                                final v =
+                                    (_from +
+                                            (widget.value - _from) *
+                                                _anim.value)
+                                        .round();
+                                return Text(
+                                  _fmt(v),
+                                  style: Y4.display(
+                                    fontSize: 52,
+                                    fontWeight: FontWeight.w400,
+                                    color: Y4.honeyDeep,
+                                    letterSpacing: -0.02 * 52,
+                                    height: 0.95,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         Text(
                           AppLocalizations.of(context)?.noorPointsBloomed ??
-                              'noor points bloomed',
+                              'Sabiq Seeds bloomed',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -7670,7 +7723,9 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                                 const SizedBox(width: 6),
                                 Flexible(
                                   child: Text(
-                                    '+${widget.pendingPoints} pts pending — seal to keep',
+                                    '+${widget.pendingPoints} '
+                                    '${widget.pendingPoints == 1 ? 'Seed' : 'Seeds'} '
+                                    'pending — seal to keep',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.outfit(

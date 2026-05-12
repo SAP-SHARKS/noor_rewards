@@ -1231,7 +1231,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             value: _totalDonated,
             color: const Color(0xFFE67E22),
             hadith: '"Sadaqah does not decrease wealth." — Muslim 2588',
-            breakdown: 'Points you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} pts',
+            breakdown: 'Seeds you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} ${_totalDonated == 1 ? 'Seed' : 'Seeds'}',
           ),
         ),
       ];
@@ -1775,7 +1775,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    '$amt pts',
+                                    '$amt Seeds',
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.w700,
                                       color: sel ? Colors.white : _C.text,
@@ -1869,8 +1869,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     },
                             child: Text(
                               _myAvailablePoints < selected
-                                  ? 'Insufficient Points'
-                                  : 'Donate $selected Points 🤲',
+                                  ? 'Insufficient Seeds'
+                                  : 'Donate $selected ${selected == 1 ? 'Seed' : 'Seeds'} 🤲',
                               style: GoogleFonts.outfit(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
@@ -2008,7 +2008,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             const Spacer(),
                             Flexible(
                               child: Text(
-                                '${_fmt(cur)} / ${_fmt(tgt)} pts',
+                                '${_fmt(cur)} / ${_fmt(tgt)} Seeds',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(

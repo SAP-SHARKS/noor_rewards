@@ -430,7 +430,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                             children: [
                               Flexible(
                                 child: Text(
-                                  '${_fmtN(current)} pts',
+                                  '${_fmtN(current)} Seeds',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: Y4.display(
@@ -461,7 +461,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${_fmtN(target)} pts',
+                          '${_fmtN(target)} Seeds',
                           style: GoogleFonts.outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -555,7 +555,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'My contribution: ${_fmtN(userPoints)} pts',
+                        'My contribution: ${_fmtN(userPoints)} ${userPoints == 1 ? 'Seed' : 'Seeds'}',
                         style: GoogleFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -633,7 +633,7 @@ class _DonateBar extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'JazakAllah Khayran! $amount points donated.',
+                          'JazakAllah Khayran! $amount ${amount == 1 ? 'Seed' : 'Seeds'} donated.',
                           style: GoogleFonts.outfit(
                             fontWeight: FontWeight.w600,
                           ),
@@ -851,7 +851,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                               ),
                               const Spacer(),
                               Text(
-                                '${widget.availablePoints} pts',
+                                '${widget.availablePoints} ${widget.availablePoints == 1 ? 'Seed' : 'Seeds'}',
                                 style: GoogleFonts.outfit(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
@@ -891,7 +891,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                         // Big amount
                         Center(
                           child: Text(
-                            '$_amount pts',
+                            '$_amount ${_amount == 1 ? 'Seed' : 'Seeds'}',
                             style: GoogleFonts.outfit(
                               fontSize: 42,
                               fontWeight: FontWeight.w900,
@@ -960,7 +960,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                                       ),
                                     )
                                     : Text(
-                                      'Donate $_amount pts',
+                                      'Donate $_amount ${_amount == 1 ? 'Seed' : 'Seeds'}',
                                       style: GoogleFonts.outfit(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,

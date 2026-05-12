@@ -88,13 +88,13 @@ class AppLocalizationsMs extends AppLocalizations {
       'Pintu gerbang Noor terbuka.\nPerjalanan rohani anda bermula hari ini.';
 
   @override
-  String get earnNoorPoints => 'RAIH MATA NOOR';
+  String get earnNoorPoints => 'EARN SABIQ SEEDS';
 
   @override
   String get yourProgress => 'KEMAJUAN ANDA';
 
   @override
-  String get yourTotalNoorPoints => 'JUMLAH MATA NOOR ANDA';
+  String get yourTotalNoorPoints => 'YOUR TOTAL SABIQ SEEDS';
 
   @override
   String get achievements => 'Pencapaian';
@@ -112,7 +112,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get streaks => 'BERTURUTAN';
 
   @override
-  String get noorPoints => 'Mata Noor';
+  String get noorPoints => 'Sabiq Seeds';
 
   @override
   String get readQuran => 'Baca Al-Quran';
@@ -244,8 +244,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get communityLeaderboard => 'Papan Pendahulu Komuniti';
 
   @override
-  String get topContributors =>
-      'Penyumbang teratas mengikut mata sepanjang masa';
+  String get topContributors => 'Top contributors by lifetime Seeds';
 
   @override
   String get myProfile => 'Profil Saya';
@@ -351,10 +350,10 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get yourNoorPointsFundProjects =>
-      'Mata Noor anda membiayai projek-projek ini';
+      'Your Sabiq Seeds fund these projects';
 
   @override
-  String get youBothEarnPoints => 'Anda berdua memperoleh 500 Mata Noor!';
+  String get youBothEarnPoints => 'You both earn 500 Sabiq Seeds!';
 
   @override
   String get reward => 'Ganjaran';
@@ -378,7 +377,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get seeDetailsForMore => 'Lihat Butiran untuk lagi Projek →';
 
   @override
-  String get pts => 'mata';
+  String get pts => 'Seeds';
 
   @override
   String get funded => 'dibiayai';
@@ -401,7 +400,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get donationAmount => 'Jumlah Derma';
 
   @override
-  String get points => 'mata';
+  String get points => 'Seeds';
 
   @override
   String get donateEarnReward => 'Derma & Raih Ganjaran';
@@ -434,7 +433,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get donatePointsToSupport =>
-      'Dermakan Mata Noor anda untuk menyokong projek dunia sebenar';
+      'Donate your Sabiq Seeds to support real-world projects';
 
   @override
   String get noActiveProjects => 'Tiada projek aktif buat masa ini';
@@ -468,7 +467,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String ptsToLevel(String pts, String level) {
-    return '$pts mata ke Tahap $level';
+    return '$pts Seeds to Level $level';
   }
 
   @override
@@ -504,10 +503,10 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Mula raih mata — baca Al-Quran, buat Zikir & Doa.';
+      'Start earning Seeds — read Quran, do Dhikr & Dua.';
 
   @override
-  String get howToEarnPts => 'Cara Raih Mata';
+  String get howToEarnPts => 'How to Earn Seeds';
 
   @override
   String get readOneAyah => 'Baca 1 Ayat';
@@ -599,7 +598,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String ptsBoost(String multiplier) {
-    return '$multiplier× Gandaan Mata';
+    return '$multiplier× Seeds Boost';
   }
 
   @override
@@ -657,7 +656,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get earnPointsTafsir =>
-      'Raih mata untuk setiap 10 minit mendengar Tafsir';
+      'Earn Seeds for every 10 min of Tafsir listening';
 
   @override
   String get featuredSurahs => 'Surah Pilihan';
@@ -803,10 +802,10 @@ class AppLocalizationsMs extends AppLocalizations {
   String get progressBarAyahCount => 'Bar kemajuan & kad kiraan ayat';
 
   @override
-  String get showPointsBanner => 'Tunjuk Sepanduk Mata';
+  String get showPointsBanner => 'Show Seeds Banner';
 
   @override
-  String get noorPointsNotificationStrip => 'Jalur pemberitahuan +Mata Noor';
+  String get noorPointsNotificationStrip => '+Sabiq Seeds notification strip';
 
   @override
   String get showSurahHeader => 'Tunjuk Pengepala Surah';
@@ -925,7 +924,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get loadingQuran => 'Memuatkan Al-Quran…';
 
   @override
-  String get earnPointsPerVerse => 'Raih +10 Mata Noor setiap ayat dibaca';
+  String get earnPointsPerVerse => 'Earn +10 Sabiq Seeds per verse read';
 
   @override
   String get chooseSurah => 'Pilih Surah';
@@ -1243,7 +1242,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get sadaqahGiven => 'Sedekah Diberikan';
 
   @override
-  String get pointsDonatedToCommunity => 'Mata didermakan kepada komuniti';
+  String get pointsDonatedToCommunity => 'Seeds donated to community';
 
   @override
   String get allTimeLabel => 'Sepanjang masa';
@@ -1255,10 +1254,10 @@ class AppLocalizationsMs extends AppLocalizations {
   String get timeSpentInRemembrance => 'Masa dihabiskan dalam zikir';
 
   @override
-  String get noorPointsSummary => 'Ringkasan Mata Noor';
+  String get noorPointsSummary => 'Sabiq Seeds Summary';
 
   @override
-  String get totalPoints => 'Jumlah Mata';
+  String get totalPoints => 'Total Seeds';
 
   @override
   String get title => 'Tajuk';
@@ -1268,20 +1267,20 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String yourAvailable(String pts) {
-    return 'Baki anda: $pts mata';
+    return 'Your available: $pts Seeds';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'JazakAllah! $pts mata didermakan';
+    return 'JazakAllah! $pts Seeds donated';
   }
 
   @override
-  String get insufficientPoints => 'Mata Tidak Mencukupi';
+  String get insufficientPoints => 'Insufficient Seeds';
 
   @override
   String donatePoints(String pts) {
-    return 'Dermakan $pts Mata';
+    return 'Donate $pts Seeds';
   }
 
   @override
@@ -1292,7 +1291,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get fullyFunded => 'Dibiayai Sepenuhnya ✓';
 
   @override
-  String get noPointsAvailable => 'Tiada Mata Tersedia';
+  String get noPointsAvailable => 'No Seeds Available';
 
   @override
   String get communityProgress => 'Kemajuan Komuniti';
@@ -1624,14 +1623,14 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String noorPlusPoints(String pts) {
-    return '+$pts Mata Noor';
+    return '+$pts Sabiq Seeds';
   }
 
   @override
   String get yourGarden => 'YOUR GARDEN';
 
   @override
-  String get noorPointsBloomed => 'noor points bloomed';
+  String get noorPointsBloomed => 'Sabiq Seeds bloomed';
 
   @override
   String get growingStreakTitle => 'GROWING STREAK';
@@ -1767,11 +1766,11 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String pointsForSealing(String points) {
-    return '+$points Noor Points for sealing today.';
+    return '+$points Sabiq Seeds for sealing today.';
   }
 
   @override
   String welcomeBack(String points) {
-    return '+$points Noor Points · welcome back!';
+    return '+$points Sabiq Seeds  welcome back!';
   }
 }
