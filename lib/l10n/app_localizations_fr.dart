@@ -88,13 +88,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les portes de Noor sont ouvertes.\nVotre voyage spirituel commence aujourd\'hui.';
 
   @override
-  String get earnNoorPoints => 'GAGNER DES POINTS NOOR';
+  String get earnNoorPoints => 'EARN SABIQ SEEDS';
 
   @override
   String get yourProgress => 'VOTRE PROGRESSION';
 
   @override
-  String get yourTotalNoorPoints => 'TOTAL DE VOS POINTS NOOR';
+  String get yourTotalNoorPoints => 'YOUR TOTAL SABIQ SEEDS';
 
   @override
   String get achievements => 'Réalisations';
@@ -112,7 +112,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get streaks => 'SÉRIES';
 
   @override
-  String get noorPoints => 'Points Noor';
+  String get noorPoints => 'Sabiq Seeds';
 
   @override
   String get readQuran => 'Lire le Coran';
@@ -244,7 +244,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityLeaderboard => 'Classement communautaire';
 
   @override
-  String get topContributors => 'Meilleurs contributeurs par points totaux';
+  String get topContributors => 'Top contributors by lifetime Seeds';
 
   @override
   String get myProfile => 'Mon profil';
@@ -350,10 +350,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get yourNoorPointsFundProjects =>
-      'Vos Points Noor financent ces projets';
+      'Your Sabiq Seeds fund these projects';
 
   @override
-  String get youBothEarnPoints => 'Vous gagnez tous les deux 500 Points Noor !';
+  String get youBothEarnPoints => 'You both earn 500 Sabiq Seeds!';
 
   @override
   String get reward => 'Récompense';
@@ -377,7 +377,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get seeDetailsForMore => 'Voir les détails pour plus de projets →';
 
   @override
-  String get pts => 'pts';
+  String get pts => 'Seeds';
 
   @override
   String get funded => 'financé';
@@ -400,7 +400,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get donationAmount => 'Montant du don';
 
   @override
-  String get points => 'points';
+  String get points => 'Seeds';
 
   @override
   String get donateEarnReward => 'Donner et gagner une récompense';
@@ -433,7 +433,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get donatePointsToSupport =>
-      'Donnez vos Points Noor pour soutenir des projets concrets';
+      'Donate your Sabiq Seeds to support real-world projects';
 
   @override
   String get noActiveProjects => 'Aucun projet actif pour le moment';
@@ -468,7 +468,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String ptsToLevel(String pts, String level) {
-    return '$pts pts pour le niveau $level';
+    return '$pts Seeds to Level $level';
   }
 
   @override
@@ -504,10 +504,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Commencez à gagner des pts — lisez le Coran, faites du Dhikr et des Douaa.';
+      'Start earning Seeds — read Quran, do Dhikr & Dua.';
 
   @override
-  String get howToEarnPts => 'Comment gagner des pts';
+  String get howToEarnPts => 'How to Earn Seeds';
 
   @override
   String get readOneAyah => 'Lire 1 Ayah';
@@ -600,7 +600,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String ptsBoost(String multiplier) {
-    return 'Boost de pts ×$multiplier';
+    return '$multiplier× Seeds Boost';
   }
 
   @override
@@ -658,7 +658,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get earnPointsTafsir =>
-      'Gagnez des points pour chaque 10 min d\'écoute de Tafsir';
+      'Earn Seeds for every 10 min of Tafsir listening';
 
   @override
   String get featuredSurahs => 'Sourates en vedette';
@@ -806,11 +806,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Barre de progression et compteur d\'ayahs';
 
   @override
-  String get showPointsBanner => 'Afficher la bannière de points';
+  String get showPointsBanner => 'Show Seeds Banner';
 
   @override
-  String get noorPointsNotificationStrip =>
-      'Bandeau de notification +Points Noor';
+  String get noorPointsNotificationStrip => '+Sabiq Seeds notification strip';
 
   @override
   String get showSurahHeader => 'Afficher l\'en-tête de la sourate';
@@ -926,7 +925,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loadingQuran => 'Chargement du Coran…';
 
   @override
-  String get earnPointsPerVerse => 'Gagnez +10 Points Noor par verset lu';
+  String get earnPointsPerVerse => 'Earn +10 Sabiq Seeds per verse read';
 
   @override
   String get chooseSurah => 'Choisir une sourate';
@@ -1245,7 +1244,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sadaqahGiven => 'Sadaqa donnée';
 
   @override
-  String get pointsDonatedToCommunity => 'Points donnés à la communauté';
+  String get pointsDonatedToCommunity => 'Seeds donated to community';
 
   @override
   String get allTimeLabel => 'Depuis toujours';
@@ -1257,10 +1256,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get timeSpentInRemembrance => 'Temps passé dans le rappel';
 
   @override
-  String get noorPointsSummary => 'Résumé des Points Noor';
+  String get noorPointsSummary => 'Sabiq Seeds Summary';
 
   @override
-  String get totalPoints => 'Points totaux';
+  String get totalPoints => 'Total Seeds';
 
   @override
   String get title => 'Titre';
@@ -1270,20 +1269,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String yourAvailable(String pts) {
-    return 'Votre solde : $pts pts';
+    return 'Your available: $pts Seeds';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'JazakAllah ! $pts pts donnés';
+    return 'JazakAllah! $pts Seeds donated';
   }
 
   @override
-  String get insufficientPoints => 'Points insuffisants';
+  String get insufficientPoints => 'Insufficient Seeds';
 
   @override
   String donatePoints(String pts) {
-    return 'Donner $pts points';
+    return 'Donate $pts Seeds';
   }
 
   @override
@@ -1294,7 +1293,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fullyFunded => 'Entièrement financé ✓';
 
   @override
-  String get noPointsAvailable => 'Aucun point disponible';
+  String get noPointsAvailable => 'No Seeds Available';
 
   @override
   String get communityProgress => 'Progrès communautaire';
@@ -1631,14 +1630,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String noorPlusPoints(String pts) {
-    return '+$pts Points Noor';
+    return '+$pts Sabiq Seeds';
   }
 
   @override
   String get yourGarden => 'VOTRE JARDIN';
 
   @override
-  String get noorPointsBloomed => 'points noor éclos';
+  String get noorPointsBloomed => 'Sabiq Seeds bloomed';
 
   @override
   String get growingStreakTitle => 'SÉRIE CROISSANTE';
@@ -1775,11 +1774,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String pointsForSealing(String points) {
-    return '+$points Noor Points for sealing today.';
+    return '+$points Sabiq Seeds for sealing today.';
   }
 
   @override
   String welcomeBack(String points) {
-    return '+$points Noor Points · welcome back!';
+    return '+$points Sabiq Seeds  welcome back!';
   }
 }

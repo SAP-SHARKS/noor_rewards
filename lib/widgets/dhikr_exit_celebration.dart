@@ -429,7 +429,7 @@ class _StatsRow extends StatelessWidget {
                   builder: (_, __) {
                     final v = pointsAnim.value;
                     return Text(
-                      hasPoints ? '+$v pts' : '+0 pts',
+                      hasPoints ? '+$v ${v == 1 ? 'Seed' : 'Seeds'}' : '+0 Seeds',
                       style: GoogleFonts.fraunces(
                         fontSize: 28,
                         fontWeight: FontWeight.w500,

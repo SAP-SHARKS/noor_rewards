@@ -4026,7 +4026,7 @@ class _RewardCounters extends StatelessWidget {
                 const Icon(Icons.star_rounded, size: 11, color: Color(0xFFB8860B)),
                 const SizedBox(width: 3),
                 Text(
-                  '+$pointsToday pts',
+                  '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -4219,7 +4219,7 @@ class _AzkarCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '+$pointsToday pts',
+                            '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
                             style: GoogleFonts.outfit(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,

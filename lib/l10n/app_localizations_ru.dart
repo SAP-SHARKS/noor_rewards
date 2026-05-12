@@ -88,13 +88,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Врата Нура открыты.\nВаш духовный путь начинается сегодня.';
 
   @override
-  String get earnNoorPoints => 'ЗАРАБАТЫВАЙТЕ ОЧКИ НУР';
+  String get earnNoorPoints => 'EARN SABIQ SEEDS';
 
   @override
   String get yourProgress => 'ВАШ ПРОГРЕСС';
 
   @override
-  String get yourTotalNoorPoints => 'ВСЕГО ОЧКОВ НУР';
+  String get yourTotalNoorPoints => 'YOUR TOTAL SABIQ SEEDS';
 
   @override
   String get achievements => 'Достижения';
@@ -112,7 +112,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get streaks => 'СЕРИИ';
 
   @override
-  String get noorPoints => 'Очки Нур';
+  String get noorPoints => 'Sabiq Seeds';
 
   @override
   String get readQuran => 'Читать Коран';
@@ -244,7 +244,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityLeaderboard => 'Таблица лидеров сообщества';
 
   @override
-  String get topContributors => 'Лучшие участники по общему количеству очков';
+  String get topContributors => 'Top contributors by lifetime Seeds';
 
   @override
   String get myProfile => 'Мой профиль';
@@ -350,10 +350,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get yourNoorPointsFundProjects =>
-      'Ваши очки Нур финансируют эти проекты';
+      'Your Sabiq Seeds fund these projects';
 
   @override
-  String get youBothEarnPoints => 'Вы оба получите 500 очков Нур!';
+  String get youBothEarnPoints => 'You both earn 500 Sabiq Seeds!';
 
   @override
   String get reward => 'Награда';
@@ -377,7 +377,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get seeDetailsForMore => 'Подробнее о проектах →';
 
   @override
-  String get pts => 'очк.';
+  String get pts => 'Seeds';
 
   @override
   String get funded => 'собрано';
@@ -400,7 +400,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get donationAmount => 'Сумма пожертвования';
 
   @override
-  String get points => 'очки';
+  String get points => 'Seeds';
 
   @override
   String get donateEarnReward => 'Пожертвовать и получить награду';
@@ -433,7 +433,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get donatePointsToSupport =>
-      'Пожертвуйте очки Нур на поддержку реальных проектов';
+      'Donate your Sabiq Seeds to support real-world projects';
 
   @override
   String get noActiveProjects => 'Сейчас нет активных проектов';
@@ -468,7 +468,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String ptsToLevel(String pts, String level) {
-    return '$pts очк. до уровня $level';
+    return '$pts Seeds to Level $level';
   }
 
   @override
@@ -504,10 +504,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Начните зарабатывать очки — читайте Коран, делайте зикр и дуа.';
+      'Start earning Seeds — read Quran, do Dhikr & Dua.';
 
   @override
-  String get howToEarnPts => 'Как заработать очки';
+  String get howToEarnPts => 'How to Earn Seeds';
 
   @override
   String get readOneAyah => 'Прочитать 1 аят';
@@ -599,7 +599,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String ptsBoost(String multiplier) {
-    return '$multiplier× бонус очков';
+    return '$multiplier× Seeds Boost';
   }
 
   @override
@@ -657,7 +657,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get earnPointsTafsir =>
-      'Зарабатывайте очки за каждые 10 минут прослушивания тафсира';
+      'Earn Seeds for every 10 min of Tafsir listening';
 
   @override
   String get featuredSurahs => 'Избранные суры';
@@ -803,10 +803,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get progressBarAyahCount => 'Прогресс-бар и счётчик аятов';
 
   @override
-  String get showPointsBanner => 'Показать баннер очков';
+  String get showPointsBanner => 'Show Seeds Banner';
 
   @override
-  String get noorPointsNotificationStrip => 'Уведомление +Очки Нур';
+  String get noorPointsNotificationStrip => '+Sabiq Seeds notification strip';
 
   @override
   String get showSurahHeader => 'Показать заголовок суры';
@@ -923,8 +923,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadingQuran => 'Загрузка Корана…';
 
   @override
-  String get earnPointsPerVerse =>
-      'Зарабатывайте +10 очков Нур за каждый прочитанный аят';
+  String get earnPointsPerVerse => 'Earn +10 Sabiq Seeds per verse read';
 
   @override
   String get chooseSurah => 'Выберите суру';
@@ -1242,7 +1241,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sadaqahGiven => 'Садака отдана';
 
   @override
-  String get pointsDonatedToCommunity => 'Очки пожертвованы сообществу';
+  String get pointsDonatedToCommunity => 'Seeds donated to community';
 
   @override
   String get allTimeLabel => 'За всё время';
@@ -1254,10 +1253,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get timeSpentInRemembrance => 'Время, проведённое в поминании';
 
   @override
-  String get noorPointsSummary => 'Сводка очков Нур';
+  String get noorPointsSummary => 'Sabiq Seeds Summary';
 
   @override
-  String get totalPoints => 'Всего очков';
+  String get totalPoints => 'Total Seeds';
 
   @override
   String get title => 'Название';
@@ -1267,20 +1266,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String yourAvailable(String pts) {
-    return 'Доступно: $pts очк.';
+    return 'Your available: $pts Seeds';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'ДжазакАллах! $pts очк. пожертвовано';
+    return 'JazakAllah! $pts Seeds donated';
   }
 
   @override
-  String get insufficientPoints => 'Недостаточно очков';
+  String get insufficientPoints => 'Insufficient Seeds';
 
   @override
   String donatePoints(String pts) {
-    return 'Пожертвовать $pts очков';
+    return 'Donate $pts Seeds';
   }
 
   @override
@@ -1290,7 +1289,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fullyFunded => 'Полностью собрано ✓';
 
   @override
-  String get noPointsAvailable => 'Нет доступных очков';
+  String get noPointsAvailable => 'No Seeds Available';
 
   @override
   String get communityProgress => 'Прогресс сообщества';
@@ -1622,14 +1621,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String noorPlusPoints(String pts) {
-    return '+$pts очков Нур';
+    return '+$pts Sabiq Seeds';
   }
 
   @override
   String get yourGarden => 'YOUR GARDEN';
 
   @override
-  String get noorPointsBloomed => 'noor points bloomed';
+  String get noorPointsBloomed => 'Sabiq Seeds bloomed';
 
   @override
   String get growingStreakTitle => 'GROWING STREAK';
@@ -1765,11 +1764,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String pointsForSealing(String points) {
-    return '+$points Noor Points for sealing today.';
+    return '+$points Sabiq Seeds for sealing today.';
   }
 
   @override
   String welcomeBack(String points) {
-    return '+$points Noor Points · welcome back!';
+    return '+$points Sabiq Seeds  welcome back!';
   }
 }

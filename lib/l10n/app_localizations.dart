@@ -251,7 +251,7 @@ abstract class AppLocalizations {
   /// No description provided for @earnNoorPoints.
   ///
   /// In en, this message translates to:
-  /// **'EARN NOOR POINTS'**
+  /// **'EARN SABIQ SEEDS'**
   String get earnNoorPoints;
 
   /// No description provided for @yourProgress.
@@ -263,7 +263,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourTotalNoorPoints.
   ///
   /// In en, this message translates to:
-  /// **'YOUR TOTAL NOOR POINTS'**
+  /// **'YOUR TOTAL SABIQ SEEDS'**
   String get yourTotalNoorPoints;
 
   /// No description provided for @achievements.
@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @noorPoints.
   ///
   /// In en, this message translates to:
-  /// **'Noor Points'**
+  /// **'Sabiq Seeds'**
   String get noorPoints;
 
   /// No description provided for @readQuran.
@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @topContributors.
   ///
   /// In en, this message translates to:
-  /// **'Top contributors by lifetime pts'**
+  /// **'Top contributors by lifetime Seeds'**
   String get topContributors;
 
   /// No description provided for @myProfile.
@@ -767,13 +767,13 @@ abstract class AppLocalizations {
   /// No description provided for @yourNoorPointsFundProjects.
   ///
   /// In en, this message translates to:
-  /// **'Your Noor Points fund these projects'**
+  /// **'Your Sabiq Seeds fund these projects'**
   String get yourNoorPointsFundProjects;
 
   /// No description provided for @youBothEarnPoints.
   ///
   /// In en, this message translates to:
-  /// **'You both earn 500 Noor Points!'**
+  /// **'You both earn 500 Sabiq Seeds!'**
   String get youBothEarnPoints;
 
   /// No description provided for @reward.
@@ -821,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @pts.
   ///
   /// In en, this message translates to:
-  /// **'pts'**
+  /// **'Seeds'**
   String get pts;
 
   /// No description provided for @funded.
@@ -863,7 +863,7 @@ abstract class AppLocalizations {
   /// No description provided for @points.
   ///
   /// In en, this message translates to:
-  /// **'points'**
+  /// **'Seeds'**
   String get points;
 
   /// No description provided for @donateEarnReward.
@@ -923,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @donatePointsToSupport.
   ///
   /// In en, this message translates to:
-  /// **'Donate your Noor Points to support real-world projects'**
+  /// **'Donate your Sabiq Seeds to support real-world projects'**
   String get donatePointsToSupport;
 
   /// No description provided for @noActiveProjects.
@@ -989,7 +989,7 @@ abstract class AppLocalizations {
   /// No description provided for @ptsToLevel.
   ///
   /// In en, this message translates to:
-  /// **'{pts} pts to Level {level}'**
+  /// **'{pts} Seeds to Level {level}'**
   String ptsToLevel(String pts, String level);
 
   /// No description provided for @dayStreak.
@@ -1049,13 +1049,13 @@ abstract class AppLocalizations {
   /// No description provided for @startEarningPts.
   ///
   /// In en, this message translates to:
-  /// **'Start earning pts — read Quran, do Dhikr & Dua.'**
+  /// **'Start earning Seeds — read Quran, do Dhikr & Dua.'**
   String get startEarningPts;
 
   /// No description provided for @howToEarnPts.
   ///
   /// In en, this message translates to:
-  /// **'How to Earn pts'**
+  /// **'How to Earn Seeds'**
   String get howToEarnPts;
 
   /// No description provided for @readOneAyah.
@@ -1199,7 +1199,7 @@ abstract class AppLocalizations {
   /// No description provided for @ramadanChallengeDesc.
   ///
   /// In en, this message translates to:
-  /// **'3× pts multiplier • Special badges • Community wells goal'**
+  /// **'3× Seeds multiplier • Special badges • Community wells goal'**
   String get ramadanChallengeDesc;
 
   /// No description provided for @comingSoonStayConsistent.
@@ -1217,7 +1217,7 @@ abstract class AppLocalizations {
   /// No description provided for @ptsBoost.
   ///
   /// In en, this message translates to:
-  /// **'{multiplier}× pts Boost'**
+  /// **'{multiplier}× Seeds Boost'**
   String ptsBoost(String multiplier);
 
   /// No description provided for @ends.
@@ -1313,7 +1313,7 @@ abstract class AppLocalizations {
   /// No description provided for @earnPointsTafsir.
   ///
   /// In en, this message translates to:
-  /// **'Earn points for every 10 min of Tafsir listening'**
+  /// **'Earn Seeds for every 10 min of Tafsir listening'**
   String get earnPointsTafsir;
 
   /// No description provided for @featuredSurahs.
@@ -1589,13 +1589,13 @@ abstract class AppLocalizations {
   /// No description provided for @showPointsBanner.
   ///
   /// In en, this message translates to:
-  /// **'Show Points Banner'**
+  /// **'Show Seeds Banner'**
   String get showPointsBanner;
 
   /// No description provided for @noorPointsNotificationStrip.
   ///
   /// In en, this message translates to:
-  /// **'+Noor Points notification strip'**
+  /// **'+Sabiq Seeds notification strip'**
   String get noorPointsNotificationStrip;
 
   /// No description provided for @showSurahHeader.
@@ -1817,7 +1817,7 @@ abstract class AppLocalizations {
   /// No description provided for @earnPointsPerVerse.
   ///
   /// In en, this message translates to:
-  /// **'Earn +10 Noor Points per verse read'**
+  /// **'Earn +10 Sabiq Seeds per verse read'**
   String get earnPointsPerVerse;
 
   /// No description provided for @chooseSurah.
@@ -1937,7 +1937,7 @@ abstract class AppLocalizations {
   /// No description provided for @dailyAzkarBonusMsg.
   ///
   /// In en, this message translates to:
-  /// **'Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.'**
+  /// **'Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Sabiq Seeds.'**
   String get dailyAzkarBonusMsg;
 
   /// No description provided for @awesome.
@@ -2417,7 +2417,7 @@ abstract class AppLocalizations {
   /// No description provided for @pointsDonatedToCommunity.
   ///
   /// In en, this message translates to:
-  /// **'Points donated to community'**
+  /// **'Seeds donated to community'**
   String get pointsDonatedToCommunity;
 
   /// No description provided for @allTimeLabel.
@@ -2441,13 +2441,13 @@ abstract class AppLocalizations {
   /// No description provided for @noorPointsSummary.
   ///
   /// In en, this message translates to:
-  /// **'Noor Points Summary'**
+  /// **'Sabiq Seeds Summary'**
   String get noorPointsSummary;
 
   /// No description provided for @totalPoints.
   ///
   /// In en, this message translates to:
-  /// **'Total Points'**
+  /// **'Total Seeds'**
   String get totalPoints;
 
   /// No description provided for @title.
@@ -2465,25 +2465,25 @@ abstract class AppLocalizations {
   /// No description provided for @yourAvailable.
   ///
   /// In en, this message translates to:
-  /// **'Your available: {pts} pts'**
+  /// **'Your available: {pts} Seeds'**
   String yourAvailable(String pts);
 
   /// No description provided for @jazakAllahDonated.
   ///
   /// In en, this message translates to:
-  /// **'JazakAllah! {pts} pts donated'**
+  /// **'JazakAllah! {pts} Seeds donated'**
   String jazakAllahDonated(String pts);
 
   /// No description provided for @insufficientPoints.
   ///
   /// In en, this message translates to:
-  /// **'Insufficient Points'**
+  /// **'Insufficient Seeds'**
   String get insufficientPoints;
 
   /// No description provided for @donatePoints.
   ///
   /// In en, this message translates to:
-  /// **'Donate {pts} Points'**
+  /// **'Donate {pts} Seeds'**
   String donatePoints(String pts);
 
   /// No description provided for @everyRecitationCanChange.
@@ -2501,7 +2501,7 @@ abstract class AppLocalizations {
   /// No description provided for @noPointsAvailable.
   ///
   /// In en, this message translates to:
-  /// **'No Points Available'**
+  /// **'No Seeds Available'**
   String get noPointsAvailable;
 
   /// No description provided for @communityProgress.
@@ -2861,19 +2861,19 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBody.
   ///
   /// In en, this message translates to:
-  /// **'Built with love for the global Muslim Ummah.\nEarn Noor Points by building Islamic habits.\nDonate points to support real community projects.'**
+  /// **'Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.'**
   String get aboutBody;
 
   /// No description provided for @howToEarnQuestion.
   ///
   /// In en, this message translates to:
-  /// **'How to earn Noor Points?'**
+  /// **'How to earn Sabiq Seeds?'**
   String get howToEarnQuestion;
 
   /// No description provided for @howToEarnAnswer.
   ///
   /// In en, this message translates to:
-  /// **'Complete Quran reading, Dhikr sets, and daily login to earn points.'**
+  /// **'Complete Quran reading, Dhikr sets, and daily login to earn Seeds.'**
   String get howToEarnAnswer;
 
   /// No description provided for @whatIsValidateQuestion.
@@ -2903,13 +2903,13 @@ abstract class AppLocalizations {
   /// No description provided for @canDonatQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Can I donate my Noor Points?'**
+  /// **'Can I donate my Sabiq Seeds?'**
   String get canDonatQuestion;
 
   /// No description provided for @canDonateAnswer.
   ///
   /// In en, this message translates to:
-  /// **'Yes! Visit the Akhirah tab to donate your points to active community projects.'**
+  /// **'Yes! Visit the Akhirah tab to donate your Seeds to active community projects.'**
   String get canDonateAnswer;
 
   /// No description provided for @coinsSealedMashaAllah.
@@ -3023,7 +3023,7 @@ abstract class AppLocalizations {
   /// No description provided for @noorPointsBang.
   ///
   /// In en, this message translates to:
-  /// **'NOOR POINTS!'**
+  /// **'SABIQ SEEDS!'**
   String get noorPointsBang;
 
   /// No description provided for @keepMomentum.
@@ -3113,7 +3113,7 @@ abstract class AppLocalizations {
   /// No description provided for @noorPlusPoints.
   ///
   /// In en, this message translates to:
-  /// **'+{pts} Noor Points'**
+  /// **'+{pts} Sabiq Seeds'**
   String noorPlusPoints(String pts);
 
   /// No description provided for @yourGarden.
@@ -3125,7 +3125,7 @@ abstract class AppLocalizations {
   /// No description provided for @noorPointsBloomed.
   ///
   /// In en, this message translates to:
-  /// **'noor points bloomed'**
+  /// **'Sabiq Seeds bloomed'**
   String get noorPointsBloomed;
 
   /// No description provided for @growingStreakTitle.
@@ -3233,7 +3233,7 @@ abstract class AppLocalizations {
   /// No description provided for @fundProjectsText.
   ///
   /// In en, this message translates to:
-  /// **'Your Noor Points fund these projects'**
+  /// **'Your Sabiq Seeds fund these projects'**
   String get fundProjectsText;
 
   /// No description provided for @activeCount.
@@ -3353,13 +3353,13 @@ abstract class AppLocalizations {
   /// No description provided for @pointsForSealing.
   ///
   /// In en, this message translates to:
-  /// **'+{points} Noor Points for sealing today.'**
+  /// **'+{points} Sabiq Seeds for sealing today.'**
   String pointsForSealing(String points);
 
   /// No description provided for @welcomeBack.
   ///
   /// In en, this message translates to:
-  /// **'+{points} Noor Points · welcome back!'**
+  /// **'+{points} Sabiq Seeds · welcome back!'**
   String welcomeBack(String points);
 }
 

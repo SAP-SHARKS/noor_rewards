@@ -4199,7 +4199,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Text(
-                                      '+$_pointsToday pts',
+                                      '+$_pointsToday ${_pointsToday == 1 ? 'Seed' : 'Seeds'}',
                                       style: GoogleFonts.outfit(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w700,
@@ -4349,7 +4349,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   ? (AppLocalizations.of(context)?.next ??
                                       AppLocalizations.of(context)?.nextPage ??
                                       'Next Page')
-                                  : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
+                                  : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 Seeds',
                               style: GoogleFonts.outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
