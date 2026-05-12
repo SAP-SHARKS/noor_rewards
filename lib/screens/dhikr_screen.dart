@@ -16,6 +16,7 @@ import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
+import '../widgets/dhikr_exit_celebration.dart';
 import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
 
@@ -802,6 +803,41 @@ class _DhikrScreenState extends State<DhikrScreen> {
     setState(() {
       _counts[id] = 0;
     });
+  }
+
+  // ── Exit handler ──────────────────────────────────────────────────────────
+  // Shown when the user leaves Daily Dhikr after counting at least one zikr.
+  // Displays accurate points earned this session + current dhikr streak.
+  bool _isExiting = false;
+  Future<void> _handleExitDhikr() async {
+    if (_isExiting) return;
+    _isExiting = true;
+    // Only celebrate when the user has actually completed at least one
+    // zikr set this session. Partial counts (tapped but not finished)
+    // don't count — leaving without finishing should pop silently.
+    if (_setsCompleted <= 0) {
+      if (mounted) Navigator.pop(context, _pointsToday);
+      return;
+    }
+
+    int streakDays = 0;
+    try {
+      final snap = await StreakService.instance.loadSnapshot().timeout(
+        const Duration(seconds: 2),
+      );
+      streakDays = snap.dhikr;
+    } catch (_) {
+      // Fall back to 0 — never block the exit on a network hiccup.
+    }
+    if (!mounted) return;
+
+    await showDhikrExitCelebration(
+      context,
+      pointsEarned: _pointsToday,
+      streakDays: streakDays,
+    );
+    if (!mounted) return;
+    Navigator.pop(context, _pointsToday);
   }
 
   Future<void> _completeDhikr(String dhikrId, int target) async {
@@ -1653,7 +1689,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_rounded, color: kText, size: 20),
-          onPressed: () => Navigator.pop(context, _pointsToday),
+          onPressed: _handleExitDhikr,
         ),
         title: Text(
           'Dua & Azkar',
@@ -2206,7 +2242,14 @@ class _DhikrScreenState extends State<DhikrScreen> {
       ),
     );
 
-    return scaffold;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _handleExitDhikr();
+      },
+      child: scaffold,
+    );
   }
 }
 
@@ -2244,6 +2287,23 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   StreamSubscription<PlayerState>? _playerSub;
   bool _isAdvancing = false; // guard against double-skip
 
+  // ── Single-track repeat session ────────────────────────────────────────
+  // When the user taps play on one azkar, we play the audio
+  // `_singleRepeatTarget` times back-to-back — matching the azkar's
+  // recommended count (or the user's custom target). The session is
+  // bound to a token so tapping play on a different azkar (or pausing)
+  // cleanly cancels any in-flight sequence.
+  String? _singleRepeatUrl;
+  int _singleRepeatTarget = 0;
+  int _singleRepeatDone = 0;
+  int _singleRepeatToken = 0;
+
+  // ── Play-All repeat status (for the player subtitle) ─────────────────
+  // 1-indexed current rep + total reps for the currently playing azkar.
+  // Shown subtly next to "X of Y" in the play bar.
+  int _playAllRep = 0;
+  int _playAllRepTotal = 0;
+
   bool _showToolbar = false;
   Timer? _hideTimer;
 
@@ -2271,6 +2331,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _pageController = PageController(initialPage: widget.initialIndex);
     StatsService.instance.enterScreen('dhikr');
     _playerSub = _audioPlayer.playerStateStream.listen((state) {
+      // Repaint play / pause icons. Repeat sequencing is handled
+      // explicitly in `_toggleAudio` and `_runPlayAllLoop`.
       if (mounted) setState(() {});
     });
     // Start sequential play-all loop
@@ -2304,19 +2366,69 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     super.dispose();
   }
 
-  Future<void> _toggleAudio(String url) async {
-    try {
-      if (_currentlyLoadedAudio != url) {
-        _currentlyLoadedAudio = url;
-        await _audioPlayer.setUrl(url);
-      }
-      if (_audioPlayer.playing) {
+  Future<void> _toggleAudio(_Azkar azkar) async {
+    final url = azkar.audioUrl;
+    if (url == null || url.isEmpty) return;
+
+    // If this azkar is mid-sequence and playing, treat the tap as a
+    // pause — invalidate the token so the running loop exits cleanly.
+    if (_audioPlayer.playing && _currentlyLoadedAudio == url) {
+      _singleRepeatToken++;
+      try {
         await _audioPlayer.pause();
-      } else {
-        await _audioPlayer.play();
+      } catch (e) {
+        debugPrint('Audio Error: $e');
+      }
+      return;
+    }
+
+    final target = widget.parentState
+        ._getTarget(azkar.id, azkar.recommendedCount)
+        .clamp(1, 9999);
+
+    // Start a fresh repeat session.
+    _singleRepeatToken++;
+    final myToken = _singleRepeatToken;
+    if (mounted) {
+      setState(() {
+        _singleRepeatUrl = url;
+        _singleRepeatTarget = target;
+        _singleRepeatDone = 0;
+      });
+    } else {
+      _singleRepeatUrl = url;
+      _singleRepeatTarget = target;
+      _singleRepeatDone = 0;
+    }
+
+    try {
+      for (var rep = 0; rep < target; rep++) {
+        if (!mounted || _singleRepeatToken != myToken) return;
+        if (mounted) setState(() => _singleRepeatDone = rep);
+        // Re-arm the source on every repeat. `seek(0) + play()` is
+        // unreliable after `completed` in just_audio 0.10, but
+        // stop→setUrl→play always starts a fresh track.
+        await _audioPlayer.stop();
+        await _audioPlayer.setUrl(url);
+        _currentlyLoadedAudio = url;
+        await _audioPlayer.play(); // resolves on completion / pause / stop
+        if (!mounted || _singleRepeatToken != myToken) return;
+        // If play() returned without reaching the end (user paused/
+        // stopped), bail out of the sequence.
+        if (_audioPlayer.processingState != ProcessingState.completed) {
+          return;
+        }
+      }
+      // Reached the prescribed count cleanly.
+      if (_singleRepeatToken == myToken && mounted) {
+        setState(() {
+          _singleRepeatUrl = null;
+          _singleRepeatTarget = 0;
+          _singleRepeatDone = 0;
+        });
       }
     } catch (e) {
-      debugPrint("Audio Error: $e");
+      debugPrint('Audio Error: $e');
     }
   }
 
@@ -2348,16 +2460,64 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
       }
 
       try {
-        _currentlyLoadedAudio = url;
-        await _audioPlayer.stop();
-        await _audioPlayer.setUrl(url);
-        await _audioPlayer.seek(Duration.zero);
-        await _audioPlayer.play();
+        // Play this azkar's audio its prescribed number of times — e.g. if
+        // the hadith specifies 3 recitations, the audio plays 3 times
+        // before we move on to the next track.
+        final target = widget.parentState
+            ._getTarget(azkar.id, azkar.recommendedCount)
+            .clamp(1, 9999);
+        if (mounted) {
+          setState(() {
+            _playAllRepTotal = target;
+            _playAllRep = 0;
+          });
+        }
+        var interrupted = false;
+        for (var rep = 0; rep < target && !interrupted; rep++) {
+          if (!mounted || !_playAllMode || _currentIndex != i) break;
+          if (mounted) setState(() => _playAllRep = rep + 1);
+          // Fresh load each rep — `seek(0) + play()` after a `completed`
+          // state is unreliable in just_audio 0.10, but stop→setUrl→play
+          // always starts a fresh playback.
+          await _audioPlayer.stop();
+          await _audioPlayer.setUrl(url);
+          _currentlyLoadedAudio = url;
 
-        // Wait until this track finishes or is stopped/skipped
-        await _audioPlayer.processingStateStream.firstWhere(
-          (s) => s == ProcessingState.completed || s == ProcessingState.idle,
-        );
+          // Play this rep, treating a user pause as "wait, don't advance".
+          var repDone = false;
+          while (!repDone && !interrupted) {
+            if (!mounted || !_playAllMode || _currentIndex != i) {
+              interrupted = true;
+              break;
+            }
+            await _audioPlayer.play(); // resolves on end / pause / stop
+            if (!mounted || !_playAllMode || _currentIndex != i) {
+              interrupted = true;
+              break;
+            }
+            final ps = _audioPlayer.processingState;
+            if (ps == ProcessingState.completed) {
+              repDone = true;
+            } else if (ps == ProcessingState.idle) {
+              // User hit stop or skip — let the outer loop decide.
+              interrupted = true;
+            } else {
+              // Paused. Stay on the current track and wait for the user
+              // to resume (or stop). Resuming kicks off another play()
+              // by way of the play-bar button, but our own re-await
+              // below will resolve at the same end-of-track event.
+              await _audioPlayer.playerStateStream.firstWhere(
+                (s) =>
+                    s.playing ||
+                    s.processingState == ProcessingState.idle,
+              );
+              if (_audioPlayer.processingState ==
+                  ProcessingState.idle) {
+                interrupted = true;
+              }
+            }
+          }
+        }
       } catch (e) {
         debugPrint("Play All Audio Error at index $i: $e");
       }
@@ -2385,7 +2545,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     }
 
     // Done — end play-all mode
-    if (mounted) setState(() => _playAllMode = false);
+    if (mounted) {
+      setState(() {
+        _playAllMode = false;
+        _playAllRep = 0;
+        _playAllRepTotal = 0;
+      });
+    }
   }
 
   void _tryComplete(_Azkar azkar, int tapTarget, {bool isSwipe = false}) {
@@ -2737,7 +2903,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                             : Icons.play_arrow_rounded,
                                     color: const Color(0xFFFFC83D),
                                     isDark: isDark,
-                                    onTap: () => _toggleAudio(azkar.audioUrl!),
+                                    onTap: () => _toggleAudio(azkar),
                                   ),
                                   _toolbarDivider(isDark),
                                 ],
@@ -3065,14 +3231,38 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  _playAllMode
-                      ? '${_currentIndex + 1} of ${widget.azkars.length}'
-                      : 'Now playing',
-                  style: GoogleFonts.outfit(
-                    fontSize: 11,
-                    color: isDark ? Colors.white54 : Y4.ink.withValues(alpha: 0.6),
-                  ),
+                Builder(
+                  builder: (_) {
+                    // Compose a subtle subtitle. Includes the repeat count
+                    // (e.g. "· 2/3") only when the current azkar has more
+                    // than one prescribed recitation, so it doesn't add
+                    // visual noise for single-recitation azkar.
+                    String base;
+                    int curRep = 0;
+                    int totRep = 0;
+                    if (_playAllMode) {
+                      base = '${_currentIndex + 1} of ${widget.azkars.length}';
+                      curRep = _playAllRep;
+                      totRep = _playAllRepTotal;
+                    } else {
+                      base = 'Now playing';
+                      if (_singleRepeatUrl != null &&
+                          _singleRepeatUrl == _currentlyLoadedAudio) {
+                        curRep = _singleRepeatDone + 1;
+                        totRep = _singleRepeatTarget;
+                      }
+                    }
+                    final showRep = totRep > 1 && curRep > 0;
+                    return Text(
+                      showRep ? '$base  ·  $curRep / $totRep' : base,
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        color: isDark
+                            ? Colors.white54
+                            : Y4.ink.withValues(alpha: 0.6),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -3085,17 +3275,24 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 : Icons.play_arrow_rounded,
             onTap: () async {
               if (isPlaying) {
+                // In single-play mode, pausing cancels the in-flight
+                // repeat sequence so resuming starts fresh. In Play All
+                // mode the sequence pauses on the current rep — the
+                // outer loop is waiting for a resume.
+                if (!_playAllMode) _singleRepeatToken++;
                 _audioPlayer.pause();
-              } else {
-                // Check if we need to load the current azkar's audio
-                final current = widget.azkars[_currentIndex.clamp(0, widget.azkars.length - 1)];
-                final url = current.audioUrl;
-                if (url != null && url.isNotEmpty && _currentlyLoadedAudio != url) {
-                  _currentlyLoadedAudio = url;
-                  await _audioPlayer.stop();
-                  await _audioPlayer.setUrl(url);
-                }
+              } else if (_playAllMode) {
+                // Resume the Play All loop's current track — the loop is
+                // parked in playerStateStream.firstWhere waiting for us.
                 _audioPlayer.play();
+              } else {
+                final current = widget.azkars[_currentIndex.clamp(
+                  0,
+                  widget.azkars.length - 1,
+                )];
+                // Re-use the single-play sequence so we get the full
+                // repeat behaviour (stop → setUrl → play, target times).
+                _toggleAudio(current);
               }
             },
           ),
@@ -3123,9 +3320,17 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           _playBarBtn(
             icon: Icons.stop_rounded,
             onTap: () {
+              // Invalidate any in-flight single-track repeat loop so it
+              // exits at the next await boundary.
+              _singleRepeatToken++;
               setState(() {
                 _playAllMode = false;
                 _currentlyLoadedAudio = null;
+                _singleRepeatUrl = null;
+                _singleRepeatTarget = 0;
+                _singleRepeatDone = 0;
+                _playAllRep = 0;
+                _playAllRepTotal = 0;
               });
               _audioPlayer.stop();
             },

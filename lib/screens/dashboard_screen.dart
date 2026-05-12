@@ -3365,6 +3365,7 @@ class _MyDonationsSection extends StatelessWidget {
               final target = (d['target_points'] as num).toInt();
               final current = (d['current_points'] as num).toInt();
               final myPts = (d['my_donated'] as num).toInt();
+              final donorCount = (d['donor_count'] as num?)?.toInt() ?? 0;
               final pct =
                   target == 0 ? 0.0 : (current / target).clamp(0.0, 1.0);
               final isCompleted = d['is_completed'] == true;
@@ -3468,43 +3469,48 @@ class _MyDonationsSection extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            if ((d['description'] ?? '')
-                                .toString()
-                                .isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                (d['description'] ?? '').toString(),
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Y4.inkSoft,
-                                  height: 1.35,
-                                ),
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
                             const Spacer(),
 
-                            // Progress info row
+                            // ── Raised + % row (LaunchGood-style headline) ──
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  '${fmt(current)} / ${fmt(target)} pts',
+                                  '${fmt(current)} pts',
+                                  style: Y4.display(
+                                    fontSize: 22,
+                                    color: Y4.honeyDeep,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.0,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'raised',
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
+                                    color: Y4.inkSoft,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Text(
+                                  '${(pct * 100).round()}%',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w800,
                                     color: Y4.ink,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6),
-                            // Honey→butter progress bar
+                            const SizedBox(height: 8),
+                            // ── Bigger honey→butter progress bar ──
                             ClipRRect(
                               borderRadius: BorderRadius.circular(999),
                               child: Container(
-                                height: 6,
+                                height: 12,
                                 color: Y4.track,
                                 child: FractionallySizedBox(
                                   alignment: Alignment.centerLeft,
@@ -3512,12 +3518,41 @@ class _MyDonationsSection extends StatelessWidget {
                                   child: Container(
                                     decoration: const BoxDecoration(
                                       gradient: LinearGradient(
-                                        colors: [Y4.honey, Y4.butter],
+                                        colors: [Y4.honey, Y4.honeyDeep],
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
+                            ),
+                            const SizedBox(height: 8),
+                            // ── Goal + contributors row ──
+                            Row(
+                              children: [
+                                Text(
+                                  'Goal: ${fmt(target)} pts',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: Y4.inkSoft,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Icon(
+                                  Icons.people_alt_rounded,
+                                  size: 13,
+                                  color: Y4.inkSoft,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${fmt(donorCount)} ${donorCount == 1 ? 'contributor' : 'contributors'}',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: Y4.ink,
+                                  ),
+                                ),
+                              ],
                             ),
                             // "You donated" small caption
                             if (myPts > 0) ...[
@@ -3526,7 +3561,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 '${AppLocalizations.of(context)?.youDonated ?? 'You donated'} ${fmt(myPts)} pts',
                                 style: GoogleFonts.outfit(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   color: Y4.honeyDeep,
                                 ),
                               ),
@@ -4106,7 +4141,12 @@ class _ImpactTabState extends State<_ImpactTab> {
     // Load user's donations in parallel
     _myDonations = await DonationService.instance.getUserProjectDonations();
 
-    // Sync the correct current_points into myDonations as well
+    // Load contributor counts (distinct donors per project) so each card
+    // can surface "X contributors" like LaunchGood.
+    final donorCounts = await DonationService.instance
+        .getProjectDonorCounts();
+
+    // Sync the correct current_points + donor count into myDonations.
     for (var m in _myDonations) {
       final realPts =
           _projects.cast<Map<String, dynamic>?>().firstWhere(
@@ -4114,6 +4154,13 @@ class _ImpactTabState extends State<_ImpactTab> {
             orElse: () => null,
           )?['current_points'];
       if (realPts != null) m['current_points'] = realPts;
+      final pid = m['id'] as String?;
+      if (pid != null) m['donor_count'] = donorCounts[pid] ?? 0;
+    }
+    // And into the active project list (used elsewhere on the dashboard).
+    for (var p in _projects) {
+      final pid = p['id'] as String?;
+      if (pid != null) p['donor_count'] = donorCounts[pid] ?? 0;
     }
 
     if (mounted) setState(() => _loading = false);
@@ -7537,12 +7584,15 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Y4.border),
       ),
+      // Clip children to the outer rounded shape directly. The previous
+      // inner ClipRRect was inset by the 20 px padding but still used a
+      // radius of 28, which made its top-left corner curve clip the "Y"
+      // of "YOUR GARDEN" right at the origin.
+      clipBehavior: Clip.antiAlias,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
             // Sun (top-right)
             Positioned(top: 0, right: 0, child: _Y4Sun(size: 44)),
 
@@ -7618,12 +7668,16 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                                   color: Y4.honeyDeep,
                                 ),
                                 const SizedBox(width: 6),
-                                Text(
-                                  '+${widget.pendingPoints} pts pending — seal to keep',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Y4.honeyDeep,
+                                Flexible(
+                                  child: Text(
+                                    '+${widget.pendingPoints} pts pending — seal to keep',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      color: Y4.honeyDeep,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -7666,7 +7720,6 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
             ),
           ],
         ),
-      ),
     );
   }
 }
