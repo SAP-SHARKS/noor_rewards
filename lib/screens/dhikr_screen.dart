@@ -15,6 +15,7 @@ import '../services/streak_service.dart';
 import '../services/live_notification_service.dart';
 import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/sabiq_coin.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/dhikr_exit_celebration.dart';
 import '../theme/y4_theme.dart';
@@ -752,7 +753,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   void _shareAzkar(_Azkar azkar) {
     HapticFeedback.lightImpact();
     final text =
-        '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n— Shared via Noor App';
+        '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n— Shared via Sabiq Rewards';
     // ignore: deprecated_member_use
     Share.share(text);
   }
@@ -1502,7 +1503,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   const SizedBox(height: 12),
                   Text(
                     AppLocalizations.of(context)?.dailyAzkarBonusMsg ??
-                        'Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Noor Points.',
+                        'Masha\'Allah! You tracked your daily Azkar and earned a bonus +50 Sabiq Seeds.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 15,
@@ -4023,8 +4024,8 @@ class _RewardCounters extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.star_rounded, size: 11, color: Color(0xFFB8860B)),
-                const SizedBox(width: 3),
+                const SabiqCoin(size: 12),
+                const SizedBox(width: 4),
                 Text(
                   '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
                   style: GoogleFonts.outfit(
@@ -4212,11 +4213,7 @@ class _AzkarCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.star_rounded,
-                            size: 12,
-                            color: const Color(0xFFB8860B).withValues(alpha: 0.90),
-                          ),
+                          const SabiqCoin(size: 14),
                           const SizedBox(width: 4),
                           Text(
                             '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',

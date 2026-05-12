@@ -16,6 +16,7 @@ import '../services/donation_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/project_media_carousel.dart';
+import '../widgets/sabiq_coin.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
@@ -1528,7 +1529,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             const SizedBox(width: 10),
             Text(
               AppLocalizations.of(context)?.noorPointsSummary ??
-                  'Noor Points Summary',
+                  'Sabiq Seeds Summary',
               style: GoogleFonts.outfit(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
@@ -1774,12 +1775,20 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                       color: sel ? Y4.honeyDeep : _C.border,
                                     ),
                                   ),
-                                  child: Text(
-                                    '$amt Seeds',
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: FontWeight.w700,
-                                      color: sel ? Colors.white : _C.text,
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SabiqCoin(size: 14),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '$amt Seeds',
+                                        style: GoogleFonts.outfit(
+                                          fontWeight: FontWeight.w700,
+                                          color:
+                                              sel ? Colors.white : _C.text,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
@@ -1867,16 +1876,31 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                         }
                                       }
                                     },
-                            child: Text(
-                              _myAvailablePoints < selected
-                                  ? 'Insufficient Seeds'
-                                  : 'Donate $selected ${selected == 1 ? 'Seed' : 'Seeds'} 🤲',
-                              style: GoogleFonts.outfit(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w800,
-                                color: Y4.ink,
-                              ),
-                            ),
+                            child: _myAvailablePoints < selected
+                                ? Text(
+                                    'Insufficient Seeds',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: Y4.ink,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SabiqCoin(size: 18),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Donate $selected ${selected == 1 ? 'Seed' : 'Seeds'} 🤲',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w800,
+                                          color: Y4.ink,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                       ),

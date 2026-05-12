@@ -1,7 +1,7 @@
 // lib/screens/qf_account_conflict_screen.dart
 //
 // Shown when a user tries to sign in via Quran.com but their QF email already
-// belongs to an existing Noor Rewards account created with Email or Google.
+// belongs to an existing Sabiq Rewards account created with Email or Google.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'dart:math' as math;
@@ -168,7 +168,7 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
 
                   // Explanation
                   Text(
-                    'This email is already registered with Noor Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Noor Points, please sign in using your original method.',
+                    'This email is already registered with Sabiq Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Sabiq Seeds, please sign in using your original method.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,

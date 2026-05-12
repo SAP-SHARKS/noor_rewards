@@ -16,6 +16,8 @@ import '../services/stats_service.dart';
 import '../services/quran_api_service.dart'; // Quran Foundation authenticated API
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/sabiq_coin.dart';
+import '../widgets/quran_exit_celebration.dart';
 
 /// Shorthand to get the live AppConfig.
 AppConfig get _cfg => SettingsService.instance.config;
@@ -309,6 +311,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── Stats ─────────────────────────────────────────────────────────────────────
   int _ayahsToday = 0, _pointsToday = 0;
 
+  // ── This-session tracking (drives the Quran-exit celebration) ───────────────
+  late final DateTime _sessionStart = DateTime.now();
+  int _sessionStartPoints = 0;
+  int _sessionAyahsRead = 0;
+  bool _isExiting = false;
+
   // ── Bookmarks (stored as "surah:ayah" strings) ────────────────────────────────
   final Set<String> _bookmarks = {};
   final Set<String> _favourites = {};
@@ -445,6 +453,35 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Exit the Quran reader.
+  ///
+  /// Shows the celebration popup when the session meets either threshold:
+  ///   • ≥ 60 s spent in Mushaf mode, OR
+  ///   • ≥ 1 ayah read in Ayat mode.
+  /// Then pops the route with the day-total points (the existing contract).
+  Future<void> _handleExitQuran() async {
+    if (_isExiting) return;
+    _isExiting = true;
+
+    final elapsed = DateTime.now().difference(_sessionStart);
+    final sessionPoints =
+        (_pointsToday - _sessionStartPoints).clamp(0, 1 << 31).toInt();
+    final qualifies = _fullPageMode
+        ? elapsed.inSeconds >= 60
+        : _sessionAyahsRead >= 1;
+
+    if (qualifies && mounted) {
+      await showQuranExitCelebration(
+        context,
+        pointsEarned: sessionPoints,
+        ayahsRead: _sessionAyahsRead,
+        durationSeconds: elapsed.inSeconds,
+      );
+    }
+    if (!mounted) return;
+    Navigator.pop(context, _pointsToday);
+  }
+
   @override
   void dispose() {
     StatsService.instance.exitScreen();
@@ -539,6 +576,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         if ((row['last_read_date'] ?? '') == today) {
           _ayahsToday = row['ayahs_read_today'] ?? 0;
           _pointsToday = _ayahsToday * PointReward.ayahRead;
+          // Capture the points-at-start so the celebration can show the
+          // delta earned in just this session (not the day-total).
+          _sessionStartPoints = _pointsToday;
         }
       });
     } catch (_) {}
@@ -735,6 +775,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       _surah = nextSurah;
       _ayah = nextAyah;
       _wbwWords = [];
+      // The session counter tracks reading activity, not reward state —
+      // so it ticks even on auto-advance / repeat-ayah passes where
+      // points aren't awarded. Without this, advancing 5 ayahs in
+      // auto-advance mode would silently skip the exit celebration.
+      _sessionAyahsRead++;
       if (earnRewards) {
         _ayahsToday++;
         _pointsToday += PointReward.ayahRead;
@@ -885,6 +930,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       _surah = prevSurah;
       _ayah = prevAyah;
       _wbwWords = [];
+      // Prev counts as reading activity for the exit celebration.
+      _sessionAyahsRead++;
     });
     _syncReadingPosition();
     _fetchAyah(prevSurah, prevAyah);
@@ -2916,7 +2963,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   AppLocalizations.of(
                                         context,
                                       )?.noorPointsNotificationStrip ??
-                                      '+Noor Points notification strip',
+                                      '+Sabiq Seeds notification strip',
                                   Icons.nights_stay_rounded,
                                   _showPointsBanner,
                                   (v) => _showPointsBanner = v,
@@ -3571,8 +3618,17 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── build() ────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    // Full mushaf mode takes over the entire screen
-    if (_fullPageMode) return _buildMushafPage();
+    // Full mushaf mode takes over the entire screen.
+    if (_fullPageMode) {
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) return;
+          _handleExitQuran();
+        },
+        child: _buildMushafPage(),
+      );
+    }
 
     final bg = _darkMode ? const Color(0xFF000000) : _kBg;
     final cardBg = _darkMode ? _kText : _kWhite;
@@ -3580,7 +3636,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final txt = _darkMode ? Colors.white : _kText;
     final sub = _darkMode ? const Color(0xFF8E8E93) : _kSub;
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        // Intercept system back / back gesture so the celebration runs.
+        if (didPop) return;
+        _handleExitQuran();
+      },
+      child: Scaffold(
       backgroundColor: _darkMode ? const Color(0xFF000000) : Colors.transparent,
       appBar:
           _fullScreenMode
@@ -3595,7 +3658,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     color: txt,
                     size: 20,
                   ),
-                  onPressed: () => Navigator.pop(context, _pointsToday),
+                  onPressed: _handleExitQuran,
                 ),
                 title: Text(
                   'Read Quran',
@@ -3655,6 +3718,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 decoration: BoxDecoration(gradient: _kBgGradient),
                 child: _buildBody(bg, cardBg, barBg, txt, sub),
               ),
+      ),
     );
   }
 
@@ -3700,7 +3764,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               const Text('🌟', style: TextStyle(fontSize: 16)),
                               const SizedBox(width: 8),
                               Text(
-                                '+$_pointsToday Noor Points earned today!',
+                                '+$_pointsToday Sabiq Seeds earned today!',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
@@ -4198,13 +4262,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       color: _accent.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Text(
-                                      '+$_pointsToday ${_pointsToday == 1 ? 'Seed' : 'Seeds'}',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: _accent,
-                                      ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SabiqCoin(size: 12),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '+$_pointsToday ${_pointsToday == 1 ? 'Seed' : 'Seeds'}',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: _accent,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],

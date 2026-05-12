@@ -224,7 +224,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '+50 Noor Points',
+                                '+50 Sabiq Seeds',
                                 style: GoogleFonts.outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w800,

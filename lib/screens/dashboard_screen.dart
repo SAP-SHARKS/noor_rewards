@@ -1290,7 +1290,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 AppLocalizations.of(
                                       context,
                                     )?.fundProjectsText ??
-                                    'Your Noor Points fund these projects',
+                                    'Your Sabiq Seeds fund these projects',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -1471,8 +1471,8 @@ class _InviteSheetState extends State<_InviteSheet>
       'https://noorrewards.app/join?ref=${widget.referralCode}';
 
   String get _shareMessage =>
-      'Join me on Noor Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
-      'Use my code *${widget.referralCode}* and we both get 500 Noor Points!\n\n'
+      'Join me on Sabiq Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
+      'Use my code *${widget.referralCode}* and we both get 500 Sabiq Seeds!\n\n'
       '$_shareLink';
 
   @override
@@ -1520,7 +1520,7 @@ class _InviteSheetState extends State<_InviteSheet>
 
   void _shareGeneral() {
     // ignore: deprecated_member_use
-    Share.share(_shareMessage, subject: 'Join Noor Rewards');
+    Share.share(_shareMessage, subject: 'Join Sabiq Rewards');
   }
 
   void _shareWhatsApp() async {
@@ -1535,7 +1535,7 @@ class _InviteSheetState extends State<_InviteSheet>
       await Clipboard.setData(ClipboardData(text: _shareMessage));
       if (!mounted) return;
       // ignore: deprecated_member_use
-      Share.share(_shareMessage, subject: 'Join Noor Rewards');
+      Share.share(_shareMessage, subject: 'Join Sabiq Rewards');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -1566,7 +1566,7 @@ class _InviteSheetState extends State<_InviteSheet>
         'apply_referral',
         params: {'inviter_code': code},
       );
-      setState(() => _success = '500 Noor Points rewarded to you both!');
+      setState(() => _success = '500 Sabiq Seeds rewarded to you both!');
     } catch (e) {
       final s = e.toString();
       if (s.contains('Already referred')) {
@@ -1662,7 +1662,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                 ),
                               ),
                               Text(
-                                'You both earn 500 Noor Points!',
+                                'You both earn 500 Sabiq Seeds!',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   color: Y4.inkSoft,
@@ -3484,9 +3484,10 @@ class _MyDonationsSection extends StatelessWidget {
 
                             // ── Raised + % row (LaunchGood-style headline) ──
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const SabiqCoin(size: 22),
+                                const SizedBox(width: 6),
                                 Text(
                                   '${fmt(current)} Seeds',
                                   style: Y4.display(
@@ -3546,7 +3547,17 @@ class _MyDonationsSection extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  'Goal: ${fmt(target)} Seeds',
+                                  'Goal: ',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: Y4.ink,
+                                  ),
+                                ),
+                                const SabiqCoin(size: 14),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${fmt(target)} Seeds',
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
@@ -3672,13 +3683,21 @@ class _Y4DonateChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
           ),
           child: Center(
-            child: Text(
-              '$amount Seeds',
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Y4.ink,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SabiqCoin(size: 12),
+                const SizedBox(width: 4),
+                Text(
+                  '$amount Seeds',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Y4.ink,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -6535,6 +6554,11 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
   }
 
   void _complete(double maxDrag) {
+    // Snapshot pending NOW — `claimValidate()` zeroes XpService's pending
+    // counter before our `.then` callback runs, so reading
+    // `widget.pendingPoints` later would always be 0 and skip the
+    // celebration animation.
+    final pendingAtSwipe = widget.pendingPoints;
     setState(() {
       _drag = maxDrag;
       _completed = true;
@@ -6559,23 +6583,20 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
       // Sabiq Seed celebration — spin the coin, then fly it to the
       // top-right profile icon (the Seeds wallet). Best-effort; never
       // blocks the existing burst/snap/fill animation.
-      if (awarded) {
-        final pts = widget.pendingPoints;
-        if (pts > 0) {
-          // Resolve the avatar's centre in global screen coordinates so
-          // the coin lands exactly on it.
-          Offset? target;
-          final box = sabiqProfileIconKey.currentContext
-              ?.findRenderObject() as RenderBox?;
-          if (box != null && box.attached) {
-            target = box.localToGlobal(box.size.center(Offset.zero));
-          }
-          playSealCoinAnimation(
-            context,
-            pointsSealed: pts,
-            targetPosition: target,
-          );
+      if (awarded && pendingAtSwipe > 0) {
+        // Resolve the avatar's centre in global screen coordinates so
+        // the coin lands exactly on it.
+        Offset? target;
+        final box = sabiqProfileIconKey.currentContext
+            ?.findRenderObject() as RenderBox?;
+        if (box != null && box.attached) {
+          target = box.localToGlobal(box.size.center(Offset.zero));
         }
+        playSealCoinAnimation(
+          context,
+          pointsSealed: pendingAtSwipe,
+          targetPosition: target,
+        );
       }
       // Hold completed state, then reset
       Future.delayed(const Duration(milliseconds: 2200), () async {
@@ -7140,7 +7161,7 @@ class _OrbWidget extends StatelessWidget {
 // ═════════════════════════════════════════════════════════════════════════════
 // Y4 — HONEY + SAGE GARDEN WIDGETS
 // Custom painters that recreate the SVG plant / sun / arc graphics used in the
-// Y4 dashboard design (Copy of Noor Rewards V1).
+// Y4 dashboard design (Copy of Sabiq Rewards V1).
 // ═════════════════════════════════════════════════════════════════════════════
 
 /// A small potted plant — used in the hero garden floor.
@@ -7715,11 +7736,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  Icons.hourglass_bottom_rounded,
-                                  size: 14,
-                                  color: Y4.honeyDeep,
-                                ),
+                                const SabiqCoin(size: 14),
                                 const SizedBox(width: 6),
                                 Flexible(
                                   child: Text(

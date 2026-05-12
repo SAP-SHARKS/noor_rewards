@@ -28,7 +28,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lightOfMercy => 'LUMIÈRE DE LA MISÉRICORDE';
 
   @override
-  String get noorRewards => 'Noor Rewards';
+  String get noorRewards => 'Sabiq Rewards';
 
   @override
   String get startYourJourney => 'Commencer votre voyage';
@@ -48,14 +48,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboarding1Subtitle =>
-      'Bienvenue sur Noor Rewards — où chaque bonne action vous rapproche un peu plus de la miséricorde et de la lumière d\'Allah.';
+      'Bienvenue sur Sabiq Rewards — où chaque bonne action vous rapproche un peu plus de la miséricorde et de la lumière d\'Allah.';
 
   @override
   String get onboarding2Title => 'Deux récompenses.\nUne action.';
 
   @override
   String get onboarding2Subtitle =>
-      'Chaque mot lu vous rapporte du Sawab — une lumière dans votre Akhira.\nVos Noor Coins financent de vraies causes qui changent de vraies vies.';
+      'Chaque mot lu vous rapporte du Sawab — une lumière dans votre Akhira.\nVos Sabiq Seeds financent de vraies causes qui changent de vraies vies.';
 
   @override
   String get onboarding3Title => 'Rappelez-vous\nd\'Allah toujours';
@@ -85,7 +85,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gatesOfNoor =>
-      'Les portes de Noor sont ouvertes.\nVotre voyage spirituel commence aujourd\'hui.';
+      'Les portes de la lumière sont ouvertes.\nVotre voyage spirituel commence aujourd\'hui.';
 
   @override
   String get earnNoorPoints => 'EARN SABIQ SEEDS';
@@ -995,7 +995,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dailyAzkarBonusMsg =>
-      'Masha\'Allah ! Vous avez suivi vos Adhkar quotidiens et gagné un bonus de +50 Points Noor.';
+      'Masha\'Allah ! Vous avez suivi vos Adhkar quotidiens et gagné un bonus de +50 Points Sabiq Seeds.';
 
   @override
   String get awesome => 'Super';
@@ -1475,7 +1475,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get reportABug => 'Signaler un bug';
 
   @override
-  String get aboutNoorRewards => 'À propos de Noor Rewards';
+  String get aboutNoorRewards => 'About Sabiq Rewards';
 
   @override
   String get builtWithLove => 'Construit avec amour pour la Oumma';
@@ -1492,14 +1492,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'Construit avec amour pour la Oumma musulmane mondiale.\nGagnez des Points Noor en développant des habitudes islamiques.\nDonnez vos points pour soutenir de vrais projets communautaires.';
+      'Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.';
 
   @override
-  String get howToEarnQuestion => 'Comment gagner des Points Noor ?';
+  String get howToEarnQuestion => 'How to earn Sabiq Seeds?';
 
   @override
   String get howToEarnAnswer =>
-      'Lisez le Coran, faites des séries de Dhikr et connectez-vous quotidiennement pour gagner des points.';
+      'Complete Quran reading, Dhikr sets, and daily login to earn Seeds.';
 
   @override
   String get whatIsValidateQuestion => 'Qu\'est-ce que Valider les Coins ?';
@@ -1516,11 +1516,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Complétez vos activités quotidiennes consécutivement pour construire votre série.';
 
   @override
-  String get canDonatQuestion => 'Puis-je donner mes Points Noor ?';
+  String get canDonatQuestion => 'Can I donate my Sabiq Seeds?';
 
   @override
   String get canDonateAnswer =>
-      'Oui ! Visitez l\'onglet Akhira pour donner vos points à des projets communautaires actifs.';
+      'Yes! Visit the Akhirah tab to donate your Seeds to active community projects.';
 
   @override
   String get coinsSealedMashaAllah => 'Coins validés !';
@@ -1550,7 +1550,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get shareWithFriends => 'Partager avec des amis';
 
   @override
-  String get earnMoreNoor => 'Gagner plus de Noor';
+  String get earnMoreNoor => 'Earn More Seeds';
 
   @override
   String get dontDisturb => 'Ne pas déranger';
@@ -1562,31 +1562,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get read5QuranPages => 'Lire 5 pages du Coran';
 
   @override
-  String get completeNowBonus =>
-      'Terminez maintenant → gagnez +50 points bonus';
+  String get completeNowBonus => 'Complete now → earn +50 Seeds bonus';
 
   @override
   String get completeADhikrSet => 'Compléter une série de Dhikr';
 
   @override
-  String get finishAzkaarBonus =>
-      'Terminez vos Adhkar → gagnez +30 points bonus';
+  String get finishAzkaarBonus => 'Finish your Azkaar → earn +30 Seeds bonus';
 
   @override
   String get inviteAFriend => 'Inviter un ami';
 
   @override
-  String get shareNoorBonus => 'Partagez Noor avec quelqu\'un → gagnez +100 NP';
+  String get shareNoorBonus => 'Share Sabiq with someone → earn +100 Seeds';
 
   @override
-  String get multiplyYour => 'MULTIPLIEZ VOS';
+  String get multiplyYour => 'MULTIPLY YOUR';
 
   @override
-  String get noorPointsBang => 'POINTS NOOR !';
+  String get noorPointsBang => 'SABIQ SEEDS!';
 
   @override
   String get keepMomentum =>
-      'Gardez votre élan spirituel\net regardez votre Noor grandir';
+      'Keep your spiritual momentum going\nand watch your Seeds grow';
 
   @override
   String get openQuranNow => 'Ouvrir le Coran maintenant';
@@ -1598,13 +1596,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get goodDeed => 'Bonne action';
 
   @override
-  String get earnSawabWithRead => 'Gagnez du Sawab\nà chaque lecture';
+  String get earnSawabWithRead => 'Earn Sawab\nwith every read';
 
   @override
   String get realImpact => 'Impact réel';
 
   @override
-  String get coinsFundCauses => 'Les coins financent\nde nobles causes';
+  String get coinsFundCauses => 'Seeds fund\nnoble causes';
 
   @override
   String get unexpectedGoogleError =>
@@ -1701,7 +1699,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get greetingPrefix => 'Assalamu alaikum,';
 
   @override
-  String get fundProjectsText => 'Vos points Noor financent ces projets';
+  String get fundProjectsText => 'Vos points Sabiq Seeds financent ces projets';
 
   @override
   String activeCount(String count) {
@@ -1779,6 +1777,161 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String welcomeBack(String points) {
-    return '+$points Sabiq Seeds  welcome back!';
+    return '+$points Sabiq Seeds · welcome back!';
   }
+
+  @override
+  String get onbV2Skip => 'Skip';
+
+  @override
+  String get onbV2Next => 'Next';
+
+  @override
+  String get onbV2_1_TitleA => 'Your Quran reading';
+
+  @override
+  String get onbV2_1_TitleB => 'feeds the hungry.';
+
+  @override
+  String get onbV2_1_Sub => 'Real meals. Real people. Real impact.';
+
+  @override
+  String get onbV2_1_Cta => 'How does that work?';
+
+  @override
+  String get onbV2_2_Title => 'Here\'s how.';
+
+  @override
+  String get onbV2_2_Body =>
+      'Read Quran or recite dhikr → earn Sabiq Seeds → fund real causes.';
+
+  @override
+  String get onbV2_3_TitleA => 'The Quran rewards you';
+
+  @override
+  String get onbV2_3_TitleB => 'twice.';
+
+  @override
+  String get onbV2_3_Sub =>
+      'Once with Allah\'s blessing. Once with Seeds that feed the needy.';
+
+  @override
+  String get onbV2_3_BannerLabel => 'earned today';
+
+  @override
+  String get onbV2_4_TitleA => 'See your worship';
+
+  @override
+  String get onbV2_4_TitleB => 'come to life.';
+
+  @override
+  String get onbV2_4_Sub =>
+      'Recite morning and evening dhikr — and watch your reward unfold, hadith by hadith.';
+
+  @override
+  String get onbV2_5_TitleA => 'Your reading reaches';
+
+  @override
+  String get onbV2_5_TitleB => 'here.';
+
+  @override
+  String get onbV2_5_Sub =>
+      'Every Seed you earn becomes real food, real water, real hope.';
+
+  @override
+  String get onbV2_6_TitleA => 'But where does the';
+
+  @override
+  String get onbV2_6_TitleB => 'money';
+
+  @override
+  String get onbV2_6_TitleC => 'come from?';
+
+  @override
+  String get onbV2_6_Sub =>
+      'Generous donors fund the causes. Your Seeds direct where their gift goes — and grow their reward with every reader.';
+
+  @override
+  String get onbV2_6_Donor => 'Donor';
+
+  @override
+  String get onbV2_6_DonorSub => 'Funds the cause';
+
+  @override
+  String get onbV2_6_You => 'You';
+
+  @override
+  String get onbV2_6_YouSub => 'Direct the gift';
+
+  @override
+  String get onbV2_6_Charity => 'Charity';
+
+  @override
+  String get onbV2_6_CharitySub => 'Delivers aid';
+
+  @override
+  String get onbV2_6_TrustBadge => '100% disbursed to verified partners';
+
+  @override
+  String get onbV2_7_TitleA => 'Every deed is';
+
+  @override
+  String get onbV2_7_TitleB => 'counted.';
+
+  @override
+  String get onbV2_7_Sub =>
+      'See the akhirah account you\'re building — trees, palaces, freed souls — rooted in authentic hadith.';
+
+  @override
+  String get onbV2_8_TitleA => 'Let\'s begin with your';
+
+  @override
+  String get onbV2_8_TitleB => 'name.';
+
+  @override
+  String get onbV2_8_Sub => 'So Sabiq feels like yours.';
+
+  @override
+  String get onbV2_8_Placeholder => 'Your name';
+
+  @override
+  String get onbV2_8_Cta => 'Continue';
+
+  @override
+  String get onbV2_9_TitleA => 'Which cause moves you';
+
+  @override
+  String get onbV2_9_TitleB => 'most?';
+
+  @override
+  String get onbV2_9_Sub =>
+      'Your Seeds support all causes — this just helps us understand what matters to our community.';
+
+  @override
+  String get onbV2_9_Cta => 'Begin';
+
+  @override
+  String get onbV2_9_Orphans => 'Orphans';
+
+  @override
+  String get onbV2_9_OrphansSub =>
+      'Feed and care for children who\'ve lost everything';
+
+  @override
+  String get onbV2_9_Water => 'Water Wells';
+
+  @override
+  String get onbV2_9_WaterSub => 'Clean water for villages in need';
+
+  @override
+  String get onbV2_9_War => 'War-Impacted Areas';
+
+  @override
+  String get onbV2_9_WarSub => 'Relief where it\'s needed most';
+
+  @override
+  String get onbV2_9_Disaster => 'Natural Disasters';
+
+  @override
+  String get onbV2_9_DisasterSub => 'Rapid response when crisis strikes';
 }

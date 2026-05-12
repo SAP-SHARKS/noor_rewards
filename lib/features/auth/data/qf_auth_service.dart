@@ -12,7 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/env/env.dart';
 
 /// Thrown when the email returned by Quran Foundation userinfo already belongs
-/// to an existing (non-anonymous) Noor Rewards account. The user should be
+/// to an existing (non-anonymous) Sabiq Rewards account. The user should be
 /// directed to sign in with their original method instead.
 class QfEmailConflictException implements Exception {
   final String email;
