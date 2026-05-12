@@ -421,10 +421,13 @@ class Phase1Screen4 extends StatelessWidget {
               const SizedBox(height: 18),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 22),
-                child: PhotoSlot(
-                  slotKey: 'onb_zikr_4',
-                  fallback: const DoorScalesAnim(),
-                  borderRadius: BorderRadius.circular(22),
+                child: SizedBox(
+                  height: 240,
+                  child: PhotoSlot(
+                    slotKey: 'onb_zikr_4',
+                    fallback: const DoorScalesAnim(),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
