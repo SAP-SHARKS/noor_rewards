@@ -149,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @noorRewards.
   ///
   /// In en, this message translates to:
-  /// **'Noor Rewards'**
+  /// **'Sabiq Rewards'**
   String get noorRewards;
 
   /// No description provided for @startYourJourney.
@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding1Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Noor Rewards — where every good deed is a step closer to Allah\'s mercy and light.'**
+  /// **'Welcome to Sabiq Rewards — where every good deed is a step closer to Allah\'s mercy and light.'**
   String get onboarding1Subtitle;
 
   /// No description provided for @onboarding2Title.
@@ -197,7 +197,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding2Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Every word you read earns you Sawab — a light in your Akhirah.\nYour Noor Coins fund real causes that change real lives.'**
+  /// **'Every word you read earns you Sawab — a light in your Akhirah.\nYour Sabiq Seeds fund real causes that change real lives.'**
   String get onboarding2Subtitle;
 
   /// No description provided for @onboarding3Title.
@@ -245,7 +245,7 @@ abstract class AppLocalizations {
   /// No description provided for @gatesOfNoor.
   ///
   /// In en, this message translates to:
-  /// **'The gates of Noor are open.\nYour spiritual journey begins today.'**
+  /// **'The gates of light are open.\nYour spiritual journey begins today.'**
   String get gatesOfNoor;
 
   /// No description provided for @earnNoorPoints.
@@ -2831,7 +2831,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutNoorRewards.
   ///
   /// In en, this message translates to:
-  /// **'About Noor Rewards'**
+  /// **'About Sabiq Rewards'**
   String get aboutNoorRewards;
 
   /// No description provided for @builtWithLove.
@@ -2963,7 +2963,7 @@ abstract class AppLocalizations {
   /// No description provided for @earnMoreNoor.
   ///
   /// In en, this message translates to:
-  /// **'Earn More Noor'**
+  /// **'Earn More Seeds'**
   String get earnMoreNoor;
 
   /// No description provided for @dontDisturb.
@@ -2987,7 +2987,7 @@ abstract class AppLocalizations {
   /// No description provided for @completeNowBonus.
   ///
   /// In en, this message translates to:
-  /// **'Complete now → earn +50 points bonus'**
+  /// **'Complete now → earn +50 Seeds bonus'**
   String get completeNowBonus;
 
   /// No description provided for @completeADhikrSet.
@@ -2999,7 +2999,7 @@ abstract class AppLocalizations {
   /// No description provided for @finishAzkaarBonus.
   ///
   /// In en, this message translates to:
-  /// **'Finish your Azkaar → earn +30 points bonus'**
+  /// **'Finish your Azkaar → earn +30 Seeds bonus'**
   String get finishAzkaarBonus;
 
   /// No description provided for @inviteAFriend.
@@ -3011,7 +3011,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareNoorBonus.
   ///
   /// In en, this message translates to:
-  /// **'Share Noor with someone → earn +100 NP'**
+  /// **'Share Sabiq with someone → earn +100 Seeds'**
   String get shareNoorBonus;
 
   /// No description provided for @multiplyYour.
@@ -3029,7 +3029,7 @@ abstract class AppLocalizations {
   /// No description provided for @keepMomentum.
   ///
   /// In en, this message translates to:
-  /// **'Keep your spiritual momentum going\nand watch your Noor grow'**
+  /// **'Keep your spiritual momentum going\nand watch your Seeds grow'**
   String get keepMomentum;
 
   /// No description provided for @openQuranNow.
@@ -3065,7 +3065,7 @@ abstract class AppLocalizations {
   /// No description provided for @coinsFundCauses.
   ///
   /// In en, this message translates to:
-  /// **'Coins fund\nnoble causes'**
+  /// **'Seeds fund\nnoble causes'**
   String get coinsFundCauses;
 
   /// No description provided for @unexpectedGoogleError.
@@ -3361,6 +3361,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+{points} Sabiq Seeds · welcome back!'**
   String welcomeBack(String points);
+
+  /// No description provided for @onbV2Skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onbV2Skip;
+
+  /// No description provided for @onbV2Next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onbV2Next;
+
+  /// No description provided for @onbV2_1_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Quran reading'**
+  String get onbV2_1_TitleA;
+
+  /// No description provided for @onbV2_1_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'feeds the hungry.'**
+  String get onbV2_1_TitleB;
+
+  /// No description provided for @onbV2_1_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Real meals. Real people. Real impact.'**
+  String get onbV2_1_Sub;
+
+  /// No description provided for @onbV2_1_Cta.
+  ///
+  /// In en, this message translates to:
+  /// **'How does that work?'**
+  String get onbV2_1_Cta;
+
+  /// No description provided for @onbV2_2_Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s how.'**
+  String get onbV2_2_Title;
+
+  /// No description provided for @onbV2_2_Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Quran or recite dhikr → earn Sabiq Seeds → fund real causes.'**
+  String get onbV2_2_Body;
+
+  /// No description provided for @onbV2_3_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'The Quran rewards you'**
+  String get onbV2_3_TitleA;
+
+  /// No description provided for @onbV2_3_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'twice.'**
+  String get onbV2_3_TitleB;
+
+  /// No description provided for @onbV2_3_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Once with Allah\'s blessing. Once with Seeds that feed the needy.'**
+  String get onbV2_3_Sub;
+
+  /// No description provided for @onbV2_3_BannerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'earned today'**
+  String get onbV2_3_BannerLabel;
+
+  /// No description provided for @onbV2_4_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'See your worship'**
+  String get onbV2_4_TitleA;
+
+  /// No description provided for @onbV2_4_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'come to life.'**
+  String get onbV2_4_TitleB;
+
+  /// No description provided for @onbV2_4_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Recite morning and evening dhikr — and watch your reward unfold, hadith by hadith.'**
+  String get onbV2_4_Sub;
+
+  /// No description provided for @onbV2_5_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reading reaches'**
+  String get onbV2_5_TitleA;
+
+  /// No description provided for @onbV2_5_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'here.'**
+  String get onbV2_5_TitleB;
+
+  /// No description provided for @onbV2_5_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Seed you earn becomes real food, real water, real hope.'**
+  String get onbV2_5_Sub;
+
+  /// No description provided for @onbV2_6_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'But where does the'**
+  String get onbV2_6_TitleA;
+
+  /// No description provided for @onbV2_6_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'money'**
+  String get onbV2_6_TitleB;
+
+  /// No description provided for @onbV2_6_TitleC.
+  ///
+  /// In en, this message translates to:
+  /// **'come from?'**
+  String get onbV2_6_TitleC;
+
+  /// No description provided for @onbV2_6_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Generous donors fund the causes. Your Seeds direct where their gift goes — and grow their reward with every reader.'**
+  String get onbV2_6_Sub;
+
+  /// No description provided for @onbV2_6_Donor.
+  ///
+  /// In en, this message translates to:
+  /// **'Donor'**
+  String get onbV2_6_Donor;
+
+  /// No description provided for @onbV2_6_DonorSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Funds the cause'**
+  String get onbV2_6_DonorSub;
+
+  /// No description provided for @onbV2_6_You.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get onbV2_6_You;
+
+  /// No description provided for @onbV2_6_YouSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct the gift'**
+  String get onbV2_6_YouSub;
+
+  /// No description provided for @onbV2_6_Charity.
+  ///
+  /// In en, this message translates to:
+  /// **'Charity'**
+  String get onbV2_6_Charity;
+
+  /// No description provided for @onbV2_6_CharitySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivers aid'**
+  String get onbV2_6_CharitySub;
+
+  /// No description provided for @onbV2_6_TrustBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'100% disbursed to verified partners'**
+  String get onbV2_6_TrustBadge;
+
+  /// No description provided for @onbV2_7_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'Every deed is'**
+  String get onbV2_7_TitleA;
+
+  /// No description provided for @onbV2_7_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'counted.'**
+  String get onbV2_7_TitleB;
+
+  /// No description provided for @onbV2_7_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'See the akhirah account you\'re building — trees, palaces, freed souls — rooted in authentic hadith.'**
+  String get onbV2_7_Sub;
+
+  /// No description provided for @onbV2_8_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s begin with your'**
+  String get onbV2_8_TitleA;
+
+  /// No description provided for @onbV2_8_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'name.'**
+  String get onbV2_8_TitleB;
+
+  /// No description provided for @onbV2_8_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'So Sabiq feels like yours.'**
+  String get onbV2_8_Sub;
+
+  /// No description provided for @onbV2_8_Placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get onbV2_8_Placeholder;
+
+  /// No description provided for @onbV2_8_Cta.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onbV2_8_Cta;
+
+  /// No description provided for @onbV2_9_TitleA.
+  ///
+  /// In en, this message translates to:
+  /// **'Which cause moves you'**
+  String get onbV2_9_TitleA;
+
+  /// No description provided for @onbV2_9_TitleB.
+  ///
+  /// In en, this message translates to:
+  /// **'most?'**
+  String get onbV2_9_TitleB;
+
+  /// No description provided for @onbV2_9_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Seeds support all causes — this just helps us understand what matters to our community.'**
+  String get onbV2_9_Sub;
+
+  /// No description provided for @onbV2_9_Cta.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin'**
+  String get onbV2_9_Cta;
+
+  /// No description provided for @onbV2_9_Orphans.
+  ///
+  /// In en, this message translates to:
+  /// **'Orphans'**
+  String get onbV2_9_Orphans;
+
+  /// No description provided for @onbV2_9_OrphansSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed and care for children who\'ve lost everything'**
+  String get onbV2_9_OrphansSub;
+
+  /// No description provided for @onbV2_9_Water.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Wells'**
+  String get onbV2_9_Water;
+
+  /// No description provided for @onbV2_9_WaterSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean water for villages in need'**
+  String get onbV2_9_WaterSub;
+
+  /// No description provided for @onbV2_9_War.
+  ///
+  /// In en, this message translates to:
+  /// **'War-Impacted Areas'**
+  String get onbV2_9_War;
+
+  /// No description provided for @onbV2_9_WarSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Relief where it\'s needed most'**
+  String get onbV2_9_WarSub;
+
+  /// No description provided for @onbV2_9_Disaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Disasters'**
+  String get onbV2_9_Disaster;
+
+  /// No description provided for @onbV2_9_DisasterSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Rapid response when crisis strikes'**
+  String get onbV2_9_DisasterSub;
 }
 
 class _AppLocalizationsDelegate

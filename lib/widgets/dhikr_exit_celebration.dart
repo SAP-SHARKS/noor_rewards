@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/y4_theme.dart';
+import 'sabiq_coin.dart';
 
 /// Show the Dhikr-exit celebration. Awaits user dismissal (tap CTA, back, or
 /// barrier tap). Caller is responsible for `Navigator.pop` after this returns.
@@ -415,7 +416,7 @@ class _StatsRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'POINTS EARNED',
+                  'SEEDS EARNED',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -428,16 +429,38 @@ class _StatsRow extends StatelessWidget {
                   animation: pointsAnim,
                   builder: (_, __) {
                     final v = pointsAnim.value;
-                    return Text(
-                      hasPoints ? '+$v ${v == 1 ? 'Seed' : 'Seeds'}' : '+0 Seeds',
-                      style: GoogleFonts.fraunces(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        letterSpacing: -0.4,
-                        height: 1.0,
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SabiqCoin(size: 20),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              // The header "SEEDS EARNED" already labels
+                              // the unit, so this row just shows the
+                              // value to keep the card tight on small
+                              // screens. Big values (e.g. +286) used to
+                              // push the row past the column's width.
+                              '+$v',
+                              maxLines: 1,
+                              style: GoogleFonts.fraunces(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                                letterSpacing: -0.4,
+                                height: 1.0,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures()
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),

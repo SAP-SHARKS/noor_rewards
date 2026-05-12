@@ -15,6 +15,7 @@ import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/project_media_carousel.dart';
 import '../widgets/noor_offline.dart';
+import '../widgets/sabiq_coin.dart';
 
 AppConfig get _pdcfg => SettingsService.instance.config;
 
@@ -167,8 +168,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     return '🤲 Support "$title"\n\n'
         'Organised by $sponsor\n\n'
         'Funded so far — every point counts!\n\n'
-        'Open Noor Rewards app to donate your points and earn reward.\n'
-        '#NoorRewards #Sadaqah #IslamicCharity';
+        'Open Sabiq Rewards app to donate your points and earn reward.\n'
+        '#SabiqRewards #Sadaqah #IslamicCharity';
   }
 
   Future<void> _shareGeneric() async {
@@ -428,6 +429,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              const SabiqCoin(size: 24),
+                              const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
                                   '${_fmtN(current)} Seeds',
@@ -460,14 +463,21 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          '${_fmtN(target)} Seeds',
-                          style: GoogleFonts.outfit(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: _PD.text,
-                            height: 1.0,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SabiqCoin(size: 18),
+                            const SizedBox(width: 5),
+                            Text(
+                              '${_fmtN(target)} Seeds',
+                              style: GoogleFonts.outfit(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: _PD.text,
+                                height: 1.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -850,6 +860,8 @@ class _DonateSheetState extends State<_DonateSheet> {
                                 ),
                               ),
                               const Spacer(),
+                              const SabiqCoin(size: 16),
+                              const SizedBox(width: 5),
                               Text(
                                 '${widget.availablePoints} ${widget.availablePoints == 1 ? 'Seed' : 'Seeds'}',
                                 style: GoogleFonts.outfit(
@@ -890,14 +902,22 @@ class _DonateSheetState extends State<_DonateSheet> {
 
                         // Big amount
                         Center(
-                          child: Text(
-                            '$_amount ${_amount == 1 ? 'Seed' : 'Seeds'}',
-                            style: GoogleFonts.outfit(
-                              fontSize: 42,
-                              fontWeight: FontWeight.w900,
-                              color: _PD.teal,
-                              height: 1,
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SabiqCoin(size: 38),
+                              const SizedBox(width: 10),
+                              Text(
+                                '$_amount ${_amount == 1 ? 'Seed' : 'Seeds'}',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 42,
+                                  fontWeight: FontWeight.w900,
+                                  color: _PD.teal,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -1246,19 +1266,26 @@ class _DonorRow extends StatelessWidget {
           const SizedBox(width: 8),
           // Amount pill
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: Y4.honey.withValues(alpha: 0.22),
               borderRadius: BorderRadius.circular(999),
               border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
             ),
-            child: Text(
-              donor.amount.toString(),
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
-                color: Y4.honeyDeep,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SabiqCoin(size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  donor.amount.toString(),
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.honeyDeep,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

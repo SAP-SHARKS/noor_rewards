@@ -572,7 +572,7 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
         const Color(0xFF3B82F6),
       ),
       _CtaType.boost => (
-        'Earn More Noor',
+        'Earn More Seeds',
         Icons.bolt_rounded,
         const Color(0xFFFFAA00),
       ),
@@ -1056,7 +1056,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: NoorIcon.handshake(size: 26),
         title: 'Invite a Friend',
-        desc: 'Share Noor with someone → earn +100 NP',
+        desc: 'Share Sabiq with someone → earn +100 Seeds',
         onTap: () {
           Navigator.maybePop(context);
           widget.onGoInvite?.call();
@@ -1325,7 +1325,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                             FadeTransition(
                               opacity: _contentFade,
                               child: Text(
-                                'Keep your spiritual momentum going\nand watch your Noor grow ✨',
+                                'Keep your spiritual momentum going\nand watch your Seeds grow ✨',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,

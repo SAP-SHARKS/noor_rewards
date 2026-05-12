@@ -156,7 +156,7 @@ class NoorLiveNotificationService {
       styleInformation: BigTextStyleInformation(
         lines.join('\n'),
         contentTitle: 'Your Noor Today ✨',
-        summaryText: 'Tap to open Noor Rewards',
+        summaryText: 'Tap to open Sabiq Rewards',
       ),
       color: const Color(0xFF6B4EBB),
     );

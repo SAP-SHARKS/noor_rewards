@@ -549,7 +549,7 @@ class _IslamicPatternPainter extends CustomPainter {
 // Illustrations
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// NEW Page 2 — Dual Benefit (Sawab + Noor Coins for noble cause)
+/// NEW Page 2 — Dual Benefit (Sawab + Sabiq Seeds for noble cause)
 class _DualBenefitIllustration extends StatefulWidget {
   const _DualBenefitIllustration();
   @override

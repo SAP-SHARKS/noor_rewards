@@ -417,13 +417,13 @@ class _NotificationTile extends StatelessWidget {
   }
 
   String _localizeBody(BuildContext context, String rawBody) {
-    if (rawBody.contains('Noor Points for sealing today')) {
+    if (rawBody.contains('Sabiq Seeds for sealing today')) {
       final pts = RegExp(r'\+(\d+)').firstMatch(rawBody)?.group(1) ?? '20';
-      return AppLocalizations.of(context)?.pointsForSealing(pts) ?? '+$pts Noor Points for sealing today.';
+      return AppLocalizations.of(context)?.pointsForSealing(pts) ?? '+$pts Sabiq Seeds for sealing today.';
     }
     if (rawBody.contains('welcome back')) {
       final pts = RegExp(r'\+(\d+)').firstMatch(rawBody)?.group(1) ?? '10';
-      return AppLocalizations.of(context)?.welcomeBack(pts) ?? '+$pts Noor Points · welcome back!';
+      return AppLocalizations.of(context)?.welcomeBack(pts) ?? '+$pts Sabiq Seeds · welcome back!';
     }
     if (rawBody.contains('badge.')) {
       final badge = RegExp(r'"([^"]+)"').firstMatch(rawBody)?.group(1) ?? '';

@@ -2,13 +2,11 @@
 //
 // The seal-the-day celebration overlay.
 //
-// Flow when the user taps "Seal the Day":
-//   1. A 180 px Sprouting SabiqCoin scales in, slow-rotating on the Y axis
-//      (a 720° flip) over ~900 ms with easeInOutCubic.
-//   2. After the spin, the coin shrinks and arcs upward to the top-left
-//      Seed-balance pill, then fades out.
-//   3. The future returned by [playSealCoinAnimation] completes when the
-//      flight is done — the caller can then refresh the balance pill.
+// A small burst of Sabiq Seed coins — a mix of large hero coins and many
+// smaller ones — fans outward from the centre of the screen, each spinning
+// on its own axis, then converges on the top-right profile icon (the
+// Seeds wallet). Each landing triggers a tiny gold burst ring so the
+// wallet visibly "catches" every coin.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -17,13 +15,11 @@ import 'package:flutter/material.dart';
 
 import 'sabiq_coin.dart';
 
-/// Plays the seal-the-day coin animation as a fullscreen overlay.
+/// Plays the seal-the-day coin shower as a fullscreen overlay.
 ///
-/// [pointsSealed] is the value to show beneath the coin while it's
-/// spinning ("+286 Seeds"). [targetPosition] is where the coin should
-/// fly to — typically the centre of the top-left Seed balance pill in
-/// global screen coordinates. If null, the coin lands at the top-left
-/// corner with a small inset.
+/// [pointsSealed] is the value shown briefly beneath the burst.
+/// [targetPosition] is the wallet centre in global coordinates; defaults
+/// to the top-right corner with a sensible inset.
 Future<void> playSealCoinAnimation(
   BuildContext context, {
   required int pointsSealed,
@@ -64,59 +60,93 @@ class _SealCoinOverlay extends StatefulWidget {
 }
 
 class _SealCoinOverlayState extends State<_SealCoinOverlay>
-    with TickerProviderStateMixin {
-  late final AnimationController _spinCtrl;
-  late final AnimationController _flightCtrl;
-  late final AnimationController _burstCtrl;
-  late final Animation<double> _scaleIn;
-  late final Animation<double> _spin;
-  late final Animation<double> _flightT;
-  late final Animation<double> _burst;
+    with SingleTickerProviderStateMixin {
+  static const Duration _totalDuration = Duration(milliseconds: 1500);
+
+  late final AnimationController _master;
+  late final List<_CoinParticle> _particles;
 
   @override
   void initState() {
     super.initState();
-
-    _spinCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    );
-    _flightCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 720),
-    );
-    _burstCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 480),
-    );
-
-    _scaleIn = CurvedAnimation(
-      parent: _spinCtrl,
-      curve: const Interval(0.0, 0.25, curve: Curves.easeOutBack),
-    );
-    _spin = CurvedAnimation(parent: _spinCtrl, curve: Curves.easeInOutCubic);
-    _flightT =
-        CurvedAnimation(parent: _flightCtrl, curve: Curves.easeInCubic);
-    _burst = CurvedAnimation(parent: _burstCtrl, curve: Curves.easeOut);
-
-    _spinCtrl.forward().whenComplete(() async {
-      if (!mounted) return;
-      // Fire the welcome-burst just before the coin lands so it feels
-      // like the wallet "catches" the coin.
-      Future.delayed(const Duration(milliseconds: 520), () {
-        if (mounted) _burstCtrl.forward();
-      });
-      await _flightCtrl.forward();
+    _master = AnimationController(vsync: this, duration: _totalDuration);
+    _particles = _buildParticles();
+    _master.forward().whenComplete(() {
       if (mounted) widget.onFinished();
     });
   }
 
   @override
   void dispose() {
-    _spinCtrl.dispose();
-    _flightCtrl.dispose();
-    _burstCtrl.dispose();
+    _master.dispose();
     super.dispose();
+  }
+
+  List<_CoinParticle> _buildParticles() {
+    final rng = math.Random();
+    final out = <_CoinParticle>[];
+
+    // 2 hero coins — one with the leaf sprout, one without.
+    for (var i = 0; i < 2; i++) {
+      out.add(_CoinParticle(
+        size: 38 + rng.nextDouble() * 10,
+        launchDelay: rng.nextDouble() * 0.04,
+        travel: 0.58 + rng.nextDouble() * 0.08,
+        spinTurns: (rng.nextBool() ? 1 : -1) * (1.4 + rng.nextDouble() * 0.8),
+        launchAngle: (rng.nextDouble() * 2 - 1) * 0.7,
+        launchDistance: 70 + rng.nextDouble() * 40,
+        sprouting: i == 0,
+        zOrder: 2,
+      ));
+    }
+
+    // 5 medium coins.
+    for (var i = 0; i < 5; i++) {
+      out.add(_CoinParticle(
+        size: 20 + rng.nextDouble() * 10,
+        launchDelay: 0.02 + rng.nextDouble() * 0.14,
+        travel: 0.50 + rng.nextDouble() * 0.14,
+        spinTurns: (rng.nextBool() ? 1 : -1) * (1.5 + rng.nextDouble() * 1.5),
+        launchAngle: (rng.nextDouble() * 2 - 1) * 1.1,
+        launchDistance: 100 + rng.nextDouble() * 60,
+        sprouting: false,
+        zOrder: 1,
+      ));
+    }
+
+    // 10 small coins — full fan in any direction.
+    for (var i = 0; i < 10; i++) {
+      out.add(_CoinParticle(
+        size: 11 + rng.nextDouble() * 8,
+        launchDelay: 0.05 + rng.nextDouble() * 0.2,
+        travel: 0.48 + rng.nextDouble() * 0.2,
+        spinTurns: (rng.nextBool() ? 1 : -1) * (2 + rng.nextDouble() * 2),
+        launchAngle: (rng.nextDouble() * 2 - 1) * math.pi * 0.9,
+        launchDistance: 80 + rng.nextDouble() * 100,
+        sprouting: false,
+        zOrder: 0,
+      ));
+    }
+
+    // Render small coins first so heros land on top.
+    out.sort((a, b) => a.zOrder.compareTo(b.zOrder));
+    return out;
+  }
+
+  /// Quadratic Bezier interpolation.
+  Offset _bezier(double t, Offset p0, Offset p1, Offset p2) {
+    final mt = 1 - t;
+    return Offset(
+      mt * mt * p0.dx + 2 * mt * t * p1.dx + t * t * p2.dx,
+      mt * mt * p0.dy + 2 * mt * t * p1.dy + t * t * p2.dy,
+    );
+  }
+
+  /// Easing for a single particle's local progress.
+  double _ease(double u) {
+    // ease-out-cubic — fast launch, gentle catch.
+    final c = 1 - u;
+    return 1 - c * c * c;
   }
 
   @override
@@ -124,125 +154,177 @@ class _SealCoinOverlayState extends State<_SealCoinOverlay>
     final media = MediaQuery.of(context);
     final screen = media.size;
     final centerStart = Offset(screen.width / 2, screen.height / 2.4);
-    // Default to top-right when no target supplied (closest to the
-    // standard profile-icon location on most layouts).
-    final flightTarget = widget.targetPosition ??
+    final target = widget.targetPosition ??
         Offset(
           screen.width - 30 - media.padding.right,
           media.padding.top + 36,
         );
 
     return AnimatedBuilder(
-      animation: Listenable.merge([_spinCtrl, _flightCtrl, _burstCtrl]),
+      animation: _master,
       builder: (_, __) {
-        final spinning = _flightCtrl.value == 0;
-        final scale = spinning
-            ? 0.4 + 0.6 * _scaleIn.value
-            : 1.0 - 0.78 * _flightT.value;
-        // Parabolic flight: lerp x/y linearly but add an upward arc so
-        // the coin feels tossed into the wallet rather than dragged.
-        final t = _flightT.value;
-        final lerped =
-            Offset.lerp(centerStart, flightTarget, t) ?? flightTarget;
-        // peak of the arc ~80 px above the straight-line midpoint
-        final arcLift = -80.0 * math.sin(t * math.pi);
-        final pos = spinning
-            ? centerStart
-            : Offset(lerped.dx, lerped.dy + arcLift);
-        final coinSize = 180.0 * scale;
-        final yRot = _spin.value * 2 * math.pi * 2; // 720° flip
+        final t = _master.value;
+        // Barrier fades in over the first 200 ms, holds, fades out at end.
+        final barrierOpacity = (() {
+          if (t < 0.15) return (t / 0.15) * 0.55;
+          if (t > 0.82) return ((1.0 - t) / 0.18) * 0.55;
+          return 0.55;
+        })();
+        // Label visible during the initial burst.
+        final labelOpacity = (() {
+          if (t < 0.1) return t / 0.1;
+          if (t > 0.55) return ((0.72 - t) / 0.17).clamp(0.0, 1.0);
+          return 1.0;
+        })();
 
-        final barrierOpacity = spinning
-            ? 0.55 * _scaleIn.value
-            : 0.55 * (1.0 - _flightT.value);
-        final labelOpacity = spinning ? _scaleIn.value : (1.0 - _flightT.value);
+        // Build per-particle widgets.
+        final coinWidgets = <Widget>[];
+        final landingBursts = <Widget>[];
+        for (final p in _particles) {
+          final localT =
+              ((t - p.launchDelay) / p.travel).clamp(0.0, 1.0).toDouble();
+          if (localT <= 0) continue;
+          final u = _ease(localT);
+
+          // Bezier control point — biased upward and fanned out by
+          // launchAngle. This makes each coin sweep out and converge.
+          final control = Offset(
+            centerStart.dx + math.sin(p.launchAngle) * p.launchDistance,
+            centerStart.dy -
+                math.cos(p.launchAngle).abs() * p.launchDistance * 0.7 -
+                40,
+          );
+          final pos = _bezier(u, centerStart, control, target);
+
+          // Spin around its own centre.
+          final yRot = p.spinTurns * u * math.pi * 2;
+          // Fade in over the first 12% of the particle's life and fade
+          // out over the last 8% so the convergence reads cleanly.
+          final pOpacity = (() {
+            if (localT < 0.12) return localT / 0.12;
+            if (localT > 0.92) return ((1.0 - localT) / 0.08).clamp(0.0, 1.0);
+            return 1.0;
+          })();
+
+          coinWidgets.add(Positioned(
+            left: pos.dx - p.size / 2,
+            top: pos.dy - p.size / 2,
+            width: p.size,
+            height: p.size,
+            child: Opacity(
+              opacity: pOpacity,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(yRot),
+                child: SabiqCoin(size: p.size, sprouting: p.sprouting),
+              ),
+            ),
+          ));
+
+          // When a coin has just landed (localT ≈ 1), paint a brief
+          // burst ring at the target. We trigger once per particle.
+          if (localT >= 0.95) {
+            final burstT = ((localT - 0.95) / 0.05).clamp(0.0, 1.0);
+            final ringSize = 24 + 38 * burstT * (p.size / 30);
+            landingBursts.add(Positioned(
+              left: target.dx - ringSize / 2,
+              top: target.dy - ringSize / 2,
+              width: ringSize,
+              height: ringSize,
+              child: Opacity(
+                opacity: (1.0 - burstT).clamp(0.0, 1.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFFFE89A),
+                      width: 2,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x66FFD662),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ));
+          }
+        }
 
         return Material(
           color: Colors.black.withValues(alpha: barrierOpacity),
           child: Stack(
             children: [
-              // The coin.
+              // Caption — fades in with the burst and out before flight ends.
               Positioned(
-                left: pos.dx - coinSize / 2,
-                top: pos.dy - coinSize / 2,
-                width: coinSize,
-                height: coinSize,
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.001) // perspective
-                    ..rotateY(yRot),
-                  child: const SabiqCoin(size: 180, sprouting: true),
+                left: 0,
+                right: 0,
+                top: centerStart.dy + 90,
+                child: Opacity(
+                  opacity: labelOpacity.clamp(0.0, 1.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        '+${widget.pointsSealed} '
+                        '${widget.pointsSealed == 1 ? 'Seed' : 'Seeds'}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFFFFE89A),
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'SEALED FOR THE AKHIRAH',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFFAF3E3),
+                          letterSpacing: 1.6,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              // Welcome-burst ring on the wallet — gold ripple that
-              // expands outward when the coin lands.
-              if (_burstCtrl.value > 0)
-                Positioned(
-                  left: flightTarget.dx - 60 * _burst.value,
-                  top: flightTarget.dy - 60 * _burst.value,
-                  width: 120 * _burst.value,
-                  height: 120 * _burst.value,
-                  child: Opacity(
-                    opacity: (1.0 - _burst.value).clamp(0.0, 1.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFFFFE89A),
-                          width: 3,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x66FFD662),
-                            blurRadius: 24,
-                            spreadRadius: 4,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              // "+X Seeds" label under the coin during the spin.
-              if (spinning)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: centerStart.dy + 110,
-                  child: Opacity(
-                    opacity: labelOpacity.clamp(0.0, 1.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          '+${widget.pointsSealed} '
-                          '${widget.pointsSealed == 1 ? 'Seed' : 'Seeds'}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFFFFE89A),
-                            letterSpacing: -0.4,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        const Text(
-                          'SEALED FOR THE AKHIRAH',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFFAF3E3),
-                            letterSpacing: 1.6,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              // Individual coins (small first, heroes on top).
+              ...coinWidgets,
+              // Landing bursts at the wallet.
+              ...landingBursts,
             ],
           ),
         );
       },
     );
   }
+}
+
+class _CoinParticle {
+  final double size;          // diameter in logical px
+  final double launchDelay;   // fraction of total [0, 0.3]
+  final double travel;        // fraction of total to fly [0.45, 0.7]
+  final double spinTurns;     // signed rotations during flight
+  final double launchAngle;   // radians; 0 = straight up
+  final double launchDistance;// control-point distance
+  final bool sprouting;       // hero variant with leaf
+  final int zOrder;           // 0=small, 1=medium, 2=hero (drawn on top)
+
+  const _CoinParticle({
+    required this.size,
+    required this.launchDelay,
+    required this.travel,
+    required this.spinTurns,
+    required this.launchAngle,
+    required this.launchDistance,
+    required this.sprouting,
+    required this.zOrder,
+  });
 }

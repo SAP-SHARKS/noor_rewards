@@ -29,6 +29,8 @@ const ICONS: Record<string, string> = {
     "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
   categories:
     "M4 6h16M4 10h16M4 14h16M4 18h16",
+  onboarding:
+    "M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z",
 };
 
 const NAV_ITEMS = [
@@ -42,6 +44,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/config", label: "Raw Config", icon: "config" },
   { href: "/dashboard/analytics", label: "Analytics", icon: "analytics" },
   { href: "/dashboard/categories", label: "Azkar Categories", icon: "categories" },
+  { href: "/dashboard/onboarding", label: "Onboarding Images", icon: "onboarding" },
 ];
 
 function NavIcon({ name, className }: { name: string; className?: string }) {

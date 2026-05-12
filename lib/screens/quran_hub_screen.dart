@@ -973,7 +973,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Earn +10 Noor Points per verse read',
+                        'Earn +10 Sabiq Seeds per verse read',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           color: Y4.inkSoft,

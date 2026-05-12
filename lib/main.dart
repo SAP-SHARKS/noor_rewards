@@ -13,9 +13,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/data/qf_auth_service.dart';
 
 import 'models/app_config.dart';
-import 'screens/onboarding_screen.dart';
+import 'screens/onboarding_v2/phase1_flow.dart';
+import 'screens/onboarding_v2/phase2_flow.dart';
 import 'screens/start_journey_screen.dart';
-import 'screens/profile_setup_screen.dart';
 import 'screens/welcome_gate_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/flower_splash_screen.dart';
@@ -24,6 +24,7 @@ import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart'; // Quran Foundation credentials
 import 'services/notification_service.dart';
 import 'services/notification_center.dart';
+import 'services/onboarding_assets_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'widgets/noor_offline.dart';
@@ -121,6 +122,7 @@ Future<void> _bootHeavyInit() async {
   unawaited(
     _step('NoorLiveNotification', NoorLiveNotificationService.instance.init),
   );
+  unawaited(_step('OnboardingAssets', OnboardingAssetsService.instance.init));
 
   try {
     _initAppLinks();
@@ -135,7 +137,7 @@ class MyApp extends StatelessWidget {
     // Rebuild theme whenever SettingsService notifies (Realtime color change)
     final cfg = context.watch<SettingsService>().config;
     return MaterialApp(
-      title: 'Noor Rewards',
+      title: 'Sabiq Rewards',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(cfg),
       locale:
@@ -378,7 +380,7 @@ class _AuthGateState extends State<AuthGate> {
 
         if (showLogin) {
           if (!_onboardingDone) {
-            return OnboardingScreen(
+            return Phase1Flow(
               onComplete: () => setState(() => _onboardingDone = true),
             );
           }
@@ -411,31 +413,63 @@ class _AuthGateState extends State<AuthGate> {
         final storedName = user?.userMetadata?['noor_name'] as String?;
 
         if (!hasProfile) {
-          return ProfileSetupScreen(
+          // Pre-fill with whatever name the auth provider gave us, if any.
+          final providerName =
+              (user?.userMetadata?['full_name'] as String?) ??
+              (user?.userMetadata?['noor_name'] as String?) ??
+              '';
+          return Phase2Flow(
+            initialName: providerName,
             onComplete: (name) {
               final isQfUser = user?.userMetadata?['provider'] == 'quran_com';
               if (isQfUser) {
                 QfAuthService.instance.storeQfName(name);
               }
-              // Persist email to profiles table for all login methods so
-              // it's always visible in the Supabase dashboard.
+              // Persist email + display name to profiles table for all login
+              // methods so they're always visible in the Supabase dashboard.
               final userEmail =
                   user
                       ?.email // email/Google
                       ??
                   user?.userMetadata?['qf_email'] as String?; // QF
-              if (userEmail != null && userEmail.isNotEmpty) {
+              if (user != null) {
+                final row = <String, dynamic>{
+                  'id': user.id,
+                  'display_name': name,
+                  'setup_done': true,
+                };
+                if (userEmail != null && userEmail.isNotEmpty) {
+                  row['email'] = userEmail;
+                }
                 Supabase.instance.client
                     .from('profiles')
                     .upsert(
-                      {'id': user!.id, 'email': userEmail},
+                      row,
                       onConflict: 'id',
                       ignoreDuplicates: false,
                     )
                     .catchError(
-                      (e) => debugPrint('[AuthGate] email upsert failed: $e'),
+                      (e) => debugPrint('[AuthGate] profile upsert failed: $e'),
                     );
               }
+              // Mirror to auth metadata so future cold starts skip Phase 2.
+              unawaited(
+                Supabase.instance.client.auth
+                    .updateUser(
+                      UserAttributes(
+                        data: {
+                          'noor_setup_complete': true,
+                          'noor_name': name,
+                        },
+                      ),
+                    )
+                    .then<void>((_) {})
+                    .catchError(
+                      (e) => debugPrint(
+                        '[AuthGate] metadata update failed: $e',
+                      ),
+                    ),
+              );
               setState(() {
                 _userName = name;
                 _profileSetupDone = true;

@@ -292,8 +292,15 @@ class XpService {
     }
   }
 
-  // ── Validate & Support points ─────────────────────────────────────────────────
+  // ── Seal the Day (flush pending Seeds) ───────────────────────────────────
+  // The user can seal multiple times a day so newly-earned Seeds can always
+  // be flushed when they tap. The validate *bonus* is only awarded on the
+  // first seal of the day (one daily ritual reward, not an exploit).
   Future<bool> claimValidate() async {
+    // Nothing pending → nothing to seal. Skip the RPC and return false so
+    // the swipe button can show its boost / "earn more" hint instead.
+    if (_pendingPoints <= 0) return false;
+
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
     try {
@@ -305,28 +312,34 @@ class XpService {
           .eq('activity_type', 'validate')
           .gte('created_at', today)
           .limit(1);
-
-      if ((existing as List).isNotEmpty) return false;
-
-      // Add validation bonus to pending before flushing
+      final firstSealToday = (existing as List).isEmpty;
       final bonus = PointReward.validate;
-      _pendingPoints += bonus;
 
-      // Flush ALL pending points (earned today + validation bonus) to server
+      // Only stack the daily bonus on the first seal of the day.
+      if (firstSealToday) {
+        _pendingPoints += bonus;
+      }
+
+      // Flush everything pending (this resets _pendingPoints to 0 inside
+      // _flushPendingToServer on success).
       final flushed = _pendingPoints;
       await _flushPendingToServer();
 
-      // Record the validation activity
-      await _sb.from('user_activities').insert({
-        'user_id': uid,
-        'activity_type': 'validate',
-        'points_earned': flushed,
-      });
+      // Record one validate activity per day so the bonus can't repeat.
+      if (firstSealToday) {
+        await _sb.from('user_activities').insert({
+          'user_id': uid,
+          'activity_type': 'validate',
+          'points_earned': flushed,
+        });
+      }
 
       NotificationCenter.instance.add(
         kind: NoorNotifKind.validation,
         title: 'Day sealed 🌙',
-        body: '+$flushed Noor Points confirmed! ($bonus bonus for sealing)',
+        body: firstSealToday
+            ? '+$flushed Sabiq Seeds confirmed! ($bonus bonus for sealing)'
+            : '+$flushed Sabiq Seeds confirmed!',
         route: '/home',
       );
       return true;
