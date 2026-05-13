@@ -71,7 +71,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   int _totalDonated = 0;
   int _todayPoints = 0;
   int _weekPoints = 0;
-  int _sessionSec = 0;
+  // Last 7 days of worship time (oldest → newest) in seconds.
+  // Aligned with `_weekDayLabels` below.
+  List<int> _weekDayTimes = const [0, 0, 0, 0, 0, 0, 0];
+  int _selectedDay = 6; // 0..6, defaults to today (last in window)
 
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
@@ -256,18 +259,30 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         _sb.rpc('get_today_points'),
         _sb.rpc('get_week_points'),
         StreakService.instance.loadSnapshot(),
+        _sb.rpc('get_week_screen_time', params: {'p_user_id': uid})
+            .then<List<int>>((rows) {
+              final list = (rows as List)
+                  .map((r) => (r['total_sec'] as num?)?.toInt() ?? 0)
+                  .toList();
+              // Pad/trim to exactly 7 (defensive).
+              while (list.length < 7) {
+                list.insert(0, 0);
+              }
+              return list.length > 7 ? list.sublist(list.length - 7) : list;
+            })
+            .catchError((_) => List<int>.filled(7, 0)),
       ]);
 
       final profile = results[0] as Map<String, dynamic>?;
-      final analytics = results[1] as Map<String, dynamic>?;
 
       _level = (profile?['level'] as num?)?.toInt() ?? 1;
       _noorPoints = (profile?['noor_points'] as num?)?.toInt() ?? 0;
       _totalDonated = results[2] as int;
       _todayPoints = (results[3] as num?)?.toInt() ?? 0;
       _weekPoints = (results[4] as num?)?.toInt() ?? 0;
-      _sessionSec = (analytics?['session_duration_sec'] as num?)?.toInt() ?? 0;
       _snap = results[5] as StreakSnapshot;
+      _weekDayTimes = results[6] as List<int>;
+      _selectedDay = 6; // today is the newest entry
 
       // Level title from xp_levels
       try {
@@ -1408,11 +1423,24 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   }
 
   Widget _buildActivityCard() {
-    final hours = _sessionSec ~/ 3600;
-    final mins = (_sessionSec % 3600) ~/ 60;
-    final days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    final weekRatio = math.min(1.0, _weekPoints / math.max(1, 700));
-    final bars = [0.3, 0.5, weekRatio * 0.7, 0.8, 1.0, weekRatio, 0.4];
+    // Labels for the 7-day window (oldest → newest). The newest entry is
+    // today, so we compute labels by walking back from today's weekday.
+    final todayWd = DateTime.now().weekday; // 1=Mon … 7=Sun
+    const weekdayLetters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final days = List<String>.generate(7, (i) {
+      // window position i (0..6) corresponds to (today - (6 - i)) days
+      final wd = ((todayWd - 1 - (6 - i)) % 7 + 7) % 7;
+      return weekdayLetters[wd];
+    });
+    final selectedSec = (_selectedDay >= 0 && _selectedDay < _weekDayTimes.length)
+        ? _weekDayTimes[_selectedDay]
+        : 0;
+    final hours = selectedSec ~/ 3600;
+    final mins = (selectedSec % 3600) ~/ 60;
+    final maxSec = _weekDayTimes.fold<int>(0, math.max);
+    final bars = _weekDayTimes
+        .map((s) => maxSec == 0 ? 0.0 : (s / maxSec).clamp(0.0, 1.0))
+        .toList();
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -1493,8 +1521,13 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(
               7,
-              (i) => _DayBar(days[i], bars[i], highlight: i == 4),
-            ), // Friday highlighted
+              (i) => _DayBar(
+                days[i],
+                bars[i],
+                highlight: i == _selectedDay,
+                onTap: () => setState(() => _selectedDay = i),
+              ),
+            ),
           ),
         ],
       ),
@@ -2469,40 +2502,47 @@ class _DayBar extends StatelessWidget {
   final String day;
   final double value;
   final bool highlight;
-  const _DayBar(this.day, this.value, {this.highlight = false});
+  final VoidCallback? onTap;
+  const _DayBar(this.day, this.value, {this.highlight = false, this.onTap});
   @override
   Widget build(BuildContext context) {
     const maxH = 64.0;
     return Expanded(
-      child: Column(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 700),
-            curve: Curves.easeOut,
-            height: (value * maxH).clamp(4.0, maxH),
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors:
-                    highlight
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 700),
+                curve: Curves.easeOut,
+                height: (value * maxH).clamp(4.0, maxH),
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: highlight
                         ? [const Color(0xFFF59E0B), const Color(0xFFD4783A)]
                         : [_C.teal.withValues(alpha: 0.7), _C.teal],
+                  ),
+                  borderRadius: BorderRadius.circular(6),
+                ),
               ),
-              borderRadius: BorderRadius.circular(6),
-            ),
+              const SizedBox(height: 5),
+              Text(
+                day,
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: highlight ? FontWeight.w800 : FontWeight.w500,
+                  color: highlight ? _C.gold : _C.sub,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 5),
-          Text(
-            day,
-            style: GoogleFonts.outfit(
-              fontSize: 10,
-              fontWeight: highlight ? FontWeight.w800 : FontWeight.w500,
-              color: highlight ? _C.gold : _C.sub,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
