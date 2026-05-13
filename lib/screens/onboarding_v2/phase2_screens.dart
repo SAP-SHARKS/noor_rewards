@@ -58,85 +58,92 @@ class _Phase2Screen8State extends State<Phase2Screen8> {
       backgroundColor: OnbTok.cream,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(26, 30, 26, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Wordmark(size: 20),
-              const SizedBox(height: 36),
-              const Center(child: SabiqGardenIcon(size: 88)),
-              const SizedBox(height: 30),
-              OnbHeading(
-                first: l.onbV2_8_TitleA,
-                accent: l.onbV2_8_TitleB,
-                align: TextAlign.center,
-              ),
-              const SizedBox(height: 14),
-              Text(
-                l.onbV2_8_Sub,
-                textAlign: TextAlign.center,
-                style: OnbTok.sans(),
-              ),
-              const SizedBox(height: 34),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                decoration: BoxDecoration(
-                  color: OnbTok.creamWarm,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: _focused ? OnbTok.gold : Colors.transparent,
-                    width: 2,
-                  ),
-                  boxShadow: _focused
-                      ? [
-                          BoxShadow(
-                            color: OnbTok.gold.withValues(alpha: 0.18),
-                            spreadRadius: 4,
+        child: LayoutBuilder(
+          builder: (_, c) => SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(26, 30, 26, 0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: c.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Wordmark(size: 26),
+                    const SizedBox(height: 36),
+                    const Center(child: SabiqGardenIcon(size: 88)),
+                    const SizedBox(height: 30),
+                    OnbHeading(
+                      first: l.onbV2_8_TitleA,
+                      accent: l.onbV2_8_TitleB,
+                      align: TextAlign.center,
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      l.onbV2_8_Sub,
+                      textAlign: TextAlign.center,
+                      style: OnbTok.sans(),
+                    ),
+                    const SizedBox(height: 34),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      decoration: BoxDecoration(
+                        color: OnbTok.creamWarm,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: _focused ? OnbTok.gold : Colors.transparent,
+                          width: 2,
+                        ),
+                        boxShadow: _focused
+                            ? [
+                                BoxShadow(
+                                  color: OnbTok.gold.withValues(alpha: 0.18),
+                                  spreadRadius: 4,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: TextField(
+                        controller: _ctrl,
+                        focusNode: _focus,
+                        onChanged: (_) => setState(() {}),
+                        onSubmitted: (v) {
+                          if (v.trim().isNotEmpty) widget.onSubmit(v.trim());
+                        },
+                        textInputAction: TextInputAction.done,
+                        style: OnbTok.sans(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                          color: OnbTok.brown,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: l.onbV2_8_Placeholder,
+                          hintStyle: OnbTok.sans(
+                            fontSize: 17,
+                            color: OnbTok.greySoft,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ]
-                      : null,
-                ),
-                child: TextField(
-                  controller: _ctrl,
-                  focusNode: _focus,
-                  onChanged: (_) => setState(() {}),
-                  onSubmitted: (v) {
-                    if (v.trim().isNotEmpty) widget.onSubmit(v.trim());
-                  },
-                  textInputAction: TextInputAction.done,
-                  style: OnbTok.sans(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: OnbTok.brown,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: l.onbV2_8_Placeholder,
-                    hintStyle: OnbTok.sans(
-                      fontSize: 17,
-                      color: OnbTok.greySoft,
-                      fontWeight: FontWeight.w500,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 16,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 16,
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: CTA(
+                        label: l.onbV2_8_Cta,
+                        disabled: !hasText,
+                        onPressed: hasText
+                            ? () => widget.onSubmit(_ctrl.text.trim())
+                            : null,
+                      ),
                     ),
-                    border: InputBorder.none,
-                  ),
+                  ],
                 ),
               ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: CTA(
-                  label: l.onbV2_8_Cta,
-                  disabled: !hasText,
-                  onPressed: hasText
-                      ? () => widget.onSubmit(_ctrl.text.trim())
-                      : null,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -191,7 +198,7 @@ class _Phase2Screen9State extends State<Phase2Screen9> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Wordmark(size: 20),
+              const Wordmark(size: 26),
               const SizedBox(height: 18),
               OnbHeading(
                 first: l.onbV2_9_TitleA,
@@ -208,7 +215,7 @@ class _Phase2Screen9State extends State<Phase2Screen9> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.78,
+                    childAspectRatio: 0.62,
                   ),
                   itemCount: causes.length,
                   itemBuilder: (_, i) {
@@ -260,111 +267,103 @@ class _CauseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedScale(
-        scale: selected ? 1.025 : 1.0,
+      child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: OnbTok.gold,
-                      spreadRadius: 3,
-                    ),
-                    BoxShadow(
-                      color: OnbTok.gold.withValues(alpha: 0.55),
-                      blurRadius: 36,
-                      spreadRadius: -16,
-                      offset: const Offset(0, 18),
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: OnbTok.creamWarm,
-                      spreadRadius: 1,
-                    ),
-                    BoxShadow(
-                      color: OnbTok.brown.withValues(alpha: 0.18),
-                      blurRadius: 14,
-                      spreadRadius: -10,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: selected ? OnbTok.gold : Colors.transparent,
+            width: 2.5,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AspectRatio(
-                  aspectRatio: 16 / 11,
-                  child: Stack(
-                    children: [
-                      PhotoSlot(
-                        slotKey: cause.slotKey,
-                        placeholderText: cause.label.toLowerCase(),
-                      ),
-                      if (selected)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: OnbTok.gold,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.check_rounded,
-                              size: 14,
-                              color: OnbTok.brown,
-                            ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: OnbTok.gold.withValues(alpha: 0.35),
+                    blurRadius: 22,
+                    spreadRadius: -10,
+                    offset: const Offset(0, 10),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: OnbTok.brown.withValues(alpha: 0.10),
+                    blurRadius: 14,
+                    spreadRadius: -10,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 11,
+                child: Stack(
+                  children: [
+                    PhotoSlot(
+                      slotKey: cause.slotKey,
+                      placeholderText: cause.label.toLowerCase(),
+                    ),
+                    if (selected)
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: OnbTok.gold,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.15),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.check_rounded,
+                            size: 14,
+                            color: OnbTok.brown,
                           ),
                         ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        cause.label,
-                        style: OnbTok.sans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: OnbTok.brown,
-                          letterSpacing: -0.07,
-                        ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        cause.desc,
-                        style: OnbTok.sans(
-                          fontSize: 11,
-                          color: OnbTok.brownSoft,
-                          height: 1.35,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      cause.label,
+                      style: OnbTok.sans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: OnbTok.brown,
+                        letterSpacing: -0.07,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      cause.desc,
+                      style: OnbTok.sans(
+                        fontSize: 11,
+                        color: OnbTok.brownSoft,
+                        height: 1.35,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

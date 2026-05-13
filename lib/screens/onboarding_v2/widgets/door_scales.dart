@@ -44,7 +44,7 @@ class _DoorScalesAnimState extends State<DoorScalesAnim>
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 240,
+      height: 320,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [OnbTok.goldLight, OnbTok.creamWarm],
@@ -69,7 +69,7 @@ class _DoorScalesAnimState extends State<DoorScalesAnim>
                 final t = _rays.value;
                 final alpha = 0.35 + 0.25 * math.sin(t * math.pi * 2);
                 return CustomPaint(
-                  size: const Size.fromHeight(240),
+                  size: const Size.fromHeight(320),
                   painter: _RaysPainter(alpha: alpha),
                 );
               },

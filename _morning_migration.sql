@@ -34,7 +34,30 @@ VALUES ('morning_8', 'لَا يُكَلِّفُ اللّٰهُ نَفْسًا إ
 INSERT INTO azkar_items (id, arabic, transliteration, translation, recommended_count, category_id, reward, reference, sort_order, hadith_full, audio_url)
 VALUES ('morning_9', 'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
 
-قُلْ هُوَ اللّٰهُ أَحَدٌ ، اَللّٰهُ الصَّمَدُ ، لَمْ يَلِدْ وَلَمْ يُوْلَدْ ، وَلَمْ يَكُنْ لَّهُ كُفُوًا أَحَدٌ', 'Bismillahir-Rahmanir-Rahim. Qul Huwallahu Ahad. Allahus-Samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad.', 'In the name of Allah, the Most Gracious, the Most Merciful. Say, "He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent."', 3, 'morning', 'Surah Al-Ikhlas | Abu Dawud 5082', 'Quran 112 | Abu Dawud 5082', 9, 'Abdullah ibn Khubayb (رضي الله عنه) reported: The Messenger of Allah (ﷺ) said to me, "Recite Qul Huwa Allahu Ahad and Al-Mu''awwidhatayn (Surah Al-Falaq and Surah An-Nas) three times at dawn and dusk. It will suffice you in all respects." (Abu Dawud 5082, At-Tirmidhi 3575)', 'https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/112.mp3');
+قُلْ هُوَ اللّٰهُ أَحَدٌ ، اَللّٰهُ الصَّمَدُ ، لَمْ يَلِدْ وَلَمْ يُوْلَدْ ، وَلَمْ يَكُنْ لَّهُ كُفُوًا أَحَدٌ', 'Bismillahir-Rahmanir-Rahim. Qul Huwallahu Ahad. Allahus-Samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad.', 'In the name of Allah, the Most Gracious, the Most Merciful. Say, "He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent."', 3, 'morning', 'Surah Al-Ikhlas | Abu Dawud 5082', 'Quran 112 | Abu Dawud 5082', 9, 'Mu`adh bin `Abdullah bin Khubaib, narrated from his father, who said:
+"We went out on a rainy and extremely dark night, looking for the Messenger of Allah ﷺ, so that he could lead us in Salat." He said: "So I met him and he ﷺ said: ''Speak'' but I did not say anything. Then he ﷺ said: ''Speak.'' But I did not say anything. He ﷺ said: ''Speak.'' So I said: ''What should I say?'' He ﷺ said: ''Say: "Say: He is Allah, the One" and Al-Mu`awwidhatain, when you reach evening, and when you reach morning, three times, they will suffice you against everything.''"
+
+Jami` at-Tirmidhi 3575
+
+Narrated Uqbah ibn Amir:
+
+The Messenger of Allah ﷺ commanded me to recite Mu''awwidhatan (the last two surahs of the Qur''an) after every prayer.
+
+Sunan Abi Dawud 1523
+
+The Prophet ﷺ said to his companions, "Is it difficult for any of you to recite one third of the Qur''an in one night?" This suggestion was difficult for them so they said, "Who among us has the power to do so, O Allah''s Messenger ﷺ?" Allah Apostle replied: " Allah (the) One, the Self-Sufficient Master Whom all creatures need.'' (Surat Al-Ikhlas 112.1--to the End) is equal to one third of the Qur''an."
+
+Sahih al-Bukhari 5015
+
+Narrated ''Aisha:
+Whenever the Prophet ﷺ went to bed every night, he used to cup his hands together and blow over it after reciting Surat Al-Ikhlas, Surat Al-Falaq and Surat An-Nas, and then rub his hands over whatever parts of his body he was able to rub, starting with his head, face and front of his body. He used to do that three times.
+
+Sahih al-Bukhari 5017
+
+(Surahs 112 Al-Ikhlas, 113 Al-Falaq, and 114 An-Nas)
+These Surah''s should be recited once in Arabic after each prayer and three times after Maghrib and Fajr.
+
+Hisn al-Muslim 70', 'https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/112.mp3');
 
 INSERT INTO azkar_items (id, arabic, transliteration, translation, recommended_count, category_id, reward, reference, sort_order, hadith_full, audio_url)
 VALUES ('morning_10', 'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
