@@ -18,6 +18,7 @@ import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/quran_exit_celebration.dart';
+import '../theme/y4_theme.dart';
 
 /// Shorthand to get the live AppConfig.
 AppConfig get _cfg => SettingsService.instance.config;
@@ -1249,7 +1250,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Y4.bg,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -1277,7 +1278,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
+                          color: Y4.track,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -1289,7 +1290,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           style: GoogleFonts.outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: _kText,
+                            color: Y4.ink,
                           ),
                         ),
                       ),
@@ -1298,25 +1299,26 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
+                            color: Y4.cream,
                             borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Y4.border),
                           ),
                           child: TextField(
                             onChanged:
                                 (val) => setStateSheet(() => searchQuery = val),
                             style: GoogleFonts.outfit(
                               fontSize: 15,
-                              color: _kText,
+                              color: Y4.ink,
                             ),
                             decoration: InputDecoration(
                               hintText: 'Search Surah...',
                               hintStyle: GoogleFonts.outfit(
-                                color: Colors.grey.shade500,
+                                color: Y4.inkSoft,
                               ),
                               border: InputBorder.none,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.search_rounded,
-                                color: Colors.grey.shade400,
+                                color: Y4.inkSoft,
                                 size: 20,
                               ),
                             ),
@@ -1352,8 +1354,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   shape: BoxShape.circle,
                                   color:
                                       isCurrent
-                                          ? _kTeal
-                                          : const Color(0xFFF0FBF9),
+                                          ? Y4.primary
+                                          : Y4.cream,
                                 ),
                                 child: Center(
                                   child: Text(
@@ -1361,7 +1363,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     style: GoogleFonts.outfit(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
-                                      color: isCurrent ? Colors.white : _kTeal,
+                                      color: isCurrent ? Colors.white : Y4.primary,
                                     ),
                                   ),
                                 ),
@@ -1373,21 +1375,21 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       isCurrent
                                           ? FontWeight.w700
                                           : FontWeight.w500,
-                                  color: isCurrent ? _kTeal : _kText,
+                                  color: isCurrent ? Y4.primary : Y4.ink,
                                 ),
                               ),
                               subtitle: Text(
                                 '${_surahLengths[n]} ayahs',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
-                                  color: _kSub,
+                                  color: Y4.inkSoft,
                                 ),
                               ),
                               trailing:
                                   isCurrent
-                                      ? Icon(
+                                      ? const Icon(
                                         Icons.check_circle_rounded,
-                                        color: _kTeal,
+                                        color: Y4.primary,
                                       )
                                       : null,
                             );
@@ -6526,7 +6528,7 @@ class _WbwWordChipState extends State<_WbwWordChip>
                 ),
               ),
               const SizedBox(height: 4),
-              // Transliteration (italic, gold-tinted) — only if non-empty
+              // Transliteration (italic, always black for readability) — only if non-empty
               if (widget.transliteration.isNotEmpty) ...[
                 Text(
                   widget.transliteration,
@@ -6536,7 +6538,7 @@ class _WbwWordChipState extends State<_WbwWordChip>
                   style: GoogleFonts.lora(
                     fontSize: 11.5,
                     fontStyle: FontStyle.italic,
-                    color: goldClr.withValues(alpha: 0.85),
+                    color: Colors.black87,
                     height: 1.3,
                   ),
                 ),
