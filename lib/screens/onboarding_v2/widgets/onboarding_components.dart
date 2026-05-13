@@ -3,6 +3,8 @@
 // Shared onboarding UI primitives — Wordmark, Skip button, CTA, ScreenFooter
 // with dots, PhotoSlot (admin-uploaded image + fallback).
 
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,7 +17,7 @@ import 'onboarding_tokens.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 class Wordmark extends StatelessWidget {
   final double size;
-  const Wordmark({super.key, this.size = 20});
+  const Wordmark({super.key, this.size = 26});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -223,7 +225,7 @@ class PhotoSlot extends StatelessWidget {
     required this.slotKey,
     this.placeholderText,
     this.fallback,
-    this.fit = BoxFit.cover,
+    this.fit = BoxFit.contain,
     this.borderRadius,
   });
 
@@ -234,14 +236,44 @@ class PhotoSlot extends StatelessWidget {
       builder: (_, map, __) {
         final url = map[slotKey];
         final body = (url != null && url.isNotEmpty)
-            ? CachedNetworkImage(
-                imageUrl: url,
-                fit: fit,
+            ? Container(
+                color: OnbTok.creamWarm,
                 width: double.infinity,
                 height: double.infinity,
-                placeholder: (_, __) => _Placeholder(text: placeholderText),
-                errorWidget: (_, __, ___) =>
-                    fallback ?? _Placeholder(text: placeholderText),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Blurred cover backdrop fills any letterbox area
+                    // with a soft, color-matched version of the image.
+                    ImageFiltered(
+                      imageFilter: ImageFilter.blur(
+                        sigmaX: 28,
+                        sigmaY: 28,
+                        tileMode: TileMode.decal,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        placeholder: (_, __) => const SizedBox.shrink(),
+                        errorWidget: (_, __, ___) => const SizedBox.shrink(),
+                      ),
+                    ),
+                    // Foreground: actual photo at requested fit (default
+                    // contain) so nothing is cropped.
+                    CachedNetworkImage(
+                      imageUrl: url,
+                      fit: fit,
+                      width: double.infinity,
+                      height: double.infinity,
+                      placeholder: (_, __) =>
+                          _Placeholder(text: placeholderText),
+                      errorWidget: (_, __, ___) =>
+                          fallback ?? _Placeholder(text: placeholderText),
+                    ),
+                  ],
+                ),
               )
             : (fallback ?? _Placeholder(text: placeholderText));
         return borderRadius != null
@@ -262,21 +294,25 @@ class _Placeholder extends StatelessWidget {
       height: double.infinity,
       color: OnbTok.creamWarm,
       alignment: Alignment.center,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.image_outlined, color: OnbTok.greySoft, size: 28),
+          Icon(Icons.image_outlined, color: OnbTok.greySoft, size: 22),
           if (text != null && text!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              text!,
-              textAlign: TextAlign.center,
-              style: OnbTok.sans(
-                fontSize: 11,
-                color: OnbTok.greySoft,
-                fontWeight: FontWeight.w500,
-                height: 1.3,
+            const SizedBox(height: 4),
+            Flexible(
+              child: Text(
+                text!,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: OnbTok.sans(
+                  fontSize: 10.5,
+                  color: OnbTok.greySoft,
+                  fontWeight: FontWeight.w500,
+                  height: 1.2,
+                ),
               ),
             ),
           ],

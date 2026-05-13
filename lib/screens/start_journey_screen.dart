@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../l10n/app_localizations.dart';
 import '../features/auth/data/qf_auth_service.dart';
+import 'onboarding_v2/widgets/onboarding_tokens.dart';
 import 'qf_account_conflict_screen.dart';
 
 class StartJourneyScreen extends StatefulWidget {
@@ -53,10 +54,10 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A1628),
+      backgroundColor: OnbTok.cream,
       body: Stack(
         children: [
-          // ── Deep gradient background ───────────────────────────────────────
+          // ── Cream gradient background ──────────────────────────────────────
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
@@ -64,9 +65,9 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF0A1628), // Deep midnight blue
-                    Color(0xFF0D2137), // Dark navy
-                    Color(0xFF0A2E1F), // Deep emerald
+                    OnbTok.cream,
+                    OnbTok.creamWarm,
+                    OnbTok.cream,
                   ],
                   stops: [0.0, 0.5, 1.0],
                 ),
@@ -74,7 +75,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             ),
           ),
 
-          // ── Radial emerald glow (behind lantern) ───────────────────────────
+          // ── Radial gold wash (behind lantern) ──────────────────────────────
           Positioned(
             top: -80,
             left: 0,
@@ -87,7 +88,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF00C875).withValues(alpha: 0.18),
+                      OnbTok.goldLight.withValues(alpha: 0.55),
                       Colors.transparent,
                     ],
                   ),
@@ -96,7 +97,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             ),
           ),
 
-          // ── Bottom gold glow ───────────────────────────────────────────────
+          // ── Bottom teal wash ───────────────────────────────────────────────
           Positioned(
             bottom: -60,
             left: 0,
@@ -109,7 +110,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFFFFAA00).withValues(alpha: 0.08),
+                      OnbTok.teal.withValues(alpha: 0.12),
                       Colors.transparent,
                     ],
                   ),
@@ -119,20 +120,20 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           ),
 
           // ── Floating Islamic icons in background ───────────────────────────
-          _fi(Icons.mosque_rounded, 80, left: 16, size: 32, op: 0.07),
-          _fi(Icons.mosque_rounded, 200, right: 14, size: 24, op: 0.06),
-          _fi(Icons.nights_stay_rounded, 55, right: 48, size: 28, op: 0.08),
-          _fi(Icons.star_rounded, 130, left: 58, size: 18, op: 0.09),
-          _fi(Icons.star_rounded, 310, right: 38, size: 14, op: 0.07),
-          _fi(Icons.favorite_rounded, 260, left: 20, size: 20, op: 0.07),
-          _fi(Icons.volunteer_activism, 430, right: 22, size: 24, op: 0.06),
-          _fi(Icons.book_rounded, 510, left: 28, size: 22, op: 0.06),
-          _fi(Icons.self_improvement, 575, right: 32, size: 24, op: 0.07),
-          _fi(Icons.nights_stay_rounded, 380, left: 12, size: 16, op: 0.09),
-          _fi(Icons.spa_rounded, 650, left: 46, size: 20, op: 0.06),
-          _fi(Icons.star_border_rounded, 700, right: 26, size: 22, op: 0.07),
-          _fi(Icons.circle_outlined, 460, left: 60, size: 12, op: 0.06),
-          _fi(Icons.circle_outlined, 160, right: 70, size: 10, op: 0.07),
+          _fi(Icons.mosque_rounded, 80, left: 16, size: 32, op: 0.14),
+          _fi(Icons.mosque_rounded, 200, right: 14, size: 24, op: 0.12),
+          _fi(Icons.nights_stay_rounded, 55, right: 48, size: 28, op: 0.16),
+          _fi(Icons.star_rounded, 130, left: 58, size: 18, op: 0.18),
+          _fi(Icons.star_rounded, 310, right: 38, size: 14, op: 0.14),
+          _fi(Icons.favorite_rounded, 260, left: 20, size: 20, op: 0.14),
+          _fi(Icons.volunteer_activism, 430, right: 22, size: 24, op: 0.12),
+          _fi(Icons.book_rounded, 510, left: 28, size: 22, op: 0.12),
+          _fi(Icons.self_improvement, 575, right: 32, size: 24, op: 0.14),
+          _fi(Icons.nights_stay_rounded, 380, left: 12, size: 16, op: 0.18),
+          _fi(Icons.spa_rounded, 650, left: 46, size: 20, op: 0.12),
+          _fi(Icons.star_border_rounded, 700, right: 26, size: 22, op: 0.14),
+          _fi(Icons.circle_outlined, 460, left: 60, size: 12, op: 0.12),
+          _fi(Icons.circle_outlined, 160, right: 70, size: 10, op: 0.14),
 
           // ── Islamic geometric star tiling ──────────────────────────────────
           Positioned.fill(child: CustomPaint(painter: _IslamicBgPainter())),
@@ -146,7 +147,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                 children: [
                   const Spacer(flex: 1),
 
-                  // Lantern card with emerald glow
+                  // Lantern card with gold glow
                   Center(
                     child: Container(
                       width: 220,
@@ -156,13 +157,11 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFF1A4A2E), Color(0xFF00C875)],
+                          colors: [OnbTok.goldDeep, OnbTok.gold],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFF00C875,
-                            ).withValues(alpha: 0.4),
+                            color: OnbTok.gold.withValues(alpha: 0.45),
                             blurRadius: 48,
                             spreadRadius: 6,
                             offset: const Offset(0, 14),
@@ -178,7 +177,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                                 child: Icon(
                                   Icons.local_fire_department_rounded,
                                   size: 88,
-                                  color: Colors.white,
+                                  color: OnbTok.cream,
                                 ),
                               ),
                         ),
@@ -195,7 +194,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     style: GoogleFonts.amiri(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF00C875),
+                      color: OnbTok.goldDeep,
                       height: 1.4,
                     ),
                   ),
@@ -205,7 +204,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 10,
-                      color: Colors.white30,
+                      color: OnbTok.brownSoft.withValues(alpha: 0.6),
                       letterSpacing: 2.5,
                       fontWeight: FontWeight.w500,
                     ),
@@ -221,7 +220,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: OnbTok.brown,
                       height: 1.2,
                     ),
                   ),
@@ -234,7 +233,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
-                      color: Colors.white54,
+                      color: OnbTok.brownSoft,
                       height: 1.6,
                     ),
                   ),
@@ -242,11 +241,23 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   const Spacer(flex: 2),
 
                   // Google Sign-In Button
-                  ElevatedButton(
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: OnbTok.brown.withValues(alpha: 0.10),
+                          blurRadius: 18,
+                          spreadRadius: -6,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
                     onPressed: _isLoading ? null : _googleSignIn,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00C875),
-                      foregroundColor: Colors.black87,
+                      backgroundColor: Colors.white,
+                      foregroundColor: OnbTok.brown,
                       padding: const EdgeInsets.symmetric(vertical: 17),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(32),
@@ -263,7 +274,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: OnbTok.brown,
                                 strokeWidth: 2,
                               ),
                             )
@@ -280,11 +291,24 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               ],
                             ),
                   ),
+                  ),
 
                   const SizedBox(height: 16),
 
                   // QF Sign-In Button
-                  ElevatedButton(
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: OnbTok.tealDark.withValues(alpha: 0.14),
+                          blurRadius: 18,
+                          spreadRadius: -6,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
                     onPressed:
                         _isLoading
                             ? null
@@ -344,8 +368,8 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               }
                             },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1A4A2E),
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      foregroundColor: OnbTok.tealDark,
                       padding: const EdgeInsets.symmetric(vertical: 17),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(32),
@@ -362,7 +386,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: OnbTok.tealDark,
                                 strokeWidth: 2,
                               ),
                             )
@@ -372,7 +396,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                                 const Icon(
                                   Icons.book_rounded,
                                   size: 22,
-                                  color: Color(0xFF00C875),
+                                  color: OnbTok.tealDark,
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
@@ -383,6 +407,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               ],
                             ),
                   ),
+                  ),
 
                   const SizedBox(height: 20),
 
@@ -392,7 +417,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 11,
-                      color: Colors.white24,
+                      color: OnbTok.brownSoft.withValues(alpha: 0.5),
                     ),
                   ),
 
@@ -419,7 +444,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
       top: top,
       left: left,
       right: right,
-      child: Icon(icon, size: size, color: Colors.white.withValues(alpha: op)),
+      child: Icon(icon, size: size, color: OnbTok.brownSoft.withValues(alpha: op)),
     );
   }
 }
@@ -432,7 +457,7 @@ class _IslamicBgPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.white.withValues(alpha: 0.028)
+          ..color = OnbTok.brownSoft.withValues(alpha: 0.07)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.7;
 

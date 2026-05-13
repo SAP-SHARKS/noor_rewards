@@ -65,13 +65,13 @@ class Phase1Screen1 extends StatelessWidget {
               flex: 45,
               child: Container(
                 color: OnbTok.cream,
-                padding: const EdgeInsets.fromLTRB(26, 14, 26, 0),
+                padding: const EdgeInsets.fromLTRB(26, 22, 26, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 6),
-                    const Wordmark(size: 20),
-                    const SizedBox(height: 18),
+                    const Wordmark(size: 26),
+                    const SizedBox(height: 26),
                     OnbHeading(
                       first: l.onbV2_1_TitleA,
                       accent: l.onbV2_1_TitleB,
@@ -82,7 +82,7 @@ class Phase1Screen1 extends StatelessWidget {
                     const Spacer(),
                     ScreenFooter(
                       dotsIdx: 0,
-                      child: CTA(label: l.onbV2_1_Cta, onPressed: onNext),
+                      child: CTA(label: l.onbV2Next, onPressed: onNext),
                     ),
                   ],
                 ),
@@ -115,20 +115,20 @@ class Phase1Screen2 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Padding(
-                padding: EdgeInsets.fromLTRB(26, 30, 26, 10),
-                child: Wordmark(size: 20),
+                padding: EdgeInsets.fromLTRB(26, 32, 26, 24),
+                child: Wordmark(size: 26),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: Text(l.onbV2_2_Title,
                     style: OnbTok.serif(fontSize: 30)),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               // Flow box
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: Container(
-                  height: 230,
+                  height: 300,
                   decoration: BoxDecoration(
                     color: OnbTok.creamWarm,
                     borderRadius: BorderRadius.circular(24),
@@ -139,8 +139,8 @@ class Phase1Screen2 extends StatelessWidget {
                       Positioned(
                         left: 18,
                         top: 24,
-                        width: 88,
-                        height: 170,
+                        width: 120,
+                        height: 240,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14),
                           child: PhotoSlot(
@@ -153,8 +153,8 @@ class Phase1Screen2 extends StatelessWidget {
                       Positioned(
                         right: 18,
                         top: 24,
-                        width: 88,
-                        height: 170,
+                        width: 120,
+                        height: 240,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14),
                           child: const PhotoSlot(
@@ -166,24 +166,24 @@ class Phase1Screen2 extends StatelessWidget {
                       ),
                       // Dashed arrow (centered horizontally between cards)
                       const Positioned(
-                        left: 120,
-                        right: 120,
-                        top: 105,
+                        left: 150,
+                        right: 150,
+                        top: 138,
                         child: DashedArrow(height: 20),
                       ),
                       // Seeds flowing
                       const Positioned(
-                        left: 115,
+                        left: 145,
                         top: 0,
-                        width: 80,
-                        height: 230,
+                        width: 90,
+                        height: 300,
                         child: SeedFlow(),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: _MechanicLine(),
@@ -291,10 +291,10 @@ class Phase1Screen3 extends StatelessWidget {
           Column(
             children: [
               const Padding(
-                padding: EdgeInsets.fromLTRB(26, 30, 26, 0),
+                padding: EdgeInsets.fromLTRB(26, 32, 26, 20),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Wordmark(size: 20),
+                  child: Wordmark(size: 26),
                 ),
               ),
               Expanded(
@@ -342,6 +342,7 @@ class Phase1Screen3 extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: Column(
@@ -415,14 +416,14 @@ class Phase1Screen4 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Padding(
-                padding: EdgeInsets.fromLTRB(26, 30, 26, 0),
-                child: Wordmark(size: 20),
+                padding: EdgeInsets.fromLTRB(26, 32, 26, 0),
+                child: Wordmark(size: 26),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 28),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 22),
                 child: SizedBox(
-                  height: 240,
+                  height: 320,
                   child: PhotoSlot(
                     slotKey: 'onb_zikr_4',
                     fallback: const DoorScalesAnim(),
@@ -430,7 +431,7 @@ class Phase1Screen4 extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 36),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: Column(
@@ -508,7 +509,7 @@ class Phase1Screen5 extends StatelessWidget {
               flex: 40,
               child: Container(
                 color: OnbTok.cream,
-                padding: const EdgeInsets.fromLTRB(26, 18, 26, 0),
+                padding: const EdgeInsets.fromLTRB(26, 32, 26, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -554,11 +555,11 @@ class Phase1Screen6 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Padding(
-                padding: EdgeInsets.fromLTRB(26, 30, 26, 0),
-                child: Wordmark(size: 20),
+                padding: EdgeInsets.fromLTRB(26, 32, 26, 0),
+                child: Wordmark(size: 26),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(26, 24, 26, 0),
+                padding: const EdgeInsets.fromLTRB(26, 28, 26, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -576,41 +577,34 @@ class Phase1Screen6 extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: Stack(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Connector arrows behind icons
-                      const Positioned.fill(
-                        child: IgnorePointer(
-                          child: CustomPaint(painter: _ConnectorPainter()),
+                      _StepIcon(
+                        size: 62,
+                        bg: OnbTok.goldDeep,
+                        glyph: const DonorGlyph(),
+                        label: l.onbV2_6_Donor,
+                        sub: l.onbV2_6_DonorSub,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 36),
+                        child: _StepIcon(
+                          size: 124,
+                          bg: OnbTok.gold,
+                          big: true,
+                          glyph: const ReaderGlyph(),
+                          label: l.onbV2_6_You,
+                          sub: l.onbV2_6_YouSub,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          _StepIcon(
-                            size: 62,
-                            bg: OnbTok.goldDeep,
-                            glyph: const DonorGlyph(),
-                            label: l.onbV2_6_Donor,
-                            sub: l.onbV2_6_DonorSub,
-                          ),
-                          _StepIcon(
-                            size: 88,
-                            bg: OnbTok.gold,
-                            big: true,
-                            glyph: const ReaderGlyph(),
-                            label: l.onbV2_6_You,
-                            sub: l.onbV2_6_YouSub,
-                          ),
-                          _StepIcon(
-                            size: 62,
-                            bg: OnbTok.goldDeep,
-                            glyph: const CharityGlyph(),
-                            label: l.onbV2_6_Charity,
-                            sub: l.onbV2_6_CharitySub,
-                          ),
-                        ],
+                      _StepIcon(
+                        size: 62,
+                        bg: OnbTok.goldDeep,
+                        glyph: const CharityGlyph(),
+                        label: l.onbV2_6_Charity,
+                        sub: l.onbV2_6_CharitySub,
                       ),
                     ],
                   ),
@@ -736,58 +730,6 @@ class _StepIcon extends StatelessWidget {
   }
 }
 
-class _ConnectorPainter extends CustomPainter {
-  const _ConnectorPainter();
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Two arrows arcing across the row, behind the icons. Anchor to the
-    // top portion (Y ≈ 95 on the original 220-tall canvas; we scale).
-    final y = size.height * 0.43; // matches y=95/220 from prototype
-    final apexLift = size.height * 0.09;
-    final w = size.width;
-
-    final paint = Paint()
-      ..color = OnbTok.brownSoft
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    final headPaint = Paint()..color = OnbTok.brownSoft;
-
-    // Left arrow: from ~24% to ~47%
-    final leftStart = Offset(w * 0.24, y);
-    final leftEnd = Offset(w * 0.47, y);
-    final leftMid =
-        Offset((leftStart.dx + leftEnd.dx) / 2, y - apexLift);
-    final leftPath = Path()
-      ..moveTo(leftStart.dx, leftStart.dy)
-      ..quadraticBezierTo(leftMid.dx, leftMid.dy, leftEnd.dx, leftEnd.dy);
-    canvas.drawPath(leftPath, paint);
-    _drawHead(canvas, leftEnd, headPaint);
-
-    // Right arrow: from ~56% to ~77%
-    final rightStart = Offset(w * 0.56, y);
-    final rightEnd = Offset(w * 0.77, y);
-    final rightMid =
-        Offset((rightStart.dx + rightEnd.dx) / 2, y - apexLift);
-    final rightPath = Path()
-      ..moveTo(rightStart.dx, rightStart.dy)
-      ..quadraticBezierTo(rightMid.dx, rightMid.dy, rightEnd.dx, rightEnd.dy);
-    canvas.drawPath(rightPath, paint);
-    _drawHead(canvas, rightEnd, headPaint);
-  }
-
-  void _drawHead(Canvas canvas, Offset tip, Paint p) {
-    final head = Path()
-      ..moveTo(tip.dx - 5, tip.dy - 3)
-      ..lineTo(tip.dx, tip.dy)
-      ..lineTo(tip.dx - 5, tip.dy + 3)
-      ..close();
-    canvas.drawPath(head, p);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter old) => false;
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // SCREEN 7 — Akhirah Account (teal-dominant)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -856,10 +798,10 @@ class _Phase1Screen7State extends State<Phase1Screen7>
           Column(
             children: [
               const Padding(
-                padding: EdgeInsets.fromLTRB(26, 30, 26, 0),
+                padding: EdgeInsets.fromLTRB(26, 32, 26, 20),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Wordmark(size: 20),
+                  child: Wordmark(size: 26),
                 ),
               ),
               Expanded(
@@ -934,6 +876,7 @@ class _Phase1Screen7State extends State<Phase1Screen7>
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: Column(

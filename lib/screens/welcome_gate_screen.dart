@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
+import 'onboarding_v2/widgets/onboarding_tokens.dart';
 
 class WelcomeGateScreen extends StatefulWidget {
   final String name;
@@ -66,10 +67,22 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF070E1A),
+      backgroundColor: OnbTok.cream,
       body: Stack(
         children: [
-          // Animated star field
+          // Soft cream gradient base
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [OnbTok.cream, OnbTok.creamWarm],
+                ),
+              ),
+            ),
+          ),
+          // Animated sparkle field
           AnimatedBuilder(
             animation: _starCtrl,
             builder:
@@ -81,7 +94,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
           ),
           // Masjid Gate illustration
           Positioned.fill(child: CustomPaint(painter: _MasjidGatePainter())),
-          // Golden glow at the gate centre
+          // Soft gold/teal glow at the gate centre
           AnimatedBuilder(
             animation: _glowCtrl,
             builder:
@@ -94,10 +107,10 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                       gradient: RadialGradient(
                         colors: [
                           Color.lerp(
-                            const Color(0xFFFFAA00),
-                            const Color(0xFF00C875),
+                            OnbTok.gold,
+                            OnbTok.teal,
                             _glowCtrl.value,
-                          )!.withValues(alpha: 0.22 + _glowCtrl.value * 0.1),
+                          )!.withValues(alpha: 0.28 + _glowCtrl.value * 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -128,9 +141,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  const Color(
-                                    0xFFFFAA00,
-                                  ).withValues(alpha: 0.25),
+                                  OnbTok.gold.withValues(alpha: 0.32),
                                   Colors.transparent,
                                 ],
                               ),
@@ -140,8 +151,8 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                             shaderCallback:
                                 (r) => const LinearGradient(
                                   colors: [
-                                    Color(0xFFFFAA00),
-                                    Color(0xFFFFD54F),
+                                    OnbTok.goldDeep,
+                                    OnbTok.gold,
                                   ],
                                 ).createShader(r),
                             child: const Icon(
@@ -158,7 +169,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                         'مَرْحَبًا',
                         style: GoogleFonts.amiri(
                           fontSize: 46,
-                          color: const Color(0xFFFFAA00),
+                          color: OnbTok.goldDeep,
                           fontWeight: FontWeight.bold,
                           height: 1.2,
                         ),
@@ -168,7 +179,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                         'Marhaban',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
-                          color: Colors.white30,
+                          color: OnbTok.brownSoft.withValues(alpha: 0.6),
                           letterSpacing: 3,
                         ),
                       ),
@@ -186,7 +197,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                               style: GoogleFonts.outfit(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w400,
-                                color: Colors.white70,
+                                color: OnbTok.brownSoft,
                               ),
                             ),
                             TextSpan(
@@ -194,7 +205,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                               style: GoogleFonts.outfit(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w800,
-                                color: Colors.white,
+                                color: OnbTok.brown,
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -211,7 +222,7 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: 15,
-                          color: Colors.white54,
+                          color: OnbTok.brownSoft,
                           height: 1.7,
                         ),
                       ),
@@ -225,13 +236,11 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(32),
                             gradient: const LinearGradient(
-                              colors: [Color(0xFFFFAA00), Color(0xFFFF8F00)],
+                              colors: [OnbTok.gold, OnbTok.goldDeep],
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(
-                                  0xFFFFAA00,
-                                ).withValues(alpha: 0.45),
+                                color: OnbTok.gold.withValues(alpha: 0.45),
                                 blurRadius: 28,
                                 offset: const Offset(0, 10),
                               ),
@@ -246,13 +255,13 @@ class _WelcomeGateScreenState extends State<WelcomeGateScreen>
                                   style: GoogleFonts.outfit(
                                     fontSize: 17,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.black87,
+                                    color: OnbTok.brown,
                                   ),
                                 ),
                                 const SizedBox(width: 10),
                                 const Icon(
                                   Icons.arrow_forward_rounded,
-                                  color: Colors.black87,
+                                  color: OnbTok.brown,
                                   size: 20,
                                 ),
                               ],
@@ -287,9 +296,11 @@ class _StarFieldPainter extends CustomPainter {
     for (int i = 0; i < _stars.length; i++) {
       final s = _stars[i];
       final twinkle = (math.sin(t * 2 * math.pi + i * 0.7) + 1) / 2;
+      // Alternate gold and teal sparkles
+      final base = i.isEven ? OnbTok.gold : OnbTok.teal;
       final paint =
           Paint()
-            ..color = Colors.white.withValues(alpha: 0.1 + twinkle * 0.5)
+            ..color = base.withValues(alpha: 0.08 + twinkle * 0.22)
             ..style = PaintingStyle.fill;
       canvas.drawCircle(
         Offset(s.dx * size.width, s.dy * size.height),
@@ -309,20 +320,20 @@ class _MasjidGatePainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
 
-    // Ground
+    // Ground (very soft teal wash)
     final groundPaint =
-        Paint()..color = const Color(0xFF0A2E1F).withValues(alpha: 0.5);
+        Paint()..color = OnbTok.teal.withValues(alpha: 0.06);
     canvas.drawRect(Rect.fromLTWH(0, h * 0.75, w, h * 0.25), groundPaint);
 
-    // Wall
+    // Wall (very subtle cream-warm silhouette)
     final wallPaint =
-        Paint()..color = const Color(0xFF0D2137).withValues(alpha: 0.8);
+        Paint()..color = OnbTok.creamWarm.withValues(alpha: 0.25);
     canvas.drawRect(Rect.fromLTWH(0, h * 0.45, w, h * 0.30), wallPaint);
 
     // Gold accent line on top of wall
     canvas.drawRect(
       Rect.fromLTWH(0, h * 0.445, w, 2.5),
-      Paint()..color = const Color(0xFFFFAA00).withValues(alpha: 0.4),
+      Paint()..color = OnbTok.goldDeep.withValues(alpha: 0.20),
     );
 
     // Left minaret
@@ -349,7 +360,7 @@ class _MasjidGatePainter extends CustomPainter {
       height: bottom - top.dy,
     );
     final paint =
-        Paint()..color = const Color(0xFF0F2A40).withValues(alpha: 0.9);
+        Paint()..color = OnbTok.creamWarm.withValues(alpha: 0.30);
     canvas.drawRRect(
       RRect.fromRectAndRadius(r, const Radius.circular(6)),
       paint,
@@ -357,7 +368,7 @@ class _MasjidGatePainter extends CustomPainter {
     // Gold border
     final borderPaint =
         Paint()
-          ..color = const Color(0xFFFFAA00).withValues(alpha: 0.25)
+          ..color = OnbTok.goldDeep.withValues(alpha: 0.18)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1;
     canvas.drawRRect(
@@ -373,7 +384,7 @@ class _MasjidGatePainter extends CustomPainter {
           ..close();
     canvas.drawPath(
       tipPath,
-      Paint()..color = const Color(0xFFFFAA00).withValues(alpha: 0.6),
+      Paint()..color = OnbTok.goldDeep.withValues(alpha: 0.30),
     );
     // Balcony
     canvas.drawRect(
@@ -382,7 +393,7 @@ class _MasjidGatePainter extends CustomPainter {
         width: width * 1.5,
         height: 4,
       ),
-      Paint()..color = const Color(0xFFFFAA00).withValues(alpha: 0.3),
+      Paint()..color = OnbTok.goldDeep.withValues(alpha: 0.20),
     );
   }
 
@@ -396,7 +407,7 @@ class _MasjidGatePainter extends CustomPainter {
     final r = w / 2;
 
     final bgPaint =
-        Paint()..color = const Color(0xFF061020).withValues(alpha: 0.85);
+        Paint()..color = OnbTok.creamWarm.withValues(alpha: 0.22);
     final path =
         Path()
           ..moveTo(archLeft, archBottom)
@@ -421,7 +432,7 @@ class _MasjidGatePainter extends CustomPainter {
           ..shader = RadialGradient(
             center: Alignment.bottomCenter,
             colors: [
-              const Color(0xFFFFAA00).withValues(alpha: 0.15),
+              OnbTok.gold.withValues(alpha: 0.12),
               Colors.transparent,
             ],
           ).createShader(
@@ -433,14 +444,14 @@ class _MasjidGatePainter extends CustomPainter {
     canvas.drawPath(
       path,
       Paint()
-        ..color = const Color(0xFFFFAA00).withValues(alpha: 0.35)
+        ..color = OnbTok.goldDeep.withValues(alpha: 0.22)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
 
     // Geometric dots along arch
     final dotPaint =
-        Paint()..color = const Color(0xFFFFAA00).withValues(alpha: 0.5);
+        Paint()..color = OnbTok.goldDeep.withValues(alpha: 0.30);
     for (int i = 0; i <= 10; i++) {
       final a = math.pi + i * math.pi / 10;
       final dotX = cx + (r - 6) * math.cos(a);
@@ -470,12 +481,12 @@ class _MasjidGatePainter extends CustomPainter {
           ..close();
     canvas.drawPath(
       path,
-      Paint()..color = const Color(0xFF0D2137).withValues(alpha: 0.9),
+      Paint()..color = OnbTok.creamWarm.withValues(alpha: 0.28),
     );
     canvas.drawPath(
       path,
       Paint()
-        ..color = const Color(0xFFFFAA00).withValues(alpha: 0.2)
+        ..color = OnbTok.goldDeep.withValues(alpha: 0.18)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1,
     );
@@ -484,7 +495,7 @@ class _MasjidGatePainter extends CustomPainter {
   void _drawCrescent(Canvas canvas, Offset centre) {
     final r = 9.0;
     final paint =
-        Paint()..color = const Color(0xFFFFAA00).withValues(alpha: 0.8);
+        Paint()..color = OnbTok.goldDeep.withValues(alpha: 0.45);
     final rect = Rect.fromCircle(center: centre, radius: r * 2);
     canvas.saveLayer(rect, Paint());
     canvas.drawCircle(centre, r, paint);
