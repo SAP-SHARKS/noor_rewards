@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../l10n/app_localizations.dart';
 import '../features/auth/data/qf_auth_service.dart';
+import '../services/quran_api_service.dart';
 import 'onboarding_v2/widgets/onboarding_tokens.dart';
 import 'qf_account_conflict_screen.dart';
 
@@ -137,6 +138,66 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
           // ── Islamic geometric star tiling ──────────────────────────────────
           Positioned.fill(child: CustomPaint(painter: _IslamicBgPainter())),
+
+          // ── Sign-in error banner ────────────────────────────────────────────
+          // Surfaces whatever QfAuthService captured during the last
+          // sign-in attempt — typically the Token-exchange / Edge Function
+          // failure body. Lives at the top of the SafeArea so the user
+          // sees the cause the moment the OAuth flow bounces them back.
+          SafeArea(
+            child: ValueListenableBuilder<String?>(
+              valueListenable: QfAuthService.instance.lastSignInErrorN,
+              builder: (_, err, __) {
+                if (err == null || err.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Material(
+                    color: const Color(0xFFFDECEA),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.error_outline_rounded,
+                            color: Color(0xFFB91C1C),
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: SelectableText(
+                              err,
+                              style: const TextStyle(
+                                color: Color(0xFF7F1D1D),
+                                fontSize: 12,
+                                height: 1.35,
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () =>
+                                QfAuthService.instance.lastSignInError = null,
+                            child: const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.close_rounded,
+                                color: Color(0xFF7F1D1D),
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
 
           // ── Main content ───────────────────────────────────────────────────
           SafeArea(
@@ -317,14 +378,25 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                               try {
                                 // Assuming QfAuthService is defined globally or we can just import it
                                 await QfAuthService.instance.signIn();
+                                // Two-way bookmark sync — await it so we can
+                                // surface the result to the user (counts +
+                                // any error). Capped at a few seconds so a
+                                // slow network doesn't block onboarding.
+                                String syncMessage = 'Connected to Quran.com';
+                                try {
+                                  final sync = await QuranApiService.instance
+                                      .syncBookmarks()
+                                      .timeout(
+                                        const Duration(seconds: 8),
+                                      );
+                                  syncMessage = sync.message;
+                                } catch (e) {
+                                  syncMessage =
+                                      'Connected to Quran.com (bookmark sync deferred)';
+                                }
                                 if (context.mounted) {
-                                  // Navigate to dashboard or handle success
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Successfully authenticated with Quran.com!',
-                                      ),
-                                    ),
+                                    SnackBar(content: Text(syncMessage)),
                                   );
                                 }
                               } on QfEmailConflictException catch (e) {

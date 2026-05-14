@@ -272,7 +272,7 @@ class _QuranExitCelebrationBodyState extends State<_QuranExitCelebrationBody>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Hero emblem — open book in honey + sage with a gentle pulse.
+// Hero emblem — illuminated Mushaf with a gentle Noor glow.
 // ─────────────────────────────────────────────────────────────────────────────
 class _BookEmblem extends StatelessWidget {
   final Animation<double> animation;
@@ -281,12 +281,12 @@ class _BookEmblem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 104,
-      height: 104,
+      width: 120,
+      height: 120,
       child: AnimatedBuilder(
         animation: animation,
         builder: (_, __) => CustomPaint(
-          size: const Size(104, 104),
+          size: const Size(120, 120),
           painter: _BookPainter(pulse: animation.value),
         ),
       ),
@@ -303,81 +303,262 @@ class _BookPainter extends CustomPainter {
     final c = Offset(size.width / 2, size.height / 2);
     final r = size.width / 2;
 
-    // Soft halo behind the book.
+    // ── Layered halo: outer butter glow → inner cream disc → gold ring ─────
+    final haloPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Y4.honey.withValues(alpha: 0.32 + 0.10 * pulse),
+          Y4.honey.withValues(alpha: 0),
+        ],
+        stops: const [0.0, 1.0],
+      ).createShader(Rect.fromCircle(center: c, radius: r));
+    canvas.drawCircle(c, r, haloPaint);
+
     canvas.drawCircle(
       c,
-      r,
-      Paint()..color = Y4.butter.withValues(alpha: 0.55 + 0.1 * pulse),
+      r * 0.84,
+      Paint()
+        ..shader = const RadialGradient(
+          colors: [Color(0xFFFFFAEB), Y4.cream],
+          stops: [0.0, 1.0],
+        ).createShader(Rect.fromCircle(center: c, radius: r * 0.84)),
     );
     canvas.drawCircle(
       c,
-      r * 0.82,
-      Paint()..color = Y4.cream.withValues(alpha: 0.9),
+      r * 0.84,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.4
+        ..color = Y4.honeyDeep.withValues(alpha: 0.35),
     );
 
-    // Open-book silhouette — two leaves meeting at a central spine,
-    // tilted up slightly at the outer corners to look held open.
-    final bookLeft = Path()
-      ..moveTo(c.dx, c.dy + r * 0.05)
-      ..lineTo(c.dx - r * 0.55, c.dy + r * 0.40)
-      ..lineTo(c.dx - r * 0.55, c.dy - r * 0.35)
-      ..lineTo(c.dx, c.dy - r * 0.10)
-      ..close();
-    final bookRight = Path()
-      ..moveTo(c.dx, c.dy + r * 0.05)
-      ..lineTo(c.dx + r * 0.55, c.dy + r * 0.40)
-      ..lineTo(c.dx + r * 0.55, c.dy - r * 0.35)
-      ..lineTo(c.dx, c.dy - r * 0.10)
-      ..close();
+    // ── Crescent ornament above the book ────────────────────────────────────
+    final crescentCenter = Offset(c.dx, c.dy - r * 0.50);
+    final crescentR = r * 0.085;
+    canvas.saveLayer(
+      Rect.fromCircle(center: crescentCenter, radius: crescentR * 1.4),
+      Paint(),
+    );
+    canvas.drawCircle(
+      crescentCenter,
+      crescentR,
+      Paint()..color = Y4.honeyDeep,
+    );
+    canvas.drawCircle(
+      Offset(crescentCenter.dx + crescentR * 0.45, crescentCenter.dy - crescentR * 0.10),
+      crescentR * 0.85,
+      Paint()..blendMode = BlendMode.clear,
+    );
+    canvas.restore();
 
-    final leafFill = Paint()..color = Colors.white;
-    final leafStroke = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.6
-      ..color = Y4.honeyDeep.withValues(alpha: 0.7);
+    // ── Open mushaf: curved pages meeting at a gold spine ──────────────────
+    final pageTopY = c.dy - r * 0.30;
+    final pageBottomY = c.dy + r * 0.38;
+    final pageOuterDx = r * 0.58;
+    final spineTop = Offset(c.dx, pageTopY + r * 0.04);
+    final spineBottom = Offset(c.dx, pageBottomY - r * 0.02);
 
-    canvas.drawPath(bookLeft, leafFill);
-    canvas.drawPath(bookLeft, leafStroke);
-    canvas.drawPath(bookRight, leafFill);
-    canvas.drawPath(bookRight, leafStroke);
-
-    // Ruled lines on each leaf to suggest text.
-    final linePaint = Paint()
-      ..color = Y4.honeyDeep.withValues(alpha: 0.30)
-      ..strokeWidth = 1.0;
-    for (int i = 0; i < 4; i++) {
-      final dy = c.dy - r * 0.18 + i * (r * 0.12);
-      // Left page
-      canvas.drawLine(
-        Offset(c.dx - r * 0.45, dy),
-        Offset(c.dx - r * 0.10, dy - r * 0.02),
-        linePaint,
-      );
-      // Right page
-      canvas.drawLine(
-        Offset(c.dx + r * 0.10, dy - r * 0.02),
-        Offset(c.dx + r * 0.45, dy),
-        linePaint,
-      );
+    Path leafPath({required bool isLeft}) {
+      final sign = isLeft ? -1.0 : 1.0;
+      final outerTop = Offset(c.dx + sign * pageOuterDx, pageTopY + r * 0.14);
+      final outerBottom =
+          Offset(c.dx + sign * pageOuterDx, pageBottomY - r * 0.02);
+      return Path()
+        ..moveTo(spineTop.dx, spineTop.dy)
+        // Top edge curves out to the outer top corner (page lifts away
+        // from the spine like a real open page).
+        ..cubicTo(
+          c.dx + sign * pageOuterDx * 0.35,
+          pageTopY - r * 0.02,
+          c.dx + sign * pageOuterDx * 0.85,
+          pageTopY + r * 0.04,
+          outerTop.dx,
+          outerTop.dy,
+        )
+        // Outer edge runs down the page.
+        ..lineTo(outerBottom.dx, outerBottom.dy)
+        // Bottom edge curves back to the spine.
+        ..cubicTo(
+          c.dx + sign * pageOuterDx * 0.70,
+          pageBottomY + r * 0.02,
+          c.dx + sign * pageOuterDx * 0.30,
+          pageBottomY - r * 0.02,
+          spineBottom.dx,
+          spineBottom.dy,
+        )
+        ..close();
     }
 
-    // Spine highlight.
-    canvas.drawLine(
-      Offset(c.dx, c.dy - r * 0.10),
-      Offset(c.dx, c.dy + r * 0.05),
+    final leftPath = leafPath(isLeft: true);
+    final rightPath = leafPath(isLeft: false);
+
+    // Subtle drop shadow under each page.
+    final shadow = Paint()
+      ..color = Y4.honeyDeep.withValues(alpha: 0.22)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    canvas.save();
+    canvas.translate(0, 3);
+    canvas.drawPath(leftPath, shadow);
+    canvas.drawPath(rightPath, shadow);
+    canvas.restore();
+
+    // Page fill — cream gradient that hints at the gutter being deeper.
+    Paint pageFill({required bool isLeft}) {
+      final start = isLeft ? Alignment.centerRight : Alignment.centerLeft;
+      final end = isLeft ? Alignment.centerLeft : Alignment.centerRight;
+      return Paint()
+        ..shader = LinearGradient(
+          colors: const [Color(0xFFFFFCF1), Color(0xFFFFFFFF)],
+          begin: start,
+          end: end,
+          stops: const [0.0, 0.55],
+        ).createShader(leftPath.getBounds().expandToInclude(rightPath.getBounds()));
+    }
+
+    canvas.drawPath(leftPath, pageFill(isLeft: true));
+    canvas.drawPath(rightPath, pageFill(isLeft: false));
+
+    // Page edges — fine gold stroke.
+    final edge = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = Y4.honeyDeep.withValues(alpha: 0.85);
+    canvas.drawPath(leftPath, edge);
+    canvas.drawPath(rightPath, edge);
+
+    // ── Calligraphic strokes hinting at Arabic baseline on each page ───────
+    final scriptPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.round
+      ..color = Y4.honeyDeep.withValues(alpha: 0.55);
+    for (int i = 0; i < 3; i++) {
+      final y = pageTopY + r * 0.18 + i * (r * 0.16);
+
+      // Left page baseline + a short loop above it.
+      final leftBase = Path()
+        ..moveTo(c.dx - pageOuterDx * 0.82, y)
+        ..quadraticBezierTo(
+          c.dx - pageOuterDx * 0.42,
+          y + r * 0.03,
+          c.dx - r * 0.06,
+          y,
+        );
+      canvas.drawPath(leftBase, scriptPaint);
+      // A tiny ascending stroke to suggest letterforms.
+      final leftAsc = Path()
+        ..moveTo(c.dx - pageOuterDx * 0.55, y - r * 0.04)
+        ..lineTo(c.dx - pageOuterDx * 0.55, y);
+      canvas.drawPath(leftAsc, scriptPaint);
+
+      // Right page (mirror).
+      final rightBase = Path()
+        ..moveTo(c.dx + r * 0.06, y)
+        ..quadraticBezierTo(
+          c.dx + pageOuterDx * 0.42,
+          y + r * 0.03,
+          c.dx + pageOuterDx * 0.82,
+          y,
+        );
+      canvas.drawPath(rightBase, scriptPaint);
+      final rightAsc = Path()
+        ..moveTo(c.dx + pageOuterDx * 0.55, y - r * 0.04)
+        ..lineTo(c.dx + pageOuterDx * 0.55, y);
+      canvas.drawPath(rightAsc, scriptPaint);
+    }
+
+    // ── Gold spine — gradient ribbon along the gutter ───────────────────────
+    final spineRect = Rect.fromLTWH(
+      c.dx - r * 0.022,
+      spineTop.dy,
+      r * 0.044,
+      spineBottom.dy - spineTop.dy,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(spineRect, const Radius.circular(2)),
       Paint()
-        ..color = Y4.honeyDeep
-        ..strokeWidth = 2,
+        ..shader = const LinearGradient(
+          colors: [Y4.honey, Y4.honeyDeep, Y4.honey],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.0, 0.5, 1.0],
+        ).createShader(spineRect),
     );
 
-    // Gentle glow on top of the open book.
-    canvas.drawCircle(
-      c.translate(0, -r * 0.32),
-      r * 0.18 + 4 * pulse,
-      Paint()
-        ..color = Y4.honey.withValues(alpha: 0.45 + 0.15 * pulse)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+    // ── Noor radiating from the spine — top-down beam ───────────────────────
+    final beamCenter = Offset(c.dx, pageTopY - r * 0.08);
+    final beamGlow = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Y4.honey.withValues(alpha: 0.65 + 0.18 * pulse),
+          Y4.honey.withValues(alpha: 0),
+        ],
+      ).createShader(Rect.fromCircle(
+        center: beamCenter,
+        radius: r * (0.26 + 0.04 * pulse),
+      ))
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    canvas.drawCircle(beamCenter, r * (0.26 + 0.04 * pulse), beamGlow);
+
+    // Six-rayed star at the beam center (Islamic geometric motif).
+    final star = Path();
+    const points = 6;
+    final outerR = r * 0.07;
+    final innerR = r * 0.03;
+    for (int i = 0; i < points * 2; i++) {
+      final angle = -math.pi / 2 + i * math.pi / points;
+      final rr = i.isEven ? outerR : innerR;
+      final p = Offset(
+        beamCenter.dx + rr * math.cos(angle),
+        beamCenter.dy + rr * math.sin(angle),
+      );
+      if (i == 0) {
+        star.moveTo(p.dx, p.dy);
+      } else {
+        star.lineTo(p.dx, p.dy);
+      }
+    }
+    star.close();
+    canvas.drawPath(
+      star,
+      Paint()..color = Y4.honeyDeep.withValues(alpha: 0.92),
     );
+
+    // ── Twinkles around the halo (pulsing) ──────────────────────────────────
+    final twinklePaint = Paint()
+      ..color = Y4.honey.withValues(alpha: 0.85 - 0.2 * pulse);
+    final twinklePositions = <Offset>[
+      Offset(c.dx - r * 0.78, c.dy - r * 0.20),
+      Offset(c.dx + r * 0.80, c.dy - r * 0.08),
+      Offset(c.dx - r * 0.05, c.dy - r * 0.86),
+      Offset(c.dx + r * 0.62, c.dy + r * 0.62),
+      Offset(c.dx - r * 0.66, c.dy + r * 0.58),
+    ];
+    for (int i = 0; i < twinklePositions.length; i++) {
+      final tw = twinklePositions[i];
+      final sz = 1.6 + (i.isEven ? 0.6 : 0.2) + 0.5 * pulse;
+      _drawSparkle(canvas, tw, sz, twinklePaint);
+    }
+  }
+
+  void _drawSparkle(Canvas canvas, Offset center, double radius, Paint paint) {
+    // Four-point sparkle (☆-style).
+    final path = Path()
+      ..moveTo(center.dx, center.dy - radius)
+      ..quadraticBezierTo(
+          center.dx + radius * 0.2, center.dy - radius * 0.2,
+          center.dx + radius, center.dy)
+      ..quadraticBezierTo(
+          center.dx + radius * 0.2, center.dy + radius * 0.2,
+          center.dx, center.dy + radius)
+      ..quadraticBezierTo(
+          center.dx - radius * 0.2, center.dy + radius * 0.2,
+          center.dx - radius, center.dy)
+      ..quadraticBezierTo(
+          center.dx - radius * 0.2, center.dy - radius * 0.2,
+          center.dx, center.dy - radius)
+      ..close();
+    canvas.drawPath(path, paint);
   }
 
   @override

@@ -24,9 +24,11 @@ CREATE TABLE IF NOT EXISTS user_daily_stats (
 
 ALTER TABLE user_daily_stats ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users read own daily stats" ON user_daily_stats;
 CREATE POLICY "Users read own daily stats" ON user_daily_stats
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role manages daily stats" ON user_daily_stats;
 CREATE POLICY "Service role manages daily stats" ON user_daily_stats
   FOR ALL USING (auth.role() = 'service_role');
 

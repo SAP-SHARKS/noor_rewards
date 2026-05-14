@@ -35,4 +35,14 @@ class Env {
   static String get qfApiBase {
     return qfAuthBase;
   }
+
+  /// Base URL for the QF user-data API (bookmarks, reading sessions,
+  /// profile). Must be matched to the auth environment — prelive-issued
+  /// tokens are not valid on the production API and vice-versa. The
+  /// prelive host uses an `apis-prelive` prefix; production drops it.
+  static String get qfUserApiBase {
+    return isDev
+        ? 'https://apis-prelive.quran.foundation'
+        : 'https://apis.quran.foundation';
+  }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 type Profile = {
@@ -107,16 +108,24 @@ export default function UsersPage() {
           </thead>
           <tbody>
             {filtered.map((u, i) => (
-              <tr key={u.id} className="border-b border-slate-100 last:border-0">
+              <tr
+                key={u.id}
+                className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition"
+              >
                 <td className="px-4 py-3 text-slate-400">{i + 1}</td>
                 <td className="px-4 py-3">
-                  <p className="font-medium text-slate-800">
-                    {u.display_name || "Anonymous"}
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    {u.country || "—"} &middot; Joined{" "}
-                    {new Date(u.created_at).toLocaleDateString()}
-                  </p>
+                  <Link
+                    href={`/dashboard/users/${u.id}`}
+                    className="block group"
+                  >
+                    <p className="font-medium text-slate-800 group-hover:text-teal-700">
+                      {u.display_name || "Anonymous"}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {u.country || "—"} &middot; Joined{" "}
+                      {new Date(u.created_at).toLocaleDateString()}
+                    </p>
+                  </Link>
                 </td>
                 <td className="px-4 py-3 text-right text-slate-600">
                   {u.level}
@@ -152,12 +161,20 @@ export default function UsersPage() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => setGrantUserId(u.id)}
-                      className="text-xs text-teal-600 hover:text-teal-800 cursor-pointer"
-                    >
-                      Grant Points
-                    </button>
+                    <div className="flex items-center justify-end gap-3">
+                      <Link
+                        href={`/dashboard/users/${u.id}`}
+                        className="text-xs text-slate-500 hover:text-slate-800"
+                      >
+                        Details
+                      </Link>
+                      <button
+                        onClick={() => setGrantUserId(u.id)}
+                        className="text-xs text-teal-600 hover:text-teal-800 cursor-pointer"
+                      >
+                        Grant Points
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>

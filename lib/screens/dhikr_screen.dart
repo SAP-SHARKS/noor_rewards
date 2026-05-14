@@ -2570,15 +2570,17 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         final currentGlobalIndex = widget.azkars.indexOf(azkar);
         final nextIndex = currentGlobalIndex + 1;
         if (nextIndex > 0 && nextIndex < widget.azkars.length) {
-          // Let the user enjoy the completed illustration before auto-swiping
-          // Only advance if user is still on the same page (didn't swipe away)
-          Future.delayed(const Duration(milliseconds: 2000), () {
+          // Advance immediately — only skip if the user already swiped away.
+          // A short delay (~120ms) lets the completion setState paint one
+          // frame so the user sees the count tick to target before the
+          // animation begins; the animation itself is snappy.
+          Future.delayed(const Duration(milliseconds: 120), () {
             if (!mounted) return;
             if (_currentIndex != currentGlobalIndex) return; // user already moved
             _pageController.animateToPage(
               nextIndex,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOutCubic,
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOutCubic,
             );
           });
         }
@@ -2781,6 +2783,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           onTap: () => _toggleToolbar(),
           child: PageView.builder(
             controller: _pageController,
+            // Premium swipe feel: iOS-style bounce at the ends, snaps cleanly
+            // between pages on every platform.
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            allowImplicitScrolling: true,
             onPageChanged: (nextIndex) {
               // Only stop audio if user manually swiped (not auto-advancing)
               if (!_isAdvancing) {
@@ -4361,7 +4369,7 @@ class _AzkarCard extends StatelessWidget {
               final List<Color> sectionGrad =
                   isDark
                       ? [const Color(0xFF1A1A1A), const Color(0xFF1E1E1E)]
-                      : [Y4.bg, Y4.bg];
+                      : [Colors.white, Colors.white];
               final textColor =
                   isDark ? Colors.white.withValues(alpha: 0.85) : kText;
               final subColor =

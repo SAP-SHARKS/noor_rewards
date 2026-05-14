@@ -22,6 +22,7 @@ import 'screens/flower_splash_screen.dart';
 import 'services/settings_service.dart';
 import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart'; // Quran Foundation credentials
+import 'services/quran_api_service.dart';
 import 'services/notification_service.dart';
 import 'services/notification_center.dart';
 import 'services/onboarding_assets_service.dart';
@@ -327,6 +328,21 @@ class _AuthGateState extends State<AuthGate> {
     super.initState();
     // Restore the persisted QF signed-out flag from secure storage.
     QfAuthService.instance.init();
+    // If the user already has a live QF session at app start, reconcile
+    // bookmarks both ways in the background. Catches the case where the
+    // user added a bookmark on quran.com while the app was closed.
+    _syncQfBookmarksIfLinked();
+  }
+
+  Future<void> _syncQfBookmarksIfLinked() async {
+    try {
+      if (await QuranApiService.instance.isUserLoggedIn()) {
+        // Fire-and-forget — sync runs in the background, never blocks UI.
+        QuranApiService.instance.syncBookmarks();
+      }
+    } catch (_) {
+      // Never let bookmark sync crash app startup.
+    }
   }
 
   @override

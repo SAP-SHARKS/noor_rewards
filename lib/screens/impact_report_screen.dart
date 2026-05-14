@@ -75,14 +75,22 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Aligned with `_weekDayLabels` below.
   List<int> _weekDayTimes = const [0, 0, 0, 0, 0, 0, 0];
   int _selectedDay = 6; // 0..6, defaults to today (last in window)
+  // Current-month aggregates derived from user_daily_stats so the "Your Month"
+  // card stays in sync with the same source of truth as the weekly chart.
+  int _monthActiveDays = 0;
+  int _monthQuranTimeSec = 0;
+  int _monthDhikrTimeSec = 0;
+  int _monthAyahs = 0;
+  int _monthDhikrCount = 0;
+  int _monthPoints = 0;
+  // Today's own activity (from user_daily_stats row where stat_date = today).
+  int _todayAyahs = 0;
+  int _todayQuranSec = 0;
 
   // Streaks
   StreakSnapshot _snap = StreakSnapshot.empty;
 
   // Monthly stats
-  MonthlyStats? _currentMonth;
-  MonthlyStats? _previousMonth;
-  GlobalStats _globalStats = const GlobalStats();
 
   // Real lifetime activity (sum of every recorded month) — drives holdings
   int _lifetimeAyahs = 0;
@@ -203,6 +211,20 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     // so this fires the instant the user completes a set — even while the
     // Akhirah tab is offstage in the IndexedStack.
     StatsService.instance.revision.addListener(_onStatsChanged);
+    // Re-run _load() whenever a screen-time flush commits. We can't rely
+    // on didUpdateWidget here because the dashboard wraps each tab in a
+    // Navigator(onGenerateRoute:) which captures the child widget once and
+    // doesn't propagate later visitCount changes.
+    StatsService.instance.chartRefresh.addListener(_onChartRefresh);
+    _load();
+  }
+
+  void _onChartRefresh() {
+    if (!mounted) return;
+    // Re-render immediately so the optimistic local seconds show up; then
+    // re-fetch from the server in the background. _load() will reset the
+    // optimistic counter once the server numbers come back.
+    setState(() {});
     _load();
   }
 
@@ -219,6 +241,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   @override
   void dispose() {
     StatsService.instance.revision.removeListener(_onStatsChanged);
+    StatsService.instance.chartRefresh.removeListener(_onChartRefresh);
     _fadeCtrl.dispose();
     _scrollCtrl.dispose();
     super.dispose();
@@ -242,6 +265,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       setState(() => _loading = false);
       return;
     }
+
+    // If the user just came from a Quran or Dhikr screen, its dispose() fired
+    // exitScreen() but didn't await the RPC. Wait for that flush to commit so
+    // the daily-stats read below includes the session that just ended.
+    await StatsService.instance.awaitPendingFlush();
 
     try {
       final results = await Future.wait<dynamic>([
@@ -271,6 +299,25 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               return list.length > 7 ? list.sublist(list.length - 7) : list;
             })
             .catchError((_) => List<int>.filled(7, 0)),
+        // Current-month daily rows for the "Your Month" aggregates and the
+        // personalized today badge.
+        () async {
+          final now = DateTime.now();
+          final firstOfMonth = DateTime(now.year, now.month, 1)
+              .toIso8601String()
+              .substring(0, 10);
+          try {
+            return await _sb
+                .from('user_daily_stats')
+                .select(
+                    'stat_date, quran_time_sec, dhikr_time_sec, ayahs_read, dhikr_count')
+                .eq('user_id', uid)
+                .gte('stat_date', firstOfMonth);
+          } catch (_) {
+            return const <Map<String, dynamic>>[];
+          }
+        }(),
+        _sb.rpc('get_month_points').catchError((_) => 0),
       ]);
 
       final profile = results[0] as Map<String, dynamic>?;
@@ -283,6 +330,39 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       _snap = results[5] as StreakSnapshot;
       _weekDayTimes = results[6] as List<int>;
       _selectedDay = 6; // today is the newest entry
+      // Server values are now the truth; clear any optimistic seconds that
+      // were prepended while the RPC was in flight.
+      StatsService.instance.resetOptimisticToday();
+
+      // Aggregate current-month daily rows.
+      _monthActiveDays = 0;
+      _monthQuranTimeSec = 0;
+      _monthDhikrTimeSec = 0;
+      _monthAyahs = 0;
+      _monthDhikrCount = 0;
+      _todayAyahs = 0;
+      _todayQuranSec = 0;
+      final todayKey = DateTime.now().toIso8601String().substring(0, 10);
+      final monthRows = results[7] as List;
+      for (final r in monthRows) {
+        final m = r as Map<String, dynamic>;
+        final qt = (m['quran_time_sec'] as num?)?.toInt() ?? 0;
+        final dt = (m['dhikr_time_sec'] as num?)?.toInt() ?? 0;
+        final ay = (m['ayahs_read'] as num?)?.toInt() ?? 0;
+        final dc = (m['dhikr_count'] as num?)?.toInt() ?? 0;
+        if (qt > 0 || dt > 0 || ay > 0 || dc > 0) _monthActiveDays++;
+        _monthQuranTimeSec += qt;
+        _monthDhikrTimeSec += dt;
+        _monthAyahs += ay;
+        _monthDhikrCount += dc;
+        // Capture today's own values for the personalized badge.
+        final d = (m['stat_date'] as String?) ?? '';
+        if (d == todayKey) {
+          _todayAyahs = ay;
+          _todayQuranSec = qt;
+        }
+      }
+      _monthPoints = (results[8] as num?)?.toInt() ?? 0;
 
       // Level title from xp_levels
       try {
@@ -296,14 +376,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       } catch (_) {
         _levelTitle = _fallbackTitle(_level);
       }
-    } catch (_) {}
-
-    // Load monthly stats (fire-and-forget, non-blocking)
-    try {
-      final comparison = await StatsService.instance.loadComparison();
-      _currentMonth = comparison.current;
-      _previousMonth = comparison.previous;
-      _globalStats = await StatsService.instance.loadGlobalStats();
     } catch (_) {}
 
     // Load lifetime activity + per-phrase counts for hadith-grounded holdings
@@ -965,7 +1037,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     );
   }
 
-  List<Widget> _buildAllHoldingRows() => [
+  List<Widget> _buildAllHoldingRows() {
+    final rows = <_HoldingRow>[
         _HoldingRow(
           icon: NoorIcon.sparkles(size: 24),
           color: _C.gold,
@@ -1251,20 +1324,43 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           ),
         ),
       ];
+    // Sort highest-value holdings first so the user sees their biggest
+    // rewards at the top of the list.
+    rows.sort((a, b) => b.value.compareTo(a.value));
+    return rows;
+  }
+
+  // Builds the personalized "today" badge text under the monthly stats.
+  // Rules:
+  //   • Ayahs only → "Read N ayahs today"
+  //   • Mushaf/time only → "Spent Xm reading Quran today"
+  //   • Both → "Read N ayahs · Xm reading Quran today"
+  // Caller already guarantees at least one is > 0 before showing the badge.
+  String _todayBadgeText() {
+    final liveQuranSec =
+        _todayQuranSec + StatsService.instance.optimisticTodaySec;
+    final mins = liveQuranSec ~/ 60;
+    final secs = liveQuranSec % 60;
+    String timePart() {
+      if (mins == 0 && secs > 0) return '${secs}s';
+      if (mins > 0 && secs >= 30) return '${mins + 1}m';
+      return '${mins}m';
+    }
+
+    final hasAyahs = _todayAyahs > 0;
+    final hasTime = liveQuranSec > 0;
+    if (hasAyahs && hasTime) {
+      return 'Read ${_fmt(_todayAyahs)} ayah${_todayAyahs == 1 ? '' : 's'} plus ${timePart()} reading Quran today';
+    }
+    if (hasAyahs) {
+      return 'Read ${_fmt(_todayAyahs)} ayah${_todayAyahs == 1 ? '' : 's'} today';
+    }
+    return 'Spent ${timePart()} reading Quran today';
+  }
 
   // ── Activity card (session time) ───────────────────────────────────────────
   // ── Monthly stats card ──────────────────────────────────────────────────
   Widget _buildMonthlyStatsCard() {
-    final cur = _currentMonth;
-    final prev = _previousMonth;
-
-    String delta(int current, int? previous) {
-      if (previous == null || previous == 0) return '';
-      final diff = current - previous;
-      if (diff == 0) return '';
-      return diff > 0 ? ' ↑${_fmt(diff)}' : ' ↓${_fmt(diff.abs())}';
-    }
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1309,10 +1405,6 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       color: _C.text,
                     ),
                   ),
-                  Text(
-                    'This month vs last month',
-                    style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
-                  ),
                 ],
               ),
             ],
@@ -1324,8 +1416,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               Expanded(
                 child: _MonthStat(
                   label: 'Ayahs Read',
-                  value: _fmt(cur?.ayahsRead ?? 0),
-                  delta: delta(cur?.ayahsRead ?? 0, prev?.ayahsRead),
+                  value: _fmt(_monthAyahs),
+                  delta: '',
                   icon: Icons.menu_book_rounded,
                   color: const Color(0xFF2BAE99),
                 ),
@@ -1333,9 +1425,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _MonthStat(
-                  label: 'Dhikr Sets',
-                  value: _fmt(cur?.dhikrSets ?? 0),
-                  delta: delta(cur?.dhikrSets ?? 0, prev?.dhikrSets),
+                  label: 'Dhikr Count',
+                  value: _fmt(_monthDhikrCount),
+                  delta: '',
                   icon: Icons.spa_rounded,
                   color: const Color(0xFF6366F1),
                 ),
@@ -1348,7 +1440,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               Expanded(
                 child: _MonthStat(
                   label: 'Quran Time',
-                  value: MonthlyStats.formatDuration(cur?.quranTimeSec ?? 0),
+                  value: MonthlyStats.formatDuration(
+                      _monthQuranTimeSec +
+                          StatsService.instance.optimisticTodaySec),
                   delta: '',
                   icon: Icons.timer_outlined,
                   color: const Color(0xFFE67E22),
@@ -1358,7 +1452,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               Expanded(
                 child: _MonthStat(
                   label: 'Dhikr Time',
-                  value: MonthlyStats.formatDuration(cur?.dhikrTimeSec ?? 0),
+                  value: MonthlyStats.formatDuration(_monthDhikrTimeSec),
                   delta: '',
                   icon: Icons.access_time_rounded,
                   color: const Color(0xFF9B59B6),
@@ -1372,8 +1466,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               Expanded(
                 child: _MonthStat(
                   label: 'Active Days',
-                  value: '${cur?.activeDays ?? 0}',
-                  delta: delta(cur?.activeDays ?? 0, prev?.activeDays),
+                  value: '$_monthActiveDays',
+                  delta: '',
                   icon: Icons.check_circle_outline_rounded,
                   color: const Color(0xFF2D7A45),
                 ),
@@ -1382,16 +1476,18 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               Expanded(
                 child: _MonthStat(
                   label: 'Total Points',
-                  value: _fmt(cur?.totalPoints ?? 0),
-                  delta: delta(cur?.totalPoints ?? 0, prev?.totalPoints),
+                  value: _fmt(_monthPoints),
+                  delta: '',
                   icon: Icons.star_rounded,
                   color: Y4.honeyDeep,
                 ),
               ),
             ],
           ),
-          // Community stat
-          if (_globalStats.todayReaders > 0 || _globalStats.todayActive > 0) ...[
+          // Personalized "today" badge — only shown when the user has
+          // recorded ayahs read and/or time in the Quran screen today.
+          if (_todayAyahs > 0 ||
+              _todayQuranSec + StatsService.instance.optimisticTodaySec > 0) ...[
             const SizedBox(height: 16),
             Container(
               width: double.infinity,
@@ -1403,14 +1499,17 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.people_rounded, size: 16, color: Y4.honeyDeep),
+                  const Icon(Icons.menu_book_rounded,
+                      size: 16, color: Y4.honeyDeep),
                   const SizedBox(width: 8),
-                  Text(
-                    '${_globalStats.todayReaders} reading Quran today · ${_fmt(_globalStats.todayAyahs)} ayahs',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Y4.inkSoft,
+                  Expanded(
+                    child: Text(
+                      _todayBadgeText(),
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Y4.inkSoft,
+                      ),
                     ),
                   ),
                 ],
@@ -1432,13 +1531,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       final wd = ((todayWd - 1 - (6 - i)) % 7 + 7) % 7;
       return weekdayLetters[wd];
     });
-    final selectedSec = (_selectedDay >= 0 && _selectedDay < _weekDayTimes.length)
-        ? _weekDayTimes[_selectedDay]
+    // Apply the optimistic counter to today's seconds so the chart updates
+    // instantly after a flush, before the RPC and re-fetch finish.
+    final optimistic = StatsService.instance.optimisticTodaySec;
+    final adjustedTimes = List<int>.from(_weekDayTimes);
+    if (adjustedTimes.isNotEmpty) {
+      adjustedTimes[adjustedTimes.length - 1] =
+          adjustedTimes.last + optimistic;
+    }
+    final selectedSec = (_selectedDay >= 0 && _selectedDay < adjustedTimes.length)
+        ? adjustedTimes[_selectedDay]
         : 0;
     final hours = selectedSec ~/ 3600;
     final mins = (selectedSec % 3600) ~/ 60;
-    final maxSec = _weekDayTimes.fold<int>(0, math.max);
-    final bars = _weekDayTimes
+    final maxSec = adjustedTimes.fold<int>(0, math.max);
+    final bars = adjustedTimes
         .map((s) => maxSec == 0 ? 0.0 : (s / maxSec).clamp(0.0, 1.0))
         .toList();
 
@@ -2507,6 +2614,14 @@ class _DayBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const maxH = 64.0;
+    const minVisibleH = 14.0;
+    // Empty days collapse to a thin sliver; any day with worship time
+    // starts at minVisibleH and scales linearly up to maxH for the day
+    // with the most time. This keeps small-vs-large differences obvious
+    // without making zero-time days look like real activity.
+    final h = value <= 0
+        ? 2.0
+        : (minVisibleH + value * (maxH - minVisibleH)).clamp(minVisibleH, maxH);
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -2518,7 +2633,7 @@ class _DayBar extends StatelessWidget {
               AnimatedContainer(
                 duration: const Duration(milliseconds: 700),
                 curve: Curves.easeOut,
-                height: (value * maxH).clamp(4.0, maxH),
+                height: h,
                 margin: const EdgeInsets.symmetric(horizontal: 3),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
