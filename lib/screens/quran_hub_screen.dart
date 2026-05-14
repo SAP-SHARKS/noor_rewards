@@ -360,26 +360,38 @@ class _QuranHubScreenState extends State<QuranHubScreen>
         _favouriteCount = 0;
       }
 
-      // Quran Foundation API Bookmarks
-      try {
-        if (await QuranApiService.instance.isUserLoggedIn()) {
-          final qfBookmarks = await QuranApiService.instance.getBookmarks();
-          for (final b in qfBookmarks) {
-            final int s = b['chapterNumber'] ?? b['key'] ?? 1;
-            final int a = b['verseNumber'] ?? 1;
-            if (!_bookmarks.any(
-              (existing) => existing['surah'] == s && existing['ayah'] == a,
-            )) {
-              _bookmarks.add({'surah': s, 'ayah': a});
-            }
-          }
-          _bookmarkCount = _bookmarks.length;
-        }
-      } catch (_) {}
+      // Quran Foundation bookmarks are pulled in the background so a slow
+      // (or 504-ing) QF API can't stall this screen — Supabase data is
+      // already canonical and shown above.
+      // ignore: unawaited_futures
+      _foldInQfBookmarksLater();
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
       _fadeCtrl.forward();
+    }
+  }
+
+  Future<void> _foldInQfBookmarksLater() async {
+    try {
+      if (!await QuranApiService.instance.isUserLoggedIn()) return;
+      final qfBookmarks = await QuranApiService.instance.getBookmarks();
+      if (!mounted) return;
+      bool changed = false;
+      for (final b in qfBookmarks) {
+        final int s = b['chapterNumber'] ?? b['key'] ?? 1;
+        final int a = b['verseNumber'] ?? 1;
+        if (!_bookmarks
+            .any((existing) => existing['surah'] == s && existing['ayah'] == a)) {
+          _bookmarks.add({'surah': s, 'ayah': a});
+          changed = true;
+        }
+      }
+      if (changed && mounted) {
+        setState(() => _bookmarkCount = _bookmarks.length);
+      }
+    } catch (_) {
+      // Best-effort — Supabase is the source of truth for the UI.
     }
   }
 

@@ -19,7 +19,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../core/env/env.dart';
 import '../features/auth/data/qf_auth_service.dart';
 import 'quran_api_config.dart';
 
@@ -107,7 +108,9 @@ class QuranApiService {
   }
 
   // ── User Authentication (Bookmarks / Profile) ─────────────────────────────
-  static const String _kUserApiBase = 'https://apis.quran.foundation';
+  // Switches between prelive + production depending on Env.isDev so tokens
+  // minted by `<env>-oauth2.quran.foundation` reach the matching API host.
+  String get _kUserApiBase => Env.qfUserApiBase;
   // Use config clientId or default if missing
   String get _kClientId => QuranApiConfig.clientId;
 
@@ -134,6 +137,63 @@ class QuranApiService {
     return token != null && token.isNotEmpty;
   }
 
+  /// Wraps a QF user-API call with a one-time refresh-and-retry on an
+  /// auth failure. QF returns expired-token errors as either HTTP 401 OR
+  /// HTTP 403 with `type: "invalid_token"` in the body — without this
+  /// helper we treated 403 as a permanent failure and never refreshed.
+  /// On a real auth failure we call `qf-token-refresh` to mint a fresh
+  /// access token using the stored refresh token and replay the request
+  /// once.
+  Future<http.Response?> _qfRequest(
+    Future<http.Response> Function(Map<String, String> headers) makeRequest,
+  ) async {
+    final headers = await _userAuthHeaders();
+    if (headers == null) return null;
+    http.Response response;
+    try {
+      response = await makeRequest(headers);
+    } catch (e) {
+      debugPrint('QF_API: request threw: $e');
+      return null;
+    }
+    if (!_isAuthFailure(response)) return response;
+
+    debugPrint(
+        'QF_API: auth failure (HTTP ${response.statusCode}) — '
+        'attempting token refresh + retry. body=${response.body}');
+    try {
+      await QfAuthService.instance.refresh();
+    } catch (e) {
+      debugPrint('QF_API: token refresh failed — user must sign in again: $e');
+      return response;
+    }
+    final retryHeaders = await _userAuthHeaders();
+    if (retryHeaders == null) return response;
+    try {
+      return await makeRequest(retryHeaders);
+    } catch (e) {
+      debugPrint('QF_API: retry threw: $e');
+      return response;
+    }
+  }
+
+  // Returns true when the response indicates the access token is no longer
+  // valid (expired, revoked, malformed) and a refresh should be attempted.
+  // QF uses both 401 and 403 for these cases, so we look at both the status
+  // code and an optional `invalid_token` / "expired" hint in the body.
+  static bool _isAuthFailure(http.Response response) {
+    if (response.statusCode == 401) return true;
+    if (response.statusCode == 403) {
+      final body = response.body.toLowerCase();
+      if (body.contains('invalid_token') ||
+          body.contains('expired') ||
+          body.contains('inactive')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // ── User Profile ──
   Future<Map<String, dynamic>?> getUserProfile() async {
     final headers = await _userAuthHeaders();
@@ -155,22 +215,44 @@ class QuranApiService {
   }
 
   // ── Get Bookmarks ──
+  //
+  // QF requires a `mushafId` query param; we use the same Uthmani Mushaf
+  // (mushafId=1) the POST body sends — keeps GET and POST consistent.
+  // Responses can arrive in several shapes:
+  //   • a bare List of bookmark objects
+  //   • `{ bookmarks: [...] }`
+  //   • `{ data: [...] }`  (newer QF wrapper format)
+  //   • `{ data: { items: [...] } }`
   Future<List<Map<String, dynamic>>> getBookmarks() async {
-    final headers = await _userAuthHeaders();
-    if (headers == null) return [];
+    final response = await _qfRequest((headers) => http
+        .get(
+          Uri.parse('$_kUserApiBase/auth/v1/bookmarks?mushafId=1&first=20'),
+          headers: headers,
+        )
+        .timeout(const Duration(seconds: 10)));
+    if (response == null) return [];
+    if (response.statusCode != 200) {
+      debugPrint(
+          'QF_API: GetBookmarks ${response.statusCode}: ${response.body}');
+      return [];
+    }
     try {
-      final response = await http
-          .get(Uri.parse('$_kUserApiBase/auth/v1/bookmarks'), headers: headers)
-          .timeout(const Duration(seconds: 10));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data is List) return data.cast<Map<String, dynamic>>();
-        if (data is Map && data['bookmarks'] is List) {
-          return (data['bookmarks'] as List).cast<Map<String, dynamic>>();
+      final data = jsonDecode(response.body);
+      List? rows;
+      if (data is List) {
+        rows = data;
+      } else if (data is Map) {
+        if (data['bookmarks'] is List) {
+          rows = data['bookmarks'] as List;
+        } else if (data['data'] is List) {
+          rows = data['data'] as List;
+        } else if (data['data'] is Map && (data['data'] as Map)['items'] is List) {
+          rows = (data['data'] as Map)['items'] as List;
         }
       }
+      if (rows != null) return rows.cast<Map<String, dynamic>>();
     } catch (e) {
-      debugPrint('QF_API: GetBookmarks error: $e');
+      debugPrint('QF_API: GetBookmarks parse error: $e');
     }
     return [];
   }
@@ -180,50 +262,72 @@ class QuranApiService {
     required int surahNumber,
     required int ayatNumber,
   }) async {
-    final headers = await _userAuthHeaders();
-    if (headers == null) return false;
-
-    try {
-      final response = await http
-          .post(
-            Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
-            headers: headers,
-            body: jsonEncode({
-              'key': surahNumber,
-              'type': 'ayah',
-              'verseNumber': ayatNumber,
-              'mushaf': 1,
-            }),
-          )
-          .timeout(const Duration(seconds: 10));
-      return response.statusCode == 200 || response.statusCode == 201;
-    } catch (e) {
-      debugPrint('QF_API: AddBookmark error: $e');
+    final response = await _qfRequest((headers) => http
+        .post(
+          Uri.parse('$_kUserApiBase/auth/v1/bookmarks'),
+          headers: headers,
+          body: jsonEncode({
+            'key': surahNumber,
+            'type': 'ayah',
+            'verseNumber': ayatNumber,
+            'mushaf': 1,
+          }),
+        )
+        .timeout(const Duration(seconds: 10)));
+    if (response == null) return false;
+    final ok = response.statusCode == 200 || response.statusCode == 201;
+    if (!ok) {
+      debugPrint(
+          'QF_API: AddBookmark ${response.statusCode}: ${response.body}');
     }
-    return false;
+    return ok;
   }
 
   // ── Remove Bookmark ──
+  //
+  // QF requires the bookmark's UUID `id` in the DELETE URL — not the
+  // verse_key composite (`<surah>:<ayah>`), which returns 404 NotFound.
+  // We fetch the list, find the matching entry, then delete by its id.
   Future<bool> removeBookmark({
     required int surahNumber,
     required int ayatNumber,
   }) async {
-    final headers = await _userAuthHeaders();
-    if (headers == null) return false;
+    // Look up the bookmark's QF id by verse coordinates.
+    String? bookmarkId;
     try {
-      final response = await http
-          .delete(
-            Uri.parse(
-              '$_kUserApiBase/auth/v1/bookmarks/$surahNumber:$ayatNumber',
-            ),
-            headers: headers,
-          )
-          .timeout(const Duration(seconds: 10));
-      return response.statusCode == 200 || response.statusCode == 204;
+      final list = await getBookmarks();
+      for (final b in list) {
+        final s = (b['chapterNumber'] ?? b['key']) as int?;
+        final a = b['verseNumber'] as int?;
+        if (s == surahNumber && a == ayatNumber) {
+          bookmarkId = b['id'] as String?;
+          break;
+        }
+      }
     } catch (e) {
-      debugPrint('QF_API: RemoveBookmark error: $e');
+      debugPrint('QF_API: RemoveBookmark id lookup failed: $e');
     }
-    return false;
+    if (bookmarkId == null || bookmarkId.isEmpty) {
+      // Nothing to delete on QF — already gone (or never synced). Treat as
+      // success so the local state can move on without rolling back.
+      debugPrint(
+          'QF_API: RemoveBookmark — no QF row for $surahNumber:$ayatNumber, skipping');
+      return true;
+    }
+
+    final response = await _qfRequest((headers) => http
+        .delete(
+          Uri.parse('$_kUserApiBase/auth/v1/bookmarks/$bookmarkId'),
+          headers: headers,
+        )
+        .timeout(const Duration(seconds: 10)));
+    if (response == null) return false;
+    final ok = response.statusCode == 200 || response.statusCode == 204;
+    if (!ok) {
+      debugPrint(
+          'QF_API: RemoveBookmark ${response.statusCode}: ${response.body}');
+    }
+    return ok;
   }
 
   // ── Log Reading Session ──
@@ -232,73 +336,119 @@ class QuranApiService {
     required int ayatNumber,
     required int durationSeconds,
   }) async {
-    final headers = await _userAuthHeaders();
-    if (headers == null) return false;
-    try {
-      final response = await http
-          .post(
-            Uri.parse('$_kUserApiBase/auth/v1/reading_sessions'),
-            headers: headers,
-            body: jsonEncode({
-              'chapterNumber': surahNumber,
-              'verseNumber': ayatNumber,
-              'duration': durationSeconds,
-            }),
-          )
-          .timeout(const Duration(seconds: 10));
-      return response.statusCode == 200 || response.statusCode == 201;
-    } catch (e) {
-      debugPrint('QF_API: ReadingSession error: $e');
+    final response = await _qfRequest((headers) => http
+        .post(
+          Uri.parse('$_kUserApiBase/auth/v1/reading_sessions'),
+          headers: headers,
+          body: jsonEncode({
+            'chapterNumber': surahNumber,
+            'verseNumber': ayatNumber,
+            'duration': durationSeconds,
+          }),
+        )
+        .timeout(const Duration(seconds: 10)));
+    if (response == null) return false;
+    final ok = response.statusCode == 200 || response.statusCode == 201;
+    if (!ok) {
+      debugPrint(
+          'QF_API: ReadingSession ${response.statusCode}: ${response.body}');
     }
-    return false;
+    return ok;
   }
 
-  // ── Sync Bookmarks ──
+  // ── Sync Bookmarks (two-way) ──
+  //
+  // Reconciles the user's Supabase `quran_bookmarks` table with their
+  // Quran.com (QF) bookmarks. Bookmarks only on QF are inserted into
+  // Supabase; bookmarks only in Supabase are pushed up to QF. After this
+  // returns, both stores hold the union.
+  //
+  // Safe to call from anywhere — e.g. right after the user completes QF
+  // sign-in. Skips silently if either side is not authenticated.
   Future<SyncResult> syncBookmarks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('quran_logged_in') ?? false;
-
-    if (!isLoggedIn) {
+    if (!await isUserLoggedIn()) {
       return SyncResult(success: false, message: 'Not connected to Quran.com');
+    }
+    final sb = Supabase.instance.client;
+    final uid = sb.auth.currentUser?.id;
+    if (uid == null) {
+      return SyncResult(success: false, message: 'Not signed in to Noor');
     }
 
     int uploaded = 0;
+    int downloaded = 0;
     int failed = 0;
 
     try {
-      final raw = prefs.getString('quran_bookmarks_local') ?? '[]';
-      final List<dynamic> localList = jsonDecode(raw);
+      // Pull from both sources in parallel.
+      final results = await Future.wait<dynamic>([
+        getBookmarks(),
+        sb.from('quran_bookmarks').select('surah, ayah').eq('user_id', uid),
+      ]);
+      final qfList = results[0] as List<Map<String, dynamic>>;
+      final sbList = (results[1] as List).cast<Map<String, dynamic>>();
 
-      if (localList.isEmpty) {
-        return SyncResult(
-          success: true,
-          uploaded: 0,
-          failed: 0,
-          message: 'No bookmarks to sync',
-        );
+      final Set<String> qfSet = {};
+      for (final b in qfList) {
+        final s = b['chapterNumber'] ?? b['key'];
+        final a = b['verseNumber'];
+        if (s != null && a != null) qfSet.add('$s:$a');
+      }
+      final Set<String> sbSet = {};
+      for (final r in sbList) {
+        sbSet.add('${r['surah']}:${r['ayah']}');
       }
 
-      for (final item in localList) {
-        final map = item as Map<String, dynamic>;
-        final surah = map['surahNumber'] as int? ?? 0;
-        final ayat = map['ayatNumber'] as int? ?? 0;
-        if (surah <= 0 || ayat <= 0) continue;
-
-        final success = await addBookmark(surahNumber: surah, ayatNumber: ayat);
-        if (success)
-          uploaded++;
-        else
+      // QF → Supabase (download): persist quran.com bookmarks locally.
+      for (final key in qfSet.difference(sbSet)) {
+        final parts = key.split(':');
+        if (parts.length != 2) continue;
+        final s = int.tryParse(parts[0]);
+        final a = int.tryParse(parts[1]);
+        if (s == null || a == null) continue;
+        try {
+          await sb.from('quran_bookmarks').upsert({
+            'user_id': uid,
+            'surah': s,
+            'ayah': a,
+          }, onConflict: 'user_id,surah,ayah');
+          downloaded++;
+        } catch (_) {
           failed++;
+        }
       }
 
+      // Supabase → QF (upload): push app bookmarks to quran.com.
+      for (final key in sbSet.difference(qfSet)) {
+        final parts = key.split(':');
+        if (parts.length != 2) continue;
+        final s = int.tryParse(parts[0]);
+        final a = int.tryParse(parts[1]);
+        if (s == null || a == null) continue;
+        final ok = await addBookmark(surahNumber: s, ayatNumber: a);
+        if (ok) {
+          uploaded++;
+        } else {
+          failed++;
+        }
+      }
+
+      final total = uploaded + downloaded;
+      String message;
+      if (failed > 0 && total == 0) {
+        message =
+            'Sync failed — $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+      } else if (total == 0 && failed == 0) {
+        message = 'Bookmarks already in sync';
+      } else {
+        message = 'Synced $total bookmarks ($uploaded up, $downloaded down)';
+        if (failed > 0) message += ', $failed failed';
+      }
       return SyncResult(
-        success: true,
+        success: failed == 0,
         uploaded: uploaded,
         failed: failed,
-        message:
-            uploaded > 0
-                ? 'Synced $uploaded bookmarks to Quran.com'
-                : 'Sync failed — check connection',
+        message: message,
       );
     } catch (e) {
       return SyncResult(success: false, message: 'Sync failed: $e');

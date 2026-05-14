@@ -532,6 +532,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
         bottomNavigationBar: _BottomNav(
             tab: _tab,
             onTap: (i) {
+              // Flush any Quran/Dhikr screen time accumulated under the
+              // current tab (the screen stays mounted inside its tab Navigator,
+              // so exitScreen() won't fire). Fire-and-forget — the in-flight
+              // Future is stored in StatsService for the destination tab
+              // (e.g. Impact Report) to await before reading per-day stats.
+              // Always bump chartRefresh on Akhirah-tab entry so the Impact
+              // Report re-fetches even if nothing was flushed (the tab's
+              // child widget is captured by its Navigator and won't receive
+              // didUpdateWidget).
+              if (i != _tab) {
+                StatsService.instance.flushAndContinue();
+                if (i == 3) {
+                  StatsService.instance.bumpChartRefresh();
+                }
+              }
               if (i == 0 && _tab != 0) {
                 // User returning to Home tab: kick off a new counter animation
                 // and block any popup for the duration (300ms + 1400ms + 500ms = 2200ms).

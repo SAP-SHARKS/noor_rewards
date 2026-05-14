@@ -55,6 +55,18 @@ class QfAuthService {
   /// ProfileSetupScreen between signInAnonymously() and updateUser().
   final loginInProgress = ValueNotifier<bool>(false);
 
+  /// Captures the most recent QF sign-in failure so the diagnostic UI
+  /// can surface it even when the original ScaffoldMessenger/AlertDialog
+  /// path was suppressed by mid-flow widget rebuilds. Cleared at the
+  /// start of each new sign-in attempt.
+  ///
+  /// Exposed as a ValueNotifier so screens (the login page in particular)
+  /// can rebuild and show the captured message inline the moment the
+  /// bounce-back happens — no need to navigate elsewhere to see it.
+  final ValueNotifier<String?> lastSignInErrorN = ValueNotifier<String?>(null);
+  String? get lastSignInError => lastSignInErrorN.value;
+  set lastSignInError(String? v) => lastSignInErrorN.value = v;
+
   /// True when the QF user has explicitly signed out.
   /// AuthGate watches this to show the login screen even though the
   /// underlying Supabase session is still alive.
@@ -124,6 +136,8 @@ class QfAuthService {
 
   // ── Sign In ─────────────────────────────────────────────────────────────────
   Future<void> signIn() async {
+    // Reset the captured-error slot so a fresh attempt is observable.
+    lastSignInError = null;
     final codeVerifier = _generateCodeVerifier();
     final codeChallenge = _generateCodeChallenge(codeVerifier);
 
@@ -134,7 +148,12 @@ class QfAuthService {
         'client_id': Env.qfClientId,
         'response_type': 'code',
         'redirect_uri': _redirectUri,
-        'scope': 'openid',
+        // Full scope set is now enabled on both prelive and production
+        // OAuth clients (QF support confirmed prod scope enablement on
+        // 2026-05-14). All four resource scopes are singular — plural
+        // names cause `invalid_scope`.
+        'scope':
+            'openid offline_access user bookmark collection reading_session',
         'code_challenge': codeChallenge,
         'code_challenge_method': 'S256',
         'state': _generateState(),
@@ -245,9 +264,11 @@ class QfAuthService {
       );
 
       if (response.status != 200) {
-        throw Exception(
-          'Token exchange failed (${response.status}): ${response.data}',
-        );
+        final msg =
+            'Token exchange failed (${response.status}): ${response.data}';
+        lastSignInError = msg;
+        debugPrint('[QF] $msg');
+        throw Exception(msg);
       }
 
       final data = response.data;
@@ -322,6 +343,14 @@ class QfAuthService {
       if (qfAccessToken != null) {
         await _fetchAndStoreUserInfo(qfAccessToken);
       }
+    } catch (e) {
+      // Capture every failure mode so the diagnostic UI can surface it even
+      // when the ScaffoldMessenger/AlertDialog path is suppressed by a
+      // mid-flow widget rebuild. Rethrow so existing handlers
+      // (QfEmailConflictException → conflict screen, etc.) keep working.
+      lastSignInError ??= e.toString();
+      debugPrint('[QF] _exchangeCode failed: $e');
+      rethrow;
     } finally {
       loginInProgress.value = false;
     }
@@ -346,8 +375,20 @@ class QfAuthService {
 
       debugPrint('[QF] userinfo → email=$email name=$name sub=$sub');
 
+      // ── Returning-user detection (must happen BEFORE the email conflict
+      //    check so a returning user is never bounced as a "conflict") ─────
+      final storedSub = await _secureStorage.read(key: _qfSubKey);
+      final storedName = await _secureStorage.read(key: _qfNameKey);
+
+      final isSameSub = sub.isNotEmpty && sub == storedSub;
+
       // ── Email conflict detection ─────────────────────────────────────────
-      if (email.isNotEmpty) {
+      // Only treat a matching email as a conflict when the QF sub differs —
+      // i.e. a *different* user is trying to sign in with an email that's
+      // already attached to an existing profile. Same-sub re-link must
+      // always be allowed (e.g. swapping QF environments, re-login after
+      // token expiry, etc.).
+      if (email.isNotEmpty && !isSameSub) {
         try {
           final exists =
               await _supabase
@@ -369,13 +410,10 @@ class QfAuthService {
         } catch (rpcError) {
           debugPrint('[QF] email_account_exists RPC skipped: $rpcError');
         }
+      } else if (isSameSub) {
+        debugPrint(
+            '[QF] same sub as stored ($storedSub) — skipping email conflict check');
       }
-
-      // ── Returning-user detection ─────────────────────────────────────────
-      final storedSub = await _secureStorage.read(key: _qfSubKey);
-      final storedName = await _secureStorage.read(key: _qfNameKey);
-
-      final isSameSub = sub.isNotEmpty && sub == storedSub;
 
       // Display name resolution — SecureStorage is only used as a hint for the
       // same identity.  Never inherit another user's cached name.

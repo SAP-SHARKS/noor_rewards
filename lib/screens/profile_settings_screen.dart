@@ -17,6 +17,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import '../features/auth/data/qf_auth_service.dart';
+import '../services/quran_api_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
@@ -1707,12 +1708,121 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           l.privacyPolicy,
           l.howWeProtectData,
           _pSub,
-          isLast: true,
           onTap: () {},
+        ),
+        _divider(),
+        _supportRow(
+          Icons.sync_rounded,
+          'Sync Quran.com Bookmarks',
+          'Force a two-way bookmark sync now',
+          const Color(0xFF00C875),
+          isLast: true,
+          onTap: _runQuranComSyncDiagnostic,
         ),
       ],
     ),
   );
+
+  // ── Quran.com bookmark sync action ─────────────────────────────────────────
+  // Runs a manual two-way sync and shows a concise result: how many bookmarks
+  // are on each side and what changed. The OAuth/host/scope/payload
+  // diagnostics that lived here previously have been removed now that the
+  // integration is stable — they're documented in
+  // `_qf_integration_changes.md` if ever needed again.
+  Future<void> _runQuranComSyncDiagnostic() async {
+    // Show a spinner while we work.
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: SizedBox(
+          width: 56,
+          height: 56,
+          child: CircularProgressIndicator(strokeWidth: 3),
+        ),
+      ),
+    );
+
+    String? errorLine;
+    int? qfCount;
+    int? supabaseCount;
+    SyncResult? syncResult;
+
+    try {
+      final isLinked = await QuranApiService.instance.isUserLoggedIn();
+      if (!isLinked) {
+        final lastErr = QfAuthService.instance.lastSignInError;
+        errorLine =
+            'You are not currently linked with Quran.com. Tap "Continue with Quran" on the login screen to connect.'
+            '${(lastErr != null && lastErr.isNotEmpty) ? '\n\nLast sign-in error:\n$lastErr' : ''}';
+      } else {
+        // Run the two-way sync. This also fetches both sides internally,
+        // so we can surface the counts as part of the result.
+        syncResult = await QuranApiService.instance.syncBookmarks();
+        try {
+          qfCount = (await QuranApiService.instance.getBookmarks()).length;
+        } catch (_) {}
+        try {
+          final sb = Supabase.instance.client;
+          final uid = sb.auth.currentUser?.id;
+          if (uid != null) {
+            final rows = await sb
+                .from('quran_bookmarks')
+                .select('surah, ayah')
+                .eq('user_id', uid);
+            supabaseCount = (rows as List).length;
+          }
+        } catch (_) {}
+      }
+    } catch (e) {
+      errorLine = 'Sync failed: $e';
+    }
+
+    if (!mounted) return;
+    Navigator.of(context).pop(); // dismiss spinner
+
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Quran.com Bookmark Sync'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (errorLine != null) ...[
+                Text(
+                  errorLine,
+                  style: const TextStyle(color: Color(0xFFB91C1C)),
+                ),
+              ] else ...[
+                Text(
+                  syncResult?.message ?? 'Sync complete',
+                  style: TextStyle(
+                    color: (syncResult?.success ?? true)
+                        ? const Color(0xFF166534)
+                        : const Color(0xFFB91C1C),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (qfCount != null)
+                  Text('Bookmarks on Quran.com:  $qfCount'),
+                if (supabaseCount != null)
+                  Text('Bookmarks in this app:   $supabaseCount'),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _supportRow(
     IconData icon,

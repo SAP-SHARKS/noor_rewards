@@ -586,35 +586,107 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
   // ── Load all bookmarks for this user ─────────────────────────────────────────
+  //
+  // Surfaces Supabase bookmarks immediately so the Quran reader paints
+  // without waiting on a network call, then pulls QF + reconciles in the
+  // background. If QF is slow or unreachable (e.g. prelive 504), the
+  // reader is still fully usable; the QF side just catches up later.
   Future<void> _loadBookmarks() async {
     final uid = _sb.auth.currentUser?.id;
+
+    // 1) Load Supabase bookmarks synchronously — fast.
+    final Set<String> supabaseSet = {};
     if (uid != null) {
       try {
         final rows = await _sb
             .from('quran_bookmarks')
             .select('surah, ayah')
             .eq('user_id', uid);
-        setState(() {
-          _bookmarks.addAll(rows.map((r) => '${r['surah']}:${r['ayah']}'));
-        });
+        for (final r in rows) {
+          supabaseSet.add('${r['surah']}:${r['ayah']}');
+        }
       } catch (_) {}
     }
 
-    // Quran Foundation Bookmarks
+    if (mounted) {
+      setState(() => _bookmarks.addAll(supabaseSet));
+    }
+
+    // 2) Pull QF + reconcile in the background. Doesn't block initial paint.
+    if (uid != null) {
+      // Intentional fire-and-forget; QF responses fold into _bookmarks
+      // when they arrive.
+      // ignore: unawaited_futures
+      _syncWithQfInBackground(uid: uid, supabaseSet: supabaseSet);
+    }
+  }
+
+  Future<void> _syncWithQfInBackground({
+    required String uid,
+    required Set<String> supabaseSet,
+  }) async {
     try {
-      if (await QuranApiService.instance.isUserLoggedIn()) {
-        final qfBookmarks = await QuranApiService.instance.getBookmarks();
-        if (mounted) {
-          setState(() {
-            _bookmarks.addAll(
-              qfBookmarks.map(
-                (b) => '${b['chapterNumber'] ?? b['key']}:${b['verseNumber']}',
-              ),
-            );
-          });
-        }
+      if (!await QuranApiService.instance.isUserLoggedIn()) return;
+      final qfBookmarks = await QuranApiService.instance.getBookmarks();
+      final Set<String> qfSet = {};
+      for (final b in qfBookmarks) {
+        final surah = b['chapterNumber'] ?? b['key'];
+        final ayah = b['verseNumber'];
+        if (surah != null && ayah != null) qfSet.add('$surah:$ayah');
       }
-    } catch (_) {}
+      if (mounted && qfSet.isNotEmpty) {
+        setState(() => _bookmarks.addAll(qfSet));
+      }
+      _reconcileBookmarks(uid: uid, supabase: supabaseSet, qf: qfSet);
+    } catch (_) {
+      // Silent — QF is best-effort, Supabase is authoritative for the UI.
+    }
+  }
+
+  /// Background two-way bookmark reconciliation. Any bookmark present only on
+  /// QF is inserted into our Supabase table; any bookmark present only in
+  /// Supabase is pushed up to QF.
+  Future<void> _reconcileBookmarks({
+    required String uid,
+    required Set<String> supabase,
+    required Set<String> qf,
+  }) async {
+    // QF → Supabase (persist quran.com bookmarks locally).
+    final onlyOnQf = qf.difference(supabase);
+    for (final key in onlyOnQf) {
+      final parts = key.split(':');
+      if (parts.length != 2) continue;
+      final s = int.tryParse(parts[0]);
+      final a = int.tryParse(parts[1]);
+      if (s == null || a == null) continue;
+      try {
+        await _sb.from('quran_bookmarks').upsert({
+          'user_id': uid,
+          'surah': s,
+          'ayah': a,
+        }, onConflict: 'user_id,surah,ayah');
+      } catch (e) {
+        debugPrint('Bookmark sync QF→Supabase failed for $key: $e');
+      }
+    }
+
+    // Supabase → QF (push app bookmarks to quran.com).
+    final onlyOnSupabase = supabase.difference(qf);
+    for (final key in onlyOnSupabase) {
+      final parts = key.split(':');
+      if (parts.length != 2) continue;
+      final s = int.tryParse(parts[0]);
+      final a = int.tryParse(parts[1]);
+      if (s == null || a == null) continue;
+      try {
+        await QuranApiService.instance.addBookmark(
+          surahNumber: s,
+          ayatNumber: a,
+        );
+      } catch (e) {
+        debugPrint('Bookmark sync Supabase→QF failed for $key: $e');
+      }
+    }
   }
 
   // ── Load favourites for this user ─────────────────────────────────────────────
@@ -1406,23 +1478,28 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   }
 
   // ── Toggle bookmark ───────────────────────────────────────────────────────────
+  //
+  // Both the QF and Supabase writes are awaited together — without that, a
+  // fire-and-forget QF call could fail silently and the next reconcile loop
+  // would re-insert the deleted bookmark back into Supabase, making the
+  // unbookmark appear not to work. If either side errors out we roll the
+  // local UI state back so the user can retry.
   Future<void> _toggleBookmark() async {
-    final key = '$_surah:_ayah';
+    final key = '$_surah:$_ayah';
     final uid = _sb.auth.currentUser?.id;
-
-    // Check if user is logged into Quran Foundation
     final isQfLoggedIn = await QuranApiService.instance.isUserLoggedIn();
 
     if (_bookmarks.contains(key)) {
+      // ── Remove ──────────────────────────────────────────────────────────
       setState(() => _bookmarks.remove(key));
-      // Remove from QF API
+      bool qfOk = true;
+      bool sbOk = true;
       if (isQfLoggedIn) {
-        QuranApiService.instance.removeBookmark(
+        qfOk = await QuranApiService.instance.removeBookmark(
           surahNumber: _surah,
           ayatNumber: _ayah,
         );
       }
-      // Remove from Supabase
       if (uid != null) {
         try {
           await _sb
@@ -1432,19 +1509,28 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               .eq('surah', _surah)
               .eq('ayah', _ayah);
         } catch (_) {
-          setState(() => _bookmarks.add(key));
+          sbOk = false;
         }
       }
+      if (!qfOk || !sbOk) {
+        // Either side rejected the delete — restore the UI and warn the
+        // user so the icon stays consistent with what's actually stored.
+        if (mounted) setState(() => _bookmarks.add(key));
+        if (mounted) _showSnack('Could not remove bookmark — please retry');
+      } else if (mounted) {
+        _showSnack('Removed bookmark $_surahName $_surah:$_ayah');
+      }
     } else {
+      // ── Add ─────────────────────────────────────────────────────────────
       setState(() => _bookmarks.add(key));
-      // Add to QF API
+      bool qfOk = true;
+      bool sbOk = true;
       if (isQfLoggedIn) {
-        QuranApiService.instance.addBookmark(
+        qfOk = await QuranApiService.instance.addBookmark(
           surahNumber: _surah,
           ayatNumber: _ayah,
         );
       }
-      // Add to Supabase
       if (uid != null) {
         try {
           await _sb.from('quran_bookmarks').insert({
@@ -1454,10 +1540,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             'surah_name': _surahName,
           });
         } catch (_) {
-          setState(() => _bookmarks.remove(key));
+          sbOk = false;
         }
       }
-      if (mounted) _showSnack('Bookmarked $_surahName $_surah:$_ayah');
+      if (!qfOk || !sbOk) {
+        if (mounted) setState(() => _bookmarks.remove(key));
+        if (mounted) _showSnack('Could not save bookmark — please retry');
+      } else if (mounted) {
+        _showSnack('Bookmarked $_surahName $_surah:$_ayah');
+      }
     }
   }
 
@@ -2246,8 +2337,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     );
   }
 
-  bool get _isBookmarked => _bookmarks.contains('$_surah:_ayah');
-  bool get _isFavourited => _favourites.contains('$_surah:_ayah');
+  bool get _isBookmarked => _bookmarks.contains('$_surah:$_ayah');
+  bool get _isFavourited => _favourites.contains('$_surah:$_ayah');
 
   // ── Toggle favourite ──────────────────────────────────────────────────────────
   Future<void> _toggleFavourite() async {
@@ -2259,7 +2350,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       );
       return;
     }
-    final key = '$_surah:_ayah';
+    final key = '$_surah:$_ayah';
     final adding = !_isFavourited;
     setState(() {
       if (adding) {

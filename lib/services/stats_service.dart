@@ -105,6 +105,23 @@ class StatsService {
   String? _currentScreen; // 'quran' | 'dhikr'
   bool _globalActiveRecordedThisSession = false;
 
+  // In-flight flush Future, so screens that read the daily table (e.g. the
+  // Impact Report) can await any pending exit flush before fetching.
+  Future<void>? _pendingFlush;
+
+  /// Returns the in-flight screen-time flush (if any), or a completed Future
+  /// when nothing is pending. Callers should `await` this before reading
+  /// per-day worship-time stats to avoid a race where the read happens
+  /// before the previous screen's flush has committed.
+  Future<void> awaitPendingFlush() async {
+    final f = _pendingFlush;
+    if (f != null) {
+      try {
+        await f;
+      } catch (_) {}
+    }
+  }
+
   // ── In-memory caches for instant Akhirah-tab reflection ─────────────────
   // Each recordDhikr*/recordQuran* call bumps these synchronously, so the
   // Akhirah holdings reflect the change before the RPC has committed.
@@ -120,6 +137,27 @@ class StatsService {
   /// a new dhikr is recorded — even while they're mounted offstage in an
   /// IndexedStack.
   final ValueNotifier<int> revision = ValueNotifier<int>(0);
+
+  /// Bumped synchronously the moment a flush is **queued** (before the RPC
+  /// completes) and again when the RPC commits. The Impact Report listens
+  /// and re-renders immediately using the optimistic value below, then
+  /// fetches fresh server state in the background. This avoids the user
+  /// staring at a stale chart while the network round-trip resolves.
+  final ValueNotifier<int> chartRefresh = ValueNotifier<int>(0);
+  void bumpChartRefresh() {
+    chartRefresh.value++;
+  }
+
+  /// Seconds that have been flushed locally but the next read of the chart
+  /// hasn't yet observed on the server. Added to today's bar so the chart
+  /// updates instantly when the user navigates to the Impact Report, even
+  /// though the RPC is still in flight. Reset by the Impact Report after
+  /// it successfully re-reads from `user_daily_stats`.
+  int _optimisticTodaySec = 0;
+  int get optimisticTodaySec => _optimisticTodaySec;
+  void resetOptimisticToday() {
+    _optimisticTodaySec = 0;
+  }
 
   // Read-only snapshots of the cache for UI consumers.
   Map<String, int> get phraseCountsSnapshot => Map.unmodifiable(_phraseCache);
@@ -163,16 +201,26 @@ class StatsService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
 
-    try {
-      await _sb.rpc('record_activity_stats', params: {
-        'p_user_id': uid,
-        'p_type': _currentScreen!,
-        'p_count': 0,
-        'p_duration_sec': duration,
-      });
-    } catch (e) {
-      debugPrint('StatsService.pauseScreenTimer error: $e');
-    }
+    // Optimistic bookkeeping — see flushAndContinue for the rationale.
+    _optimisticTodaySec += duration;
+    chartRefresh.value++;
+
+    final flush = _sb.rpc('record_activity_stats', params: {
+      'p_user_id': uid,
+      'p_type': _currentScreen!,
+      'p_count': 0,
+      'p_duration_sec': duration,
+    });
+
+    _pendingFlush = Future(() async {
+      try {
+        await flush;
+        chartRefresh.value++;
+      } catch (e) {
+        debugPrint('StatsService.pauseScreenTimer error: $e');
+      }
+    });
+    return _pendingFlush;
   }
 
   /// Call when app resumes from background — restart time counting.
@@ -182,7 +230,50 @@ class StatsService {
     }
   }
 
+  /// Flush accumulated screen time without ending the session. The screen
+  /// timer resets to `now()` so subsequent time keeps counting. Useful when
+  /// the user navigates inside the app (e.g. tab change in an IndexedStack)
+  /// where the Quran/Dhikr screen stays mounted but the user is no longer
+  /// actively on it.
+  Future<void> flushAndContinue() async {
+    if (_currentScreen == null || _screenEnteredAt == null) return;
+    final duration =
+        DateTime.now().difference(_screenEnteredAt!).inSeconds;
+    if (duration < 2) return;
+
+    _screenEnteredAt = DateTime.now(); // reset, keep tracking
+
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return;
+
+    // Optimistic bookkeeping: pre-add this duration to today's local total
+    // and notify listeners synchronously so the chart updates instantly,
+    // independent of the in-flight RPC latency.
+    _optimisticTodaySec += duration;
+    chartRefresh.value++;
+
+    final type = _currentScreen!;
+    _pendingFlush = Future(() async {
+      try {
+        await _sb.rpc('record_activity_stats', params: {
+          'p_user_id': uid,
+          'p_type': type,
+          'p_count': 0,
+          'p_duration_sec': duration,
+        });
+        // Second bump so the Impact Report can fetch fresh server state
+        // and reconcile the optimistic counter.
+        chartRefresh.value++;
+      } catch (e) {
+        debugPrint('StatsService.flushAndContinue error: $e');
+      }
+    });
+    return _pendingFlush;
+  }
+
   /// Call in dispose — computes duration and flushes to DB.
+  /// The returned Future is also stored in [_pendingFlush] so other screens
+  /// can [awaitPendingFlush] before reading per-day stats.
   Future<void> exitScreen() async {
     if (_currentScreen == null || _screenEnteredAt == null) return;
 
@@ -196,16 +287,26 @@ class StatsService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
 
-    try {
-      await _sb.rpc('record_activity_stats', params: {
-        'p_user_id': uid,
-        'p_type': type,
-        'p_count': 0, // time-only flush, no activity count
-        'p_duration_sec': duration,
-      });
-    } catch (e) {
-      debugPrint('StatsService.exitScreen error: $e');
-    }
+    // Optimistic bookkeeping — see flushAndContinue for the rationale.
+    _optimisticTodaySec += duration;
+    chartRefresh.value++;
+
+    final flush = _sb.rpc('record_activity_stats', params: {
+      'p_user_id': uid,
+      'p_type': type,
+      'p_count': 0, // time-only flush, no activity count
+      'p_duration_sec': duration,
+    });
+
+    _pendingFlush = Future(() async {
+      try {
+        await flush;
+        chartRefresh.value++;
+      } catch (e) {
+        debugPrint('StatsService.exitScreen error: $e');
+      }
+    });
+    return _pendingFlush;
   }
 
   // ── Activity recording (fire-and-forget) ─────────────────────────────────
