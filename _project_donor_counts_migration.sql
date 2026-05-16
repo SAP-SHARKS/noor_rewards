@@ -11,10 +11,18 @@ RETURNS TABLE (
   project_id  uuid,
   donor_count int
 )
-LANGUAGE sql STABLE SECURITY DEFINER AS $$
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  -- The table is aliased (ud) so `ud.project_id` is never confused with
+  -- the RETURNS TABLE output column also named `project_id`.
   SELECT
-    project_id,
-    COUNT(DISTINCT user_id)::int AS donor_count
-  FROM user_donations
-  GROUP BY project_id;
+    ud.project_id,
+    COUNT(DISTINCT ud.user_id)::int
+  FROM user_donations ud
+  GROUP BY ud.project_id;
 $$;
+
+GRANT EXECUTE ON FUNCTION get_project_donor_counts() TO authenticated, anon;

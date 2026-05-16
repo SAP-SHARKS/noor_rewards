@@ -369,7 +369,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
   bool _showArabic = true;
 
   // ── Points ───────────────────────────────────────────────────────────────────
-  // (Tafsir is read-only; no XP is awarded for reading or listening)
+  // (Tafsir is read-only; no Seeds are awarded for reading or listening)
 
   // ── Audio ────────────────────────────────────────────────────────────────────
   final _player = AudioPlayer();

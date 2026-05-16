@@ -245,6 +245,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   double _translationFontSize = 15.0; // 12-22
   int _quranScriptIdx = 0; // index into _kQuranScripts
   bool _showTranslation = true; // show/hide translation block
+  bool _showTransliteration = false; // show/hide transliteration in WbW chips
   bool _showProgressCard = true; // show/hide daily progress card
   bool _showPointsBanner = true; // show/hide +points banner
   bool _showSurahBanner = true; // show/hide surah header banner
@@ -471,6 +472,18 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         ? elapsed.inSeconds >= 60
         : _sessionAyahsRead >= 1;
 
+    // Log the reading session to Quran Foundation's user-data API so it
+    // feeds quran.com's reading-progress views. Fire-and-forget — we
+    // never block the exit celebration / navigation on a network call.
+    if (elapsed.inSeconds >= 5) {
+      // ignore: unawaited_futures
+      QuranApiService.instance.logReadingSession(
+        surahNumber: _surah,
+        ayatNumber: _ayah,
+        durationSeconds: elapsed.inSeconds,
+      );
+    }
+
     if (qualifies && mounted) {
       await showQuranExitCelebration(
         context,
@@ -508,6 +521,30 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     _fullPageMode = _cache.get('pref_mushaf_mode', defaultValue: false) as bool;
     _wordByWord = _cache.get('pref_wbw_mode', defaultValue: false) as bool;
     _themeIdx = _cache.get('pref_theme_idx', defaultValue: 5) as int;
+    // Restore all auto-saved reader preferences (every settings change in
+    // the Quran reader is persisted to Hive — see _savePref below).
+    _darkMode = _cache.get('pref_dark_mode', defaultValue: false) as bool;
+    _arabicFontSize =
+        (_cache.get('pref_arabic_fs', defaultValue: 28.0) as num).toDouble();
+    _mushafFontSize =
+        (_cache.get('pref_mushaf_fs', defaultValue: 32.0) as num).toDouble();
+    _translationFontSize =
+        (_cache.get('pref_trans_fs', defaultValue: 15.0) as num).toDouble();
+    _quranScriptIdx = _cache.get('pref_script_idx', defaultValue: 0) as int;
+    _showTranslation =
+        _cache.get('pref_show_translation', defaultValue: true) as bool;
+    _showTransliteration =
+        _cache.get('pref_show_transliteration', defaultValue: false) as bool;
+    _showProgressCard =
+        _cache.get('pref_show_progress', defaultValue: true) as bool;
+    _showPointsBanner =
+        _cache.get('pref_show_points_banner', defaultValue: true) as bool;
+    _showSurahBanner =
+        _cache.get('pref_show_surah_banner', defaultValue: true) as bool;
+    _mushafSplitTranslation =
+        _cache.get('pref_mushaf_split_trans', defaultValue: false) as bool;
+    // Note: _fullScreenMode is intentionally NOT persisted — it's a
+    // distraction-free reading session toggle, not a setting.
 
     if (_cache.get('pref_translation') == null && mounted) {
       final lang = Localizations.localeOf(context).languageCode;
@@ -2321,6 +2358,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   String _todayStr() => DateTime.now().toIso8601String().split('T')[0];
 
+  /// Persist a single reader preference to Hive. Silent on failure (e.g.,
+  /// in the rare race where the user changes a setting before _init()
+  /// finishes initializing _cache).
+  void _savePref(String key, Object? value) {
+    try {
+      _cache.put(key, value);
+    } catch (_) {}
+  }
+
   void _showSnack(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -2578,7 +2624,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       'Comfortable night-time reading',
                                   Icons.dark_mode_rounded,
                                   _darkMode,
-                                  (v) => _darkMode = v,
+                                  (v) {
+                                    _darkMode = v;
+                                    _savePref('pref_dark_mode', v);
+                                  },
                                 ),
                                 sTile(
                                   AppLocalizations.of(context)?.focusMode ??
@@ -2665,13 +2714,16 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                             alpha: 0.2,
                                           ),
                                           onChanged: (v) {
+                                            final tFs =
+                                                12.0 +
+                                                (v - 20.0) * (10.0 / 24.0);
                                             setSt(() {
                                               _arabicFontSize = v;
-                                              _translationFontSize =
-                                                  12.0 +
-                                                  (v - 20.0) * (10.0 / 24.0);
+                                              _translationFontSize = tFs;
                                             });
                                             setState(() {});
+                                            _savePref('pref_arabic_fs', v);
+                                            _savePref('pref_trans_fs', tFs);
                                           },
                                         ),
                                         Row(
@@ -2915,6 +2967,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                               setState(
                                                 () => _quranScriptIdx = i,
                                               );
+                                              _savePref('pref_script_idx', i);
                                               _fetchAyah(
                                                 _surah,
                                                 _ayah,
@@ -3033,7 +3086,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       'Display meaning below each verse',
                                   Icons.translate_rounded,
                                   _showTranslation,
-                                  (v) => _showTranslation = v,
+                                  (v) {
+                                    _showTranslation = v;
+                                    _savePref('pref_show_translation', v);
+                                  },
+                                ),
+                                sTile(
+                                  'Show Transliteration',
+                                  'Romanised pronunciation under each word',
+                                  Icons.spellcheck_rounded,
+                                  _showTransliteration,
+                                  (v) {
+                                    _showTransliteration = v;
+                                    _savePref('pref_show_transliteration', v);
+                                  },
                                 ),
                                 sTile(
                                   AppLocalizations.of(
@@ -3046,20 +3112,26 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       'Progress bar & ayah count card',
                                   Icons.bar_chart_rounded,
                                   _showProgressCard,
-                                  (v) => _showProgressCard = v,
+                                  (v) {
+                                    _showProgressCard = v;
+                                    _savePref('pref_show_progress', v);
+                                  },
                                 ),
                                 sTile(
                                   AppLocalizations.of(
                                         context,
                                       )?.showPointsBanner ??
-                                      'Show Points Banner',
+                                      'Show Seeds Banner',
                                   AppLocalizations.of(
                                         context,
                                       )?.noorPointsNotificationStrip ??
                                       '+Sabiq Seeds notification strip',
                                   Icons.nights_stay_rounded,
                                   _showPointsBanner,
-                                  (v) => _showPointsBanner = v,
+                                  (v) {
+                                    _showPointsBanner = v;
+                                    _savePref('pref_show_points_banner', v);
+                                  },
                                 ),
                                 sTile(
                                   AppLocalizations.of(
@@ -3072,7 +3144,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       'Surah name banner at top of page',
                                   Icons.menu_book_rounded,
                                   _showSurahBanner,
-                                  (v) => _showSurahBanner = v,
+                                  (v) {
+                                    _showSurahBanner = v;
+                                    _savePref('pref_show_surah_banner', v);
+                                  },
                                 ),
 
                                 // ═ AUDIO & PLAYBACK
@@ -4358,7 +4433,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const SabiqCoin(size: 12),
+                                        const SabiqCoin(size: 18),
                                         const SizedBox(width: 4),
                                         Text(
                                           '+$_pointsToday ${_pointsToday == 1 ? 'Seed' : 'Seeds'}',
@@ -4596,6 +4671,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     ),
                     transliteration: w['transliteration'] as String? ?? '',
                     translation: w['translation'] as String? ?? '',
+                    showTransliteration: _showTransliteration,
                     arabicFontSize: _arabicFontSize * 0.95,
                     quranScriptIdx: _quranScriptIdx,
                     accentColor: _accent,
@@ -4714,7 +4790,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         color: Colors.white,
                       ),
               label: Text(
-                '${AppLocalizations.of(context)?.next ?? 'Next'} +10 pts',
+                '${AppLocalizations.of(context)?.next ?? 'Next'} +10 Seeds',
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -5919,6 +5995,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             () {
                               setModalState(() {});
                               setState(() => _mushafSplitTranslation = false);
+                              _savePref('pref_mushaf_split_trans', false);
                             },
                           ),
                         ),
@@ -5932,6 +6009,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             () {
                               setModalState(() {});
                               setState(() => _mushafSplitTranslation = true);
+                              _savePref('pref_mushaf_split_trans', true);
                               for (final entry in _loadedPages.entries) {
                                 _fetchMushafTranslations(entry.value);
                               }
@@ -5958,6 +6036,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               onTap: () {
                                 setModalState(() => _quranScriptIdx = i);
                                 setState(() => _quranScriptIdx = i);
+                                _savePref('pref_script_idx', i);
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -6025,6 +6104,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   ),
                             );
                             setState(() {});
+                            _savePref('pref_mushaf_fs', _mushafFontSize);
                           },
                         ),
                         Expanded(
@@ -6043,6 +6123,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               onChanged: (v) {
                                 setModalState(() => _mushafFontSize = v);
                                 setState(() {});
+                                _savePref('pref_mushaf_fs', v);
                               },
                             ),
                           ),
@@ -6058,6 +6139,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   ),
                             );
                             setState(() {});
+                            _savePref('pref_mushaf_fs', _mushafFontSize);
                           },
                         ),
                         Text(
@@ -6108,6 +6190,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             () {
                               setModalState(() => _darkMode = !_darkMode);
                               setState(() {});
+                              _savePref('pref_dark_mode', _darkMode);
                             },
                           ),
                         ),
@@ -6510,6 +6593,7 @@ class _WbwWordChip extends StatefulWidget {
   final String arabic;
   final String transliteration;
   final String translation;
+  final bool showTransliteration;
   final double arabicFontSize;
   final int quranScriptIdx;
   final Color accentColor;
@@ -6521,6 +6605,7 @@ class _WbwWordChip extends StatefulWidget {
     required this.arabic,
     required this.transliteration,
     required this.translation,
+    required this.showTransliteration,
     required this.arabicFontSize,
     required this.quranScriptIdx,
     required this.accentColor,
@@ -6619,8 +6704,10 @@ class _WbwWordChipState extends State<_WbwWordChip>
                 ),
               ),
               const SizedBox(height: 4),
-              // Transliteration (italic, always black for readability) — only if non-empty
-              if (widget.transliteration.isNotEmpty) ...[
+              // Transliteration (italic, always black for readability) —
+              // shown only when the user toggle is on AND text is non-empty.
+              if (widget.showTransliteration &&
+                  widget.transliteration.isNotEmpty) ...[
                 Text(
                   widget.transliteration,
                   textAlign: TextAlign.center,

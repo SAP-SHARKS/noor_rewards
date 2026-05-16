@@ -1405,7 +1405,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _goalRow(
             icon: Icons.wb_sunny_rounded,
             label: 'Daily Goal',
-            value: '${ss.dayGoal} pts',
+            value: '${ss.dayGoal} Seeds',
             color: const Color(0xFF00897B),
             isFirst: true,
             onTap: () => _showGoalEditor(
@@ -1419,7 +1419,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _goalRow(
             icon: Icons.date_range_rounded,
             label: 'Weekly Goal',
-            value: '${ss.weekGoal} pts',
+            value: '${ss.weekGoal} Seeds',
             color: const Color(0xFF5C6BC0),
             onTap: () => _showGoalEditor(
               title: 'Weekly Goal',
@@ -1432,7 +1432,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _goalRow(
             icon: Icons.calendar_month_rounded,
             label: 'Monthly Goal',
-            value: '${ss.monthGoal} pts',
+            value: '${ss.monthGoal} Seeds',
             color: const Color(0xFFE91E8C),
             isLast: true,
             onTap: () => _showGoalEditor(
@@ -1550,7 +1550,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Set your target points (default: $defaultVal)',
+                  'Set your target Seeds (default: $defaultVal)',
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     color: _pSub,

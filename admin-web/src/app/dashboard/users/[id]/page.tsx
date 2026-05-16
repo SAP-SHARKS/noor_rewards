@@ -308,7 +308,10 @@ export default function UserDetailPage() {
           </svg>
         </button>
         <div className="flex-1 min-w-0">
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">
+          <h2
+            className="text-3xl font-bold tracking-tight"
+            style={{ color: "#000000" }}
+          >
             {profile.display_name || "Anonymous"}{" "}
             <span className="ml-1">
               {countryFlag(analytics?.country_code ?? profile.country)}

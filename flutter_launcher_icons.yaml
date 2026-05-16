@@ -1,5 +1,10 @@
 flutter_launcher_icons:
-  android: "launcher_icon"
+  # Use the standard `ic_launcher` name. Some Android launchers, the
+  # "Search apps" surface, and certain OEM (Samsung/Xiaomi) UI contexts
+  # fall back to `@mipmap/ic_launcher` regardless of what the manifest
+  # declares, so a custom name leaves stale Flutter-template icons
+  # visible in those places.
+  android: true
   ios: true
   image_path: "assets/images/Logo.png"
   min_sdk_android: 21 # android min sdk min:16, default 21

@@ -283,7 +283,7 @@ class XpService {
       NotificationCenter.instance.add(
         kind: NoorNotifKind.reward,
         title: 'Daily login bonus',
-        body: '+${PointReward.dailyLogin} Noor Points · welcome back!',
+        body: '+${PointReward.dailyLogin} Seeds · welcome back!',
         route: '/journey',
       );
       return true;

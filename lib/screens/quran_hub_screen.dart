@@ -1248,7 +1248,7 @@ class _ProgressStrip extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      '+${ayahsToday * 10} pts',
+                      '+${ayahsToday * 10} Seeds',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,

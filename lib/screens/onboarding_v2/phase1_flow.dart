@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../services/onboarding_assets_service.dart';
 import 'phase1_screens.dart';
 import 'widgets/onboarding_tokens.dart';
 
@@ -20,6 +21,21 @@ class Phase1Flow extends StatefulWidget {
 class _Phase1FlowState extends State<Phase1Flow> {
   final _pc = PageController();
   bool _completing = false;
+  bool _prefetched = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_prefetched) {
+      _prefetched = true;
+      // Start decoding every onboarding image into Flutter's image cache
+      // right now, before the user has swiped past the first slide. The
+      // URLs are already cached in Hive from a prior session or were
+      // refreshed during app init, so this is a pure bytes-into-memory
+      // warm-up — no spinners on subsequent slides.
+      OnboardingAssetsService.instance.precacheAll(context);
+    }
+  }
 
   @override
   void dispose() {

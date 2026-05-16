@@ -285,8 +285,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     await prefs.setString('pending_reminder_date', today);
     NotificationCenter.instance.add(
       kind: NoorNotifKind.validation,
-      title: 'Points expiring at midnight!',
-      body: 'You have $pending points pending. Seal the Day now or they expire!',
+      title: 'Seeds expiring at midnight!',
+      body: 'You have $pending Seeds pending. Seal the Day now or they expire!',
       route: '/home',
     );
   }
@@ -910,7 +910,7 @@ class _HomeTabState extends State<_HomeTab> {
         }
       }
 
-      // Also refresh current_points from actual donation totals
+      // Also refresh current_points from actual donation totals.
       final pids = data.map((d) => d['id'] as String).toList();
       final sumRes = await Supabase.instance.client
           .from('user_donations')
@@ -924,8 +924,14 @@ class _HomeTabState extends State<_HomeTab> {
             (totalPts[pid] ?? 0) +
             ((r['points_donated'] as num?)?.toInt() ?? 0);
       }
+      // Distinct donor counts come from a SECURITY DEFINER RPC. A direct
+      // read of user_donations is limited by Row-Level Security to the
+      // signed-in user's own rows, so it cannot see other contributors.
+      final donorCounts =
+          await DonationService.instance.getProjectDonorCounts();
       for (final d in data) {
         d['current_points'] = totalPts[d['id']] ?? 0;
+        d['donor_count'] = donorCounts[d['id']] ?? 0;
       }
 
       if (mounted) setState(() => _myDonations = data);
@@ -959,7 +965,7 @@ class _HomeTabState extends State<_HomeTab> {
         _recentBadgeName != null
             ? (l10n?.lastAchievement(_recentBadgeName!) ??
                 'Last: ${_recentBadgeName!}')
-            : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} pts';
+            : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} Seeds';
     final inviteSub = l10n?.earnPerFriend ?? 'Earn +500 per friend';
 
     return Container(
@@ -1486,7 +1492,7 @@ class _InviteSheetState extends State<_InviteSheet>
       'https://noorrewards.app/join?ref=${widget.referralCode}';
 
   String get _shareMessage =>
-      'Join me on Sabiq Rewards — earn points for daily Quran, Dhikr & good deeds!\n\n'
+      'Join me on Sabiq Rewards — earn Seeds for daily Quran, Dhikr & good deeds!\n\n'
       'Use my code *${widget.referralCode}* and we both get 500 Sabiq Seeds!\n\n'
       '$_shareLink';
 
@@ -2852,7 +2858,7 @@ class _ProgBar extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: '/ $goal pts',
+                      text: '/ $goal Seeds',
                       style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
                     ),
                   ],
@@ -3569,7 +3575,7 @@ class _MyDonationsSection extends StatelessWidget {
                                     color: Y4.ink,
                                   ),
                                 ),
-                                const SabiqCoin(size: 14),
+                                const SabiqCoin(size: 22),
                                 const SizedBox(width: 4),
                                 Text(
                                   '${fmt(target)} Seeds',
@@ -3702,7 +3708,7 @@ class _Y4DonateChip extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SabiqCoin(size: 12),
+                const SabiqCoin(size: 22),
                 const SizedBox(width: 4),
                 Text(
                   '$amount Seeds',
@@ -3891,7 +3897,7 @@ class _NoorCounterState extends State<_NoorCounter>
                         AppLocalizations.of(
                               context,
                             )?.yourTotalNoorPoints.toUpperCase() ??
-                            'YOUR TOTAL NOOR POINTS',
+                            'YOUR TOTAL SABIQ SEEDS',
                         style: GoogleFonts.rajdhani(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -4498,6 +4504,8 @@ class _ProjectCard extends StatelessWidget {
 
                   Row(
                     children: [
+                      const SabiqCoin(size: 16),
+                      const SizedBox(width: 4),
                       Text(
                         '${fmtM(current)} / ${fmtM(target)} Seeds',
                         style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
@@ -4725,7 +4733,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'You donated $_selectedAmount points to\n${widget.project['title']}.',
+                  'You donated $_selectedAmount Seeds to\n${widget.project['title']}.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
                     fontSize: 16,
@@ -4780,7 +4788,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      NoorIcon.coin(size: 18),
+                      const SabiqCoin(size: 18),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
@@ -4876,7 +4884,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
-                        'points',
+                        'Seeds',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -5146,7 +5154,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                   ),
                                 ),
                                 Text(
-                                  'Top contributors by lifetime pts',
+                                  'Top contributors by lifetime Seeds',
                                   style: GoogleFonts.outfit(
                                     fontSize: 12,
                                     color: _C.sub,
@@ -5398,7 +5406,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                             ),
                                           ),
                                           Text(
-                                            '$pts pts',
+                                            '$pts Seeds',
                                             style: GoogleFonts.outfit(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w700,
@@ -5477,7 +5485,7 @@ class _ProfileTabState extends State<_ProfileTab> {
             .select()
             .order('total_xp', ascending: false)
             .limit(10),
-        // Query 2: my own row (to get my XP for rank calculation)
+        // Query 2: my own row (to get my Seeds total for rank calculation)
         Supabase.instance.client
             .from('leaderboard_global')
             .select('total_xp')
@@ -5492,14 +5500,14 @@ class _ProfileTabState extends State<_ProfileTab> {
               ? (myRows.first['total_xp'] as num?)?.toInt() ?? 0
               : 0;
 
-      // Rank within top-10: count how many have more XP than me + 1
+      // Rank within top-10: count how many have more Seeds than me + 1
       final posInTop10 = _leaders.indexWhere(
         (p) => p['id'] == widget.currentUserId,
       );
       if (posInTop10 >= 0) {
         _myRank = posInTop10 + 1;
       } else {
-        // Not in top 10 — count how many top-10 members beat my XP
+        // Not in top 10 — count how many top-10 members beat my Seeds total
         final beatenBy =
             _leaders
                 .where((p) => ((p['total_xp'] as num?)?.toInt() ?? 0) > myXp)
@@ -5841,7 +5849,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                         AppLocalizations.of(
                                               context,
                                             )?.topContributors ??
-                                            'Top contributors by lifetime pts',
+                                            'Top contributors by lifetime Seeds',
                                         style: GoogleFonts.outfit(
                                           fontSize: 11,
                                           color: _C.sub,
@@ -6059,7 +6067,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                       ),
                                     ),
                                     Text(
-                                      '$pts pts',
+                                      '$pts Seeds',
                                       style: GoogleFonts.outfit(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
@@ -6406,6 +6414,12 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
   // Idle shimmer on text
   late AnimationController _shimmerCtrl;
 
+  // Pending-pill: drop-in from above + slow glow pulse.
+  late AnimationController _pendingDropCtrl;
+  late Animation<double> _pendingDropAnim;
+  late AnimationController _pendingPulseCtrl;
+  late Animation<double> _pendingPulseAnim;
+
   @override
   void initState() {
     super.initState();
@@ -6466,6 +6480,38 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
       vsync: this,
       duration: const Duration(milliseconds: 1600),
     )..repeat(reverse: true);
+
+    _pendingDropCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 720),
+    );
+    _pendingDropAnim = CurvedAnimation(
+      parent: _pendingDropCtrl,
+      curve: Curves.elasticOut,
+    );
+    _pendingPulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+    _pendingPulseAnim = CurvedAnimation(
+      parent: _pendingPulseCtrl,
+      curve: Curves.easeInOut,
+    );
+    if (widget.pendingPoints > 0) {
+      Future.delayed(const Duration(milliseconds: 240), () {
+        if (mounted) _pendingDropCtrl.forward(from: 0);
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(_SwipeValidateButton old) {
+    super.didUpdateWidget(old);
+    // Re-drop the pill whenever pending transitions from 0 to a positive
+    // value (e.g. user just earned new seeds and returned to the dashboard).
+    if (old.pendingPoints <= 0 && widget.pendingPoints > 0) {
+      _pendingDropCtrl.forward(from: 0);
+    }
   }
 
   @override
@@ -6478,6 +6524,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     _haloCtrl.dispose();
     _fillCtrl.dispose();
     _shimmerCtrl.dispose();
+    _pendingDropCtrl.dispose();
+    _pendingPulseCtrl.dispose();
     super.dispose();
   }
 
@@ -6637,6 +6685,151 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     });
   }
 
+  // ── Daily-reset countdown label ──────────────────────────────────────
+  // Local-time clock: pending seeds expire at the user's local midnight,
+  // so we count down to the next 00:00. Returns "Resets in 2h" or
+  // "Resets in 45m" depending on how close we are.
+  String _untilResetLabel() {
+    final now = DateTime.now();
+    final nextMidnight = DateTime(now.year, now.month, now.day + 1);
+    final diff = nextMidnight.difference(now);
+    if (diff.inHours >= 1) return 'Resets in ${diff.inHours}h';
+    if (diff.inMinutes >= 1) return 'Resets in ${diff.inMinutes}m';
+    return 'Resets soon';
+  }
+
+  // ── Pending-seeds pill (drops in above the seal track) ──────────────
+  // Shares the emerald gradient with the seal slider so the eye reads them
+  // as one component — the seeds the user is about to lock in, and the
+  // action that locks them in. Hidden while the seal animation plays.
+  Widget _buildPendingPill() {
+    final pending = widget.pendingPoints;
+    if (pending <= 0 || _completed) return const SizedBox.shrink();
+
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pendingDropAnim, _pendingPulseAnim]),
+      builder: (_, __) {
+        final t = _pendingDropAnim.value.clamp(0.0, 1.0);
+        final pulse = _pendingPulseAnim.value; // 0..1
+        // Slide down from -22px with the elastic curve already applied.
+        final dy = (1 - t) * -22;
+        final fade = (_pendingDropAnim.value * 1.4).clamp(0.0, 1.0);
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Center(
+            child: Transform.translate(
+              offset: Offset(0, dy),
+              child: Opacity(
+                opacity: fade,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 14, 8),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF4A9B8E), Color(0xFF1F4F3D)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Y4.butter.withValues(alpha: 0.55),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF1F4F3D).withValues(alpha: 0.32),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                      BoxShadow(
+                        color: Y4.honey.withValues(
+                          alpha: 0.22 + 0.18 * pulse,
+                        ),
+                        blurRadius: 16 + 6 * pulse,
+                        spreadRadius: 0.5 + 1.0 * pulse,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Bright butter-coin badge — pops against emerald.
+                      Container(
+                        width: 22,
+                        height: 22,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const RadialGradient(
+                            colors: [Y4.butter, Y4.honey],
+                            radius: 0.85,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Y4.honey.withValues(
+                                alpha: 0.55 + 0.25 * pulse,
+                              ),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          '+',
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            color: Y4.ink,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Text(
+                        '$pending ${pending == 1 ? 'Seed' : 'Seeds'} pending',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                          color: Y4.butter,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 1,
+                        height: 14,
+                        color: Y4.butter.withValues(alpha: 0.35),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Seal to save',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                          color: Y4.butter.withValues(alpha: 0.88),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      // Subtle bobbing chevron — visually points to the
+                      // seal slider directly below.
+                      Transform.translate(
+                        offset: Offset(0, 1 + 1.5 * pulse),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 18,
+                          color: Y4.butter,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -6664,7 +6857,11 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
             _particleCtrl,
           ]),
           builder: (_, __) {
-            return GestureDetector(
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildPendingPill(),
+                GestureDetector(
               onHorizontalDragStart: _onPanStart,
               onHorizontalDragUpdate: (d) => _onPanUpdate(d, maxDrag),
               onHorizontalDragEnd: (_) => _onPanEnd(maxDrag),
@@ -6673,23 +6870,28 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    // ── Track background — butter/honey (matches activity cards) ──
+                    // ── Track background — emerald (so the pill pops off
+                    // the honey-wash dashboard and matches the seed coin's
+                    // emerald inner disc).
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Y4.butter, Y4.honey],
+                            colors: [
+                              Color(0xFF4A9B8E), // emerald
+                              Color(0xFF1F4F3D), // emerald deep
+                            ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(radius),
                           border: Border.all(
-                            color: Y4.honey.withValues(alpha: 0.5),
+                            color: const Color(0xFF1F4F3D).withValues(alpha: 0.6),
                             width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.honey.withValues(alpha: 0.30),
+                              color: const Color(0xFF1F4F3D).withValues(alpha: 0.30),
                               blurRadius: 20,
                               offset: const Offset(0, 6),
                             ),
@@ -6773,20 +6975,72 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         ),
                       ),
 
-                    // ── Centre label — ink on butter/honey bg ────────────
+                    // ── Centre label — cream on emerald bg ───────────────
+                    // Split label: action on the left, daily-reset countdown
+                    // on the right, with a hairline divider between them.
+                    // FittedBox lets each half shrink instead of overflowing
+                    // on narrow phones (320pt-class devices).
                     if (!_completed)
-                      Center(
-                        child: Opacity(
-                          opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
-                          child: Text(
-                            (AppLocalizations.of(context)?.sealTheDay ??
-                                    'Seal the Day') +
-                                '  ✨',
-                            style: GoogleFonts.rajdhani(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: Y4.ink,
-                              letterSpacing: 1.5,
+                      Positioned(
+                        left: _padding + _thumbSize + 6,
+                        right: _padding + _thumbSize + 6,
+                        top: 0,
+                        bottom: 0,
+                        child: IgnorePointer(
+                          child: Opacity(
+                            opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        AppLocalizations.of(
+                                              context,
+                                            )?.sealTheDay ??
+                                            'Seal the Day',
+                                        maxLines: 1,
+                                        style: GoogleFonts.rajdhani(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w800,
+                                          color: const Color(0xFFFAF3E3),
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: 1,
+                                  height: 22,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  color: const Color(
+                                    0xFFFAF3E3,
+                                  ).withValues(alpha: 0.32),
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        _untilResetLabel(),
+                                        maxLines: 1,
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(
+                                            0xFFFAF3E3,
+                                          ).withValues(alpha: 0.85),
+                                          letterSpacing: 0.3,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -6797,7 +7051,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       Center(
                         child: Text(
                           _freshXp
-                              ? 'JazakAllah!  +${PointReward.validate} pts'
+                              ? 'JazakAllah!  +${PointReward.validate} Seeds'
                               : AppLocalizations.of(context)?.alreadySealed ??
                                   'Already sealed today',
                           style: GoogleFonts.rajdhani(
@@ -6810,21 +7064,9 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       ),
 
                     // ── Lightning arc flash ───────────────────────────────
-                    if (_arcAnim.value > 0 && !_completed)
-                      Positioned.fill(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(radius),
-                          child: CustomPaint(
-                            painter: _ArcPainter(
-                              fromX: knobCx,
-                              toX: socketCx,
-                              cy: trackCy,
-                              progress: _arcAnim.value,
-                              color: _neonGreen,
-                            ),
-                          ),
-                        ),
-                      ),
+                    // Note: the knob-to-socket connecting arc was removed
+                    // per design — only the localized socket flash on
+                    // completion remains below.
                     if (_arcAnim.value > 0 && _completed)
                       Positioned.fill(
                         child: ClipRRect(
@@ -6874,6 +7116,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                   ],
                 ),
               ),
+            ),
+              ],
             );
           },
         );
@@ -6952,32 +7196,48 @@ class _SocketWidget extends StatelessWidget {
                 ),
               ),
             ),
-            // Ring border
+            // Ring border + dark "soil" fill so the seedling pops. The
+            // previous butter-cream fill was the same hue as the seedling
+            // icon and washed it out completely.
             Container(
               width: size - 6,
               height: size - 6,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFF2F6B53).withValues(
+                      alpha: 0.55 + proximity * 0.25,
+                    ),
+                    const Color(0xFF143A2C).withValues(
+                      alpha: 0.70 + proximity * 0.25,
+                    ),
+                  ],
+                ),
                 border: Border.all(
-                  color: neonGreen.withValues(alpha: 0.20 + proximity * 0.55),
+                  color: socketRing.withValues(alpha: 0.55 + proximity * 0.35),
                   width: 1.5,
                 ),
-                color: socketRing.withValues(alpha: 0.3 + proximity * 0.3),
               ),
             ),
-            // Inner ring
+            // Inner ring — butter accent so the socket still reads as the
+            // golden goal at the end of the track.
             Container(
               width: size - 18,
               height: size - 18,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: neonGreen.withValues(alpha: 0.10 + proximity * 0.40),
+                  color: socketRing.withValues(alpha: 0.25 + proximity * 0.45),
                   width: 1,
                 ),
               ),
             ),
-            NoorIcon.sparkles(size: 18),
+            // The S coin (seed) sits on the left socket; this end shows
+            // the seedling sprouting from it — completing the "seed →
+            // sprout" metaphor as the user seals the day. Sized up from
+            // 20 → 26 to read at a glance against the dark soil fill.
+            NoorIcon.seedling(size: 26),
           ],
         ),
       ),
@@ -7066,67 +7326,30 @@ class _OrbWidget extends StatelessWidget {
             ),
           ),
 
-          // ── Orb body ──────────────────────────────────────────────────
+          // ── Orb body (Sabiq Seed coin) ────────────────────────────────
           Transform.scale(
             scale: snapScale,
             child: Container(
               width: size,
               height: size,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                gradient:
-                    completed && freshXp
-                        ? const RadialGradient(
-                          colors: [
-                            Color(0xFFFFEEAA),
-                            Color(0xFFFFD166),
-                            Color(0xFF8B5E00),
-                          ],
-                          stops: [0.0, 0.55, 1.0],
-                          center: Alignment(-0.25, -0.3),
-                        )
-                        : RadialGradient(
-                          colors: [
-                            Color.lerp(
-                              const Color(0xFFFFFFCC),
-                              const Color(0xFFFFFFFF),
-                              pct,
-                            )!,
-                            Color.lerp(
-                              const Color(0xFFFFB300),
-                              const Color(0xFFFFE033),
-                              pct,
-                            )!,
-                            Color.lerp(
-                              const Color(0xFFCC7700),
-                              const Color(0xFFFF9500),
-                              pct,
-                            )!,
-                          ],
-                          stops: const [0.0, 0.5, 1.0],
-                          center: const Alignment(-0.25, -0.3),
-                        ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.30),
+                    color: Color(0x4D000000),
                     blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                   BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Color(0x80FFFFFF),
                     blurRadius: 4,
-                    offset: const Offset(-1, -2),
+                    offset: Offset(-1, -2),
                   ),
                 ],
               ),
-              child: Center(
-                child:
-                    completed
-                        ? (freshXp
-                            ? NoorIcon.sun(size: 26)
-                            : NoorIcon.check(size: 22))
-                        : NoorIcon.sun(size: 24),
-              ),
+              child: completed && !freshXp
+                  ? Center(child: NoorIcon.check(size: size * 0.55))
+                  : SabiqCoin(size: size, sprouting: completed && freshXp),
             ),
           ),
 
@@ -7724,53 +7947,11 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          AppLocalizations.of(context)?.noorPointsBloomed ??
-                              'Sabiq Seeds bloomed',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Y4.inkSoft,
-                          ),
-                        ),
-                        if (widget.pendingPoints > 0) ...[
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Y4.honeyDeep.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Y4.honeyDeep.withValues(alpha: 0.3),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const SabiqCoin(size: 14),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    '+${widget.pendingPoints} '
-                                    '${widget.pendingPoints == 1 ? 'Seed' : 'Seeds'} '
-                                    'pending — seal to keep',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      color: Y4.honeyDeep,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        // "Sabiq Seeds bloomed" caption removed — the big
+                        // honey-deep number plus the seed coin already read
+                        // as the wallet total without an extra label.
+                        // Pending-seeds messaging lives in the drop-in pill
+                        // above the Seal-the-Day slider.
                       ],
                     ),
                   ),
@@ -8053,11 +8234,22 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
           const SizedBox(height: 10),
           Row(
             children: [
-              _Y4SunArc(pct: pct),
+              // Animate between the tab's pct values so the swap is
+              // visually unambiguous — without this the arc snaps and on
+              // similar values looks like nothing changed.
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: pct.toDouble()),
+                duration: const Duration(milliseconds: 450),
+                curve: Curves.easeOutCubic,
+                builder: (_, v, __) => _Y4SunArc(pct: v),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // Align number + "of X week goal" to the right edge so
+                  // they sit directly under the Today/Week/Month tab pill
+                  // above (which is pinned to the card's right edge).
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       widget.hasError ? '---' : fmt(pts),

@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../services/onboarding_assets_service.dart';
 import 'phase2_screens.dart';
 import 'widgets/onboarding_tokens.dart';
 
@@ -24,11 +25,23 @@ class Phase2Flow extends StatefulWidget {
 class _Phase2FlowState extends State<Phase2Flow> {
   String _name = '';
   int _step = 0;
+  bool _prefetched = false;
 
   @override
   void initState() {
     super.initState();
     _name = widget.initialName;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_prefetched) {
+      _prefetched = true;
+      // Warm the image cache so the cause cards on Screen 9 paint
+      // instantly when the user advances from Screen 8 (name input).
+      OnboardingAssetsService.instance.precacheAll(context);
+    }
   }
 
   @override

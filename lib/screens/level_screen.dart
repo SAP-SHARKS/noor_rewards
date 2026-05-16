@@ -159,6 +159,9 @@ class _LevelScreenState extends State<LevelScreen>
   List<Map<String, dynamic>> _challenges = [];
   StreakSnapshot? _streakSnap;
   bool _loading = true;
+  // Captures any thrown error from _loadAll so the UI can show a retry
+  // instead of getting stuck on the spinner (the "blank Journey page" bug).
+  Object? _loadError;
 
   @override
   void initState() {
@@ -174,26 +177,40 @@ class _LevelScreenState extends State<LevelScreen>
   }
 
   Future<void> _loadAll() async {
-    setState(() => _loading = true);
-    // Run all fetches in parallel — total time = max(t1..t5) not the sum
-    final results = await Future.wait([
-      _xp.loadProfile(),
-      _xp.loadLevels(),
-      _xp.loadBadges(),
-      _xp.loadChallenges(),
-      StreakService.instance.loadSnapshot(),
-    ]);
+    if (mounted) {
+      setState(() {
+        _loading = true;
+        _loadError = null;
+      });
+    }
+    try {
+      // Run all fetches in parallel — total time = max(t1..t5) not the sum
+      final results = await Future.wait([
+        _xp.loadProfile(),
+        _xp.loadLevels(),
+        _xp.loadBadges(),
+        _xp.loadChallenges(),
+        StreakService.instance.loadSnapshot(),
+      ]);
 
-    final profile = results[0] as ({int pts, int level, int streak});
-    _currentXp = profile.pts;
-    _currentLevel = profile.level;
-    _streak = profile.streak;
-    _allLevels = results[1] as List<Map<String, dynamic>>;
-    _badges = results[2] as List<BadgeInfo>;
-    _challenges = results[3] as List<Map<String, dynamic>>;
-    _streakSnap = results[4] as StreakSnapshot;
-    _levelInfo = _xp.resolveLevelInfo(_currentXp, _currentLevel, _allLevels);
-    if (mounted) setState(() => _loading = false);
+      final profile = results[0] as ({int pts, int level, int streak});
+      _currentXp = profile.pts;
+      _currentLevel = profile.level;
+      _streak = profile.streak;
+      _allLevels = results[1] as List<Map<String, dynamic>>;
+      _badges = results[2] as List<BadgeInfo>;
+      _challenges = results[3] as List<Map<String, dynamic>>;
+      _streakSnap = results[4] as StreakSnapshot;
+      _levelInfo = _xp.resolveLevelInfo(_currentXp, _currentLevel, _allLevels);
+    } catch (e, st) {
+      // Without this, any one failing parallel fetch (transient network,
+      // auth-token refresh race, RLS hiccup, cold-start profile row) left
+      // _loading stuck true forever and the tab rendered as blank.
+      debugPrint('LevelScreen load failed: $e\n$st');
+      if (mounted) _loadError = e;
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
@@ -244,7 +261,47 @@ class _LevelScreenState extends State<LevelScreen>
       ),
       body:
           _loading
-              ? const Center(child: NoorInlineLoader())
+              ? Center(child: NoorInlineLoader(color: Y4.honeyDeep))
+              : _loadError != null
+              ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.cloud_off_rounded,
+                        size: 48,
+                        color: Y4.inkSoft,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        "Couldn't load your Journey",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Y4.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Check your connection and try again.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          color: Y4.inkSoft,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton(
+                        onPressed: _loadAll,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                ),
+              )
               : TabBarView(
                 controller: _tabs,
                 children: [
@@ -545,7 +602,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                                         curve: Curves.easeOut,
                                         builder:
                                             (_, v, __) => Text(
-                                              '$v pts',
+                                              '$v Seeds',
                                               style: GoogleFonts.rajdhani(
                                                 fontSize: 32,
                                                 fontWeight: FontWeight.w900,
@@ -737,33 +794,33 @@ class _ProgressTabState extends State<_ProgressTab> {
                 _XpRow(
                   NoorIcon.book(size: 20),
                   l.readOneAyah,
-                  '+${PointReward.ayahRead} pts',
+                  '+${PointReward.ayahRead} Seeds',
                 ),
                 _XpRow(
                   NoorIcon.books(size: 20),
                   l.completeOneJuz,
-                  '+${PointReward.juzComplete} pts',
+                  '+${PointReward.juzComplete} Seeds',
                 ),
                 if (_showAllXpGuide) ...[
                   _XpRow(
                     NoorIcon.beads(size: 20),
                     'SubhanAllah x33',
-                    '+${PointReward.dhikr} pts',
+                    '+${PointReward.dhikr} Seeds',
                   ),
                   _XpRow(
                     NoorIcon.beads(size: 20),
                     'La ilaha illallah x100',
-                    '+${PointReward.dhikr} pts',
+                    '+${PointReward.dhikr} Seeds',
                   ),
                   _XpRow(
                     NoorIcon.sunrise(size: 20),
                     l.dailyLogin,
-                    '+${PointReward.dailyLogin} pts',
+                    '+${PointReward.dailyLogin} Seeds',
                   ),
                   _XpRow(
                     NoorIcon.sparkles(size: 20),
                     l.validateAndSupport,
-                    '+${PointReward.validate} pts',
+                    '+${PointReward.validate} Seeds',
                   ),
                 ],
                 GestureDetector(
@@ -832,7 +889,7 @@ class _ProgressTabState extends State<_ProgressTab> {
       title: 'Seeker',
       emoji: '🌱',
       range: '1–5',
-      pts: '0–500 pts',
+      pts: '0–500 Seeds',
       color: Color(0xFF78C1F3),
       unlocks: 'Basic features',
     ),
@@ -840,7 +897,7 @@ class _ProgressTabState extends State<_ProgressTab> {
       title: 'Believer',
       emoji: '🌟',
       range: '6–10',
-      pts: '500–1,500 pts',
+      pts: '500–1,500 Seeds',
       color: Color(0xFF4CAF50),
       unlocks: 'Custom profile themes',
     ),
@@ -848,7 +905,7 @@ class _ProgressTabState extends State<_ProgressTab> {
       title: 'Devoted',
       emoji: '💜',
       range: '11–20',
-      pts: '1,500–5,000 pts',
+      pts: '1,500–5,000 Seeds',
       color: Color(0xFFAB47BC),
       unlocks: 'Leaderboard badge',
     ),
@@ -856,7 +913,7 @@ class _ProgressTabState extends State<_ProgressTab> {
       title: 'Champion',
       emoji: '🏆',
       range: '21–50',
-      pts: '5,000–20,000 pts',
+      pts: '5,000–20,000 Seeds',
       color: Color(0xFFF5A623),
       unlocks: 'Exclusive voting rights',
     ),
@@ -864,7 +921,7 @@ class _ProgressTabState extends State<_ProgressTab> {
       title: 'Legend',
       emoji: '👑',
       range: '50+',
-      pts: '20,000+ pts',
+      pts: '20,000+ Seeds',
       color: Color(0xFFE53935),
       unlocks: 'Hall of Fame listing',
     ),
@@ -1462,8 +1519,8 @@ class _BadgeCard extends StatelessWidget {
               ),
               child: Text(
                 earned
-                    ? '+${badge.ptsReward} pts ✓'
-                    : '+${badge.ptsReward} pts',
+                    ? '+${badge.ptsReward} Seeds ✓'
+                    : '+${badge.ptsReward} Seeds',
                 style: GoogleFonts.rajdhani(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -1756,11 +1813,11 @@ class _ChallengeCard extends StatelessWidget {
           Wrap(
             spacing: 8,
             children: [
-              if (ptsReward > 0) _RewardChip('+$ptsReward pts', cardColor),
-              if (coinReward > 0) _RewardChip('+$coinReward Noor', _kGold),
+              if (ptsReward > 0) _RewardChip('+$ptsReward Seeds', cardColor),
+              if (coinReward > 0) _RewardChip('+$coinReward Seeds', _kGold),
               if (multiplier > 1.0)
                 _RewardChip(
-                  '${multiplier.toStringAsFixed(0)}× pts Boost',
+                  '${multiplier.toStringAsFixed(0)}× Seeds Boost',
                   Colors.orange,
                 ),
               if (endDate.isNotEmpty)
@@ -1891,7 +1948,7 @@ class _BreakdownChip extends StatelessWidget {
                 ),
               ),
               Text(
-                '+$pts pts',
+                '+$pts Seeds',
                 style: GoogleFonts.outfit(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -1985,7 +2042,7 @@ class _ActivityRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '+$pts pts',
+              '+$pts Seeds',
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
@@ -2654,7 +2711,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '+${milestone.ptsBonus} pts',
+                '+${milestone.ptsBonus} Seeds',
                 style: GoogleFonts.rajdhani(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -2819,7 +2876,7 @@ class _StreakMilestoneList extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      '+${m.ptsBonus} pts',
+                      '+${m.ptsBonus} Seeds',
                       style: GoogleFonts.rajdhani(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,

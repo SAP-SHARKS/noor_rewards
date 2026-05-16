@@ -708,7 +708,7 @@ class _MilestoneProgress extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '+${milestone.ptsBonus} pts',
+                '+${milestone.ptsBonus} Seeds',
                 style: GoogleFonts.rajdhani(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -862,7 +862,7 @@ class _MilestoneList extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      '+${m.ptsBonus} pts',
+                      '+${m.ptsBonus} Seeds',
                       style: GoogleFonts.rajdhani(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
