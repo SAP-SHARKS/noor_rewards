@@ -73,6 +73,12 @@ class AppConfig {
   bool get featureTafsir => _bool('feature_tafsir', true);
   bool get featureInvite => _bool('feature_invite', false);
 
+  // ── Page / tab visibility (admin-controlled via the Features page) ─────────
+  // Toggle a tab off from the admin panel to hide it for all users.
+  bool get featureCause => _bool('feature_cause', true);
+  bool get featureJourney => _bool('feature_journey', false);
+  bool get featureAkhirah => _bool('feature_akhirah', true);
+
   // ── Limits ─────────────────────────────────────────────────────────────────
   String get minAppVersionIos => _str('min_app_version_ios', '1.0.0');
   String get minAppVersionAndroid => _str('min_app_version_android', '1.0.0');

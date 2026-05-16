@@ -59,6 +59,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   final _nameCtrl = TextEditingController();
   final _countryCtrl = TextEditingController();
+  final _nameFocus = FocusNode();
   final _picker = ImagePicker();
 
   @override
@@ -71,6 +72,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   void dispose() {
     _nameCtrl.dispose();
     _countryCtrl.dispose();
+    _nameFocus.dispose();
     super.dispose();
   }
 
@@ -933,7 +935,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           label: l.displayName,
           controller: _nameCtrl,
           hint: l.yourName,
-          isFirst: true,
         ),
         _divider(),
         _readOnlyRow(icon: Icons.email_outlined, label: l.email, value: _email),
@@ -941,13 +942,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         // Connected account row — shows provider with icon
         _connectedAccountRow(l),
         _divider(),
-        _editableRow(
-          icon: Icons.public_rounded,
-          label: l.country,
-          controller: _countryCtrl,
-          hint: l.countryHint,
-          isLast: true,
-        ),
+        _countryRow(l),
       ],
     ),
   );
@@ -957,16 +952,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     required String label,
     required TextEditingController controller,
     required String hint,
-    bool isFirst = false,
-    bool isLast = false,
-  }) => Container(
+  }) => Padding(
+    // Flat inline row — the field text sits directly under the label,
+    // matching the read-only rows. (Removed the nested honey box that
+    // produced a "container inside a container" look.)
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.vertical(
-        top: isFirst ? const Radius.circular(20) : Radius.zero,
-        bottom: isLast ? const Radius.circular(20) : Radius.zero,
-      ),
-    ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -992,43 +982,291 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   color: _pSub,
                 ),
               ),
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+              const SizedBox(height: 2),
+              TextField(
+                controller: controller,
+                focusNode: _nameFocus,
+                style: GoogleFonts.outfit(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: _pText,
                 ),
-                decoration: BoxDecoration(
-                  color: Y4.bg,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Y4.honey.withValues(alpha: 0.4)),
-                ),
-                child: TextField(
-                  controller: controller,
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
+                cursorColor: Y4.honeyDeep,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: GoogleFonts.outfit(
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: _pText,
+                    color: const Color(0xFFB0A898),
                   ),
-                  cursorColor: Y4.honeyDeep,
-                  decoration: InputDecoration(
-                    hintText: hint,
-                    hintStyle: GoogleFonts.outfit(
-                      fontSize: 14,
-                      color: const Color(0xFFB0A898),
-                    ),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
+                  // filled:false overrides the global InputDecorationTheme
+                  // (filled:true + cream fill) which otherwise paints a
+                  // box behind the field — the "extra container".
+                  filled: false,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ],
           ),
         ),
+        // "Edit" pill — same style as the "Verified" badge on the email
+        // row. Tapping it focuses the field.
+        GestureDetector(
+          onTap: () => _nameFocus.requestFocus(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Y4.honey.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.edit_rounded,
+                  size: 11,
+                  color: Y4.honeyDeep,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Edit',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Y4.honeyDeep,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     ),
   );
+
+  // ── Country list (alphabetical) ───────────────────────────────────────────
+  static const List<String> _kCountries = [
+    'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Argentina',
+    'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain',
+    'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin',
+    'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil',
+    'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon',
+    'Canada', 'Cape Verde', 'Central African Republic', 'Chad', 'Chile',
+    'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica', 'Croatia', 'Cuba',
+    'Cyprus', 'Czechia', 'Denmark', 'Djibouti', 'Dominica',
+    'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador',
+    'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji',
+    'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana',
+    'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana',
+    'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran',
+    'Iraq', 'Ireland', 'Israel', 'Italy', 'Ivory Coast', 'Jamaica', 'Japan',
+    'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kosovo', 'Kuwait',
+    'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya',
+    'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi',
+    'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania',
+    'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia',
+    'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru',
+    'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria',
+    'North Korea', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau',
+    'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru',
+    'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia',
+    'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia',
+    'Saint Vincent and the Grenadines', 'Samoa', 'San Marino',
+    'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia',
+    'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia',
+    'Solomon Islands', 'Somalia', 'South Africa', 'South Korea', 'South Sudan',
+    'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland',
+    'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste',
+    'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey',
+    'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates',
+    'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu',
+    'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe',
+  ];
+
+  // ── Country selector row — opens a searchable picker bottom sheet ─────────
+  Widget _countryRow(AppLocalizations l) => Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: _showCountryPicker,
+      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: Y4.honey.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: const Icon(
+                Icons.public_rounded,
+                color: Y4.honeyDeep,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l.country,
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: _pSub,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _countryCtrl.text.isNotEmpty
+                        ? _countryCtrl.text
+                        : l.countryHint,
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _countryCtrl.text.isNotEmpty
+                          ? _pText
+                          : const Color(0xFFB0A898),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.unfold_more_rounded, size: 18, color: _pSub),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  void _showCountryPicker() {
+    var query = '';
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (sheetCtx, setSheet) {
+          final filtered = _kCountries
+              .where((c) => c.toLowerCase().contains(query.toLowerCase()))
+              .toList();
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(sheetCtx).viewInsets.bottom,
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(sheetCtx).size.height * 0.75,
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE0DCD2),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                    child: Text(
+                      'Select Country',
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: _pText,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: TextField(
+                      autofocus: true,
+                      cursorColor: Y4.honeyDeep,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        color: _pText,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search…',
+                        hintStyle: GoogleFonts.outfit(
+                          color: const Color(0xFFB0A898),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search_rounded,
+                          color: Color(0xFFB0A898),
+                        ),
+                        filled: true,
+                        fillColor: Y4.bg,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      onChanged: (v) => setSheet(() => query = v),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Expanded(
+                    child: filtered.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No match',
+                              style: GoogleFonts.outfit(color: _pSub),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: filtered.length,
+                            itemBuilder: (_, i) {
+                              final c = filtered[i];
+                              final selected = c == _countryCtrl.text;
+                              return ListTile(
+                                title: Text(
+                                  c,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 14,
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                    color: _pText,
+                                  ),
+                                ),
+                                trailing: selected
+                                    ? const Icon(
+                                        Icons.check_rounded,
+                                        color: Y4.honeyDeep,
+                                        size: 20,
+                                      )
+                                    : null,
+                                onTap: () {
+                                  setState(() => _countryCtrl.text = c);
+                                  Navigator.pop(sheetCtx);
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   Widget _readOnlyRow({
     required IconData icon,

@@ -292,6 +292,12 @@ class XpService {
     }
   }
 
+  /// Whether the most recent [claimValidate] awarded the once-daily seal
+  /// bonus. False on a repeat seal that only flushed newly-earned pending
+  /// Seeds. The "Coins Sealed!" popup reads this so it advertises the
+  /// +bonus only on the first seal of the day.
+  bool lastSealAwardedBonus = false;
+
   // ── Seal the Day (flush pending Seeds) ───────────────────────────────────
   // The user can seal multiple times a day so newly-earned Seeds can always
   // be flushed when they tap. The validate *bonus* is only awarded on the
@@ -304,15 +310,24 @@ class XpService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return false;
     try {
-      final today = DateTime.now().toIso8601String().substring(0, 10);
+      // First seal of the *local* day. created_at is stored in UTC, so we
+      // must compare against local midnight converted to UTC. Comparing
+      // against a bare local date string (e.g. "2026-05-16") makes
+      // Postgres treat it as UTC midnight — which, for users not on UTC,
+      // lets an early-hours seal slip past the check and re-award the
+      // daily bonus on a later seal.
+      final now = DateTime.now();
+      final localDayStartUtc =
+          DateTime(now.year, now.month, now.day).toUtc().toIso8601String();
       final existing = await _sb
           .from('user_activities')
           .select('id')
           .eq('user_id', uid)
           .eq('activity_type', 'validate')
-          .gte('created_at', today)
+          .gte('created_at', localDayStartUtc)
           .limit(1);
       final firstSealToday = (existing as List).isEmpty;
+      lastSealAwardedBonus = firstSealToday;
       final bonus = PointReward.validate;
 
       // Only stack the daily bonus on the first seal of the day.

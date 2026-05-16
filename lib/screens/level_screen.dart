@@ -13,6 +13,7 @@ import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
 import '../l10n/app_localizations.dart';
+import '../config/feature_flags.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _lcfg => SettingsService.instance.config;
@@ -166,7 +167,12 @@ class _LevelScreenState extends State<LevelScreen>
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 4, vsync: this);
+    // Tab count must match the filtered tab list in build(). FeatureFlags
+    // values are compile-time const, so this stays in sync.
+    _tabs = TabController(
+      length: FeatureFlags.challengesTab ? 4 : 3,
+      vsync: this,
+    );
     _loadAll();
   }
 
@@ -255,7 +261,8 @@ class _LevelScreenState extends State<LevelScreen>
             Tab(text: '🔥 ${l.tabStreaks}'),
             Tab(text: '📈 ${l.tabProgress}'),
             Tab(text: '🏅 ${l.tabBadges}'),
-            Tab(text: '⚡ ${l.tabChallenges}'),
+            if (FeatureFlags.challengesTab)
+              Tab(text: '⚡ ${l.tabChallenges}'),
           ],
         ),
       ),
@@ -315,7 +322,11 @@ class _LevelScreenState extends State<LevelScreen>
                     supabase: _sb,
                   ),
                   _BadgesTab(badges: _badges),
-                  _ChallengesTab(challenges: _challenges, onRefresh: _loadAll),
+                  if (FeatureFlags.challengesTab)
+                    _ChallengesTab(
+                      challenges: _challenges,
+                      onRefresh: _loadAll,
+                    ),
                 ],
               ),
     );

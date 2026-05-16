@@ -36,6 +36,7 @@ import '../widgets/motivational_popup.dart';
 import '../widgets/project_media_carousel.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/seal_coin_animation.dart';
+import '../config/feature_flags.dart';
 import 'project_detail_screen.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
@@ -44,6 +45,11 @@ import '../widgets/notifications_sheet.dart';
 /// the celebration coin flies to this widget so the user sees the Seeds
 /// arrive at their wallet (the profile icon doubles as the Seeds wallet).
 final GlobalKey sabiqProfileIconKey = GlobalKey();
+
+/// Global key on the Garden hero card's Sabiq Seed coin. After sealing the
+/// day, the celebration coins fly here so the user sees the freshly-sealed
+/// Seeds settle into their garden balance — which then counts up.
+final GlobalKey gardenSeedKey = GlobalKey();
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
 AppConfig get _cfg => SettingsService.instance.config;
@@ -441,7 +447,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             index: _tab,
             children: [
               _HomeTab(
-                key: ValueKey('home_${_noorPoints}_${_streak}'),
+                // Stable key — the tab must keep its State across a seal so
+                // the post-seal popups (which run after an await and check
+                // `mounted`) survive. A key tied to _noorPoints/_streak
+                // recreated the whole tab the moment sealing credited the
+                // garden, disposing the State mid-flow. The hero card still
+                // animates its count-up via didUpdateWidget.
+                key: const ValueKey('home_tab'),
                 name: widget.name,
                 noorPoints: _noorPoints,
                 totalXp: _totalPts ?? 0,
@@ -458,7 +470,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onGoQuran: () => _goToScreen(const QuranHubScreen()),
                 onGoDhikr: () => _goToScreen(const DhikrHubScreen()),
                 onGoTafsir: () => _goToScreen(const TafsirHubScreen()),
-                onGoAchievements: () => setState(() => _tab = 2),
+                onGoAchievements: () {
+                  // Achievements live on the Journey tab — only jump there
+                  // if that tab is enabled.
+                  if (FeatureFlags.journeyTab) setState(() => _tab = 2);
+                },
                 onGoProfile: () {
                   final uid = _supabase.auth.currentUser?.id ?? '';
                   final displayName =
@@ -514,19 +530,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 hasError: _noorPoints == null,
               ),
-              _buildTabNavigator(
-                1,
-                const CommunityImpactPage(isTab: true),
-              ), // Tab 1 — Cause
-              _buildTabNavigator(2, const LevelScreen()), // Tab 2 — Journey
-              _buildTabNavigator(
-                3,
-                ImpactReportScreen(
-                  key: const ValueKey('impact'),
-                  isTab: true,
-                  visitCount: _akhirahVisitCount,
-                ),
-              ), // Tab 3 — Akhirah
+              // Tab 1 — Cause. Hidden tabs keep a placeholder so the fixed
+              // 0-3 indices (used by _tab, _navKeys, the nav bar) never shift.
+              FeatureFlags.causeTab
+                  ? _buildTabNavigator(
+                      1,
+                      const CommunityImpactPage(isTab: true),
+                    )
+                  : const SizedBox.shrink(),
+              // Tab 2 — Journey
+              FeatureFlags.journeyTab
+                  ? _buildTabNavigator(2, const LevelScreen())
+                  : const SizedBox.shrink(),
+              // Tab 3 — Akhirah
+              FeatureFlags.akhirahTab
+                  ? _buildTabNavigator(
+                      3,
+                      ImpactReportScreen(
+                        key: const ValueKey('impact'),
+                        isTab: true,
+                        visitCount: _akhirahVisitCount,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ],
           ),
         bottomNavigationBar: _BottomNav(
@@ -845,17 +871,39 @@ class _HomeTabState extends State<_HomeTab> {
   }
 
   void _showValidateModal() {
-    showValidationRewardPopup(
-      context,
-      pointsEarned: PointReward.validate,
-      bonusPoints: 0, // streak bonus could be added here later
-      onContinue: _triggerBoostPopup,
-    );
+    // The +bonus row is only honest on the first seal of the day. On a
+    // repeat seal claimValidate() flushes pending Seeds without the bonus,
+    // so pass 0 and the popup hides the reward breakdown. Captured now,
+    // before the async gap, since it reflects the seal that just ran.
+    final gotBonus = XpService.instance.lastSealAwardedBonus;
+    Future<void>(() async {
+      // The seal-coin animation starts a beat after this callback returns.
+      // Wait for it to register, then hold the "Coins Sealed!" popup until
+      // the coins have finished flying into the garden.
+      await Future.delayed(const Duration(milliseconds: 60));
+      final inFlight = sealCoinAnimationInFlight;
+      if (inFlight != null) await inFlight;
+      if (!mounted) return;
+      showValidationRewardPopup(
+        context,
+        pointsEarned: gotBonus ? PointReward.validate : 0,
+        bonusPoints: 0, // streak bonus could be added here later
+        onContinue: _triggerBoostPopup,
+      );
+    });
   }
 
-  // Shows the Noor Boost popup — called after validation is confirmed
+  // Shows the Noor Boost popup — called after validation is confirmed.
+  // Waits for the seal-coin animation to finish first, so the popup never
+  // appears while coins are still flying into the garden.
   void _triggerBoostPopup() {
-    Future.delayed(const Duration(milliseconds: 400), () {
+    Future<void>(() async {
+      final inFlight = sealCoinAnimationInFlight;
+      if (inFlight != null) {
+        await inFlight;
+      }
+      if (!mounted) return;
+      await Future.delayed(const Duration(milliseconds: 400));
       if (!mounted) return;
       showNoorBoostPopup(
         context,
@@ -6192,31 +6240,41 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navItems = [
+    // Each item carries its real tab index (0-3) so hiding a tab never
+    // shifts the others. Home is always present; the rest are gated by
+    // FeatureFlags. Tuple: (realIndex, filledIcon, outlineIcon, label, color).
+    final navItems = <(int, IconData, IconData, String, Color)>[
       (
+        0,
         Icons.home_rounded,
         Icons.home_outlined,
         AppLocalizations.of(context)?.navHome ?? 'Home',
         _C.navHome,
       ),
-      (
-        Icons.volunteer_activism_rounded,
-        Icons.volunteer_activism_outlined,
-        'Cause',
-        _C.navRanking,
-      ),
-      (
-        Icons.trending_up_rounded,
-        Icons.trending_up_outlined,
-        AppLocalizations.of(context)?.navJourney ?? 'Journey',
-        _C.navRanking,
-      ),
-      (
-        Icons.mosque_rounded,
-        Icons.mosque_outlined,
-        AppLocalizations.of(context)?.navAkhirah ?? 'Akhirah',
-        _C.navImpact,
-      ),
+      if (FeatureFlags.causeTab)
+        (
+          1,
+          Icons.volunteer_activism_rounded,
+          Icons.volunteer_activism_outlined,
+          'Cause',
+          _C.navRanking,
+        ),
+      if (FeatureFlags.journeyTab)
+        (
+          2,
+          Icons.trending_up_rounded,
+          Icons.trending_up_outlined,
+          AppLocalizations.of(context)?.navJourney ?? 'Journey',
+          _C.navRanking,
+        ),
+      if (FeatureFlags.akhirahTab)
+        (
+          3,
+          Icons.mosque_rounded,
+          Icons.mosque_outlined,
+          AppLocalizations.of(context)?.navAkhirah ?? 'Akhirah',
+          _C.navImpact,
+        ),
     ];
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Container(
@@ -6234,12 +6292,12 @@ class _BottomNav extends StatelessWidget {
         ],
       ),
       child: Row(
-        children: List.generate(navItems.length, (i) {
-          final (filled, outline, label, color) = navItems[i];
-          final sel = i == tab;
+        children: navItems.map((item) {
+          final (realIndex, filled, outline, label, color) = item;
+          final sel = realIndex == tab;
           return Expanded(
             child: GestureDetector(
-              onTap: () => onTap(i),
+              onTap: () => onTap(realIndex),
               behavior: HitTestBehavior.opaque,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -6262,7 +6320,7 @@ class _BottomNav extends StatelessWidget {
               ),
             ),
           );
-        }),
+        }).toList(),
       ),
     );
   }
@@ -6643,14 +6701,15 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     widget.onValidate().then((awarded) {
       if (!mounted) return;
       setState(() => _freshXp = awarded);
-      // Sabiq Seed celebration — spin the coin, then fly it to the
-      // top-right profile icon (the Seeds wallet). Best-effort; never
-      // blocks the existing burst/snap/fill animation.
+      // Sabiq Seed celebration — spin the coins, then fly them into the
+      // Garden hero card so the sealed Seeds visibly land in the garden
+      // (and the balance counts up). Best-effort; never blocks the
+      // existing burst/snap/fill animation.
       if (awarded && pendingAtSwipe > 0) {
-        // Resolve the avatar's centre in global screen coordinates so
-        // the coin lands exactly on it.
+        // Resolve the garden coin's centre in global screen coordinates
+        // so the coins land exactly on it.
         Offset? target;
-        final box = sabiqProfileIconKey.currentContext
+        final box = gardenSeedKey.currentContext
             ?.findRenderObject() as RenderBox?;
         if (box != null && box.attached) {
           target = box.localToGlobal(box.size.center(Offset.zero));
@@ -7051,7 +7110,9 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       Center(
                         child: Text(
                           _freshXp
-                              ? 'JazakAllah!  +${PointReward.validate} Seeds'
+                              ? (XpService.instance.lastSealAwardedBonus
+                                    ? 'JazakAllah!  +${PointReward.validate} Seeds'
+                                    : 'JazakAllah!  Day sealed')
                               : AppLocalizations.of(context)?.alreadySealed ??
                                   'Already sealed today',
                           style: GoogleFonts.rajdhani(
@@ -7922,8 +7983,13 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             // Sabiq Seed coin — the currency mark next to
-                            // the big balance number.
-                            const SabiqCoin(size: 44, sprouting: true),
+                            // the big balance number. Keyed so sealed-day
+                            // coins can fly here and land in the garden.
+                            SabiqCoin(
+                              key: gardenSeedKey,
+                              size: 44,
+                              sprouting: true,
+                            ),
                             const SizedBox(width: 10),
                             AnimatedBuilder(
                               animation: _anim,

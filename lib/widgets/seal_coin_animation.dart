@@ -15,6 +15,12 @@ import 'package:flutter/material.dart';
 
 import 'sabiq_coin.dart';
 
+/// Resolves when the in-flight seal-coin animation finishes, or is null
+/// when no animation is playing. Post-seal popups (e.g. the Noor Boost
+/// popup) await this so they never appear while coins are still flying
+/// to the garden.
+Future<void>? sealCoinAnimationInFlight;
+
 /// Plays the seal-the-day coin shower as a fullscreen overlay.
 ///
 /// [pointsSealed] is the value shown briefly beneath the burst.
@@ -40,7 +46,15 @@ Future<void> playSealCoinAnimation(
     ),
   );
   overlay.insert(entry);
-  return completer.future;
+
+  final future = completer.future;
+  sealCoinAnimationInFlight = future;
+  future.whenComplete(() {
+    if (identical(sealCoinAnimationInFlight, future)) {
+      sealCoinAnimationInFlight = null;
+    }
+  });
+  return future;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -170,10 +184,12 @@ class _SealCoinOverlayState extends State<_SealCoinOverlay>
           if (t > 0.82) return ((1.0 - t) / 0.18) * 0.55;
           return 0.55;
         })();
-        // Label visible during the initial burst.
+        // Label holds for the whole coin flight — it stays up while the
+        // coins stream into the garden, then fades out over the final
+        // stretch as the last coins land.
         final labelOpacity = (() {
           if (t < 0.1) return t / 0.1;
-          if (t > 0.55) return ((0.72 - t) / 0.17).clamp(0.0, 1.0);
+          if (t > 0.86) return ((1.0 - t) / 0.14).clamp(0.0, 1.0);
           return 1.0;
         })();
 
