@@ -366,15 +366,15 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                       child: Column(
                         children: [
                           _RewardRow(
-                            '⚡ Validation Points',
-                            '+${widget.pointsEarned} pts',
+                            '⚡ Validation Seeds',
+                            '+${widget.pointsEarned} Seeds',
                             Y4.honeyDeep,
                           ),
                           if (widget.bonusPoints > 0) ...[
                             const SizedBox(height: 10),
                             _RewardRow(
                               '🔥 Streak Bonus',
-                              '+${widget.bonusPoints} pts',
+                              '+${widget.bonusPoints} Seeds',
                               Y4.honeyDeep,
                             ),
                             const SizedBox(height: 10),
@@ -382,7 +382,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                             const SizedBox(height: 10),
                             _RewardRow(
                               '✨ Total Earned',
-                              '+$total pts',
+                              '+$total Seeds',
                               Y4.ink,
                               big: true,
                             ),
@@ -1038,7 +1038,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: NoorIcon.greenBook(size: 26),
         title: 'Read 5 Quran Pages',
-        desc: 'Complete now → earn +50 points bonus',
+        desc: 'Complete now → earn +50 Seeds bonus',
         onTap: () {
           Navigator.maybePop(context);
           widget.onGoQuran();
@@ -1047,7 +1047,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: NoorIcon.beads(size: 26),
         title: 'Complete a Dhikr Set',
-        desc: 'Finish your Azkaar → earn +30 points bonus',
+        desc: 'Finish your Azkaar → earn +30 Seeds bonus',
         onTap: () {
           Navigator.maybePop(context);
           widget.onGoDhikr();

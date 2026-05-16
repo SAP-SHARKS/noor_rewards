@@ -8,6 +8,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../widgets/sabiq_coin.dart';
 import 'onboarding_tokens.dart';
 
 class QuranMini extends StatefulWidget {
@@ -210,7 +211,7 @@ class _SeedBanner extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.eco_rounded, size: width * 0.055, color: OnbTok.brown),
+          SabiqCoin(size: width * 0.08),
           SizedBox(width: width * 0.025),
           Text(
             '+96 Sabiq Seeds',

@@ -2,6 +2,7 @@
 // Handles donations to community projects via Supabase
 
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'notification_center.dart';
@@ -104,7 +105,7 @@ class DonationService {
         NotificationCenter.instance.add(
           kind: NoorNotifKind.donation,
           title: 'Donation received 💝',
-          body: 'You donated $amount Noor Points · jazak Allah khair.',
+          body: 'You donated $amount Seeds · jazak Allah khair.',
           route: '/akhirah',
           data: {'project_id': projectId, 'amount': amount},
         );
@@ -171,7 +172,11 @@ class DonationService {
         if (id != null) out[id] = c;
       }
       return out;
-    } catch (_) {
+    } catch (e, st) {
+      // Surface the error in debug builds so missing RPC / RLS / schema
+      // mismatches are diagnosable instead of silently returning empty.
+      debugPrint('getProjectDonorCounts failed: $e');
+      debugPrintStack(stackTrace: st);
       return const {};
     }
   }
@@ -191,7 +196,14 @@ class DonationService {
       return rows
           .map((e) => ProjectDonation.fromJson(e as Map<String, dynamic>))
           .toList();
-    } catch (_) {
+    } catch (e, st) {
+      // Surface the error — if the donor list is empty in the UI while
+      // donations have clearly been made, the cause is almost always
+      // visible in this log: the get_project_recent_donors RPC missing
+      // from the live Supabase project, an RLS denial, or a column
+      // mismatch with ProjectDonation.fromJson.
+      debugPrint('getProjectDonors($projectId) failed: $e');
+      debugPrintStack(stackTrace: st);
       return const [];
     }
   }

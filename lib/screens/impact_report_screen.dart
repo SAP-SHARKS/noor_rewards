@@ -1309,7 +1309,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: const Color(0xFFE67E22),
           bgColor: const Color(0xFFFEF5E7),
           title: AppLocalizations.of(context)?.sadaqahGiven ?? 'Sadaqah Given',
-          subtitle: 'Points donated to community',
+          subtitle: 'Seeds donated to community',
           value: _totalDonated,
           change: AppLocalizations.of(context)?.allTimeLabel ?? 'All time',
           positive: true,
@@ -1475,10 +1475,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _MonthStat(
-                  label: 'Total Points',
+                  label: 'Total Seeds',
                   value: _fmt(_monthPoints),
                   delta: '',
                   icon: Icons.star_rounded,
+                  iconWidget: const SabiqCoin(size: 18),
                   color: Y4.honeyDeep,
                 ),
               ),
@@ -1683,9 +1684,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           children: [
             Expanded(
               child: _DarkStat(
-                AppLocalizations.of(context)?.totalPoints ?? 'Total Points',
+                AppLocalizations.of(context)?.totalPoints ?? 'Total Seeds',
                 _fmt(_noorPoints),
-                NoorIcon.star(size: 16),
+                const SabiqCoin(size: 16),
               ),
             ),
             Container(height: 44, width: 1, color: Y4.honey.withValues(alpha: 0.4)),
@@ -1731,6 +1732,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 // Community Impact Page (previously embedded _ImpactTab)
 // Navigated to from the Akhirah Balance tab
 // ——————————————————————————————————————————————————————————————————————————
+/// One donor's aggregated contribution to a single project — their summed
+/// total, the number of separate gifts, and when they last gave.
+class _DonorAgg {
+  final String displayName;
+  final String? avatarUrl;
+  int total;
+  final DateTime lastDonatedAt;
+  _DonorAgg({
+    required this.displayName,
+    required this.avatarUrl,
+    required this.total,
+    required this.lastDonatedAt,
+  });
+}
+
 class CommunityImpactPage extends StatefulWidget {
   final String? scrollToProjectId;
   final bool isTab;
@@ -1746,9 +1762,15 @@ class CommunityImpactPage extends StatefulWidget {
 class _CommunityImpactPageState extends State<CommunityImpactPage> {
   List<Map<String, dynamic>> _projects = [];
   Map<String, List<ProjectMedia>> _projectMedia = {};
+  Map<String, List<ProjectDonation>> _projectDonors = {};
+  // Authoritative distinct-donor count per project (SECURITY DEFINER RPC,
+  // unaffected by Row-Level Security on user_donations).
+  Map<String, int> _donorCounts = {};
   int _myAvailablePoints = 0;
   bool _loading = true;
   final Map<String, GlobalKey> _projectKeys = {};
+  // Project ids whose donor list is expanded (showing all rows).
+  final Set<String> _expandedDonors = {};
 
   @override
   void initState() {
@@ -1813,9 +1835,42 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
 
       final pids = _projects.map((p) => p['id'] as String).toList();
       _projectMedia = await DonationService.instance.getMediaForProjects(pids);
+
+      // Recent donors per project (name + avatar + amount + time) — one
+      // RPC call per project, run in parallel.
+      final donorLists = await Future.wait(
+        pids.map(
+          (pid) => DonationService.instance.getProjectDonors(pid, limit: 20),
+        ),
+      );
+      _projectDonors = {
+        for (var i = 0; i < pids.length; i++) pids[i]: donorLists[i],
+      };
+
+      // Authoritative distinct-donor counts (RLS-safe RPC).
+      _donorCounts = await DonationService.instance.getProjectDonorCounts();
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
+      // Warm the image cache for every project's media as soon as the
+      // list is rendered. Users said the first paint of a carousel takes
+      // too long; precaching here means by the time they scroll to a
+      // project card or open its carousel, the bytes are already in
+      // memory + on disk. Runs in the next frame so it never blocks the
+      // initial paint of the list itself.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        for (final media in _projectMedia.values) {
+          for (final m in media) {
+            if (m.isVideo) continue;
+            precacheImage(
+              CachedNetworkImageProvider(m.url),
+              context,
+              onError: (_, __) {},
+            );
+          }
+        }
+      });
       // Scroll to specific project if requested
       if (widget.scrollToProjectId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1839,6 +1894,232 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           : n >= 1000
           ? '${(n / 1000).toStringAsFixed(1)}k'
           : '$n';
+
+  String _timeAgo(DateTime d) {
+    final diff = DateTime.now().difference(d);
+    if (diff.inSeconds < 60) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
+    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()}mo ago';
+    return '${(diff.inDays / 365).floor()}y ago';
+  }
+
+  // Recent-donors card shown inside each project: "X contributors" header
+  // + up to 3 donor rows (avatar, name, last-gave time, total pill).
+  // One row per person — repeat donations are aggregated.
+  Widget _buildDonorsBlock(String pid) {
+    final raw = _projectDonors[pid] ?? const <ProjectDonation>[];
+    if (raw.isEmpty) return const SizedBox.shrink();
+    // Collapse to one entry per person: sum their total, count their
+    // gifts, keep their most-recent donation time. `raw` arrives
+    // newest-first, so the first sighting of a user is their latest gift.
+    final byUser = <String, _DonorAgg>{};
+    for (final d in raw) {
+      final e = byUser[d.userId];
+      if (e == null) {
+        byUser[d.userId] = _DonorAgg(
+          displayName: d.displayName,
+          avatarUrl: d.avatarUrl,
+          total: d.amount,
+          lastDonatedAt: d.donatedAt,
+        );
+      } else {
+        e.total += d.amount;
+      }
+    }
+    final donors = byUser.values.toList()
+      ..sort((a, b) => b.lastDonatedAt.compareTo(a.lastDonatedAt));
+    final expanded = _expandedDonors.contains(pid);
+    final preview = expanded ? donors : donors.take(3).toList();
+    final extra = donors.length - 3;
+    // Header count comes from the RLS-safe RPC (true distinct donors),
+    // not the donor list length (which is capped at the fetch limit).
+    final count = _donorCounts[pid] ?? donors.length;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Y4.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.people_alt_rounded,
+                size: 16,
+                color: Y4.honeyDeep,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '$count ${count == 1 ? 'contributor' : 'contributors'}',
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: _C.text,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          for (var i = 0; i < preview.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            _impactDonorRow(preview[i]),
+          ],
+          if (extra > 0) ...[
+            const SizedBox(height: 12),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(999),
+                onTap: () => setState(() {
+                  if (expanded) {
+                    _expandedDonors.remove(pid);
+                  } else {
+                    _expandedDonors.add(pid);
+                  }
+                }),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: Y4.honey.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: Y4.honeyDeep.withValues(alpha: 0.35),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 9),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          expanded
+                              ? 'Show less'
+                              : 'View all ${donors.length} donors',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: Y4.honeyDeep,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          expanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 18,
+                          color: Y4.honeyDeep,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _impactDonorRow(_DonorAgg d) {
+    final initial = d.displayName.trim().isEmpty
+        ? '?'
+        : d.displayName.trim().substring(0, 1).toUpperCase();
+    final subtitle = 'last gave ${_timeAgo(d.lastDonatedAt)}';
+    return Row(
+      children: [
+        ClipOval(
+          child: SizedBox(
+            width: 32,
+            height: 32,
+            child: d.avatarUrl != null
+                ? CachedNetworkImage(
+                    imageUrl: d.avatarUrl!,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => _donorInitial(initial),
+                    errorWidget: (_, __, ___) => _donorInitial(initial),
+                  )
+                : _donorInitial(initial),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                d.displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: _C.text,
+                ),
+              ),
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w500,
+                  color: _C.sub,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        // Total donated by this person to this project.
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          decoration: BoxDecoration(
+            color: Y4.honey.withValues(alpha: 0.22),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SabiqCoin(size: 15),
+              const SizedBox(width: 4),
+              Text(
+                _fmt(d.total),
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Y4.honeyDeep,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _donorInitial(String initial) {
+    return Container(
+      color: Y4.honey.withValues(alpha: 0.25),
+      alignment: Alignment.center,
+      child: Text(
+        initial,
+        style: GoogleFonts.outfit(
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          color: Y4.honeyDeep,
+        ),
+      ),
+    );
+  }
 
   void _showDonateSheet(Map<String, dynamic> project) {
     int selected = 50;
@@ -1889,7 +2170,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Your available: ${_fmt(_myAvailablePoints)} pts',
+                        'Your available: ${_fmt(_myAvailablePoints)} Seeds',
                         style: GoogleFonts.outfit(fontSize: 13, color: _C.sub),
                       ),
                       const SizedBox(height: 20),
@@ -1918,7 +2199,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const SabiqCoin(size: 14),
+                                      const SabiqCoin(size: 18),
                                       const SizedBox(width: 4),
                                       Text(
                                         '$amt Seeds',
@@ -1986,7 +2267,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                           ).showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                'JazakAllah! ${_fmt(selected)} pts donated 🤲',
+                                                'JazakAllah! ${_fmt(selected)} Seeds donated 🤲',
                                                 style: GoogleFonts.outfit(
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -2029,7 +2310,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const SabiqCoin(size: 18),
+                                      const SabiqCoin(size: 22),
                                       const SizedBox(width: 6),
                                       Text(
                                         'Donate $selected ${selected == 1 ? 'Seed' : 'Seeds'} 🤲',
@@ -2056,18 +2337,22 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     return Scaffold(
       backgroundColor: _C.bg,
       appBar: AppBar(
-        backgroundColor: Y4.honeyDeep,
-        foregroundColor: Colors.white,
+        // Honey-wash app bar to match the rest of the app's theme (was
+        // Y4.honeyDeep — too dark and saturated against the cream bg).
+        backgroundColor: Y4.bg,
+        surfaceTintColor: Y4.bg,
+        foregroundColor: Y4.ink,
         title: Text(
           'Every Recitation Can\nChange a Life',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: Y4.ink,
             fontSize: 14,
           ),
           maxLines: 2,
         ),
         elevation: 0,
+        iconTheme: const IconThemeData(color: Y4.ink),
       ),
       body:
           _loading
@@ -2208,10 +2493,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                   vertical: 5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Y4.honey.withValues(alpha: 0.10),
+                                  color: Y4.honey.withValues(alpha: 0.22),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: Y4.honey.withValues(alpha: 0.30),
+                                    color: Y4.honeyDeep.withValues(alpha: 0.45),
                                   ),
                                 ),
                                 child: Row(
@@ -2224,13 +2509,13 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     const SizedBox(width: 5),
                                     Flexible(
                                       child: Text(
-                                        'My contribution: ${_fmt(myPts)} pts',
+                                        'My contribution: ${_fmt(myPts)} Seeds',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(
                                           fontSize: 11,
-                                          fontWeight: FontWeight.w700,
-                                          color: Y4.honeyDeep,
+                                          fontWeight: FontWeight.w800,
+                                          color: Y4.ink,
                                         ),
                                       ),
                                     ),
@@ -2241,6 +2526,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                           ],
                         ),
                         const SizedBox(height: 14),
+
+                        // Recent donors — name, photo, amount, time.
+                        _buildDonorsBlock(pid),
 
                         // Donate button
                         if (!done)
@@ -2543,6 +2831,9 @@ class _MonthStat extends StatelessWidget {
   final String delta;
   final IconData icon;
   final Color color;
+  // When set, replaces the [icon] glyph — used to show the SabiqCoin for
+  // the Seeds stat instead of a generic Material icon.
+  final Widget? iconWidget;
 
   const _MonthStat({
     required this.label,
@@ -2550,6 +2841,7 @@ class _MonthStat extends StatelessWidget {
     required this.delta,
     required this.icon,
     required this.color,
+    this.iconWidget,
   });
 
   @override
@@ -2565,7 +2857,7 @@ class _MonthStat extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: color),
+          iconWidget ?? Icon(icon, size: 18, color: color),
           const SizedBox(height: 8),
           Row(
             children: [

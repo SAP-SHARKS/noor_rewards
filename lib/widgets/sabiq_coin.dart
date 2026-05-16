@@ -78,6 +78,12 @@ class _SabiqCoinPainter extends CustomPainter {
     // brief's SVG viewBox), so every detail keeps proportion at any size.
     double rel(double v) => v * (s / 180.0);
 
+    // Below this pixel size, the dots / sheens / cream-overlay all turn
+    // to mush. Drop them and use a beefier S so the coin still reads.
+    // Threshold kept tight (only 12–15 px) so bumped 16+ sizes get the
+    // full denser rendering and don't look visually lighter than before.
+    final compact = s < 16;
+
     final goldR = rel(86); // outer ring radius
     final innerR = rel(62); // emerald disc radius
 
@@ -107,36 +113,38 @@ class _SabiqCoinPainter extends CustomPainter {
         ..color = _Pal.brownStroke,
     );
 
-    // Decorative dots — 12, evenly spaced around the gold ring.
-    final dotPaint = Paint()
-      ..color = _Pal.brownStroke.withValues(alpha: 0.5);
-    final dotR = math.max(0.4, rel(1.8));
-    final dotOrbit = goldR - rel(10);
-    for (var i = 0; i < 12; i++) {
-      final angle = -math.pi / 2 + i * (math.pi * 2 / 12);
-      final p = Offset(
-        c.dx + dotOrbit * math.cos(angle),
-        c.dy + dotOrbit * math.sin(angle),
-      );
-      canvas.drawCircle(p, dotR, dotPaint);
-    }
+    if (!compact) {
+      // Decorative dots — 12, evenly spaced around the gold ring.
+      final dotPaint = Paint()
+        ..color = _Pal.brownStroke.withValues(alpha: 0.5);
+      final dotR = math.max(0.4, rel(1.8));
+      final dotOrbit = goldR - rel(10);
+      for (var i = 0; i < 12; i++) {
+        final angle = -math.pi / 2 + i * (math.pi * 2 / 12);
+        final p = Offset(
+          c.dx + dotOrbit * math.cos(angle),
+          c.dy + dotOrbit * math.sin(angle),
+        );
+        canvas.drawCircle(p, dotR, dotPaint);
+      }
 
-    // Top-left sheen on the gold ring.
-    final sheenCenter = Offset(c.dx - rel(30), c.dy - rel(35));
-    final sheenRect = Rect.fromCenter(
-      center: sheenCenter,
-      width: rel(44),
-      height: rel(24),
-    );
-    canvas.save();
-    canvas.translate(sheenCenter.dx, sheenCenter.dy);
-    canvas.scale(rel(22) / rel(12)); // mild squash for ellipse feel
-    canvas.translate(-sheenCenter.dx, -sheenCenter.dy);
-    canvas.drawOval(
-      sheenRect,
-      Paint()..color = _Pal.goldHilite.withValues(alpha: 0.45),
-    );
-    canvas.restore();
+      // Top-left sheen on the gold ring.
+      final sheenCenter = Offset(c.dx - rel(30), c.dy - rel(35));
+      final sheenRect = Rect.fromCenter(
+        center: sheenCenter,
+        width: rel(44),
+        height: rel(24),
+      );
+      canvas.save();
+      canvas.translate(sheenCenter.dx, sheenCenter.dy);
+      canvas.scale(rel(22) / rel(12)); // mild squash for ellipse feel
+      canvas.translate(-sheenCenter.dx, -sheenCenter.dy);
+      canvas.drawOval(
+        sheenRect,
+        Paint()..color = _Pal.goldHilite.withValues(alpha: 0.45),
+      );
+      canvas.restore();
+    }
 
     // ── Inner emerald disc ─────────────────────────────────────────────
     final emeraldRect = Rect.fromCircle(center: c, radius: innerR);
@@ -160,23 +168,28 @@ class _SabiqCoinPainter extends CustomPainter {
         ..color = _Pal.emeraldDeep,
     );
 
-    // Emerald top-left sheen.
-    final eSheenCenter = Offset(c.dx - rel(18), c.dy - rel(18));
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: eSheenCenter,
-        width: rel(40),
-        height: rel(22),
-      ),
-      Paint()..color = const Color(0xFFA8E0C5).withValues(alpha: 0.5),
-    );
+    if (!compact) {
+      // Emerald top-left sheen.
+      final eSheenCenter = Offset(c.dx - rel(18), c.dy - rel(18));
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: eSheenCenter,
+          width: rel(40),
+          height: rel(22),
+        ),
+        Paint()..color = const Color(0xFFA8E0C5).withValues(alpha: 0.5),
+      );
+    }
 
     // ── Bold italic Fraunces "S" in gold gradient ──────────────────────
-    // The serif S is the brand mark. We render it twice: once with a
-    // gold gradient + brown stroke (the body), once with a faint cream
-    // overlay (top-light highlight) to give it depth.
-    final sFontSize = rel(108);
-    final sStroke = math.max(0.6, rel(1.2));
+    // The serif S is the brand mark. At full size we render it twice
+    // (gradient body + cream highlight overlay) for depth; in compact
+    // mode we use a single, slightly larger, solid-light fill so the S
+    // reads cleanly at 12–20 px.
+    final sFontSize = compact ? rel(130) : rel(108);
+    final sStroke = compact
+        ? math.max(0.8, rel(1.6))
+        : math.max(0.6, rel(1.2));
 
     void drawS({
       required Shader fillShader,
@@ -235,28 +248,40 @@ class _SabiqCoinPainter extends CustomPainter {
 
     final sRect = Rect.fromCircle(center: c, radius: rel(48));
     drawS(
-      fillShader: const LinearGradient(
-        begin: Alignment(-0.6, -1.0),
-        end: Alignment(0.6, 1.0),
-        colors: [_Pal.sGoldTop, _Pal.sGoldMid, _Pal.sGoldBottom],
-        stops: [0.0, 0.5, 1.0],
-      ).createShader(sRect),
+      fillShader: compact
+          // Brighter, higher-contrast fill at small sizes — the 3-stop
+          // gradient muddies into beige at <22 px.
+          ? const LinearGradient(
+              begin: Alignment(-0.6, -1.0),
+              end: Alignment(0.6, 1.0),
+              colors: [_Pal.sGoldTop, _Pal.sGoldMid],
+              stops: [0.0, 1.0],
+            ).createShader(sRect)
+          : const LinearGradient(
+              begin: Alignment(-0.6, -1.0),
+              end: Alignment(0.6, 1.0),
+              colors: [_Pal.sGoldTop, _Pal.sGoldMid, _Pal.sGoldBottom],
+              stops: [0.0, 0.5, 1.0],
+            ).createShader(sRect),
       strokeWidth: sStroke,
       strokeColor: _Pal.sStrokeBrown,
     );
-    // Cream highlight pass — subtle, gives the serif depth.
-    drawS(
-      fillShader: LinearGradient(
-        begin: const Alignment(-0.6, -1.0),
-        end: const Alignment(0.6, 1.0),
-        colors: [
-          _Pal.goldHilite.withValues(alpha: 0.6),
-          _Pal.goldHilite.withValues(alpha: 0.0),
-        ],
-      ).createShader(sRect),
-      strokeWidth: 0,
-      opacity: 0.4,
-    );
+    if (!compact) {
+      // Cream highlight pass — subtle, gives the serif depth. At small
+      // sizes this just turns the S to mush, so we skip it.
+      drawS(
+        fillShader: LinearGradient(
+          begin: const Alignment(-0.6, -1.0),
+          end: const Alignment(0.6, 1.0),
+          colors: [
+            _Pal.goldHilite.withValues(alpha: 0.6),
+            _Pal.goldHilite.withValues(alpha: 0.0),
+          ],
+        ).createShader(sRect),
+        strokeWidth: 0,
+        opacity: 0.4,
+      );
+    }
 
     // ── Optional leaf sprout (Option 4 — "Sprouting S") ────────────────
     if (sprouting) {

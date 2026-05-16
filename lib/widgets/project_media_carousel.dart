@@ -29,11 +29,38 @@ class ProjectMediaCarousel extends StatefulWidget {
 class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
   late final PageController _pageController;
   int _currentIndex = 0;
+  bool _prefetchedInitial = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_prefetchedInitial) {
+      _prefetchedInitial = true;
+      // Warm the image cache for the visible slide + the next two so the
+      // first swipe is instant. Fire-and-forget; precacheImage handles
+      // network internally via CachedNetworkImageProvider.
+      _prefetchAround(0);
+    }
+  }
+
+  void _prefetchAround(int center) {
+    for (final delta in const [0, 1, 2, -1]) {
+      final idx = center + delta;
+      if (idx < 0 || idx >= widget.media.length) continue;
+      final m = widget.media[idx];
+      if (m.isVideo) continue; // videos init themselves on demand
+      precacheImage(
+        CachedNetworkImageProvider(m.url),
+        context,
+        onError: (_, __) {},
+      );
+    }
   }
 
   @override
@@ -57,7 +84,12 @@ class _ProjectMediaCarouselState extends State<ProjectMediaCarousel> {
             PageView.builder(
               controller: _pageController,
               itemCount: widget.media.length,
-              onPageChanged: (i) => setState(() => _currentIndex = i),
+              onPageChanged: (i) {
+                setState(() => _currentIndex = i);
+                // Stay one ahead of the user's swipes so the next slide
+                // is always already decoded.
+                _prefetchAround(i);
+              },
               itemBuilder: (_, i) {
                 final m = widget.media[i];
                 return m.isVideo
@@ -307,8 +339,11 @@ class _ImageSlide extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // Cream underlay (matches Y4 theme) instead of pure black so an
+          // uncached frame never reads as a "black screen" — it looks like
+          // a soft empty card while the image fades in.
           Container(
-            color: Colors.black,
+            color: const Color(0xFFF5EBC8),
             child: CachedNetworkImage(
               imageUrl: url,
               fit: BoxFit.cover,
@@ -316,23 +351,26 @@ class _ImageSlide extends StatelessWidget {
               height: double.infinity,
               fadeInDuration: const Duration(milliseconds: 200),
               placeholder: (_, __) => Container(
-                color: Colors.grey.shade900,
-                child: Center(
+                color: const Color(0xFFF5EBC8),
+                child: const Center(
                   child: SizedBox(
-                    width: 24,
-                    height: 24,
+                    width: 22,
+                    height: 22,
                     child: CircularProgressIndicator(
-                      color: Colors.white38,
+                      color: Color(0x55000000),
                       strokeWidth: 2,
                     ),
                   ),
                 ),
               ),
-              errorWidget: (_, __, ___) => const Center(
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  color: Colors.white54,
-                  size: 40,
+              errorWidget: (_, __, ___) => Container(
+                color: const Color(0xFFF5EBC8),
+                child: const Center(
+                  child: Icon(
+                    Icons.broken_image_outlined,
+                    color: Color(0x88000000),
+                    size: 40,
+                  ),
                 ),
               ),
             ),

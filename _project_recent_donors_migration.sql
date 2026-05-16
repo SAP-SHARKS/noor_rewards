@@ -18,7 +18,11 @@ RETURNS TABLE (
   amount       int,
   donated_at   timestamptz
 )
-LANGUAGE sql STABLE SECURITY DEFINER AS $$
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
   SELECT
     ud.user_id,
     COALESCE(p.display_name, 'A generous soul') AS display_name,
@@ -31,3 +35,7 @@ LANGUAGE sql STABLE SECURITY DEFINER AS $$
   ORDER BY ud.created_at DESC
   LIMIT GREATEST(p_limit, 1);
 $$;
+
+-- Allow the app's signed-in users (and anon, if projects are browsable
+-- while logged out) to call the RPC.
+GRANT EXECUTE ON FUNCTION get_project_recent_donors(uuid, int) TO authenticated, anon;

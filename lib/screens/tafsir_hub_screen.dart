@@ -235,7 +235,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
                                 AppLocalizations.of(
                                       context,
                                     )?.earnPointsTafsir ??
-                                    'Earn points for every 10 min of Tafsir listening',
+                                    'Earn Seeds for every 10 min of Tafsir listening',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
                                   color: _kSub,

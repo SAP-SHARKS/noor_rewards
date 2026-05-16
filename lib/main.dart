@@ -138,7 +138,7 @@ class MyApp extends StatelessWidget {
     // Rebuild theme whenever SettingsService notifies (Realtime color change)
     final cfg = context.watch<SettingsService>().config;
     return MaterialApp(
-      title: 'Sabiq Rewards',
+      title: 'Sabiq',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(cfg),
       locale:

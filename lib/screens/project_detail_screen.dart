@@ -140,6 +140,19 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
       _donorCount = counts[id] ?? _donors.length;
       _loading = false;
     });
+    // Warm the image cache for this project's media so the carousel is
+    // instant once the user scrolls to it. Fire-and-forget.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      for (final m in _media) {
+        if (m.isVideo) continue;
+        precacheImage(
+          CachedNetworkImageProvider(m.url),
+          context,
+          onError: (_, __) {},
+        );
+      }
+    });
   }
 
   Future<List<ProjectUpdate>> _loadUpdates(String pid) async {
@@ -167,8 +180,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     final pct = ((current / target) * 100).toStringAsFixed(0);
     return '🤲 Support "$title"\n\n'
         'Organised by $sponsor\n\n'
-        'Funded so far — every point counts!\n\n'
-        'Open Sabiq Rewards app to donate your points and earn reward.\n'
+        'Funded so far — every Seed counts!\n\n'
+        'Open Sabiq Rewards app to donate your Seeds and earn reward.\n'
         '#SabiqRewards #Sadaqah #IslamicCharity';
   }
 
@@ -466,7 +479,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const SabiqCoin(size: 18),
+                            const SabiqCoin(size: 24),
                             const SizedBox(width: 5),
                             Text(
                               '${_fmtN(target)} Seeds',
@@ -590,6 +603,10 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
               onDonated: (amount) {
                 setState(() => _availablePoints -= amount);
                 widget.onDonationSuccess?.call();
+                // Re-fetch the donor list + contributor count so the
+                // user's freshly-recorded donation appears immediately on
+                // the same screen instead of only after re-opening it.
+                _loadData();
               },
             ),
           ),
@@ -713,7 +730,7 @@ class _DonateBar extends StatelessWidget {
                         'Fully Funded ✓'
                     : !hasPoints
                     ? AppLocalizations.of(context)?.noPointsAvailable ??
-                        'No Points Available'
+                        'No Seeds Available'
                     : 'Donate & Earn Reward',
                 style: GoogleFonts.outfit(
                   fontSize: 16,
@@ -860,7 +877,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                                 ),
                               ),
                               const Spacer(),
-                              const SabiqCoin(size: 16),
+                              const SabiqCoin(size: 22),
                               const SizedBox(width: 5),
                               Text(
                                 '${widget.availablePoints} ${widget.availablePoints == 1 ? 'Seed' : 'Seeds'}',
@@ -1275,7 +1292,7 @@ class _DonorRow extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SabiqCoin(size: 14),
+                const SabiqCoin(size: 18),
                 const SizedBox(width: 4),
                 Text(
                   donor.amount.toString(),

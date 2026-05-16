@@ -184,7 +184,7 @@ class StreakService {
         title: '${reachedMilestone.emoji} ${reachedMilestone.label}',
         body:
             '${reachedMilestone.days}-day ${type.label} streak · '
-            '+${reachedMilestone.ptsBonus} bonus pts unlocked',
+            '+${reachedMilestone.ptsBonus} bonus Seeds unlocked',
         route: '/journey',
         data: {'streak_type': type.key, 'days': reachedMilestone.days},
       );

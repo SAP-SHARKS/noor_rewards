@@ -27,7 +27,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 /// (per-category toggles surface in profile settings; for now we only ship a
 /// master on/off).
 enum NoorNotifKind {
-  reward, // +XP / +pts earned
+  reward, // +Seeds earned
   streak, // streak milestone hit
   badge, // new achievement unlocked
   donation, // donation succeeded

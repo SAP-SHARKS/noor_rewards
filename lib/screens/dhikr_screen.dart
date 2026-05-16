@@ -1023,11 +1023,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                         ? Colors.white12
                                         : const Color(0xFFE5E7EB),
                               ),
-                              // Points earned
+                              // Seeds earned
                               _statChip(
                                 icon: Icons.auto_awesome_rounded,
+                                iconWidget: const SabiqCoin(size: 18),
                                 value: '+$pts',
-                                label: 'Points',
+                                label: 'Seeds',
                                 color: kGold,
                                 isDark: isDark,
                               ),
@@ -1078,11 +1079,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
     String? label,
     required Color color,
     required bool isDark,
+    Widget? iconWidget,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 18, color: color),
+        iconWidget ?? Icon(icon, size: 18, color: color),
         const SizedBox(height: 4),
         Text(
           value,
@@ -4032,7 +4034,7 @@ class _RewardCounters extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SabiqCoin(size: 12),
+                const SabiqCoin(size: 18),
                 const SizedBox(width: 4),
                 Text(
                   '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
@@ -4221,7 +4223,7 @@ class _AzkarCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const SabiqCoin(size: 14),
+                          const SabiqCoin(size: 18),
                           const SizedBox(width: 4),
                           Text(
                             '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',

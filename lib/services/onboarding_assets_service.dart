@@ -12,7 +12,9 @@
 //   onb_impact_5, onb_akhirah_7,
 //   cause_orphans, cause_water, cause_war, cause_disaster
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -76,4 +78,21 @@ class OnboardingAssetsService {
 
   /// Returns the image URL for [slotKey] or null if no upload exists yet.
   String? urlFor(String slotKey) => images.value[slotKey];
+
+  /// Warm Flutter's image cache with every known onboarding URL so the
+  /// slides paint instantly — no spinners, no blank slots — even on the
+  /// user's first session.
+  ///
+  /// Safe to call multiple times; precacheImage is idempotent (a second
+  /// call for an already-cached image is a no-op). Fire-and-forget.
+  void precacheAll(BuildContext context) {
+    for (final url in images.value.values) {
+      if (url.isEmpty) continue;
+      precacheImage(
+        CachedNetworkImageProvider(url),
+        context,
+        onError: (_, __) {},
+      );
+    }
+  }
 }
