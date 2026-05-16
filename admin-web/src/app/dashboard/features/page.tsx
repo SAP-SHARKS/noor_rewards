@@ -4,8 +4,11 @@ import { useState } from "react";
 import { useConfig } from "@/lib/config-context";
 
 const FEATURE_FLAGS = [
+  { key: "feature_cause", label: "Cause Tab", desc: "Show the Cause tab in the app's bottom navigation" },
+  { key: "feature_journey", label: "Journey Tab", desc: "Show the Journey tab in the app's bottom navigation" },
+  { key: "feature_akhirah", label: "Akhirah Tab", desc: "Show the Akhirah tab in the app's bottom navigation" },
+  { key: "feature_challenges", label: "Challenges Tab", desc: "Show the Challenges tab inside the Journey screen" },
   { key: "feature_leaderboard", label: "Leaderboard", desc: "Show rankings screen" },
-  { key: "feature_challenges", label: "Challenges", desc: "Enable challenges system" },
   { key: "feature_badges", label: "Badges", desc: "Show badges/achievements" },
   { key: "feature_tafsir", label: "Tafsir", desc: "Enable Tafsir audio screen" },
   { key: "feature_invite", label: "Invite Friends", desc: "Enable friend invites" },

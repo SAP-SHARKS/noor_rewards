@@ -155,15 +155,15 @@ class NoorLiveNotificationService {
       ticker: ticker,
       styleInformation: BigTextStyleInformation(
         lines.join('\n'),
-        contentTitle: 'Your Noor Today ✨',
-        summaryText: 'Tap to open Sabiq Rewards',
+        contentTitle: 'Your Seeds Today ✨',
+        summaryText: 'Tap to open Sabiq',
       ),
       color: const Color(0xFF6B4EBB),
     );
 
     await _plugin.show(
       id: _notifId,
-      title: 'Your Noor Today ✨',
+      title: 'Your Seeds Today ✨',
       body: lines.join('  •  '),
       notificationDetails: NotificationDetails(android: androidDetails),
     );

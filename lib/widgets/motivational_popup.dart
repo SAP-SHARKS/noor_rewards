@@ -335,7 +335,9 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'You have been rewarded for\nyour consistency today!',
+                      total > 0
+                          ? 'You have been rewarded for\nyour consistency today!'
+                          : 'Your Seeds are sealed and safe\nfor the Akhirah.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.outfit(
                         fontSize: 13,
@@ -343,9 +345,11 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                         height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 24),
 
-                    // — Points breakdown card (white surface on honey wash)
+                    // — Points breakdown card — only shown when this seal
+                    // actually awarded the daily bonus.
+                    if (total > 0) ...[
+                    const SizedBox(height: 24),
                     Container(
                       decoration: BoxDecoration(
                         color: Y4.surface,
@@ -390,6 +394,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                         ],
                       ),
                     ),
+                    ],
                     const SizedBox(height: 24),
 
                     // — CTA (honey-deep filled button)
@@ -1304,7 +1309,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                             ],
                                           ).createShader(bounds),
                                       child: Text(
-                                        'NOOR POINTS!',
+                                        'SEEDS!',
                                         style: GoogleFonts.rajdhani(
                                           fontSize: 32,
                                           fontWeight: FontWeight.w900,

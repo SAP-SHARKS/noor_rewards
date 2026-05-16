@@ -3929,7 +3929,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           ),
                           child: Row(
                             children: [
-                              const Text('🌟', style: TextStyle(fontSize: 16)),
+                              const SabiqCoin(size: 18),
                               const SizedBox(width: 8),
                               Text(
                                 '+$_pointsToday Sabiq Seeds earned today!',
