@@ -8,12 +8,19 @@
 -- ════════════════════════════════════════════════════════════════════════════
 
 -- ── 1. Table: one row per slot ──
+-- image_fit: optional admin-chosen crop/fit for the image. One of
+--   'cover_center', 'cover_top', 'cover_bottom', 'contain', 'fill'.
+--   NULL means "use the app's built-in default for that slot".
 CREATE TABLE IF NOT EXISTS onboarding_images (
   slot_key    TEXT PRIMARY KEY,
   image_url   TEXT,
+  image_fit   TEXT,
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_by  UUID REFERENCES auth.users(id) ON DELETE SET NULL
 );
+
+-- Backfill for databases created before image_fit existed (idempotent).
+ALTER TABLE onboarding_images ADD COLUMN IF NOT EXISTS image_fit TEXT;
 
 -- Seed the 11 known slots so the admin panel can list them as empty rows.
 INSERT INTO onboarding_images (slot_key) VALUES
