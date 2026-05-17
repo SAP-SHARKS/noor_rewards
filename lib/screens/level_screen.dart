@@ -145,7 +145,7 @@ class LevelScreen extends StatefulWidget {
 }
 
 class _LevelScreenState extends State<LevelScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabs;
   final _xp = XpService.instance;
   final _sb = Supabase.instance.client;
@@ -164,16 +164,35 @@ class _LevelScreenState extends State<LevelScreen>
   // instead of getting stuck on the spinner (the "blank Journey page" bug).
   Object? _loadError;
 
+  /// Number of tabs currently shown. The Challenges tab is gated on the
+  /// `challengesTab` remote feature flag, so this can change at runtime.
+  int get _desiredTabCount => FeatureFlags.challengesTab ? 4 : 3;
+
   @override
   void initState() {
     super.initState();
-    // Tab count must match the filtered tab list in build(). FeatureFlags
-    // values are compile-time const, so this stays in sync.
-    _tabs = TabController(
-      length: FeatureFlags.challengesTab ? 4 : 3,
-      vsync: this,
-    );
+    _tabs = TabController(length: _desiredTabCount, vsync: this);
     _loadAll();
+  }
+
+  /// Keeps [_tabs] in sync with [_desiredTabCount].
+  ///
+  /// `challengesTab` is a remote flag that can flip AFTER initState — the
+  /// app config loads asynchronously at startup and refreshes over
+  /// Realtime. When it flips, build() emits a different number of tabs
+  /// than the controller's length; TabBar/TabBarView then throw and the
+  /// whole Journey screen renders blank. Recreating the controller on a
+  /// length change keeps them consistent. Requires TickerProviderStateMixin
+  /// (not Single…) so a fresh controller can allocate a new ticker.
+  void _syncTabController() {
+    if (_tabs.length == _desiredTabCount) return;
+    final keepIndex = _tabs.index.clamp(0, _desiredTabCount - 1);
+    _tabs.dispose();
+    _tabs = TabController(
+      length: _desiredTabCount,
+      vsync: this,
+      initialIndex: keepIndex,
+    );
   }
 
   @override
@@ -222,6 +241,10 @@ class _LevelScreenState extends State<LevelScreen>
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    // Resync before using _tabs — the Challenges tab's remote flag may
+    // have flipped since initState (see _syncTabController). Without this
+    // the tab count and controller length diverge and the screen blanks.
+    _syncTabController();
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(

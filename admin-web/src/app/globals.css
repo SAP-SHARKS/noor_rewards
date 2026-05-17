@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* Bind the `dark:` variant to the `.dark` class that DashboardLayout toggles
+   on <html>, instead of Tailwind v4's default `prefers-color-scheme` media
+   query. Without this, dark text colors fire from the OS theme while the
+   page background stays light, making text unreadable. */
+@custom-variant dark (&:where(.dark, .dark *));
