@@ -1934,4 +1934,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onbV2_9_DisasterSub => 'Rapid response when crisis strikes';
+
+  @override
+  String get onbV2_3step_Title => 'Three simple steps.';
+
+  @override
+  String get onbV2_3step_Sub => 'Every verse, every dhikr becomes real aid.';
+
+  @override
+  String get onbV2_3step_S1Label => 'Step 1';
+
+  @override
+  String get onbV2_3step_S1Text => 'Read Quran';
+
+  @override
+  String get onbV2_3step_S2Label => 'Step 2';
+
+  @override
+  String get onbV2_3step_S2Text => 'Earn Seeds';
+
+  @override
+  String get onbV2_3step_S3Label => 'Step 3';
+
+  @override
+  String get onbV2_3step_S3Text => 'Feed Orphans';
 }

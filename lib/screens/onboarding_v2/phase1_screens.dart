@@ -10,6 +10,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../widgets/sabiq_coin.dart';
 import 'widgets/akhirah_mini.dart';
 import 'widgets/decorations.dart';
 import 'widgets/door_scales.dart';
@@ -258,6 +259,220 @@ class _MiniQuranCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SCREEN 3 (display order) — Three-step flow: Read → Earn → Fund.
+// Inserted between "The Mechanism" and "Quran Earns Seeds". The older
+// Phase1ScreenN classes keep their original names; display order is
+// defined by phase1_flow.dart, not by the class numbers.
+// ─────────────────────────────────────────────────────────────────────────────
+class Phase1ScreenSteps extends StatefulWidget {
+  final VoidCallback onNext;
+  final VoidCallback onSkip;
+  const Phase1ScreenSteps({
+    super.key,
+    required this.onNext,
+    required this.onSkip,
+  });
+
+  @override
+  State<Phase1ScreenSteps> createState() => _Phase1ScreenStepsState();
+}
+
+class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return Container(
+      color: OnbTok.cream,
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(26, 30, 26, 0),
+                child: Wordmark(size: 20),
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, c) => SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
+                    child: ConstrainedBox(
+                      constraints:
+                          BoxConstraints(minHeight: c.maxHeight - 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Step 1 — Read Quran (admin-uploadable image)
+                          _JourneyStep(
+                            label: l.onbV2_3step_S1Text,
+                            visual: const _StepImage(
+                              slotKey: 'onb_step_quran',
+                              placeholder: 'Quran reading\nimage',
+                            ),
+                          ),
+                          _StepArrow(pulse: _pulse),
+                          // Step 2 — Earn Seeds (the Sabiq Seed coin)
+                          _JourneyStep(
+                            label: l.onbV2_3step_S2Text,
+                            visual: const SizedBox(
+                              height: 108,
+                              child: Center(child: SabiqCoin(size: 100)),
+                            ),
+                          ),
+                          _StepArrow(pulse: _pulse),
+                          // Step 3 — Feed Orphans (admin-uploadable image)
+                          _JourneyStep(
+                            label: l.onbV2_3step_S3Text,
+                            visual: const _StepImage(
+                              slotKey: 'onb_step_orphans',
+                              placeholder: 'Orphans\nimage',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 26),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.onbV2_3step_Title,
+                      style: OnbTok.serif(fontSize: 30),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(l.onbV2_3step_Sub, style: OnbTok.sans()),
+                  ],
+                ),
+              ),
+              ScreenFooter(
+                dotsIdx: 2,
+                child: CTA(label: l.onbV2Next, onPressed: widget.onNext),
+              ),
+            ],
+          ),
+          SkipBtn(label: l.onbV2Skip, onPressed: widget.onSkip),
+        ],
+      ),
+    );
+  }
+}
+
+// One step of the Read → Earn → Feed journey: a large visual with its
+// label below it.
+class _JourneyStep extends StatelessWidget {
+  final Widget visual;
+  final String label;
+  const _JourneyStep({required this.visual, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        visual,
+        const SizedBox(height: 10),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: OnbTok.sans(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: OnbTok.brown,
+            height: 1.2,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Large rounded image for a journey step. Pulls the admin-uploaded
+// onboarding image for [slotKey] (manageable from the admin web panel's
+// "Onboarding Images" section); falls back to a cream placeholder.
+class _StepImage extends StatelessWidget {
+  final String slotKey;
+  final String placeholder;
+  const _StepImage({required this.slotKey, required this.placeholder});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 188,
+      height: 108,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: OnbTok.brown.withValues(alpha: 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: PhotoSlot(
+        slotKey: slotKey,
+        placeholderText: placeholder,
+        fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(22),
+      ),
+    );
+  }
+}
+
+class _StepArrow extends StatelessWidget {
+  final Animation<double> pulse;
+  const _StepArrow({required this.pulse});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: AnimatedBuilder(
+        animation: pulse,
+        builder: (_, __) {
+          final t = pulse.value;
+          // Ease opacity 0.35 → 1 → 0.35 across the cycle.
+          final o = 0.35 + 0.65 * (1 - (2 * t - 1).abs());
+          return Opacity(
+            opacity: o,
+            child: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: OnbTok.goldDeep,
+              size: 28,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // SCREEN 3 — Quran Earns Seeds
 // ─────────────────────────────────────────────────────────────────────────────
 class Phase1Screen3 extends StatelessWidget {
@@ -358,7 +573,7 @@ class Phase1Screen3 extends StatelessWidget {
                 ),
               ),
               ScreenFooter(
-                dotsIdx: 2,
+                dotsIdx: 3,
                 child: CTA(label: l.onbV2Next, onPressed: onNext),
               ),
             ],
@@ -448,7 +663,7 @@ class Phase1Screen4 extends StatelessWidget {
               ),
               const Spacer(),
               ScreenFooter(
-                dotsIdx: 3,
+                dotsIdx: 4,
                 child: CTA(label: l.onbV2Next, onPressed: onNext),
               ),
             ],
@@ -521,7 +736,7 @@ class Phase1Screen5 extends StatelessWidget {
                     Text(l.onbV2_5_Sub, style: OnbTok.sans()),
                     const Spacer(),
                     ScreenFooter(
-                      dotsIdx: 4,
+                      dotsIdx: 5,
                       child: CTA(label: l.onbV2Next, onPressed: onNext),
                     ),
                   ],
@@ -643,7 +858,7 @@ class Phase1Screen6 extends StatelessWidget {
                 ),
               ),
               ScreenFooter(
-                dotsIdx: 5,
+                dotsIdx: 6,
                 child: CTA(label: l.onbV2Next, onPressed: onNext),
               ),
             ],
@@ -893,7 +1108,7 @@ class _Phase1Screen7State extends State<Phase1Screen7>
                 ),
               ),
               ScreenFooter(
-                dotsIdx: 6,
+                dotsIdx: 7,
                 teal: true,
                 child: CTA(label: l.onbV2Next, onPressed: widget.onNext),
               ),

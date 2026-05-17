@@ -171,7 +171,7 @@ class ScreenFooter extends StatelessWidget {
     super.key,
     required this.child,
     required this.dotsIdx,
-    this.dotsTotal = 7,
+    this.dotsTotal = 8,
     this.teal = false,
   });
   @override

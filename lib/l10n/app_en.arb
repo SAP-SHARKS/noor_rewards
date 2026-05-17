@@ -951,5 +951,13 @@
   "onbV2_9_War": "War-Impacted Areas",
   "onbV2_9_WarSub": "Relief where it's needed most",
   "onbV2_9_Disaster": "Natural Disasters",
-  "onbV2_9_DisasterSub": "Rapid response when crisis strikes"
+  "onbV2_9_DisasterSub": "Rapid response when crisis strikes",
+  "onbV2_3step_Title": "Three simple steps.",
+  "onbV2_3step_Sub": "Every verse, every dhikr becomes real aid.",
+  "onbV2_3step_S1Label": "Step 1",
+  "onbV2_3step_S1Text": "Read Quran",
+  "onbV2_3step_S2Label": "Step 2",
+  "onbV2_3step_S2Text": "Earn Seeds",
+  "onbV2_3step_S3Label": "Step 3",
+  "onbV2_3step_S3Text": "Feed Orphans"
 }

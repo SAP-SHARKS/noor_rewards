@@ -3655,6 +3655,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rapid response when crisis strikes'**
   String get onbV2_9_DisasterSub;
+
+  /// No description provided for @onbV2_3step_Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Three simple steps.'**
+  String get onbV2_3step_Title;
+
+  /// No description provided for @onbV2_3step_Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Every verse, every dhikr becomes real aid.'**
+  String get onbV2_3step_Sub;
+
+  /// No description provided for @onbV2_3step_S1Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1'**
+  String get onbV2_3step_S1Label;
+
+  /// No description provided for @onbV2_3step_S1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Quran'**
+  String get onbV2_3step_S1Text;
+
+  /// No description provided for @onbV2_3step_S2Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2'**
+  String get onbV2_3step_S2Label;
+
+  /// No description provided for @onbV2_3step_S2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn Seeds'**
+  String get onbV2_3step_S2Text;
+
+  /// No description provided for @onbV2_3step_S3Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3'**
+  String get onbV2_3step_S3Label;
+
+  /// No description provided for @onbV2_3step_S3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed Orphans'**
+  String get onbV2_3step_S3Text;
 }
 
 class _AppLocalizationsDelegate

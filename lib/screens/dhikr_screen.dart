@@ -2310,6 +2310,11 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   bool _showToolbar = false;
   Timer? _hideTimer;
 
+  // Pending auto-advance to the next dhikr after a completion. Held as a
+  // cancellable Timer so a manual swipe can kill it instantly — otherwise
+  // the queued animateToPage fights the user's drag and the swipe stutters.
+  Timer? _autoAdvanceTimer;
+
   // ── Draggable counter position ──
   Offset? _counterOffset; // null = default bottom-center
   bool _isDragging = false;
@@ -2365,6 +2370,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _playerSub?.cancel();
     _audioPlayer.dispose();
     _hideTimer?.cancel();
+    _autoAdvanceTimer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
@@ -2584,7 +2590,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           final delay = holdSeconds > 0
               ? Duration(seconds: holdSeconds)
               : const Duration(milliseconds: 120);
-          Future.delayed(delay, () {
+          _autoAdvanceTimer?.cancel();
+          _autoAdvanceTimer = Timer(delay, () {
             if (!mounted) return;
             if (_currentIndex != currentGlobalIndex) return; // user already moved
             _pageController.animateToPage(
@@ -2791,7 +2798,15 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () => _toggleToolbar(),
-          child: PageView.builder(
+          child: NotificationListener<ScrollStartNotification>(
+            // The instant the user starts dragging the page, kill any
+            // pending auto-advance so the queued animateToPage can't fight
+            // the manual swipe (that collision is what made it stutter).
+            onNotification: (n) {
+              if (n.dragDetails != null) _autoAdvanceTimer?.cancel();
+              return false;
+            },
+            child: PageView.builder(
             controller: _pageController,
             // Premium swipe feel: iOS-style bounce at the ends, snaps cleanly
             // between pages on every platform.
@@ -3196,6 +3211,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 ],
               );
             },
+            ),
           ),
         ),
         // ── Play-All control bar ──────────────────────────────────────────
