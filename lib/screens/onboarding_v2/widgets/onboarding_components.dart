@@ -231,10 +231,14 @@ class PhotoSlot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Map<String, String>>(
+    return ValueListenableBuilder<Map<String, OnbImage>>(
       valueListenable: OnboardingAssetsService.instance.images,
       builder: (_, map, __) {
-        final url = map[slotKey];
+        final entry = map[slotKey];
+        final url = entry?.url;
+        // Admin-chosen crop wins; otherwise fall back to the fit the
+        // calling screen requested.
+        final resolved = resolveOnbFit(entry?.fit, fit);
         final body = (url != null && url.isNotEmpty)
             ? Container(
                 color: OnbTok.creamWarm,
@@ -260,11 +264,12 @@ class PhotoSlot extends StatelessWidget {
                         errorWidget: (_, __, ___) => const SizedBox.shrink(),
                       ),
                     ),
-                    // Foreground: actual photo at requested fit (default
-                    // contain) so nothing is cropped.
+                    // Foreground: actual photo at the resolved fit +
+                    // alignment (admin crop control).
                     CachedNetworkImage(
                       imageUrl: url,
-                      fit: fit,
+                      fit: resolved.fit,
+                      alignment: resolved.alignment,
                       width: double.infinity,
                       height: double.infinity,
                       placeholder: (_, __) =>
@@ -281,6 +286,29 @@ class PhotoSlot extends StatelessWidget {
             : body;
       },
     );
+  }
+}
+
+/// Maps an admin crop/fit token to a concrete ([BoxFit], [Alignment]) pair.
+/// Unknown / null tokens fall back to [fallback] at center alignment, so a
+/// slot with no admin override keeps the screen's intended behaviour.
+({BoxFit fit, Alignment alignment}) resolveOnbFit(
+  String? token,
+  BoxFit fallback,
+) {
+  switch (token) {
+    case 'cover_center':
+      return (fit: BoxFit.cover, alignment: Alignment.center);
+    case 'cover_top':
+      return (fit: BoxFit.cover, alignment: Alignment.topCenter);
+    case 'cover_bottom':
+      return (fit: BoxFit.cover, alignment: Alignment.bottomCenter);
+    case 'contain':
+      return (fit: BoxFit.contain, alignment: Alignment.center);
+    case 'fill':
+      return (fit: BoxFit.fill, alignment: Alignment.center);
+    default:
+      return (fit: fallback, alignment: Alignment.center);
   }
 }
 

@@ -137,7 +137,33 @@ const SLOTS: Slot[] = [
 
 const BUCKET = "onboarding-images";
 
-type Row = { slot_key: string; image_url: string | null; updated_at: string };
+type Row = {
+  slot_key: string;
+  image_url: string | null;
+  image_fit: string | null;
+  updated_at: string;
+};
+
+// Crop / fit options the admin can pick per slot. Value "" = let the app
+// decide (its built-in default for that slot).
+const FIT_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "Auto (app default)" },
+  { value: "cover_center", label: "Cover · center" },
+  { value: "cover_top", label: "Cover · top" },
+  { value: "cover_bottom", label: "Cover · bottom" },
+  { value: "contain", label: "Contain · no crop" },
+  { value: "fill", label: "Fill · stretch" },
+];
+
+// Tailwind object-* classes mirroring each fit, for the live preview.
+const FIT_PREVIEW_CLASS: Record<string, string> = {
+  "": "object-cover object-center",
+  cover_center: "object-cover object-center",
+  cover_top: "object-cover object-top",
+  cover_bottom: "object-cover object-bottom",
+  contain: "object-contain",
+  fill: "object-fill",
+};
 
 export default function OnboardingImagesPage() {
   const [rows, setRows] = useState<Record<string, Row>>({});
@@ -157,7 +183,7 @@ export default function OnboardingImagesPage() {
     setErrorMsg("");
     const { data, error } = await supabase
       .from("onboarding_images")
-      .select("slot_key, image_url, updated_at");
+      .select("slot_key, image_url, image_fit, updated_at");
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
@@ -202,6 +228,28 @@ export default function OnboardingImagesPage() {
     } finally {
       setUploadingKey(null);
     }
+  }
+
+  async function handleFitChange(slotKey: string, fit: string) {
+    // Optimistic update so the preview reflects the choice instantly.
+    setRows((prev) => ({
+      ...prev,
+      [slotKey]: {
+        slot_key: slotKey,
+        image_url: prev[slotKey]?.image_url ?? null,
+        image_fit: fit || null,
+        updated_at: new Date().toISOString(),
+      },
+    }));
+    const { error } = await supabase.from("onboarding_images").upsert(
+      {
+        slot_key: slotKey,
+        image_fit: fit || null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "slot_key" }
+    );
+    if (error) setErrorMsg(`Could not save image fit: ${error.message}`);
   }
 
   async function handleReset(slotKey: string) {
@@ -274,7 +322,10 @@ export default function OnboardingImagesPage() {
                       <img
                         src={url}
                         alt={slot.title}
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full ${
+                          FIT_PREVIEW_CLASS[row?.image_fit ?? ""] ??
+                          "object-cover"
+                        }`}
                       />
                     ) : (
                       <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 gap-1.5 px-4 text-center">
@@ -350,6 +401,26 @@ export default function OnboardingImagesPage() {
                           Reset
                         </button>
                       )}
+                    </div>
+                    {/* Crop / fit control — applies in the app and to the
+                        preview thumbnail above. */}
+                    <div className="flex items-center gap-2 mt-2.5">
+                      <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                        Image fit
+                      </label>
+                      <select
+                        value={row?.image_fit ?? ""}
+                        onChange={(e) =>
+                          void handleFitChange(slot.key, e.target.value)
+                        }
+                        className="flex-1 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-2 py-1.5 cursor-pointer"
+                      >
+                        {FIT_OPTIONS.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </article>
