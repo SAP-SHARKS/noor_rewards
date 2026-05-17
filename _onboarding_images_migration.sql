@@ -21,6 +21,8 @@ INSERT INTO onboarding_images (slot_key) VALUES
   ('onb_aid_2'),
   ('onb_quran_2'),
   ('onb_quran_3'),
+  ('onb_step_quran'),
+  ('onb_step_orphans'),
   ('onb_zikr_4'),
   ('onb_impact_5'),
   ('onb_akhirah_7'),

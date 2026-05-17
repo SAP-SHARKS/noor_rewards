@@ -7,8 +7,9 @@
 // storage bucket. This singleton caches that mapping in Hive so the
 // onboarding flow renders instantly even on a cold start with no network.
 //
-// Slot keys (11):
-//   onb_hero_1, onb_aid_2, onb_quran_2, onb_quran_3, onb_zikr_4,
+// Slot keys (13):
+//   onb_hero_1, onb_aid_2, onb_quran_2, onb_quran_3,
+//   onb_step_quran, onb_step_orphans, onb_zikr_4,
 //   onb_impact_5, onb_akhirah_7,
 //   cause_orphans, cause_water, cause_war, cause_disaster
 

@@ -56,6 +56,24 @@ const SLOTS: Slot[] = [
     aspect: "1:2 portrait",
   },
   {
+    key: "onb_step_quran",
+    phase: "Phase 1",
+    screen: "S3 — Three-step flow",
+    title: "Step 1 image — Read Quran",
+    guidance:
+      "Image for the first step of the Read → Earn → Feed journey. Renders as a large rounded card (~188×108).",
+    aspect: "16:9 landscape",
+  },
+  {
+    key: "onb_step_orphans",
+    phase: "Phase 1",
+    screen: "S3 — Three-step flow",
+    title: "Step 3 image — Feed Orphans",
+    guidance:
+      "Image for the third step of the journey. The middle step uses the in-app Sabiq Seed coin, so no upload is needed there.",
+    aspect: "16:9 landscape",
+  },
+  {
     key: "onb_zikr_4",
     phase: "Phase 1",
     screen: "S4 — Azkaar",

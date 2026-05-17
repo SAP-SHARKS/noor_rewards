@@ -1,8 +1,11 @@
 // lib/screens/onboarding_v2/phase1_flow.dart
 //
-// Phase 1 controller — a PageView through the 7 Story screens. The
+// Phase 1 controller — a PageView through the 8 Story screens. The
 // last screen's "Next" CTA and the Skip button both fire [onComplete],
 // which the caller wires to its existing StartJourneyScreen (Google login).
+//
+// Display order: Hook · Mechanism · Three-step flow · Quran Earns Seeds ·
+// Azkaar · Real-World Impact · Trust · Akhirah Account.
 
 import 'package:flutter/material.dart';
 
@@ -44,7 +47,7 @@ class _Phase1FlowState extends State<Phase1Flow> {
   }
 
   void _advanceOrComplete(int currentIndex) {
-    if (currentIndex >= 6) {
+    if (currentIndex >= 7) {
       _complete();
       return;
     }
@@ -71,11 +74,12 @@ class _Phase1FlowState extends State<Phase1Flow> {
           children: [
             Phase1Screen1(onNext: () => _advanceOrComplete(0), onSkip: _complete),
             Phase1Screen2(onNext: () => _advanceOrComplete(1), onSkip: _complete),
-            Phase1Screen3(onNext: () => _advanceOrComplete(2), onSkip: _complete),
-            Phase1Screen4(onNext: () => _advanceOrComplete(3), onSkip: _complete),
-            Phase1Screen5(onNext: () => _advanceOrComplete(4), onSkip: _complete),
-            Phase1Screen6(onNext: () => _advanceOrComplete(5), onSkip: _complete),
-            Phase1Screen7(onNext: () => _advanceOrComplete(6), onSkip: _complete),
+            Phase1ScreenSteps(onNext: () => _advanceOrComplete(2), onSkip: _complete),
+            Phase1Screen3(onNext: () => _advanceOrComplete(3), onSkip: _complete),
+            Phase1Screen4(onNext: () => _advanceOrComplete(4), onSkip: _complete),
+            Phase1Screen5(onNext: () => _advanceOrComplete(5), onSkip: _complete),
+            Phase1Screen6(onNext: () => _advanceOrComplete(6), onSkip: _complete),
+            Phase1Screen7(onNext: () => _advanceOrComplete(7), onSkip: _complete),
           ],
         ),
       ),
