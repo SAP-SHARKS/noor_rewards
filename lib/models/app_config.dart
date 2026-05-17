@@ -18,6 +18,13 @@ class AppConfig {
   int get pointsValidate => _int('points_validate', 20);
   int get dailyFreeCap => _int('daily_free_cap', 500);
 
+  // ── Dhikr behaviour ────────────────────────────────────────────────────────
+  /// Seconds to hold a completed dhikr on screen before auto-advancing to
+  /// the next one. 0 keeps the current snappy advance (~120 ms). A positive
+  /// value (e.g. 3) holds that many seconds — the user can still swipe
+  /// manually at any time.
+  int get dhikrAdvanceDelaySeconds => _int('dhikr_advance_delay_seconds', 0);
+
   // ── Theme — Global ─────────────────────────────────────────────────────────
   // Y4 Honey + Sage Garden defaults. Admin can still override via app_config
   // Supabase rows; these values just become the fallback when no row exists.

@@ -29,6 +29,11 @@ const ECONOMY_KEYS = [
     label: "Daily Free Cap",
     desc: "Max free points per day",
   },
+  {
+    key: "dhikr_advance_delay_seconds",
+    label: "Dhikr Auto-Advance Delay (sec)",
+    desc: "Seconds to hold a completed dhikr before sliding to the next. 0 = quick advance (current). e.g. 3 = hold 3 seconds. Users can always swipe manually.",
+  },
 ];
 
 export default function EconomyPage() {

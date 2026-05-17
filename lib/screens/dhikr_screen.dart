@@ -2572,11 +2572,19 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         final currentGlobalIndex = widget.azkars.indexOf(azkar);
         final nextIndex = currentGlobalIndex + 1;
         if (nextIndex > 0 && nextIndex < widget.azkars.length) {
-          // Advance immediately — only skip if the user already swiped away.
-          // A short delay (~120ms) lets the completion setState paint one
-          // frame so the user sees the count tick to target before the
-          // animation begins; the animation itself is snappy.
-          Future.delayed(const Duration(milliseconds: 120), () {
+          // How long to hold the completed dhikr before auto-advancing is
+          // admin-controlled (dhikr_advance_delay_seconds). 0 keeps the
+          // snappy ~120ms advance — long enough for the completion
+          // setState to paint one frame; a positive value holds that many
+          // seconds so the user can dwell on the finished dhikr. Either
+          // way the _currentIndex guard means a manual swipe cancels the
+          // pending auto-advance instantly.
+          final holdSeconds =
+              SettingsService.instance.config.dhikrAdvanceDelaySeconds;
+          final delay = holdSeconds > 0
+              ? Duration(seconds: holdSeconds)
+              : const Duration(milliseconds: 120);
+          Future.delayed(delay, () {
             if (!mounted) return;
             if (_currentIndex != currentGlobalIndex) return; // user already moved
             _pageController.animateToPage(
