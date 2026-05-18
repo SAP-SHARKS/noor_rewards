@@ -83,7 +83,7 @@ class Phase1Screen1 extends StatelessWidget {
                     const Spacer(),
                     ScreenFooter(
                       dotsIdx: 0,
-                      child: CTA(label: l.onbV2Next, onPressed: onNext),
+                      child: CTA(label: l.onbV2_1_Cta, onPressed: onNext),
                     ),
                   ],
                 ),
@@ -165,20 +165,42 @@ class Phase1Screen2 extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Dashed arrow (centered horizontally between cards)
-                      const Positioned(
-                        left: 150,
-                        right: 150,
-                        top: 138,
-                        child: DashedArrow(height: 20),
-                      ),
-                      // Seeds flowing
+                      // Seeds flowing between the two cards
                       const Positioned(
                         left: 145,
                         top: 0,
                         width: 90,
                         height: 300,
                         child: SeedFlow(),
+                      ),
+                      // Sabiq Seed coin — the centerpiece linking the two
+                      // images: Read Quran → earn Seeds → fund the cause.
+                      Positioned(
+                        top: 100,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            width: 88,
+                            height: 88,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: OnbTok.cream,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: OnbTok.goldDeep.withValues(
+                                    alpha: 0.28,
+                                  ),
+                                  blurRadius: 22,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: const Center(
+                              child: SabiqCoin(size: 62),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -326,6 +348,7 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
                           // Step 1 — Read Quran (admin-uploadable image)
                           _JourneyStep(
                             label: l.onbV2_3step_S1Text,
+                            color: OnbTok.tealDark,
                             visual: const _StepImage(
                               slotKey: 'onb_step_quran',
                               placeholder: 'Quran reading\nimage',
@@ -335,15 +358,17 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
                           // Step 2 — Earn Seeds (the Sabiq Seed coin)
                           _JourneyStep(
                             label: l.onbV2_3step_S2Text,
+                            color: OnbTok.goldDeep,
                             visual: const SizedBox(
-                              height: 108,
-                              child: Center(child: SabiqCoin(size: 100)),
+                              height: 88,
+                              child: Center(child: SabiqCoin(size: 84)),
                             ),
                           ),
                           _StepArrow(pulse: _pulse),
                           // Step 3 — Feed Orphans (admin-uploadable image)
                           _JourneyStep(
                             label: l.onbV2_3step_S3Text,
+                            color: OnbTok.brownSoft,
                             visual: const _StepImage(
                               slotKey: 'onb_step_orphans',
                               placeholder: 'Orphans\nimage',
@@ -382,12 +407,18 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
   }
 }
 
-// One step of the Read → Earn → Feed journey: a large visual with its
-// label below it.
+// One step of the Read → Earn → Feed journey: a large visual with a solid
+// colored pill label below it. Each step gets its own [color] so the three
+// stages read as distinct, focused beats.
 class _JourneyStep extends StatelessWidget {
   final Widget visual;
   final String label;
-  const _JourneyStep({required this.visual, required this.label});
+  final Color color;
+  const _JourneyStep({
+    required this.visual,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -395,15 +426,30 @@ class _JourneyStep extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         visual,
-        const SizedBox(height: 10),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: OnbTok.sans(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: OnbTok.brown,
-            height: 1.2,
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.34),
+                blurRadius: 14,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: OnbTok.sans(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              height: 1.15,
+              letterSpacing: 0.2,
+            ),
           ),
         ),
       ],
@@ -423,7 +469,7 @@ class _StepImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 188,
-      height: 108,
+      height: 88,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
@@ -451,7 +497,7 @@ class _StepArrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 1),
       child: AnimatedBuilder(
         animation: pulse,
         builder: (_, __) {
@@ -463,7 +509,7 @@ class _StepArrow extends StatelessWidget {
             child: const Icon(
               Icons.keyboard_arrow_down_rounded,
               color: OnbTok.goldDeep,
-              size: 28,
+              size: 22,
             ),
           );
         },
@@ -754,10 +800,79 @@ class Phase1Screen5 extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // SCREEN 6 — Trust (3-step diagram)
 // ─────────────────────────────────────────────────────────────────────────────
-class Phase1Screen6 extends StatelessWidget {
+class Phase1Screen6 extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onSkip;
-  const Phase1Screen6({super.key, required this.onNext, required this.onSkip});
+  // The Phase 1 PageView controller — lets this screen detect when it
+  // settles into view (page index 6) so the Donor → You → Charity icons
+  // play their staggered entrance exactly when the user arrives, not
+  // while the page is still being swiped in.
+  final PageController pageController;
+  const Phase1Screen6({
+    super.key,
+    required this.onNext,
+    required this.onSkip,
+    required this.pageController,
+  });
+
+  @override
+  State<Phase1Screen6> createState() => _Phase1Screen6State();
+}
+
+class _Phase1Screen6State extends State<Phase1Screen6>
+    with SingleTickerProviderStateMixin {
+  // This screen's index in the Phase 1 PageView (see phase1_flow.dart).
+  static const int _pageIndex = 6;
+
+  late final AnimationController _entrance;
+  // Three staggered slices of [_entrance]: Donor reveals first, then You,
+  // then Charity — each fades + slides up + scales into place.
+  late final Animation<double> _donorIn;
+  late final Animation<double> _youIn;
+  late final Animation<double> _charityIn;
+  bool _played = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _entrance = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1150),
+    );
+    _donorIn = CurvedAnimation(
+      parent: _entrance,
+      curve: const Interval(0.0, 0.55, curve: Curves.easeOutCubic),
+    );
+    _youIn = CurvedAnimation(
+      parent: _entrance,
+      curve: const Interval(0.22, 0.80, curve: Curves.easeOutCubic),
+    );
+    _charityIn = CurvedAnimation(
+      parent: _entrance,
+      curve: const Interval(0.46, 1.0, curve: Curves.easeOutCubic),
+    );
+    widget.pageController.addListener(_maybePlay);
+    // Covers the case where screen 6 is already the visible page at build.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybePlay());
+  }
+
+  // Fires the staggered entrance once, the moment page 6 settles into view.
+  void _maybePlay() {
+    if (_played || !mounted) return;
+    final c = widget.pageController;
+    if (!c.hasClients || c.page == null) return;
+    if ((c.page! - _pageIndex).abs() < 0.08) {
+      _played = true;
+      _entrance.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.pageController.removeListener(_maybePlay);
+    _entrance.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -796,30 +911,39 @@ class Phase1Screen6 extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _StepIcon(
-                        size: 62,
-                        bg: OnbTok.goldDeep,
-                        glyph: const DonorGlyph(),
-                        label: l.onbV2_6_Donor,
-                        sub: l.onbV2_6_DonorSub,
+                      _RevealStep(
+                        animation: _donorIn,
+                        child: _StepIcon(
+                          size: 62,
+                          bg: OnbTok.goldDeep,
+                          glyph: const DonorGlyph(),
+                          label: l.onbV2_6_Donor,
+                          sub: l.onbV2_6_DonorSub,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 36),
-                        child: _StepIcon(
-                          size: 124,
-                          bg: OnbTok.gold,
-                          big: true,
-                          glyph: const ReaderGlyph(),
-                          label: l.onbV2_6_You,
-                          sub: l.onbV2_6_YouSub,
+                        child: _RevealStep(
+                          animation: _youIn,
+                          child: _StepIcon(
+                            size: 124,
+                            bg: OnbTok.gold,
+                            big: true,
+                            glyph: const ReaderGlyph(),
+                            label: l.onbV2_6_You,
+                            sub: l.onbV2_6_YouSub,
+                          ),
                         ),
                       ),
-                      _StepIcon(
-                        size: 62,
-                        bg: OnbTok.goldDeep,
-                        glyph: const CharityGlyph(),
-                        label: l.onbV2_6_Charity,
-                        sub: l.onbV2_6_CharitySub,
+                      _RevealStep(
+                        animation: _charityIn,
+                        child: _StepIcon(
+                          size: 62,
+                          bg: OnbTok.goldDeep,
+                          glyph: const CharityGlyph(),
+                          label: l.onbV2_6_Charity,
+                          sub: l.onbV2_6_CharitySub,
+                        ),
                       ),
                     ],
                   ),
@@ -859,11 +983,11 @@ class Phase1Screen6 extends StatelessWidget {
               ),
               ScreenFooter(
                 dotsIdx: 6,
-                child: CTA(label: l.onbV2Next, onPressed: onNext),
+                child: CTA(label: l.onbV2Next, onPressed: widget.onNext),
               ),
             ],
           ),
-          SkipBtn(label: l.onbV2Skip, onPressed: onSkip),
+          SkipBtn(label: l.onbV2Skip, onPressed: widget.onSkip),
         ],
       ),
     );
@@ -941,6 +1065,36 @@ class _StepIcon extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// Plays a single step into view: fade + slide-up + scale, driven by an
+// [animation] (0 → 1). Used to stagger the Donor → You → Charity reveal on
+// Screen 6 without changing how each [_StepIcon] looks once settled.
+class _RevealStep extends StatelessWidget {
+  final Animation<double> animation;
+  final Widget child;
+  const _RevealStep({required this.animation, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      child: child,
+      builder: (context, child) {
+        final double t = animation.value.clamp(0.0, 1.0).toDouble();
+        return Opacity(
+          opacity: t,
+          child: Transform.translate(
+            offset: Offset(0, (1 - t) * 28),
+            child: Transform.scale(
+              scale: 0.82 + 0.18 * t,
+              child: child,
+            ),
+          ),
+        );
+      },
     );
   }
 }

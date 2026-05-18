@@ -121,7 +121,15 @@ class _Category {
   final String id;
   final String label;
   final IconData icon;
-  const _Category(this.id, this.label, this.icon);
+  // When false, completed azkar in this category advance instantly,
+  // ignoring the global dhikr_advance_delay_seconds setting.
+  final bool autoAdvanceDelay;
+  const _Category(
+    this.id,
+    this.label,
+    this.icon, {
+    this.autoAdvanceDelay = true,
+  });
 }
 
 class _DhikrSettings {
@@ -665,6 +673,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                   c['id'] as String,
                   c['label'] as String,
                   _parseIcon(c['icon_name'] as String),
+                  autoAdvanceDelay: (c['auto_advance_delay'] as bool?) ?? true,
                 ),
               )
               .toList();
@@ -732,6 +741,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
       }
       _filtered.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     });
+  }
+
+  /// Whether completed azkar in [categoryId] honor the global auto-advance
+  /// delay. Categories with the flag turned off in the admin panel advance
+  /// instantly. Unknown categories default to true (delay applies).
+  bool _categoryUsesAdvanceDelay(String categoryId) {
+    for (final c in _categories) {
+      if (c.id == categoryId) return c.autoAdvanceDelay;
+    }
+    return true;
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
@@ -2585,8 +2604,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           // seconds so the user can dwell on the finished dhikr. Either
           // way the _currentIndex guard means a manual swipe cancels the
           // pending auto-advance instantly.
+          // Per-category override: a category with its auto-advance delay
+          // toggled off in the admin panel always uses the snappy advance,
+          // ignoring the global dhikr_advance_delay_seconds value.
           final holdSeconds =
-              SettingsService.instance.config.dhikrAdvanceDelaySeconds;
+              widget.parentState._categoryUsesAdvanceDelay(azkar.category)
+              ? SettingsService.instance.config.dhikrAdvanceDelaySeconds
+              : 0;
           final delay = holdSeconds > 0
               ? Duration(seconds: holdSeconds)
               : const Duration(milliseconds: 120);

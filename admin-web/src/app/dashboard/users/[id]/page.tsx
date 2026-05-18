@@ -11,7 +11,6 @@ type Profile = {
   display_name: string | null;
   email?: string | null;
   level: number;
-  total_xp: number;
   noor_points: number;
   login_streak: number | null;
   dhikr_streak: number | null;
@@ -347,10 +346,9 @@ export default function UserDetailPage() {
       </div>
 
       {/* Top stats — at-a-glance */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <Stat label="Sabiq Seeds" value={fmtNum(profile.noor_points)} accent="amber" />
         <Stat label="Level" value={profile.level.toString()} accent="violet" />
-        <Stat label="Total XP" value={fmtNum(profile.total_xp)} accent="indigo" />
         <Stat
           label="Best Streak"
           value={`${Math.max(

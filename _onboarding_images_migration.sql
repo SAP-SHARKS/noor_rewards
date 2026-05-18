@@ -66,12 +66,12 @@ VALUES (
   'onboarding-images',
   true,
   10485760,  -- 10 MB max per file
-  ARRAY['image/jpeg', 'image/png', 'image/webp']
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
 ON CONFLICT (id) DO UPDATE SET
   public = true,
   file_size_limit = 10485760,
-  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp'];
+  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 -- ── 4. Storage policies ──
 DROP POLICY IF EXISTS "onb_imgs_public_read" ON storage.objects;

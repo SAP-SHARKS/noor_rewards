@@ -31,6 +31,7 @@ import '../services/notification_center.dart';
 import '../l10n/app_localizations.dart';
 import 'streak_screen.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/plot_illustrations.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/motivational_popup.dart';
 import '../widgets/project_media_carousel.dart';
@@ -1272,44 +1273,40 @@ class _HomeTabState extends State<_HomeTab> {
                     childAspectRatio: 0.78,
                     children: [
                       _ActivityCard(
-                        AppLocalizations.of(context)?.readQuran ?? 'Quran',
-                        NoorIcon.greenBook(size: 60),
-                        solid: Y4.butter,
-                        solidDeep: Y4.honey,
-                        textColor: Y4.ink,
+                        title:
+                            AppLocalizations.of(context)?.readQuran ?? 'Quran',
+                        illustration: const PlotIllustration(PlotIcon.quran),
+                        gradient: kPlotGradientA,
                         reward: quranSub,
-                        patternType: _CardPattern.arcRings,
                         onTap: widget.onGoQuran,
                       ),
                       _ActivityCard(
-                        AppLocalizations.of(context)?.dailyDhikr ?? 'Dhikr',
-                        NoorIcon.beads(size: 60),
-                        solid: Y4.butter,
-                        solidDeep: Y4.honey,
-                        textColor: Y4.ink,
+                        title:
+                            AppLocalizations.of(context)?.dailyDhikr ??
+                            'Dhikr',
+                        illustration: const PlotIllustration(PlotIcon.dhikr),
+                        gradient: kPlotGradientB,
                         reward: dhikrSub,
-                        patternType: _CardPattern.floatingDots,
                         onTap: widget.onGoDhikr,
                       ),
                       _ActivityCard(
-                        AppLocalizations.of(context)?.achievements ??
+                        title:
+                            AppLocalizations.of(context)?.achievements ??
                             'Achievements',
-                        NoorIcon.trophy(size: 60),
-                        solid: Y4.butter,
-                        solidDeep: Y4.honey,
-                        textColor: Y4.ink,
+                        illustration: const PlotIllustration(
+                          PlotIcon.achievements,
+                        ),
+                        gradient: kPlotGradientA,
                         reward: achievementsSub,
-                        patternType: _CardPattern.diamondSparks,
                         onTap: widget.onGoAchievements,
                       ),
                       _ActivityCard(
-                        AppLocalizations.of(context)?.inviteFriends ?? 'Invite',
-                        NoorIcon.handshake(size: 60),
-                        solid: Y4.butter,
-                        solidDeep: Y4.honey,
-                        textColor: Y4.ink,
+                        title:
+                            AppLocalizations.of(context)?.inviteFriends ??
+                            'Invite',
+                        illustration: const PlotIllustration(PlotIcon.invite),
+                        gradient: kPlotGradientB,
                         reward: inviteSub,
-                        patternType: _CardPattern.speedLines,
                         onTap: widget.onGoInvite,
                       ),
                     ],
@@ -2935,48 +2932,30 @@ class _ProgBar extends StatelessWidget {
 // Activity Card — bold solid card with unique per-type decoration
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum _CardPattern { arcRings, floatingDots, speedLines, diamondSparks }
-
 class _ActivityCard extends StatefulWidget {
   final String title, reward;
-  final Widget icon;
-  final Color solid, solidDeep;
-  final Color textColor;
-  final _CardPattern patternType;
+  final Widget illustration;
+  /// Two-stop pale-cream card gradient (kPlotGradientA / kPlotGradientB).
+  final List<Color> gradient;
   final VoidCallback onTap;
-  const _ActivityCard(
-    this.title,
-    this.icon, {
-    required this.solid,
-    required this.solidDeep,
+  const _ActivityCard({
+    required this.title,
+    required this.illustration,
+    required this.gradient,
     required this.reward,
-    required this.patternType,
     required this.onTap,
-    this.textColor = Colors.white,
   });
   @override
   State<_ActivityCard> createState() => _ActivityCardState();
 }
 
 class _ActivityCardState extends State<_ActivityCard> {
+  // Deep brown — the mockup's card text colour.
+  static const _ink = Color(0xFF5A4818);
   bool _pressed = false;
+
   @override
   Widget build(BuildContext context) {
-    CustomPainter painter;
-    switch (widget.patternType) {
-      case _CardPattern.arcRings:
-        painter = const _ArcRingsPainter();
-        break;
-      case _CardPattern.floatingDots:
-        painter = const _FloatingDotsPainter();
-        break;
-      case _CardPattern.speedLines:
-        painter = const _SpeedLinesPainter();
-        break;
-      case _CardPattern.diamondSparks:
-        painter = const _DiamondSparksPainter();
-        break;
-    }
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
@@ -2987,103 +2966,71 @@ class _ActivityCardState extends State<_ActivityCard> {
         duration: const Duration(milliseconds: 120),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: widget.gradient,
+            ),
             boxShadow: [
               BoxShadow(
-                color: widget.solidDeep.withValues(alpha: 0.40),
+                color: const Color(0xFF785014).withValues(alpha: 0.12),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
             child: Stack(
               children: [
-                // ── Radial gradient base ────────────────────────────────
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        colors: [widget.solid, widget.solidDeep],
-                        center: const Alignment(-0.3, -0.5),
-                        radius: 1.5,
-                      ),
-                    ),
-                  ),
+                // ── Big 3D illustration — sits at the top of the card ──
+                Positioned(
+                  top: 6,
+                  left: 0,
+                  right: 0,
+                  child: Center(child: widget.illustration),
                 ),
-                // (pattern removed — clean gradient only)
-                // ── Content ──────────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.all(12),
+                // ── Title + info pill — anchored bottom-left ───────────
+                Positioned(
+                  left: 14,
+                  right: 14,
+                  bottom: 14,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Emoji bubble
+                      Text(
+                        widget.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.fraunces(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600,
+                          height: 1.1,
+                          color: _ink,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Container(
-                        width: 72,
-                        height: 72,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: Colors.white,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          widget.reward,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: _ink,
                           ),
                         ),
-                        child: Center(child: widget.icon),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.rajdhani(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w800,
-                              height: 1.1,
-                              color: widget.textColor,
-                              letterSpacing: 0.3,
-                              shadows:
-                                  widget.textColor == Colors.white
-                                      ? [
-                                        Shadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.20,
-                                          ),
-                                          blurRadius: 4,
-                                        ),
-                                      ]
-                                      : null,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: (widget.textColor == Colors.white
-                                      ? Colors.white
-                                      : Colors.black)
-                                  .withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              widget.reward,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: widget.textColor,
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),
@@ -3095,147 +3042,6 @@ class _ActivityCardState extends State<_ActivityCard> {
       ),
     );
   }
-}
-
-// ─ Arc Rings — concentric quarter-circles emanating from top-right corner
-class _ArcRingsPainter extends CustomPainter {
-  const _ArcRingsPainter();
-  @override
-  void paint(Canvas canvas, Size s) {
-    final paint =
-        Paint()
-          ..color = Colors.white.withValues(alpha: 0.14)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.8;
-    for (int i = 1; i <= 5; i++) {
-      final r = s.width * 0.22 * i;
-      canvas.drawArc(
-        Rect.fromCircle(center: Offset(s.width, 0), radius: r),
-        math.pi * 0.5,
-        math.pi * 0.5,
-        false,
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_ArcRingsPainter _) => false;
-}
-
-// ─ Floating Dots — scattered circles, largest bottom-right
-class _FloatingDotsPainter extends CustomPainter {
-  const _FloatingDotsPainter();
-  static const _positions = [
-    [0.80, 0.12, 22.0],
-    [0.60, 0.28, 8.0],
-    [0.92, 0.55, 14.0],
-    [0.15, 0.72, 10.0],
-    [0.70, 0.80, 30.0],
-    [0.35, 0.18, 6.0],
-    [0.05, 0.42, 18.0],
-  ];
-  @override
-  void paint(Canvas canvas, Size s) {
-    for (final p in _positions) {
-      canvas.drawCircle(
-        Offset(s.width * p[0], s.height * p[1]),
-        p[2],
-        Paint()
-          ..color = Colors.white.withValues(alpha: 0.13)
-          ..style = PaintingStyle.fill,
-      );
-      // Ring outline
-      canvas.drawCircle(
-        Offset(s.width * p[0], s.height * p[1]),
-        p[2] + 4,
-        Paint()
-          ..color = Colors.white.withValues(alpha: 0.07)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_FloatingDotsPainter _) => false;
-}
-
-// ─ Speed Lines — diagonal parallel lines top-left to bottom-right
-class _SpeedLinesPainter extends CustomPainter {
-  const _SpeedLinesPainter();
-  @override
-  void paint(Canvas canvas, Size s) {
-    final paint =
-        Paint()
-          ..color = Colors.white.withValues(alpha: 0.11)
-          ..strokeWidth = 1.4
-          ..style = PaintingStyle.stroke;
-    const gap = 22.0;
-    final diag = s.width + s.height;
-    for (double offset = -diag; offset < diag; offset += gap) {
-      canvas.drawLine(Offset(offset, 0), Offset(offset + diag, diag), paint);
-    }
-    // Bold accent line
-    final boldPaint =
-        Paint()
-          ..color = Colors.white.withValues(alpha: 0.18)
-          ..strokeWidth = 3.5;
-    canvas.drawLine(
-      Offset(s.width * 0.1, 0),
-      Offset(s.width, s.height * 0.82),
-      boldPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_SpeedLinesPainter _) => false;
-}
-
-// ─ Diamond Sparks — rotated small square gems scattered across card
-class _DiamondSparksPainter extends CustomPainter {
-  const _DiamondSparksPainter();
-  static const _gems = [
-    [0.75, 0.10, 12.0, 0.18],
-    [0.85, 0.45, 7.0, 0.12],
-    [0.60, 0.72, 10.0, 0.14],
-    [0.15, 0.15, 8.0, 0.10],
-    [0.30, 0.80, 14.0, 0.16],
-    [0.90, 0.25, 5.0, 0.09],
-    [0.50, 0.35, 6.0, 0.08],
-  ];
-  @override
-  void paint(Canvas canvas, Size s) {
-    for (final g in _gems) {
-      final cx = s.width * g[0];
-      final cy = s.height * g[1];
-      final r = g[2];
-      final a = g[3];
-      final path =
-          Path()
-            ..moveTo(cx, cy - r)
-            ..lineTo(cx + r, cy)
-            ..lineTo(cx, cy + r)
-            ..lineTo(cx - r, cy)
-            ..close();
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = Colors.white.withValues(alpha: a)
-          ..style = PaintingStyle.fill,
-      );
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = Colors.white.withValues(alpha: a * 0.6)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DiamondSparksPainter _) => false;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
