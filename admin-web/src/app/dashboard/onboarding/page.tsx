@@ -201,7 +201,13 @@ export default function OnboardingImagesPage() {
     try {
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const mime =
-        ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg";
+        ext === "png"
+          ? "image/png"
+          : ext === "webp"
+            ? "image/webp"
+            : ext === "gif"
+              ? "image/gif"
+              : "image/jpeg";
       // Unique path per upload so CDN never serves a stale image after replace.
       const path = `${slotKey}/${crypto.randomUUID()}.${ext}`;
       const { error: upErr } = await supabase.storage
@@ -291,7 +297,7 @@ export default function OnboardingImagesPage() {
           Upload the photo or screenshot for each onboarding slot. Slots
           marked &ldquo;mock&rdquo; have a built-in fallback so it&apos;s safe
           to leave them empty until you&apos;re ready. Recommended formats:
-          JPEG, PNG, or WebP up to 10 MB.
+          JPEG, PNG, WebP, or GIF (animated supported) up to 10 MB.
         </p>
       </header>
 
@@ -375,7 +381,7 @@ export default function OnboardingImagesPage() {
                           fileRefs.current[slot.key] = el;
                         }}
                         type="file"
-                        accept="image/jpeg,image/png,image/webp"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
                         className="hidden"
                         onChange={(e) => {
                           const f = e.target.files?.[0];

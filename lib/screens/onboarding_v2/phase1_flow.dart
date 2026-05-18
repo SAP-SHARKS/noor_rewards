@@ -78,7 +78,11 @@ class _Phase1FlowState extends State<Phase1Flow> {
             Phase1Screen3(onNext: () => _advanceOrComplete(3), onSkip: _complete),
             Phase1Screen4(onNext: () => _advanceOrComplete(4), onSkip: _complete),
             Phase1Screen5(onNext: () => _advanceOrComplete(5), onSkip: _complete),
-            Phase1Screen6(onNext: () => _advanceOrComplete(6), onSkip: _complete),
+            Phase1Screen6(
+              onNext: () => _advanceOrComplete(6),
+              onSkip: _complete,
+              pageController: _pc,
+            ),
             Phase1Screen7(onNext: () => _advanceOrComplete(7), onSkip: _complete),
           ],
         ),
