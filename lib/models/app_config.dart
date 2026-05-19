@@ -25,6 +25,15 @@ class AppConfig {
   /// manually at any time.
   int get dhikrAdvanceDelaySeconds => _int('dhikr_advance_delay_seconds', 0);
 
+  /// Whether the auto-advance delay above applies to single-read azkar
+  /// (counter target of 1 — read once and done). When false, those azkar
+  /// always advance instantly regardless of dhikrAdvanceDelaySeconds.
+  bool get dhikrDelaySingleRead => _bool('dhikr_delay_single_read', true);
+
+  /// Whether the auto-advance delay applies to multi-count azkar (a dhikr
+  /// counter, e.g. x33). When false, those azkar always advance instantly.
+  bool get dhikrDelayMultiCount => _bool('dhikr_delay_multi_count', true);
+
   // ── Theme — Global ─────────────────────────────────────────────────────────
   // Y4 Honey + Sage Garden defaults. Admin can still override via app_config
   // Supabase rows; these values just become the fallback when no row exists.

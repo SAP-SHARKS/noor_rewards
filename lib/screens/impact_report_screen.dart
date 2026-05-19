@@ -2031,13 +2031,13 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     final initial = d.displayName.trim().isEmpty
         ? '?'
         : d.displayName.trim().substring(0, 1).toUpperCase();
-    final subtitle = 'last gave ${_timeAgo(d.lastDonatedAt)}';
+    final subtitle = _timeAgo(d.lastDonatedAt);
     return Row(
       children: [
         ClipOval(
           child: SizedBox(
-            width: 32,
-            height: 32,
+            width: 40,
+            height: 40,
             child: d.avatarUrl != null
                 ? CachedNetworkImage(
                     imageUrl: d.avatarUrl!,
@@ -2048,7 +2048,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 : _donorInitial(initial),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2059,7 +2059,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.outfit(
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: _C.text,
                 ),
@@ -2069,7 +2069,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.outfit(
-                  fontSize: 10.5,
+                  fontSize: 11.5,
                   fontWeight: FontWeight.w500,
                   color: _C.sub,
                 ),
@@ -2089,12 +2089,12 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SabiqCoin(size: 15),
-              const SizedBox(width: 4),
+              const SabiqCoin(size: 20),
+              const SizedBox(width: 5),
               Text(
                 _fmt(d.total),
                 style: GoogleFonts.outfit(
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
                   color: Y4.honeyDeep,
                 ),
@@ -2113,7 +2113,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       child: Text(
         initial,
         style: GoogleFonts.outfit(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w800,
           color: Y4.honeyDeep,
         ),

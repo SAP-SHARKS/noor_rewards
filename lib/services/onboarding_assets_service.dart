@@ -63,7 +63,9 @@ class OnboardingAssetsService {
     } catch (_) {
       // Hive not ready — fall through to network fetch.
     }
-    // Fire-and-forget refresh from Supabase.
+    // Warm whatever URLs we already have cached (instant on 2nd+ runs),
+    // then refresh from Supabase.
+    _warmCache();
     refresh();
   }
 
@@ -87,6 +89,7 @@ class OnboardingAssetsService {
         }
       }
       images.value = next;
+      _warmCache();
       try {
         final box = await Hive.openBox<String>(_boxName);
         await box.clear();
@@ -119,6 +122,28 @@ class OnboardingAssetsService {
   /// Returns the admin-chosen crop/fit token for [slotKey], or null when
   /// the admin hasn't overridden it.
   String? fitFor(String slotKey) => images.value[slotKey]?.fit;
+
+  /// Downloads every known onboarding image into the cached_network_image
+  /// disk cache and Flutter's image cache — with NO BuildContext required.
+  ///
+  /// Called from [init]/[refresh], which run at app boot while the splash
+  /// plays. By the time the user reaches the onboarding flow the images
+  /// are already decoded in memory, so each slide paints instantly instead
+  /// of kicking off a download when its page first appears.
+  void _warmCache() {
+    for (final img in images.value.values) {
+      if (img.url.isEmpty) continue;
+      final stream = CachedNetworkImageProvider(
+        img.url,
+      ).resolve(ImageConfiguration.empty);
+      late final ImageStreamListener listener;
+      listener = ImageStreamListener(
+        (_, __) => stream.removeListener(listener),
+        onError: (_, __) => stream.removeListener(listener),
+      );
+      stream.addListener(listener);
+    }
+  }
 
   /// Warm Flutter's image cache with every known onboarding URL so the
   /// slides paint instantly — no spinners, no blank slots — even on the

@@ -6550,17 +6550,23 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     });
   }
 
-  // ── Daily-reset countdown label ──────────────────────────────────────
-  // Local-time clock: pending seeds expire at the user's local midnight,
-  // so we count down to the next 00:00. Returns "Resets in 2h" or
-  // "Resets in 45m" depending on how close we are.
-  String _untilResetLabel() {
+  // ── Seal-track label ─────────────────────────────────────────────────
+  // Single line shown on the swipe track: the swipe instruction plus how
+  // long until pending seeds expire at the user's local midnight.
+  // e.g. "Swipe  »  Seal before 2h" → "… 45m" → "… now".
+  String _sealTrackLabel() {
     final now = DateTime.now();
     final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     final diff = nextMidnight.difference(now);
-    if (diff.inHours >= 1) return 'Resets in ${diff.inHours}h';
-    if (diff.inMinutes >= 1) return 'Resets in ${diff.inMinutes}m';
-    return 'Resets soon';
+    final String when;
+    if (diff.inHours >= 1) {
+      when = 'before ${diff.inHours}h';
+    } else if (diff.inMinutes >= 1) {
+      when = 'before ${diff.inMinutes}m';
+    } else {
+      when = 'now';
+    }
+    return 'Swipe  »  Seal $when';
   }
 
   // ── Pending-seeds pill (drops in above the seal track) ──────────────
@@ -6743,15 +6749,16 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
-                              Color(0xFF4A9B8E), // emerald
-                              Color(0xFF1F4F3D), // emerald deep
+                              Color(0xFF53A99B), // light emerald
+                              Color(0xFF4A9B8E), // emerald — kept light so the
+                              // right end stays as bright as the left
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(radius),
                           border: Border.all(
-                            color: const Color(0xFF1F4F3D).withValues(alpha: 0.6),
+                            color: const Color(0xFF2E6B62).withValues(alpha: 0.45),
                             width: 1.5,
                           ),
                           boxShadow: [
@@ -6769,6 +6776,54 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         ),
                       ),
                     ),
+
+                    // ── Swipe-hint arrows — big, faint chevrons that
+                    // cascade left→right across the track so it reads as
+                    // draggable. Fade out once the user starts dragging.
+                    if (!_completed)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Opacity(
+                            opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: _padding + _thumbSize,
+                              ),
+                              // FittedBox scales the chevron run down to fit
+                              // any track width — no RenderFlex overflow on
+                              // narrow phones.
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(5, (i) {
+                                    // A bright pulse travels through the
+                                    // chevrons, looping continuously.
+                                    final d =
+                                        (_haloCtrl.value - i * 0.13) % 1.0;
+                                    final wave =
+                                        d < 0.45 ? (1 - d / 0.45) : 0.0;
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      child: Icon(
+                                        Icons.chevron_right_rounded,
+                                        size: 54,
+                                        color: const Color(0xFFFAF3E3)
+                                            .withValues(
+                                              alpha: 0.30 + wave * 0.48,
+                                            ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
 
                     // ── Golden circuit fill (animates left→right on complete)
                     if (_fillAnim.value > 0)
@@ -6854,58 +6909,20 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         child: IgnorePointer(
                           child: Opacity(
                             opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        AppLocalizations.of(
-                                              context,
-                                            )?.sealTheDay ??
-                                            'Seal the Day',
-                                        maxLines: 1,
-                                        style: GoogleFonts.rajdhani(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w800,
-                                          color: const Color(0xFFFAF3E3),
-                                          letterSpacing: 1.2,
-                                        ),
-                                      ),
-                                    ),
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  _sealTrackLabel(),
+                                  maxLines: 1,
+                                  style: GoogleFonts.rajdhani(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: const Color(0xFFFAF3E3),
+                                    letterSpacing: 0.8,
                                   ),
                                 ),
-                                Container(
-                                  width: 1,
-                                  height: 22,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  color: const Color(
-                                    0xFFFAF3E3,
-                                  ).withValues(alpha: 0.32),
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        _untilResetLabel(),
-                                        maxLines: 1,
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(
-                                            0xFFFAF3E3,
-                                          ).withValues(alpha: 0.85),
-                                          letterSpacing: 0.3,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
@@ -7063,22 +7080,18 @@ class _SocketWidget extends StatelessWidget {
                 ),
               ),
             ),
-            // Ring border + dark "soil" fill so the seedling pops. The
-            // previous butter-cream fill was the same hue as the seedling
-            // icon and washed it out completely.
+            // Ring border + cream fill so the socket reads as the bright
+            // goal at the end of the track. The brown-stemmed green
+            // seedling icon contrasts cleanly against the cream.
             Container(
               width: size - 6,
               height: size - 6,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: RadialGradient(
+                gradient: const RadialGradient(
                   colors: [
-                    const Color(0xFF2F6B53).withValues(
-                      alpha: 0.55 + proximity * 0.25,
-                    ),
-                    const Color(0xFF143A2C).withValues(
-                      alpha: 0.70 + proximity * 0.25,
-                    ),
+                    Color(0xFFFFFAE3), // cream
+                    Color(0xFFF4E4B8), // warm cream edge
                   ],
                 ),
                 border: Border.all(
