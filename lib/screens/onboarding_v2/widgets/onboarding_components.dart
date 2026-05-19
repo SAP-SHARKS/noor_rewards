@@ -272,8 +272,11 @@ class PhotoSlot extends StatelessWidget {
                       alignment: resolved.alignment,
                       width: double.infinity,
                       height: double.infinity,
-                      placeholder: (_, __) =>
-                          _Placeholder(text: placeholderText),
+                      // Images are warmed into cache at app boot, so this
+                      // normally resolves instantly. On the rare miss, show
+                      // the plain cream surface — never a spinner or icon.
+                      fadeInDuration: const Duration(milliseconds: 150),
+                      placeholder: (_, __) => const SizedBox.shrink(),
                       errorWidget: (_, __, ___) =>
                           fallback ?? _Placeholder(text: placeholderText),
                     ),

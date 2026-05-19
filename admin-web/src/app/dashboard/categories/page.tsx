@@ -8,7 +8,6 @@ type Category = {
   label: string;
   icon: string;
   is_visible: boolean;
-  auto_advance_delay: boolean;
   sort_order: number;
 };
 
@@ -16,7 +15,6 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
-  const [togglingDelay, setTogglingDelay] = useState<string | null>(null);
 
   async function loadCategories() {
     const { data } = await supabase
@@ -44,23 +42,6 @@ export default function CategoriesPage() {
       .update({ is_visible: !cat.is_visible })
       .eq("id", cat.id);
     setToggling(null);
-  }
-
-  async function toggleAdvanceDelay(cat: Category) {
-    setTogglingDelay(cat.id);
-    // Optimistic update
-    setCategories((prev) =>
-      prev.map((c) =>
-        c.id === cat.id
-          ? { ...c, auto_advance_delay: !c.auto_advance_delay }
-          : c
-      )
-    );
-    await supabase
-      .from("azkar_categories")
-      .update({ auto_advance_delay: !cat.auto_advance_delay })
-      .eq("id", cat.id);
-    setTogglingDelay(null);
   }
 
   async function moveUp(index: number) {
@@ -120,9 +101,7 @@ export default function CategoriesPage() {
     <div className="max-w-2xl">
       <p className="text-sm text-slate-500 mb-6">
         Control which azkar categories are visible in the app and their display
-        order. <span className="font-medium text-slate-600">Delay</span> turns
-        the auto-advance delay on or off for a category &mdash; off means
-        completed azkar in that category advance instantly.
+        order.
       </p>
 
       <div className="space-y-2">
@@ -165,36 +144,11 @@ export default function CategoriesPage() {
               </button>
             </div>
 
-            {/* Auto-advance delay toggle */}
-            <div className="shrink-0 flex flex-col items-center gap-1 pl-3">
-              <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">
-                Delay
-              </span>
-              <button
-                onClick={() => toggleAdvanceDelay(cat)}
-                disabled={togglingDelay === cat.id}
-                title="Auto-advance delay for this category"
-                className={`relative w-[52px] h-[28px] rounded-full transition-colors cursor-pointer ${
-                  cat.auto_advance_delay ? "bg-teal-500" : "bg-slate-200"
-                }`}
-              >
-                <span
-                  className={`absolute top-[2px] left-[2px] w-6 h-6 bg-white rounded-full shadow transition-transform ${
-                    cat.auto_advance_delay ? "translate-x-6" : "translate-x-0"
-                  }`}
-                />
-              </button>
-            </div>
-
             {/* Visibility toggle */}
-            <div className="shrink-0 flex flex-col items-center gap-1 pl-3">
-              <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">
-                Visible
-              </span>
+            <div className="shrink-0 pl-3">
               <button
                 onClick={() => toggleVisibility(cat)}
                 disabled={toggling === cat.id}
-                title="Show this category in the app"
                 className={`relative w-[52px] h-[28px] rounded-full transition-colors cursor-pointer ${
                   cat.is_visible ? "bg-teal-500" : "bg-slate-200"
                 }`}

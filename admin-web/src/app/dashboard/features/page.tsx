@@ -12,6 +12,8 @@ const FEATURE_FLAGS = [
   { key: "feature_badges", label: "Badges", desc: "Show badges/achievements" },
   { key: "feature_tafsir", label: "Tafsir", desc: "Enable Tafsir audio screen" },
   { key: "feature_invite", label: "Invite Friends", desc: "Enable friend invites" },
+  { key: "dhikr_delay_single_read", label: "Advance Delay · Single-read Azkar", desc: "Apply the auto-advance delay after a read-once azkar (counter target of 1). Off = advance instantly." },
+  { key: "dhikr_delay_multi_count", label: "Advance Delay · Counter Azkar", desc: "Apply the auto-advance delay after a multi-count azkar (a dhikr counter, e.g. x33). Off = advance instantly." },
   { key: "maintenance_mode", label: "Maintenance Mode", desc: "Block ALL users from app (emergency only!)", danger: true },
 ];
 

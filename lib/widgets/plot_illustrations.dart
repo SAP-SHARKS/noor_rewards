@@ -1,9 +1,16 @@
 // lib/widgets/plot_illustrations.dart
 //
 // 3D-style illustrations for the four "Today's plots" home cards —
-// Quran, Dhikr, Achievements, Invite Friends. The SVGs are taken
-// verbatim from the approved design mockup (var3_unified_bg) and
-// rendered with flutter_svg.
+// Quran, Dhikr, Achievements, Invite Friends. The SVGs are taken from
+// the approved design mockup (var3_unified_bg) and rendered with
+// flutter_svg.
+//
+// NOTE: every translucent colour is written as a hex value plus a
+// `*-opacity` attribute (stop-opacity / fill-opacity) rather than the
+// CSS `rgba()` form. flutter_svg does not apply the alpha channel of
+// `rgba()` consistently, which made the soft highlights render as
+// opaque white patches. Hex + `*-opacity` renders identically to the
+// browser mockup.
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -63,11 +70,11 @@ const String _quranSvg = '''
       <stop offset="100%" stop-color="#f0d890"/>
     </linearGradient>
     <radialGradient id="qHi" cx="25%" cy="20%" r="65%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.7)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <ellipse cx="100" cy="180" rx="72" ry="6" fill="rgba(120,80,20,0.18)"/>
+  <ellipse cx="100" cy="180" rx="72" ry="6" fill="#785014" fill-opacity="0.18"/>
   <path d="M 30 158 L 170 158 L 168 168 L 32 168 Z" fill="url(#qCside)"/>
   <path d="M 32 54 L 168 54 L 168 158 L 32 158 Z" fill="url(#qPages)"/>
   <path d="M 30 46 L 170 46 L 170 154 L 30 154 Z" fill="url(#qCover)"/>
@@ -104,26 +111,26 @@ const String _dhikrSvg = '''
       <stop offset="100%" stop-color="#8a6018"/>
     </radialGradient>
   </defs>
-  <ellipse cx="100" cy="180" rx="62" ry="7" fill="rgba(120,80,20,0.16)"/>
+  <ellipse cx="100" cy="180" rx="62" ry="7" fill="#785014" fill-opacity="0.16"/>
   <ellipse cx="100" cy="95" rx="58" ry="62" fill="none" stroke="#8a6020" stroke-width="0.8" opacity="0.5"/>
   <g>
     <circle cx="100" cy="33" r="13" fill="url(#dLead)"/>
-    <ellipse cx="96" cy="28" rx="3.5" ry="2.5" fill="rgba(255,255,255,0.75)"/>
+    <ellipse cx="96" cy="28" rx="3.5" ry="2.5" fill="#ffffff" fill-opacity="0.75"/>
   </g>
-  <g><circle cx="76"  cy="40"  r="9" fill="url(#dBead)"/><ellipse cx="73.5"  cy="37.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="56"  cy="54"  r="9" fill="url(#dBead)"/><ellipse cx="53.5"  cy="51.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="44"  cy="74"  r="9" fill="url(#dBead)"/><ellipse cx="41.5"  cy="71.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="40"  cy="98"  r="9" fill="url(#dBead)"/><ellipse cx="37.5"  cy="95.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="44"  cy="122" r="9" fill="url(#dBead)"/><ellipse cx="41.5"  cy="119.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="58"  cy="142" r="9" fill="url(#dBead)"/><ellipse cx="55.5"  cy="139.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="80"  cy="155" r="9" fill="url(#dBead)"/><ellipse cx="77.5"  cy="152.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="120" cy="155" r="9" fill="url(#dBead)"/><ellipse cx="117.5" cy="152.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="142" cy="142" r="9" fill="url(#dBead)"/><ellipse cx="139.5" cy="139.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="156" cy="122" r="9" fill="url(#dBead)"/><ellipse cx="153.5" cy="119.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="160" cy="98"  r="9" fill="url(#dBead)"/><ellipse cx="157.5" cy="95.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="156" cy="74"  r="9" fill="url(#dBead)"/><ellipse cx="153.5" cy="71.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="144" cy="54"  r="9" fill="url(#dBead)"/><ellipse cx="141.5" cy="51.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
-  <g><circle cx="124" cy="40"  r="9" fill="url(#dBead)"/><ellipse cx="121.5" cy="37.5"  rx="2" ry="1.5" fill="rgba(255,255,255,0.7)"/></g>
+  <g><circle cx="76"  cy="40"  r="9" fill="url(#dBead)"/><ellipse cx="73.5"  cy="37.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="56"  cy="54"  r="9" fill="url(#dBead)"/><ellipse cx="53.5"  cy="51.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="44"  cy="74"  r="9" fill="url(#dBead)"/><ellipse cx="41.5"  cy="71.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="40"  cy="98"  r="9" fill="url(#dBead)"/><ellipse cx="37.5"  cy="95.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="44"  cy="122" r="9" fill="url(#dBead)"/><ellipse cx="41.5"  cy="119.5" rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="58"  cy="142" r="9" fill="url(#dBead)"/><ellipse cx="55.5"  cy="139.5" rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="80"  cy="155" r="9" fill="url(#dBead)"/><ellipse cx="77.5"  cy="152.5" rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="120" cy="155" r="9" fill="url(#dBead)"/><ellipse cx="117.5" cy="152.5" rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="142" cy="142" r="9" fill="url(#dBead)"/><ellipse cx="139.5" cy="139.5" rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="156" cy="122" r="9" fill="url(#dBead)"/><ellipse cx="153.5" cy="119.5" rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="160" cy="98"  r="9" fill="url(#dBead)"/><ellipse cx="157.5" cy="95.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="156" cy="74"  r="9" fill="url(#dBead)"/><ellipse cx="153.5" cy="71.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="144" cy="54"  r="9" fill="url(#dBead)"/><ellipse cx="141.5" cy="51.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
+  <g><circle cx="124" cy="40"  r="9" fill="url(#dBead)"/><ellipse cx="121.5" cy="37.5"  rx="2" ry="1.5" fill="#ffffff" fill-opacity="0.7"/></g>
   <line x1="100" y1="46" x2="100" y2="60" stroke="#a8801c" stroke-width="2"/>
   <path d="M 90 60 L 110 60 L 112 70 L 88 70 Z" fill="#d4a850"/>
   <ellipse cx="100" cy="60" rx="10" ry="1.5" fill="#a8801c"/>
@@ -167,11 +174,11 @@ const String _trophySvg = '''
       <stop offset="100%" stop-color="#6a4010"/>
     </linearGradient>
     <radialGradient id="tHi" cx="30%" cy="25%" r="65%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <ellipse cx="100" cy="180" rx="58" ry="6" fill="rgba(120,80,20,0.2)"/>
+  <ellipse cx="100" cy="180" rx="58" ry="6" fill="#785014" fill-opacity="0.2"/>
   <rect x="60" y="160" width="80" height="14" rx="2" fill="url(#tPlinth)"/>
   <rect x="60" y="160" width="80" height="3" fill="#fff5d0" opacity="0.5"/>
   <path d="M 72 138 L 128 138 L 134 160 L 66 160 Z" fill="url(#tBase)"/>
@@ -223,25 +230,25 @@ const String _inviteSvg = '''
       <stop offset="100%" stop-color="#a87018"/>
     </radialGradient>
     <radialGradient id="fHi" cx="30%" cy="25%" r="70%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <ellipse cx="100" cy="180" rx="68" ry="6" fill="rgba(120,80,20,0.2)"/>
+  <ellipse cx="100" cy="180" rx="68" ry="6" fill="#785014" fill-opacity="0.2"/>
   <path d="M 110 100 Q 138 100 144 130 L 148 170 Q 130 178 110 178 Q 100 178 100 170 L 100 130 Q 100 100 110 100 Z" fill="url(#fBody2)"/>
   <path d="M 110 100 Q 138 100 144 130 L 148 170 Q 130 178 110 178 Q 100 178 100 170 L 100 130 Q 100 100 110 100 Z" fill="url(#fHi)"/>
   <path d="M 116 92 L 132 92 L 132 104 L 116 104 Z" fill="#b88830"/>
   <circle cx="124" cy="78" r="20" fill="url(#fHead2)"/>
-  <ellipse cx="117" cy="70" rx="6" ry="4" fill="rgba(255,255,255,0.5)"/>
+  <ellipse cx="117" cy="70" rx="6" ry="4" fill="#ffffff" fill-opacity="0.5"/>
   <path d="M 82 100 Q 56 100 50 130 L 46 170 Q 64 180 82 180 Q 100 180 100 170 L 100 130 Q 100 100 82 100 Z" fill="url(#fBody1)"/>
   <path d="M 82 100 Q 56 100 50 130 L 46 170 Q 64 180 82 180 Q 100 180 100 170 L 100 130 Q 100 100 82 100 Z" fill="url(#fHi)"/>
   <path d="M 68 92 L 84 92 L 84 104 L 68 104 Z" fill="#a8761e"/>
   <circle cx="76" cy="76" r="22" fill="url(#fHead1)"/>
-  <ellipse cx="68" cy="68" rx="7" ry="5" fill="rgba(255,255,255,0.55)"/>
+  <ellipse cx="68" cy="68" rx="7" ry="5" fill="#ffffff" fill-opacity="0.55"/>
   <g transform="translate(154,46)">
     <circle cx="0" cy="0" r="18" fill="url(#fStar)"/>
     <circle cx="0" cy="0" r="18" fill="none" stroke="#a87018" stroke-width="0.5"/>
-    <ellipse cx="-5" cy="-7" rx="5" ry="3" fill="rgba(255,255,255,0.5)"/>
+    <ellipse cx="-5" cy="-7" rx="5" ry="3" fill="#ffffff" fill-opacity="0.5"/>
     <rect x="-7" y="-2" width="14" height="4" rx="1" fill="#7a4a10"/>
     <rect x="-2" y="-7" width="4" height="14" rx="1" fill="#7a4a10"/>
   </g>

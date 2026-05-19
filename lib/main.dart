@@ -105,6 +105,15 @@ Future<void> _bootHeavyInit() async {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3anpodGN4ZmllbmRvZm5oeXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMzkwNDksImV4cCI6MjA4NjkxNTA0OX0.gspfVlCH-S2Cs8_fhOeDWNZN2XH1NC53CJ8riyvJ5nw',
     ),
   );
+  // Start onboarding-image warming as early as possible — the moment
+  // Supabase is up (it needs Supabase for the URL fetch). Running it here,
+  // unawaited and in parallel with the remaining boot steps, gives the
+  // image downloads the whole rest of boot + the splash window as a head
+  // start, so the onboarding slides are already cached when shown.
+  // init() returns fast; the downloads it kicks off continue in the
+  // background and never block navigation.
+  unawaited(_step('OnboardingAssets', OnboardingAssetsService.instance.init));
+
   await _step('NotificationService', NotificationService.instance.initialize);
   await _step('QuranApiConfig', QuranApiConfig.load);
 
@@ -123,7 +132,6 @@ Future<void> _bootHeavyInit() async {
   unawaited(
     _step('NoorLiveNotification', NoorLiveNotificationService.instance.init),
   );
-  unawaited(_step('OnboardingAssets', OnboardingAssetsService.instance.init));
 
   try {
     _initAppLinks();

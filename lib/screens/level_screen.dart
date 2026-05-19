@@ -145,7 +145,7 @@ class LevelScreen extends StatefulWidget {
 }
 
 class _LevelScreenState extends State<LevelScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late TabController _tabs;
   final _xp = XpService.instance;
   final _sb = Supabase.instance.client;
@@ -164,35 +164,30 @@ class _LevelScreenState extends State<LevelScreen>
   // instead of getting stuck on the spinner (the "blank Journey page" bug).
   Object? _loadError;
 
-  /// Number of tabs currently shown. The Challenges tab is gated on the
-  /// `challengesTab` remote feature flag, so this can change at runtime.
-  int get _desiredTabCount => FeatureFlags.challengesTab ? 4 : 3;
+  /// Whether the Challenges tab is shown — SNAPSHOTTED once in initState.
+  ///
+  /// `challengesTab` is a remote feature flag (app_config, refreshed live
+  /// over Supabase Realtime), so its value can change at any moment. If
+  /// build() read it directly, the tab list / TabBarView children could
+  /// end up a different length than the [TabController] — and TabBar /
+  /// TabBarView throw on a length mismatch, blanking the whole Journey
+  /// screen (the "Journey opens blank" bug).
+  ///
+  /// Freezing the value for this screen's lifetime makes the controller
+  /// length and the tab/child counts derive from ONE constant, so they
+  /// can never diverge. A flag change simply takes effect the next time
+  /// the screen is built fresh (next app launch) — the expected behaviour
+  /// for a feature flag, and infinitely better than a blank page. No
+  /// controller is ever recreated, so SingleTickerProviderStateMixin and
+  /// a single ticker are all that's needed.
+  late final bool _showChallenges;
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: _desiredTabCount, vsync: this);
+    _showChallenges = FeatureFlags.challengesTab;
+    _tabs = TabController(length: _showChallenges ? 4 : 3, vsync: this);
     _loadAll();
-  }
-
-  /// Keeps [_tabs] in sync with [_desiredTabCount].
-  ///
-  /// `challengesTab` is a remote flag that can flip AFTER initState — the
-  /// app config loads asynchronously at startup and refreshes over
-  /// Realtime. When it flips, build() emits a different number of tabs
-  /// than the controller's length; TabBar/TabBarView then throw and the
-  /// whole Journey screen renders blank. Recreating the controller on a
-  /// length change keeps them consistent. Requires TickerProviderStateMixin
-  /// (not Single…) so a fresh controller can allocate a new ticker.
-  void _syncTabController() {
-    if (_tabs.length == _desiredTabCount) return;
-    final keepIndex = _tabs.index.clamp(0, _desiredTabCount - 1);
-    _tabs.dispose();
-    _tabs = TabController(
-      length: _desiredTabCount,
-      vsync: this,
-      initialIndex: keepIndex,
-    );
   }
 
   @override
@@ -241,24 +236,28 @@ class _LevelScreenState extends State<LevelScreen>
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    // Resync before using _tabs — the Challenges tab's remote flag may
-    // have flipped since initState (see _syncTabController). Without this
-    // the tab count and controller length diverge and the screen blanks.
-    _syncTabController();
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
         backgroundColor: Y4.bg,
         surfaceTintColor: Y4.bg,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_rounded,
-            color: Y4.ink,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
+        // LevelScreen is used BOTH as a standalone pushed route AND as the
+        // root of the dashboard's Journey tab (a nested Navigator). Only
+        // show the back button when there is actually a route to pop —
+        // popping the tab's only route empties the nested Navigator and
+        // trips the `_history.isNotEmpty` assertion (red-screen crash).
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_rounded,
+                  color: Y4.ink,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
           l.journey,
           style: GoogleFonts.outfit(
@@ -284,7 +283,7 @@ class _LevelScreenState extends State<LevelScreen>
             Tab(text: '🔥 ${l.tabStreaks}'),
             Tab(text: '📈 ${l.tabProgress}'),
             Tab(text: '🏅 ${l.tabBadges}'),
-            if (FeatureFlags.challengesTab)
+            if (_showChallenges)
               Tab(text: '⚡ ${l.tabChallenges}'),
           ],
         ),
@@ -345,7 +344,7 @@ class _LevelScreenState extends State<LevelScreen>
                     supabase: _sb,
                   ),
                   _BadgesTab(badges: _badges),
-                  if (FeatureFlags.challengesTab)
+                  if (_showChallenges)
                     _ChallengesTab(
                       challenges: _challenges,
                       onRefresh: _loadAll,
