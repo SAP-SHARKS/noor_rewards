@@ -79,5 +79,26 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<!-- ── Privacy purpose strings (NSUsageDescription) ────────────────────
+		     Required by App Store Connect whenever the binary references the
+		     matching iOS API — even via a transitive plugin. Apple's
+		     processing scanner rejects builds that omit these. -->
+
+		<!-- Location: geolocator (notification_service.dart) reads coarse GPS
+		     to detect the user's IANA timezone, so reminders & prayer-time
+		     features fire at the right local moment. -->
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
+
+		<!-- Photos / camera: image_picker + image_cropper power the profile
+		     avatar flow (Settings → change photo). -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Sabiq needs photo library access so you can choose a profile picture.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Sabiq needs permission to save images you create in the app to your photo library.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Sabiq needs camera access so you can take a profile picture.</string>
 	</dict>
 </plist>
