@@ -1,4 +1,4 @@
-package com.example.noor_rewards
+package com.sabiq.noorrewards
 
 import io.flutter.embedding.android.FlutterActivity
 
