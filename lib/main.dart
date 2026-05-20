@@ -259,7 +259,7 @@ bool _isQfCallback(Uri uri) =>
 
 bool _isJoinCallback(Uri uri) =>
     (uri.scheme == 'noorrewards' && uri.host == 'join') ||
-    (uri.scheme == 'https' && uri.host == 'noorrewards.app' && uri.path == '/join');
+    (uri.scheme == 'https' && uri.host == 'sabiq-rewards.vercel.app' && uri.path == '/join');
 
 // ─────────────────────────────────────────────────────────────────────────────
 /// Shows the flower Lottie splash, then hands off to [AuthGate] only when

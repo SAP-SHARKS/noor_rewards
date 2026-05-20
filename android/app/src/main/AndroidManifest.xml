@@ -56,12 +56,12 @@
                 <data android:scheme="noorrewards" android:host="join" />
             </intent-filter>
 
-            <!-- Production App Links (https://noorrewards.app/join?ref=...) -->
+            <!-- Production App Links (https://sabiq-rewards.vercel.app/join?ref=...) -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="noorrewards.app" android:pathPrefix="/join" />
+                <data android:scheme="https" android:host="sabiq-rewards.vercel.app" android:pathPrefix="/join" />
             </intent-filter>
         </activity>
         

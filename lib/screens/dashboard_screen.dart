@@ -1573,7 +1573,7 @@ class _InviteSheetState extends State<_InviteSheet>
   late Animation<double> _shimmer;
 
   String get _shareLink =>
-      'https://noorrewards.app/join?ref=${widget.referralCode}';
+      'https://sabiq-rewards.vercel.app/join?ref=${widget.referralCode}';
 
   String get _shareMessage =>
       'Join me on Sabiq Rewards — earn Seeds for daily Quran, Dhikr & good deeds!\n\n'
