@@ -220,6 +220,12 @@ class PhotoSlot extends StatelessWidget {
   final Widget? fallback;
   final BoxFit fit;
   final BorderRadius? borderRadius;
+  /// When true the uploaded image renders on a cream surface with a soft
+  /// blurred-cover backdrop filling any letterbox margins. When false the
+  /// image is simply centered (BoxFit.contain) on a transparent background,
+  /// so the screen behind shows through with no cream fill or side blur —
+  /// use this for slots where the asset is a self-contained illustration.
+  final bool transparentBackdrop;
   const PhotoSlot({
     super.key,
     required this.slotKey,
@@ -227,6 +233,7 @@ class PhotoSlot extends StatelessWidget {
     this.fallback,
     this.fit = BoxFit.contain,
     this.borderRadius,
+    this.transparentBackdrop = false,
   });
 
   @override
@@ -239,51 +246,69 @@ class PhotoSlot extends StatelessWidget {
         // Admin-chosen crop wins; otherwise fall back to the fit the
         // calling screen requested.
         final resolved = resolveOnbFit(entry?.fit, fit);
-        final body = (url != null && url.isNotEmpty)
-            ? Container(
-                color: OnbTok.creamWarm,
-                width: double.infinity,
-                height: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Blurred cover backdrop fills any letterbox area
-                    // with a soft, color-matched version of the image.
-                    ImageFiltered(
-                      imageFilter: ImageFilter.blur(
-                        sigmaX: 28,
-                        sigmaY: 28,
-                        tileMode: TileMode.decal,
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: url,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        placeholder: (_, __) => const SizedBox.shrink(),
-                        errorWidget: (_, __, ___) => const SizedBox.shrink(),
-                      ),
-                    ),
-                    // Foreground: actual photo at the resolved fit +
-                    // alignment (admin crop control).
-                    CachedNetworkImage(
-                      imageUrl: url,
-                      fit: resolved.fit,
-                      alignment: resolved.alignment,
-                      width: double.infinity,
-                      height: double.infinity,
-                      // Images are warmed into cache at app boot, so this
-                      // normally resolves instantly. On the rare miss, show
-                      // the plain cream surface — never a spinner or icon.
-                      fadeInDuration: const Duration(milliseconds: 150),
-                      placeholder: (_, __) => const SizedBox.shrink(),
-                      errorWidget: (_, __, ___) =>
-                          fallback ?? _Placeholder(text: placeholderText),
-                    ),
-                  ],
+        final Widget body;
+        if (url == null || url.isEmpty) {
+          body = fallback ?? _Placeholder(text: placeholderText);
+        } else if (transparentBackdrop) {
+          // Centered asset, transparent background — no cream fill, no
+          // blurred side margins. The screen behind shows through, so a
+          // portrait illustration sits naturally on the app background.
+          body = CachedNetworkImage(
+            imageUrl: url,
+            fit: BoxFit.contain,
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: double.infinity,
+            fadeInDuration: const Duration(milliseconds: 150),
+            placeholder: (_, __) => const SizedBox.shrink(),
+            errorWidget: (_, __, ___) =>
+                fallback ?? _Placeholder(text: placeholderText),
+          );
+        } else {
+          body = Container(
+            color: OnbTok.creamWarm,
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Blurred cover backdrop fills any letterbox area
+                // with a soft, color-matched version of the image.
+                ImageFiltered(
+                  imageFilter: ImageFilter.blur(
+                    sigmaX: 28,
+                    sigmaY: 28,
+                    tileMode: TileMode.decal,
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    placeholder: (_, __) => const SizedBox.shrink(),
+                    errorWidget: (_, __, ___) => const SizedBox.shrink(),
+                  ),
                 ),
-              )
-            : (fallback ?? _Placeholder(text: placeholderText));
+                // Foreground: actual photo at the resolved fit +
+                // alignment (admin crop control).
+                CachedNetworkImage(
+                  imageUrl: url,
+                  fit: resolved.fit,
+                  alignment: resolved.alignment,
+                  width: double.infinity,
+                  height: double.infinity,
+                  // Images are warmed into cache at app boot, so this
+                  // normally resolves instantly. On the rare miss, show
+                  // the plain cream surface — never a spinner or icon.
+                  fadeInDuration: const Duration(milliseconds: 150),
+                  placeholder: (_, __) => const SizedBox.shrink(),
+                  errorWidget: (_, __, ___) =>
+                      fallback ?? _Placeholder(text: placeholderText),
+                ),
+              ],
+            ),
+          );
+        }
         return borderRadius != null
             ? ClipRRect(borderRadius: borderRadius!, child: body)
             : body;

@@ -73,8 +73,8 @@ class _Phase1FlowState extends State<Phase1Flow> {
           physics: const BouncingScrollPhysics(),
           children: [
             Phase1Screen1(onNext: () => _advanceOrComplete(0), onSkip: _complete),
-            Phase1Screen2(onNext: () => _advanceOrComplete(1), onSkip: _complete),
-            Phase1ScreenSteps(onNext: () => _advanceOrComplete(2), onSkip: _complete),
+            Phase1ScreenSteps(onNext: () => _advanceOrComplete(1), onSkip: _complete),
+            Phase1Screen2(onNext: () => _advanceOrComplete(2), onSkip: _complete),
             Phase1Screen3(onNext: () => _advanceOrComplete(3), onSkip: _complete),
             Phase1Screen4(onNext: () => _advanceOrComplete(4), onSkip: _complete),
             Phase1Screen5(onNext: () => _advanceOrComplete(5), onSkip: _complete),
