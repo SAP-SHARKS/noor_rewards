@@ -10,16 +10,16 @@
 
 workflows:
   ios-workflow:
-    name: iOS Development Build
+    name: iOS App Store Build
     instance_type: mac_mini_m2
     max_build_duration: 60
     integrations:
       app_store_connect: Codemagic
     environment:
       ios_signing:
-        # Switch to ad_hoc once UDIDs are registered in the Apple Developer
-        # portal, or app_store for TestFlight / App Store submission.
-        distribution_type: development
+        # Switch to ad_hoc for UDID-restricted test builds, or development
+        # for direct-install dev builds.
+        distribution_type: app_store
         bundle_identifier: com.sabiq.noorrewards
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
@@ -52,9 +52,9 @@ workflows:
       - name: Set up provisioning profiles via the connected ASC API key
         script: |
           xcode-project use-profiles
-      - name: Flutter build IPA (debug)
+      - name: Flutter build IPA (release)
         script: |
-          flutter build ipa --debug \
+          flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
