@@ -1,0 +1,47 @@
+# Codemagic build configuration.
+#
+# Signing identity is fetched at build time from the App Store Connect API
+# key uploaded under Teams → Codemagic → Integrations:
+#   Integration name : Codemagic
+#   Issuer ID        : 7a39c4c7-9c57-4419-8071-9e486db5cef7
+#   Key ID           : DMPB84UZ69
+# `xcode-project use-profiles` then provisions / fetches a matching
+# development profile for com.sabiq.noorrewards before flutter build ipa.
+
+workflows:
+  ios-workflow:
+    name: iOS Development Build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Codemagic
+    environment:
+      ios_signing:
+        # Switch to ad_hoc once UDIDs are registered in the Apple Developer
+        # portal, or app_store for TestFlight / App Store submission.
+        distribution_type: development
+        bundle_identifier: com.sabiq.noorrewards
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Fetch the latest Flutter packages
+        script: |
+          flutter pub get
+      - name: Install CocoaPods dependencies
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Set up provisioning profiles via the connected ASC API key
+        script: |
+          xcode-project use-profiles
+      - name: Flutter build IPA (debug)
+        script: |
+          flutter build ipa --debug \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
