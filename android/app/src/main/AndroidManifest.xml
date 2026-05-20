@@ -47,6 +47,22 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="noorrewards" android:host="oauth2" android:pathPrefix="/callback" />
             </intent-filter>
+
+            <!-- Custom Referral Scheme (noorrewards://join?ref=...) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="noorrewards" android:host="join" />
+            </intent-filter>
+
+            <!-- Production App Links (https://noorrewards.app/join?ref=...) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="noorrewards.app" android:pathPrefix="/join" />
+            </intent-filter>
         </activity>
         
         <!-- flutter_appauth removed: QF OAuth now uses manual PKCE (url_launcher +

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/auth/data/qf_auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/app_config.dart';
 import 'screens/onboarding_v2/phase1_flow.dart';
@@ -215,12 +216,30 @@ class MyApp extends StatelessWidget {
 void _initAppLinks() {
   final appLinks = AppLinks();
 
-  // Handle URI if the app was COLD-STARTED by the OAuth redirect
+  // Helper function to handle a referral join URI
+  Future<void> handleJoinUri(Uri uri) async {
+    final referralCode = uri.queryParameters['ref'];
+    if (referralCode != null && referralCode.isNotEmpty) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_referral_code', referralCode.toUpperCase());
+        debugPrint('[AppLinks] Saved pending referral code: $referralCode');
+      } catch (e) {
+        debugPrint('[AppLinks] Error saving pending referral code: $e');
+      }
+    }
+  }
+
+  // Handle URI if the app was COLD-STARTED
   appLinks.getInitialLinkString().then((link) {
     if (link != null) {
       final uri = Uri.tryParse(link);
-      if (uri != null && _isQfCallback(uri)) {
-        QfAuthService.instance.handleCallback(uri);
+      if (uri != null) {
+        if (_isQfCallback(uri)) {
+          QfAuthService.instance.handleCallback(uri);
+        } else if (_isJoinCallback(uri)) {
+          handleJoinUri(uri);
+        }
       }
     }
   });
@@ -229,12 +248,18 @@ void _initAppLinks() {
   appLinks.uriLinkStream.listen((uri) {
     if (_isQfCallback(uri)) {
       QfAuthService.instance.handleCallback(uri);
+    } else if (_isJoinCallback(uri)) {
+      handleJoinUri(uri);
     }
   });
 }
 
 bool _isQfCallback(Uri uri) =>
     uri.scheme == 'noorrewards' && uri.host == 'oauth2';
+
+bool _isJoinCallback(Uri uri) =>
+    (uri.scheme == 'noorrewards' && uri.host == 'join') ||
+    (uri.scheme == 'https' && uri.host == 'noorrewards.app' && uri.path == '/join');
 
 // ─────────────────────────────────────────────────────────────────────────────
 /// Shows the flower Lottie splash, then hands off to [AuthGate] only when

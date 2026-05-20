@@ -396,7 +396,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ).showSnackBar(SnackBar(content: Text('Dashboard Load Error: $e')));
       }
     }
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {});
+      _checkAndApplyPendingReferral();
+    }
+  }
+
+  Future<void> _checkAndApplyPendingReferral() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final pendingCode = prefs.getString('pending_referral_code');
+      if (pendingCode != null && pendingCode.isNotEmpty) {
+        await _supabase.rpc(
+          'apply_referral',
+          params: {'inviter_code': pendingCode},
+        );
+        await prefs.remove('pending_referral_code');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Referral code "$pendingCode" applied successfully! 500 Sabiq Seeds rewarded to you both! 🎉',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: Colors.white),
+              ),
+              backgroundColor: const Color(0xFF6D28D9),
+              duration: const Duration(seconds: 5),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      final s = e.toString();
+      if (s.contains('Already referred') || s.contains('Invalid referral code') || s.contains('Cannot refer yourself')) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('pending_referral_code');
+      }
+    }
   }
 
   // Fallback level title if DB not reachable
