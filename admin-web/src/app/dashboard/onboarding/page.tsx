@@ -165,6 +165,105 @@ const FIT_PREVIEW_CLASS: Record<string, string> = {
   fill: "object-fill",
 };
 
+// ── Auto image optimisation ──────────────────────────────────────────────────
+// Onboarding images render on a ~390px-wide phone frame, so multi-MB photos
+// are wasted bytes that make the in-app slides load slowly. On upload each
+// image is downscaled to a sensible longest edge and re-encoded (WebP, with
+// a JPEG fallback) so files stay small and the onboarding flow paints fast.
+const MAX_IMAGE_DIM = 1280; // longest-edge cap, px
+const IMAGE_QUALITY = 0.82;
+
+function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: string,
+  quality: number
+): Promise<Blob | null> {
+  return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+}
+
+type OptimizedImage = { blob: Blob; mime: string; ext: string };
+
+// Animated GIFs can't be re-encoded with a <canvas> — that flattens them to
+// a single frame. gifsicle-wasm runs the real gifsicle optimiser in the
+// browser (downscale + lossy compression + palette reduction) while keeping
+// the animation intact. It's imported lazily so it never weighs on the rest
+// of the admin panel, and any failure falls back to the untouched original.
+async function optimizeGif(file: File): Promise<OptimizedImage> {
+  const original = (): OptimizedImage => ({
+    blob: file,
+    mime: "image/gif",
+    ext: "gif",
+  });
+  try {
+    const { default: gifsicle } = await import("gifsicle-wasm-browser");
+    const out = await gifsicle.run({
+      input: [{ file, name: "in.gif" }],
+      command: [
+        `--resize-fit ${MAX_IMAGE_DIM}x${MAX_IMAGE_DIM} ` +
+          `--lossy=80 -O3 --colors 128 in.gif -o /out/out.gif`,
+      ],
+    });
+    const result = out?.[0];
+    if (!result) return original();
+    // Keep whichever is smaller — a tiny source GIF may not benefit.
+    if (result.size >= file.size) return original();
+    return { blob: result, mime: "image/gif", ext: "gif" };
+  } catch {
+    return original();
+  }
+}
+
+async function optimizeImage(file: File): Promise<OptimizedImage> {
+  // GIFs need the dedicated gifsicle optimiser (a <canvas> would flatten
+  // the animation to one frame).
+  if (file.type === "image/gif") {
+    return optimizeGif(file);
+  }
+  const original = (): OptimizedImage => {
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+    return { blob: file, mime: file.type || "image/jpeg", ext };
+  };
+  try {
+    const bitmap = await createImageBitmap(file, {
+      imageOrientation: "from-image",
+    });
+    let w = bitmap.width;
+    let h = bitmap.height;
+    if (Math.max(w, h) > MAX_IMAGE_DIM) {
+      const scale = MAX_IMAGE_DIM / Math.max(w, h);
+      w = Math.round(w * scale);
+      h = Math.round(h * scale);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      bitmap.close();
+      return original();
+    }
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
+    // Prefer WebP (smallest, keeps transparency). If the browser can't
+    // encode WebP, canvas.toBlob returns a PNG — fall back to JPEG then.
+    let blob = await canvasToBlob(canvas, "image/webp", IMAGE_QUALITY);
+    let mime = "image/webp";
+    let ext = "webp";
+    if (!blob || blob.type !== "image/webp") {
+      blob = await canvasToBlob(canvas, "image/jpeg", IMAGE_QUALITY);
+      mime = "image/jpeg";
+      ext = "jpg";
+    }
+    if (!blob) return original();
+    // If the source was already smaller than our re-encode, keep it.
+    if (blob.size >= file.size) return original();
+    return { blob, mime, ext };
+  } catch {
+    // Any decode/encode failure → upload the original untouched.
+    return original();
+  }
+}
+
 export default function OnboardingImagesPage() {
   const [rows, setRows] = useState<Record<string, Row>>({});
   const [loading, setLoading] = useState(true);
@@ -199,20 +298,14 @@ export default function OnboardingImagesPage() {
     setUploadingKey(slotKey);
     setErrorMsg("");
     try {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const mime =
-        ext === "png"
-          ? "image/png"
-          : ext === "webp"
-            ? "image/webp"
-            : ext === "gif"
-              ? "image/gif"
-              : "image/jpeg";
+      // Auto-shrink: downscale + re-encode so onboarding images stay small
+      // and load instantly in the app.
+      const { blob, mime, ext } = await optimizeImage(file);
       // Unique path per upload so CDN never serves a stale image after replace.
       const path = `${slotKey}/${crypto.randomUUID()}.${ext}`;
       const { error: upErr } = await supabase.storage
         .from(BUCKET)
-        .upload(path, file, { contentType: mime, upsert: true });
+        .upload(path, blob, { contentType: mime, upsert: true });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
       const url = data.publicUrl;
@@ -297,7 +390,9 @@ export default function OnboardingImagesPage() {
           Upload the photo or screenshot for each onboarding slot. Slots
           marked &ldquo;mock&rdquo; have a built-in fallback so it&apos;s safe
           to leave them empty until you&apos;re ready. Recommended formats:
-          JPEG, PNG, WebP, or GIF (animated supported) up to 10 MB.
+          JPEG, PNG, WebP, or GIF (animated supported) up to 10 MB. Uploads
+          are automatically downscaled and compressed so the app&apos;s
+          onboarding slides load instantly.
         </p>
       </header>
 

@@ -124,96 +124,112 @@ class Phase1Screen2 extends StatelessWidget {
                 child: Text(l.onbV2_2_Title,
                     style: OnbTok.serif(fontSize: 30)),
               ),
-              const SizedBox(height: 28),
-              // Flow box
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-                child: Container(
-                  height: 300,
-                  decoration: BoxDecoration(
-                    color: OnbTok.creamWarm,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Stack(
-                    children: [
-                      // Left: Quran mini
-                      Positioned(
-                        left: 18,
-                        top: 24,
-                        width: 120,
-                        height: 240,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: PhotoSlot(
-                            slotKey: 'onb_quran_2',
-                            fallback: _MiniQuranCard(),
-                          ),
-                        ),
-                      ),
-                      // Right: aid photo
-                      Positioned(
-                        right: 18,
-                        top: 24,
-                        width: 120,
-                        height: 240,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: const PhotoSlot(
-                            slotKey: 'onb_aid_2',
-                            placeholderText:
-                                'aid photo\nhands receiving',
-                          ),
-                        ),
-                      ),
-                      // Seeds flowing between the two cards
-                      const Positioned(
-                        left: 145,
-                        top: 0,
-                        width: 90,
-                        height: 300,
-                        child: SeedFlow(),
-                      ),
-                      // Sabiq Seed coin — the centerpiece linking the two
-                      // images: Read Quran → earn Seeds → fund the cause.
-                      Positioned(
-                        top: 100,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: Container(
-                            width: 88,
-                            height: 88,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: OnbTok.cream,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: OnbTok.goldDeep.withValues(
-                                    alpha: 0.28,
-                                  ),
-                                  blurRadius: 22,
-                                  spreadRadius: 1,
+              const SizedBox(height: 20),
+              // Flow box — expands to fill the space that used to sit
+              // empty above the Next button, so the two screenshots
+              // inside render as large as the screen allows.
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: OnbTok.creamWarm,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, c) {
+                        // Card height tracks the box height — a taller box
+                        // means taller screenshots. Cards are inset from
+                        // the box edges so the cream frame still shows.
+                        const inset = 22.0;
+                        const cardW = 142.0;
+                        final cardH = c.maxHeight - inset * 2;
+                        const coinD = 96.0;
+                        return Stack(
+                          children: [
+                            // Left: Quran mini
+                            Positioned(
+                              left: 18,
+                              top: inset,
+                              width: cardW,
+                              height: cardH,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: PhotoSlot(
+                                  slotKey: 'onb_quran_2',
+                                  fallback: _MiniQuranCard(),
                                 ),
-                              ],
+                              ),
                             ),
-                            child: const Center(
-                              child: SabiqCoin(size: 62),
+                            // Right: aid photo
+                            Positioned(
+                              right: 18,
+                              top: inset,
+                              width: cardW,
+                              height: cardH,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: const PhotoSlot(
+                                  slotKey: 'onb_aid_2',
+                                  placeholderText:
+                                      'aid photo\nhands receiving',
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ],
+                            // Seeds flowing between the two cards
+                            Positioned.fill(
+                              child: Center(
+                                child: SizedBox(
+                                  width: 90,
+                                  height: c.maxHeight,
+                                  child: const SeedFlow(),
+                                ),
+                              ),
+                            ),
+                            // Sabiq Seed coin — the centerpiece linking the
+                            // two images: Read Quran → earn Seeds → fund.
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: (c.maxHeight - coinD) / 2,
+                              child: Center(
+                                child: Container(
+                                  width: coinD,
+                                  height: coinD,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: OnbTok.cream,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: OnbTok.goldDeep.withValues(
+                                          alpha: 0.28,
+                                        ),
+                                        blurRadius: 22,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Center(
+                                    child: SabiqCoin(size: 68),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: _MechanicLine(),
               ),
-              const Spacer(),
+              const SizedBox(height: 16),
               ScreenFooter(
-                dotsIdx: 1,
+                dotsIdx: 2,
                 child: CTA(label: l.onbV2Next, onPressed: onNext),
               ),
             ],
@@ -347,6 +363,7 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
                         children: [
                           // Step 1 — Read Quran (admin-uploadable image)
                           _JourneyStep(
+                            step: 1,
                             label: l.onbV2_3step_S1Text,
                             color: OnbTok.tealDark,
                             visual: const _StepImage(
@@ -357,16 +374,18 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
                           _StepArrow(pulse: _pulse),
                           // Step 2 — Earn Seeds (the Sabiq Seed coin)
                           _JourneyStep(
+                            step: 2,
                             label: l.onbV2_3step_S2Text,
                             color: OnbTok.goldDeep,
                             visual: const SizedBox(
-                              height: 88,
-                              child: Center(child: SabiqCoin(size: 84)),
+                              height: 150,
+                              child: Center(child: SabiqCoin(size: 138)),
                             ),
                           ),
                           _StepArrow(pulse: _pulse),
                           // Step 3 — Feed Orphans (admin-uploadable image)
                           _JourneyStep(
+                            step: 3,
                             label: l.onbV2_3step_S3Text,
                             color: OnbTok.brownSoft,
                             visual: const _StepImage(
@@ -395,7 +414,7 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
                 ),
               ),
               ScreenFooter(
-                dotsIdx: 2,
+                dotsIdx: 1,
                 child: CTA(label: l.onbV2Next, onPressed: widget.onNext),
               ),
             ],
@@ -408,16 +427,19 @@ class _Phase1ScreenStepsState extends State<Phase1ScreenSteps>
 }
 
 // One step of the Read → Earn → Feed journey: a large visual with a solid
-// colored pill label below it. Each step gets its own [color] so the three
-// stages read as distinct, focused beats.
+// colored pill below it. The pill carries a numbered white disc (1 · 2 · 3)
+// so the three stages read clearly as ordered steps. Each step has its own
+// [color] so the stages stay visually distinct.
 class _JourneyStep extends StatelessWidget {
   final Widget visual;
   final String label;
   final Color color;
+  final int step;
   const _JourneyStep({
     required this.visual,
     required this.label,
     required this.color,
+    required this.step,
   });
 
   @override
@@ -426,30 +448,55 @@ class _JourneyStep extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         visual,
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+          padding: const EdgeInsets.fromLTRB(8, 8, 22, 8),
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: color.withValues(alpha: 0.34),
-                blurRadius: 14,
-                offset: const Offset(0, 5),
+                color: color.withValues(alpha: 0.36),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: OnbTok.sans(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              height: 1.15,
-              letterSpacing: 0.2,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Numbered disc — white circle, colored numeral.
+              Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '$step',
+                  style: OnbTok.sans(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                    color: color,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: OnbTok.sans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  height: 1.15,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -468,15 +515,17 @@ class _StepImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 188,
-      height: 88,
+      // Fills the available width (screen minus the scroll padding) and
+      // stands ~1.7× taller than before so each step reads clearly.
+      width: double.infinity,
+      height: 152,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(26),
         boxShadow: [
           BoxShadow(
-            color: OnbTok.brown.withValues(alpha: 0.12),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+            color: OnbTok.brown.withValues(alpha: 0.14),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -484,7 +533,7 @@ class _StepImage extends StatelessWidget {
         slotKey: slotKey,
         placeholderText: placeholder,
         fit: BoxFit.cover,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(26),
       ),
     );
   }
@@ -497,7 +546,7 @@ class _StepArrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: AnimatedBuilder(
         animation: pulse,
         builder: (_, __) {
@@ -509,7 +558,7 @@ class _StepArrow extends StatelessWidget {
             child: const Icon(
               Icons.keyboard_arrow_down_rounded,
               color: OnbTok.goldDeep,
-              size: 22,
+              size: 46,
             ),
           );
         },
@@ -560,46 +609,21 @@ class Phase1Screen3 extends StatelessWidget {
               ),
               Expanded(
                 child: Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Curved gold arrow + "earned today" label
-                      Positioned(
-                        right: 24,
-                        top: 80,
-                        child: SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: CustomPaint(painter: _CurveArrowPainter()),
-                        ),
+                  child: Center(
+                    // Quran mockup (or admin-uploaded screenshot).
+                    // transparentBackdrop: the uploaded asset is centered
+                    // on the screen's own background — no cream fill or
+                    // blurred side margins around a portrait image.
+                    child: PhotoSlot(
+                      slotKey: 'onb_quran_3',
+                      transparentBackdrop: true,
+                      fallback: const QuranMini(
+                        width: 210,
+                        tilt: -4,
+                        showSeedBanner: true,
+                        pulseBanner: true,
                       ),
-                      Positioned(
-                        right: 38,
-                        top: 70,
-                        child: Text(
-                          l.onbV2_3_BannerLabel,
-                          style: OnbTok.serif(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.italic,
-                            color: OnbTok.goldDeep,
-                            height: 1.0,
-                            letterSpacing: 0,
-                          ),
-                        ),
-                      ),
-                      // Quran mockup (or admin-uploaded screenshot)
-                      PhotoSlot(
-                        slotKey: 'onb_quran_3',
-                        fallback: const QuranMini(
-                          width: 210,
-                          tilt: -4,
-                          showSeedBanner: true,
-                          pulseBanner: true,
-                        ),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -631,33 +655,6 @@ class Phase1Screen3 extends StatelessWidget {
   }
 }
 
-class _CurveArrowPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final p = Paint()
-      ..color = OnbTok.gold
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path()
-      ..moveTo(110, 12)
-      ..cubicTo(70, 20, 40, 30, 28, 70);
-    canvas.drawPath(path, p);
-
-    // Arrow head at end
-    final head = Path()
-      ..moveTo(20, 64)
-      ..lineTo(28, 70)
-      ..lineTo(34, 60)
-      ..close();
-    canvas.drawPath(head, Paint()..color = OnbTok.goldDeep);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter old) => false;
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // SCREEN 4 — Azkaar Animations (door ↔ scales)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -680,11 +677,12 @@ class Phase1Screen4 extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(26, 32, 26, 0),
                 child: Wordmark(size: 26),
               ),
-              const SizedBox(height: 28),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 22),
-                child: SizedBox(
-                  height: 320,
+              const SizedBox(height: 20),
+              // Artwork expands to fill the space that used to sit empty
+              // above the Next button, so the azkaar screenshot is large.
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 22),
                   child: PhotoSlot(
                     slotKey: 'onb_zikr_4',
                     fallback: const DoorScalesAnim(),
@@ -692,7 +690,7 @@ class Phase1Screen4 extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
                 child: Column(
@@ -707,7 +705,7 @@ class Phase1Screen4 extends StatelessWidget {
                   ],
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 16),
               ScreenFooter(
                 dotsIdx: 4,
                 child: CTA(label: l.onbV2Next, onPressed: onNext),
