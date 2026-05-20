@@ -28,6 +28,21 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Generate .env from Codemagic environment variables
+        # `.env` is gitignored (it holds Quran Foundation API secrets) but
+        # pubspec.yaml declares it as a Flutter asset, so the asset bundler
+        # needs a file. We write one from Codemagic env vars — set them
+        # under Workflow → Environment variables (mark each "Secure").
+        # If a var is unset the placeholder stays empty and the Quran
+        # auth code falls back to unauthenticated mode automatically.
+        script: |
+          cat > "$CM_BUILD_DIR/.env" <<EOF
+          IS_DEV=${IS_DEV:-false}
+          QURAN_PRELIVE_CLIENT_ID=${QURAN_PRELIVE_CLIENT_ID:-}
+          QURAN_PRELIVE_CLIENT_SECRET=${QURAN_PRELIVE_CLIENT_SECRET:-}
+          QURAN_PROD_CLIENT_ID=${QURAN_PROD_CLIENT_ID:-}
+          QURAN_PROD_CLIENT_SECRET=${QURAN_PROD_CLIENT_SECRET:-}
+          EOF
       - name: Fetch the latest Flutter packages
         script: |
           flutter pub get
