@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBBKHn0c3yejfnLalaoYeinYQkSRLgvrd8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>933672581282</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.sabiq.noorrewards</string>
+	<key>PROJECT_ID</key>
+	<string>noor-rewards-b02ae</string>
+	<key>STORAGE_BUCKET</key>
+	<string>noor-rewards-b02ae.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:933672581282:ios:baf9e4502c06911e0f3ffb</string>
+</dict>
+</plist>
