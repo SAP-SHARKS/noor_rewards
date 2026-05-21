@@ -71,9 +71,28 @@
 			<dict>
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.sabiq.noorrewards.supabase</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>io.supabase.flutterquickstart</string>
+				</array>
+			</dict>
+			<dict>
+				<!-- Quran Foundation OAuth2 PKCE callback + referral deep
+				     link. Mirrors the Android intent filters in
+				     AndroidManifest.xml so the same noorrewards:// URLs
+				     work on iOS too. Without this iOS Safari errors with
+				     "Safari cannot open the page because the address is
+				     invalid" after the user completes login at
+				     auth.quran.com. -->
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.sabiq.noorrewards.app</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>noorrewards</string>
 				</array>
 			</dict>
 		</array>
