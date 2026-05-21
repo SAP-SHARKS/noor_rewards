@@ -92,6 +92,13 @@
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
 
+		<!-- Export Compliance: we only use standard iOS encryption (HTTPS
+		     via URLSession). Declaring this here means Apple skips the
+		     "Missing Compliance" prompt on every TestFlight upload — builds
+		     go straight from Processing to Ready to Test. -->
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
+
 		<!-- Photos / camera: image_picker + image_cropper power the profile
 		     avatar flow (Settings → change photo). -->
 		<key>NSPhotoLibraryUsageDescription</key>
