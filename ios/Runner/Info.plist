@@ -99,6 +99,14 @@
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 
+		<!-- Allow the app to wake briefly to process incoming FCM data
+		     messages (silent pushes) so the notification handler can run
+		     even when the app isn't in the foreground. -->
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>remote-notification</string>
+		</array>
+
 		<!-- Photos / camera: image_picker + image_cropper power the profile
 		     avatar flow (Settings → change photo). -->
 		<key>NSPhotoLibraryUsageDescription</key>
