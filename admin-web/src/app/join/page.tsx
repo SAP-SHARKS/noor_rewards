@@ -117,27 +117,27 @@ function JoinPageContent() {
                 {/* Micro dots pattern in background */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#5C3A0A_1px,transparent_1px)] [background-size:16px_16px]" />
                 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                   {/* Left Column: Reward details */}
-                  <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-white border border-[#D89A1E]/20 shadow-md p-1.5 flex items-center justify-center flex-shrink-0 animate-bounce">
-                      <SabiqLogo size={42} sprouting={true} />
+                  <div className="flex items-start gap-4 min-w-0">
+                    <div className="w-16 h-16 flex items-center justify-center flex-shrink-0 animate-bounce">
+                      <SabiqLogo size={64} sprouting={true} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <span className="inline-block text-[10px] font-extrabold tracking-widest text-[#7A8C3A] uppercase bg-[#7A8C3A]/10 px-2.5 py-1 rounded-full border border-[#7A8C3A]/10">
                         Signup Reward
                       </span>
                       <h4 className="text-xl font-black text-[#2A2410] mt-1.5 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
                         Claim <span className="text-[#D89A1E] font-extrabold">500 Seeds</span>
                       </h4>
-                      <p className="text-xs text-[#5C543A] mt-1 leading-normal font-medium max-w-[280px]">
+                      <p className="text-xs text-[#5C543A] mt-1 leading-normal font-medium">
                         Both you and the inviter receive a <span className="font-bold text-[#D89A1E]">500 Seeds bonus</span> the instant you join!
                       </p>
                     </div>
                   </div>
 
                   {/* Right Column: Code and Copy action */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white border border-[#D89A1E]/20 p-2.5 rounded-2xl shadow-inner flex-1 max-w-md w-full">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white border border-[#D89A1E]/20 p-2.5 rounded-2xl shadow-inner w-full lg:flex-shrink-0 lg:w-auto min-w-0">
                     <div className="flex flex-col justify-center px-4 py-1.5 flex-1 min-w-[140px] text-center sm:text-left">
                       <span className="text-[9px] uppercase tracking-widest font-extrabold text-[#7A8C3A]">Invite Code</span>
                       <span className="text-2xl font-mono font-black tracking-widest text-[#D89A1E] select-all mt-0.5">
