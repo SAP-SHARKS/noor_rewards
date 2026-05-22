@@ -102,7 +102,6 @@
 		     Required by App Store Connect whenever the binary references the
 		     matching iOS API — even via a transitive plugin. Apple's
 		     processing scanner rejects builds that omit these. -->
-
 		<!-- Location: geolocator (notification_service.dart) reads coarse GPS
 		     to detect the user's IANA timezone, so reminders & prayer-time
 		     features fire at the right local moment. -->
@@ -110,14 +109,12 @@
 		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
-
 		<!-- Export Compliance: we only use standard iOS encryption (HTTPS
 		     via URLSession). Declaring this here means Apple skips the
 		     "Missing Compliance" prompt on every TestFlight upload — builds
 		     go straight from Processing to Ready to Test. -->
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
-
 		<!-- Allow the app to wake briefly to process incoming FCM data
 		     messages (silent pushes) so the notification handler can run
 		     even when the app isn't in the foreground. -->
@@ -125,7 +122,6 @@
 		<array>
 			<string>remote-notification</string>
 		</array>
-
 		<!-- Photos / camera: image_picker + image_cropper power the profile
 		     avatar flow (Settings → change photo). -->
 		<key>NSPhotoLibraryUsageDescription</key>
