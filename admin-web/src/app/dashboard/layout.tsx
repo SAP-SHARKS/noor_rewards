@@ -31,11 +31,14 @@ const ICONS: Record<string, string> = {
     "M4 6h16M4 10h16M4 14h16M4 18h16",
   onboarding:
     "M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z",
+  donor_pool:
+    "M2.25 18 9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941",
 };
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: "overview" },
   { href: "/dashboard/economy", label: "Economy", icon: "economy" },
+  { href: "/dashboard/donor-pool", label: "Donor Pool", icon: "donor_pool" },
   { href: "/dashboard/theme", label: "Theme & Colors", icon: "theme" },
   { href: "/dashboard/projects", label: "Projects", icon: "projects" },
   { href: "/dashboard/users", label: "Users", icon: "users" },
