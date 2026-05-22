@@ -24,10 +24,17 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
   Future<void> _googleSignIn() async {
     setState(() => _isLoading = true);
     try {
+      // authScreenLaunchMode: externalApplication opens OAuth in the real
+      // Safari app, NOT SFSafariViewController. Google's OAuth flow
+      // intentionally hangs forever in embedded browsers as an anti-abuse
+      // measure (they can't verify the embedder's identity), so the default
+      // platformDefault mode results in a stuck blue progress bar after
+      // the user reaches the consent screen.
       await Supabase.instance.client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: 'io.supabase.flutterquickstart://login-callback/',
         queryParams: {'prompt': 'select_account'},
+        authScreenLaunchMode: LaunchMode.externalApplication,
       );
     } on AuthException catch (error) {
       if (mounted) {
