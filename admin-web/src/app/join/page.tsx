@@ -2,152 +2,11 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import SabiqLogo from "@/components/SabiqLogo";
 
-// Pixel-perfect SVG component representing Sabiq Coin (Noor S Coin) from Flutter painter.
-// Scaled mathematically relative to a 180-unit reference grid.
-function SabiqCoin({ size = 40, sprouting = false, className = "" }: { size?: number; sprouting?: boolean; className?: string }) {
-  const dots = [];
-  // 12 dots evenly spaced at gold orbit radius = 76 (86 - 10)
-  for (let i = 0; i < 12; i++) {
-    const angle = -Math.PI / 2 + i * (Math.PI * 2 / 12);
-    const x = 90 + 76 * Math.cos(angle);
-    const y = 90 + 76 * Math.sin(angle);
-    dots.push(
-      <circle key={i} cx={x} cy={y} r={1.8} fill="#5C3A0A" opacity={0.5} />
-    );
-  }
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 180 180"
-      className={className}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        {/* Outer Ring Gold Radial Gradient */}
-        <radialGradient
-          id="goldRadial"
-          cx="35%"
-          cy="30%"
-          r="90%"
-          fx="35%"
-          fy="30%"
-        >
-          <stop offset="0%" stopColor="#FFE89A" />
-          <stop offset="55%" stopColor="#E8B84A" />
-          <stop offset="100%" stopColor="#8B6420" />
-        </radialGradient>
-
-        {/* Inner Emerald Disc Radial Gradient */}
-        <radialGradient
-          id="emeraldRadial"
-          cx="35%"
-          cy="30%"
-          r="90%"
-          fx="35%"
-          fy="30%"
-        >
-          <stop offset="0%" stopColor="#7FCFA8" />
-          <stop offset="50%" stopColor="#4A9B8E" />
-          <stop offset="100%" stopColor="#1F4F3D" />
-        </radialGradient>
-
-        {/* Bold Italic S Gold Linear Gradient */}
-        <linearGradient id="sGoldGrad" x1="20%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stopColor="#FFFAEC" />
-          <stop offset="50%" stopColor="#FFD662" />
-          <stop offset="100%" stopColor="#A37520" />
-        </linearGradient>
-
-        {/* Cream Highlight for S */}
-        <linearGradient id="sCreamGrad" x1="20%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stopColor="#FFFAEC" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#FFFAEC" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-
-      {/* Sprouting Leaf (Sprouting S variant) */}
-      {sprouting && (
-        <g transform="translate(110, 42) rotate(25)">
-          <path
-            d="M 0 0 Q 12 -3 14 -10 Q 8 -8 0 0 Z"
-            fill="#4A9B8E"
-            stroke="#1F4F3D"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-        </g>
-      )}
-
-      {/* Outer Ring */}
-      <circle
-        cx="90"
-        cy="90"
-        r="86"
-        fill="url(#goldRadial)"
-        stroke="#5C3A0A"
-        strokeWidth="2.5"
-      />
-
-      {/* 12 Decorative Dots */}
-      {dots}
-
-      {/* Gold ring top-left sheen */}
-      <ellipse cx="60" cy="55" rx="22" ry="12" fill="#FFFAEC" opacity="0.45" />
-
-      {/* Inner Emerald Disc */}
-      <circle
-        cx="90"
-        cy="90"
-        r="62"
-        fill="url(#emeraldRadial)"
-        stroke="#1F4F3D"
-        strokeWidth="1.5"
-      />
-
-      {/* Emerald disc top-left sheen */}
-      <ellipse cx="72" cy="72" rx="20" ry="11" fill="#A8E0C5" opacity="0.5" />
-
-      {/* Bold Italic "S" body mark */}
-      <text
-        x="90"
-        y="98"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontFamily="Fraunces, Georgia, serif"
-        fontSize="108"
-        fontWeight="900"
-        fontStyle="italic"
-        fill="url(#sGoldGrad)"
-        stroke="#5C3A0A"
-        strokeWidth="1.2"
-        style={{ userSelect: "none" }}
-      >
-        S
-      </text>
-
-      {/* Cream Highlight Overlay */}
-      <text
-        x="90"
-        y="98"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontFamily="Fraunces, Georgia, serif"
-        fontSize="108"
-        fontWeight="900"
-        fontStyle="italic"
-        fill="url(#sCreamGrad)"
-        opacity="0.4"
-        style={{ userSelect: "none", pointerEvents: "none" }}
-      >
-        S
-      </text>
-    </svg>
-  );
-}
+// Set to true to display a real app screenshot image instead of our interactive HTML/CSS mockup.
+// Just save your mobile screenshot image as "app-screenshot.png" in the "admin-web/public/" folder.
+const USE_REAL_SCREENSHOT = true;
 
 function JoinPageContent() {
   const searchParams = useSearchParams();
@@ -158,6 +17,7 @@ function JoinPageContent() {
   const [dhikrCount, setDhikrCount] = useState(12);
   const [seeds, setSeeds] = useState(1250);
   const [showSeedBonus, setShowSeedBonus] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
     // Detect operating system
@@ -213,7 +73,7 @@ function JoinPageContent() {
       <div className="w-full max-w-5xl mb-8 flex items-center justify-between z-10 px-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 flex items-center justify-center filter drop-shadow-sm transition-transform duration-300 hover:scale-105">
-            <SabiqCoin size={36} sprouting={true} />
+            <SabiqLogo size={36} sprouting={true} />
           </div>
           <span className="font-extrabold tracking-widest text-xl text-[#2A2410]" style={{ fontFamily: "Outfit, sans-serif" }}>
             SABIQ
@@ -261,7 +121,7 @@ function JoinPageContent() {
                   {/* Left Column: Reward details */}
                   <div className="flex items-start gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-white border border-[#D89A1E]/20 shadow-md p-1.5 flex items-center justify-center flex-shrink-0 animate-bounce">
-                      <SabiqCoin size={42} sprouting={true} />
+                      <SabiqLogo size={42} sprouting={true} />
                     </div>
                     <div>
                       <span className="inline-block text-[10px] font-extrabold tracking-widest text-[#7A8C3A] uppercase bg-[#7A8C3A]/10 px-2.5 py-1 rounded-full border border-[#7A8C3A]/10">
@@ -349,256 +209,341 @@ function JoinPageContent() {
           </div>
         </div>
 
-        {/* Right Column: Sabiq Original App Home Dashboard Mockup */}
-        <div className="lg:col-span-5 flex justify-center">
+        {/* Right Column: Sabiq Original App Home Dashboard Mockup or Screenshot Display */}
+        <div className="lg:col-span-5 flex justify-center items-center w-full">
           
-          {/* Smart Phone Device Frame Mockup */}
-          <div className="w-[330px] h-[660px] rounded-[48px] border-[10px] border-[#2A2410] bg-[#FFFDF8] shadow-2xl relative flex flex-col overflow-hidden select-none">
-            
-            {/* Phone Speaker Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[22px] w-[140px] bg-[#2A2410] rounded-b-[20px] z-30 flex items-center justify-center">
-              <div className="w-12 h-1 bg-neutral-800 rounded-full mb-1" />
-            </div>
-
-            {/* In-App Status Bar */}
-            <div className="pt-7 px-6 flex justify-between items-center text-xs font-bold text-[#2A2410]/70 z-20">
-              <span>9:41 AM</span>
-              <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm1 13.5h-2v-6h2v6zm0-8h-2V7h2v1.5z"/></svg>
-                <span className="w-5 h-3 border border-[#2A2410]/70 rounded-[3px] p-[1px] flex"><span className="h-full w-full bg-[#2A2410] rounded-[1px]" /></span>
-              </div>
-            </div>
-
-            {/* Sabiq Original App In-Header Layout */}
-            <div className="px-5 pt-3 pb-3 flex justify-between items-center z-20 border-b border-[#7A8C3A]/10 bg-white">
-              <div className="flex-1">
-                <span className="text-[10px] uppercase font-semibold text-[#7A8C3A] tracking-wider block" style={{ fontFamily: "Outfit, sans-serif" }}>
-                  Assalamu Alaikum
-                </span>
-                <h3 className="text-lg font-bold text-[#2A2410] leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-                  Friend
-                </h3>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Notification Bell */}
-                <div className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center relative shadow-sm">
-                  <svg className="w-5 h-5 text-[#2A2410]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                  </svg>
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-                </div>
-                {/* Profile Icon with Level Badge */}
-                <div className="relative">
-                  <div className="w-9 h-9 rounded-xl bg-[#E8B84A] flex items-center justify-center font-extrabold text-sm text-[#2A2410] border border-[#5C3A0A]/10 shadow-sm font-sans">
-                    S
-                  </div>
-                  <span className="absolute -bottom-1 -right-1 bg-[#2A2410] text-[#FFC83D] text-[7.5px] font-black px-1.5 py-0.5 rounded-md border border-white" style={{ fontFamily: "Rajdhani, sans-serif" }}>
-                    LV 3
-                  </span>
+          {USE_REAL_SCREENSHOT && isLandscape ? (
+            /* Premium Landscape Browser / Tablet Mockup */
+            <div className="w-full max-w-[420px] aspect-[4/3] rounded-[24px] border-[8px] border-[#2A2410] bg-[#FFFDF8] shadow-2xl relative flex flex-col overflow-hidden select-none transition-all duration-300">
+              {/* Browser Header Bar */}
+              <div className="bg-slate-50 border-b border-[#2A2410]/10 px-4 py-2.5 flex items-center gap-1.5 flex-shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] opacity-80" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] opacity-80" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] opacity-80" />
+                <div className="flex-1 bg-white border border-[#2A2410]/5 rounded px-2 py-0.5 text-[9px] text-[#5C543A] font-mono text-center truncate max-w-[180px] mx-auto opacity-70">
+                  sabiq.app/dashboard
                 </div>
               </div>
-            </div>
-
-            {/* Sabiq Original App Screen Content (Scrollable) */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-gradient-to-b from-[#FFFDF8] to-[#FFF9E6]">
               
-              {/* 1. Sabiq _Y4HeroCard (Garden Card) */}
-              <div className="bg-gradient-to-br from-[#FFFCEE] to-[#FFF9E2] border border-[#D89A1E]/30 rounded-2xl p-4 shadow-sm relative overflow-hidden flex flex-col justify-between h-[130px] group transition-all duration-200">
-                {/* Sun Glow */}
-                <div className="absolute -top-6 -right-6 w-20 h-20 bg-[#FFC83D]/25 rounded-full blur-xl animate-pulse" />
+              {/* Scrollable Viewport */}
+              <div 
+                className="flex-1 overflow-y-auto bg-white hide-scrollbar relative"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                }}
+              >
+                {/* Scoped CSS to hide scrollbars */}
+                <style>{`
+                  .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
                 
-                <div className="flex items-center justify-between relative z-10">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 flex items-center justify-center filter drop-shadow-sm">
-                      <SabiqCoin size={32} sprouting={true} />
+                <img 
+                  src="/app-screenshot.png" 
+                  alt="Sabiq Dashboard Screenshot" 
+                  className="w-full h-auto block select-none pointer-events-none"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    if (img.naturalWidth > img.naturalHeight) {
+                      setIsLandscape(true);
+                    }
+                  }}
+                  style={{
+                    imageRendering: "auto",
+                    transform: "translateZ(0)",
+                    backfaceVisibility: "hidden",
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            /* Smart Phone Device Frame Mockup - Shrunk and optimized to 285px for better web views */
+            <div className="w-[285px] h-[570px] rounded-[40px] border-[8px] border-[#2A2410] bg-[#FFFDF8] shadow-2xl relative flex flex-col overflow-hidden select-none transition-all duration-300">
+              
+              {/* Phone Speaker Notch (Always fixed on top for maximum physical realism) */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[18px] w-[110px] bg-[#2A2410] rounded-b-[15px] z-30 flex items-center justify-center">
+                <div className="w-10 h-0.5 bg-neutral-800 rounded-full mb-0.5" />
+              </div>
+
+              {USE_REAL_SCREENSHOT ? (
+                <div 
+                  className="w-full h-full relative overflow-y-auto bg-white hide-scrollbar"
+                  style={{
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  }}
+                >
+                  {/* Scoped CSS to hide scrollbars */}
+                  <style>{`
+                    .hide-scrollbar::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}</style>
+                  
+                  {/* App Screenshot Image - High quality rendering and naturally scrollable */}
+                  <img 
+                    src="/app-screenshot.png" 
+                    alt="Sabiq App Screenshot" 
+                    className="w-full h-auto select-none pointer-events-none block"
+                    onLoad={(e) => {
+                      const img = e.currentTarget;
+                      if (img.naturalWidth > img.naturalHeight) {
+                        setIsLandscape(true);
+                      }
+                    }}
+                    style={{
+                      imageRendering: "auto",
+                      transform: "translateZ(0)",
+                      backfaceVisibility: "hidden",
+                    }}
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* In-App Status Bar */}
+                  <div className="pt-6 px-5 flex justify-between items-center text-[10px] font-bold text-[#2A2410]/70 z-20">
+                    <span>9:41 AM</span>
+                    <div className="flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm1 13.5h-2v-6h2v6zm0-8h-2V7h2v1.5z"/></svg>
+                      <span className="w-4 h-2.5 border border-[#2A2410]/70 rounded-[2px] p-[0.5px] flex"><span className="h-full w-full bg-[#2A2410] rounded-[0.5px]" /></span>
                     </div>
-                    <div>
-                      <span className="text-[9px] uppercase tracking-widest font-extrabold text-[#7A8C3A]">Sabiq Seeds</span>
-                      <div className="text-xl font-black text-[#2A2410] font-mono leading-none mt-0.5">
-                        {seeds.toLocaleString()}
+                  </div>
+
+                  {/* Sabiq Original App In-Header Layout */}
+                  <div className="px-4 pt-2 pb-2 flex justify-between items-center z-20 border-b border-[#7A8C3A]/10 bg-white">
+                    <div className="flex-1">
+                      <span className="text-[9px] uppercase font-semibold text-[#7A8C3A] tracking-wider block" style={{ fontFamily: "Outfit, sans-serif" }}>
+                        Assalamu Alaikum
+                      </span>
+                      <h3 className="text-base font-bold text-[#2A2410] leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+                        Friend
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {/* Notification Bell */}
+                      <div className="w-7.5 h-7.5 rounded-lg bg-white border border-slate-100 flex items-center justify-center relative shadow-sm">
+                        <svg className="w-4 h-4 text-[#2A2410]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                        <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full border border-white" />
+                      </div>
+                      {/* Profile Icon with Level Badge */}
+                      <div className="relative">
+                        <div className="w-7.5 h-7.5 rounded-lg bg-[#E8B84A] flex items-center justify-center font-extrabold text-xs text-[#2A2410] border border-[#5C3A0A]/10 shadow-sm font-sans">
+                          S
+                        </div>
+                        <span className="absolute -bottom-1 -right-1 bg-[#2A2410] text-[#FFC83D] text-[6.5px] font-black px-1 py-0.5 rounded-md border border-white" style={{ fontFamily: "Rajdhani, sans-serif" }}>
+                          LV 3
+                        </span>
                       </div>
                     </div>
                   </div>
-                  {/* Seeds Expiring alert */}
-                  <div className="text-right">
-                    <span className="inline-block text-[8px] bg-[#7A8C3A]/10 text-[#7A8C3A] font-extrabold px-2 py-0.5 rounded-full border border-[#7A8C3A]/15">
-                      Sprout Status
-                    </span>
-                    <div className="text-[9px] font-semibold text-[#5C543A] mt-0.5 font-sans">
-                      Level 3 · Growing
+
+                  {/* Sabiq Original App Screen Content (Scrollable) */}
+                  <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 bg-gradient-to-b from-[#FFFDF8] to-[#FFF9E6]">
+                    
+                    {/* 1. Sabiq _Y4HeroCard (Garden Card) */}
+                    <div className="bg-gradient-to-br from-[#FFFCEE] to-[#FFF9E2] border border-[#D89A1E]/30 rounded-2xl p-3 shadow-sm relative overflow-hidden flex flex-col justify-between h-[115px] group transition-all duration-200">
+                      {/* Sun Glow */}
+                      <div className="absolute -top-6 -right-6 w-16 h-16 bg-[#FFC83D]/25 rounded-full blur-lg animate-pulse" />
+                      
+                      <div className="flex items-center justify-between relative z-10">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7.5 h-7.5 flex items-center justify-center filter drop-shadow-sm">
+                            <SabiqLogo size={28} sprouting={true} />
+                          </div>
+                          <div>
+                            <span className="text-[8px] uppercase tracking-widest font-extrabold text-[#7A8C3A]">Sabiq Seeds</span>
+                            <div className="text-lg font-black text-[#2A2410] font-mono leading-none mt-0.5">
+                              {seeds.toLocaleString()}
+                            </div>
+                          </div>
+                        </div>
+                        {/* Seeds Expiring alert */}
+                        <div className="text-right">
+                          <span className="inline-block text-[7px] bg-[#7A8C3A]/10 text-[#7A8C3A] font-extrabold px-1.5 py-0.5 rounded-full border border-[#7A8C3A]/15">
+                            Sprout Status
+                          </span>
+                          <div className="text-[8px] font-semibold text-[#5C543A] mt-0.5 font-sans">
+                            Level 3 · Growing
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Animated Seed Pop-up */}
+                      {showSeedBonus && (
+                        <div className="absolute top-10 left-1/3 bg-[#7A8C3A] text-white text-[8px] font-black py-1 px-2.5 rounded-full animate-bounce shadow-md z-30">
+                          +50 Seeds Bonus! 🎉
+                        </div>
+                      )}
+
+                      {/* Micro Garden plants visual representing real garden */}
+                      <div className="mt-2.5 relative z-10 flex items-end justify-between px-1.5 pt-1.5 border-t border-[#D89A1E]/10">
+                        {/* Curved grass slope */}
+                        <div className="absolute inset-x-0 bottom-0 h-3 bg-[#7A8C3A]/10 rounded-b-xl blur-xs pointer-events-none" />
+                        
+                        {/* 5 plants representing daily progress stages */}
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className="text-xs transition-transform hover:scale-125">🌱</span>
+                          <span className="text-[6.5px] text-[#5C543A] font-bold">Mon</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className="text-xs transition-transform hover:scale-125">🌿</span>
+                          <span className="text-[6.5px] text-[#5C543A] font-bold">Tue</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className="text-xs transition-transform hover:scale-125">🪴</span>
+                          <span className="text-[6.5px] text-[#5C543A] font-bold">Wed</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-0.5 scale-105">
+                          <span className="text-xs animate-bounce">🌸</span>
+                          <span className="text-[6.5px] text-[#7A8C3A] font-black">Thu</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-0.5 opacity-40">
+                          <span className="text-xs">🌰</span>
+                          <span className="text-[6.5px] text-[#5C543A] font-bold">Fri</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. Sabiq _Y4StreakCard (Habit Streak Plant Tracker) */}
+                    <div className="bg-white border border-[#7A8C3A]/15 rounded-2xl p-2.5 shadow-xs">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-[8px] uppercase tracking-wider font-extrabold text-[#7A8C3A]">Habit Streak</span>
+                          <h4 className="text-[11px] font-black text-[#2A2410] mt-0.5">5 Days Active!</h4>
+                        </div>
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/10">
+                          🔥 5 Days
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-1 mt-2">
+                        {[
+                          { day: "S", active: true },
+                          { day: "M", active: true },
+                          { day: "T", active: true },
+                          { day: "W", active: true },
+                          { day: "T", active: true },
+                          { day: "F", active: false },
+                          { day: "S", active: false },
+                        ].map((d, index) => (
+                          <div key={index} className="flex-1 flex flex-col items-center p-0.5 rounded border border-slate-100 bg-slate-50/50">
+                            <span className={`text-[7px] font-bold ${d.active ? "text-[#7A8C3A]" : "text-slate-400"}`}>
+                              {d.day}
+                            </span>
+                            <span className="text-[9px] mt-0.5">
+                              {d.active ? "🌱" : "▫️"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 3. Today's Plots Title Section */}
+                    <div className="pt-0.5 flex items-center justify-between">
+                      <h4 className="text-[11px] font-extrabold italic text-[#2A2410] font-serif" style={{ fontFamily: "Outfit, sans-serif" }}>
+                        Today's Plots
+                      </h4>
+                    </div>
+
+                    {/* 4. Sabiq Original Activity Grid (2x2 _ActivityCard Mockup) */}
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {/* Grid Item 1: Quran Card */}
+                      <div className="bg-[#FFFDF6] border border-[#7A8C3A]/15 rounded-xl p-2.5 flex flex-col justify-between min-h-[92px] relative overflow-hidden transition-transform duration-200 active:scale-98">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <span className="text-[12px]">📖</span>
+                            <span className="text-[6.5px] font-black bg-[#7A8C3A]/10 text-[#7A8C3A] px-1 py-0.5 rounded">
+                              +10/V
+                            </span>
+                          </div>
+                          <h5 className="text-[10px] font-black text-[#2A2410] mt-1.5">Read Quran</h5>
+                          <p className="text-[7.5px] text-[#5C543A] mt-0.5 leading-tight">Al-Mulk · Ayah 7</p>
+                        </div>
+                        <span className="text-[7.5px] text-[#7A8C3A] font-bold self-start mt-1.5">Continue →</span>
+                      </div>
+
+                      {/* Grid Item 2: Dhikr Card (INTERACTIVE counter) */}
+                      <div 
+                        onClick={handleDhikrTap}
+                        className="bg-[#FFFDF6] border border-[#D89A1E]/20 rounded-xl p-2.5 flex flex-col justify-between min-h-[92px] cursor-pointer relative overflow-hidden transition-all duration-200 active:scale-95 hover:border-[#D89A1E]/40"
+                      >
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <span className="text-[12px]">📿</span>
+                            <span className="text-[6.5px] font-black bg-[#D89A1E]/10 text-[#D89A1E] px-1 py-0.5 rounded">
+                              +5/T
+                            </span>
+                          </div>
+                          <h5 className="text-[10px] font-black text-[#2A2410] mt-1.5">Daily Dhikr</h5>
+                          <p className="text-[7.5px] text-[#5C543A] mt-0.5 leading-tight font-semibold text-[#D89A1E]">
+                            {dhikrCount} / 33
+                          </p>
+                        </div>
+                        <span className="text-[7px] text-[#D89A1E] font-extrabold uppercase tracking-wide mt-1.5">
+                          {dhikrCount >= 33 ? "Reset 🔄" : "TAP ME 👆"}
+                        </span>
+                      </div>
+
+                      {/* Grid Item 3: Achievements Card */}
+                      <div className="bg-[#FFFDF6] border border-[#7A8C3A]/10 rounded-xl p-2.5 flex flex-col justify-between min-h-[92px] relative overflow-hidden">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <span className="text-[12px]">🏆</span>
+                            <span className="text-[6.5px] font-black bg-purple-500/10 text-purple-600 px-1 py-0.5 rounded">
+                              Badges
+                            </span>
+                          </div>
+                          <h5 className="text-[10px] font-black text-[#2A2410] mt-1.5">Achievements</h5>
+                          <p className="text-[7.5px] text-[#5C543A] mt-0.5 leading-tight font-sans">Fajr Warrior</p>
+                        </div>
+                        <span className="text-[7.5px] text-[#7A8C3A] font-bold self-start mt-1.5">View →</span>
+                      </div>
+
+                      {/* Grid Item 4: Invite Friends Card */}
+                      <div className="bg-[#FFFDF6] border border-[#7A8C3A]/10 rounded-xl p-2.5 flex flex-col justify-between min-h-[92px] relative overflow-hidden">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <span className="text-[12px]">🤝</span>
+                            <span className="text-[6.5px] font-black bg-[#D89A1E]/10 text-[#D89A1E] px-1 py-0.5 rounded">
+                              +500 S
+                            </span>
+                          </div>
+                          <h5 className="text-[10px] font-black text-[#2A2410] mt-1.5">Invite Friends</h5>
+                          <p className="text-[7.5px] text-[#5C543A] mt-0.5 leading-tight font-sans">Earn per invite</p>
+                        </div>
+                        <span className="text-[7.5px] text-[#D89A1E] font-bold self-start mt-1.5">Share →</span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Sabiq Original App In-App Bottom Navigation Bar */}
+                  <div className="h-12 bg-white border-t border-[#7A8C3A]/10 flex items-center justify-around px-3 z-20 flex-shrink-0">
+                    <div className="flex flex-col items-center gap-0.5 text-[#7A8C3A] opacity-100">
+                      <span className="text-[13px]">🏡</span>
+                      <span className="text-[7px] font-extrabold uppercase tracking-wide">Home</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-0.5 text-[#2A2410] opacity-40">
+                      <span className="text-[13px]">📖</span>
+                      <span className="text-[7px] font-extrabold uppercase tracking-wide">Quran</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-0.5 text-[#2A2410] opacity-40">
+                      <span className="text-[13px]">📿</span>
+                      <span className="text-[7px] font-extrabold uppercase tracking-wide">Dhikr</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-0.5 text-[#2A2410] opacity-40">
+                      <span className="text-[13px]">🌱</span>
+                      <span className="text-[7px] font-extrabold uppercase tracking-wide">Impact</span>
                     </div>
                   </div>
-                </div>
-
-                {/* Animated Seed Pop-up */}
-                {showSeedBonus && (
-                  <div className="absolute top-12 left-1/3 bg-[#7A8C3A] text-white text-[9px] font-black py-1.5 px-3 rounded-full animate-bounce shadow-md z-30">
-                    +50 Seeds Bonus! 🎉
-                  </div>
-                )}
-
-                {/* Micro Garden plants visual representing real garden */}
-                <div className="mt-3 relative z-10 flex items-end justify-between px-2 pt-2 border-t border-[#D89A1E]/10">
-                  {/* Curved grass slope */}
-                  <div className="absolute inset-x-0 bottom-0 h-4 bg-[#7A8C3A]/10 rounded-b-xl blur-xs pointer-events-none" />
-                  
-                  {/* 5 plants representing daily progress stages */}
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xs transition-transform hover:scale-125">🌱</span>
-                    <span className="text-[7px] text-[#5C543A] font-bold">Mon</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xs transition-transform hover:scale-125">🌿</span>
-                    <span className="text-[7px] text-[#5C543A] font-bold">Tue</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xs transition-transform hover:scale-125">🪴</span>
-                    <span className="text-[7px] text-[#5C543A] font-bold">Wed</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5 scale-110">
-                    <span className="text-xs animate-bounce">🌸</span>
-                    <span className="text-[7px] text-[#7A8C3A] font-black">Thu</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5 opacity-40">
-                    <span className="text-xs">🌰</span>
-                    <span className="text-[7px] text-[#5C543A] font-bold">Fri</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Sabiq _Y4StreakCard (Habit Streak Plant Tracker) */}
-              <div className="bg-white border border-[#7A8C3A]/15 rounded-2xl p-3 shadow-xs">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider font-extrabold text-[#7A8C3A]">Habit Streak</span>
-                    <h4 className="text-xs font-black text-[#2A2410] mt-0.5">5 Days Active!</h4>
-                  </div>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/10">
-                    🔥 5 Days
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-1.5 mt-2.5">
-                  {[
-                    { day: "S", active: true },
-                    { day: "M", active: true },
-                    { day: "T", active: true },
-                    { day: "W", active: true },
-                    { day: "T", active: true },
-                    { day: "F", active: false },
-                    { day: "S", active: false },
-                  ].map((d, index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center p-1 rounded-lg border border-slate-100 bg-slate-50/50">
-                      <span className={`text-[8px] font-bold ${d.active ? "text-[#7A8C3A]" : "text-slate-400"}`}>
-                        {d.day}
-                      </span>
-                      <span className="text-[10px] mt-0.5">
-                        {d.active ? "🌱" : "▫️"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3. Today's Plots Title Section */}
-              <div className="pt-1 flex items-center justify-between">
-                <h4 className="text-xs font-extrabold italic text-[#2A2410] font-serif" style={{ fontFamily: "Outfit, sans-serif" }}>
-                  Today's Plots
-                </h4>
-              </div>
-
-              {/* 4. Sabiq Original Activity Grid (2x2 _ActivityCard Mockup) */}
-              <div className="grid grid-cols-2 gap-3">
-                {/* Grid Item 1: Quran Card */}
-                <div className="bg-[#FFFDF6] border border-[#7A8C3A]/15 rounded-xl p-3 flex flex-col justify-between min-h-[110px] relative overflow-hidden transition-transform duration-200 active:scale-98">
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <span className="text-[14px]">📖</span>
-                      <span className="text-[7px] font-black bg-[#7A8C3A]/10 text-[#7A8C3A] px-1.5 py-0.5 rounded">
-                        +10/Verse
-                      </span>
-                    </div>
-                    <h5 className="text-[11px] font-black text-[#2A2410] mt-2">Read Quran</h5>
-                    <p className="text-[8px] text-[#5C543A] mt-0.5 leading-tight">Al-Mulk · Ayah 7 · +12 today</p>
-                  </div>
-                  <span className="text-[8px] text-[#7A8C3A] font-bold self-start mt-2">Continue →</span>
-                </div>
-
-                {/* Grid Item 2: Dhikr Card (INTERACTIVE counter) */}
-                <div 
-                  onClick={handleDhikrTap}
-                  className="bg-[#FFFDF6] border border-[#D89A1E]/20 rounded-xl p-3 flex flex-col justify-between min-h-[110px] cursor-pointer relative overflow-hidden transition-all duration-200 active:scale-95 hover:border-[#D89A1E]/40"
-                >
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <span className="text-[14px]">📿</span>
-                      <span className="text-[7px] font-black bg-[#D89A1E]/10 text-[#D89A1E] px-1.5 py-0.5 rounded">
-                        +5/Tap
-                      </span>
-                    </div>
-                    <h5 className="text-[11px] font-black text-[#2A2410] mt-2">Daily Dhikr</h5>
-                    <p className="text-[8px] text-[#5C543A] mt-0.5 leading-tight font-semibold text-[#D89A1E]">
-                      {dhikrCount} / 33 · SubhanAllah
-                    </p>
-                  </div>
-                  <span className="text-[8px] text-[#D89A1E] font-extrabold uppercase tracking-wide mt-2">
-                    {dhikrCount >= 33 ? "Reset set 🔄" : "TAP TO REPEAT 👆"}
-                  </span>
-                </div>
-
-                {/* Grid Item 3: Achievements Card */}
-                <div className="bg-[#FFFDF6] border border-[#7A8C3A]/10 rounded-xl p-3 flex flex-col justify-between min-h-[110px] relative overflow-hidden">
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <span className="text-[14px]">🏆</span>
-                      <span className="text-[7px] font-black bg-purple-500/10 text-purple-600 px-1.5 py-0.5 rounded">
-                        Badges
-                      </span>
-                    </div>
-                    <h5 className="text-[11px] font-black text-[#2A2410] mt-2">Achievements</h5>
-                    <p className="text-[8px] text-[#5C543A] mt-0.5 leading-tight font-sans">Last: Fajr Warrior</p>
-                  </div>
-                  <span className="text-[8px] text-[#7A8C3A] font-bold self-start mt-2">View Badges →</span>
-                </div>
-
-                {/* Grid Item 4: Invite Friends Card */}
-                <div className="bg-[#FFFDF6] border border-[#7A8C3A]/10 rounded-xl p-3 flex flex-col justify-between min-h-[110px] relative overflow-hidden">
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <span className="text-[14px]">🤝</span>
-                      <span className="text-[7px] font-black bg-[#D89A1E]/10 text-[#D89A1E] px-1.5 py-0.5 rounded">
-                        +500 Seeds
-                      </span>
-                    </div>
-                    <h5 className="text-[11px] font-black text-[#2A2410] mt-2">Invite Friends</h5>
-                    <p className="text-[8px] text-[#5C543A] mt-0.5 leading-tight font-sans">Earn per friend referred</p>
-                  </div>
-                  <span className="text-[8px] text-[#D89A1E] font-bold self-start mt-2">Share Link →</span>
-                </div>
-              </div>
+                </>
+              )}
 
             </div>
-
-            {/* Sabiq Original App In-App Bottom Navigation Bar */}
-            <div className="h-14 bg-white border-t border-[#7A8C3A]/10 flex items-center justify-around px-4 z-20 flex-shrink-0">
-              <div className="flex flex-col items-center gap-0.5 text-[#7A8C3A] opacity-100">
-                <span className="text-[15px]">🏡</span>
-                <span className="text-[8px] font-extrabold uppercase tracking-wide">Home</span>
-              </div>
-              <div className="flex flex-col items-center gap-0.5 text-[#2A2410] opacity-40">
-                <span className="text-[15px]">📖</span>
-                <span className="text-[8px] font-extrabold uppercase tracking-wide">Quran</span>
-              </div>
-              <div className="flex flex-col items-center gap-0.5 text-[#2A2410] opacity-40">
-                <span className="text-[15px]">📿</span>
-                <span className="text-[8px] font-extrabold uppercase tracking-wide">Dhikr</span>
-              </div>
-              <div className="flex flex-col items-center gap-0.5 text-[#2A2410] opacity-40">
-                <span className="text-[15px]">🌱</span>
-                <span className="text-[8px] font-extrabold uppercase tracking-wide">Impact</span>
-              </div>
-            </div>
-
-          </div>
+          )}
 
         </div>
 
@@ -637,7 +582,7 @@ function JoinPageContent() {
         <div className="bg-white/60 border border-[#7A8C3A]/10 rounded-2xl p-6 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="w-10 h-10 rounded-xl bg-[#7A8C3A]/10 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
             <div className="w-5 h-5 flex items-center justify-center">
-              <SabiqCoin size={20} sprouting={true} />
+              <SabiqLogo size={20} sprouting={true} />
             </div>
           </div>
           <h3 className="font-black text-[#2A2410] text-lg" style={{ fontFamily: "Outfit, sans-serif" }}>Impactful Seeds</h3>

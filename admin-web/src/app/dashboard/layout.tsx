@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase, ADMIN_EMAILS } from "@/lib/supabase";
 import { ConfigProvider } from "@/lib/config-context";
 import type { User } from "@supabase/supabase-js";
+import SabiqLogo from "@/components/SabiqLogo";
 
 // SVG icon paths (Heroicons outline style)
 const ICONS: Record<string, string> = {
@@ -147,13 +148,11 @@ export default function DashboardLayout({
         {/* Logo */}
         <div className={`px-6 py-5 border-b ${dark ? "border-slate-700" : "border-slate-100"}`}>
           <div className="flex items-center gap-2.5">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${dark ? "bg-teal-600" : "bg-teal-50"}`}>
-              <svg className={`w-4.5 h-4.5 ${dark ? "text-white" : "text-teal-600"}`} fill="currentColor" viewBox="0 0 20 20">
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
+            <div className="w-8 h-8 flex items-center justify-center filter drop-shadow-sm">
+              <SabiqLogo size={32} />
             </div>
-            <span className={`text-lg font-bold tracking-tight ${dark ? "text-white" : "text-slate-800"}`}>
-              NoorAdmin
+            <span className={`text-lg font-bold tracking-tight ${dark ? "text-white" : "text-slate-800"}`} style={{ fontFamily: "Outfit, sans-serif" }}>
+              Sabiq Admin
             </span>
           </div>
         </div>

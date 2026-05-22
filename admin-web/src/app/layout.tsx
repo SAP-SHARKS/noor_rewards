@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Noor Admin",
-  description: "Admin panel for Noor Rewards",
+  title: "Sabiq Admin",
+  description: "Secure admin panel for Sabiq Rewards",
 };
 
 export default function RootLayout({
