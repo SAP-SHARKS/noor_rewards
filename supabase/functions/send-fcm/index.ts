@@ -100,7 +100,8 @@ serve(async (req: Request) => {
           notification: {
             sound: 'default'
           }
-        }
+        },
+        apns: { payload: { aps: { sound: 'default' } } },
       }
     };
 

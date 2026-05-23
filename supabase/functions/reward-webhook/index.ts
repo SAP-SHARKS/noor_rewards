@@ -105,7 +105,8 @@ serve(async (req: Request) => {
         android: {
           priority: 'high',
           notification: { sound: 'default' }
-        }
+        },
+        apns: { payload: { aps: { sound: 'default' } } },
       }
     };
 

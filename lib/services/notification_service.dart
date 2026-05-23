@@ -19,11 +19,18 @@ class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
 
+  /// Cached position from the boot-time location request. Reused by
+  /// [_saveTokenWithLocation] so a second permission/location fetch isn't
+  /// needed when the user signs in.
+  Position? _cachedPosition;
+
   // ── Public entry point ──────────────────────────────────────────────────────
   Future<void> initialize() async {
     final messaging = FirebaseMessaging.instance;
 
-    // Request notification permission
+    // ── 1. Notification permission ───────────────────────────────────────────
+    // First prompt the user sees on fresh install. The OS only shows this
+    // dialog once per install regardless of how often we call it.
     await messaging.requestPermission(
       alert: true,
       badge: true,
@@ -31,7 +38,36 @@ class NotificationService {
       provisional: false,
     );
 
-    // Get FCM token
+    // iOS: show banner/sound when a push arrives while the app is in the
+    // foreground. Without this iOS silently delivers the message to handlers
+    // only and the user sees nothing. No-op on Android.
+    await messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    // iOS: FCM tokens require an APNs token to be ready. On a fresh install
+    // getToken() can return null if APNs hasn't registered yet, so wait
+    // briefly for APNs first.
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      final apns = await messaging.getAPNSToken();
+      debugPrint('APNS_TOKEN: $apns');
+    }
+
+    // ── 2. Location permission ───────────────────────────────────────────────
+    // Requested immediately after notification so both prompts appear
+    // back-to-back on fresh install, regardless of whether the user is signed
+    // in yet. Previously this only ran inside _saveTokenWithLocation (gated
+    // on sign-in) which meant fresh-install users never saw the location
+    // prompt until a later launch — feeling random/inconsistent.
+    try {
+      _cachedPosition = await _getLocation();
+    } catch (_) {
+      _cachedPosition = null;
+    }
+
+    // ── 3. FCM token + initial Supabase persistence ──────────────────────────
     final token = await messaging.getToken();
     debugPrint('FCM_TOKEN: $token');
 
@@ -43,8 +79,26 @@ class NotificationService {
     // Re-save on token refresh
     messaging.onTokenRefresh.listen((newToken) async {
       final uid = Supabase.instance.client.auth.currentUser?.id;
-      if (uid != null)
+      if (uid != null) {
         await _saveTokenWithLocation(token: newToken, userId: uid);
+      }
+    });
+
+    // ── 4. Save the token when the user signs in ─────────────────────────────
+    // Fresh-install flow: notification + location prompts fire during boot,
+    // then the user goes through onboarding and signs in. We need to push the
+    // FCM token to Supabase at that point — without this, the token grabbed
+    // pre-sign-in is never persisted, and the user receives no FCM messages.
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
+      final session = data.session;
+      if ((data.event == AuthChangeEvent.signedIn ||
+              data.event == AuthChangeEvent.userUpdated) &&
+          session != null) {
+        final t = await messaging.getToken();
+        if (t != null) {
+          await _saveTokenWithLocation(token: t, userId: session.user.id);
+        }
+      }
     });
 
     // ── Deep-link handling ────────────────────────────────────────────────────
@@ -64,13 +118,16 @@ class NotificationService {
     required String token,
     required String userId,
   }) async {
-    // Attempt GPS → precise IANA timezone first, system tz as fallback
+    // Attempt GPS → precise IANA timezone first, system tz as fallback.
+    // Reuse the position cached during initialize() so the sign-in flow
+    // doesn't re-prompt for location or stall on a second GPS read.
     String timezone = 'UTC';
     double? latitude;
     double? longitude;
 
     try {
-      final pos = await _getLocation();
+      final pos = _cachedPosition ?? await _getLocation();
+      _cachedPosition ??= pos;
       if (pos != null) {
         latitude = pos.latitude;
         longitude = pos.longitude;
@@ -94,7 +151,8 @@ class NotificationService {
         'timezone': timezone,
         'latitude': latitude,
         'longitude': longitude,
-        'device_type': 'android',
+        'device_type':
+            defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
         'last_seen': DateTime.now().toUtc().toIso8601String(),
       }, onConflict: 'user_id');
     } catch (e) {

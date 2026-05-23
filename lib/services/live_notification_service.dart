@@ -38,9 +38,15 @@ class NoorLiveNotificationService {
     if (kIsWeb) return;
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    // v21 uses named parameter 'settings'
+    // Request iOS permission inside init so users see the system prompt the
+    // first time the live notification fires (mirrors Android 13+ behavior).
+    const iosInit = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: false,
+    );
     await _plugin.initialize(
-      settings: const InitializationSettings(android: androidInit),
+      settings: const InitializationSettings(android: androidInit, iOS: iosInit),
     );
 
     // Request permission (Android 13+)
@@ -49,6 +55,14 @@ class NoorLiveNotificationService {
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.requestNotificationsPermission();
+
+    // Request iOS permission (in case the system prompt was suppressed during
+    // initialize, e.g. on subsequent launches).
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true, badge: true, sound: false);
 
     _initialized = true;
     await _loadCounts();
@@ -161,11 +175,27 @@ class NoorLiveNotificationService {
       color: const Color(0xFF6B4EBB),
     );
 
+    // iOS has no concept of "ongoing" notifications, so we present silently
+    // (no sound, no banner re-alert) and rely on the stable id to update the
+    // single notification in place each time _refresh runs.
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: false,
+      presentSound: false,
+      presentBanner: false,
+      presentList: true,
+      interruptionLevel: InterruptionLevel.passive,
+      threadIdentifier: _channelId,
+    );
+
     await _plugin.show(
       id: _notifId,
       title: 'Your Seeds Today ✨',
       body: lines.join('  •  '),
-      notificationDetails: NotificationDetails(android: androidDetails),
+      notificationDetails: NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      ),
     );
   }
 
