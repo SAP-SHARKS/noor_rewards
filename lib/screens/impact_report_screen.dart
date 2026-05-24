@@ -17,6 +17,8 @@ import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/project_media_carousel.dart';
 import '../widgets/sabiq_coin.dart';
+import '../widgets/orphans_strip.dart';
+import '../models/orphan.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
@@ -1767,6 +1769,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
   // unaffected by Row-Level Security on user_donations).
   Map<String, int> _donorCounts = {};
   int _myAvailablePoints = 0;
+  List<Orphan> _orphans = const [];
   bool _loading = true;
   final Map<String, GlobalKey> _projectKeys = {};
   // Project ids whose donor list is expanded (showing all rows).
@@ -1849,6 +1852,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
 
       // Authoritative distinct-donor counts (RLS-safe RPC).
       _donorCounts = await DonationService.instance.getProjectDonorCounts();
+
+      // Sponsored orphans for the strip above community projects.
+      _orphans = await DonationService.instance.getOrphans();
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
@@ -2359,14 +2365,27 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
               ? const Center(child: NoorInlineLoader())
               : ListView.separated(
                 padding: EdgeInsets.only(bottom: widget.isTab ? 100 : 0),
-                itemCount: _projects.length,
+                // +1 leading item when orphans exist, for the strip header
+                itemCount: _projects.length + (_orphans.isEmpty ? 0 : 1),
                 separatorBuilder:
                     (_, __) => const Divider(
                       height: 1,
                       thickness: 1,
                       color: Color(0xFFEEEEEE),
                     ),
-                itemBuilder: (ctx, i) {
+                itemBuilder: (ctx, idx) {
+                  // First item = orphans strip when orphans exist
+                  if (_orphans.isNotEmpty && idx == 0) {
+                    return Container(
+                      color: Colors.white,
+                      child: OrphansStrip(
+                        orphans: _orphans,
+                        availablePoints: _myAvailablePoints,
+                        onChanged: _load,
+                      ),
+                    );
+                  }
+                  final i = _orphans.isEmpty ? idx : idx - 1;
                   final p = _projects[i];
                   final cur = (p['current_points'] as num?)?.toInt() ?? 0;
                   final tgt = (p['target_points'] as num?)?.toInt() ?? 1;
