@@ -34,6 +34,8 @@ const ICONS: Record<string, string> = {
     "M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z",
   donor_pool:
     "M2.25 18 9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941",
+  orphans:
+    "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zM21 9.75l-2.25 2.25M21 9.75l-2.25-2.25",
 };
 
 const NAV_ITEMS = [
@@ -42,6 +44,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/donor-pool", label: "Donor Pool", icon: "donor_pool" },
   { href: "/dashboard/theme", label: "Theme & Colors", icon: "theme" },
   { href: "/dashboard/projects", label: "Projects", icon: "projects" },
+  { href: "/dashboard/orphans", label: "Orphans", icon: "orphans" },
   { href: "/dashboard/users", label: "Users", icon: "users" },
   { href: "/dashboard/features", label: "Feature Flags", icon: "features" },
   { href: "/dashboard/banners", label: "Banners", icon: "banners" },

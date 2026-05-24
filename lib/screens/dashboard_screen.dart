@@ -39,6 +39,9 @@ import '../widgets/sabiq_coin.dart';
 import '../widgets/seal_coin_animation.dart';
 import '../config/feature_flags.dart';
 import 'project_detail_screen.dart';
+import '../models/orphan.dart';
+import 'orphans_grid_screen.dart';
+import 'orphan_detail_screen.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
 
@@ -4042,6 +4045,7 @@ class _ImpactTabState extends State<_ImpactTab> {
   List<Map<String, dynamic>> _projects = [];
   List<Map<String, dynamic>> _myDonations = [];
   Map<String, List<ProjectMedia>> _projectMedia = {};
+  List<Orphan> _orphans = const [];
   bool _loading = true;
 
   @override
@@ -4089,6 +4093,9 @@ class _ImpactTabState extends State<_ImpactTab> {
 
     // Load user's donations in parallel
     _myDonations = await DonationService.instance.getUserProjectDonations();
+
+    // Sponsored orphans for the strip above community projects
+    _orphans = await DonationService.instance.getOrphans();
 
     // Load contributor counts (distinct donors per project) so each card
     // can surface "X contributors" like LaunchGood.
@@ -4138,6 +4145,16 @@ class _ImpactTabState extends State<_ImpactTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Sponsor an Orphan strip ──────────────────────────────────
+            if (_orphans.isNotEmpty) ...[
+              _OrphansStrip(
+                orphans: _orphans,
+                availablePoints: availablePoints,
+                onChanged: _load,
+              ),
+              const SizedBox(height: 8),
+            ],
+
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Text(
@@ -4276,6 +4293,103 @@ class _ImpactTabState extends State<_ImpactTab> {
             ),
           ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ORPHANS STRIP — horizontal preview at the top of the Impact tab
+// ─────────────────────────────────────────────────────────────────────────────
+class _OrphansStrip extends StatelessWidget {
+  final List<Orphan> orphans;
+  final int availablePoints;
+  final VoidCallback onChanged;
+
+  const _OrphansStrip({
+    required this.orphans,
+    required this.availablePoints,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Sponsor an Orphan',
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: _C.text,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _openGrid(context),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6, vertical: 4),
+                  child: Text(
+                    'See all →',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Y4.honeyDeep,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 220,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: orphans.length > 6 ? 6 : orphans.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (ctx, i) => SizedBox(
+              width: 140,
+              child: OrphanCard(
+                orphan: orphans[i],
+                onTap: () => _openDetail(context, orphans[i]),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openGrid(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => OrphansGridScreen(
+          availablePoints: availablePoints,
+          onSponsorshipSuccess: onChanged,
+        ),
+      ),
+    );
+    onChanged();
+  }
+
+  Future<void> _openDetail(BuildContext context, Orphan o) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => OrphanDetailScreen(
+          orphan: o,
+          availablePoints: availablePoints,
+          onSponsored: (_) => onChanged(),
+        ),
+      ),
+    );
+    onChanged();
   }
 }
 
