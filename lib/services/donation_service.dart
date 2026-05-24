@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import '../models/orphan.dart';
 import 'notification_center.dart';
 
 /// A single donation made by a user to a community project, including the
@@ -390,6 +391,136 @@ class DonationService {
         return 'image/gif';
       default:
         return 'image/jpeg';
+    }
+  }
+
+  // ─── Sponsored Orphans ────────────────────────────────────────────────────
+
+  /// Fetches all active orphans + their aggregated sponsorship stats in one go.
+  Future<List<Orphan>> getOrphans({bool activeOnly = true}) async {
+    try {
+      final query = _sb.from('sponsored_orphans').select();
+      final res = activeOnly
+          ? await query.eq('is_active', true).order('sort_order')
+          : await query.order('sort_order');
+      final list = (res as List)
+          .cast<Map<String, dynamic>>()
+          .map(Orphan.fromMap)
+          .toList();
+      if (list.isEmpty) return list;
+
+      // Bulk-load stats so the list view shows accurate progress on first paint.
+      try {
+        final statsRes = await _sb.rpc(
+          'get_orphan_stats_bulk',
+          params: {'p_orphan_ids': list.map((o) => o.id).toList()},
+        );
+        final byId = <String, Orphan>{for (final o in list) o.id: o};
+        for (final row in (statsRes as List)) {
+          final o = byId[row['orphan_id'] as String?];
+          if (o != null) {
+            o.currentSeeds = (row['current_seeds'] as num?)?.toInt() ?? 0;
+            o.sponsorCount = (row['sponsor_count'] as num?)?.toInt() ?? 0;
+          }
+        }
+      } catch (_) {/* stats are best-effort */}
+      return list;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Latest stats for a single orphan — used on the detail screen to refresh
+  /// the progress bar after a successful sponsorship.
+  Future<({int currentSeeds, int sponsorCount})?> getOrphanStats(
+    String orphanId,
+  ) async {
+    try {
+      final res = await _sb.rpc(
+        'get_orphan_stats',
+        params: {'p_orphan_id': orphanId},
+      );
+      final row = (res as List).isNotEmpty ? (res).first as Map : null;
+      if (row == null) return (currentSeeds: 0, sponsorCount: 0);
+      return (
+        currentSeeds: (row['current_seeds'] as num?)?.toInt() ?? 0,
+        sponsorCount: (row['sponsor_count'] as num?)?.toInt() ?? 0,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Recent sponsors for an orphan (for the "Sponsored by" list on detail).
+  Future<List<ProjectDonation>> getOrphanRecentSponsors(
+    String orphanId, {
+    int limit = 5,
+  }) async {
+    try {
+      final res = await _sb.rpc(
+        'get_orphan_recent_sponsors',
+        params: {'p_orphan_id': orphanId, 'p_limit': limit},
+      );
+      return (res as List)
+          .cast<Map<String, dynamic>>()
+          .map((j) => ProjectDonation(
+                userId: j['user_id'] as String? ?? '',
+                displayName: (j['display_name'] as String?) ?? 'A wellwisher',
+                avatarUrl: j['avatar_url'] as String?,
+                amount: (j['points_donated'] as num?)?.toInt() ?? 0,
+                donatedAt:
+                    DateTime.tryParse(j['donated_at'] as String? ?? '') ??
+                        DateTime.now(),
+              ))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Sponsors an orphan with [amount] Seeds. Returns null on success or an
+  /// error string for the UI to display.
+  Future<String?> sponsorOrphan(String orphanId, int amount) async {
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return 'You must be logged in to sponsor.';
+    try {
+      final ok = await _sb.rpc(
+        'sponsor_orphan',
+        params: {
+          'p_user_id': uid,
+          'p_orphan_id': orphanId,
+          'p_amount': amount,
+        },
+      );
+      if (ok == true) {
+        NotificationCenter.instance.add(
+          kind: NoorNotifKind.donation,
+          title: 'Sponsorship received 💝',
+          body: 'You sponsored $amount Seeds · jazak Allah khair.',
+          route: '/akhirah',
+          data: {'orphan_id': orphanId, 'amount': amount},
+        );
+        return null;
+      }
+      return 'Sponsorship could not be processed at this time.';
+    } catch (e) {
+      if (e is PostgrestException) return e.message;
+      return 'An unexpected network error occurred.';
+    }
+  }
+
+  /// User's lifetime orphan sponsorships, grouped by orphan — for My Donations.
+  Future<List<Map<String, dynamic>>> getUserOrphanSponsorships() async {
+    final uid = _sb.auth.currentUser?.id;
+    if (uid == null) return [];
+    try {
+      final res = await _sb.rpc(
+        'get_user_orphan_sponsorships',
+        params: {'p_user_id': uid},
+      );
+      return (res as List).cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
     }
   }
 }

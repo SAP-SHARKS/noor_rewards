@@ -2319,6 +2319,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   Offset? _counterOffset; // null = default bottom-center
   bool _isDragging = false;
 
+  // ── First-time hint: explains that completing a dhikr animates the
+  // illustration above. Shown once per install via SharedPreferences flag.
+  static const String _kHintSeenKey = 'dhikr_detail_hint_v1_shown';
+  bool _showFirstTimeHint = false;
+  Timer? _hintAutoDismissTimer;
+
   // ── Session tracking for smart notification logic ────────────────────
   late DateTime _sessionStart;
   // Number of azkar pages completed in THIS session visit
@@ -2347,9 +2353,32 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     if (_playAllMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _runPlayAllLoop());
     }
+    _maybeShowFirstTimeHint();
+  }
+
+  Future<void> _maybeShowFirstTimeHint() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(_kHintSeenKey) ?? false) return;
+    // Let the page settle in before fading the hint in.
+    await Future.delayed(const Duration(milliseconds: 700));
+    if (!mounted) return;
+    setState(() => _showFirstTimeHint = true);
+    _hintAutoDismissTimer?.cancel();
+    _hintAutoDismissTimer = Timer(const Duration(seconds: 6), _dismissHint);
+  }
+
+  void _dismissHint() {
+    _hintAutoDismissTimer?.cancel();
+    _hintAutoDismissTimer = null;
+    if (!_showFirstTimeHint) return;
+    if (mounted) setState(() => _showFirstTimeHint = false);
+    SharedPreferences.getInstance().then(
+      (p) => p.setBool(_kHintSeenKey, true),
+    );
   }
 
   void _toggleToolbar() {
+    if (_showFirstTimeHint) _dismissHint();
     setState(() {
       _showToolbar = !_showToolbar;
     });
@@ -2371,6 +2400,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _audioPlayer.dispose();
     _hideTimer?.cancel();
     _autoAdvanceTimer?.cancel();
+    _hintAutoDismissTimer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
@@ -2564,6 +2594,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   }
 
   void _tryComplete(_Azkar azkar, int tapTarget, {bool isSwipe = false}) {
+    if (!isSwipe && _showFirstTimeHint) _dismissHint();
     final current = widget.parentState._counts[azkar.id] ?? 0;
     if (current >= tapTarget) return;
 
@@ -2806,7 +2837,9 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             ),
           ),
         ),
-        body: GestureDetector(
+        body: Stack(
+          children: [
+            GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () => _toggleToolbar(),
           child: NotificationListener<ScrollStartNotification>(
@@ -3032,8 +3065,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                     ? Container(
                                       key: const ValueKey('done'),
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 28,
-                                        vertical: 14,
+                                        horizontal: 32,
+                                        vertical: 16,
                                       ),
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
@@ -3054,11 +3087,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            'Done',
+                                            "You've Done!",
                                             style: GoogleFonts.outfit(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
+                                              letterSpacing: 0.3,
                                             ),
                                           ),
                                         ],
@@ -3224,6 +3258,20 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             },
             ),
           ),
+        ),
+            if (_showFirstTimeHint)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 110 + MediaQuery.of(context).padding.bottom,
+                child: Center(
+                  child: _FirstTimeHintBubble(
+                    isDark: isDark,
+                    onTap: _dismissHint,
+                  ),
+                ),
+              ),
+          ],
         ),
         // ── Play-All control bar ──────────────────────────────────────────
         bottomNavigationBar: _playAllMode || _currentlyLoadedAudio != null
@@ -24412,6 +24460,185 @@ class _ProgressLinePainter extends CustomPainter {
     }
     return true;
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// First-time hint bubble — appears once per install on the dhikr detail screen
+// to tell the user that completing a dhikr animates the illustration above.
+// ─────────────────────────────────────────────────────────────────────────────
+class _FirstTimeHintBubble extends StatefulWidget {
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _FirstTimeHintBubble({required this.isDark, required this.onTap});
+
+  @override
+  State<_FirstTimeHintBubble> createState() => _FirstTimeHintBubbleState();
+}
+
+class _FirstTimeHintBubbleState extends State<_FirstTimeHintBubble>
+    with TickerProviderStateMixin {
+  late final AnimationController _fadeCtrl;
+  late final AnimationController _pulseCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    )..forward();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _fadeCtrl.dispose();
+    _pulseCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = widget.isDark
+        ? const Color(0xFF2A2410) // warm dark = Y4.ink
+        : Y4.cream;
+    final textColor = widget.isDark ? Y4.cream : Y4.ink;
+    final borderColor = Y4.honey;
+    final sageAccent = Y4.primary;
+
+    return FadeTransition(
+      opacity: CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut),
+      child: ScaleTransition(
+        scale: Tween<double>(begin: 0.94, end: 1.0).animate(
+          CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutBack),
+        ),
+        child: AnimatedBuilder(
+          animation: _pulseCtrl,
+          builder: (context, child) {
+            final scale = 1.0 + (_pulseCtrl.value * 0.035);
+            return Transform.scale(scale: scale, child: child);
+          },
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 320),
+                  padding: const EdgeInsets.fromLTRB(16, 11, 18, 11),
+                  decoration: BoxDecoration(
+                    color: bg,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: borderColor, width: 1.4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Y4.honeyDeep.withValues(alpha: 0.22),
+                        blurRadius: 20,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 2),
+                      ),
+                      BoxShadow(
+                        color: Y4.ink.withValues(
+                          alpha: widget.isDark ? 0.45 : 0.10,
+                        ),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Sage leaf icon — ties to the "garden" of the illustration
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: sageAccent.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.spa_rounded,
+                          size: 15,
+                          color: sageAccent,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text(
+                          'Complete to watch your garden bloom above',
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                            letterSpacing: 0.1,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Downward triangle pointing at the button below
+                CustomPaint(
+                  size: const Size(18, 9),
+                  painter: _HintArrowPainter(
+                    color: bg,
+                    borderColor: borderColor,
+                    borderWidth: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HintArrowPainter extends CustomPainter {
+  final Color color;
+  final Color borderColor;
+  final double borderWidth;
+  _HintArrowPainter({
+    required this.color,
+    required this.borderColor,
+    this.borderWidth = 1.4,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..close();
+    // Fill
+    canvas.drawPath(path, Paint()..color = color);
+    // Side strokes only (skip the top edge so it blends into the bubble)
+    final stroke = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(0, 0), Offset(size.width / 2, size.height), stroke);
+    canvas.drawLine(
+      Offset(size.width, 0),
+      Offset(size.width / 2, size.height),
+      stroke,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _HintArrowPainter old) =>
+      old.color != color || old.borderColor != borderColor;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
