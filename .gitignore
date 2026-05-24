@@ -54,5 +54,4 @@ app.*.map.json
 # after pulling, so local secret edits never get committed.
 *.env
 .env.*
-!.env
 .env.bak
