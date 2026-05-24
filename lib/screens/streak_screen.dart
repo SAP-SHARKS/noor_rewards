@@ -335,7 +335,7 @@ class _HeroFlame extends StatelessWidget {
                 streak == 0
                     ? 'Start your streak today!'
                     : streak >= 100
-                    ? 'Centurion — Masha\'Allah!'
+                    ? 'Centurion, Masha\'Allah!'
                     : 'Current best streak',
                 style: GoogleFonts.outfit(
                   fontSize: 14,
@@ -754,7 +754,7 @@ class _MilestoneProgress extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go — keep it up!',
+            '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go, keep it up!',
             style: GoogleFonts.outfit(
               fontSize: 12,
               color: Y4.inkSoft,

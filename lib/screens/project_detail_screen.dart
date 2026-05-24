@@ -180,7 +180,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     final pct = ((current / target) * 100).toStringAsFixed(0);
     return '🤲 Support "$title"\n\n'
         'Organised by $sponsor\n\n'
-        'Funded so far — every Seed counts!\n\n'
+        'Funded so far, every Seed counts!\n\n'
         'Open Sabiq Rewards app to donate your Seeds and earn reward.\n'
         '#SabiqRewards #Sadaqah #IslamicCharity';
   }

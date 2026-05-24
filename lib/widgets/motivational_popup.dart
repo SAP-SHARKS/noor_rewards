@@ -41,7 +41,7 @@ const _kCards = [
   ),
   _Card(
     arabic: 'وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ',
-    quote: 'Whoever puts their trust in Allah —\nHe is sufficient for them.',
+    quote: 'Whoever puts their trust in Allah ,\nHe is sufficient for them.',
     source: 'Quran • At-Talaq 65:3',
     gradient: [Color(0xFF1A1060), Color(0xFF4C35A0), Color(0xFF7C5CBF)],
     cta: _CtaType.quran,
@@ -57,7 +57,7 @@ const _kCards = [
   _Card(
     arabic: 'فَاذْكُرُونِي أَذْكُرْكُمْ',
     quote:
-        'Remember Me — I will remember you.\nYour Dhikr rises to the heavens.',
+        'Remember Me, I will remember you.\nYour Dhikr rises to the heavens.',
     source: 'Quran • Al-Baqarah 2:152',
     gradient: [Color(0xFF3D1A0A), Color(0xFFB45309), Color(0xFFF59E0B)],
     cta: _CtaType.dhikr,
@@ -75,7 +75,7 @@ const _kCards = [
   _Card(
     arabic: '',
     quote:
-        'Make your time precious.\nShare goodness with a friend today —\nevery good deed shared is a sadaqah.',
+        'Make your time precious.\nShare goodness with a friend today ,\nevery good deed shared is a sadaqah.',
     source:
         'The Prophet ﷺ said: "Guide others to good, and you get its reward."',
     gradient: [Color(0xFF0F1E3A), Color(0xFF1D4ED8), Color(0xFF60A5FA)],
@@ -110,7 +110,7 @@ const _kCards = [
     arabic: '',
     quote:
         'Your akhirah is being built\none moment of dhikr at a time.\nDon\'t let this moment pass.',
-    source: 'Remind yourself — time is the most precious sadaqah.',
+    source: 'Remind yourself, time is the most precious sadaqah.',
     gradient: [Color(0xFF0D1A2E), Color(0xFF0369A1), Color(0xFF38BDF8)],
     cta: _CtaType.dhikr,
   ),

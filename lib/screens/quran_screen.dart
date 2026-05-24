@@ -72,96 +72,96 @@ const List<_TransDef> _translations = [
   // ── English ────────────────────────────────────────────────────────────────────
   (
     id: 'en.sahih',
-    name: 'English — Sahih Intl.',
+    name: 'English, Sahih Intl.',
     author: 'Saheeh International',
     rtl: false,
   ),
   (
     id: 'en.pickthall',
-    name: 'English — Pickthall',
+    name: 'English, Pickthall',
     author: 'Mohammad Marmaduke Pickthall',
     rtl: false,
   ),
   (
     id: 'en.asad',
-    name: 'English — The Message',
+    name: 'English, The Message',
     author: 'Muhammad Asad',
     rtl: false,
   ),
   (
     id: 'en.hilali',
-    name: 'English — Muhsin Khan',
+    name: 'English, Muhsin Khan',
     author: 'Muhsin Khan & Hilali',
     rtl: false,
   ),
   // ── Urdu ───────────────────────────────────────────────────────────────────────
   (
     id: 'ur.jalandhry',
-    name: 'اردو — جالندھری',
+    name: 'اردو, جالندھری',
     author: 'Fateh Muhammad Jalandhry',
     rtl: true,
   ),
   (
     id: 'ur.kanzuliman',
-    name: 'اردو — کنز الایمان',
+    name: 'اردو, کنز الایمان',
     author: 'Imam Ahmad Raza Khan',
     rtl: true,
   ),
   (
     id: 'ur.ahmedali',
-    name: 'اردو — احمد علی',
+    name: 'اردو, احمد علی',
     author: 'Shah Ahmed Ali',
     rtl: true,
   ),
   (
     id: 'ur.maududi',
-    name: 'اردو — تفہیم القرآن',
+    name: 'اردو, تفہیم القرآن',
     author: 'Maulana Sayyid Abul Ala Maududi',
     rtl: true,
   ),
   // ── French ─────────────────────────────────────────────────────────────────────
   (
     id: 'fr.hamidullah',
-    name: 'Français — Hamidullah',
+    name: 'Français, Hamidullah',
     author: 'Muhammad Hamidullah',
     rtl: false,
   ),
   // ── Turkish ────────────────────────────────────────────────────────────────────
   (
     id: 'tr.diyanet',
-    name: 'Türkçe — Diyanet',
+    name: 'Türkçe, Diyanet',
     author: 'Diyanet İşleri',
     rtl: false,
   ),
   (
     id: 'tr.ates',
-    name: 'Türkçe — Süleyman Ateş',
+    name: 'Türkçe, Süleyman Ateş',
     author: 'Süleyman Ateş',
     rtl: false,
   ),
   // ── Indonesian ─────────────────────────────────────────────────────────────────
   (
     id: 'id.indonesian',
-    name: 'Bahasa — Indonesian',
+    name: 'Bahasa, Indonesian',
     author: 'Ministry of Religious Affairs',
     rtl: false,
   ),
   // ── Bengali ────────────────────────────────────────────────────────────────────
   (
     id: 'bn.bengali',
-    name: 'বাংলা — Muhiuddin Khan',
+    name: 'বাংলা, Muhiuddin Khan',
     author: 'Muhiuddin Khan',
     rtl: false,
   ),
   // ── German ─────────────────────────────────────────────────────────────────────
   (
     id: 'de.aburida',
-    name: 'Deutsch — Abu Rida',
+    name: 'Deutsch, Abu Rida',
     author: 'Abu Rida Muhammad ibn Ahmad',
     rtl: false,
   ),
   // ── Spanish ────────────────────────────────────────────────────────────────────
-  (id: 'es.asad', name: 'Español — Asad', author: 'Muhammad Asad', rtl: false),
+  (id: 'es.asad', name: 'Español, Asad', author: 'Muhammad Asad', rtl: false),
 ];
 
 typedef _QuranScript =
@@ -1553,7 +1553,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         // Either side rejected the delete — restore the UI and warn the
         // user so the icon stays consistent with what's actually stored.
         if (mounted) setState(() => _bookmarks.add(key));
-        if (mounted) _showSnack('Could not remove bookmark — please retry');
+        if (mounted) _showSnack('Could not remove bookmark, please retry');
       } else if (mounted) {
         _showSnack('Removed bookmark $_surahName $_surah:$_ayah');
       }
@@ -1582,7 +1582,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
       if (!qfOk || !sbOk) {
         if (mounted) setState(() => _bookmarks.remove(key));
-        if (mounted) _showSnack('Could not save bookmark — please retry');
+        if (mounted) _showSnack('Could not save bookmark, please retry');
       } else if (mounted) {
         _showSnack('Bookmarked $_surahName $_surah:$_ayah');
       }
@@ -2340,7 +2340,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         setState(() => _audioLoading = false);
         _showSnack(
           AppLocalizations.of(context)?.audioUnavailable ??
-              'Audio unavailable — check internet connection.',
+              'Audio unavailable, check internet connection.',
         );
       }
     }
@@ -5193,7 +5193,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     blocks.add(
       Center(
         child: Text(
-          '— $pageNum —',
+          ', $pageNum ,',
           style: GoogleFonts.lora(
             fontSize: 10,
             color: goldClr.withValues(alpha: 0.55),

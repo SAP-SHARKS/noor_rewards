@@ -50,7 +50,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
       color: Color(0xFFFFAA00),
       title: 'Maintain Daily Azkar',
       description:
-          'Keep your heart alive — SubhanAllah, Alhamdulillah, AllahuAkbar, 99 times each',
+          'Keep your heart alive, SubhanAllah, Alhamdulillah, AllahuAkbar, 99 times each',
       reward: '+20 per set',
     ),
     _GoalItem(
@@ -66,7 +66,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
       color: Color(0xFF4FC3F7),
       title: 'Give Sadaqah Generously',
       description:
-          'Every dirham given sincerely extinguishes sin as water does fire — give and grow',
+          'Every dirham given sincerely extinguishes sin as water does fire, give and grow',
       reward: '+50 per gift',
     ),
     _GoalItem(
@@ -74,7 +74,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
       color: Color(0xFFFF8A65),
       title: 'Deepen Islamic Knowledge',
       description:
-          'Explore seerah, fiqh and tafseer — the Prophet ﷺ said: "Seek knowledge from the cradle"',
+          'Explore seerah, fiqh and tafseer, the Prophet ﷺ said: "Seek knowledge from the cradle"',
       reward: '+25 per lesson',
     ),
   ];
@@ -415,7 +415,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context)?.chooseGoals ??
-                    'Choose your spiritual goals — you can select multiple',
+                    'Choose your spiritual goals, you can select multiple',
                 style: GoogleFonts.outfit(
                   fontSize: 13,
                   color: Colors.white54,

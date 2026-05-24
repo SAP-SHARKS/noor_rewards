@@ -19,6 +19,7 @@ import '../widgets/project_media_carousel.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/orphans_strip.dart';
 import '../models/orphan.dart';
+import 'orphan_detail_screen.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
@@ -1056,7 +1057,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Hasanaat Earned',
             value: _hasanaat,
             color: _C.gold,
-            hadith: '"Whoever does a good deed shall have ten times the like thereof." — Sahih Muslim 131',
+            hadith: '"Whoever does a good deed shall have ten times the like thereof.", Sahih Muslim 131',
             breakdown: 'Every dhikr you recited and every ayah you read is counted as a good deed, then multiplied by 10 as hasanaat in your record.\n\n'
                 'Dhikr recited (lifetime): ${_fmt(_lifetimeDhikr)}\n'
                 'Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
@@ -1080,7 +1081,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Trees in Jannah',
             value: _treesPlanted,
             color: const Color(0xFF2D7A45),
-            hadith: '"SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar — each one plants a tree for you in Jannah." — Tirmidhi 3464',
+            hadith: '"SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar, each one plants a tree for you in Jannah.", Tirmidhi 3464',
             breakdown: 'One tree is planted for every recitation of these four phrases (including post-prayer tasbih, bedtime tasbih, morning/evening tasbih, and tawaf):\n\n'
                 '• SubhanAllah (all sources): ${_fmt((_phraseCounts['subhanallah'] ?? 0) + (_phraseCounts['post_prayer_subhanallah'] ?? 0) + (_phraseCounts['sleeping_tasbih_1'] ?? 0))}\n'
                 '• Alhamdulillah (all sources): ${_fmt((_phraseCounts['alhamdulillah'] ?? 0) + (_phraseCounts['post_prayer_alhamdulillah'] ?? 0) + (_phraseCounts['sleeping_tasbih_2'] ?? 0))}\n'
@@ -1105,7 +1106,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Sins Forgiven',
             value: _sinsWiped,
             color: _C.teal,
-            hadith: '"Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea." — Bukhari 6405',
+            hadith: '"Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea.", Bukhari 6405',
             breakdown: 'Each set of 100 recitations of "SubhanAllahi wa bihamdihi" counts as one cycle of forgiveness.\n\n'
                 'Standalone: ${_fmt(_phraseCounts['subhanallahi_wabihamdih'] ?? 0)}\n'
                 'In morning azkar (item 32): ${_fmt(_phraseCounts['morning_32'] ?? 0)}\n'
@@ -1129,7 +1130,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Palaces Built',
             value: _palacesBuilt,
             color: const Color(0xFF4A90E2),
-            hadith: '"Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah." — Musnad Ahmad',
+            hadith: '"Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah.", Musnad Ahmad',
             breakdown: 'Each 10 recitations of Surah Al-Ikhlas earns one palace.\n\n'
                 'Before sleep (Ikhlas ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n'
                 'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n'
@@ -1153,7 +1154,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Treasures of Jannah',
             value: _treasures,
             color: const Color(0xFF9B59B6),
-            hadith: '"La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah." — Bukhari 4205, Muslim 2704',
+            hadith: '"La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah.", Bukhari 4205, Muslim 2704',
             breakdown: 'Each recitation of "La hawla wa la quwwata illa billah" earns one treasure.\n\n'
                 '"La hawla" (standalone): ${_fmt(_phraseCounts['la_hawla'] ?? 0)}\n'
                 '"Tawakkaltu... wa la hawla": ${_fmt(_phraseCounts['iman_tawakkul'] ?? 0)}\n'
@@ -1175,7 +1176,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Slaves Freed',
             value: _slavesFreed,
             color: _C.purple,
-            hadith: '"Whoever says La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay\'in qadir 10 times, it is as if he freed 4 slaves from the children of Ismail." — Bukhari 6403',
+            hadith: '"Whoever says La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay\'in qadir 10 times, it is as if he freed 4 slaves from the children of Ismail.", Bukhari 6403',
             breakdown: 'Every 10 recitations of "La ilaha illallahu wahdahu la sharika lahu..." equals freeing 4 slaves.\n\n'
                 'Post-prayer: ${_fmt(_phraseCounts['post_prayer_la_ilaha'] ?? 0)}\n'
                 'Upon waking: ${_fmt(_phraseCounts['waking_up_2'] ?? 0)}\n'
@@ -1200,7 +1201,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Gates of Paradise Opened',
             value: _gatesOpened,
             color: const Color(0xFFD4A017),
-            hadith: '"None of you performs wudu and completes it perfectly, then says: Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh — except that all eight gates of Paradise will be opened for him, and he may enter from whichever one he wishes." — Sahih Muslim 234',
+            hadith: '"None of you performs wudu and completes it perfectly, then says: Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh, except that all eight gates of Paradise will be opened for him, and he may enter from whichever one he wishes.", Sahih Muslim 234',
             breakdown: 'Each post-wudu shahadah opens all 8 gates of Paradise.\n\n'
                 'Post-wudu shahadah recited: ${_fmt(_wuduShahadaCount)}\n'
                 'Multiplied by 8 gates → ${_fmt(_gatesOpened)} openings',
@@ -1221,7 +1222,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Blessings from Allah',
             value: _blessingsReceived,
             color: const Color(0xFFE91E63),
-            hadith: '"Whoever sends one blessing upon me, Allah sends ten blessings upon him." — Sahih Muslim 408',
+            hadith: '"Whoever sends one blessing upon me, Allah sends ten blessings upon him.", Sahih Muslim 408',
             breakdown: 'For every salawat (durood) you send upon the Prophet ﷺ, Allah returns ten upon you.\n\n'
                 'Salawat Ibrahimiyya: ${_fmt(_phraseCounts['salawat_ibrahimiyya'] ?? 0)}\n'
                 'Short salawat: ${_fmt(_phraseCounts['salawat_simple'] ?? 0)}\n'
@@ -1246,9 +1247,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Times Protected',
             value: _protectionInvocations,
             color: const Color(0xFF455A64),
-            hadith: '"Whoever recites Ayat al-Kursi before sleeping — a guardian from Allah will protect him and Shaytan will not come near him until morning." — Bukhari 2311\n\n'
-                '"Whoever says A\'udhu bi-kalimatillahit-tammati min sharri ma khalaq three times when arriving at a place — nothing will harm him until he leaves." — Muslim 2708\n\n'
-                '"Recite Qul Huwa Allahu Ahad and the Mu\'awwidhatayn three times morning and evening — they will suffice you against everything." — Abu Dawud 5082',
+            hadith: '"Whoever recites Ayat al-Kursi before sleeping, a guardian from Allah will protect him and Shaytan will not come near him until morning.", Bukhari 2311\n\n'
+                '"Whoever says A\'udhu bi-kalimatillahit-tammati min sharri ma khalaq three times when arriving at a place, nothing will harm him until he leaves.", Muslim 2708\n\n'
+                '"Recite Qul Huwa Allahu Ahad and the Mu\'awwidhatayn three times morning and evening, they will suffice you against everything.", Abu Dawud 5082',
             breakdown: 'Each protection-invoking azkar adds one to your shield.\n\n'
                 'Ayat al-Kursi before sleep: ${_fmt(_phraseCounts['sleeping_ayat_kursi'] ?? 0)}\n'
                 'Ayat al-Kursi after prayer: ${_fmt(_phraseCounts['post_prayer_ayat_kursi'] ?? 0)}\n'
@@ -1275,7 +1276,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Quran Completions',
             value: _quranCompletionsViaIkhlas,
             color: const Color(0xFF2E7D32),
-            hadith: '"Reciting Qul Huwa Allahu Ahad (Surah Al-Ikhlas) three times equals reciting the entire Quran." — Sahih Bukhari 5017',
+            hadith: '"Reciting Qul Huwa Allahu Ahad (Surah Al-Ikhlas) three times equals reciting the entire Quran.", Sahih Bukhari 5017',
             breakdown: 'Every three Ikhlas recitations equal one complete recitation of the Qur\'an.\n\n'
                 'Before sleep (item recites ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n'
                 'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n'
@@ -1300,7 +1301,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               title: 'Bonus Million Hasanaat',
               value: _millionHasanaat,
               color: const Color(0xFFB8860B),
-              hadith: '"Whoever enters the marketplace and says: La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa ala kulli shay\'in Qadir — Allah will write for him a million good deeds, erase a million of his bad deeds, and raise him a million levels." — Ibn Majah 2235',
+              hadith: '"Whoever enters the marketplace and says: La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa ala kulli shay\'in Qadir, Allah will write for him a million good deeds, erase a million of his bad deeds, and raise him a million levels.", Ibn Majah 2235',
               breakdown: 'Each recitation of the marketplace du\'a writes 1,000,000 good deeds.\n\n'
                   'Times recited: ${_fmt(_shoppingDuaCount)}\n'
                   'Bonus hasanaat: ${_fmt(_millionHasanaat)}',
@@ -1321,7 +1322,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Sadaqah Given',
             value: _totalDonated,
             color: const Color(0xFFE67E22),
-            hadith: '"Sadaqah does not decrease wealth." — Muslim 2588',
+            hadith: '"Sadaqah does not decrease wealth.", Muslim 2588',
             breakdown: 'Seeds you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} ${_totalDonated == 1 ? 'Seed' : 'Seeds'}',
           ),
         ),
@@ -1770,6 +1771,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
   Map<String, int> _donorCounts = {};
   int _myAvailablePoints = 0;
   List<Orphan> _orphans = const [];
+  // Aggregated "Your Giving" footer stats
+  int _myTotalSeedsLifetime = 0;
+  int _myProjectsSupportedCount = 0;
+  int _myOrphansSponsoredCount = 0;
   bool _loading = true;
   final Map<String, GlobalKey> _projectKeys = {};
   // Project ids whose donor list is expanded (showing all rows).
@@ -1855,6 +1860,31 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
 
       // Sponsored orphans for the strip above community projects.
       _orphans = await DonationService.instance.getOrphans();
+
+      // Aggregate "Your Giving" footer stats — lifetime totals across BOTH
+      // projects and orphans, so the footer summarises the user's full
+      // philanthropic footprint in one card.
+      final orphanSponsorships =
+          await DonationService.instance.getUserOrphanSponsorships();
+      _myOrphansSponsoredCount = orphanSponsorships.length;
+      int orphanSeeds = 0;
+      for (final row in orphanSponsorships) {
+        orphanSeeds += (row['total_donated'] as num?)?.toInt() ?? 0;
+      }
+      int projectSeeds = 0;
+      int projectsSupported = 0;
+      if (uid != null) {
+        // myDonations already grouped by project earlier in this function
+        for (final p in _projects) {
+          final my = (p['my_points'] as num?)?.toInt() ?? 0;
+          if (my > 0) {
+            projectSeeds += my;
+            projectsSupported++;
+          }
+        }
+      }
+      _myTotalSeedsLifetime = orphanSeeds + projectSeeds;
+      _myProjectsSupportedCount = projectsSupported;
     } catch (_) {}
     if (mounted) {
       setState(() => _loading = false);
@@ -2363,30 +2393,477 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       body:
           _loading
               ? const Center(child: NoorInlineLoader())
-              : ListView.separated(
-                padding: EdgeInsets.only(bottom: widget.isTab ? 100 : 0),
-                // +1 leading item when orphans exist, for the strip header
-                itemCount: _projects.length + (_orphans.isEmpty ? 0 : 1),
-                separatorBuilder:
-                    (_, __) => const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFEEEEEE),
+              : _buildCausePage(),
+    );
+  }
+
+  // ── Cause page composition ────────────────────────────────────────────────
+  // Hero (1 featured) → "Sponsor an Orphan" section → "Active Campaigns"
+  // section → "Your Giving" footer. Each section owns its own header.
+  Widget _buildCausePage() {
+    final rows = <Widget>[];
+
+    // 1. Hero — first orphan if any, else first non-completed project.
+    final hero = _pickHero();
+    if (hero != null) rows.add(hero);
+
+    // 2. Sponsor an Orphan
+    if (_orphans.isNotEmpty) {
+      rows.add(_sectionHeader(
+        title: 'Sponsor an Orphan',
+        subtitle: 'Real children, their stories, their lives',
+        actionLabel: _orphans.length > 1 ? 'See all' : null,
+        onAction: () => OrphansStrip.openGrid(
+          context,
+          availablePoints: _myAvailablePoints,
+          onChanged: _load,
+        ),
+      ));
+      rows.add(
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.only(bottom: 16),
+          child: OrphansStrip(
+            orphans: _orphans,
+            availablePoints: _myAvailablePoints,
+            onChanged: _load,
+          ),
+        ),
+      );
+      rows.add(_thinDivider());
+    }
+
+    // 3. Active Campaigns
+    if (_projects.isNotEmpty) {
+      rows.add(_sectionHeader(
+        title: 'Active Campaigns',
+        subtitle: 'Pool your Seeds toward lasting impact',
+      ));
+      for (int i = 0; i < _projects.length; i++) {
+        rows.add(_buildProjectRow(_projects[i]));
+        if (i < _projects.length - 1) rows.add(_thinDivider());
+      }
+      rows.add(_thinDivider());
+    }
+
+    // 4. Your Giving footer
+    rows.add(_yourGivingFooter());
+
+    return ListView.builder(
+      padding: EdgeInsets.only(bottom: widget.isTab ? 100 : 0),
+      itemCount: rows.length,
+      itemBuilder: (_, i) => rows[i],
+    );
+  }
+
+  Widget _thinDivider() => const Divider(
+        height: 1, thickness: 1, color: Color(0xFFEEEEEE),
+      );
+
+  // ── Hero card ────────────────────────────────────────────────────────────
+  Widget? _pickHero() {
+    if (_orphans.isNotEmpty) {
+      return _heroOrphan(_orphans.first);
+    }
+    final firstActive = _projects.cast<Map<String, dynamic>?>().firstWhere(
+          (p) => p?['is_completed'] != true,
+          orElse: () => null,
+        );
+    if (firstActive != null) return _heroProject(firstActive);
+    return null;
+  }
+
+  Widget _heroOrphan(Orphan o) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+      child: GestureDetector(
+        onTap: () async {
+          await Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => OrphanDetailScreen(
+              orphan: o,
+              availablePoints: _myAvailablePoints,
+              onSponsored: (_) => _load(),
+            ),
+          ));
+          _load();
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Container(
+            height: 260,
+            decoration: BoxDecoration(color: Y4.butter),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (o.photoUrl != null && o.photoUrl!.isNotEmpty)
+                  CachedNetworkImage(imageUrl: o.photoUrl!, fit: BoxFit.cover)
+                else
+                  Container(
+                    color: Y4.butter,
+                    alignment: Alignment.center,
+                    child: Icon(Icons.person_rounded,
+                        size: 80, color: Y4.honeyDeep.withValues(alpha: 0.5)),
+                  ),
+                // Bottom gradient for legible text overlay
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.35, 1.0],
+                      colors: [Colors.transparent, Color(0xCC000000)],
                     ),
-                itemBuilder: (ctx, idx) {
-                  // First item = orphans strip when orphans exist
-                  if (_orphans.isNotEmpty && idx == 0) {
-                    return Container(
-                      color: Colors.white,
-                      child: OrphansStrip(
-                        orphans: _orphans,
-                        availablePoints: _myAvailablePoints,
-                        onChanged: _load,
+                  ),
+                ),
+                // Top-left pill
+                Positioned(
+                  top: 12, left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      'Featured · Sponsor a child',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Y4.honeyDeep,
+                        letterSpacing: 0.3,
                       ),
-                    );
-                  }
-                  final i = _orphans.isEmpty ? idx : idx - 1;
-                  final p = _projects[i];
+                    ),
+                  ),
+                ),
+                // Bottom-left text + CTA
+                Positioned(
+                  left: 16, right: 16, bottom: 14,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Meet ${o.firstName}, ${o.age}',
+                        style: GoogleFonts.fraunces(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          height: 1.05,
+                        ),
+                      ),
+                      if (o.displayLocation != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          o.displayLocation!,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            color: Colors.white.withValues(alpha: 0.92),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: Y4.honey,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        child: Text(
+                          'Sponsor ${o.firstName} →',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: Y4.ink,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _heroProject(Map<String, dynamic> p) {
+    final cur = (p['current_points'] as num?)?.toInt() ?? 0;
+    final tgt = (p['target_points'] as num?)?.toInt() ?? 1;
+    final pct = (cur / tgt).clamp(0.0, 1.0);
+    final dpUrl = (p['dp_url'] as String?) ?? '';
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+      child: GestureDetector(
+        onTap: () => _showDonateSheet(p),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Container(
+            height: 260,
+            decoration: BoxDecoration(color: Y4.butter),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (dpUrl.isNotEmpty)
+                  CachedNetworkImage(imageUrl: dpUrl, fit: BoxFit.cover),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.35, 1.0],
+                      colors: [Colors.transparent, Color(0xCC000000)],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12, left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      'Featured Campaign',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Y4.honeyDeep,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 16, right: 16, bottom: 14,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${p['title'] ?? ''}',
+                        style: GoogleFonts.fraunces(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          height: 1.1,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(99),
+                        child: LinearProgressIndicator(
+                          value: pct,
+                          minHeight: 5,
+                          backgroundColor: Colors.white.withValues(alpha: 0.25),
+                          valueColor:
+                              const AlwaysStoppedAnimation(Y4.honey),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${(pct * 100).round()}% funded',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11.5,
+                          color: Colors.white.withValues(alpha: 0.92),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Section header (used by both orphan + campaign sections) ─────────────
+  Widget _sectionHeader({
+    required String title,
+    String? subtitle,
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: _C.text,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.outfit(
+                      fontSize: 12.5,
+                      color: Y4.inkSoft,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (actionLabel != null && onAction != null)
+            GestureDetector(
+              onTap: onAction,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                child: Text(
+                  '$actionLabel →',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Y4.honeyDeep,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ── "Your Giving" footer ─────────────────────────────────────────────────
+  Widget _yourGivingFooter() {
+    final hasGiving = _myTotalSeedsLifetime > 0;
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Y4.cream, Y4.butter],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Y4.honey.withValues(alpha: 0.4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text('💝', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: 8),
+                Text(
+                  'Your Giving',
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.ink,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (!hasGiving)
+              Text(
+                "You haven't given yet. Pick someone above to begin your journey of impact.",
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  color: Y4.inkSoft,
+                  height: 1.4,
+                ),
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: _statTile(
+                      _fmt(_myTotalSeedsLifetime),
+                      'Seeds donated',
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 36,
+                    color: Y4.honey.withValues(alpha: 0.5),
+                  ),
+                  Expanded(
+                    child: _statTile(
+                      '$_myOrphansSponsoredCount',
+                      _myOrphansSponsoredCount == 1
+                          ? 'Orphan'
+                          : 'Orphans',
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 36,
+                    color: Y4.honey.withValues(alpha: 0.5),
+                  ),
+                  Expanded(
+                    child: _statTile(
+                      '$_myProjectsSupportedCount',
+                      _myProjectsSupportedCount == 1
+                          ? 'Project'
+                          : 'Projects',
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _statTile(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: GoogleFonts.fraunces(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: Y4.honeyDeep,
+            height: 1.0,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Y4.inkSoft,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Existing project card (extracted from itemBuilder) ────────────────────
+  Widget _buildProjectRow(Map<String, dynamic> p) {
                   final cur = (p['current_points'] as num?)?.toInt() ?? 0;
                   final tgt = (p['target_points'] as num?)?.toInt() ?? 1;
                   final myPts = (p['my_points'] as num?)?.toInt() ?? 0;
@@ -2601,9 +3078,6 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       ],
                     ),
                   );
-                },
-              ),
-    );
   }
 }
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

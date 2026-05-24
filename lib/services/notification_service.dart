@@ -141,7 +141,7 @@ class NotificationService {
       }
     } catch (e) {
       timezone = await _systemTimezone();
-      debugPrint('📍 Location error ($e) — using system timezone: $timezone');
+      debugPrint('📍 Location error ($e), using system timezone: $timezone');
     }
 
     try {
@@ -223,7 +223,7 @@ class NotificationService {
   // ── Notification tap → deep link ────────────────────────────────────────────
   void _handleMessageTap(RemoteMessage message) {
     final route = message.data['route'] as String?;
-    debugPrint('FCM tap — route: $route');
+    debugPrint('FCM tap, route: $route');
 
     final nav = notificationNavigatorKey.currentState;
     if (nav == null) return;

@@ -753,7 +753,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   void _shareAzkar(_Azkar azkar) {
     HapticFeedback.lightImpact();
     final text =
-        '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n— Shared via Sabiq Rewards';
+        '${azkar.arabic}\n\n${azkar.transliteration}\n\n"${azkar.translation}"\n\n, Shared via Sabiq Rewards';
     // ignore: deprecated_member_use
     Share.share(text);
   }
@@ -1564,10 +1564,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
             'After Each Prayer';
       case 'salawat':
         return AppLocalizations.of(context)?.anytimeEspeciallyAfterPrayer ??
-            'Anytime — Especially After Prayer';
+            'Anytime, Especially After Prayer';
       case 'istighfar':
         return AppLocalizations.of(context)?.anytimeMorningEvening ??
-            'Anytime — Morning & Evening';
+            'Anytime, Morning & Evening';
       case 'tahajjud':
         return AppLocalizations.of(context)?.duringTheNight ??
             'During the Night';
@@ -1592,7 +1592,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
             'Upon Having a Bad Dream';
       case 'ummah':
         return AppLocalizations.of(context)?.forUmmahAnytime ??
-            'For the Ummah — Anytime';
+            'For the Ummah, Anytime';
       case 'general':
         return AppLocalizations.of(context)?.anytime ?? 'Anytime';
       default:
@@ -4220,7 +4220,7 @@ class _AzkarCard extends StatelessWidget {
         final cleanSource =
             source
                 .substring(0, bracketMatch.start)
-                .replaceAll(RegExp(r'[-—\.,\|\s]+$'), '')
+                .replaceAll(RegExp(r'[-,\.,\|\s]+$'), '')
                 .trim();
         onExtract(cleanSource, ref);
         return;
@@ -4228,7 +4228,7 @@ class _AzkarCard extends StatelessWidget {
 
       // 2. Check for known Hadith keywords
       final keywordMatch = RegExp(
-        r'(?:[-—\.,\s]+|^)((?:Sahih\s)?(?:Muslim|Bukhari|Abu Dawud|Tirmidhi|Ibn Majah|Nasai|Ahmad|Quran|Surah).*)$',
+        r'(?:[-,\.,\s]+|^)((?:Sahih\s)?(?:Muslim|Bukhari|Abu Dawud|Tirmidhi|Ibn Majah|Nasai|Ahmad|Quran|Surah).*)$',
         caseSensitive: false,
       ).firstMatch(source);
       if (keywordMatch != null) {
@@ -4236,7 +4236,7 @@ class _AzkarCard extends StatelessWidget {
         final cleanSource =
             source
                 .substring(0, keywordMatch.start)
-                .replaceAll(RegExp(r'[-—\.,\|\s]+$'), '')
+                .replaceAll(RegExp(r'[-,\.,\|\s]+$'), '')
                 .trim();
         onExtract(cleanSource, ref);
         return;
@@ -4956,7 +4956,7 @@ Widget _buildIllustration({
         isComplete: isComplete,
         tapCount: tapCount,
         pointsToday: pointsToday,
-        benefitText: 'Begin your day in surrender to Allah — nothing else matters more',
+        benefitText: 'Begin your day in surrender to Allah, nothing else matters more',
         subtitle: 'Daily Devotion',
         completedSubtitle: 'May Allah accept your devotion',
         accentColor: const Color(0xFF14B8A6),
@@ -4973,7 +4973,7 @@ Widget _buildIllustration({
         isComplete: isComplete,
         tapCount: tapCount,
         pointsToday: pointsToday,
-        benefitText: 'Allah responds to every verse you recite — "This is for My servant, and My servant shall have what he has asked for"',
+        benefitText: 'Allah responds to every verse you recite, "This is for My servant, and My servant shall have what he has asked for"',
         subtitle: 'Sahih Muslim 395',
         completedSubtitle: 'Allah has answered your call',
         accentColor: const Color(0xFFD4A843),
@@ -4990,7 +4990,7 @@ Widget _buildIllustration({
         isComplete: isComplete,
         tapCount: tapCount,
         pointsToday: pointsToday,
-        benefitText: 'Allah responds to every verse you recite — "This is for My servant, and My servant shall have what he has asked for"',
+        benefitText: 'Allah responds to every verse you recite, "This is for My servant, and My servant shall have what he has asked for"',
         subtitle: 'Sahih Muslim 395',
         completedSubtitle: 'Allah has answered your call',
         accentColor: const Color(0xFF6366F1),
@@ -5426,7 +5426,7 @@ Widget _buildIllustration({
         tapCount: tapCount,
         pointsToday: pointsToday,
         benefitText:
-            'Angels couldn\'t record its reward — Allah says He will reward it Himself',
+            'Angels couldn\'t record its reward, Allah says He will reward it Himself',
         subtitle: 'Ibn Majah 3801',
         completedSubtitle: 'May Allah reward you beyond measure',
         accentColor: const Color(0xFF6B4EE6),
@@ -5560,7 +5560,7 @@ Widget _buildIllustration({
 String _pickTagline(String id) {
   // ── Specific numeric IDs first (most precise) ──
   if (id == 'morning_32' || id == 'evening_31')
-    return 'Sins forgiven — even if like the foam of the sea';
+    return 'Sins forgiven, even if like the foam of the sea';
   if (id == 'morning_31' || id == 'evening_30')
     return '10 freed · 100 hasanat · 100 sins erased · Shaytan repelled';
   if (id == 'morning_33' || id == 'evening_32')
@@ -5569,37 +5569,37 @@ String _pickTagline(String id) {
   if (id == 'morning_29' || id == 'evening_29')
     return 'Allah is sufficient for you in every affair';
   if (id == 'morning_28' || id == 'evening_28')
-    return "Wellbeing of body, hearing & sight — granted";
+    return "Wellbeing of body, hearing & sight, granted";
   if (id == 'morning_27' || id == 'evening_27')
     return 'Allah will free him from the Fire who reads this 4 times';
-  if (id == 'morning_26') return 'Guaranteed Jannah — if you die this day';
-  if (id == 'evening_26') return 'Guaranteed Jannah — if you die this night';
+  if (id == 'morning_26') return 'Guaranteed Jannah, if you die this day';
+  if (id == 'evening_26') return 'Guaranteed Jannah, if you die this night';
   if (id == 'morning_25' || id == 'evening_25')
     return 'Your life entrusted to the Ever-Living';
   if (id == 'morning_24' || id == 'evening_24')
     return 'All evil in His creation repelled from you';
   if (id == 'morning_23' || id == 'evening_23')
-    return 'Nothing shall harm you — by perfect words';
+    return 'Nothing shall harm you, by perfect words';
   if (id == 'morning_22' || id == 'evening_22')
-    return 'Shield yourself from minor and major shirk — morning & evening';
+    return 'Shield yourself from minor and major shirk, morning & evening';
   if (id == 'morning_21' || id == 'evening_21')
     return 'Complete protection in the name of Allah';
   if (id == 'morning_20' || id == 'evening_20')
-    return 'Weightier than all voluntary prayers — from dawn till dusk';
+    return 'Weightier than all voluntary prayers, from dawn till dusk';
   if (id == 'morning_18' || id == 'evening_18')
-    return 'Recite morning & evening — earn the pleasure & blessing of Allah on the Day of Judgment';
+    return 'Recite morning & evening, earn the pleasure & blessing of Allah on the Day of Judgment';
   if (id == 'morning_17' || id == 'evening_17')
     return 'Your reward awaits directly with Allah when you meet Him';
   if (id == 'morning_15' || id == 'evening_15')
     return 'Recite morning & evening to fulfill your obligation of gratitude to Allah';
   if (id == 'morning_14' || id == 'evening_14')
-    return 'The Prophet taught this dua for morning and evening — do not miss it';
+    return 'The Prophet taught this dua for morning and evening, do not miss it';
   if (id == 'morning_12')
-    return 'Declare Allah\'s dominion at the start of your morning — all kingdom belongs to Him';
+    return 'Declare Allah\'s dominion at the start of your morning, all kingdom belongs to Him';
   if (id == 'evening_12')
     return 'As evening falls, the entire kingdom belongs to Allah alone';
   if (id == 'evening_13')
-    return 'End your evening upon the pure fitrah — as the Prophet (ﷺ) taught';
+    return 'End your evening upon the pure fitrah, as the Prophet (ﷺ) taught';
   if (id == 'morning_2' || id == 'evening_2')
     return 'Satan will not enter the home of one who recites this';
   if (id == 'morning_4' ||
@@ -5617,13 +5617,13 @@ String _pickTagline(String id) {
   return switch (ill) {
     'shield' => 'Guarded by Allah until morning comes',
     'quran_complete' =>
-      'Reciting 3x equals reading the entire Quran — Bukhari & Muslim',
-    'dawn_dusk' => 'Recite 3x at dawn & dusk — suffice you against all harm',
+      'Reciting 3x equals reading the entire Quran, Bukhari & Muslim',
+    'dawn_dusk' => 'Recite 3x at dawn & dusk, suffice you against all harm',
     'falaq_shield' =>
-      'Recite 3x at dawn & dusk — it will suffice you in all respects',
-    'dua_hands' => 'Refuge from the whisperer — in the Lord of Mankind',
+      'Recite 3x at dawn & dusk, it will suffice you in all respects',
+    'dua_hands' => 'Refuge from the whisperer, in the Lord of Mankind',
     'gratitude_tree' =>
-      'Recite 3x morning & evening — your gratitude to Allah is fulfilled',
+      'Recite 3x morning & evening, your gratitude to Allah is fulfilled',
     'three_quls' => 'Sufficient against every harm recited 3 times',
     'gates' => 'Doors of Allah mercy open wide for you',
     'chains' => 'Worry and sorrow lifted by the will of Allah',
@@ -5654,9 +5654,9 @@ String _pickTagline(String id) {
     'night_peace' => 'Reading last 2 verses of al-Baqarah will suffice you',
     'baqarah_burden' => 'Every dua in this verse - Allah said: I have done so',
     'afiyah_guard' =>
-      'Guarded in your Deen · Dunya · Akhirah — and from all six sides',
+      'Guarded in your Deen · Dunya · Akhirah, and from all six sides',
     'noor_door' =>
-      'Recite morning & evening — earn the pleasure of Allah on the Day of Judgment',
+      'Recite morning & evening, earn the pleasure of Allah on the Day of Judgment',
     'evening_sovereignty' =>
       'As evening falls, the entire kingdom belongs to Allah alone',
     _ => '',
@@ -22550,7 +22550,7 @@ class _DuaHandsState extends State<_DuaHands> with TickerProviderStateMixin {
     (text: 'Say: I seek refuge', color: 0),
     (text: 'in the Lord of Mankind', color: 0),
     (text: 'the King of Mankind', color: 1),
-    (text: 'the God of Mankind —', color: 1),
+    (text: 'the God of Mankind ,', color: 1),
     (text: 'from the whispering devil', color: 1),
     (text: 'He retreats when you remember Allah.', color: 2),
   ];
@@ -22855,7 +22855,7 @@ class _AlFalaqShieldState extends State<_AlFalaqShield>
     (text: 'from evil of what He created', color: 1),
     (text: 'from darkness when it settles', color: 1),
     (text: 'from blowers in knots', color: 1),
-    (text: 'from envy when it strikes —', color: 1),
+    (text: 'from envy when it strikes ,', color: 1),
     (text: 'Sufficed in all respects.', color: 2),
   ];
 
