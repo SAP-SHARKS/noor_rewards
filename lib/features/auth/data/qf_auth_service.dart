@@ -175,7 +175,7 @@ class QfAuthService {
       callbackUri = await _pendingCallback!.future.timeout(
         const Duration(minutes: 5),
         onTimeout:
-            () => throw TimeoutException('Login timed out — please try again.'),
+            () => throw TimeoutException('Login timed out, please try again.'),
       );
     } finally {
       _pendingCallback = null;
@@ -184,7 +184,7 @@ class QfAuthService {
     final error = callbackUri.queryParameters['error'];
     if (error != null) {
       throw Exception(
-        'QF auth error: $error — ${callbackUri.queryParameters['error_description']}',
+        'QF auth error: $error, ${callbackUri.queryParameters['error_description']}',
       );
     }
 
@@ -217,7 +217,7 @@ class QfAuthService {
   Future<void> refresh() async {
     final currentRefreshToken = await refreshToken;
     if (currentRefreshToken == null) {
-      throw Exception('No refresh token available — please sign in again.');
+      throw Exception('No refresh token available, please sign in again.');
     }
     final response = await _supabase.functions.invoke(
       'qf-token-refresh',
@@ -412,7 +412,7 @@ class QfAuthService {
         }
       } else if (isSameSub) {
         debugPrint(
-            '[QF] same sub as stored ($storedSub) — skipping email conflict check');
+            '[QF] same sub as stored ($storedSub), skipping email conflict check');
       }
 
       // Display name resolution — SecureStorage is only used as a hint for the

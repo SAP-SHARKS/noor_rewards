@@ -87,7 +87,7 @@ Future<void> _step(
   try {
     await body().timeout(timeout);
   } on TimeoutException {
-    debugPrint('[boot] $name timed out — continuing without it');
+    debugPrint('[boot] $name timed out, continuing without it');
   } catch (e) {
     debugPrint('[boot] $name failed: $e');
   }
@@ -307,7 +307,7 @@ class _SplashGateState extends State<_SplashGate> {
   void _forceNavigate() {
     if (_navigated || !mounted) return;
     debugPrint(
-      '[SplashGate] hard timeout reached — navigating to AuthGate '
+      '[SplashGate] hard timeout reached, navigating to AuthGate '
       '(lottieDone=$_lottieDone, initReady=${appInitReady.value})',
     );
     _go();

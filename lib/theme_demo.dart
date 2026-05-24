@@ -702,16 +702,16 @@ class _ThemeDemoScreenState extends State<ThemeDemoScreen> {
                         Text('Title Medium', style: NoorType.titleMd),
                         SizedBox(height: NoorSpacing.xs),
                         Text(
-                          'Body Large — The quick brown fox',
+                          'Body Large, The quick brown fox',
                           style: NoorType.bodyLg,
                         ),
                         SizedBox(height: NoorSpacing.xs),
                         Text(
-                          'Body Medium — Secondary text',
+                          'Body Medium, Secondary text',
                           style: NoorType.bodyMd,
                         ),
                         SizedBox(height: NoorSpacing.xs),
-                        Text('Caption — 12px details', style: NoorType.caption),
+                        Text('Caption, 12px details', style: NoorType.caption),
                         Divider(height: NoorSpacing.lg, color: NoorColors.sand),
                         Text(
                           'بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ',

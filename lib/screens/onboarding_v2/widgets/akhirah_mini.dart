@@ -50,7 +50,7 @@ class AkhirahMini extends StatelessWidget {
             ),
             SizedBox(height: w * 0.02),
             Text(
-              'Authentic hadith — your real ledger',
+              'Authentic hadith, your real ledger',
               style: OnbTok.sans(
                 fontSize: w * 0.035,
                 color: OnbTok.brownSoft,

@@ -110,7 +110,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'title': AppLocalizations.of(context)?.quranicDuas ?? 'Quranic Duas',
         'id': 'quranic',
         'color': Y4.primaryDeep,
-        'icon': 'ðŸ“—',
+        'icon': 'ðŸ“,',
       },
       {
         'title': AppLocalizations.of(context)?.istighfar ?? 'Istighfar',

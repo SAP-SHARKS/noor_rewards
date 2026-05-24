@@ -63,6 +63,10 @@ CREATE INDEX IF NOT EXISTS idx_orphans_active_sort
 ALTER TABLE user_donations
   ADD COLUMN IF NOT EXISTS orphan_id UUID REFERENCES sponsored_orphans(id) ON DELETE SET NULL;
 
+-- project_id was originally NOT NULL — drop that so orphan donations
+-- (which have project_id NULL + orphan_id set) can be inserted.
+ALTER TABLE user_donations ALTER COLUMN project_id DROP NOT NULL;
+
 -- A donation row references exactly ONE entity: either a project OR an orphan
 ALTER TABLE user_donations DROP CONSTRAINT IF EXISTS donation_target_xor;
 ALTER TABLE user_donations

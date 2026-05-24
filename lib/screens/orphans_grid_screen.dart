@@ -93,7 +93,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
         ),
         const SizedBox(height: 6),
         Text(
-          'Check back soon — new sponsorship opportunities are added regularly.',
+          'Check back soon, new sponsorship opportunities are added regularly.',
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 13.5,
@@ -156,7 +156,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              '"And as for the orphan, do not oppress him." — Qur’an 93:9',
+              '"And as for the orphan, do not oppress him.", Qur’an 93:9',
               style: GoogleFonts.outfit(
                 fontSize: 12.5,
                 fontStyle: FontStyle.italic,
@@ -218,62 +218,151 @@ class OrphanCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Photo
-            AspectRatio(
-              aspectRatio: 1.0,
-              child: _photo(),
-            ),
-            // Info
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // Photo with grade-pill overlay — flex 11
+            Expanded(
+              flex: 11,
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Text(
-                    '${orphan.firstName} · ${orphan.age}',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Y4.ink,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (orphan.displayLocation != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      orphan.displayLocation!,
-                      style: GoogleFonts.outfit(
-                        fontSize: 11.5,
-                        color: Y4.inkSoft,
+                  _photo(),
+                  if (orphan.grade != null && orphan.grade!.isNotEmpty)
+                    Positioned(
+                      top: 8, right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.circular(99),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Y4.ink.withValues(alpha: 0.15),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          orphan.grade!,
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: Y4.honeyDeep,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+            // Info — flex 11 (slightly bigger to fit story snippet)
+            Expanded(
+              flex: 11,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${orphan.firstName} · ${orphan.age}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Y4.ink,
+                            height: 1.1,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (orphan.displayLocation != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            orphan.displayLocation!,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: Y4.inkSoft,
+                              fontWeight: FontWeight.w500,
+                              height: 1.15,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                        if (orphan.story != null && orphan.story!.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            orphan.story!,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: Y4.inkSoft,
+                              fontStyle: FontStyle.italic,
+                              height: 1.25,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(99),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 4,
+                            backgroundColor: Y4.track,
+                            valueColor:
+                                const AlwaysStoppedAnimation(Y4.honeyDeep),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${orphan.currentSeeds}/${orphan.targetSeeds} 🌱',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Y4.ink,
+                                  height: 1.1,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              orphan.sponsorCount == 0
+                                  ? 'Open'
+                                  : '${orphan.sponsorCount}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Y4.primary,
+                                height: 1.1,
+                              ),
+                            ),
+                            if (orphan.sponsorCount > 0) ...[
+                              const SizedBox(width: 2),
+                              Icon(
+                                Icons.favorite_rounded,
+                                size: 10,
+                                color: Y4.primary,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
                     ),
                   ],
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(99),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 4,
-                      backgroundColor: Y4.track,
-                      valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    orphan.sponsorCount == 0
-                        ? 'Open'
-                        : '${orphan.sponsorCount} sponsor${orphan.sponsorCount == 1 ? '' : 's'}',
-                    style: GoogleFonts.outfit(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w600,
-                      color: Y4.primary,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],

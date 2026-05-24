@@ -1576,7 +1576,7 @@ class _InviteSheetState extends State<_InviteSheet>
       'https://sabiq-rewards.vercel.app/join?ref=${widget.referralCode}';
 
   String get _shareMessage =>
-      'Join me on Sabiq Rewards — earn Seeds for daily Quran, Dhikr & good deeds!\n\n'
+      'Join me on Sabiq Rewards, earn Seeds for daily Quran, Dhikr & good deeds!\n\n'
       'Use my code *${widget.referralCode}* and we both get 500 Sabiq Seeds!\n\n'
       '$_shareLink';
 
@@ -1644,7 +1644,7 @@ class _InviteSheetState extends State<_InviteSheet>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Message copied — share or paste in WhatsApp!',
+            'Message copied, share or paste in WhatsApp!',
             style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
           ),
           backgroundColor: const Color(0xFF25D366),

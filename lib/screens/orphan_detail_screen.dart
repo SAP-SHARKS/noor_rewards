@@ -78,7 +78,13 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               SliverToBoxAdapter(child: _storySection()),
               SliverToBoxAdapter(child: _verseCard()),
               SliverToBoxAdapter(child: _recentSponsorsSection()),
-              const SliverToBoxAdapter(child: SizedBox(height: 110)),
+              // Bottom spacer = sticky sponsor bar height + device safe-area.
+              // Without this the last visible content sits under the bar.
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 110 + MediaQuery.of(context).padding.bottom,
+                ),
+              ),
             ],
           ),
           // Sticky sponsor CTA
@@ -355,7 +361,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              '"And they give food, despite their love for it, to the needy, the orphan, and the captive." — Qur’an 76:8',
+              '"And they give food, despite their love for it, to the needy, the orphan, and the captive.", Qur’an 76:8',
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 fontStyle: FontStyle.italic,

@@ -48,14 +48,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboarding1Subtitle =>
-      'Добро пожаловать в Sabiq Rewards — где каждое доброе дело приближает вас к милости и свету Аллаха.';
+      'Добро пожаловать в Sabiq Rewards, где каждое доброе дело приближает вас к милости и свету Аллаха.';
 
   @override
   String get onboarding2Title => 'Две награды.\nОдно деяние.';
 
   @override
   String get onboarding2Subtitle =>
-      'Каждое прочитанное слово приносит вам Саваб — свет в вашей Ахира.\nВаши Sabiq Seeds Coin финансируют реальные дела, меняющие реальные жизни.';
+      'Каждое прочитанное слово приносит вам Саваб, свет в вашей Ахира.\nВаши Sabiq Seeds Coin финансируют реальные дела, меняющие реальные жизни.';
 
   @override
   String get onboarding3Title => 'Всегда\nпомните Аллаха';
@@ -69,7 +69,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboarding4Subtitle =>
-      'Коран — руководство для всего человечества. Открывайте аяты, ежедневные дуа и размышления, созданные для вашего пути.';
+      'Коран, руководство для всего человечества. Открывайте аяты, ежедневные дуа и размышления, созданные для вашего пути.';
 
   @override
   String get onboarding5Title => 'Давай &\nПолучай благословение';
@@ -226,7 +226,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chooseGoals =>
-      'Выберите свои духовные цели — можно выбрать несколько';
+      'Выберите свои духовные цели, можно выбрать несколько';
 
   @override
   String get navHome => 'Главная';
@@ -443,7 +443,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get messageCopied =>
-      'Сообщение скопировано — поделитесь или вставьте в WhatsApp!';
+      'Сообщение скопировано, поделитесь или вставьте в WhatsApp!';
 
   @override
   String get lvl => 'Ур.';
@@ -504,7 +504,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Start earning Seeds — read Quran, do Dhikr & Dua.';
+      'Start earning Seeds, read Quran, do Dhikr & Dua.';
 
   @override
   String get howToEarnPts => 'How to Earn Seeds';
@@ -582,7 +582,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get checkBackChallenges =>
-      'Заходите позже — скоро события Рамадана и Зуль-Хиджа!';
+      'Заходите позже, скоро события Рамадана и Зуль-Хиджа!';
 
   @override
   String get ramadanChallenge => 'Испытание Рамадана';
@@ -592,7 +592,7 @@ class AppLocalizationsRu extends AppLocalizations {
       '3× множитель очков • Особые значки • Цель: колодцы для общины';
 
   @override
-  String get comingSoonStayConsistent => 'Скоро — будьте последовательны!';
+  String get comingSoonStayConsistent => 'Скоро, будьте последовательны!';
 
   @override
   String get done => 'Готово!';
@@ -611,7 +611,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadingStreaks => 'Загрузка серий…';
 
   @override
-  String get centurion => 'Центурион — Маша Аллах!';
+  String get centurion => 'Центурион, Маша Аллах!';
 
   @override
   String get currentBestStreak => 'Лучшая текущая серия';
@@ -746,7 +746,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get audioUnavailable =>
-      'Аудио недоступно — проверьте подключение к интернету.';
+      'Аудио недоступно, проверьте подключение к интернету.';
 
   @override
   String get signInToSaveFavourites => 'Войдите, чтобы сохранить избранное';
@@ -1014,10 +1014,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get anytimeEspeciallyAfterPrayer =>
-      'В любое время — особенно после намаза';
+      'В любое время, особенно после намаза';
 
   @override
-  String get anytimeMorningEvening => 'В любое время — утром и вечером';
+  String get anytimeMorningEvening => 'В любое время, утром и вечером';
 
   @override
   String get duringTheNight => 'В ночное время';
@@ -1044,7 +1044,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get uponBadDream => 'При плохом сне';
 
   @override
-  String get forUmmahAnytime => 'За Умму — в любое время';
+  String get forUmmahAnytime => 'За Умму, в любое время';
 
   @override
   String get all => 'Все';
@@ -1374,14 +1374,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileUpdated => 'Профиль обновлён ✓';
 
   @override
-  String get couldNotSave => 'Не удалось сохранить — попробуйте ещё раз';
+  String get couldNotSave => 'Не удалось сохранить, попробуйте ещё раз';
 
   @override
   String get photoUpdated => 'Фото обновлено ✓';
 
   @override
   String get couldNotUploadPhoto =>
-      'Не удалось загрузить фото — попробуйте ещё раз';
+      'Не удалось загрузить фото, попробуйте ещё раз';
 
   @override
   String get changeProfilePhoto => 'Изменить фото профиля';
@@ -1451,7 +1451,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get notifOnDesc => 'Награды, серии, пожертвования и прочее';
 
   @override
-  String get notifOffDesc => 'Отключены — новых оповещений не будет';
+  String get notifOffDesc => 'Отключены, новых оповещений не будет';
 
   @override
   String get viewNotificationsInbox => 'Просмотреть уведомления';
@@ -1818,7 +1818,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onbV2_4_Sub =>
-      'Recite morning and evening dhikr — and watch your reward unfold, hadith by hadith.';
+      'Recite morning and evening dhikr, and watch your reward unfold, hadith by hadith.';
 
   @override
   String get onbV2_5_TitleA => 'Your reading reaches';
@@ -1841,7 +1841,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onbV2_6_Sub =>
-      'Generous donors fund the causes. Your Seeds direct where their gift goes — and grow their reward with every reader.';
+      'Generous donors fund the causes. Your Seeds direct where their gift goes, and grow their reward with every reader.';
 
   @override
   String get onbV2_6_Donor => 'Donor';
@@ -1872,7 +1872,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onbV2_7_Sub =>
-      'See the akhirah account you\'re building — trees, palaces, freed souls — rooted in authentic hadith.';
+      'See the akhirah account you\'re building, trees, palaces, freed souls, rooted in authentic hadith.';
 
   @override
   String get onbV2_8_TitleA => 'Let\'s begin with your';
@@ -1897,7 +1897,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onbV2_9_Sub =>
-      'Your Seeds support all causes — this just helps us understand what matters to our community.';
+      'Your Seeds support all causes, this just helps us understand what matters to our community.';
 
   @override
   String get onbV2_9_Cta => 'Begin';

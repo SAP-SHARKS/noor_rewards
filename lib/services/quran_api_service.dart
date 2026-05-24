@@ -159,12 +159,12 @@ class QuranApiService {
     if (!_isAuthFailure(response)) return response;
 
     debugPrint(
-        'QF_API: auth failure (HTTP ${response.statusCode}) — '
+        'QF_API: auth failure (HTTP ${response.statusCode}), '
         'attempting token refresh + retry. body=${response.body}');
     try {
       await QfAuthService.instance.refresh();
     } catch (e) {
-      debugPrint('QF_API: token refresh failed — user must sign in again: $e');
+      debugPrint('QF_API: token refresh failed, user must sign in again: $e');
       return response;
     }
     final retryHeaders = await _userAuthHeaders();
@@ -311,7 +311,7 @@ class QuranApiService {
       // Nothing to delete on QF — already gone (or never synced). Treat as
       // success so the local state can move on without rolling back.
       debugPrint(
-          'QF_API: RemoveBookmark — no QF row for $surahNumber:$ayatNumber, skipping');
+          'QF_API: RemoveBookmark, no QF row for $surahNumber:$ayatNumber, skipping');
       return true;
     }
 
@@ -437,7 +437,7 @@ class QuranApiService {
       String message;
       if (failed > 0 && total == 0) {
         message =
-            'Sync failed — $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+            'Sync failed, $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
       } else if (total == 0 && failed == 0) {
         message = 'Bookmarks already in sync';
       } else {
