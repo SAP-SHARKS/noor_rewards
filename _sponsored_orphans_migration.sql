@@ -151,15 +151,14 @@ BEGIN
     RETURN FALSE;
   END IF;
 
-  -- Check + deduct balance (assumes profiles.total_xp is your seeds column;
-  -- if your seeds live elsewhere, adjust the column name to match
-  -- donate_to_project's logic).
-  SELECT total_xp INTO v_balance FROM profiles WHERE id = p_user_id FOR UPDATE;
+  -- Check + deduct balance (profiles.noor_points is the seeds column —
+  -- same one donate_to_project uses).
+  SELECT noor_points INTO v_balance FROM profiles WHERE id = p_user_id FOR UPDATE;
   IF v_balance IS NULL OR v_balance < p_amount THEN
     RETURN FALSE;
   END IF;
 
-  UPDATE profiles SET total_xp = total_xp - p_amount WHERE id = p_user_id;
+  UPDATE profiles SET noor_points = noor_points - p_amount WHERE id = p_user_id;
 
   INSERT INTO user_donations (user_id, orphan_id, points_donated, created_at)
   VALUES (p_user_id, p_orphan_id, p_amount, now());
