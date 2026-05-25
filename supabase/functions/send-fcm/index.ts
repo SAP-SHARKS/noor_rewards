@@ -35,6 +35,23 @@ serve(async (req: Request) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
+    // F-12 fix: caller can only send a push to their OWN user_id.
+    // Without this, any signed-in user could spoof phishing pushes to
+    // any other user via this endpoint.
+    const { data: { user }, error: authErr } = await supabase.auth.getUser();
+    if (authErr || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (user.id !== user_id) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // 2. Query FCM Token
     const { data: tokenData, error: dbError } = await supabase
       .from('fcm_tokens')
@@ -129,8 +146,10 @@ serve(async (req: Request) => {
     );
 
   } catch (error: any) {
+    // F-24 fix: don't leak DB / provider details to the client.
+    console.error('send-fcm error:', error?.message ?? error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'Internal error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

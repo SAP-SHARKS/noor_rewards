@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding1Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Sabiq Rewards — where every good deed is a step closer to Allah\'s mercy and light.'**
+  /// **'Welcome to Sabiq Rewards, where every good deed is a step closer to Allah\'s mercy and light.'**
   String get onboarding1Subtitle;
 
   /// No description provided for @onboarding2Title.
@@ -197,7 +197,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding2Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Every word you read earns you Sawab — a light in your Akhirah.\nYour Sabiq Seeds fund real causes that change real lives.'**
+  /// **'Every word you read earns you Sawab, a light in your Akhirah.\nYour Sabiq Seeds fund real causes that change real lives.'**
   String get onboarding2Subtitle;
 
   /// No description provided for @onboarding3Title.
@@ -521,7 +521,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseGoals.
   ///
   /// In en, this message translates to:
-  /// **'Choose your spiritual goals — you can select multiple'**
+  /// **'Choose your spiritual goals, you can select multiple'**
   String get chooseGoals;
 
   /// No description provided for @navHome.
@@ -941,7 +941,7 @@ abstract class AppLocalizations {
   /// No description provided for @messageCopied.
   ///
   /// In en, this message translates to:
-  /// **'Message copied — share or paste in WhatsApp!'**
+  /// **'Message copied, share or paste in WhatsApp!'**
   String get messageCopied;
 
   /// No description provided for @lvl.
@@ -1049,7 +1049,7 @@ abstract class AppLocalizations {
   /// No description provided for @startEarningPts.
   ///
   /// In en, this message translates to:
-  /// **'Start earning Seeds — read Quran, do Dhikr & Dua.'**
+  /// **'Start earning Seeds, read Quran, do Dhikr & Dua.'**
   String get startEarningPts;
 
   /// No description provided for @howToEarnPts.
@@ -1187,7 +1187,7 @@ abstract class AppLocalizations {
   /// No description provided for @checkBackChallenges.
   ///
   /// In en, this message translates to:
-  /// **'Check back soon — Ramadan & Dhul-Hijjah events are coming!'**
+  /// **'Check back soon, Ramadan & Dhul-Hijjah events are coming!'**
   String get checkBackChallenges;
 
   /// No description provided for @ramadanChallenge.
@@ -1205,7 +1205,7 @@ abstract class AppLocalizations {
   /// No description provided for @comingSoonStayConsistent.
   ///
   /// In en, this message translates to:
-  /// **'Coming Soon — Stay Consistent!'**
+  /// **'Coming Soon, Stay Consistent!'**
   String get comingSoonStayConsistent;
 
   /// No description provided for @done.
@@ -1235,7 +1235,7 @@ abstract class AppLocalizations {
   /// No description provided for @centurion.
   ///
   /// In en, this message translates to:
-  /// **'Centurion — Masha\'Allah!'**
+  /// **'Centurion, Masha\'Allah!'**
   String get centurion;
 
   /// No description provided for @currentBestStreak.
@@ -1475,7 +1475,7 @@ abstract class AppLocalizations {
   /// No description provided for @audioUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'Audio unavailable — check internet connection.'**
+  /// **'Audio unavailable, check internet connection.'**
   String get audioUnavailable;
 
   /// No description provided for @signInToSaveFavourites.
@@ -1979,13 +1979,13 @@ abstract class AppLocalizations {
   /// No description provided for @anytimeEspeciallyAfterPrayer.
   ///
   /// In en, this message translates to:
-  /// **'Anytime — Especially After Prayer'**
+  /// **'Anytime, Especially After Prayer'**
   String get anytimeEspeciallyAfterPrayer;
 
   /// No description provided for @anytimeMorningEvening.
   ///
   /// In en, this message translates to:
-  /// **'Anytime — Morning & Evening'**
+  /// **'Anytime, Morning & Evening'**
   String get anytimeMorningEvening;
 
   /// No description provided for @duringTheNight.
@@ -2039,7 +2039,7 @@ abstract class AppLocalizations {
   /// No description provided for @forUmmahAnytime.
   ///
   /// In en, this message translates to:
-  /// **'For the Ummah — Anytime'**
+  /// **'For the Ummah, Anytime'**
   String get forUmmahAnytime;
 
   /// No description provided for @all.
@@ -2651,7 +2651,7 @@ abstract class AppLocalizations {
   /// No description provided for @couldNotSave.
   ///
   /// In en, this message translates to:
-  /// **'Could not save — please try again'**
+  /// **'Could not save, please try again'**
   String get couldNotSave;
 
   /// No description provided for @photoUpdated.
@@ -2663,7 +2663,7 @@ abstract class AppLocalizations {
   /// No description provided for @couldNotUploadPhoto.
   ///
   /// In en, this message translates to:
-  /// **'Could not upload photo — please try again'**
+  /// **'Could not upload photo, please try again'**
   String get couldNotUploadPhoto;
 
   /// No description provided for @changeProfilePhoto.
@@ -2801,7 +2801,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifOffDesc.
   ///
   /// In en, this message translates to:
-  /// **'Turned off — no new alerts will be added'**
+  /// **'Turned off, no new alerts will be added'**
   String get notifOffDesc;
 
   /// No description provided for @viewNotificationsInbox.
@@ -3449,7 +3449,7 @@ abstract class AppLocalizations {
   /// No description provided for @onbV2_4_Sub.
   ///
   /// In en, this message translates to:
-  /// **'Recite morning and evening dhikr — and watch your reward unfold, hadith by hadith.'**
+  /// **'Recite morning and evening dhikr, and watch your reward unfold, hadith by hadith.'**
   String get onbV2_4_Sub;
 
   /// No description provided for @onbV2_5_TitleA.
@@ -3491,7 +3491,7 @@ abstract class AppLocalizations {
   /// No description provided for @onbV2_6_Sub.
   ///
   /// In en, this message translates to:
-  /// **'Generous donors fund the causes. Your Seeds direct where their gift goes — and grow their reward with every reader.'**
+  /// **'Generous donors fund the causes. Your Seeds direct where their gift goes, and grow their reward with every reader.'**
   String get onbV2_6_Sub;
 
   /// No description provided for @onbV2_6_Donor.
@@ -3551,7 +3551,7 @@ abstract class AppLocalizations {
   /// No description provided for @onbV2_7_Sub.
   ///
   /// In en, this message translates to:
-  /// **'See the akhirah account you\'re building — trees, palaces, freed souls — rooted in authentic hadith.'**
+  /// **'See the akhirah account you\'re building, trees, palaces, freed souls, rooted in authentic hadith.'**
   String get onbV2_7_Sub;
 
   /// No description provided for @onbV2_8_TitleA.
@@ -3599,7 +3599,7 @@ abstract class AppLocalizations {
   /// No description provided for @onbV2_9_Sub.
   ///
   /// In en, this message translates to:
-  /// **'Your Seeds support all causes — this just helps us understand what matters to our community.'**
+  /// **'Your Seeds support all causes, this just helps us understand what matters to our community.'**
   String get onbV2_9_Sub;
 
   /// No description provided for @onbV2_9_Cta.

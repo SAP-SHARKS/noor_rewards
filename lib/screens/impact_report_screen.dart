@@ -1804,7 +1804,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           .select('project_id, points_donated');
       final Map<String, int> communityTotals = {};
       for (final d in dRes as List) {
-        final pid = d['project_id'] as String;
+        final pid = d['project_id'] as String?;
+        if (pid == null) continue; // orphan donation — counted elsewhere
         communityTotals[pid] =
             (communityTotals[pid] ?? 0) +
             ((d['points_donated'] as num?)?.toInt() ?? 0);
@@ -1818,7 +1819,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
             .select('project_id, points_donated')
             .eq('user_id', uid);
         for (final d in myRes as List) {
-          final pid = d['project_id'] as String;
+          final pid = d['project_id'] as String?;
+          if (pid == null) continue; // orphan donation — counted elsewhere
           myDonations[pid] =
               (myDonations[pid] ?? 0) +
               ((d['points_donated'] as num?)?.toInt() ?? 0);
@@ -1885,7 +1887,11 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       }
       _myTotalSeedsLifetime = orphanSeeds + projectSeeds;
       _myProjectsSupportedCount = projectsSupported;
-    } catch (_) {}
+    } catch (e, st) {
+      // Surfaced in dev so regressions show up instantly. No-op in release.
+      debugPrint('CauseTab _load failed: $e');
+      debugPrintStack(stackTrace: st);
+    }
     if (mounted) {
       setState(() => _loading = false);
       // Warm the image cache for every project's media as soon as the

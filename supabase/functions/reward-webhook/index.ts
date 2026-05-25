@@ -3,6 +3,24 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 
 serve(async (req: Request) => {
+  // ── F-10 fix: require shared-secret header to block public abuse ──
+  // Configure REWARD_WEBHOOK_SECRET in Supabase Edge Function secrets, then
+  // set the same value as a custom header (key: x-webhook-secret) on the
+  // Supabase Database Webhook that triggers this function.
+  const expected = Deno.env.get('REWARD_WEBHOOK_SECRET');
+  if (!expected) {
+    return new Response(
+      JSON.stringify({ error: 'Server misconfigured: REWARD_WEBHOOK_SECRET not set' }),
+      { status: 500 }
+    );
+  }
+  if (req.headers.get('x-webhook-secret') !== expected) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+  }
+
   try {
     // 1. Supabase Database Webhooks send POST requests with a JSON payload
     const payload = await req.json();

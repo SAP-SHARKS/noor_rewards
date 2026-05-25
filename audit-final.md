@@ -7,6 +7,59 @@ _Reconciled: 2026-05-24. Sources: `audit.md` (Claude — 16 findings) + `auditco
 
 ---
 
+## Status (closed out 2026-05-25)
+
+| Finding | Status | Notes |
+|---|---|---|
+| F-1  QF secrets in git                  | FIX-PROVIDED-NEEDS-MY-ACTION | `ROTATE-SECRETS.md` — user accepted residual risk, did not rotate; `.env` untracked + `!.env` removed from `.gitignore` ✓ |
+| F-2  `.gitignore !.env`                  | FIXED | `.env` removed from `.gitignore` whitelist + `git rm --cached .env` |
+| F-3  admin tables `WITH CHECK (true)`    | FIXED | `20260524_020_admin_only_writes.sql` |
+| F-4  admin gate client-side only         | FIXED | `20260524_010_admin_role_infrastructure.sql` (`app_roles` + `is_admin()`) + F-3 policies |
+| F-5  storage buckets world-writable       | FIXED | Same migration as F-3 |
+| F-6  `sponsor_orphan` IDOR                | FIXED | `20260524_030_rpc_idor_fixes.sql` |
+| F-7  stats family IDOR                    | FIXED | Same migration as F-6 |
+| F-8  `earn_xp` unlimited mint             | FIXED | Same migration; +cap of 5000/call |
+| F-9  `link_qf_profile` profile theft      | FIXED | Same migration; `auth.uid()` + JWT email check |
+| F-10 `reward-webhook` no signature        | FIX-PROVIDED-NEEDS-MY-ACTION | Code patched; `REWARD_WEBHOOK_SECRET` set ✓; no DB webhook wired yet (function inert until one is) |
+| F-11 `earn_quran/dhikr_points` pump       | FIXED | `p_coins` clamped to 100 in F-6 migration |
+| F-12 `send-fcm` push spoofing             | FIXED | Caller-equals-user_id check added |
+| F-13 QF token endpoints exposed           | FIXED | `QF_ALLOWED_CLIENT_IDS` allowlist deployed ✓ |
+| F-14 profile mass-assignment              | FIXED | `20260525_040_profile_safe_update_rpc.sql` + Flutter edits (3 files) to use `update_my_profile` / `upsert_my_profile_bootstrap` |
+| F-15 donor enumeration via RPC            | DEFERRED | Low impact; donor identity is currently shown in UI by design |
+| F-16 analytics views unprotected          | FIXED | `20260525_020`: `security_invoker=true` on both views |
+| F-17 missing RLS on many tables           | VERIFIED-CLEAN | User confirmed all 16 listed tables have RLS enabled live |
+| F-18 `link_qf_profile` soft-delete trap   | DEFERRED | Low risk now that F-9 prevents the attack |
+| F-19 `supabase/.temp/` tracked            | FIXED | `git rm -r --cached supabase/.temp/` + `.gitignore` rule |
+| F-20 no rate limits                        | DEFERRED | High effort; IDOR fixes block the main abuse vectors; revisit before scale milestone |
+| F-21 search_path on definer fns            | FIXED (patched fns) / DEFERRED (untouched fns) | The 11 RPCs rewritten in F-6/F-7/F-8/F-9/F-11 all have `SET search_path = public, pg_temp` |
+| F-22 cron job invocation gates             | NEEDS-MANUAL-REVIEW | `MANUAL-REVIEW-CHECKLIST.md` step 5 |
+| F-23 CORS `*`                              | DEFERRED | Mobile-app primary surface unaffected |
+| F-24 error leakage from edge functions     | FIXED (partial) | `send-fcm`, `qf-token-exchange`, `qf-token-refresh` now return generic errors |
+| F-25 admin app direct browser writes       | DEFERRED | Mitigated by F-3 + F-4 DB-side enforcement |
+| F-26 admin audit log                       | FIX-PROVIDED-NEEDS-MY-ACTION | `20260525_030_admin_audit_log.sql` — run migration in Supabase |
+| F-27 admin allowlist + MFA                 | NEEDS-MANUAL-REVIEW | DB-backed list done (F-4); MFA is `MANUAL-REVIEW-CHECKLIST.md` step 7 |
+| F-28 GitHub branch protection              | NEEDS-MANUAL-REVIEW | `MANUAL-REVIEW-CHECKLIST.md` step 6 |
+| F-29 dev scripts (call_function.dart etc)  | FIXED | Deleted |
+| F-30 `tsbuildinfo` tracked                 | FIX-PROVIDED-NEEDS-MY-ACTION | `.gitignore` updated; run `git rm --cached admin-web/tsconfig.tsbuildinfo && git commit && git push` |
+| F-31 misleading SQL comments               | DEFERRED | Cosmetic |
+| F-32 iOS BUNDLE_ID placeholder             | FIXED | `.github/workflows/ios-testflight.yml` set to `com.sabiq.noorrewards` |
+
+**Migrations created (run in order in Supabase SQL Editor):**
+1. `supabase/migrations/20260524_010_admin_role_infrastructure.sql` ✓
+2. `supabase/migrations/20260524_020_admin_only_writes.sql` ✓
+3. `supabase/migrations/20260524_030_rpc_idor_fixes.sql` ✓
+4. `supabase/migrations/20260525_010_aggregate_orphan_sponsors.sql` ✓
+5. `supabase/migrations/20260525_020_profiles_column_lockdown_and_analytics.sql` ✓ (partly reverted)
+6. `supabase/migrations/20260525_021_revert_profiles_lockdown.sql` ✓
+7. `supabase/migrations/20260525_030_admin_audit_log.sql` ← run me
+8. `supabase/migrations/20260525_040_profile_safe_update_rpc.sql` ← run me
+
+**Edge functions deployed:** `reward-webhook`, `send-fcm`, `qf-token-exchange`, `qf-token-refresh`.
+
+**Companion docs:** `ROTATE-SECRETS.md`, `MANUAL-REVIEW-CHECKLIST.md`.
+
+---
+
 ## Summary table
 
 Sorted Critical → High → Medium → Low. Within each severity, BOTH-confirmed findings first.

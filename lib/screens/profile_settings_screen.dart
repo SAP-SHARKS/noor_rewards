@@ -159,10 +159,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     setState(() => _saving = true);
     final l = AppLocalizations.of(context)!;
     try {
-      await _supabase.from('profiles').upsert({
-        'id': user.id,
-        'display_name': name,
-        'country': country,
+      // Use the safe RPC instead of direct upsert — the profiles table no
+      // longer accepts direct writes from authenticated clients, so this
+      // RPC is the only path that doesn't risk a user editing their own
+      // noor_points / level / streak columns via REST.
+      await _supabase.rpc('update_my_profile', params: {
+        'p_display_name': name,
+        'p_country': country,
       });
       await _supabase.auth.updateUser(
         UserAttributes(data: {'noor_name': name}),

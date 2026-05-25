@@ -133,13 +133,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     final country = _countryCtrl.text.trim();
     final goals = _selected.map((i) => _goals[i].title).toList();
     try {
-      // ── 1. Upsert into profiles table (primary persistent store) ──────────
-      await Supabase.instance.client.from('profiles').upsert({
-        'id': uid,
-        'display_name': name,
-        'country': country,
-        'goals': goals,
-        'setup_done': true,
+      // ── 1. Upsert into profiles table via the safe RPC (direct writes are
+      //      revoked from authenticated; the RPC enforces auth.uid() = id) ──
+      await Supabase.instance.client.rpc('upsert_my_profile_bootstrap', params: {
+        'p_display_name': name,
+        'p_country': country,
+        'p_goals': goals,
+        'p_setup_done': true,
       });
 
       // ── 2. Cache a lightweight flag in auth metadata (fast app-start reads)
