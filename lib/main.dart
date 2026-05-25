@@ -482,23 +482,20 @@ class _AuthGateState extends State<AuthGate> {
                       ??
                   user?.userMetadata?['qf_email'] as String?; // QF
               if (user != null) {
-                final row = <String, dynamic>{
-                  'id': user.id,
-                  'display_name': name,
-                  'setup_done': true,
+                // Direct upserts on `profiles` are revoked from authenticated;
+                // use the safe RPC instead (auth.uid() check + allow-listed
+                // columns inside the function).
+                final params = <String, dynamic>{
+                  'p_display_name': name,
+                  'p_setup_done': true,
                 };
                 if (userEmail != null && userEmail.isNotEmpty) {
-                  row['email'] = userEmail;
+                  params['p_email'] = userEmail;
                 }
                 Supabase.instance.client
-                    .from('profiles')
-                    .upsert(
-                      row,
-                      onConflict: 'id',
-                      ignoreDuplicates: false,
-                    )
+                    .rpc('upsert_my_profile_bootstrap', params: params)
                     .catchError(
-                      (e) => debugPrint('[AuthGate] profile upsert failed: $e'),
+                      (e) => debugPrint('[AuthGate] profile bootstrap failed: $e'),
                     );
               }
               // Mirror to auth metadata so future cold starts skip Phase 2.

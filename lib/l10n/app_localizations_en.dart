@@ -1010,8 +1010,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get afterEachPrayer => 'After Each Prayer';
 
   @override
-  String get anytimeEspeciallyAfterPrayer =>
-      'Anytime, Especially After Prayer';
+  String get anytimeEspeciallyAfterPrayer => 'Anytime, Especially After Prayer';
 
   @override
   String get anytimeMorningEvening => 'Anytime, Morning & Evening';

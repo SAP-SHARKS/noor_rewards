@@ -407,15 +407,28 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(
-                        s.displayName,
-                        style: GoogleFonts.outfit(
-                          fontSize: 13.5,
-                          color: Y4.ink,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            s.displayName,
+                            style: GoogleFonts.outfit(
+                              fontSize: 13.5,
+                              color: Y4.ink,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            _timeAgo(s.donatedAt),
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: Y4.inkSoft,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Text(
@@ -436,6 +449,17 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
+
+  String _timeAgo(DateTime d) {
+    final diff = DateTime.now().difference(d);
+    if (diff.inSeconds < 60) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
+    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()}mo ago';
+    return '${(diff.inDays / 365).floor()}y ago';
+  }
 
   Widget _section(String title, Widget child) {
     return Padding(

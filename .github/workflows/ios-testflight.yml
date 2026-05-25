@@ -11,7 +11,7 @@ on:
 env:
   FLUTTER_VERSION: "3.27.4"       # pin to the Flutter version you develop with
   XCODE_VERSION:   "16.2"         # latest stable Xcode on GitHub runners
-  BUNDLE_ID:       "com.yourcompany.noorRewards"   # ← change to your real bundle ID
+  BUNDLE_ID:       "com.sabiq.noorrewards"
   APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
   APP_STORE_CONNECT_KEY_ID:    ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
 

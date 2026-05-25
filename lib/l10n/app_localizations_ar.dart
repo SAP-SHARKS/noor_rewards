@@ -577,8 +577,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noActiveChallenges => 'لا توجد تحديات نشطة حاليًا';
 
   @override
-  String get checkBackChallenges =>
-      'تحقق لاحقًا, أحداث رمضان وذو الحجة قادمة!';
+  String get checkBackChallenges => 'تحقق لاحقًا, أحداث رمضان وذو الحجة قادمة!';
 
   @override
   String get ramadanChallenge => 'تحدي رمضان';

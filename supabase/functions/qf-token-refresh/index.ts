@@ -24,6 +24,13 @@ serve(async (req) => {
       return jsonResponse({ error: "Missing required parameters" }, 400);
     }
 
+    // F-13 fix: same allowlist as qf-token-exchange.
+    const allowed = (Deno.env.get("QF_ALLOWED_CLIENT_IDS") || "")
+      .split(",").map(s => s.trim()).filter(Boolean);
+    if (allowed.length > 0 && !allowed.includes(client_id)) {
+      return jsonResponse({ error: "Invalid client" }, 400);
+    }
+
     const qfEnv = Deno.env.get("QF_ENV") || "production";
     const authBase = qfEnv === "production"
       ? "https://oauth2.quran.foundation"
@@ -55,9 +62,15 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    if (!response.ok) {
+      // F-24 fix: don't leak provider details.
+      console.error("qf-token-refresh provider error:", response.status, data);
+      return jsonResponse({ error: "Refresh failed" }, response.status);
+    }
     return jsonResponse(data, response.status);
 
   } catch (err: any) {
-    return jsonResponse({ error: err.message }, 500);
+    console.error("qf-token-refresh error:", err);
+    return jsonResponse({ error: "Internal error" }, 500);
   }
 });

@@ -442,8 +442,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get checkBackSoon => 'Kembali lagi nanti insya Allah';
 
   @override
-  String get messageCopied =>
-      'Pesan disalin, bagikan atau tempel di WhatsApp!';
+  String get messageCopied => 'Pesan disalin, bagikan atau tempel di WhatsApp!';
 
   @override
   String get lvl => 'Lvl';

@@ -21,6 +21,15 @@ serve(async (req) => {
       return jsonResponse({ error: "Missing required parameters" }, 400);
     }
 
+    // F-13 fix: only accept known client_ids. Set QF_ALLOWED_CLIENT_IDS
+    // (comma-separated) in Supabase Edge Function secrets. Leave unset to
+    // skip the check (back-compat) — but you should set it.
+    const allowed = (Deno.env.get("QF_ALLOWED_CLIENT_IDS") || "")
+      .split(",").map(s => s.trim()).filter(Boolean);
+    if (allowed.length > 0 && !allowed.includes(client_id)) {
+      return jsonResponse({ error: "Invalid client" }, 400);
+    }
+
     const qfEnv = Deno.env.get("QF_ENV") || "production";
     const authBase = qfEnv === "production"
       ? "https://oauth2.quran.foundation"
@@ -47,7 +56,10 @@ serve(async (req) => {
 
     const data = await resp.json();
     if (!resp.ok || data.error) {
-      return jsonResponse({ error: data.error || "Token exchange failed", details: data }, resp.status);
+      // F-24 fix: log full provider response server-side; return generic
+      // error to the client instead of echoing OAuth provider details.
+      console.error("qf-token-exchange provider error:", resp.status, data);
+      return jsonResponse({ error: "Token exchange failed" }, resp.status);
     }
 
     // Return only QF tokens — Supabase session is handled client-side
@@ -57,6 +69,7 @@ serve(async (req) => {
     });
 
   } catch (err: unknown) {
-    return jsonResponse({ error: err instanceof Error ? err.message : String(err) }, 500);
+    console.error("qf-token-exchange error:", err);
+    return jsonResponse({ error: "Internal error" }, 500);
   }
 });

@@ -224,8 +224,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get whatBringsYou => 'Seni buraya\\nne getirdi?';
 
   @override
-  String get chooseGoals =>
-      'Manevi hedeflerini seç, birden fazla seçebilirsin';
+  String get chooseGoals => 'Manevi hedeflerini seç, birden fazla seçebilirsin';
 
   @override
   String get navHome => 'Ana Sayfa';
