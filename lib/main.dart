@@ -355,6 +355,32 @@ class _AuthGateState extends State<AuthGate> {
   bool _welcomeShown = false;
   String _userName = '';
   String? _lastUserId; // tracks which user these local flags belong to
+  // Per-user once-per-session guard for the dedup RPC. Without this we'd
+  // hit the network on every StreamBuilder rebuild.
+  final Set<String> _dedupedUserIds = <String>{};
+
+  /// Calls `dedupe_profile_on_login` so any older profile that shares the
+  /// caller's email (from a different auth method) is merged INTO the
+  /// current session. Fire-and-forget; the merge happens server-side and
+  /// the next profile read will reflect the absorbed data.
+  void _maybeDedupeProfile(User? user) {
+    if (user == null) return;
+    final email = (user.email ??
+            user.userMetadata?['qf_email'] as String? ??
+            user.userMetadata?['email'] as String? ??
+            '')
+        .trim();
+    if (email.isEmpty) return;
+    if (_dedupedUserIds.contains(user.id)) return;
+    _dedupedUserIds.add(user.id);
+    Supabase.instance.client
+        .rpc('dedupe_profile_on_login', params: {'p_email': email})
+        .catchError((e) {
+      debugPrint('[AuthGate] dedupe_profile_on_login failed: $e');
+      // Allow a retry on next rebuild if it actually failed
+      _dedupedUserIds.remove(user.id);
+    });
+  }
 
   @override
   void initState() {
@@ -455,6 +481,12 @@ class _AuthGateState extends State<AuthGate> {
           _userName = '';
           _welcomeShown = false;
         }
+
+        // Cross-auth-method profile dedup. Runs once per user per session.
+        // If this auth.uid() is fresh but the email matches an older
+        // profile (Google→QF, QF→Google, etc.), the older profile's data
+        // is merged INTO this session's profile server-side.
+        _maybeDedupeProfile(user);
 
         final noorSetupDone =
             user?.userMetadata?['noor_setup_complete'] == true;
