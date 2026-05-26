@@ -4055,6 +4055,7 @@ class _ImpactTabState extends State<_ImpactTab> {
       final res = await Supabase.instance.client
           .from('community_projects')
           .select()
+          .eq('is_active', true)
           .order('sort_order', ascending: true, nullsFirst: false);
       _projects = List<Map<String, dynamic>>.from(res);
 
@@ -6589,23 +6590,31 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     });
   }
 
-  // ── Seal-track label ─────────────────────────────────────────────────
-  // Single line shown on the swipe track: the swipe instruction plus how
-  // long until pending seeds expire at the user's local midnight.
-  // e.g. "Swipe  »  Seal before 2h" → "… 45m" → "… now".
-  String _sealTrackLabel() {
+  // ── Seal-track countdown ─────────────────────────────────────────────
+  // Returns the full inline prompt: "Seal within 2h" / "Seal within 45m" /
+  // "Seal now".
+  String _sealCountdownText() {
     final now = DateTime.now();
     final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     final diff = nextMidnight.difference(now);
-    final String when;
-    if (diff.inHours >= 1) {
-      when = 'before ${diff.inHours}h';
-    } else if (diff.inMinutes >= 1) {
-      when = 'before ${diff.inMinutes}m';
-    } else {
-      when = 'now';
-    }
-    return 'Swipe  »  Seal $when';
+    if (diff.inHours >= 1) return 'Seal within ${diff.inHours}h';
+    if (diff.inMinutes >= 1) return 'Seal within ${diff.inMinutes}m';
+    return 'Seal now';
+  }
+
+  // Builds a single chevron with the staggered pulse-wave animation that
+  // travels through all three chevrons in sequence.
+  Widget _buildTrackChevron(int index, {double size = 40}) {
+    // 3 chevrons stagger evenly across the wave cycle.
+    final d = (_haloCtrl.value - index * 0.22) % 1.0;
+    final wave = d < 0.45 ? (1 - d / 0.45) : 0.0;
+    return Icon(
+      Icons.keyboard_double_arrow_right_rounded,
+      size: size,
+      color: const Color(0xFFFAF3E3).withValues(
+        alpha: 0.40 + wave * 0.55,
+      ),
+    );
   }
 
   // ── Pending-seeds pill (drops in above the seal track) ──────────────
@@ -6816,52 +6825,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       ),
                     ),
 
-                    // ── Swipe-hint arrows — big, faint chevrons that
-                    // cascade left→right across the track so it reads as
-                    // draggable. Fade out once the user starts dragging.
-                    if (!_completed)
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Opacity(
-                            opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: _padding + _thumbSize,
-                              ),
-                              // FittedBox scales the chevron run down to fit
-                              // any track width — no RenderFlex overflow on
-                              // narrow phones.
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(5, (i) {
-                                    // A bright pulse travels through the
-                                    // chevrons, looping continuously.
-                                    final d =
-                                        (_haloCtrl.value - i * 0.13) % 1.0;
-                                    final wave =
-                                        d < 0.45 ? (1 - d / 0.45) : 0.0;
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                      ),
-                                      child: Icon(
-                                        Icons.chevron_right_rounded,
-                                        size: 54,
-                                        color: const Color(0xFFFAF3E3)
-                                            .withValues(
-                                              alpha: 0.30 + wave * 0.48,
-                                            ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    // Standalone arrows row removed — chevrons are now
+                    // inline with the label below to avoid overlap.
 
 
                     // ── Golden circuit fill (animates left→right on complete)
@@ -6934,33 +6899,49 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         ),
                       ),
 
-                    // ── Centre label — cream on emerald bg ───────────────
-                    // Split label: action on the left, daily-reset countdown
-                    // on the right, with a hairline divider between them.
-                    // FittedBox lets each half shrink instead of overflowing
-                    // on narrow phones (320pt-class devices).
+                    // ── Centre label with inline chevrons ────────────────
+                    // Row: › Swipe › Seal before 2h ›
+                    // Chevrons act as rhythm markers around the text — they
+                    // are never under or behind it. FittedBox auto-shrinks
+                    // the whole row on narrow phones.
                     if (!_completed)
                       Positioned(
-                        left: _padding + _thumbSize + 6,
-                        right: _padding + _thumbSize + 6,
+                        left: _padding + _thumbSize + 4,
+                        right: _padding + _thumbSize + 4,
                         top: 0,
                         bottom: 0,
                         child: IgnorePointer(
                           child: Opacity(
                             opacity: (1 - pct * 2.2).clamp(0.0, 1.0),
-                            child: Center(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  _sealTrackLabel(),
-                                  maxLines: 1,
-                                  style: GoogleFonts.rajdhani(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                    color: const Color(0xFFFAF3E3),
-                                    letterSpacing: 0.8,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                children: [
+                                  _buildTrackChevron(0),
+                                  const SizedBox(width: 10),
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        _sealCountdownText(),
+                                        maxLines: 1,
+                                        style: GoogleFonts.rajdhani(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w800,
+                                          color: const Color(0xFFFAF3E3),
+                                          letterSpacing: 0.6,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(width: 10),
+                                  _buildTrackChevron(2),
+                                ],
                               ),
                             ),
                           ),

@@ -1795,35 +1795,43 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       final res = await sb
           .from('community_projects')
           .select()
+          .eq('is_active', true)
           .order('sort_order', ascending: true, nullsFirst: false);
       _projects = List<Map<String, dynamic>>.from(res);
 
-      // Community totals (all users)
-      final dRes = await sb
-          .from('user_donations')
-          .select('project_id, points_donated');
+      // Community totals via SECURITY DEFINER RPC. Direct SELECT on
+      // user_donations is RLS-restricted to the caller's own rows, so
+      // summing client-side was returning 0 for everyone-but-you.
+      // (See 20260525_012_aggregate_project_seed_totals.sql.)
       final Map<String, int> communityTotals = {};
-      for (final d in dRes as List) {
-        final pid = d['project_id'] as String?;
-        if (pid == null) continue; // orphan donation — counted elsewhere
-        communityTotals[pid] =
-            (communityTotals[pid] ?? 0) +
-            ((d['points_donated'] as num?)?.toInt() ?? 0);
+      try {
+        final totalsRes = await sb.rpc('get_project_seed_totals');
+        for (final r in (totalsRes as List)) {
+          final pid = r['project_id'] as String?;
+          if (pid == null) continue;
+          communityTotals[pid] =
+              (r['current_seeds'] as num?)?.toInt() ?? 0;
+        }
+      } catch (e) {
+        debugPrint('Project totals RPC error: $e');
       }
 
-      // My own donations per project
+      // My own donations per project — also via SECURITY DEFINER RPC for
+      // consistency (works even if the user's RLS were tightened further).
       Map<String, int> myDonations = {};
       if (uid != null) {
-        final myRes = await sb
-            .from('user_donations')
-            .select('project_id, points_donated')
-            .eq('user_id', uid);
-        for (final d in myRes as List) {
-          final pid = d['project_id'] as String?;
-          if (pid == null) continue; // orphan donation — counted elsewhere
-          myDonations[pid] =
-              (myDonations[pid] ?? 0) +
-              ((d['points_donated'] as num?)?.toInt() ?? 0);
+        try {
+          final myRes = await sb.rpc(
+            'get_my_project_donations',
+            params: {'p_user_id': uid},
+          );
+          for (final r in (myRes as List)) {
+            final pid = r['project_id'] as String?;
+            if (pid == null) continue;
+            myDonations[pid] = (r['my_seeds'] as num?)?.toInt() ?? 0;
+          }
+        } catch (e) {
+          debugPrint('My donations RPC error: $e');
         }
         // Available points
         final profile =
