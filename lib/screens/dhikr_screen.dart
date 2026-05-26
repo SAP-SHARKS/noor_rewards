@@ -678,12 +678,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
       if (fetchedCats.isNotEmpty && fetchedItems.isNotEmpty) {
         _categories = fetchedCats;
+        // "All" tab intentionally omitted — it would surface duplicates
+        // because Morning and Evening overlap heavily. Users browse by
+        // specific category (Morning / Evening / etc.) or by Favorites.
         _categories.insert(
           0,
-          const _Category('all', 'All', Icons.apps_rounded),
-        );
-        _categories.insert(
-          1,
           const _Category('favorites', 'Favorites', Icons.favorite_rounded),
         );
         _allAzkar = fetchedItems;
@@ -698,8 +697,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
     if (mounted) {
       setState(() {
         if (_categories.isEmpty) {
+          // "All" intentionally omitted — duplicates morning + evening.
           _categories = const [
-            _Category('all', 'All', Icons.apps_rounded),
             _Category('favorites', 'Favorites', Icons.favorite_rounded),
             _Category('general', 'General', Icons.nights_stay_rounded),
             _Category('morning', 'Morning', Icons.wb_sunny_rounded),
@@ -2409,15 +2408,58 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     final url = azkar.audioUrl;
     if (url == null || url.isEmpty) return;
 
-    // If this azkar is mid-sequence and playing, treat the tap as a
-    // pause — invalidate the token so the running loop exits cleanly.
+    // Play-all is driven by `_runPlayAllLoop`. From this button we must
+    // only pause/resume the shared player — starting our own single-track
+    // session here would race the loop on the same `_audioPlayer` and
+    // either deadlock or crash.
+    //
+    // IMPORTANT: just_audio's `play()` Future does NOT resolve when
+    // playback starts — it resolves when playback STOPS (end/pause/stop).
+    // Awaiting it here would hang the button until the track ends. Fire
+    // it without await; the play-all loop's own awaited play() and its
+    // playerState.firstWhere() take care of state transitions.
+    if (_playAllMode) {
+      try {
+        if (_audioPlayer.playing) {
+          await _audioPlayer.pause();
+        } else {
+          unawaited(_audioPlayer.play());
+        }
+      } catch (e) {
+        debugPrint('Audio Error (play-all toggle): $e');
+      }
+      if (mounted) setState(() {});
+      return;
+    }
+
+    // If this azkar is currently playing, treat the tap as a pause.
+    // We DON'T bump the token — the in-flight repeat loop should stay
+    // alive (parked in its poll) and resume naturally when the user taps
+    // play again, so the user continues from the same rep instead of
+    // restarting at rep 0.
     if (_audioPlayer.playing && _currentlyLoadedAudio == url) {
-      _singleRepeatToken++;
       try {
         await _audioPlayer.pause();
       } catch (e) {
-        debugPrint('Audio Error: $e');
+        debugPrint('Audio Error (pause): $e');
       }
+      if (mounted) setState(() {});
+      return;
+    }
+
+    // Mid-session pause on this same azkar → resume the player. The
+    // in-flight repeat loop is still polling; it sees the resume and
+    // continues at the same rep until the track completes naturally.
+    if (!_audioPlayer.playing &&
+        _currentlyLoadedAudio == url &&
+        _singleRepeatUrl == url &&
+        _singleRepeatTarget > 0) {
+      try {
+        unawaited(_audioPlayer.play());
+      } catch (e) {
+        debugPrint('Audio Error (resume): $e');
+      }
+      if (mounted) setState(() {});
       return;
     }
 
@@ -2425,7 +2467,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         ._getTarget(azkar.id, azkar.recommendedCount)
         .clamp(1, 9999);
 
-    // Start a fresh repeat session.
+    // Start a fresh repeat session (new azkar, or after Stop / completion).
     _singleRepeatToken++;
     final myToken = _singleRepeatToken;
     if (mounted) {
@@ -2450,12 +2492,20 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         await _audioPlayer.stop();
         await _audioPlayer.setUrl(url);
         _currentlyLoadedAudio = url;
-        await _audioPlayer.play(); // resolves on completion / pause / stop
-        if (!mounted || _singleRepeatToken != myToken) return;
-        // If play() returned without reaching the end (user paused/
-        // stopped), bail out of the sequence.
-        if (_audioPlayer.processingState != ProcessingState.completed) {
-          return;
+
+        // Fire-and-forget play(); poll processingState for completion.
+        // Same robust pattern as the play-all loop — avoids the
+        // double-play() hang and treats pause/resume transparently
+        // (we just keep polling while paused, the user can resume at
+        // any time and the rep continues from where it left off).
+        unawaited(_audioPlayer.play());
+
+        while (true) {
+          if (!mounted || _singleRepeatToken != myToken) return;
+          final ps = _audioPlayer.processingState;
+          if (ps == ProcessingState.completed) break; // rep finished
+          if (ps == ProcessingState.idle) return; // user hit Stop
+          await Future.delayed(const Duration(milliseconds: 120));
         }
       }
       // Reached the prescribed count cleanly.
@@ -2522,39 +2572,41 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           await _audioPlayer.setUrl(url);
           _currentlyLoadedAudio = url;
 
-          // Play this rep, treating a user pause as "wait, don't advance".
-          var repDone = false;
-          while (!repDone && !interrupted) {
-            if (!mounted || !_playAllMode || _currentIndex != i) {
+          // Fire-and-forget play(). just_audio.play() resolves on
+          // pause/end — NOT on start — and calling it twice on the same
+          // session never resolves the second future (the source of the
+          // pause→resume hang we used to have). Instead we poll the
+          // processingState: completed = rep done, idle = stopped.
+          // Pause/resume is handled transparently — we just keep polling
+          // until the track actually finishes.
+          unawaited(_audioPlayer.play());
+
+          while (true) {
+            if (!mounted) {
               interrupted = true;
               break;
             }
-            await _audioPlayer.play(); // resolves on end / pause / stop
-            if (!mounted || !_playAllMode || _currentIndex != i) {
+            if (!_playAllMode || _currentIndex != i) {
+              // Mode flipped off or user swiped — stop the player so the
+              // next rep / next track starts cleanly.
+              try {
+                await _audioPlayer.stop();
+              } catch (_) {}
               interrupted = true;
               break;
             }
             final ps = _audioPlayer.processingState;
             if (ps == ProcessingState.completed) {
-              repDone = true;
-            } else if (ps == ProcessingState.idle) {
-              // User hit stop or skip — let the outer loop decide.
-              interrupted = true;
-            } else {
-              // Paused. Stay on the current track and wait for the user
-              // to resume (or stop). Resuming kicks off another play()
-              // by way of the play-bar button, but our own re-await
-              // below will resolve at the same end-of-track event.
-              await _audioPlayer.playerStateStream.firstWhere(
-                (s) =>
-                    s.playing ||
-                    s.processingState == ProcessingState.idle,
-              );
-              if (_audioPlayer.processingState ==
-                  ProcessingState.idle) {
-                interrupted = true;
-              }
+              break; // rep finished naturally
             }
+            if (ps == ProcessingState.idle) {
+              // User hit stop. Bail out of this azkar entirely.
+              interrupted = true;
+              break;
+            }
+            // ProcessingState is loading/buffering/ready (playing or paused).
+            // Poll — pause/resume requires no special handling here.
+            await Future.delayed(const Duration(milliseconds: 120));
           }
         }
       } catch (e) {
@@ -2824,6 +2876,84 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             },
           ),
           centerTitle: true,
+          actions: [
+            // Quick "Play >" entry point on the top-right of the dhikr
+            // detail screen. Routes through the same _toggleAudio() that
+            // the right-hand toolbar's play button uses, so pause/resume
+            // and the bottom play bar work identically.
+            Builder(
+              builder: (context) {
+                int ci = safeIndex;
+                try {
+                  if (_pageController.hasClients &&
+                      _pageController.page != null) {
+                    ci = _pageController.page!.round().clamp(
+                      0,
+                      widget.azkars.length - 1,
+                    );
+                  }
+                } catch (_) {}
+                final azkar = widget.azkars[ci];
+                final hasAudio =
+                    azkar.audioUrl != null && azkar.audioUrl!.isNotEmpty;
+                if (!hasAudio) return const SizedBox.shrink();
+                final isThisPlaying = _audioPlayer.playing &&
+                    _currentlyLoadedAudio == azkar.audioUrl;
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(99),
+                      onTap: () => _toggleAudio(azkar),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Y4.honey, Y4.honeyDeep],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(99),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Y4.honeyDeep.withValues(alpha: 0.35),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 7, 10, 7),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                isThisPlaying ? 'Pause' : 'Play',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              const SizedBox(width: 3),
+                              Icon(
+                                isThisPlaying
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(3),
             child: Container(
@@ -4334,20 +4464,33 @@ class _AzkarCard extends StatelessWidget {
             return Container(
               width: double.infinity,
               color: kCardBg,
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                    horizontal: 18,
+                    vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: tagColor.withValues(alpha: isDark ? 0.14 : 0.08),
+                    // SOLID fill in the illustration's accent color so the
+                    // tagline pops off the cream/dark background — light
+                    // alpha pills were getting overlooked.
+                    color: tagColor,
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: tagColor.withValues(alpha: isDark ? 0.45 : 0.30),
-                      width: 1.4,
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: tagColor.withValues(alpha: 0.40),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.30 : 0.10,
+                        ),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Text(
                     tagline,
@@ -4355,10 +4498,10 @@ class _AzkarCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.outfit(
-                      fontSize: 13.0,
+                      fontSize: 13.5,
                       fontWeight: FontWeight.w800,
-                      color: tagColor,
-                      letterSpacing: 0.1,
+                      color: Colors.white,
+                      letterSpacing: 0.2,
                       height: 1.35,
                     ),
                   ),

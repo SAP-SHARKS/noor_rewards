@@ -409,7 +409,11 @@ class DonationService {
           .toList();
       if (list.isEmpty) return list;
 
-      // Bulk-load stats so the list view shows accurate progress on first paint.
+      // Bulk-load community totals. The RPC is SECURITY DEFINER (see
+      // 20260525_011_aggregate_orphan_stats.sql) so it bypasses
+      // user_donations RLS and returns aggregate stats across all
+      // donors, matching the figures the detail screen's "Sponsored by"
+      // list shows.
       try {
         final statsRes = await _sb.rpc(
           'get_orphan_stats_bulk',
@@ -423,7 +427,9 @@ class DonationService {
             o.sponsorCount = (row['sponsor_count'] as num?)?.toInt() ?? 0;
           }
         }
-      } catch (_) {/* stats are best-effort */}
+      } catch (e) {
+        debugPrint('Orphan stats aggregation error: $e');
+      }
       return list;
     } catch (_) {
       return [];
