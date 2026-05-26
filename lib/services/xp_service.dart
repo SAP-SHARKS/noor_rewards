@@ -562,7 +562,14 @@ class XpService {
     String type = 'global',
   }) async {
     try {
-      final rows = await _sb.from('leaderboard_global').select().limit(100);
+      // leaderboard_global_v2 = filtered view that excludes merged
+      // duplicate profiles (see 20260526_020_profile_dedup_by_email.sql).
+      // The old `leaderboard_global` view doesn't filter, which is why
+      // multiple "zaid" / "Yaseen" rows for the same email showed up.
+      final rows = await _sb
+          .from('leaderboard_global_v2')
+          .select()
+          .limit(100);
       return List<Map<String, dynamic>>.from(rows as List);
     } catch (_) {
       return [];

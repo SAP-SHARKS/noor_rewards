@@ -39,6 +39,8 @@ import '../widgets/sabiq_coin.dart';
 import '../widgets/seal_coin_animation.dart';
 import '../config/feature_flags.dart';
 import 'project_detail_screen.dart';
+import 'orphan_detail_screen.dart';
+import '../models/orphan.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
 
@@ -998,19 +1000,21 @@ class _HomeTabState extends State<_HomeTab> {
         }
       }
 
-      // Also refresh current_points from actual donation totals.
-      final pids = data.map((d) => d['id'] as String).toList();
-      final sumRes = await Supabase.instance.client
-          .from('user_donations')
-          .select('project_id, points_donated')
-          .filter('project_id', 'in', pids);
-
+      // Community totals via SECURITY DEFINER RPC. A direct SELECT on
+      // user_donations would be RLS-restricted to the caller's own rows,
+      // which is why project cards showed 0 seeds for everyone but the
+      // donor themselves. See 20260525_012_aggregate_project_seed_totals.
       final Map<String, int> totalPts = {};
-      for (final r in (sumRes as List)) {
-        final pid = r['project_id'] as String;
-        totalPts[pid] =
-            (totalPts[pid] ?? 0) +
-            ((r['points_donated'] as num?)?.toInt() ?? 0);
+      try {
+        final totalsRes = await Supabase.instance.client
+            .rpc('get_project_seed_totals');
+        for (final r in (totalsRes as List)) {
+          final pid = r['project_id'] as String?;
+          if (pid == null) continue;
+          totalPts[pid] = (r['current_seeds'] as num?)?.toInt() ?? 0;
+        }
+      } catch (e) {
+        debugPrint('Dashboard project totals RPC error: $e');
       }
       // Distinct donor counts come from a SECURITY DEFINER RPC. A direct
       // read of user_donations is limited by Row-Level Security to the
@@ -1020,12 +1024,57 @@ class _HomeTabState extends State<_HomeTab> {
       for (final d in data) {
         d['current_points'] = totalPts[d['id']] ?? 0;
         d['donor_count'] = donorCounts[d['id']] ?? 0;
+        d['_type'] = 'project';
       }
+
+      // Append active orphans into the same horizontal strip so the user
+      // sees BOTH donation projects AND people they can sponsor. Each
+      // orphan is converted to the same Map shape the card already
+      // understands, plus a `_type: 'orphan'` marker the tap handler uses
+      // to route to OrphanDetailScreen instead of CommunityImpactPage.
+      try {
+        final orphans = await DonationService.instance.getOrphans();
+        for (final o in orphans) {
+          data.add(_orphanToDonationMap(o));
+        }
+      } catch (_) {/* orphans are best-effort */}
 
       if (mounted) setState(() => _myDonations = data);
     } catch (_) {
       if (mounted) setState(() => _myDonations = []);
     }
+  }
+
+  /// Converts an [Orphan] to the same Map shape the `_MyDonationsSection`
+  /// card already renders for community projects. `_type` is set to
+  /// `'orphan'` so the tap handler routes to OrphanDetailScreen.
+  Map<String, dynamic> _orphanToDonationMap(Orphan o) {
+    final name = o.lastInitial != null && o.lastInitial!.isNotEmpty
+        ? '${o.firstName} ${o.lastInitial}.'
+        : o.firstName;
+    return {
+      '_type': 'orphan',
+      '_orphan': o,
+      'id': o.id,
+      'title': 'Sponsor $name, ${o.age}',
+      'sponsor': o.partnerOrg ?? 'Sponsored Orphan',
+      'category': 'Orphan',
+      'location': o.displayLocation ?? '',
+      'description': o.story ?? '',
+      'story': o.story ?? '',
+      'short_description': o.story ?? '',
+      'impact_quote': '',
+      'target_points': o.targetSeeds,
+      'current_points': o.currentSeeds,
+      'my_donated': 0, // dashboard doesn't track per-orphan my-donated here
+      'donor_count': o.sponsorCount,
+      'dp_url': o.photoUrl ?? '',
+      'is_active': true,
+      'is_completed': o.currentSeeds >= o.targetSeeds,
+      'sort_order': 0,
+      'end_date': '',
+      'estimated_usd': 0,
+    };
   }
 
   @override
@@ -1435,14 +1484,29 @@ class _HomeTabState extends State<_HomeTab> {
                     _MyDonationsSection(
                       donations: _myDonations,
                       availablePoints: widget.noorPoints ?? 0,
-                      onDonateMore: (project) {
+                      onDonateMore: (item) {
+                        // Route based on entity type — orphan or project.
+                        if (item['_type'] == 'orphan' &&
+                            item['_orphan'] is Orphan) {
+                          final orphan = item['_orphan'] as Orphan;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => OrphanDetailScreen(
+                                orphan: orphan,
+                                availablePoints: widget.noorPoints ?? 0,
+                                onSponsored: (_) => _loadDonations(),
+                              ),
+                            ),
+                          ).then((_) => _loadDonations());
+                          return;
+                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder:
-                                (_) => CommunityImpactPage(
-                                  scrollToProjectId: project['id'] as String?,
-                                ),
+                            builder: (_) => CommunityImpactPage(
+                              scrollToProjectId: item['id'] as String?,
+                            ),
                           ),
                         );
                       },
@@ -3437,12 +3501,15 @@ class _MyDonationsSection extends StatelessWidget {
                               ],
                             ),
                             const SizedBox(height: 4),
-                            // ── Bigger honey→butter progress bar ──
+                            // ── Honey→butter progress bar ──
+                            // Matches the bar style on the project detail
+                            // screen (after tapping "See details") so the
+                            // visual is consistent across surfaces.
                             ClipRRect(
                               borderRadius: BorderRadius.circular(999),
                               child: Container(
                                 height: 12,
-                                color: Y4.track,
+                                color: Y4.honey.withValues(alpha: 0.18),
                                 child: FractionallySizedBox(
                                   alignment: Alignment.centerLeft,
                                   widthFactor: pct,
@@ -3532,7 +3599,9 @@ class _MyDonationsSection extends StatelessWidget {
                               const SizedBox(height: 8),
                             ],
 
-                            // See Details → for more Projects (next row)
+                            // CTA — copy depends on entity type. Orphan
+                            // cards say "See details" (no "more projects"
+                            // suffix since orphans aren't projects).
                             GestureDetector(
                               onTap: () => onDonateMore(d),
                               child: Container(
@@ -3546,10 +3615,11 @@ class _MyDonationsSection extends StatelessWidget {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    AppLocalizations.of(
-                                          context,
-                                        )?.seeDetailsForMoreProjects ??
-                                        'See Details for more Projects →',
+                                    d['_type'] == 'orphan'
+                                        ? 'See details →'
+                                        : (AppLocalizations.of(context)
+                                                ?.seeDetailsForMoreProjects ??
+                                            'See Details for more Projects →'),
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w800,
@@ -4982,7 +5052,7 @@ class _RankingSheetState extends State<_RankingSheet> {
   Future<void> _load() async {
     try {
       final res = await Supabase.instance.client
-          .from('leaderboard_global')
+          .from('leaderboard_global_v2')
           .select()
           .limit(100);
       _leaders = List<Map<String, dynamic>>.from(res);
@@ -5242,31 +5312,17 @@ class _RankingSheetState extends State<_RankingSheet> {
                                               ],
                                             ),
                                             child: Center(
-                                              child:
-                                                  i < 3
-                                                      ? (i == 0
-                                                          ? NoorIcon.goldMedal(
-                                                            size: 20,
-                                                          )
-                                                          : i == 1
-                                                          ? NoorIcon.silverMedal(
-                                                            size: 20,
-                                                          )
-                                                          : NoorIcon.bronzeMedal(
-                                                            size: 20,
-                                                          ))
-                                                      : Text(
-                                                        '${i + 1}',
-                                                        style:
-                                                            GoogleFonts.outfit(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                      ),
+                                              child: Text(
+                                                '${i + 1}',
+                                                style: GoogleFonts.outfit(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w900,
+                                                  color: isTop3
+                                                      ? Y4.ink
+                                                      : Colors.white,
+                                                  height: 1.0,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(width: 12),
@@ -5373,30 +5429,35 @@ class _ProfileTabState extends State<_ProfileTab> {
     try {
       // Fire both queries in parallel — total time = max(t1,t2) not t1+t2
       final results = await Future.wait([
-        // Query 1: top 10 contributors
+        // Query 1: top 10 contributors (v2 = filtered view, no merged dupes)
         Supabase.instance.client
-            .from('leaderboard_global')
+            .from('leaderboard_global_v2')
             .select()
             .order('total_xp', ascending: false)
             .limit(10),
-        // Query 2: my own row (to get my Seeds total for rank calculation)
+        // Query 2: my own row. If my auth.uid() row got merged into a
+        // canonical (cross-method dedup), the v2 view hides me — fall
+        // back to reading from `profiles` directly and follow
+        // merged_into_id to the canonical.
         Supabase.instance.client
-            .from('leaderboard_global')
-            .select('total_xp')
+            .from('profiles')
+            .select('total_xp, merged_into_id')
             .eq('id', widget.currentUserId)
-            .limit(1),
+            .maybeSingle(),
       ]);
 
       _leaders = List<Map<String, dynamic>>.from(results[0] as List);
-      final myRows = results[1] as List;
-      final myXp =
-          myRows.isNotEmpty
-              ? (myRows.first['total_xp'] as num?)?.toInt() ?? 0
-              : 0;
+      final myRow = results[1] as Map<String, dynamic>?;
+      final myXp = (myRow?['total_xp'] as num?)?.toInt() ?? 0;
+      // If this user's auth.uid() row was merged into a canonical, follow
+      // the pointer so rank / XP reflect the consolidated identity.
+      // (Not strictly needed for rank math, but keeps display consistent.)
+      final canonicalId =
+          (myRow?['merged_into_id'] as String?) ?? widget.currentUserId;
 
       // Rank within top-10: count how many have more Seeds than me + 1
       final posInTop10 = _leaders.indexWhere(
-        (p) => p['id'] == widget.currentUserId,
+        (p) => p['id'] == widget.currentUserId || p['id'] == canonicalId,
       );
       if (posInTop10 >= 0) {
         _myRank = posInTop10 + 1;
@@ -5472,7 +5533,7 @@ class _ProfileTabState extends State<_ProfileTab> {
 
                   // Content — padded below status bar
                   Padding(
-                    padding: EdgeInsets.fromLTRB(22, statusBarH + 18, 22, 36),
+                    padding: EdgeInsets.fromLTRB(22, statusBarH + 12, 22, 20),
                     child: Column(
                       children: [
                         // Top row: Back button + "My Profile" title + level pill + settings
@@ -5481,62 +5542,60 @@ class _ProfileTabState extends State<_ProfileTab> {
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
                               behavior: HitTestBehavior.opaque,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(right: 12),
-                                    child: Icon(
-                                      Icons.arrow_back_rounded,
-                                      color: Y4.ink,
-                                      size: 24,
-                                    ),
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)?.myProfile ??
-                                        'My Profile',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w800,
-                                      color: Y4.ink,
-                                    ),
-                                  ),
-                                ],
+                              child: const Padding(
+                                padding: EdgeInsets.all(4),
+                                child: Icon(
+                                  Icons.arrow_back_rounded,
+                                  color: Y4.ink,
+                                  size: 24,
+                                ),
                               ),
                             ),
-                            const Spacer(),
-                            // Level pill
-                            Flexible(
+                            const SizedBox(width: 8),
+                            // Level pill — solid honey gradient with white
+                            // text. Takes whatever horizontal room is left
+                            // after the back arrow + settings button.
+                            Expanded(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
+                                  horizontal: 14,
+                                  vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Y4.honey.withValues(alpha: 0.30),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.5),
+                                  gradient: const LinearGradient(
+                                    colors: [Y4.honey, Y4.honeyDeep],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Y4.honeyDeep.withValues(alpha: 0.35),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const Icon(
                                       Icons.workspace_premium_rounded,
-                                      color: Y4.honeyDeep,
-                                      size: 14,
+                                      color: Colors.white,
+                                      size: 16,
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(width: 6),
                                     Flexible(
                                       child: Text(
                                         'Lvl $level · ${_localizeLevel(context, levelTitle)}',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: Y4.honeyDeep,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white,
+                                          letterSpacing: 0.2,
                                         ),
                                       ),
                                     ),
@@ -5573,16 +5632,16 @@ class _ProfileTabState extends State<_ProfileTab> {
                           ],
                         ),
 
-                        const SizedBox(height: 28),
+                        const SizedBox(height: 16),
 
-                        // Avatar (honey gradient circle)
+                        // Avatar (honey gradient circle) — compacted
                         Stack(
                           clipBehavior: Clip.none,
                           alignment: Alignment.center,
                           children: [
                             Container(
-                              width: 100,
-                              height: 100,
+                              width: 64,
+                              height: 64,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: const LinearGradient(
@@ -5614,7 +5673,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                               ? first[0].toUpperCase()
                                               : 'N',
                                           style: GoogleFonts.outfit(
-                                            fontSize: 44,
+                                            fontSize: 28,
                                             fontWeight: FontWeight.w800,
                                             color: Y4.ink,
                                           ),
@@ -5625,20 +5684,20 @@ class _ProfileTabState extends State<_ProfileTab> {
                           ],
                         ),
 
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 10),
 
-                        // Name (Fraunces serif)
+                        // Name (Fraunces serif) — compacted from 28 → 20
                         Text(
                           name,
                           style: Y4.display(
-                            fontSize: 28,
+                            fontSize: 20,
                             fontWeight: FontWeight.w500,
                             color: Y4.ink,
-                            letterSpacing: -0.3,
+                            letterSpacing: -0.2,
                             height: 1.0,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
 
                         // Email / Country
                         if ((user?.email ?? user?.userMetadata?['qf_email']) !=
@@ -5756,7 +5815,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                             ),
                           ),
 
-                          // My rank hero
+                          // My rank hero — honey theme
                           if (!_lbLoading)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -5767,14 +5826,14 @@ class _ProfileTabState extends State<_ProfileTab> {
                                 ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Y4.primaryDeep, Y4.primary],
+                                    colors: [Y4.butter, Y4.honey, Y4.honeyDeep],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Y4.primary.withValues(alpha: 0.35),
+                                      color: Y4.honeyDeep.withValues(alpha: 0.35),
                                       blurRadius: 14,
                                       offset: const Offset(0, 5),
                                     ),
@@ -5794,14 +5853,15 @@ class _ProfileTabState extends State<_ProfileTab> {
                                             style: GoogleFonts.outfit(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w800,
-                                              color: Colors.white,
+                                              color: Y4.ink,
                                             ),
                                           ),
                                           Text(
                                             'Out of ${_leaders.length} believers',
                                             style: GoogleFonts.outfit(
                                               fontSize: 11,
-                                              color: Colors.white60,
+                                              color: Y4.ink.withValues(alpha: 0.70),
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ],
@@ -5911,27 +5971,15 @@ class _ProfileTabState extends State<_ProfileTab> {
                                         ],
                                       ),
                                       child: Center(
-                                        child:
-                                            i < 3
-                                                ? (i == 0
-                                                    ? NoorIcon.goldMedal(
-                                                      size: 18,
-                                                    )
-                                                    : i == 1
-                                                    ? NoorIcon.silverMedal(
-                                                      size: 18,
-                                                    )
-                                                    : NoorIcon.bronzeMedal(
-                                                      size: 18,
-                                                    ))
-                                                : Text(
-                                                  '${i + 1}',
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w800,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
+                                        child: Text(
+                                          '${i + 1}',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900,
+                                            color: isTop3 ? Y4.ink : Colors.white,
+                                            height: 1.0,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 12),
