@@ -34,6 +34,7 @@ import 'utils/asset_helper.dart';
 
 import 'core/env/env.dart';
 import 'theme/y4_theme.dart';
+import 'services/profile_name_notifier.dart';
 
 /// Pre-parsed Lottie composition — loaded in [main] before [runApp] so the
 /// splash screen can start animating on the very first Flutter frame.
@@ -480,6 +481,8 @@ class _AuthGateState extends State<AuthGate> {
           _profileSetupDone = false;
           _userName = '';
           _welcomeShown = false;
+          // Drop the previous user's override so it can't leak to the new user.
+          ProfileNameNotifier.instance.clear();
         }
 
         // Cross-auth-method profile dedup. Runs once per user per session.
@@ -559,19 +562,35 @@ class _AuthGateState extends State<AuthGate> {
         }
 
         final googleName = user?.userMetadata?['full_name'] as String?;
-        final displayName =
-            _userName.isNotEmpty
-                ? _userName
-                : (storedName ?? googleName ?? 'Friend');
+        // Highest-priority source for the user-facing display name is the
+        // ProfileNameNotifier — settings_screen pushes the freshly saved
+        // name into it the instant the RPC succeeds, so this guarantees
+        // propagation even if the auth stream's userUpdated event is
+        // missed. Falls back to auth metadata, then local cached name,
+        // then OAuth provider name, then 'Friend'.
+        return ValueListenableBuilder<String?>(
+          valueListenable: ProfileNameNotifier.instance.name,
+          builder: (context, overrideName, _) {
+            final override = overrideName?.trim();
+            final freshStoredName = storedName?.trim();
+            final displayName = (override != null && override.isNotEmpty)
+                ? override
+                : (freshStoredName != null && freshStoredName.isNotEmpty)
+                    ? freshStoredName
+                    : (_userName.isNotEmpty
+                        ? _userName
+                        : (googleName ?? 'Friend'));
 
-        if (_profileSetupDone && !_welcomeShown) {
-          return WelcomeGateScreen(
-            name: displayName,
-            onComplete: () => setState(() => _welcomeShown = true),
-          );
-        }
+            if (_profileSetupDone && !_welcomeShown) {
+              return WelcomeGateScreen(
+                name: displayName,
+                onComplete: () => setState(() => _welcomeShown = true),
+              );
+            }
 
-        return DashboardScreen(name: displayName);
+            return DashboardScreen(name: displayName);
+          },
+        );
       },
     );
   }
