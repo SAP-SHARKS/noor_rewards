@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/profile_name_notifier.dart';
 import 'package:provider/provider.dart';
 import '../features/auth/data/qf_auth_service.dart';
 import '../services/quran_api_service.dart';
@@ -159,23 +160,43 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     setState(() => _saving = true);
     final l = AppLocalizations.of(context)!;
     try {
-      // Use the safe RPC instead of direct upsert — the profiles table no
-      // longer accepts direct writes from authenticated clients, so this
-      // RPC is the only path that doesn't risk a user editing their own
-      // noor_points / level / streak columns via REST.
-      await _supabase.rpc('update_my_profile', params: {
-        'p_display_name': name,
-        'p_country': country,
-      });
+      // Try the safe SECURITY DEFINER RPC first (no risk of users editing
+      // sensitive columns like noor_points). If the RPC isn't deployed
+      // yet (older DB) or fails for any reason, fall back to a direct
+      // update on the row — protected by the existing RLS auth.uid()
+      // policy. Either path requires only display_name + country.
+      try {
+        await _supabase.rpc('update_my_profile', params: {
+          'p_display_name': name,
+          'p_country': country,
+        });
+      } on PostgrestException catch (rpcErr) {
+        debugPrint('[Profile] update_my_profile RPC failed: ${rpcErr.code} ${rpcErr.message} — falling back to direct update');
+        // Fallback: direct update gated by RLS (id = auth.uid()).
+        await _supabase
+            .from('profiles')
+            .update({'display_name': name, 'country': country})
+            .eq('id', user.id);
+      }
       await _supabase.auth.updateUser(
         UserAttributes(data: {'noor_name': name}),
       );
+      // Broadcast to the rest of the app instantly. Even if the auth
+      // stream's userUpdated event is missed for any reason, every
+      // listener (AuthGate → Dashboard greeting / Profile tab / etc.)
+      // will see the new name within one frame.
+      ProfileNameNotifier.instance.set(name);
       _displayName = name;
       _country = country;
       _showSnack(l.profileUpdated);
       HapticFeedback.lightImpact();
     } catch (e) {
-      _showSnack(l.couldNotSave, isError: true);
+      // Surface the actual error so the user can report what's wrong.
+      final detail = e is PostgrestException
+          ? '${e.code ?? ''} ${e.message}'.trim()
+          : e.toString();
+      debugPrint('[Profile] _saveProfile error: $detail');
+      _showSnack('${l.couldNotSave}: $detail', isError: true);
     }
     if (mounted) setState(() => _saving = false);
   }

@@ -41,6 +41,7 @@ import '../config/feature_flags.dart';
 import 'project_detail_screen.dart';
 import 'orphan_detail_screen.dart';
 import '../models/orphan.dart';
+import '../services/profile_name_notifier.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
 
@@ -519,11 +520,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 onGoProfile: () {
                   final uid = _supabase.auth.currentUser?.id ?? '';
-                  final displayName =
-                      _supabase.auth.currentUser?.userMetadata?['full_name']
-                          as String? ??
-                      _supabase.auth.currentUser?.email?.split('@').first ??
-                      'User';
+                  // Prefer the live name from settings (`noor_name` is
+                  // written by profile_settings_screen on save) and only
+                  // fall back to provider-supplied names if it's empty.
+                  // Was previously reading `full_name` first, which is
+                  // the OAuth provider's original name and so masked any
+                  // user rename done in Settings.
+                  final meta = _supabase.auth.currentUser?.userMetadata;
+                  final displayName = (() {
+                    final widgetName = widget.name.trim();
+                    if (widgetName.isNotEmpty && widgetName != 'Friend') {
+                      return widgetName;
+                    }
+                    final noorName = (meta?['noor_name'] as String?)?.trim();
+                    if (noorName != null && noorName.isNotEmpty) return noorName;
+                    final fullName = (meta?['full_name'] as String?)?.trim();
+                    if (fullName != null && fullName.isNotEmpty) return fullName;
+                    return _supabase.auth.currentUser?.email?.split('@').first ??
+                        'User';
+                  })();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -1135,15 +1150,30 @@ class _HomeTabState extends State<_HomeTab> {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              Text(
-                                firstName.isEmpty ? 'Friend' : firstName,
-                                style: Y4.display(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.1,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              // Listen DIRECTLY to ProfileNameNotifier so a
+                              // settings rename rebuilds just this text node
+                              // even if the parent's widget.name happens to
+                              // be stale due to nav-stack timing.
+                              ValueListenableBuilder<String?>(
+                                valueListenable:
+                                    ProfileNameNotifier.instance.name,
+                                builder: (context, override, _) {
+                                  final overrideFirst =
+                                      override?.trim().split(' ').first ?? '';
+                                  final display = overrideFirst.isNotEmpty
+                                      ? overrideFirst
+                                      : (firstName.isEmpty ? 'Friend' : firstName);
+                                  return Text(
+                                    display,
+                                    style: Y4.display(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.1,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -3502,14 +3532,26 @@ class _MyDonationsSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             // ── Honey→butter progress bar ──
-                            // Matches the bar style on the project detail
-                            // screen (after tapping "See details") so the
-                            // visual is consistent across surfaces.
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(999),
+                            // The Column above uses crossAxisAlignment.start
+                            // so the Container won't stretch horizontally on
+                            // its own — it would size to the fractional
+                            // child's intrinsic width (the 5% fill) and the
+                            // empty portion would visually vanish. Wrap in
+                            // SizedBox(width: infinity) to force full width
+                            // so the track pill is always visible.
+                            SizedBox(
+                              width: double.infinity,
                               child: Container(
-                                height: 12,
-                                color: Y4.honey.withValues(alpha: 0.18),
+                                height: 14,
+                                decoration: BoxDecoration(
+                                  color: Y4.honey.withValues(alpha: 0.38),
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: Y4.honeyDeep.withValues(alpha: 0.65),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                clipBehavior: Clip.antiAlias,
                                 child: FractionallySizedBox(
                                   alignment: Alignment.centerLeft,
                                   widthFactor: pct,
