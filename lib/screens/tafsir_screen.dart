@@ -463,17 +463,70 @@ class _TafsirScreenState extends State<TafsirScreen> {
         }
         int endVerseId = startVerseId + _tSurahLengths[_surah] - 1;
 
-        final arabicList = await _sb
-            .from('quran_verses')
-            .select('ayah, text_uthmani')
-            .eq('surah', _surah);
+        // ── 3 independent network fetches in parallel ───────────────────
+        // Was sequential: Arabic verses → translation → tafsir CDN.
+        // The tafsir CDN/API is often the slowest leg, and Supabase rows
+        // can come back while it's still in flight. Fire all three at once.
+        final fetches = await Future.wait<dynamic>([
+          // 0: Arabic verses for this surah
+          _sb
+              .from('quran_verses')
+              .select('ayah, text_uthmani')
+              .eq('surah', _surah)
+              .then<List<dynamic>>((v) => v as List)
+              .catchError((_) => const <dynamic>[]),
+          // 1: English translations for the verse-id range
+          _sb
+              .from('quran_translations')
+              .select('verse_id, text')
+              .gte('verse_id', startVerseId)
+              .lte('verse_id', endVerseId)
+              .eq('edition', 'en.sahih')
+              .then<List<dynamic>>((v) => v as List)
+              .catchError((_) => const <dynamic>[]),
+          // 2: tafsir text (CDN or alquran.cloud) — returns Map<int,String>
+          (() async {
+            try {
+              if (def.src == 'cdn') {
+                final cdnUrl =
+                    'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${def.slug}/$_surah.json';
+                final tRes = await http
+                    .get(Uri.parse(cdnUrl))
+                    .timeout(const Duration(seconds: 15));
+                if (tRes.statusCode == 200) {
+                  final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
+                  if (ayahs != null) {
+                    return <int, String>{
+                      for (var a in ayahs)
+                        a['ayah'] as int: a['text'] as String,
+                    };
+                  }
+                }
+              } else {
+                final tUrl =
+                    'https://api.alquran.cloud/v1/surah/$_surah/${def.id}';
+                final tRes = await http
+                    .get(Uri.parse(tUrl))
+                    .timeout(const Duration(seconds: 15));
+                if (tRes.statusCode == 200) {
+                  final ayahs =
+                      jsonDecode(tRes.body)['data']['ayahs'] as List?;
+                  if (ayahs != null) {
+                    return <int, String>{
+                      for (var a in ayahs)
+                        a['numberInSurah'] as int: a['text'] as String,
+                    };
+                  }
+                }
+              }
+            } catch (_) {}
+            return <int, String>{};
+          })(),
+        ]);
 
-        final transList = await _sb
-            .from('quran_translations')
-            .select('verse_id, text')
-            .gte('verse_id', startVerseId)
-            .lte('verse_id', endVerseId)
-            .eq('edition', 'en.sahih');
+        final arabicList = fetches[0] as List;
+        final transList = fetches[1] as List;
+        final tafsirMap = fetches[2] as Map<int, String>;
 
         final arabicMap = {
           for (var item in arabicList)
@@ -483,39 +536,6 @@ class _TafsirScreenState extends State<TafsirScreen> {
           for (var item in transList)
             item['verse_id'] as int: item['text'] as String,
         };
-
-        // ── Fetch tafsir text for the entire Surah (if CDN) ──────────────────────
-        Map<int, String> tafsirMap = {};
-        if (def.src == 'cdn') {
-          // spa5k/tafsir_api: one JSON per surah, indexed by ayah
-          final cdnUrl =
-              'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${def.slug}/$_surah.json';
-          final tRes = await http
-              .get(Uri.parse(cdnUrl))
-              .timeout(const Duration(seconds: 15));
-          if (tRes.statusCode == 200) {
-            final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
-            if (ayahs != null) {
-              for (var a in ayahs) {
-                tafsirMap[a['ayah'] as int] = a['text'] as String;
-              }
-            }
-          }
-        } else {
-          // alquran.cloud tafsir edition (API returns entire surah)
-          final tUrl = 'https://api.alquran.cloud/v1/surah/$_surah/${def.id}';
-          final tRes = await http
-              .get(Uri.parse(tUrl))
-              .timeout(const Duration(seconds: 15));
-          if (tRes.statusCode == 200) {
-            final ayahs = jsonDecode(tRes.body)['data']['ayahs'] as List?;
-            if (ayahs != null) {
-              for (var a in ayahs) {
-                tafsirMap[a['numberInSurah'] as int] = a['text'] as String;
-              }
-            }
-          }
-        }
 
         final reciter = _tReciters[_reciterIdx].$1;
 

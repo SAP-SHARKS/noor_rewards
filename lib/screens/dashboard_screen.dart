@@ -309,13 +309,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Evening reminder: if pending points exist and it's after 8 PM
     _checkPendingReminder();
     try {
-      final profile =
-          await _supabase
-              .from('profiles')
-              .select('noor_points, country, total_xp, level, avatar_url')
-              .eq('id', uid)
-              .maybeSingle();
+      // ── Wave 1 ───────────────────────────────────────────────────────────
+      // 7 independent fetches in parallel (was 6 sequential round-trips).
+      // Each is wrapped so one failing won't cancel the rest.
+      final w1 = await Future.wait<dynamic>([
+        // 0: profile
+        _supabase
+            .from('profiles')
+            .select('noor_points, country, total_xp, level, avatar_url')
+            .eq('id', uid)
+            .maybeSingle()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+        // 1: today points
+        _supabase.rpc('get_today_points').catchError((e) {
+          debugPrint('today err: $e');
+          return 0;
+        }),
+        // 2: week points
+        _supabase.rpc('get_week_points').catchError((e) {
+          debugPrint('week err: $e');
+          return 0;
+        }),
+        // 3: month points
+        _supabase.rpc('get_month_points').catchError((e) {
+          debugPrint('month err: $e');
+          return 0;
+        }),
+        // 4: day streak
+        _supabase.rpc('get_day_streak').catchError((e) {
+          debugPrint('streak err: $e');
+          return 0;
+        }),
+        // 5: streak snapshot (Hive + Supabase composite)
+        StreakService.instance.loadSnapshot().catchError(
+          (_) => StreakSnapshot.empty,
+        ),
+        // 6: featured community project
+        _supabase
+            .from('community_projects')
+            .select()
+            .eq('is_active', true)
+            .eq('is_completed', false)
+            .order('sort_order', ascending: true, nullsFirst: false)
+            .limit(1)
+            .maybeSingle()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+      ]);
 
+      final profile = w1[0] as Map<String, dynamic>?;
       if (profile != null) {
         _noorPoints = (profile['noor_points'] as num?)?.toInt() ?? 0;
         _totalPts = (profile['total_xp'] as num?)?.toInt() ?? 0;
@@ -323,7 +366,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _country = profile['country'] as String?;
         _avatarUrl = profile['avatar_url'] as String?;
       } else {
-        _noorPoints = 0; // Better to show 0 explicitly rather than leave null
+        _noorPoints = 0;
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Profile returned zero rows for $uid')),
@@ -331,64 +374,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
       }
 
-      // Resolve level title
+      _todayPoints = (w1[1] as num?)?.toInt() ?? 0;
+      _weekPoints = (w1[2] as num?)?.toInt() ?? 0;
+      _monthPoints = (w1[3] as num?)?.toInt() ?? 0;
+      _streak = (w1[4] as num?)?.toInt() ?? 0;
+      _streakSnap = w1[5] as StreakSnapshot;
+      _project = w1[6] as Map<String, dynamic>?;
+
+      // ── Wave 2 ───────────────────────────────────────────────────────────
+      // xp_levels needs _level from profile — tiny lookup, run after wave 1.
       try {
-        final levels =
-            await _supabase
-                .from('xp_levels')
-                .select('level, title')
-                .eq('level', _level)
-                .maybeSingle();
+        final levels = await _supabase
+            .from('xp_levels')
+            .select('level, title')
+            .eq('level', _level)
+            .maybeSingle();
         if (_levelTitle == 'Seeker' ||
             _levelTitle == 'Champion' ||
             _levelTitle == 'Legend' ||
             _levelTitle == 'Believer' ||
             _levelTitle == 'Devoted') {
-          _levelTitle = (levels?['title'] as String?) ?? _levelTitleFor(_level);
+          _levelTitle =
+              (levels?['title'] as String?) ?? _levelTitleFor(_level);
         }
-      } catch (_) {}
-
-      // Fetch points in parallel, but handle individual failures safely without throwing everything via catchError
-      final results = await Future.wait([
-        _supabase.rpc('get_today_points').catchError((e) {
-          print('today err: $e');
-          return 0;
-        }),
-        _supabase.rpc('get_week_points').catchError((e) {
-          print('week err: $e');
-          return 0;
-        }),
-        _supabase.rpc('get_month_points').catchError((e) {
-          print('month err: $e');
-          return 0;
-        }),
-        _supabase.rpc('get_day_streak').catchError((e) {
-          print('streak err: $e');
-          return 0;
-        }),
-      ]);
-      _todayPoints = (results[0] as num?)?.toInt() ?? 0;
-      _weekPoints = (results[1] as num?)?.toInt() ?? 0;
-      _monthPoints = (results[2] as num?)?.toInt() ?? 0;
-      _streak = (results[3] as num?)?.toInt() ?? 0;
-
-      // Load streak snapshot safely
-      try {
-        final snap = await StreakService.instance.loadSnapshot();
-        _streakSnap = snap;
-      } catch (_) {}
-
-      try {
-        final proj =
-            await _supabase
-                .from('community_projects')
-                .select()
-                .eq('is_active', true)
-                .eq('is_completed', false)
-                .order('sort_order', ascending: true, nullsFirst: false)
-                .limit(1)
-                .maybeSingle();
-        _project = proj;
       } catch (_) {}
     } catch (e) {
       _levelTitle = 'Root error: $e';
@@ -738,64 +746,73 @@ class _HomeTabState extends State<_HomeTab> {
     final uid = sb.auth.currentUser?.id;
     if (uid == null) return;
 
-    // Last-read surah / ayah + today's ayah count (Quran tile)
-    try {
-      final prog =
-          await sb
-              .from('quran_progress')
-              .select(
-                'current_surah, current_ayah, last_read_date, ayahs_read_today',
-              )
-              .eq('user_id', uid)
-              .maybeSingle();
-      if (prog != null && mounted) {
-        final s = (prog['current_surah'] as num?)?.toInt() ?? 1;
-        final a = (prog['current_ayah'] as num?)?.toInt() ?? 1;
-        final today = DateTime.now().toIso8601String().split('T')[0];
-        final isToday = (prog['last_read_date'] ?? '') == today;
-        setState(() {
-          _lastSurahName = _surahNameFor(s);
-          _lastAyah = a;
-          _ayahsToday =
-              isToday ? ((prog['ayahs_read_today'] as num?)?.toInt() ?? 0) : 0;
-        });
-      }
-    } catch (_) {}
+    // ── 3 independent reads in parallel (was 3 sequential round-trips). ──
+    // One setState at the end instead of 3 separate rebuilds.
+    final today = DateTime.now();
+    final startOfDay = DateTime(today.year, today.month, today.day)
+        .toIso8601String();
 
-    // Most recent earned badge (Achievements tile)
-    try {
-      final earned =
-          await sb
-              .from('user_badges')
-              .select('badge_id, earned_at, badges(name)')
-              .eq('user_id', uid)
-              .order('earned_at', ascending: false)
-              .limit(1)
-              .maybeSingle();
-      if (earned != null && mounted) {
-        final badgeRow = earned['badges'];
-        final name = (badgeRow is Map ? badgeRow['name'] : null) as String?;
-        if (name != null && name.isNotEmpty) {
-          setState(() => _recentBadgeName = name);
-        }
-      }
-    } catch (_) {}
-
-    // Today's dhikr sets — count rows in user_activities for today (best-effort)
-    try {
-      final today = DateTime.now();
-      final start =
-          DateTime(today.year, today.month, today.day).toIso8601String();
-      final rows = await sb
+    final results = await Future.wait<dynamic>([
+      // 0: last-read Quran progress
+      sb
+          .from('quran_progress')
+          .select('current_surah, current_ayah, last_read_date, ayahs_read_today')
+          .eq('user_id', uid)
+          .maybeSingle()
+          .then<Map<String, dynamic>?>((v) => v)
+          .catchError((_) => null),
+      // 1: most recently earned badge
+      sb
+          .from('user_badges')
+          .select('badge_id, earned_at, badges(name)')
+          .eq('user_id', uid)
+          .order('earned_at', ascending: false)
+          .limit(1)
+          .maybeSingle()
+          .then<Map<String, dynamic>?>((v) => v)
+          .catchError((_) => null),
+      // 2: today's dhikr session count
+      sb
           .from('user_activities')
           .select('id')
           .eq('user_id', uid)
           .eq('activity_type', 'dhikr')
-          .gte('created_at', start);
-      if (mounted) {
-        setState(() => _dhikrToday = (rows as List).length);
-      }
-    } catch (_) {}
+          .gte('created_at', startOfDay)
+          .then<List<dynamic>>((v) => v as List)
+          .catchError((_) => const <dynamic>[]),
+    ]);
+
+    if (!mounted) return;
+    final prog = results[0] as Map<String, dynamic>?;
+    final earned = results[1] as Map<String, dynamic>?;
+    final dhikrRows = results[2] as List;
+
+    final todayKey = today.toIso8601String().split('T')[0];
+    String? newSurah;
+    int? newAyah;
+    int? newAyahsToday;
+    if (prog != null) {
+      final s = (prog['current_surah'] as num?)?.toInt() ?? 1;
+      newSurah = _surahNameFor(s);
+      newAyah = (prog['current_ayah'] as num?)?.toInt() ?? 1;
+      final isToday = (prog['last_read_date'] ?? '') == todayKey;
+      newAyahsToday =
+          isToday ? ((prog['ayahs_read_today'] as num?)?.toInt() ?? 0) : 0;
+    }
+    String? newBadgeName;
+    if (earned != null) {
+      final badgeRow = earned['badges'];
+      final name = (badgeRow is Map ? badgeRow['name'] : null) as String?;
+      if (name != null && name.isNotEmpty) newBadgeName = name;
+    }
+
+    setState(() {
+      if (newSurah != null) _lastSurahName = newSurah;
+      if (newAyah != null) _lastAyah = newAyah;
+      if (newAyahsToday != null) _ayahsToday = newAyahsToday;
+      if (newBadgeName != null) _recentBadgeName = newBadgeName;
+      _dhikrToday = dhikrRows.length;
+    });
   }
 
   /// Minimal surah-name lookup for the home tile sub-text. Falls back to "Surah N".
@@ -973,86 +990,99 @@ class _HomeTabState extends State<_HomeTab> {
 
   Future<void> _loadDonations() async {
     try {
-      // Load ALL active, non-completed projects so every card shows
-      final projects = await Supabase.instance.client
-          .from('community_projects')
-          .select()
-          .eq('is_active', true)
-          .eq('is_completed', false)
-          .order('sort_order', ascending: true, nullsFirst: false);
+      final sb = Supabase.instance.client;
+      final uid = sb.auth.currentUser?.id;
+
+      // ── Wave 1: 4 independent reads in parallel ─────────────────────────
+      // Was 5 sequential round-trips. The only dependency is "my donations"
+      // which needs the project ids, so it stays in wave 2.
+      final w1 = await Future.wait<dynamic>([
+        // 0: active projects
+        sb
+            .from('community_projects')
+            .select()
+            .eq('is_active', true)
+            .eq('is_completed', false)
+            .order('sort_order', ascending: true, nullsFirst: false)
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+        // 1: community totals per project
+        sb
+            .rpc('get_project_seed_totals')
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((e) {
+              debugPrint('Dashboard project totals RPC error: $e');
+              return const <dynamic>[];
+            }),
+        // 2: distinct donor counts per project
+        DonationService.instance.getProjectDonorCounts(),
+        // 3: active orphans (best-effort)
+        DonationService.instance.getOrphans().catchError(
+          (_) => const <Orphan>[],
+        ),
+      ]);
 
       final data = List<Map<String, dynamic>>.from(
-        (projects as List).map((p) => Map<String, dynamic>.from(p as Map)),
+        (w1[0] as List).map((p) => Map<String, dynamic>.from(p as Map)),
       );
 
       if (data.isEmpty) {
-        if (mounted) setState(() => _myDonations = []);
+        // Still surface orphans even if there are no community projects.
+        final orphans = w1[3] as List<Orphan>;
+        if (mounted) {
+          setState(() {
+            _myDonations =
+                orphans.map(_orphanToDonationMap).toList(growable: false);
+          });
+        }
         return;
       }
 
-      // Fetch the current user's donations to overlay my_donated per project
-      final uid = Supabase.instance.client.auth.currentUser?.id;
+      // Build totals + donor-count lookups from wave 1.
+      final Map<String, int> totalPts = {};
+      for (final r in (w1[1] as List)) {
+        final m = r as Map;
+        final pid = m['project_id'] as String?;
+        if (pid != null) {
+          totalPts[pid] = (m['current_seeds'] as num?)?.toInt() ?? 0;
+        }
+      }
+      final donorCounts = w1[2] as Map<String, int>;
+
+      // ── Wave 2: my donations (needs project ids from wave 1) ────────────
+      Map<String, int> myPts = const {};
       if (uid != null) {
         final pids = data.map((d) => d['id'] as String).toList();
-        final myDonations = await Supabase.instance.client
-            .from('user_donations')
-            .select('project_id, points_donated')
-            .eq('user_id', uid)
-            .filter('project_id', 'in', pids);
-
-        final Map<String, int> myPts = {};
-        for (final r in (myDonations as List)) {
-          final pid = r['project_id'] as String;
-          myPts[pid] =
-              (myPts[pid] ?? 0) + ((r['points_donated'] as num?)?.toInt() ?? 0);
-        }
-        for (final d in data) {
-          d['my_donated'] = myPts[d['id']] ?? 0;
-        }
-      } else {
-        for (final d in data) {
-          d['my_donated'] = 0;
-        }
+        try {
+          final myDonations = await sb
+              .from('user_donations')
+              .select('project_id, points_donated')
+              .eq('user_id', uid)
+              .filter('project_id', 'in', pids);
+          final m = <String, int>{};
+          for (final r in (myDonations as List)) {
+            final pid = r['project_id'] as String?;
+            if (pid == null) continue;
+            m[pid] = (m[pid] ?? 0) +
+                ((r['points_donated'] as num?)?.toInt() ?? 0);
+          }
+          myPts = m;
+        } catch (_) {}
       }
 
-      // Community totals via SECURITY DEFINER RPC. A direct SELECT on
-      // user_donations would be RLS-restricted to the caller's own rows,
-      // which is why project cards showed 0 seeds for everyone but the
-      // donor themselves. See 20260525_012_aggregate_project_seed_totals.
-      final Map<String, int> totalPts = {};
-      try {
-        final totalsRes = await Supabase.instance.client
-            .rpc('get_project_seed_totals');
-        for (final r in (totalsRes as List)) {
-          final pid = r['project_id'] as String?;
-          if (pid == null) continue;
-          totalPts[pid] = (r['current_seeds'] as num?)?.toInt() ?? 0;
-        }
-      } catch (e) {
-        debugPrint('Dashboard project totals RPC error: $e');
-      }
-      // Distinct donor counts come from a SECURITY DEFINER RPC. A direct
-      // read of user_donations is limited by Row-Level Security to the
-      // signed-in user's own rows, so it cannot see other contributors.
-      final donorCounts =
-          await DonationService.instance.getProjectDonorCounts();
+      // Merge everything onto the project rows.
       for (final d in data) {
-        d['current_points'] = totalPts[d['id']] ?? 0;
-        d['donor_count'] = donorCounts[d['id']] ?? 0;
+        final id = d['id'] as String;
+        d['current_points'] = totalPts[id] ?? 0;
+        d['donor_count'] = donorCounts[id] ?? 0;
+        d['my_donated'] = myPts[id] ?? 0;
         d['_type'] = 'project';
       }
 
-      // Append active orphans into the same horizontal strip so the user
-      // sees BOTH donation projects AND people they can sponsor. Each
-      // orphan is converted to the same Map shape the card already
-      // understands, plus a `_type: 'orphan'` marker the tap handler uses
-      // to route to OrphanDetailScreen instead of CommunityImpactPage.
-      try {
-        final orphans = await DonationService.instance.getOrphans();
-        for (final o in orphans) {
-          data.add(_orphanToDonationMap(o));
-        }
-      } catch (_) {/* orphans are best-effort */}
+      // Append orphans to the same strip (already fetched in wave 1).
+      for (final o in (w1[3] as List<Orphan>)) {
+        data.add(_orphanToDonationMap(o));
+      }
 
       if (mounted) setState(() => _myDonations = data);
     } catch (_) {
@@ -1163,6 +1193,11 @@ class _HomeTabState extends State<_HomeTab> {
                                   final display = overrideFirst.isNotEmpty
                                       ? overrideFirst
                                       : (firstName.isEmpty ? 'Friend' : firstName);
+                                  // Diagnostic: confirms whether this Text
+                                  // widget actually rebuilds when the
+                                  // notifier fires. Remove once verified.
+                                  debugPrint(
+                                      '[HomeTab greeting] rebuild: override=$override widget.name="${widget.name}" → "$display"');
                                   return Text(
                                     display,
                                     style: Y4.display(
@@ -1511,35 +1546,40 @@ class _HomeTabState extends State<_HomeTab> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _MyDonationsSection(
-                      donations: _myDonations,
-                      availablePoints: widget.noorPoints ?? 0,
-                      onDonateMore: (item) {
-                        // Route based on entity type — orphan or project.
-                        if (item['_type'] == 'orphan' &&
-                            item['_orphan'] is Orphan) {
-                          final orphan = item['_orphan'] as Orphan;
+                    // Image-heavy horizontal list — RepaintBoundary keeps its
+                    // inner scroll / image-loading paints from invalidating
+                    // the rest of the home scroll layer.
+                    RepaintBoundary(
+                      child: _MyDonationsSection(
+                        donations: _myDonations,
+                        availablePoints: widget.noorPoints ?? 0,
+                        onDonateMore: (item) {
+                          // Route based on entity type — orphan or project.
+                          if (item['_type'] == 'orphan' &&
+                              item['_orphan'] is Orphan) {
+                            final orphan = item['_orphan'] as Orphan;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => OrphanDetailScreen(
+                                  orphan: orphan,
+                                  availablePoints: widget.noorPoints ?? 0,
+                                  onSponsored: (_) => _loadDonations(),
+                                ),
+                              ),
+                            ).then((_) => _loadDonations());
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => OrphanDetailScreen(
-                                orphan: orphan,
-                                availablePoints: widget.noorPoints ?? 0,
-                                onSponsored: (_) => _loadDonations(),
+                              builder: (_) => CommunityImpactPage(
+                                scrollToProjectId: item['id'] as String?,
                               ),
                             ),
-                          ).then((_) => _loadDonations());
-                          return;
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CommunityImpactPage(
-                              scrollToProjectId: item['id'] as String?,
-                            ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ],
 
@@ -1875,7 +1915,10 @@ class _InviteSheetState extends State<_InviteSheet>
                       const SizedBox(height: 22),
 
                       // ── Reward Banner — light honey gradient ─────────────────────
-                      AnimatedBuilder(
+                      // RepaintBoundary isolates the shimmer's 60fps repaints so
+                      // they don't dirty the rest of the home scroll layer.
+                      RepaintBoundary(
+                        child: AnimatedBuilder(
                         animation: _shimmer,
                         builder:
                             (_, __) => Container(
@@ -1919,6 +1962,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                 ],
                               ),
                             ),
+                      ),
                       ),
 
                       const SizedBox(height: 22),

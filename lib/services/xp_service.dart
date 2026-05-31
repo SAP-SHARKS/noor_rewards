@@ -492,19 +492,28 @@ class XpService {
   Future<List<BadgeInfo>> loadBadges() async {
     final uid = _sb.auth.currentUser?.id;
     try {
-      final allBadges = await _sb.from('badges').select();
-      Set<String> earnedIds = {};
+      // Fire the catalog query and the user's earned list in parallel.
+      // Was 2 sequential round-trips (badges → user_badges); now 1.
+      final batch = await Future.wait<List<dynamic>>([
+        _sb
+            .from('badges')
+            .select()
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+        uid == null
+            ? Future.value(const <dynamic>[])
+            : _sb
+                .from('user_badges')
+                .select('badge_id')
+                .eq('user_id', uid)
+                .then<List<dynamic>>((v) => v as List)
+                .catchError((_) => const <dynamic>[]),
+      ]);
+      final allBadges = batch[0];
+      final Set<String> earnedIds =
+          batch[1].map((e) => e['badge_id'] as String).toSet();
 
-      if (uid != null) {
-        final earned = await _sb
-            .from('user_badges')
-            .select('badge_id')
-            .eq('user_id', uid);
-        earnedIds =
-            (earned as List).map((e) => e['badge_id'] as String).toSet();
-      }
-
-      return (allBadges as List)
+      return allBadges
           .map(
             (b) => BadgeInfo(
               id: b['id'] ?? '',

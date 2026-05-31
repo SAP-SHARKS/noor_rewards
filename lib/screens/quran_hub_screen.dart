@@ -319,50 +319,60 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       return;
     }
     try {
-      // Last read + daily progress
-      await _sb.from('quran_progress').upsert({
-        'user_id': uid,
-      }, onConflict: 'user_id');
-      final prog =
-          await _sb.from('quran_progress').select().eq('user_id', uid).single();
-      _lastSurah = prog['current_surah'] ?? 2;
-      _lastAyah = prog['current_ayah'] ?? 1;
-      _lastSurahName = _surahNames[_lastSurah.clamp(1, 114)];
-      _selSurah = _lastSurah;
-      _selAyah = _lastAyah;
-
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      if ((prog['last_read_date'] ?? '') == today) {
-        _ayahsToday = prog['ayahs_read_today'] ?? 0;
-      }
-
-      // Bookmarks
-      final bmarks = await _sb
-          .from('quran_bookmarks')
-          .select('surah, ayah')
-          .eq('user_id', uid)
-          .order('created_at', ascending: false);
-      _bookmarks = List<Map<String, dynamic>>.from(bmarks);
-      _bookmarkCount = _bookmarks.length;
-
-      // Favourites (same table but with is_favourite flag, or separate table)
-      // Using bookmarks table with is_favourite column if it exists, else 0
-      try {
-        final favs = await _sb
+      // ── 3 parallel reads (was 4 sequential round-trips) ─────────────────
+      // The previous code did: upsert, select, bookmarks, favourites — all
+      // strictly sequential. Combine upsert+select into one PostgREST call
+      // (via .select().single()) and fire the three reads in parallel.
+      final results = await Future.wait<dynamic>([
+        // 0: ensure-row + read in one round-trip
+        _sb
+            .from('quran_progress')
+            .upsert({'user_id': uid}, onConflict: 'user_id')
+            .select()
+            .single()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+        // 1: all bookmarks
+        _sb
+            .from('quran_bookmarks')
+            .select('surah, ayah')
+            .eq('user_id', uid)
+            .order('created_at', ascending: false)
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+        // 2: favourites only — kept separate so a missing `is_favourite`
+        //    column on legacy schemas doesn't poison the bookmarks fetch
+        _sb
             .from('quran_bookmarks')
             .select('surah, ayah')
             .eq('user_id', uid)
             .eq('is_favourite', true)
-            .order('created_at', ascending: false);
-        _favourites = List<Map<String, dynamic>>.from(favs);
-        _favouriteCount = _favourites.length;
-      } catch (_) {
-        _favouriteCount = 0;
+            .order('created_at', ascending: false)
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+      ]);
+
+      final prog = results[0] as Map<String, dynamic>?;
+      if (prog != null) {
+        _lastSurah = prog['current_surah'] ?? 2;
+        _lastAyah = prog['current_ayah'] ?? 1;
+        _lastSurahName = _surahNames[_lastSurah.clamp(1, 114)];
+        _selSurah = _lastSurah;
+        _selAyah = _lastAyah;
+
+        final today = DateTime.now().toIso8601String().split('T')[0];
+        if ((prog['last_read_date'] ?? '') == today) {
+          _ayahsToday = prog['ayahs_read_today'] ?? 0;
+        }
       }
 
-      // Quran Foundation bookmarks are pulled in the background so a slow
-      // (or 504-ing) QF API can't stall this screen — Supabase data is
-      // already canonical and shown above.
+      _bookmarks = List<Map<String, dynamic>>.from(results[1] as List);
+      _bookmarkCount = _bookmarks.length;
+      _favourites = List<Map<String, dynamic>>.from(results[2] as List);
+      _favouriteCount = _favourites.length;
+
+      // QF bookmarks pulled in the background so a slow QF API can't stall
+      // this screen — Supabase data is already canonical and shown above.
       // ignore: unawaited_futures
       _foldInQfBookmarksLater();
     } catch (_) {}

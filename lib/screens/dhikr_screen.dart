@@ -129,7 +129,7 @@ class _DhikrSettings {
   double translationFontSize = 17.0;
   bool darkMode = false;
   int arabicFontIdx = 0; // index into _kArabicFonts
-  bool showTranslation = false;
+  bool showTranslation = true;
   bool showTransliteration = false;
   bool showIllustration = true; // show/hide the illustration area
 }
@@ -354,7 +354,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
       _settings.translationFontSize = prefs.getDouble('dhikr_tr_size') ?? 17.0;
       _settings.darkMode = prefs.getBool('dhikr_dark_mode') ?? false;
       _settings.showTranslation =
-          prefs.getBool('dhikr_show_translation_v2') ?? false;
+          prefs.getBool('dhikr_show_translation_v2') ?? true;
       _settings.showTransliteration =
           prefs.getBool('dhikr_show_transliteration') ?? false;
       _settings.showIllustration =
@@ -653,28 +653,36 @@ class _DhikrScreenState extends State<DhikrScreen> {
   // ── Load Supabase Data ─────────────────────────────────────────────────────
   Future<void> _loadDBData() async {
     try {
-      final catRes = await _supabase
-          .from('azkar_categories')
-          .select()
-          .order('sort_order');
-      final fetchedCats =
-          (catRes as List)
-              .where((c) => c['is_visible'] != false)
-              .map(
-                (c) => _Category(
-                  c['id'] as String,
-                  c['label'] as String,
-                  _parseIcon(c['icon_name'] as String),
-                ),
-              )
-              .toList();
+      // Was 2 sequential SELECTs. Categories and items are independent so
+      // fire both at once — cuts dhikr-list load time roughly in half.
+      final results = await Future.wait<List<dynamic>>([
+        _supabase
+            .from('azkar_categories')
+            .select()
+            .order('sort_order')
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+        _supabase
+            .from('azkar_items')
+            .select()
+            .order('sort_order')
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+      ]);
 
-      final itemsRes = await _supabase
-          .from('azkar_items')
-          .select()
-          .order('sort_order');
+      final fetchedCats = results[0]
+          .where((c) => c['is_visible'] != false)
+          .map(
+            (c) => _Category(
+              c['id'] as String,
+              c['label'] as String,
+              _parseIcon(c['icon_name'] as String),
+            ),
+          )
+          .toList();
+
       final fetchedItems =
-          (itemsRes as List).map((i) => _Azkar.fromJson(i)).toList();
+          results[1].map((i) => _Azkar.fromJson(i)).toList();
 
       if (fetchedCats.isNotEmpty && fetchedItems.isNotEmpty) {
         _categories = fetchedCats;
@@ -2955,7 +2963,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             ),
           ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(3),
+            preferredSize: const Size.fromHeight(10),
             child: Container(
               color: appBarColor,
               child: _AzkarProgressLine(
@@ -3524,18 +3532,37 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           // Next
           _playBarBtn(
             icon: Icons.skip_next_rounded,
-            onTap: () {
+            onTap: () async {
               if (_playAllMode) {
                 // Stop current track — the loop will pick up
                 _audioPlayer.stop();
               } else {
-                // Manual single-track mode — just go next page
-                if (_currentIndex < widget.azkars.length - 1) {
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                  );
+                // Single-play mode — find the NEXT azkar that has audio and
+                // jump to it, auto-playing on arrival. Mirrors the Play All
+                // skip-audioless behaviour so the user is never parked on a
+                // dhikr with no audio.
+                int next = -1;
+                for (int j = _currentIndex + 1;
+                    j < widget.azkars.length;
+                    j++) {
+                  final url = widget.azkars[j].audioUrl;
+                  if (url != null && url.isNotEmpty) {
+                    next = j;
+                    break;
+                  }
                 }
+                if (next == -1) return; // no more audio-bearing azkar ahead
+                // Invalidate any in-flight single-repeat loop and stop the
+                // current track before swiping.
+                _singleRepeatToken++;
+                await _audioPlayer.stop();
+                await _pageController.animateToPage(
+                  next,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                );
+                if (!mounted) return;
+                _toggleAudio(widget.azkars[next]);
               }
             },
           ),
@@ -4835,8 +4862,9 @@ String _pickIllustration(String rawId) {
   if (id == 'morning_4' || id == 'evening_4') return 'dua_scene';
   if (id == 'morning_5' || id == 'evening_5') return 'dua_scene';
   if (id == 'morning_6' || id == 'evening_6') return 'night_peace';
-  // Last verses of Baqarah — protection from evils
-  if (id == 'morning_7' || id == 'evening_7') return 'repelling';
+  // Last verses of Baqarah — protection from evils (text card; replaced
+  // the previous "two red evil eyes" illustration which felt too intense).
+  if (id == 'morning_7' || id == 'evening_7') return 'benefit_text_7';
   if (id == 'morning_8' || id == 'evening_8') return 'baqarah_burden';
   // Ikhlas, Falaq, Nas
   if (id == 'morning_9' || id == 'evening_9') return 'quran_complete';
@@ -4869,7 +4897,8 @@ String _pickIllustration(String rawId) {
   // Perfect words — invincible name
   if (id == 'morning_23' || id == 'evening_23') return 'invincible';
   // Knower of unseen — repelling light
-  if (id == 'morning_24' || id == 'evening_24') return 'repelling';
+  // Knower of the Unseen — text card (replaced "two red eyes" repelling).
+  if (id == 'morning_24' || id == 'evening_24') return 'benefit_text_24';
   // Ya Hayyu Ya Qayyum — cradled heart
   if (id == 'morning_25' || id == 'evening_25') return 'blinking_eyes';
   // Sayyid al-Istighfar — heart purification
@@ -5575,6 +5604,44 @@ Widget _buildIllustration({
         accentColor: const Color(0xFF6B4EE6),
       ),
     ),
+    'benefit_text_7' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText:
+            'Whoever recites the last two verses of Al-Baqarah at night, they will suffice him',
+        highlightPhrase: 'suffice him',
+        subtitle: 'Sahih al-Bukhari 4008',
+        completedSubtitle: 'Protected by the closing verses of Al-Baqarah',
+        accentColor: const Color(0xFF7A8C3A), // Y4.primary sage
+      ),
+    ),
+    'benefit_text_24' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText:
+            'Seek refuge in Allah from the evil within yourself and from every creature',
+        highlightPhrase: 'every creature',
+        subtitle: 'Sunan At-Tirmidhi 3392',
+        completedSubtitle: 'Sheltered by the Knower of the Unseen',
+        accentColor: const Color(0xFF4D5C20), // Y4.primaryDeep — deeper sage
+      ),
+    ),
     'doors' => w(
       ({
         required progress,
@@ -5774,6 +5841,9 @@ String _pickTagline(String id) {
     'repelling' => 'Evil repelled from every direction',
     'heart' => 'Heart held by the Ever Living Ever Sustaining',
     'benefit_text_16' => 'Fulfilled your obligation of giving thanks',
+    'benefit_text_7' =>
+      'Reciting the last 2 verses of Al-Baqarah at night suffices you',
+    'benefit_text_24' => 'All evil in His creation repelled from you',
     'vessel' => 'Gratitude that multiplies your blessings',
     'dawn' => 'Start pure on the fitrah of Islam',
     'ripples' => 'Praise that ripples through all creation',
@@ -24500,9 +24570,9 @@ class _AzkarProgressLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 3,
+      height: 10,
       child: CustomPaint(
-        size: Size(MediaQuery.of(context).size.width, 3),
+        size: Size(MediaQuery.of(context).size.width, 10),
         painter: _ProgressLinePainter(
           total: azkars.length,
           currentIndex: currentIndex,
@@ -24530,21 +24600,10 @@ class _ProgressLinePainter extends CustomPainter {
     required this.completedFlags,
   });
 
-  // Vibrant palette for completed segments — bright enough on dark AppBar
-  static const _doneColors = [
-    Color(0xFFFFC83D), // emerald
-    Color(0xFFFBBF24), // amber
-    Color(0xFFF87171), // coral red
-    Color(0xFF60A5FA), // sky blue
-    Color(0xFFA78BFA), // violet
-    Color(0xFFFFC83D), // teal
-    Color(0xFFFB923C), // orange
-    Color(0xFFF472B6), // pink
-    Color(0xFFFFC83D), // green
-    Color(0xFF38BDF8), // light blue
-    Color(0xFFE879F9), // fuchsia
-    Color(0xFFFCD34D), // yellow
-  ];
+  // Y4 honey theme — one color family for the whole bar.
+  static const _doneColor    = Color(0xFFD89A1E); // Y4.honeyDeep
+  static const _currentColor = Color(0xFFFFC83D); // Y4.honey (brighter)
+  static const _pendingColor = Color(0xFFF4E5B0); // Y4.track (soft honey)
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -24552,7 +24611,8 @@ class _ProgressLinePainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
     final segW = w / total;
-    const gap = 1.5;
+    const gap = 2.0;
+    final radius = Radius.circular(h / 2); // pill-shaped segments
 
     for (int i = 0; i < total; i++) {
       final x = i * segW + gap / 2;
@@ -24561,31 +24621,31 @@ class _ProgressLinePainter extends CustomPainter {
 
       final done = completedFlags[i];
       final isCurrent = i == currentIndex;
-      final segColor = _doneColors[i % _doneColors.length];
 
-      final rect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(x, 0, sW, h),
-        const Radius.circular(1.5),
-      );
+      final rect =
+          RRect.fromRectAndRadius(Rect.fromLTWH(x, 0, sW, h), radius);
 
-      if (done || isCurrent) {
-        // Completed or active — show its vibrant color
-        canvas.drawRRect(rect, Paint()..color = segColor);
-        // Current segment gets a soft glow to stand out
-        if (isCurrent && !done) {
-          canvas.drawRRect(
-            rect.inflate(1.5),
-            Paint()
-              ..color = segColor.withValues(alpha: 0.35)
-              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-          );
-        }
+      Color fill;
+      if (done) {
+        fill = _doneColor;
+      } else if (isCurrent) {
+        fill = _currentColor;
       } else {
-        // Pending — dim
+        fill = _pendingColor;
+      }
+      canvas.drawRRect(rect, Paint()..color = fill);
+
+      // Subtle glow under the active segment so it stands out without
+      // breaking the single-color theme.
+      if (isCurrent && !done) {
         canvas.drawRRect(
-          rect,
-          Paint()..color = Colors.white.withValues(alpha: 0.15),
+          rect.inflate(2),
+          Paint()
+            ..color = _currentColor.withValues(alpha: 0.45)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
         );
+        // Re-paint the segment on top of the blur for crisp edges.
+        canvas.drawRRect(rect, Paint()..color = _currentColor);
       }
     }
   }
