@@ -55,4 +55,9 @@ app.*.map.json
 *.env
 .env.*
 .env.bak
+# Un-ignore the bare root .env: it's tracked as a placeholder so the Flutter
+# asset bundler (declared in pubspec.yaml) always finds it. Real values are
+# injected by CI (codemagic.yaml) or kept locally with:
+#   git update-index --skip-worktree .env
+!.env
 supabase/.temp/
