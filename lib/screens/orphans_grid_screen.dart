@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
 import '../theme/y4_theme.dart';
+import '../widgets/sabiq_coin.dart';
 import 'orphan_detail_screen.dart';
 
 class OrphansGridScreen extends StatefulWidget {
@@ -326,16 +327,25 @@ class OrphanCard extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(
-                                '${orphan.currentSeeds}/${orphan.targetSeeds} 🌱',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: Y4.ink,
-                                  height: 1.1,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${orphan.currentSeeds}/${orphan.targetSeeds}',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 10.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: Y4.ink,
+                                        height: 1.1,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  const SabiqCoin(size: 12),
+                                ],
                               ),
                             ),
                             Text(

@@ -275,35 +275,50 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     await StatsService.instance.awaitPendingFlush();
 
     try {
+      // ── Wave 1: 11 independent reads in parallel ─────────────────────────
+      // Each future is wrapped with catchError so one slow / failing source
+      // never poisons the rest. Was: 4 unchecked items (any of which could
+      // cancel the whole load) + 3 sequential reads at the end of the
+      // function. Now everything that doesn't depend on _level runs at once.
       final results = await Future.wait<dynamic>([
+        // 0: profile
         _sb
             .from('profiles')
             .select('display_name, total_xp, level, noor_points')
             .eq('id', uid)
-            .maybeSingle(),
+            .maybeSingle()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+        // 1: user_analytics
         _sb
             .from('user_analytics')
             .select('session_duration_sec, noor_coins_earned')
             .eq('user_id', uid)
-            .maybeSingle(),
+            .maybeSingle()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+        // 2: total donations lifetime
         DonationService.instance.getUserTotalDonations(),
-        _sb.rpc('get_today_points'),
-        _sb.rpc('get_week_points'),
-        StreakService.instance.loadSnapshot(),
-        _sb.rpc('get_week_screen_time', params: {'p_user_id': uid})
+        // 3: today points
+        _sb.rpc('get_today_points').catchError((_) => 0),
+        // 4: week points
+        _sb.rpc('get_week_points').catchError((_) => 0),
+        // 5: streak snapshot
+        StreakService.instance
+            .loadSnapshot()
+            .catchError((_) => StreakSnapshot.empty),
+        // 6: last 7 days of screen time
+        _sb
+            .rpc('get_week_screen_time', params: {'p_user_id': uid})
             .then<List<int>>((rows) {
               final list = (rows as List)
                   .map((r) => (r['total_sec'] as num?)?.toInt() ?? 0)
                   .toList();
-              // Pad/trim to exactly 7 (defensive).
-              while (list.length < 7) {
-                list.insert(0, 0);
-              }
+              while (list.length < 7) list.insert(0, 0);
               return list.length > 7 ? list.sublist(list.length - 7) : list;
             })
             .catchError((_) => List<int>.filled(7, 0)),
-        // Current-month daily rows for the "Your Month" aggregates and the
-        // personalized today badge.
+        // 7: current-month daily rows (for the "Your Month" aggregates)
         () async {
           final now = DateTime.now();
           final firstOfMonth = DateTime(now.year, now.month, 1)
@@ -320,7 +335,16 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             return const <Map<String, dynamic>>[];
           }
         }(),
+        // 8: month points
         _sb.rpc('get_month_points').catchError((_) => 0),
+        // 9: lifetime activity (moved into wave 1 — was a 2nd round-trip)
+        StatsService.instance
+            .loadLifetimeActivity()
+            .catchError((_) => (ayahsRead: 0, dhikrCount: 0, dhikrSets: 0)),
+        // 10: per-phrase counts (moved into wave 1 — was a 3rd round-trip)
+        StatsService.instance
+            .loadPhraseCounts()
+            .catchError((_) => const <String, int>{}),
       ]);
 
       final profile = results[0] as Map<String, dynamic>?;
@@ -367,29 +391,25 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       }
       _monthPoints = (results[8] as num?)?.toInt() ?? 0;
 
-      // Level title from xp_levels
+      // Indices 9 & 10 — lifetime activity + phrase counts (moved from
+      // trailing sequential reads into wave 1).
+      final lifetime = results[9]
+          as ({int ayahsRead, int dhikrCount, int dhikrSets});
+      _lifetimeAyahs = lifetime.ayahsRead;
+      _lifetimeDhikr = lifetime.dhikrCount;
+      _phraseCounts = results[10] as Map<String, int>;
+
+      // ── Wave 2: xp_levels title lookup needs _level from wave 1 ─────────
       try {
-        final lv =
-            await _sb
-                .from('xp_levels')
-                .select('title')
-                .eq('level', _level)
-                .maybeSingle();
+        final lv = await _sb
+            .from('xp_levels')
+            .select('title')
+            .eq('level', _level)
+            .maybeSingle();
         _levelTitle = (lv?['title'] as String?) ?? _fallbackTitle(_level);
       } catch (_) {
         _levelTitle = _fallbackTitle(_level);
       }
-    } catch (_) {}
-
-    // Load lifetime activity + per-phrase counts for hadith-grounded holdings
-    try {
-      final lifetime = await StatsService.instance.loadLifetimeActivity();
-      _lifetimeAyahs = lifetime.ayahsRead;
-      _lifetimeDhikr = lifetime.dhikrCount;
-    } catch (_) {}
-
-    try {
-      _phraseCounts = await StatsService.instance.loadPhraseCounts();
     } catch (_) {}
 
     if (mounted) setState(() => _loading = false);
@@ -1791,56 +1811,85 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       final sb = Supabase.instance.client;
       final uid = sb.auth.currentUser?.id;
 
-      // Load all projects
-      final res = await sb
-          .from('community_projects')
-          .select()
-          .eq('is_active', true)
-          .order('sort_order', ascending: true, nullsFirst: false);
-      _projects = List<Map<String, dynamic>>.from(res);
-
-      // Community totals via SECURITY DEFINER RPC. Direct SELECT on
-      // user_donations is RLS-restricted to the caller's own rows, so
-      // summing client-side was returning 0 for everyone-but-you.
-      // (See 20260525_012_aggregate_project_seed_totals.sql.)
-      final Map<String, int> communityTotals = {};
-      try {
-        final totalsRes = await sb.rpc('get_project_seed_totals');
-        for (final r in (totalsRes as List)) {
-          final pid = r['project_id'] as String?;
-          if (pid == null) continue;
-          communityTotals[pid] =
-              (r['current_seeds'] as num?)?.toInt() ?? 0;
-        }
-      } catch (e) {
-        debugPrint('Project totals RPC error: $e');
-      }
-
-      // My own donations per project — also via SECURITY DEFINER RPC for
-      // consistency (works even if the user's RLS were tightened further).
-      Map<String, int> myDonations = {};
-      if (uid != null) {
-        try {
-          final myRes = await sb.rpc(
-            'get_my_project_donations',
-            params: {'p_user_id': uid},
-          );
-          for (final r in (myRes as List)) {
-            final pid = r['project_id'] as String?;
-            if (pid == null) continue;
-            myDonations[pid] = (r['my_seeds'] as num?)?.toInt() ?? 0;
-          }
-        } catch (e) {
-          debugPrint('My donations RPC error: $e');
-        }
-        // Available points
-        final profile =
-            await sb
+      // ── Wave 1 ───────────────────────────────────────────────────────────
+      // 7 independent queries — fire them all at once. Was 9 sequential
+      // round-trips on first load (~2.5s on a slow connection); now ~2.
+      // Each future is wrapped so one failing won't poison the rest.
+      final w1 = await Future.wait<dynamic>([
+        // 0: active projects
+        sb
+            .from('community_projects')
+            .select()
+            .eq('is_active', true)
+            .order('sort_order', ascending: true, nullsFirst: false)
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((e) {
+              debugPrint('community_projects load error: $e');
+              return const <dynamic>[];
+            }),
+        // 1: community totals per project (SECURITY DEFINER RPC)
+        sb
+            .rpc('get_project_seed_totals')
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((e) {
+              debugPrint('Project totals RPC error: $e');
+              return const <dynamic>[];
+            }),
+        // 2: my donations per project (only when signed in)
+        uid == null
+            ? Future.value(const <dynamic>[])
+            : sb
+                .rpc('get_my_project_donations', params: {'p_user_id': uid})
+                .then<List<dynamic>>((v) => v as List)
+                .catchError((e) {
+                  debugPrint('My donations RPC error: $e');
+                  return const <dynamic>[];
+                }),
+        // 3: my available Seeds balance
+        uid == null
+            ? Future<Map<String, dynamic>?>.value(null)
+            : sb
                 .from('profiles')
                 .select('noor_points')
                 .eq('id', uid)
-                .maybeSingle();
-        _myAvailablePoints = (profile?['noor_points'] as num?)?.toInt() ?? 0;
+                .maybeSingle()
+                .then<Map<String, dynamic>?>((v) => v)
+                .catchError((_) => null),
+        // 4: distinct-donor counts (RLS-safe RPC)
+        DonationService.instance.getProjectDonorCounts(),
+        // 5: sponsored orphans + their aggregate stats
+        DonationService.instance.getOrphans(),
+        // 6: my orphan sponsorships (for the footer totals)
+        uid == null
+            ? Future.value(const <Map<String, dynamic>>[])
+            : DonationService.instance.getUserOrphanSponsorships(),
+      ]);
+
+      _projects = List<Map<String, dynamic>>.from(w1[0] as List);
+      _donorCounts = w1[4] as Map<String, int>;
+      _orphans = w1[5] as List<Orphan>;
+      final orphanSponsorships = w1[6] as List<Map<String, dynamic>>;
+
+      final Map<String, int> communityTotals = {};
+      for (final r in (w1[1] as List)) {
+        final m = r as Map;
+        final pid = m['project_id'] as String?;
+        if (pid != null) {
+          communityTotals[pid] = (m['current_seeds'] as num?)?.toInt() ?? 0;
+        }
+      }
+      final Map<String, int> myDonations = {};
+      for (final r in (w1[2] as List)) {
+        final m = r as Map;
+        final pid = m['project_id'] as String?;
+        if (pid != null) {
+          myDonations[pid] = (m['my_seeds'] as num?)?.toInt() ?? 0;
+        }
+      }
+      if (uid != null) {
+        final profile = w1[3] as Map<String, dynamic>?;
+        _myAvailablePoints =
+            (profile?['noor_points'] as num?)?.toInt() ?? 0;
       }
 
       for (var p in _projects) {
@@ -1851,31 +1900,26 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
             real >= ((p['target_points'] as num?)?.toInt() ?? 1);
       }
 
+      // ── Wave 2 ───────────────────────────────────────────────────────────
+      // These need the project ids from wave 1. Fire both at once; each has
+      // its own internal parallelism for per-project work.
       final pids = _projects.map((p) => p['id'] as String).toList();
-      _projectMedia = await DonationService.instance.getMediaForProjects(pids);
-
-      // Recent donors per project (name + avatar + amount + time) — one
-      // RPC call per project, run in parallel.
-      final donorLists = await Future.wait(
-        pids.map(
-          (pid) => DonationService.instance.getProjectDonors(pid, limit: 20),
+      final w2 = await Future.wait<dynamic>([
+        DonationService.instance.getMediaForProjects(pids),
+        Future.wait(
+          pids.map(
+            (pid) =>
+                DonationService.instance.getProjectDonors(pid, limit: 20),
+          ),
         ),
-      );
+      ]);
+      _projectMedia = w2[0] as Map<String, List<ProjectMedia>>;
+      final donorLists = w2[1] as List<List<ProjectDonation>>;
       _projectDonors = {
         for (var i = 0; i < pids.length; i++) pids[i]: donorLists[i],
       };
 
-      // Authoritative distinct-donor counts (RLS-safe RPC).
-      _donorCounts = await DonationService.instance.getProjectDonorCounts();
-
-      // Sponsored orphans for the strip above community projects.
-      _orphans = await DonationService.instance.getOrphans();
-
-      // Aggregate "Your Giving" footer stats — lifetime totals across BOTH
-      // projects and orphans, so the footer summarises the user's full
-      // philanthropic footprint in one card.
-      final orphanSponsorships =
-          await DonationService.instance.getUserOrphanSponsorships();
+      // ── Footer aggregation (pure CPU, no round-trips) ────────────────────
       _myOrphansSponsoredCount = orphanSponsorships.length;
       int orphanSeeds = 0;
       for (final row in orphanSponsorships) {
@@ -1884,7 +1928,6 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       int projectSeeds = 0;
       int projectsSupported = 0;
       if (uid != null) {
-        // myDonations already grouped by project earlier in this function
         for (final p in _projects) {
           final my = (p['my_points'] as num?)?.toInt() ?? 0;
           if (my > 0) {

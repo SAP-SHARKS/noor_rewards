@@ -240,20 +240,28 @@ class StreakService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return StreakSnapshot.empty;
     try {
-      final profile =
-          await _sb
-              .from('profiles')
-              .select(
-                'login_streak, dhikr_streak, quran_streak,'
-                'best_login_streak, best_dhikr_streak, best_quran_streak',
-              )
-              .eq('id', uid)
-              .single();
+      // Profile row and the 3 history RPCs are independent — fire them all
+      // in parallel. Was: profile, then Future.wait(histories) — 2 RTTs.
+      // Now: 1 RTT. loadSnapshot() is called from the Home, Cause, Akhirah
+      // and Journey screens, so this saves an RTT on each of them.
+      final batch = await Future.wait<dynamic>([
+        _sb
+            .from('profiles')
+            .select(
+              'login_streak, dhikr_streak, quran_streak,'
+              'best_login_streak, best_dhikr_streak, best_quran_streak',
+            )
+            .eq('id', uid)
+            .single()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+        _loadHistory(uid, StreakType.values[0], 7),
+        _loadHistory(uid, StreakType.values[1], 7),
+        _loadHistory(uid, StreakType.values[2], 7),
+      ]);
 
-      // History for each type (last 7 days)
-      final histories = await Future.wait(
-        StreakType.values.map((t) => _loadHistory(uid, t, 7)),
-      );
+      final profile = batch[0] as Map<String, dynamic>?;
+      if (profile == null) return StreakSnapshot.empty;
 
       return StreakSnapshot(
         login: (profile['login_streak'] as num?)?.toInt() ?? 0,
@@ -262,9 +270,9 @@ class StreakService {
         bestLogin: (profile['best_login_streak'] as num?)?.toInt() ?? 0,
         bestDhikr: (profile['best_dhikr_streak'] as num?)?.toInt() ?? 0,
         bestQuran: (profile['best_quran_streak'] as num?)?.toInt() ?? 0,
-        loginHistory: histories[0],
-        dhikrHistory: histories[1],
-        quranHistory: histories[2],
+        loginHistory: batch[1] as List<DateTime>,
+        dhikrHistory: batch[2] as List<DateTime>,
+        quranHistory: batch[3] as List<DateTime>,
       );
     } catch (_) {
       return StreakSnapshot.empty;

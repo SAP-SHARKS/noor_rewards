@@ -18,6 +18,7 @@ import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/quran_exit_celebration.dart';
+import '../widgets/noor_offline.dart';
 import '../theme/y4_theme.dart';
 
 /// Shorthand to get the live AppConfig.
@@ -598,11 +599,13 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
     try {
-      await _sb.from('quran_progress').upsert({
-        'user_id': uid,
-      }, onConflict: 'user_id');
-      final row =
-          await _sb.from('quran_progress').select().eq('user_id', uid).single();
+      // Was 2 round-trips (upsert then select). Chaining `.select().single()`
+      // onto the upsert returns the row in the SAME PostgREST call.
+      final row = await _sb
+          .from('quran_progress')
+          .upsert({'user_id': uid}, onConflict: 'user_id')
+          .select()
+          .single();
       final today = _todayStr();
       setState(() {
         // Only override to saved position if user didn't request a specific start
@@ -4196,39 +4199,17 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             ),
                             const SizedBox(height: 20),
                             if (_loading)
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(32),
-                                  child: CircularProgressIndicator(
-                                    color: _kTeal,
-                                    strokeWidth: 2,
-                                  ),
-                                ),
+                              const Padding(
+                                padding: EdgeInsets.all(32),
+                                child: NoorInlineLoader(),
                               )
                             else if (_wordByWord) ...[
                               // ── Word-by-Word Mode ────────────────────────────────────
                               if (_wbwLoading)
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 32,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        CircularProgressIndicator(
-                                          color: const Color(0xFFFFC83D),
-                                          strokeWidth: 2,
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          'Loading word translations...',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 12,
-                                            color: sub,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 32),
+                                  child: NoorInlineLoader(
+                                    label: 'Loading word translations…',
                                   ),
                                 )
                               else if (_wbwWords.isEmpty)
@@ -4908,6 +4889,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   ),
                 ],
               ),
+            // ── Single centered tasbih while any mushaf page is loading ──────
+            if (_loadingPages.isNotEmpty)
+              const IgnorePointer(
+                child: Center(child: NoorInlineLoader()),
+              ),
             // ── Overlay: fades in/out on tap ──────────────────────────────────
             AnimatedOpacity(
               opacity: _showMushafControls ? 1.0 : 0.0,
@@ -5031,35 +5017,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     final ayahs = _loadedPages[pageNum];
 
-    // Loading state — minimal, centred
+    // Loading state — empty viewport-sized slot. A single tasbih loader
+    // sits in the parent Stack so the user sees ONE centered loader instead
+    // of N stacked per-page spinners as they scroll across unloaded pages.
+    // Full viewport height keeps the scroll position consistent: at most
+    // one placeholder slot is visible at a time.
     if (ayahs == null) {
-      return ColoredBox(
-        color: pageBg,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 28,
-                height: 28,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    const Color(0xFFFFC83D),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                'Loading page $pageNum…',
-                style: GoogleFonts.lora(
-                  fontSize: 12,
-                  color: textClr.withValues(alpha: 0.45),
-                ),
-              ),
-            ],
-          ),
-        ),
+      return SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: ColoredBox(color: pageBg),
       );
     }
 

@@ -23,9 +23,11 @@ class ProfileNameNotifier {
     final trimmed = newName.trim();
     if (trimmed.isEmpty) {
       name.value = null;
+      debugPrint('[ProfileNameNotifier] cleared (empty input)');
       return;
     }
     name.value = trimmed;
+    debugPrint('[ProfileNameNotifier] set → "$trimmed"  (hasListeners: ${name.hasListeners})');
   }
 
   /// Clear the override (e.g. on logout) so the next session starts fresh.

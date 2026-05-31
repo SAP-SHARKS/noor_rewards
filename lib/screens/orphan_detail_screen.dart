@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
 import '../theme/y4_theme.dart';
+import '../widgets/sabiq_coin.dart';
 
 class OrphanDetailScreen extends StatefulWidget {
   final Orphan orphan;
@@ -431,13 +432,20 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                         ],
                       ),
                     ),
-                    Text(
-                      '${s.amount} 🌱',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: Y4.primary,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${s.amount}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: Y4.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const SabiqCoin(size: 14),
+                      ],
                     ),
                   ],
                 ),
