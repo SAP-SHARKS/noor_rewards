@@ -553,10 +553,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                 },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 150),
-                                  color:
-                                      sel
-                                          ? _kTeal.withValues(alpha: 0.07)
-                                          : Colors.transparent,
+                                  color: sel
+                                      ? Y4.honey.withValues(alpha: 0.10)
+                                      : Colors.transparent,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 14,
@@ -567,7 +566,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                         width: 40,
                                         height: 40,
                                         decoration: BoxDecoration(
-                                          color: sel ? _kTeal : _kTealL,
+                                          color: sel
+                                              ? Y4.honeyDeep
+                                              : Y4.honey.withValues(alpha: 0.25),
                                           borderRadius: BorderRadius.circular(
                                             12,
                                           ),
@@ -578,8 +579,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                             style: GoogleFonts.outfit(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w800,
-                                              color:
-                                                  sel ? Colors.white : _kTeal,
+                                              color: sel
+                                                  ? Colors.white
+                                                  : Y4.honeyDeep,
                                             ),
                                           ),
                                         ),
@@ -611,7 +613,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                       if (sel)
                                         Icon(
                                           Icons.check_circle_rounded,
-                                          color: _kTeal,
+                                          color: Y4.honeyDeep,
                                           size: 22,
                                         ),
                                     ],
@@ -707,22 +709,22 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 120),
                                 decoration: BoxDecoration(
-                                  color: sel ? _kTeal : _kWhite,
+                                  color: sel ? Y4.honeyDeep : _kWhite,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: sel ? _kTeal : Colors.grey.shade200,
+                                    color: sel
+                                        ? Y4.honeyDeep
+                                        : Colors.grey.shade200,
                                   ),
-                                  boxShadow:
-                                      sel
-                                          ? [
-                                            BoxShadow(
-                                              color: _kTeal.withValues(
-                                                alpha: 0.3,
-                                              ),
-                                              blurRadius: 8,
-                                            ),
-                                          ]
-                                          : null,
+                                  boxShadow: sel
+                                      ? [
+                                          BoxShadow(
+                                            color: Y4.honeyDeep
+                                                .withValues(alpha: 0.30),
+                                            blurRadius: 8,
+                                          ),
+                                        ]
+                                      : null,
                                 ),
                                 child: Center(
                                   child: Text(

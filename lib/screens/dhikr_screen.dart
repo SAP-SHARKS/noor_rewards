@@ -168,6 +168,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
   List<_Category> _categories = [];
   late String _selectedCat;
 
+  // ── Tag-based categorization (many-to-many from azkar_item_categories) ──
+  // azkar_id → list of category_ids. Empty for any azkar that wasn't tagged
+  // in the new junction table; for those we fall back to a.category.
+  final Map<String, List<String>> _categoriesByAzkar = {};
+  // ── Animation pool per azkar (from azkar_item_animations) ───────────────
+  // azkar_id → list of animation `key`s. Empty means fall back to the
+  // hard-coded _pickIllustration mapping. The screen picks today's
+  // animation as pool[dayOfYear % pool.length] for deterministic rotation.
+  final Map<String, List<String>> _animationsByAzkar = {};
+
   final Map<String, int> _counts = {};
   final Map<String, int> _customTargets = {};
   final Set<String> _completedIds = {}; // persists across count resets
@@ -653,8 +663,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
   // ── Load Supabase Data ─────────────────────────────────────────────────────
   Future<void> _loadDBData() async {
     try {
-      // Was 2 sequential SELECTs. Categories and items are independent so
-      // fire both at once — cuts dhikr-list load time roughly in half.
+      // 4 independent SELECTs in parallel — categories, items, the new
+      // tag-junction, and the animation-pool junction. Network round-trips
+      // happen concurrently so total load = max of the four.
       final results = await Future.wait<List<dynamic>>([
         _supabase
             .from('azkar_categories')
@@ -668,7 +679,41 @@ class _DhikrScreenState extends State<DhikrScreen> {
             .order('sort_order')
             .then<List<dynamic>>((v) => v as List)
             .catchError((_) => const <dynamic>[]),
+        // azkar_item_categories — many-to-many tags
+        _supabase
+            .from('azkar_item_categories')
+            .select('azkar_id, category_id')
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
+        // azkar_item_animations joined with key for direct switch use
+        _supabase
+            .from('azkar_item_animations')
+            .select('azkar_id, sort_order, azkar_animations(key, is_active)')
+            .order('sort_order')
+            .then<List<dynamic>>((v) => v as List)
+            .catchError((_) => const <dynamic>[]),
       ]);
+
+      // Build category-tags map
+      _categoriesByAzkar.clear();
+      for (final row in results[2]) {
+        final aid = row['azkar_id'] as String?;
+        final cid = row['category_id'] as String?;
+        if (aid == null || cid == null) continue;
+        (_categoriesByAzkar[aid] ??= <String>[]).add(cid);
+      }
+
+      // Build animation-pool map (preserves sort order)
+      _animationsByAzkar.clear();
+      for (final row in results[3]) {
+        final aid = row['azkar_id'] as String?;
+        final anim = row['azkar_animations'] as Map<String, dynamic>?;
+        if (aid == null || anim == null) continue;
+        if (anim['is_active'] == false) continue;
+        final key = anim['key'] as String?;
+        if (key == null) continue;
+        (_animationsByAzkar[aid] ??= <String>[]).add(key);
+      }
 
       final fetchedCats = results[0]
           .where((c) => c['is_visible'] != false)
@@ -735,10 +780,34 @@ class _DhikrScreenState extends State<DhikrScreen> {
       } else if (_selectedCat == 'favorites') {
         _filtered = _allAzkar.where((a) => _favorites.contains(a.id)).toList();
       } else {
-        _filtered = _allAzkar.where((a) => a.category == _selectedCat).toList();
+        // Prefer the many-to-many tag junction (an azkar can be tagged
+        // with multiple categories). Falls back to the legacy single
+        // `a.category` column when the junction is empty for this azkar.
+        _filtered = _allAzkar.where((a) {
+          final tags = _categoriesByAzkar[a.id];
+          if (tags != null && tags.isNotEmpty) {
+            return tags.contains(_selectedCat);
+          }
+          return a.category == _selectedCat;
+        }).toList();
       }
       _filtered.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     });
+  }
+
+  /// Returns the animation `key` that should drive today's illustration for
+  /// this azkar. Picks deterministically from the pool by day-of-year so
+  /// users see the same animation all day but a different one each day.
+  /// Returns null if the azkar has no DB-mapped animations (caller falls
+  /// back to the hardcoded `_pickIllustration`).
+  String? _todayAnimationKeyFor(String azkarId) {
+    final pool = _animationsByAzkar[azkarId];
+    if (pool == null || pool.isEmpty) return null;
+    final now = DateTime.now();
+    final dayOfYear = int.parse(
+      '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}',
+    );
+    return pool[dayOfYear % pool.length];
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
@@ -2297,6 +2366,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   StreamSubscription<PlayerState>? _playerSub;
   bool _isAdvancing = false; // guard against double-skip
 
+  // ── Playback speed ────────────────────────────────────────────────────
+  // Cycled via the speed button in the player bar. Persisted to prefs so
+  // it survives screen pops. Always re-applied after every setUrl() so a
+  // mid-play speed change carries to the next rep / next track too.
+  static const List<double> _kSpeedOptions = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+  double _audioSpeed = 1.0;
+
   // ── Single-track repeat session ────────────────────────────────────────
   // When the user taps play on one azkar, we play the audio
   // `_singleRepeatTarget` times back-to-back — matching the azkar's
@@ -2356,6 +2432,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
       // explicitly in `_toggleAudio` and `_runPlayAllLoop`.
       if (mounted) setState(() {});
     });
+    _loadAudioSpeedPref();
     // Start sequential play-all loop
     if (_playAllMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _runPlayAllLoop());
@@ -2384,6 +2461,40 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     );
   }
 
+  // ── Speed: load saved preference + cycle on tap ────────────────────────
+  static const String _kAudioSpeedKey = 'dhikr_audio_speed';
+
+  Future<void> _loadAudioSpeedPref() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      final v = p.getDouble(_kAudioSpeedKey);
+      if (v != null && _kSpeedOptions.contains(v)) {
+        if (mounted) setState(() => _audioSpeed = v);
+        // Apply to player even if nothing is playing yet — survives the
+        // next setUrl on first play.
+        try { await _audioPlayer.setSpeed(v); } catch (_) {}
+      }
+    } catch (_) {}
+  }
+
+  void _cycleAudioSpeed() {
+    final i = _kSpeedOptions.indexOf(_audioSpeed);
+    final next = _kSpeedOptions[(i + 1) % _kSpeedOptions.length];
+    setState(() => _audioSpeed = next);
+    // Apply to the active player immediately so a user can change speed
+    // mid-recitation and hear it on the next frame.
+    try { _audioPlayer.setSpeed(next); } catch (_) {}
+    SharedPreferences.getInstance().then(
+      (p) => p.setDouble(_kAudioSpeedKey, next),
+    );
+  }
+
+  String _formatSpeed(double s) {
+    // Drop trailing ".0" for cleaner labels: 1× / 1.25× / 1.5× / 2×
+    if (s == s.roundToDouble()) return '${s.toInt()}×';
+    return '${s.toString()}×';
+  }
+
   void _toggleToolbar() {
     if (_showFirstTimeHint) _dismissHint();
     setState(() {
@@ -2410,6 +2521,48 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _hintAutoDismissTimer?.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // Pressed from a per-azkar play button (the prominent top-right CTA and
+  // the floating-toolbar play). Behaves like Play All: plays this azkar
+  // first, then auto-advances through the rest of the list. If the user
+  // taps while this same azkar is playing, treat as pause.
+  Future<void> _playFromHereAsPlayAll(_Azkar azkar) async {
+    final url = azkar.audioUrl;
+    if (url == null || url.isEmpty) return;
+
+    // Pause if this azkar is currently playing.
+    if (_audioPlayer.playing && _currentlyLoadedAudio == url) {
+      try { await _audioPlayer.pause(); } catch (_) {}
+      if (mounted) setState(() {});
+      return;
+    }
+    // Resume if we're already in play-all but paused on this track.
+    if (_playAllMode && !_audioPlayer.playing &&
+        _currentlyLoadedAudio == url) {
+      try { unawaited(_audioPlayer.play()); } catch (_) {}
+      if (mounted) setState(() {});
+      return;
+    }
+
+    // Cancel any in-flight single-repeat sequence, then start play-all
+    // from the current index. _runPlayAllLoop reads _currentIndex.
+    _singleRepeatToken++;
+    try { await _audioPlayer.stop(); } catch (_) {}
+    if (mounted) {
+      setState(() {
+        _singleRepeatUrl = null;
+        _singleRepeatTarget = 0;
+        _singleRepeatDone = 0;
+        _playAllMode = true;
+      });
+    } else {
+      _singleRepeatUrl = null;
+      _singleRepeatTarget = 0;
+      _singleRepeatDone = 0;
+      _playAllMode = true;
+    }
+    _runPlayAllLoop();
   }
 
   Future<void> _toggleAudio(_Azkar azkar) async {
@@ -2499,6 +2652,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
         // stop→setUrl→play always starts a fresh track.
         await _audioPlayer.stop();
         await _audioPlayer.setUrl(url);
+        try { await _audioPlayer.setSpeed(_audioSpeed); } catch (_) {}
         _currentlyLoadedAudio = url;
 
         // Fire-and-forget play(); poll processingState for completion.
@@ -2578,6 +2732,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           // always starts a fresh playback.
           await _audioPlayer.stop();
           await _audioPlayer.setUrl(url);
+          try { await _audioPlayer.setSpeed(_audioSpeed); } catch (_) {}
           _currentlyLoadedAudio = url;
 
           // Fire-and-forget play(). just_audio.play() resolves on
@@ -2913,7 +3068,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(99),
-                      onTap: () => _toggleAudio(azkar),
+                      onTap: () => _playFromHereAsPlayAll(azkar),
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
@@ -3034,6 +3189,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                         isFavorite: widget.favorites.contains(azkar.id),
                         settings: widget.settings,
                         pointsToday: widget.parentState._pointsToday,
+                        // Pull today's animation key from the parent's
+                        // azkar_item_animations pool. Null falls back to
+                        // the hardcoded _pickIllustration mapping inside
+                        // _buildIllustration.
+                        animationKeyOverride: widget.parentState
+                            ._todayAnimationKeyFor(azkar.id),
                         onReset: () {
                           widget.parentState._reset(azkar.id);
                           setState(() {});
@@ -3119,7 +3280,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                             : Icons.play_arrow_rounded,
                                     color: const Color(0xFFFFC83D),
                                     isDark: isDark,
-                                    onTap: () => _toggleAudio(azkar),
+                                    onTap: () => _playFromHereAsPlayAll(azkar),
                                   ),
                                   _toolbarDivider(isDark),
                                 ],
@@ -3500,6 +3661,30 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             ),
           ),
           const SizedBox(width: 12),
+          // Speed cycle — 1× → 1.25× → 1.5× → 2× → 1×
+          GestureDetector(
+            onTap: _cycleAudioSpeed,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Y4.ink.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _formatSpeed(_audioSpeed),
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white : Y4.ink,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           // Pause / Resume
           _playBarBtn(
             icon: isPlaying
@@ -4328,6 +4513,9 @@ class _AzkarCard extends StatelessWidget {
   final bool isFavorite;
   final _DhikrSettings settings;
   final int pointsToday;
+  /// Today's animation `key` picked from the DB pool — null = fall back
+  /// to the hardcoded ID-based mapping inside `_buildIllustration`.
+  final String? animationKeyOverride;
   final VoidCallback onReset;
   final VoidCallback onFavorite;
   final VoidCallback onShare;
@@ -4340,6 +4528,7 @@ class _AzkarCard extends StatelessWidget {
     required this.isFavorite,
     required this.settings,
     this.pointsToday = 0,
+    this.animationKeyOverride,
     required this.onReset,
     required this.onFavorite,
     required this.onShare,
@@ -4442,6 +4631,7 @@ class _AzkarCard extends StatelessWidget {
                   isComplete: isComplete,
                   tapCount: currentCount,
                   pointsToday: pointsToday,
+                  animationKeyOverride: animationKeyOverride,
                 ),
                 if (pointsToday > 0)
                   Positioned(
@@ -5099,8 +5289,12 @@ Widget _buildIllustration({
   required bool isComplete,
   required int tapCount,
   int pointsToday = 0,
+  String? animationKeyOverride,
 }) {
-  final ill = _pickIllustration(azkarId);
+  // If the screen passed an explicit key (looked up from the new DB
+  // azkar_item_animations junction), use it. Otherwise fall back to the
+  // hardcoded ID-to-key map for legacy data not yet tagged in admin.
+  final ill = animationKeyOverride ?? _pickIllustration(azkarId);
   Widget w(
     Widget Function({
       required double progress,

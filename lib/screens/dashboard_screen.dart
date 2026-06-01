@@ -42,6 +42,7 @@ import 'project_detail_screen.dart';
 import 'orphan_detail_screen.dart';
 import '../models/orphan.dart';
 import '../services/profile_name_notifier.dart';
+import '../services/live_notification_service.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
 
@@ -284,13 +285,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _checkPendingReminder() async {
     final pending = XpService.instance.pendingPoints;
     if (pending <= 0) return;
+
+    // ── System-level scheduled notification (fires even if app is closed) ──
+    // Runs unconditionally whenever pending > 0; the service itself
+    // de-dupes via SharedPreferences so we only schedule once per day.
+    unawaited(
+      NoorLiveNotificationService.instance.scheduleValidateReminder(pending),
+    );
+
+    // ── In-app banner (only after 8 PM, once a day) ──
     final hour = DateTime.now().hour;
-    if (hour < 20) return; // Only after 8 PM
+    if (hour < 20) return;
 
     final prefs = await SharedPreferences.getInstance();
     final today = DateTime.now().toIso8601String().substring(0, 10);
     final lastReminder = prefs.getString('pending_reminder_date') ?? '';
-    if (lastReminder == today) return; // Already reminded today
+    if (lastReminder == today) return;
 
     await prefs.setString('pending_reminder_date', today);
     NotificationCenter.instance.add(
@@ -590,6 +600,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 onValidate: () async {
                   final awarded = await XpService.instance.claimValidate();
+                  // Seal succeeded — cancel any scheduled "seal before
+                  // midnight" reminder so the user doesn't get a stale
+                  // push later in the day.
+                  unawaited(
+                    NoorLiveNotificationService.instance
+                        .cancelValidateReminder(),
+                  );
                   await _loadHomeData();
                   return awarded;
                 },

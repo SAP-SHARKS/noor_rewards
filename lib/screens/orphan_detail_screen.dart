@@ -438,13 +438,13 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                         Text(
                           '${s.amount}',
                           style: GoogleFonts.outfit(
-                            fontSize: 12.5,
+                            fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: Y4.primary,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        const SabiqCoin(size: 14),
+                        const SizedBox(width: 6),
+                        const SabiqCoin(size: 22),
                       ],
                     ),
                   ],
