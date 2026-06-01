@@ -519,14 +519,19 @@ class _ProgressTabState extends State<_ProgressTab> {
                                       ? _tierIcon(info.title, size: 28)
                                       : NoorIcon.seedling(size: 28),
                                   const SizedBox(width: 8),
-                                  Text(
-                                    info != null
-                                        ? _localTierTitle(context, info.title)
-                                        : l.levelSeeker,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white70,
+                                  Flexible(
+                                    child: Text(
+                                      info != null
+                                          ? _localTierTitle(
+                                              context, info.title)
+                                          : l.levelSeeker,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white70,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],

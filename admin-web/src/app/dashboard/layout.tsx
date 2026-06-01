@@ -36,6 +36,8 @@ const ICONS: Record<string, string> = {
     "M2.25 18 9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941",
   orphans:
     "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zM21 9.75l-2.25 2.25M21 9.75l-2.25-2.25",
+  azkar:
+    "M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25",
 };
 
 const NAV_ITEMS = [
@@ -51,6 +53,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/config", label: "Raw Config", icon: "config" },
   { href: "/dashboard/analytics", label: "Analytics", icon: "analytics" },
   { href: "/dashboard/categories", label: "Azkar Categories", icon: "categories" },
+  { href: "/dashboard/azkar", label: "Azkar Library", icon: "azkar" },
   { href: "/dashboard/onboarding", label: "Onboarding Images", icon: "onboarding" },
 ];
 

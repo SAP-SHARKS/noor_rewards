@@ -8,6 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Color;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class NoorLiveNotificationService {
   NoorLiveNotificationService._();
@@ -17,6 +20,16 @@ class NoorLiveNotificationService {
   static const int _notifId = 1001; // stable ID — updates same notif
   static const String _channelId = 'noor_live_stats';
   static const String _channelName = 'Live Noor Stats';
+
+  // Validate-reminder scheduled notification (system-level, fires even
+  // when the app is closed). Separate channel + ID from the live stats
+  // notification above so they don't fight each other.
+  static const int _validateNotifId = 1002;
+  static const String _validateChannelId = 'noor_validate_reminder';
+  static const String _validateChannelName = 'Seal Reminders';
+  static const String _kLastValidateScheduledDate =
+      'noor_validate_reminder_scheduled_date';
+  bool _tzInitialized = false;
 
   // SharedPreferences keys (auto-reset at midnight)
   static const String _kAyahKey = 'noor_today_ayah';
@@ -124,6 +137,113 @@ class NoorLiveNotificationService {
     _dhikrCount += count;
     await _saveCounts();
     await _refresh();
+  }
+
+  // ── Validate reminder (system-level scheduled notification) ─────────────────
+  // Lazy-init the tz DB so we can use zonedSchedule.
+  Future<void> _ensureTimezone() async {
+    if (_tzInitialized) return;
+    try {
+      tzdata.initializeTimeZones();
+      final localName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(localName.identifier));
+      _tzInitialized = true;
+    } catch (e) {
+      // Fall back to UTC if tz init fails — the schedule still works,
+      // just not in the user's exact local time.
+      tzdata.initializeTimeZones();
+      tz.setLocalLocation(tz.UTC);
+      _tzInitialized = true;
+      debugPrint('Timezone init fell back to UTC: $e');
+    }
+  }
+
+  /// Schedules a system notification reminding the user to seal their
+  /// pending Seeds before midnight. Fires even if the app is closed.
+  /// Re-runs are idempotent for a given day — only schedules once per day.
+  Future<void> scheduleValidateReminder(int pendingSeeds) async {
+    if (kIsWeb || pendingSeeds <= 0) return;
+    await _ensureInit();
+    await _ensureTimezone();
+
+    // Only schedule once per day to avoid duplicate notifications when the
+    // dashboard reloads multiple times.
+    final prefs = await SharedPreferences.getInstance();
+    final today = _todayStr();
+    if (prefs.getString(_kLastValidateScheduledDate) == today) {
+      return;
+    }
+
+    final now = tz.TZDateTime.now(tz.local);
+    // Default target: 10 PM local. If we're already past 10 PM, schedule
+    // 15 minutes from now so the user still gets the reminder tonight.
+    tz.TZDateTime when = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      22, // 10 PM
+      0,
+    );
+    if (when.isBefore(now)) {
+      when = now.add(const Duration(minutes: 15));
+    }
+    // If 'when' is after midnight (shouldn't be but defensive), bail.
+    final midnight = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day + 1,
+      0,
+      0,
+    );
+    if (when.isAfter(midnight)) return;
+
+    final androidDetails = AndroidNotificationDetails(
+      _validateChannelId,
+      _validateChannelName,
+      channelDescription:
+          'Reminders to seal your pending Seeds before midnight.',
+      importance: Importance.high,
+      priority: Priority.high,
+      ticker: 'Seal your Seeds before midnight',
+      color: const Color(0xFFFFC83D),
+    );
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    try {
+      await _plugin.zonedSchedule(
+        id: _validateNotifId,
+        title: 'Seal your Seeds before midnight!',
+        body:
+            'You have $pendingSeeds pending Seeds. Tap Seal the Day before midnight or they expire.',
+        scheduledDate: when,
+        notificationDetails:
+            NotificationDetails(android: androidDetails, iOS: iosDetails),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+      await prefs.setString(_kLastValidateScheduledDate, today);
+      debugPrint('[NoorLive] scheduled validate reminder for $when');
+    } catch (e) {
+      debugPrint('[NoorLive] scheduleValidateReminder failed: $e');
+    }
+  }
+
+  /// Cancels the pending validate reminder. Call after a successful seal.
+  Future<void> cancelValidateReminder() async {
+    if (kIsWeb) return;
+    await _ensureInit();
+    try {
+      await _plugin.cancel(id: _validateNotifId);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_kLastValidateScheduledDate);
+    } catch (e) {
+      debugPrint('[NoorLive] cancelValidateReminder failed: $e');
+    }
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────
