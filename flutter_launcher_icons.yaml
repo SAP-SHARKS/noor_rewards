@@ -8,11 +8,13 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/images/app_icon_launcher.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
-  # Coin now fills the full foreground canvas (see tools/crop_launcher_icon.dart)
-  # so the background is only visible at the very edges where the launcher
-  # mask trims. Setting it to the coin's actual brass-gold rim colour means
-  # those edges blend invisibly — no cream / honey ring left.
-  adaptive_icon_background: "#B89241"
+  # Use the coin image as BOTH background and foreground. The background
+  # layer fills the full 108dp adaptive-icon canvas — launcher masks
+  # (circle, squircle, teardrop) trim its outer corners, but those are
+  # transparent on the coin PNG anyway. The foreground stays centred in
+  # the safe zone so the coin reads correctly at any launcher icon size.
+  # Net visual: the coin fills the icon entirely, no surrounding colour.
+  adaptive_icon_background: "assets/images/app_icon_launcher.png"
   adaptive_icon_foreground: "assets/images/app_icon_launcher.png"
   remove_alpha_ios: true
 
