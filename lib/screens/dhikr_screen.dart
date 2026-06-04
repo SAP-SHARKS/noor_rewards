@@ -21,6 +21,7 @@ import '../widgets/dhikr_exit_celebration.dart';
 import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
 import 'akhirah_balance_screen.dart';
+import 'quran_screen.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont =
@@ -117,6 +118,10 @@ class _Azkar {
   /// (e.g. Tasbih Fatima 33+33+34). Each phrase is its own count, but
   /// the overall counter still goes 0..sum(phrase.count).
   final List<_Phrase>? phrases;
+  /// Optional Quran chapter number (1-114). When non-null, the card renders
+  /// an "Open in Quran Reader" button that deep-links into QuranScreen for
+  /// rows where the actual content is a full Surah (e.g. Sleep #19/#20).
+  final int? quranSurah;
 
   const _Azkar({
     required this.id,
@@ -131,6 +136,7 @@ class _Azkar {
     this.audioUrl,
     this.sortOrder = 0,
     this.phrases,
+    this.quranSurah,
   });
 
   factory _Azkar.fromJson(Map<String, dynamic> j) => _Azkar(
@@ -149,6 +155,7 @@ class _Azkar {
     phrases: (j['phrases'] as List?)
         ?.map((e) => _Phrase.fromJson(e as Map<String, dynamic>))
         .toList(),
+    quranSurah: (j['quran_surah'] as num?)?.toInt(),
   );
 
   /// Returns which phrase is active for [tapCount] taps. Null when this
@@ -2983,17 +2990,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   );
                 }
               } catch (_) {}
-              final catId = widget.azkars[ci].category;
-              final isMorning = catId == 'morning';
-              final isEvening = catId == 'evening';
-              final List<Color> gradColors =
-                  (isMorning || isEvening)
-                      ? [
-                        Y4.cream,
-                        Y4.bg,
-                        Y4.bg,
-                      ]
-                      : [appBarColor, appBarColor, appBarColor];
+              // Use the warm cream-to-bg gradient for every category, not
+              // just morning/evening. Previously the new screenshot-imported
+              // categories (Duas before Sleep, 40 Rabbana, Ruquiya, etc.)
+              // got a flat appBarColor here, which looked plain and dark
+              // compared to morning/evening's honey wash.
+              final List<Color> gradColors = [Y4.cream, Y4.bg, Y4.bg];
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -4695,11 +4697,19 @@ class _AzkarCard extends StatelessWidget {
       if (bottomRef.isEmpty && pipedRef.isNotEmpty) bottomRef = pipedRef;
     }
 
+    // Resolve illustration up-front so we can both render it AND skip the
+    // 260px container entirely when this azkar has nothing mapped (avoids
+    // an empty/blank illustration block for the new screenshot-imported
+    // categories that don't yet have animations tagged in admin).
+    final illustrationKey =
+        animationKeyOverride ?? _pickIllustration(azkar.id);
+    final hasIllustration = illustrationKey != 'none';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // ── Illustration + pts badge overlaid at bottom-right ──
-        if (settings.showIllustration)
+        if (settings.showIllustration && hasIllustration)
           SizedBox(
             height: 260,
             child: Stack(
@@ -4930,6 +4940,41 @@ class _AzkarCard extends StatelessWidget {
                                   ? Colors.white.withValues(alpha: 0.88)
                                   : SettingsService.instance.config.dashText,
                           height: 1.65,
+                        ),
+                      ),
+                    ],
+                    // "Open in Quran Reader" button for full-Surah azkar
+                    // (Sleep #19/#20). Deep-links to the existing QuranScreen
+                    // so we don't have to hand-paste 30 verses of Qur'an.
+                    if (azkar.quranSurah != null) ...[
+                      const SizedBox(height: 18),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => QuranScreen(
+                                initialSurah: azkar.quranSurah!,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.menu_book_rounded, size: 20),
+                        label: Text(
+                          'Open Surah ${azkar.quranSurah} in Reader',
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kPrimary,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                          elevation: 0,
                         ),
                       ),
                     ],
