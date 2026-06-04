@@ -742,7 +742,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
               return GestureDetector(
                 onTap: disabled ? null : () => setState(() => _amount = p),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: disabled
                         ? Y4.track.withValues(alpha: 0.4)
@@ -755,12 +755,22 @@ class _SponsorSheetState extends State<_SponsorSheet> {
                       width: selected ? 1.5 : 1,
                     ),
                   ),
-                  child: Text(
-                    '$p',
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w700,
-                      color: disabled ? Y4.muted : Y4.ink,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Opacity(
+                        opacity: disabled ? 0.4 : 1,
+                        child: const SabiqCoin(size: 16),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '$p',
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w700,
+                          color: disabled ? Y4.muted : Y4.ink,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -771,7 +781,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
-              labelText: 'Custom amount',
+              labelText: 'Custom',
               suffixText: 'Seeds',
               filled: true, fillColor: Y4.cream,
               border: OutlineInputBorder(
@@ -782,9 +792,15 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             onChanged: (v) => setState(() => _amount = int.tryParse(v) ?? 0),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Your balance: ${widget.availablePoints} Seeds',
-            style: GoogleFonts.outfit(fontSize: 12, color: Y4.inkSoft),
+          Row(
+            children: [
+              const SabiqCoin(size: 14),
+              const SizedBox(width: 5),
+              Text(
+                'Your balance: ${widget.availablePoints} Seeds',
+                style: GoogleFonts.outfit(fontSize: 12, color: Y4.inkSoft),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -801,13 +817,29 @@ class _SponsorSheetState extends State<_SponsorSheet> {
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                _submitting ? 'Sponsoring…' : 'Confirm $_amount Seeds',
-                style: GoogleFonts.outfit(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                ),
-              ),
+              child: _submitting
+                  ? Text(
+                      'Sponsoring…',
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Confirm $_amount',
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const SabiqCoin(size: 18),
+                      ],
+                    ),
             ),
           ),
         ],

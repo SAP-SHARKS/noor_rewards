@@ -20,6 +20,7 @@ import '../widgets/sabiq_coin.dart';
 import '../widgets/quran_exit_celebration.dart';
 import '../widgets/noor_offline.dart';
 import '../theme/y4_theme.dart';
+import 'akhirah_balance_screen.dart';
 
 /// Shorthand to get the live AppConfig.
 AppConfig get _cfg => SettingsService.instance.config;
@@ -492,6 +493,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         ayahsRead: _sessionAyahsRead,
         durationSeconds: elapsed.inSeconds,
       );
+      if (!mounted) return;
+      // After the celebration popup is dismissed, surface the Akhirah Balance
+      // summary so the user sees their running spiritual balance rather than
+      // just dropping back to the dashboard.
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => AkhirahBalanceScreen(
+            sessionPoints: sessionPoints,
+            popResult: _pointsToday,
+          ),
+        ),
+        result: _pointsToday,
+      );
+      return;
     }
     if (!mounted) return;
     Navigator.pop(context, _pointsToday);

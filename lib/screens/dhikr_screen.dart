@@ -20,6 +20,7 @@ import '../widgets/noor_offline.dart';
 import '../widgets/dhikr_exit_celebration.dart';
 import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
+import 'akhirah_balance_screen.dart';
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont =
@@ -74,6 +75,32 @@ final List<_ArabicFont> _kArabicFonts = [
 ];
 
 // ── Models ────────────────────────────────────────────────────────────────────
+class _Phrase {
+  final String arabic;
+  final String transliteration;
+  final String translation;
+  final int count;
+  const _Phrase({
+    required this.arabic,
+    required this.transliteration,
+    required this.translation,
+    required this.count,
+  });
+  factory _Phrase.fromJson(Map<String, dynamic> j) => _Phrase(
+        arabic: j['arabic'] as String? ?? '',
+        transliteration: j['transliteration'] as String? ?? '',
+        translation: j['translation'] as String? ?? '',
+        count: (j['count'] as num?)?.toInt() ?? 1,
+      );
+}
+
+class _PhraseSlice {
+  final _Phrase phrase;
+  final int index; // 0-based phrase index
+  final int countInPhrase; // taps completed within this phrase
+  const _PhraseSlice(this.phrase, this.index, this.countInPhrase);
+}
+
 class _Azkar {
   final String id;
   final String arabic;
@@ -86,6 +113,10 @@ class _Azkar {
   final String hadithFull;
   final String? audioUrl; // For online MP3 playback
   final int sortOrder;
+  /// Optional segmented-counter structure. Non-null for compound dhikr
+  /// (e.g. Tasbih Fatima 33+33+34). Each phrase is its own count, but
+  /// the overall counter still goes 0..sum(phrase.count).
+  final List<_Phrase>? phrases;
 
   const _Azkar({
     required this.id,
@@ -99,6 +130,7 @@ class _Azkar {
     this.hadithFull = '',
     this.audioUrl,
     this.sortOrder = 0,
+    this.phrases,
   });
 
   factory _Azkar.fromJson(Map<String, dynamic> j) => _Azkar(
@@ -114,7 +146,27 @@ class _Azkar {
     hadithFull: j['hadith_full'] as String? ?? '',
     audioUrl: j['audio_url'] as String?,
     sortOrder: j['sort_order'] as int? ?? 0,
+    phrases: (j['phrases'] as List?)
+        ?.map((e) => _Phrase.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
+
+  /// Returns which phrase is active for [tapCount] taps. Null when this
+  /// azkar isn't segmented.
+  _PhraseSlice? phraseAt(int tapCount) {
+    final ps = phrases;
+    if (ps == null || ps.isEmpty) return null;
+    int remaining = tapCount.clamp(0, 1 << 30);
+    for (int i = 0; i < ps.length; i++) {
+      final p = ps[i];
+      if (remaining < p.count) {
+        return _PhraseSlice(p, i, remaining);
+      }
+      remaining -= p.count;
+    }
+    // Tap count is past the last segment — pin to final phrase, full count.
+    return _PhraseSlice(ps.last, ps.length - 1, ps.last.count);
+  }
 }
 
 class _Category {
@@ -914,7 +966,19 @@ class _DhikrScreenState extends State<DhikrScreen> {
       streakDays: streakDays,
     );
     if (!mounted) return;
-    Navigator.pop(context, _pointsToday);
+    // After the Alhamdulillah popup is dismissed, replace the dhikr screen
+    // with the Akhirah Balance summary. pushReplacement passes `_pointsToday`
+    // back to whoever pushed this dhikr screen (e.g. the dashboard refresh
+    // path), preserving the prior pop contract.
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => AkhirahBalanceScreen(
+          sessionPoints: _pointsToday,
+          popResult: _pointsToday,
+        ),
+      ),
+      result: _pointsToday,
+    );
   }
 
   Future<void> _completeDhikr(String dhikrId, int target) async {
@@ -2808,6 +2872,25 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     }
   }
 
+  // Throttle so rapid-tap completions don't stack toasts.
+  DateTime _lastToastAt = DateTime.fromMillisecondsSinceEpoch(0);
+  void _showRewardSecuredToast() {
+    final now = DateTime.now();
+    if (now.difference(_lastToastAt).inMilliseconds < 600) return;
+    _lastToastAt = now;
+    final overlay = Overlay.of(context, rootOverlay: true);
+    HapticFeedback.mediumImpact();
+    late OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => _RewardSecuredToast(
+        onDone: () {
+          entry.remove();
+        },
+      ),
+    );
+    overlay.insert(entry);
+  }
+
   void _tryComplete(_Azkar azkar, int tapTarget, {bool isSwipe = false}) {
     if (!isSwipe && _showFirstTimeHint) _dismissHint();
     final current = widget.parentState._counts[azkar.id] ?? 0;
@@ -2819,6 +2902,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     if (justCompleted) {
       _pagesCompletedInSession++;
       widget.parentState._completeDhikr(azkar.id, tapTarget);
+      _showRewardSecuredToast();
 
       if (!isSwipe) {
         final currentGlobalIndex = widget.azkars.indexOf(azkar);
@@ -4737,37 +4821,93 @@ class _AzkarCard extends StatelessWidget {
               const SizedBox(height: 16),
 
               // ── Main Text Content ──
+              // For segmented (compound) dhikr, swap arabic/translit/translation
+              // with the current phrase so the user always sees what they're
+                // reciting *right now*. The overall counter still drives
+                // completion (sum of phrase counts), but the display follows
+                // whichever phrase the current tap count falls into.
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
+                child: Builder(builder: (_) {
+                  final slice = azkar.phraseAt(currentCount);
+                  final displayArabic = slice?.phrase.arabic ?? azkar.arabic;
+                  final displayTranslit =
+                      slice?.phrase.transliteration ?? azkar.transliteration;
+                  final displayTranslation =
+                      slice?.phrase.translation ?? azkar.translation;
+                  return Column(
                   children: [
-                    _buildStyledArabic(
-                      azkar.arabic,
-                      _kArabicFonts[settings.arabicFontIdx.clamp(
-                            0,
-                            _kArabicFonts.length - 1,
-                          )]
-                          .style(
-                            settings.arabicFontSize,
-                            kText,
-                            2.2,
-                            FontWeight.w700,
+                    if (slice != null) ...[
+                      // "Phrase 2 of 3 · 12/33" badge so the user knows
+                      // which segment they're on and how many taps remain.
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: kPrimary.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                              color: kPrimary.withValues(alpha: 0.35),
+                              width: 1),
+                        ),
+                        child: Text(
+                          'Phrase ${slice.index + 1} of ${azkar.phrases!.length}  ·  ${slice.countInPhrase}/${slice.phrase.count}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: kPrimary,
                           ),
-                      isDark
-                          ? const Color(0xFFFFC83D)
-                          : const Color(0xFFFFC83D),
-                      azkarId: azkar.id,
-                      fontName:
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 320),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, anim) => FadeTransition(
+                        opacity: anim,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.08),
+                            end: Offset.zero,
+                          ).animate(anim),
+                          child: child,
+                        ),
+                      ),
+                      child: KeyedSubtree(
+                        // Key on phrase index so AnimatedSwitcher fires only
+                        // on phrase boundary crossings, not every tap.
+                        key: ValueKey<int>(slice?.index ?? -1),
+                        child: _buildStyledArabic(
+                          displayArabic,
                           _kArabicFonts[settings.arabicFontIdx.clamp(
                                 0,
                                 _kArabicFonts.length - 1,
                               )]
-                              .name,
+                              .style(
+                                settings.arabicFontSize,
+                                kText,
+                                2.2,
+                                FontWeight.w700,
+                              ),
+                          isDark
+                              ? const Color(0xFFFFC83D)
+                              : const Color(0xFFFFC83D),
+                          azkarId: azkar.id,
+                          fontName:
+                              _kArabicFonts[settings.arabicFontIdx.clamp(
+                                    0,
+                                    _kArabicFonts.length - 1,
+                                  )]
+                                  .name,
+                        ),
+                      ),
                     ),
                     if (settings.showTransliteration) ...[
                       const SizedBox(height: 14),
                       Text(
-                        azkar.transliteration,
+                        displayTranslit,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: settings.translationFontSize,
@@ -4780,7 +4920,7 @@ class _AzkarCard extends StatelessWidget {
                     if (settings.showTranslation) ...[
                       const SizedBox(height: 6),
                       Text(
-                        azkar.translation,
+                        displayTranslation,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: settings.translationFontSize,
@@ -4794,7 +4934,8 @@ class _AzkarCard extends StatelessWidget {
                       ),
                     ],
                   ],
-                ),
+                );
+                }),
               ),
 
               const SizedBox(height: 20),
@@ -19658,28 +19799,34 @@ class _BenefitTextIllustration extends StatefulWidget {
 
 class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
     with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late Animation<double> _fade;
-  late Animation<double> _scale;
+  // One-shot completion celebration: drives a soft glow halo and a quick
+  // sparkle ring around the text card the moment `isComplete` flips true.
+  // Plays once (~900 ms), zero entrance delay — the text itself is always
+  // fully visible from frame 1 so users never see a blurred/hidden state.
+  late AnimationController _celebrate;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
+    _celebrate = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 900),
+      value: widget.isComplete ? 1.0 : 0.0,
     );
-    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeIn);
-    _scale = Tween<double>(
-      begin: 0.92,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack));
-    _ctrl.forward();
+    if (widget.isComplete) _celebrate.forward(from: 0);
+  }
+
+  @override
+  void didUpdateWidget(covariant _BenefitTextIllustration old) {
+    super.didUpdateWidget(old);
+    if (!old.isComplete && widget.isComplete) {
+      _celebrate.forward(from: 0);
+    }
   }
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _celebrate.dispose();
     super.dispose();
   }
 
@@ -19695,17 +19842,31 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
     final accent =
         widget.isComplete ? const Color(0xFFFFC83D) : widget.accentColor;
 
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (context, _) {
-        return Container(
-          decoration: BoxDecoration(color: bg),
-          child: Center(
-            child: Opacity(
-              opacity: _fade.value,
-              child: Transform.scale(
-                scale: _scale.value,
-                child: Padding(
+    return Container(
+      decoration: BoxDecoration(color: bg),
+      child: Center(
+        child: AnimatedBuilder(
+          animation: _celebrate,
+          builder: (context, _) {
+            final glow = Curves.easeOut.transform(_celebrate.value);
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                // Sparkle ring — appears at completion only, fades out fast.
+                if (widget.isComplete)
+                  IgnorePointer(
+                    child: SizedBox(
+                      width: 320,
+                      height: 220,
+                      child: CustomPaint(
+                        painter: _SparkleRingPainter(
+                          progress: glow,
+                          color: accent,
+                        ),
+                      ),
+                    ),
+                  ),
+                Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 16,
@@ -19713,13 +19874,24 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Decorative top line
+                      // Decorative top line — pulses honey on completion.
                       Container(
                         width: 40,
                         height: 3,
                         decoration: BoxDecoration(
                           color: accent.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(2),
+                          boxShadow: widget.isComplete
+                              ? [
+                                  BoxShadow(
+                                    color: accent.withValues(
+                                      alpha: 0.55 * (1 - glow),
+                                    ),
+                                    blurRadius: 14 * (1 - glow * 0.6),
+                                    spreadRadius: 2,
+                                  ),
+                                ]
+                              : null,
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -19735,8 +19907,13 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
                         ),
                       ),
                       const SizedBox(height: 10),
-                      // Benefit text
-                      if (widget.isComplete || widget.highlightPhrase == null || !widget.benefitText.contains(widget.highlightPhrase!))
+                      // Benefit text — always rendered at full opacity. On
+                      // completion, a soft text-shadow glow blooms then
+                      // settles, no swap delay.
+                      if (widget.isComplete ||
+                          widget.highlightPhrase == null ||
+                          !widget.benefitText
+                              .contains(widget.highlightPhrase!))
                         Text(
                           widget.isComplete
                               ? 'MashaAllah! Reward Secured'
@@ -19748,6 +19925,16 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
                             color: textColor,
                             height: 1.35,
                             letterSpacing: -0.3,
+                            shadows: widget.isComplete
+                                ? [
+                                    Shadow(
+                                      color: accent.withValues(
+                                        alpha: 0.65 * (1 - glow * 0.7),
+                                      ),
+                                      blurRadius: 18 * (1 - glow * 0.5),
+                                    ),
+                                  ]
+                                : null,
                           ),
                         )
                       else
@@ -19755,7 +19942,8 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
                           final phrase = widget.highlightPhrase!;
                           final idx = widget.benefitText.indexOf(phrase);
                           final before = widget.benefitText.substring(0, idx);
-                          final after = widget.benefitText.substring(idx + phrase.length);
+                          final after =
+                              widget.benefitText.substring(idx + phrase.length);
                           final baseStyle = GoogleFonts.lora(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
@@ -19802,18 +19990,61 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
                         decoration: BoxDecoration(
                           color: accent.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(2),
+                          boxShadow: widget.isComplete
+                              ? [
+                                  BoxShadow(
+                                    color: accent.withValues(
+                                      alpha: 0.55 * (1 - glow),
+                                    ),
+                                    blurRadius: 14 * (1 - glow * 0.6),
+                                    spreadRadius: 2,
+                                  ),
+                                ]
+                              : null,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
-        );
-      },
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
+}
+
+// Quick sparkle ring drawn around the benefit text on completion.
+// 10 tiny dots expand outward from the center and fade in ~900 ms.
+// Painted once per completion — no continuous animation cost.
+class _SparkleRingPainter extends CustomPainter {
+  final double progress; // 0..1
+  final Color color;
+  _SparkleRingPainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0 || progress >= 1) return;
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final baseR = (size.shortestSide / 2) * 0.55;
+    final r = baseR + 32 * progress;
+    final alpha = (1 - progress).clamp(0.0, 1.0);
+    final paint = Paint()..color = color.withValues(alpha: alpha);
+    const count = 10;
+    for (int i = 0; i < count; i++) {
+      final angle = (i / count) * 2 * 3.14159;
+      final px = cx + r * 1.4 * math.cos(angle);
+      final py = cy + r * 0.95 * math.sin(angle);
+      final dotR = (3 - 1.5 * progress).clamp(0.5, 3.0);
+      canvas.drawCircle(Offset(px, py), dotR.toDouble(), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SparkleRingPainter old) =>
+      old.progress != progress || old.color != color;
 }
 
 // =============================================================================
@@ -25196,6 +25427,140 @@ class _DhikrCounterButton extends StatelessWidget {
                   ),
                 ],
               ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reward Secured Toast
+//
+// Floating "MashaAllah! Reward Secured" pill that pops in at the top of the
+// screen when any zikar is marked done. Lives on the root Overlay so it
+// persists across the auto-advance page swipe — the user always sees the
+// completion acknowledgment regardless of how short the admin's
+// advance-delay is set. Total visible time ~1.5 s, fully self-removing.
+// ─────────────────────────────────────────────────────────────────────────────
+class _RewardSecuredToast extends StatefulWidget {
+  final VoidCallback onDone;
+  const _RewardSecuredToast({required this.onDone});
+
+  @override
+  State<_RewardSecuredToast> createState() => _RewardSecuredToastState();
+}
+
+class _RewardSecuredToastState extends State<_RewardSecuredToast>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _slide;
+  late final Animation<double> _fade;
+  late final Animation<double> _scale;
+  Timer? _outTimer;
+  bool _exiting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+    );
+    _slide = Tween<double>(begin: -28, end: 0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
+    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _scale = Tween<double>(begin: 0.94, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack),
+    );
+    _ctrl.forward();
+    // Hold for 950 ms after entry completes, then play exit and remove.
+    _outTimer = Timer(const Duration(milliseconds: 1100), _exit);
+  }
+
+  void _exit() async {
+    if (_exiting || !mounted) return;
+    _exiting = true;
+    await _ctrl.reverse();
+    if (!mounted) return;
+    widget.onDone();
+  }
+
+  @override
+  void dispose() {
+    _outTimer?.cancel();
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    return Positioned(
+      top: media.padding.top + 14,
+      left: 0,
+      right: 0,
+      child: SafeArea(
+        bottom: false,
+        child: AnimatedBuilder(
+          animation: _ctrl,
+          builder: (_, __) {
+            return Transform.translate(
+              offset: Offset(0, _slide.value),
+              child: Opacity(
+                opacity: _fade.value,
+                child: Transform.scale(
+                  scale: _scale.value,
+                  child: Center(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Y4.honey, Y4.honeyDeep],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(99),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Y4.honeyDeep.withValues(alpha: 0.38),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'MashaAllah! Reward Secured',
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
