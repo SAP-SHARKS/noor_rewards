@@ -92,7 +92,10 @@ foreach ($r in $rows) {
   $id = "{0}_{1:D3}" -f $cat.idPrefix, $seq
   $count = Parse-Count $r.recommended_count
 
-  $insertLines += "  ($(Esc-Sql $id), $(Esc-Sql $r.subtitle), $(Esc-Sql $r.arabic), $(Esc-Sql $r.transliteration), $(Esc-Sql $r.translation), $($count.n), $(Esc-Sql $count.label), $(Esc-Sql $cat.id), $(Esc-Sql $r.benefit), $(Esc-Sql $r.reference), $seq, $(Esc-Sql $r.benefit))"
+  # benefit -> reward only. hadith_full stays NULL so the detail card doesn't
+  # render the same paragraph twice (the card prints reward AND hadith_full
+  # separately when both are non-empty).
+  $insertLines += "  ($(Esc-Sql $id), $(Esc-Sql $r.subtitle), $(Esc-Sql $r.arabic), $(Esc-Sql $r.transliteration), $(Esc-Sql $r.translation), $($count.n), $(Esc-Sql $count.label), $(Esc-Sql $cat.id), $(Esc-Sql $r.benefit), $(Esc-Sql $r.reference), $seq, NULL)"
   $junctionLines += "  ($(Esc-Sql $id), $(Esc-Sql $cat.id), $seq)"
 }
 
