@@ -77,8 +77,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       },
       {'title': 'Evening', 'id': 'evening', 'color': Y4.amberY, 'icon': 'ðŸŒ‡'},
       {
-        'title': AppLocalizations.of(context)?.beforeSleepCat ?? 'Before Sleep',
-        'id': 'sleeping',
+        'title': 'Duas before Sleep',
+        'id': 'duas_before_sleep',
         'color': Y4.primaryDeep,
         'icon': 'ðŸŒŒ',
       },
@@ -89,8 +89,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'icon': 'ðŸŒ‘',
       },
       {
-        'title': AppLocalizations.of(context)?.salah ?? 'Salah',
-        'id': 'post_prayer',
+        'title': 'Duas after Salah',
+        'id': 'duas_after_salah',
         'color': Y4.primary,
         'icon': 'ðŸ•Œ',
       },
@@ -107,8 +107,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'icon': 'ðŸ“–',
       },
       {
-        'title': AppLocalizations.of(context)?.quranicDuas ?? 'Quranic Duas',
-        'id': 'quranic',
+        'title': '40 Rabbana Duas',
+        'id': 'rabbana_40',
         'color': Y4.primaryDeep,
         'icon': 'ðŸ“,',
       },
@@ -117,6 +117,18 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'id': 'istighfar',
         'color': Y4.soil,
         'icon': 'ðŸ“¿',
+      },
+      {
+        'title': 'Daily Duas',
+        'id': 'daily_duas',
+        'color': Y4.honeyDeep,
+        'icon': '✨',
+      },
+      {
+        'title': 'Remembrance of Allah',
+        'id': 'remembrance_of_allah',
+        'color': Y4.amberY,
+        'icon': '🤲',
       },
       {
         'title':
@@ -246,6 +258,12 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'id': 'gatherings',
         'color': altHoney,
         'icon': 'ðŸ‘¥',
+      },
+      {
+        'title': 'Ruquiya',
+        'id': 'ruquiya',
+        'color': altPrimaryD,
+        'icon': '🛡️',
       },
       {
         'title': AppLocalizations.of(context)?.hajjAndUmrah ?? 'Hajj & Umrah',
