@@ -482,9 +482,29 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     Color baseColor, {
     bool isStacked = false,
   }) {
-    String? customImagePath = AssetHelper.getCustomImagePath(id);
+    // Try the ID first (e.g. 'morning' -> morning_header.png via legacy
+    // map), then fall back to the label (e.g. 'Duas before Sleep' ->
+    // 'Duas before Sleep.png' which the user added with spaces in the
+    // filename, matched via the lowercase query in AssetHelper).
+    String? customImagePath =
+        AssetHelper.getCustomImagePath(id) ??
+        AssetHelper.getCustomImagePath(title);
     bool isCustomCard = customImagePath != null;
     Color? customTextColor;
+
+    // New screenshot-imported categories that don't have a PNG yet fall
+    // through to a clean white card with emoji watermark, instead of the
+    // dark colored gradient. Drops out automatically once the user adds
+    // a matching image into assets/images/.
+    const _whiteIds = {
+      'duas_before_sleep',
+      'duas_after_salah',
+      'daily_duas',
+      'remembrance_of_allah',
+      'rabbana_40',
+      'ruquiya',
+    };
+    final bool isWhiteCard = !isCustomCard && _whiteIds.contains(id);
 
     if (isCustomCard) {
       if (id == 'evening') {
@@ -512,9 +532,9 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: isCustomCard ? Colors.white : null,
+          color: (isCustomCard || isWhiteCard) ? Colors.white : null,
           gradient:
-              isCustomCard
+              (isCustomCard || isWhiteCard)
                   ? null
                   : LinearGradient(
                     colors: [baseColor, baseColor.withValues(alpha: 0.6)],
@@ -523,7 +543,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   ),
           boxShadow: [
             BoxShadow(
-              color: baseColor.withValues(alpha: 0.3),
+              color: baseColor.withValues(alpha: isWhiteCard ? 0.18 : 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -550,6 +570,21 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                     ),
                   ),
                 )
+              else if (isWhiteCard)
+                // Soft emoji watermark in the tile's accent color so the
+                // white card still has visual identity without an image.
+                Positioned(
+                  right: -10,
+                  top: -10,
+                  child: Opacity(
+                    opacity: 0.85,
+                    child: SizedBox(
+                      width: emojiSize * 0.95,
+                      height: emojiSize * 0.95,
+                      child: NoorIcon.fromEmoji(emoji, size: emojiSize * 0.95),
+                    ),
+                  ),
+                )
               else
                 Positioned(
                   right: -20,
@@ -564,20 +599,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   ),
                 ),
               // Glassmorphic protection mask (only keep it for non-image cards, or make it subtle)
-              if (!isCustomCard)
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.black.withValues(alpha: 0.7),
-                        Colors.transparent,
-                      ],
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                    ),
-                  ),
-                )
-              else
+              if (isCustomCard)
                 // Ensure the text has a solid readable white background area that fades into the image
                 Positioned.fill(
                   child: Align(
@@ -597,6 +619,19 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                       ),
                     ),
                   ),
+                )
+              else if (!isWhiteCard)
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withValues(alpha: 0.7),
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                    ),
+                  ),
                 ),
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -609,7 +644,9 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                       style: GoogleFonts.outfit(
                         fontSize: titleSize,
                         fontWeight: FontWeight.w900,
-                        color: isCustomCard ? customTextColor : Colors.white,
+                        color: isCustomCard
+                            ? customTextColor
+                            : (isWhiteCard ? Y4.ink : Colors.white),
                         height: 1.1,
                         letterSpacing: -0.5,
                       ),
@@ -631,6 +668,24 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     String emoji,
     Color baseColor,
   ) {
+    // Mirror _buildGradientCard's image-resolution + white-card logic so
+    // mini-tiles in "Other Categories" can also pick up user-added PNG
+    // headers (e.g. assets/images/Ruquiya.png) and fall back to a white
+    // emoji card when no image exists.
+    final String? customImagePath =
+        AssetHelper.getCustomImagePath(id) ??
+        AssetHelper.getCustomImagePath(title);
+    final bool isCustomCard = customImagePath != null;
+    const _whiteIds = {
+      'duas_before_sleep',
+      'duas_after_salah',
+      'daily_duas',
+      'remembrance_of_allah',
+      'rabbana_40',
+      'ruquiya',
+    };
+    final bool isWhiteCard = !isCustomCard && _whiteIds.contains(id);
+
     return GestureDetector(
       onTap:
           () => Navigator.of(context, rootNavigator: true).push(
@@ -639,14 +694,17 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            colors: [baseColor, baseColor.withValues(alpha: 0.6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: (isCustomCard || isWhiteCard) ? Colors.white : null,
+          gradient: (isCustomCard || isWhiteCard)
+              ? null
+              : LinearGradient(
+                  colors: [baseColor, baseColor.withValues(alpha: 0.6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
           boxShadow: [
             BoxShadow(
-              color: baseColor.withValues(alpha: 0.2),
+              color: baseColor.withValues(alpha: isWhiteCard ? 0.15 : 0.2),
               blurRadius: 10,
               offset: const Offset(0, 6),
             ),
@@ -656,31 +714,47 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
-              Positioned(
-                right: -10,
-                bottom: -10,
-                child: Opacity(
-                  opacity: 0.6,
-                  child: SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: NoorIcon.fromEmoji(emoji, size: 60),
+              if (isCustomCard)
+                Positioned.fill(
+                  bottom: 24,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Image.asset(
+                      customImagePath,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                )
+              else
+                Positioned(
+                  right: isWhiteCard ? -6 : -10,
+                  top: isWhiteCard ? -6 : null,
+                  bottom: isWhiteCard ? null : -10,
+                  child: Opacity(
+                    opacity: isWhiteCard ? 0.85 : 0.6,
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: NoorIcon.fromEmoji(emoji, size: 60),
+                    ),
                   ),
                 ),
-              ),
-              // Glassmorphic protection mask
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withValues(alpha: 0.8),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
+              // Glassmorphic protection mask — only for colored gradient
+              // cards. White / image cards don't need a dark overlay.
+              if (!isWhiteCard && !isCustomCard)
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withValues(alpha: 0.8),
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
                   ),
                 ),
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -693,7 +767,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: (isWhiteCard || isCustomCard) ? Y4.ink : Colors.white,
                       height: 1.1,
                       letterSpacing: -0.3,
                     ),
