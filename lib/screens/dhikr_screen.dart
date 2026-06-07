@@ -4748,9 +4748,13 @@ class _AzkarCard extends StatelessWidget {
         return;
       }
 
-      // 2. Check for known Hadith keywords
+      // 2. Check for known Hadith keywords — REQUIRES a digit after the
+      // collection name (e.g. "Sahih Muslim 591", "Abu Dawud 5074") so the
+      // matcher doesn't mis-fire on English nouns like "Muslim" or "Quran"
+      // when they appear mid-narration (which was clipping benefit text at
+      // "…as a Muslim);" and similar).
       final keywordMatch = RegExp(
-        r'(?:[-,\.,\s]+|^)((?:Sahih\s)?(?:Muslim|Bukhari|Abu Dawud|Tirmidhi|Ibn Majah|Nasai|Ahmad|Quran|Surah).*)$',
+        r'(?:[-,\.,\s]+|^)((?:Sahih\s)?(?:Muslim|Bukhari|Abu Dawud|Tirmidhi|Ibn Majah|Nasai|Ahmad|Quran|Surah)\s+\d.*)$',
         caseSensitive: false,
       ).firstMatch(source);
       if (keywordMatch != null) {
@@ -6388,6 +6392,405 @@ Widget _buildIllustration({
         subtitle: 'Sunan Ibn Majah 925',
         completedSubtitle: 'Asked of Him after the dawn',
         accentColor: const Color(0xFFD89A1E), // honey deep
+      ),
+    ),
+    // ── Rabbana 40 — text-based benefit cards for duas without a strong
+    // Morning/Evening thematic match. Each summarises the dua's context
+    // from the data in `azkar_items.reward` and cites the Qur'an verse.
+    'benefit_rabbana_001' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Asking Allah to accept the good you have done — as Ibrahim asked after building the Kaaba',
+        highlightPhrase: 'accept the good',
+        subtitle: 'Surah Al-Baqarah 2:127',
+        completedSubtitle: 'The dua of the builders of His House',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_rabbana_002' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Affirm your Islam and ask for the success of the entire Muslim Ummah',
+        highlightPhrase: 'entire Muslim Ummah',
+        subtitle: 'Surah Al-Baqarah 2:128',
+        completedSubtitle: 'Standing with the Ummah of Muhammad ﷺ',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_rabbana_006' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Asking Allah for trials we can bear — not to be tested beyond our capacity',
+        highlightPhrase: 'trials we can bear',
+        subtitle: 'Surah Al-Baqarah 2:286',
+        completedSubtitle: 'His mercy does not burden a soul beyond what it can carry',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_rabbana_008' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Asking Allah\'s mercy and to be made among the rightly guided',
+        highlightPhrase: 'rightly guided',
+        subtitle: 'Surah Aali Imran 3:8',
+        completedSubtitle: 'Guidance is the greatest of His gifts',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_rabbana_009' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Affirming your belief in the Day Allah will gather all mankind',
+        highlightPhrase: 'gather all mankind',
+        subtitle: 'Surah Aali Imran 3:9',
+        completedSubtitle: 'His promise will not fail',
+        accentColor: const Color(0xFF475569),
+      ),
+    ),
+    'benefit_rabbana_011' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Asking to be written among the witnesses to the truth',
+        highlightPhrase: 'witnesses to the truth',
+        subtitle: 'Surah Aali Imran 3:53',
+        completedSubtitle: 'Among those who upheld His message',
+        accentColor: const Color(0xFF7C3AED),
+      ),
+    ),
+    'benefit_rabbana_014' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Reflect on where you are going — knowing the fate of the wrongdoers',
+        highlightPhrase: 'fate of the wrongdoers',
+        subtitle: 'Surah Aali Imran 3:191',
+        completedSubtitle: 'Awakened by reflection on the Hereafter',
+        accentColor: const Color(0xFFE8A84A),
+      ),
+    ),
+    'benefit_rabbana_015' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'We heard the caller and we believed — affirming submission to His message',
+        highlightPhrase: 'we believed',
+        subtitle: 'Surah Aali Imran 3:193',
+        completedSubtitle: 'Answered His call with surrender',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_rabbana_017' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Asking not to be disgraced on the Day Allah fulfils His promise',
+        highlightPhrase: 'not to be disgraced',
+        subtitle: 'Surah Aali Imran 3:194',
+        completedSubtitle: 'Walking with honour toward His promise',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_rabbana_018' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Verbally affirming your belief in the message of Muhammad ﷺ',
+        highlightPhrase: 'message of Muhammad',
+        subtitle: 'Surah Al-Maidah 5:83',
+        completedSubtitle: 'Witness to His truth',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_rabbana_022' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'The dua of those who refuse to return to falsehood after Allah saves them',
+        highlightPhrase: 'refuse to return to falsehood',
+        subtitle: 'Surah Al-A\'raf 7:89',
+        completedSubtitle: 'Standing firm in His path',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_rabbana_026' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Make me and my descendants among those who establish prayer — Ibrahim\'s dua',
+        highlightPhrase: 'establish prayer',
+        subtitle: 'Surah Ibrahim 14:40',
+        completedSubtitle: 'His dua extended through your generations',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_rabbana_028' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'The dua of the young men who fled to the Cave seeking His mercy and guidance',
+        highlightPhrase: 'mercy and guidance',
+        subtitle: 'Surah Al-Kahf 18:10',
+        completedSubtitle: 'Refuge of the righteous when the world is dark',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_rabbana_029' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Allah said: "Fear not, I am with you, I hear and I see" — the dua before facing Firawn',
+        highlightPhrase: 'I am with you',
+        subtitle: 'Surah Taha 20:46',
+        completedSubtitle: 'Standing in faith despite fear',
+        accentColor: const Color(0xFF7C3AED),
+      ),
+    ),
+    'benefit_rabbana_030' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Calling upon Allah by His attribute Ar-Rahim — the Most Merciful',
+        highlightPhrase: 'Most Merciful',
+        subtitle: 'Surah Al-Mu\'minun 23:109',
+        completedSubtitle: 'Embraced by His infinite mercy',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_rabbana_032' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Granting coolness of the eyes through righteous spouses and children — to be a leader for the godfearing',
+        highlightPhrase: 'coolness of the eyes',
+        subtitle: 'Surah Al-Furqan 25:74',
+        completedSubtitle: 'Your family the light of your soul',
+        accentColor: const Color(0xFFE8A84A),
+      ),
+    ),
+    'benefit_rabbana_033' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'The praise of the believers in the Garden of Eden — He is Forgiving, Appreciative',
+        highlightPhrase: 'Forgiving, Appreciative',
+        subtitle: 'Surah Fatir 35:34',
+        completedSubtitle: 'Praise befitting eternal gardens',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_rabbana_035' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Uniting believers with their righteous descendants in Jannah, by His mercy',
+        highlightPhrase: 'righteous descendants',
+        subtitle: 'Surah Ghafir 40:8',
+        completedSubtitle: 'Family reunited under His mercy',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_rabbana_036' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Asking Allah to remove resentment from our hearts toward our fellow believers',
+        highlightPhrase: 'remove resentment',
+        subtitle: 'Surah Al-Hashr 59:10',
+        completedSubtitle: 'Heart cleansed of envy',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_rabbana_037' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Praising Allah by His attributes — the Compassionate, the Merciful',
+        highlightPhrase: 'the Compassionate, the Merciful',
+        subtitle: 'Surah Al-Hashr 59:10',
+        completedSubtitle: 'Calling Him by His most beautiful names',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_rabbana_039' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Ibrahim\'s dua: make the believers victorious, do not make us objects of torment',
+        highlightPhrase: 'victorious',
+        subtitle: 'Surah Al-Mumtahanah 60:5',
+        completedSubtitle: 'Standing on the side of His truth',
+        accentColor: const Color(0xFFE8A84A),
+      ),
+    ),
+    'benefit_rabbana_040' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Perfect our light on the Day of Judgment and forgive us — we will walk by Your light',
+        highlightPhrase: 'Perfect our light',
+        subtitle: 'Surah At-Tahrim 66:8',
+        completedSubtitle: 'Light illuminating from your right hand',
+        accentColor: const Color(0xFFD89A1E),
       ),
     ),
     'doors' => w(
