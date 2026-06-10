@@ -54,6 +54,35 @@ workflows:
       - name: Fetch the latest Flutter packages
         script: |
           flutter pub get
+      - name: Auto-bump build number from App Store Connect
+        # Looks up the latest build number that exists on App Store Connect
+        # (across TestFlight + App Store), adds 1, and writes it back into
+        # pubspec.yaml's `version: X.Y.Z+N` field. This prevents the
+        # "bundle version must be higher than the previously uploaded
+        # version" 409 we hit on build #9.
+        #
+        # The marketing version (X.Y.Z) is preserved as-is — only N changes.
+        # Bump X.Y.Z manually in pubspec.yaml when you ship a new release.
+        #
+        # Uses the same App Store Connect integration that's already wired
+        # up for code signing, so no extra secrets are needed.
+        script: |
+          set -e
+          BUNDLE_ID="com.sabiq.noorrewards"
+
+          APP_ID=$(app-store-connect apps list \
+            --bundle-id-identifier "$BUNDLE_ID" \
+            --strict-match-identifier \
+            --json | python3 -c "import sys, json; d = json.load(sys.stdin); print(d[0]['id']) if d else sys.exit('No app found for bundle $BUNDLE_ID')")
+
+          LATEST=$(app-store-connect get-latest-build-number "$APP_ID" 2>/dev/null || echo "0")
+          NEW=$((LATEST + 1))
+
+          echo "App Store Connect latest build: $LATEST"
+          echo "Bumping pubspec.yaml to build: $NEW"
+
+          sed -i '' -E "s/^(version: [0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1+$NEW/" pubspec.yaml
+          grep '^version:' pubspec.yaml
       - name: Install CocoaPods dependencies
         # With SPM disabled, `flutter pub get` (above) auto-generates
         # ios/Podfile + ios/Flutter/Generated.xcconfig referencing every
