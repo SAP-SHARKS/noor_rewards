@@ -2032,8 +2032,18 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           .get(Uri.parse(cdnUrl))
           .timeout(const Duration(seconds: 15));
       if (res.statusCode == 200) {
-        final js = jsonDecode(res.body);
-        final ayahs = js['ayahs'] as List?;
+        final decoded = jsonDecode(res.body);
+        // CDN response shape is a top-level JSON array of
+        //   { "text": "...", "ayah": N, "surah": N }
+        // entries. Older code assumed { "ayahs": [...] } which would
+        // throw at runtime on any modern response and leave the user
+        // with an empty tafsir sheet (the outer catch swallowed the
+        // NoSuchMethodError). Accept both shapes defensively.
+        final List? ayahs = decoded is List
+            ? decoded
+            : (decoded is Map<String, dynamic>
+                ? decoded['ayahs'] as List?
+                : null);
 
         // Cache the ENTIRE SURAH tafsirs to make adjacent ayahs instant
         if (ayahs != null) {

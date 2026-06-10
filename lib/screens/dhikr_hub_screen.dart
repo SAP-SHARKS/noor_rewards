@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dhikr_screen.dart';
+import 'akhirah_balance_screen.dart';
 import '../utils/asset_helper.dart';
 import '../widgets/noor_icons.dart';
+import '../widgets/dhikr_exit_celebration.dart';
 import '../services/settings_service.dart';
+import '../services/streak_service.dart';
 import '../models/app_config.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/noor_offline.dart';
@@ -23,10 +27,110 @@ class DhikrHubScreen extends StatefulWidget {
 class _DhikrHubScreenState extends State<DhikrHubScreen> {
   Set<String>? _hiddenIds;
 
+  // ── Session accumulators ───────────────────────────────────────────────
+  // Each category visit (DhikrScreen) pops back with the points it earned
+  // and the number of zikr sets completed in that visit. We sum across
+  // visits so the celebration on hub exit reflects the WHOLE Dua & Zikar
+  // session, not the last category alone.
+  int _sessionPoints = 0;
+  int _sessionSets = 0;
+  int _sessionSeconds = 0;
+  bool _isExitingHub = false;
+
   @override
   void initState() {
     super.initState();
     _loadVisibility();
+  }
+
+  Future<void> _openCategory(String id) async {
+    final result = await Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id)),
+    );
+    // DhikrScreen pops with {points, sets, seconds}. Accumulate. (Old
+    // contract was a single int = points, so accept that shape too.)
+    if (result is Map) {
+      _sessionPoints += (result['points'] as int?) ?? 0;
+      _sessionSets += (result['sets'] as int?) ?? 0;
+      _sessionSeconds += (result['seconds'] as int?) ?? 0;
+    } else if (result is int) {
+      _sessionPoints += result;
+    }
+  }
+
+  // Daily dhikr-time persistence. We store accumulated seconds keyed by
+  // today's date so the Akhirah summary can show "Time spent today" that
+  // accurately reflects multiple sessions through the day, not just the
+  // one the user just finished.
+  static const String _kDhikrSecondsPrefix = 'dhikr_seconds_';
+  static String _todayKey() {
+    final n = DateTime.now();
+    return '$_kDhikrSecondsPrefix${n.year.toString().padLeft(4, '0')}-'
+        '${n.month.toString().padLeft(2, '0')}-'
+        '${n.day.toString().padLeft(2, '0')}';
+  }
+
+  Future<int> _bumpAndReadTodaySeconds(int add) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = _todayKey();
+      final prev = prefs.getInt(key) ?? 0;
+      final next = prev + add;
+      await prefs.setInt(key, next);
+      return next;
+    } catch (_) {
+      return add;
+    }
+  }
+
+  // Fires the two-popup celebration if the user actually completed any zikr
+  // set during this hub session, then pops the hub. Returns false to let
+  // PopScope handle the actual pop after our async work is done.
+  Future<bool> _handleHubExit() async {
+    if (_isExitingHub) return false;
+    _isExitingHub = true;
+    if (_sessionSets <= 0) {
+      // No completed sets — just pop silently.
+      if (mounted) Navigator.of(context).pop(_sessionPoints);
+      return false;
+    }
+
+    int streakDays = 0;
+    try {
+      final snap = await StreakService.instance.loadSnapshot().timeout(
+        const Duration(seconds: 2),
+      );
+      streakDays = snap.dhikr;
+    } catch (_) {
+      // Don't block the exit on a network hiccup.
+    }
+    if (!mounted) return false;
+
+    // Persist session seconds into today's cumulative total before
+    // surfacing the summary so the pill shows the *whole* day.
+    final todaySeconds = await _bumpAndReadTodaySeconds(_sessionSeconds);
+    if (!mounted) return false;
+
+    await showDhikrExitCelebration(
+      context,
+      pointsEarned: _sessionPoints,
+      streakDays: streakDays,
+    );
+    if (!mounted) return false;
+
+    // Replace the hub with the Akhirah Balance summary; it pops back
+    // with `_sessionPoints` so the dashboard refresh path still works.
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => AkhirahBalanceScreen(
+          sessionPoints: _sessionPoints,
+          popResult: _sessionPoints,
+          dhikrSecondsToday: todaySeconds,
+        ),
+      ),
+      result: _sessionPoints,
+    );
+    return false;
   }
 
   String _localTitle(String title) {
@@ -129,6 +233,12 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'id': 'remembrance_of_allah',
         'color': Y4.amberY,
         'icon': '🤲',
+      },
+      {
+        'title': 'Ruquiya',
+        'id': 'ruquiya',
+        'color': Y4.primaryDeep,
+        'icon': '🛡️',
       },
       {
         'title':
@@ -260,12 +370,6 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'icon': 'ðŸ‘¥',
       },
       {
-        'title': 'Ruquiya',
-        'id': 'ruquiya',
-        'color': altPrimaryD,
-        'icon': '🛡️',
-      },
-      {
         'title': AppLocalizations.of(context)?.hajjAndUmrah ?? 'Hajj & Umrah',
         'id': 'hajj',
         'color': altPrimaryD,
@@ -278,7 +382,13 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     final visibleOthers =
         others.where((e) => !_hiddenIds!.contains(e['id'])).toList();
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _handleHubExit();
+      },
+      child: Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
         backgroundColor: Y4.bg,
@@ -290,7 +400,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
             color: Y4.ink,
             size: 20,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: _handleHubExit,
         ),
         title: Text(
           'Dhikar & Dua',
@@ -471,6 +581,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
           );
         },
       ),
+      ),
     );
   }
 
@@ -525,10 +636,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return GestureDetector(
-      onTap:
-          () => Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id)),
-          ),
+      onTap: () => _openCategory(id),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -687,10 +795,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     final bool isWhiteCard = !isCustomCard && _whiteIds.contains(id);
 
     return GestureDetector(
-      onTap:
-          () => Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id)),
-          ),
+      onTap: () => _openCategory(id),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
