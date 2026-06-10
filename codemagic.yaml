@@ -43,12 +43,24 @@ workflows:
           QURAN_PROD_CLIENT_ID=${QURAN_PROD_CLIENT_ID:-}
           QURAN_PROD_CLIENT_SECRET=${QURAN_PROD_CLIENT_SECRET:-}
           EOF
+      - name: Disable Swift Package Manager (use CocoaPods)
+        # Firebase iOS SDK 12.x has a known SPM bug where the grpc-binary
+        # artifact zip fails to download on fresh CI runners
+        # ("file not found: SourcePackages/artifacts/grpc-binary/grpc/grpc.zip").
+        # Forcing CocoaPods sidesteps the SPM dependency graph entirely
+        # and is the path Firebase officially supports for Flutter.
+        script: |
+          flutter config --no-enable-swift-package-manager
       - name: Fetch the latest Flutter packages
         script: |
           flutter pub get
       - name: Install CocoaPods dependencies
+        # With SPM disabled, `flutter pub get` (above) auto-generates
+        # ios/Podfile + ios/Flutter/Generated.xcconfig referencing every
+        # plugin pod. We then run `pod install` in the ios/ folder so
+        # Runner.xcworkspace links the resolved pods.
         script: |
-          find . -name "Podfile" -execdir pod install \;
+          cd ios && pod install --repo-update
       - name: Set up provisioning profiles via the connected ASC API key
         script: |
           xcode-project use-profiles
