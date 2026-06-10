@@ -9,8 +9,10 @@
 // so the back stack reads: dashboard → akhirah balance (dhikr is replaced).
 // The "View full stats →" link opens the dedicated `AkhirahStatsScreen`.
 
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../theme/y4_theme.dart';
@@ -26,10 +28,17 @@ class AkhirahBalanceScreen extends StatefulWidget {
   /// can still refresh tiles the way it used to when dhikr_screen popped).
   final int? popResult;
 
+  /// Total seconds the user has spent in Dua & Zikar across the whole day
+  /// (cumulative across multiple sessions). Surfaced alongside today's azkar
+  /// count on the "TODAY" pill so the user sees both volume and time invested.
+  /// Null = caller didn't pass it; the pill quietly hides the time column.
+  final int? dhikrSecondsToday;
+
   const AkhirahBalanceScreen({
     super.key,
     this.sessionPoints = 0,
     this.popResult,
+    this.dhikrSecondsToday,
   });
 
   @override
@@ -47,6 +56,74 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
   List<_DayRow> _days = const [];
 
   late AnimationController _intro;
+  // Reflection picked once per screen build so it stays stable while the
+  // user reads, but varies between visits. Defaults to a fixed line until
+  // _loadReflection() picks a fresh one (which also persists the chosen
+  // index so the next visit is guaranteed to be different).
+  String _reflection = _kReflectionPool[0];
+  static const String _kPrefKeyLastReflectionIdx = 'akhirah_last_reflection_idx';
+
+  // Dhikr-focused motivational nudges shown after the session reward.
+  // Mix of three flavours:
+  //   • Hadith-anchored: cite a specific phrase the user just recited,
+  //     so the reward feels concrete and traceable.
+  //   • Quranic: short ayat about remembrance.
+  //   • Habit-coaching: pure motivation, no scripture, focused on
+  //     consistency and the long-term scale-of-the-soul payoff.
+  // Each <= ~20 words so it fits in a single card without truncation.
+  static const List<String> _kReflectionPool = [
+    // — Hadith-anchored —
+    '“Subhanallahi wa bi-hamdihi” — said 100 times a day wipes sins, even like the foam of the sea. (Bukhari)',
+    'Say La ilaha illallah 100 times — equals freeing 10 slaves and 100 hasanat. (Bukhari)',
+    'Light on the tongue, heavy on the scales: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)',
+    'The dhikr of Allah is heavier on the scales than gold of equal weight. Keep going.',
+    '“Your tongue should stay moist with the remembrance of Allah.” — Is it still moist?',
+    'Astaghfirullah — the Prophet ✍ said it 100 times a day, and he had no sin. How many have you?',
+    'When you remember Allah quietly, He remembers you in an assembly far greater.',
+    'Recite Ayat al-Kursi after every salah — nothing keeps you from Jannah but death.',
+    'One Alhamdulillah fills the scale. One Subhanallah fills what is between heaven and earth.',
+    // — Quranic —
+    '“The remembrance of Allah is greater than everything else.” — Surah Al-Ankabut 29:45',
+    '“Remember Me — I will remember you.” — Surah Al-Baqarah 2:152. Will you?',
+    '“In the remembrance of Allah, hearts find rest.” — Surah Ar-Ra’d 13:28',
+    // — Habit-coaching / pure motivation —
+    'Five minutes of dhikr now shapes the next 24 hours of your heart.',
+    'A streak isn’t about today — it’s about who you become in 30 days.',
+    'Small drops fill an ocean. Your daily dhikr is filling something far bigger.',
+    'No one sees the dhikr in your heart — but every angel writing your record does.',
+    'The biggest wins are built from the smallest daily habits. Don’t break the chain.',
+    'You came back today. That’s already worship. Stay one more minute?',
+    'Tomorrow’s peace is built on today’s remembrance. Plant one more seed.',
+    'Are you done? Allah’s door is always open — even after you’ve closed it.',
+    'Dhikr is the language of the heart. Has yours spoken to its Lord today?',
+    'Every Subhanallah is a sadaqah. How many will you give before sleep?',
+    'A heart that forgets dhikr begins to rust. A heart that remembers stays alight.',
+    'Have you fortified yourself with the morning and evening adhkar today?',
+  ];
+
+  // Pick a fresh reflection that differs from whatever was shown last
+  // time the user landed here. We avoid microsecondsSinceEpoch (it can
+  // cluster on the same modulo when the screen is opened in quick
+  // succession) and use dart:math Random, which is properly seeded by
+  // the runtime. Persist the chosen index so consecutive visits are
+  // guaranteed not to repeat.
+  Future<void> _loadReflection() async {
+    int lastIdx = -1;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      lastIdx = prefs.getInt(_kPrefKeyLastReflectionIdx) ?? -1;
+    } catch (_) {/* prefs failure → fall through with lastIdx = -1 */}
+    final rand = math.Random();
+    int idx;
+    do {
+      idx = rand.nextInt(_kReflectionPool.length);
+    } while (idx == lastIdx && _kReflectionPool.length > 1);
+    if (mounted) setState(() => _reflection = _kReflectionPool[idx]);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_kPrefKeyLastReflectionIdx, idx);
+    } catch (_) {/* best-effort persistence; not critical */}
+  }
 
   @override
   void initState() {
@@ -55,6 +132,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
       vsync: this,
       duration: const Duration(milliseconds: 650),
     )..forward();
+    _loadReflection();
     _load();
   }
 
@@ -162,6 +240,8 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _hero(),
+                            const SizedBox(height: 16),
+                            _reflectionCard(),
                             const SizedBox(height: 20),
                             _todayVsAvg(
                               today: today,
@@ -178,6 +258,98 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // ── Reflection prompt ──────────────────────────────────────────────────
+  // Eye-catching dhikr-motivation card. Sage-honey gradient + accent
+  // border + glowing icon badge so the eye is drawn here right after
+  // the session reward sinks in. Pool-rotated so a fresh line shows
+  // up each visit.
+  Widget _reflectionCard() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFE8F2D9), // soft sage tint
+            Color(0xFFFFF6D6), // warm honey tint
+          ],
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Y4.primary.withValues(alpha: 0.55),
+          width: 1.4,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.primary.withValues(alpha: 0.18),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Glowing icon badge — circular, gradient fill, soft halo so
+          // the reflection feels like an "aha" prompt rather than a
+          // muted hint.
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Y4.primary, Y4.primaryDeep],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Y4.primaryDeep.withValues(alpha: 0.35),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.auto_awesome_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'A REMINDER',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.primaryDeep,
+                    letterSpacing: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _reflection,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: Y4.ink,
+                    height: 1.45,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -361,32 +533,97 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
             ),
           ),
           const SizedBox(height: 10),
+          // Two side-by-side columns: azkar count + time spent today.
+          // Time column shows only when the caller supplied a duration.
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '${today.azkaar}',
-                style: GoogleFonts.fraunces(
-                  fontSize: 42,
-                  fontWeight: FontWeight.w500,
-                  color: Y4.ink,
-                  height: 1.0,
-                  letterSpacing: -0.6,
-                  fontFeatures: const [FontFeature.tabularFigures()],
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${today.azkaar}',
+                      style: GoogleFonts.fraunces(
+                        fontSize: 42,
+                        fontWeight: FontWeight.w500,
+                        color: Y4.ink,
+                        height: 1.0,
+                        letterSpacing: -0.6,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        today.azkaar == 1 ? 'azkar' : 'azkaar',
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Y4.inkSoft,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 6),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(
-                  today.azkaar == 1 ? 'azkar' : 'azkaar',
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Y4.inkSoft,
-                  ),
+              if ((widget.dhikrSecondsToday ?? 0) > 0) ...[
+                Container(
+                  width: 1,
+                  height: 44,
+                  color: Y4.border,
+                  margin: const EdgeInsets.symmetric(horizontal: 14),
                 ),
-              ),
+                Expanded(
+                  child: Builder(builder: (_) {
+                    final s = widget.dhikrSecondsToday ?? 0;
+                    final h = s ~/ 3600;
+                    final m = (s % 3600) ~/ 60;
+                    final sec = s % 60;
+                    final String value;
+                    final String label;
+                    if (h > 0) {
+                      value = '$h:${m.toString().padLeft(2, '0')}';
+                      label = h == 1 && m == 0 ? 'hour' : 'hours';
+                    } else if (m > 0) {
+                      value = '$m';
+                      label = m == 1 ? 'minute' : 'minutes';
+                    } else {
+                      value = '$sec';
+                      label = sec == 1 ? 'second' : 'seconds';
+                    }
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          value,
+                          style: GoogleFonts.fraunces(
+                            fontSize: 42,
+                            fontWeight: FontWeight.w500,
+                            color: Y4.ink,
+                            height: 1.0,
+                            letterSpacing: -0.6,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            label,
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Y4.inkSoft,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ),
+              ],
             ],
           ),
           if (widget.sessionPoints > 0) ...[

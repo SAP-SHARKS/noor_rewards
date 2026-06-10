@@ -250,6 +250,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
   int _pointsToday = 0;
   int _setsCompleted = 0;
   bool _loading = true;
+  // When the user landed on this category screen — used to compute how
+  // many seconds they spent here so the hub can sum across categories
+  // and surface a "Time spent today" stat on the Akhirah summary.
+  final DateTime _sessionStartTs = DateTime.now();
 
   // ── Progress persistence helpers ──────────────────────────────────────────
   // Key: dhikr_progress_{category}_{YYYY-MM-DD}
@@ -954,50 +958,24 @@ class _DhikrScreenState extends State<DhikrScreen> {
   }
 
   // ── Exit handler ──────────────────────────────────────────────────────────
-  // Shown when the user leaves Daily Dhikr after counting at least one zikr.
-  // Displays accurate points earned this session + current dhikr streak.
+  // When the user exits this single-category screen, pop silently with the
+  // session stats. The Dhikr Hub above us accumulates stats across multiple
+  // category visits and fires the Alhamdulillah celebration + Akhirah
+  // Balance summary only when the user finally exits the hub (i.e. truly
+  // leaves Dua & Zikar), so jumping between categories no longer triggers
+  // a premature "you're done" moment.
   bool _isExiting = false;
   Future<void> _handleExitDhikr() async {
     if (_isExiting) return;
     _isExiting = true;
-    // Only celebrate when the user has actually completed at least one
-    // zikr set this session. Partial counts (tapped but not finished)
-    // don't count — leaving without finishing should pop silently.
-    if (_setsCompleted <= 0) {
-      if (mounted) Navigator.pop(context, _pointsToday);
-      return;
-    }
-
-    int streakDays = 0;
-    try {
-      final snap = await StreakService.instance.loadSnapshot().timeout(
-        const Duration(seconds: 2),
-      );
-      streakDays = snap.dhikr;
-    } catch (_) {
-      // Fall back to 0 — never block the exit on a network hiccup.
-    }
     if (!mounted) return;
-
-    await showDhikrExitCelebration(
-      context,
-      pointsEarned: _pointsToday,
-      streakDays: streakDays,
-    );
-    if (!mounted) return;
-    // After the Alhamdulillah popup is dismissed, replace the dhikr screen
-    // with the Akhirah Balance summary. pushReplacement passes `_pointsToday`
-    // back to whoever pushed this dhikr screen (e.g. the dashboard refresh
-    // path), preserving the prior pop contract.
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => AkhirahBalanceScreen(
-          sessionPoints: _pointsToday,
-          popResult: _pointsToday,
-        ),
-      ),
-      result: _pointsToday,
-    );
+    final elapsed =
+        DateTime.now().difference(_sessionStartTs).inSeconds.clamp(0, 1 << 30);
+    Navigator.pop(context, <String, int>{
+      'points': _pointsToday,
+      'sets': _setsCompleted,
+      'seconds': elapsed,
+    });
   }
 
   Future<void> _completeDhikr(String dhikrId, int target) async {
@@ -2479,6 +2457,75 @@ class _DhikrDetailScreen extends StatefulWidget {
   State<_DhikrDetailScreen> createState() => _DhikrDetailScreenState();
 }
 
+// Snappy PageView snap. Stock Flutter PageScrollPhysics rounds to the
+// nearest page at the 50% drag boundary AND only treats a release as a
+// "flick" above ~50 px/s, so a small slow swipe gets categorised as
+// "not enough intent" and bounces back — making it feel like you have
+// to drag halfway across the screen to advance an azkar.
+//
+// Strategy:
+//   * Any non-trivial release velocity (>5 px/s, ~1/10th of Flutter's
+//     default) commits the page in the direction of that velocity:
+//     forward velocity → ceil to next page, backward → floor to prev.
+//     This is direction-of-intent based, not threshold based, so even
+//     a 5% drag with a gentle release flicks to the next azkar.
+//   * A truly zero-velocity release (finger held still at lift-off)
+//     still rounds to the nearest page at 50%. This is the safe
+//     fallback that prevents accidental commits when the user is just
+//     resting a finger on screen.
+class _SnappyPagePhysics extends PageScrollPhysics {
+  const _SnappyPagePhysics({super.parent});
+
+  @override
+  _SnappyPagePhysics applyTo(ScrollPhysics? ancestor) =>
+      _SnappyPagePhysics(parent: buildParent(ancestor));
+
+  // px/s. Anything above this counts as "deliberate flick". Default
+  // Flutter tolerance is ~50; we use ~5 so even leisurely swipes commit.
+  static const double _kFlickThreshold = 5.0;
+
+  @override
+  Simulation? createBallisticSimulation(
+    ScrollMetrics position,
+    double velocity,
+  ) {
+    final viewport = position.viewportDimension;
+    if (viewport <= 0) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    final tolerance = toleranceFor(position);
+    final currentPage = position.pixels / viewport;
+
+    double targetPage;
+    if (velocity > _kFlickThreshold) {
+      // Any forward intent → commit to next page (even from 5% drag).
+      targetPage = currentPage.ceilToDouble();
+    } else if (velocity < -_kFlickThreshold) {
+      // Any backward intent → commit to previous page.
+      targetPage = currentPage.floorToDouble();
+    } else {
+      // Truly idle release — round at 50%, standard behaviour.
+      targetPage = currentPage.roundToDouble();
+    }
+
+    // Guard against ceil/floor producing the same page when currentPage
+    // is already exactly on a page boundary (no drag at all).
+    if ((targetPage - currentPage).abs() < 1e-6) {
+      return null;
+    }
+
+    final target = targetPage * viewport;
+    if ((target - position.pixels).abs() < tolerance.distance) return null;
+    return ScrollSpringSimulation(
+      spring,
+      position.pixels,
+      target,
+      velocity,
+      tolerance: tolerance,
+    );
+  }
+}
+
 class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   late PageController _pageController;
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -3280,10 +3327,14 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
             },
             child: PageView.builder(
             controller: _pageController,
-            // Premium swipe feel: iOS-style bounce at the ends, snaps cleanly
-            // between pages on every platform.
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
+            // Snappier page-snap: small flicks (~15% drag with any release
+            // velocity) commit to the next azkar instead of bouncing back.
+            // See _SnappyPagePhysics above for the math.
+            // ClampingScrollPhysics stops the swipe hard at the last
+            // page so the user doesn't see the blank overscroll area
+            // past the final card. Snappy page snap still applies.
+            physics: const _SnappyPagePhysics(
+              parent: ClampingScrollPhysics(),
             ),
             allowImplicitScrolling: true,
             onPageChanged: (nextIndex) {
@@ -4231,9 +4282,11 @@ Widget _buildStyledArabic(
       ),
     );
 
-    if (isHeader) {
-      return FittedBox(fit: BoxFit.scaleDown, child: textWidget);
-    }
+    // Removed the FittedBox-scaleDown wrap that previously fired on any
+    // text starting with بِسْمِ or أَعُوذُ — it shrank the whole Arabic
+    // block to fit width even when natural wrap would render at the
+    // user's chosen font size. Letting it wrap normally keeps font size
+    // consistent across all azkar.
     return textWidget;
   }
 
@@ -4790,6 +4843,37 @@ class _AzkarCard extends StatelessWidget {
       final pipedRef = pipeParts.skip(1).join(' ').trim();
       if (bottomRef.isEmpty && pipedRef.isNotEmpty) bottomRef = pipedRef;
     }
+    // Hide the Benefit section entirely when its body is just a "no
+    // specific virtue / no specific condition" disclaimer (e.g. the
+    // 40 Rabbana Duas all carry this note). Telling the user "this
+    // dhikr has no special reward" is the opposite of motivating, so
+    // we drop both the reward AND the hadith-full text if either is
+    // the disclaimer, so the header conditional further down also
+    // sees them as empty and the whole "Benefit" block disappears.
+    bool _isPlaceholderBenefit(String s) {
+      if (s.trim().isEmpty) return true;
+      final patterns = [
+        // direct disclaimer phrasing
+        RegExp(r'no\s+specific\s+(virtue|condition|reward|merit|fadl|narration)',
+            caseSensitive: false),
+        // the literal anchor on the Rabbana set
+        RegExp(r'(40|forty)\s+rabbana', caseSensitive: false),
+        // common opening phrase used by the import
+        RegExp(r'there\s+is\s+no\s+specific', caseSensitive: false),
+        RegExp(r'^\s*note\s*:\s*there\s+is\s+no', caseSensitive: false),
+      ];
+      for (final p in patterns) {
+        if (p.hasMatch(s)) return true;
+      }
+      return false;
+    }
+    if (_isPlaceholderBenefit(cleanReward)) {
+      cleanReward = '';
+    }
+    String cleanHadithFull = azkar.hadithFull;
+    if (_isPlaceholderBenefit(cleanHadithFull)) {
+      cleanHadithFull = '';
+    }
 
     // Resolve illustration up-front so we can both render it AND skip the
     // 260px container entirely when this azkar has nothing mapped (avoids
@@ -5086,7 +5170,7 @@ class _AzkarCard extends StatelessWidget {
         // Unified bottom section — Benefit, Hadith, Reference
         // ══════════════════════════════════════════════════════════════════
         if (cleanReward.isNotEmpty ||
-            azkar.hadithFull.isNotEmpty ||
+            cleanHadithFull.isNotEmpty ||
             rawRef.isNotEmpty ||
             bottomRef.isNotEmpty)
           Builder(
@@ -5122,25 +5206,42 @@ class _AzkarCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Section label ──
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 15,
-                          color: labelColor.withValues(alpha: 0.70),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _sectionLabel(context, azkar),
-                          style: GoogleFonts.outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: labelColor,
-                            letterSpacing: 0.5,
+                    // Mirror the body-render gates exactly: only show the
+                    // "Benefit" header when at least one body block below
+                    // will actually render. The hadith body is skipped for
+                    // morning_4/5 + evening_4/5 (reward already covers it),
+                    // so when those rows have an empty reward we'd
+                    // otherwise show an empty header.
+                    Builder(builder: (_) {
+                      final hadithBodyRenders =
+                          cleanHadithFull.isNotEmpty &&
+                          azkar.id != 'morning_4' &&
+                          azkar.id != 'morning_5' &&
+                          azkar.id != 'evening_4' &&
+                          azkar.id != 'evening_5';
+                      if (cleanReward.isEmpty && !hadithBodyRenders) {
+                        return const SizedBox.shrink();
+                      }
+                      return Row(
+                        children: [
+                          Icon(
+                            Icons.auto_awesome_rounded,
+                            size: 15,
+                            color: labelColor.withValues(alpha: 0.70),
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _sectionLabel(context, azkar),
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: labelColor,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
 
                     // ── Benefit/Reward text ──
                     if (cleanReward.isNotEmpty) ...[
@@ -5201,7 +5302,7 @@ class _AzkarCard extends StatelessWidget {
                     ],
 
                     // ── Hadith text (skip for azkar where reward already covers it) ──
-                    if (azkar.hadithFull.isNotEmpty &&
+                    if (cleanHadithFull.isNotEmpty &&
                         azkar.id != 'morning_4' && azkar.id != 'morning_5' &&
                         azkar.id != 'evening_4' && azkar.id != 'evening_5') ...[
                       Padding(
@@ -5210,7 +5311,7 @@ class _AzkarCard extends StatelessWidget {
                       ),
                       ...() {
                         final parts =
-                            azkar.hadithFull
+                            cleanHadithFull
                                 .split('\n\n')
                                 .where((p) => p.trim().isNotEmpty)
                                 .toList();
@@ -5247,66 +5348,71 @@ class _AzkarCard extends StatelessWidget {
                     ],
 
                     // ── Reference ──
-                    if (rawRef.isNotEmpty || bottomRef.isNotEmpty) ...[
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Container(height: 0.5, color: dividerColor),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
+                    // Pre-compute the actual reference parts (filtered to
+                    // those containing a digit). If the list is empty,
+                    // we skip the whole section — including the heading
+                    // — so azkar without citations don't show an empty
+                    // "Reference" header.
+                    Builder(builder: (_) {
+                      final refParts = <String>[];
+                      final combined = rawRef.isNotEmpty
+                          ? (bottomRef.isNotEmpty
+                              ? '$rawRef | $bottomRef'
+                              : rawRef)
+                          : (bottomRef.isNotEmpty
+                              ? bottomRef
+                              : azkar.reference);
+                      for (final part in combined.split('|')) {
+                        final t = part.trim();
+                        if (t.isNotEmpty && t.contains(RegExp(r'\d'))) {
+                          refParts.add(_expandQuranRef(t));
+                        }
+                      }
+                      if (refParts.isEmpty) return const SizedBox.shrink();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.link_rounded,
-                            size: 13,
-                            color: labelColor.withValues(alpha: 0.70),
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Container(height: 0.5, color: dividerColor),
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            AppLocalizations.of(context)?.reference ??
-                                'Reference',
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: labelColor,
-                              letterSpacing: 0.5,
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.link_rounded,
+                                size: 13,
+                                color: labelColor.withValues(alpha: 0.70),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                AppLocalizations.of(context)?.reference ??
+                                    'Reference',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: labelColor,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          ...refParts.map(
+                            (p) => Text(
+                              p,
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                color: subColor,
+                                fontWeight: FontWeight.w500,
+                                height: 1.6,
+                              ),
                             ),
                           ),
                         ],
-                      ),
-                      // Collect all ref parts from rawRef | bottomRef | azkar.reference, split on |, filter blanks + no-number entries
-                      const SizedBox(height: 6),
-                      ...() {
-                        final allParts = <String>[];
-                        final combined =
-                            rawRef.isNotEmpty
-                                ? (bottomRef.isNotEmpty
-                                    ? '$rawRef | $bottomRef'
-                                    : rawRef)
-                                : (bottomRef.isNotEmpty
-                                    ? bottomRef
-                                    : azkar.reference);
-                        for (final part in combined.split('|')) {
-                          final t = part.trim();
-                          if (t.isNotEmpty && t.contains(RegExp(r'\d'))) {
-                            allParts.add(_expandQuranRef(t));
-                          }
-                        }
-                        return allParts
-                            .map(
-                              (p) => Text(
-                                p,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13.5,
-                                  color: subColor,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.6,
-                                ),
-                              ),
-                            )
-                            .toList();
-                      }(),
-                    ],
+                      );
+                    }),
                   ],
                 ),
               );
@@ -6793,6 +6899,459 @@ Widget _buildIllustration({
         accentColor: const Color(0xFFD89A1E),
       ),
     ),
+    // ── Daily Duas — text-based benefit cards for duas without a strong
+    // Morning/Evening thematic match. Each summarises the dua's hadith.
+    'benefit_daily_004' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Ask Allah for the best entry and exit — with His name and trust upon Him',
+        highlightPhrase: 'best entry and exit',
+        subtitle: 'Sunan Abi Dawud 5096',
+        completedSubtitle: 'Home entered with His blessing',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_daily_005' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'I seek refuge in You from male and female evil jinn',
+        highlightPhrase: 'I seek refuge',
+        subtitle: 'Sahih al-Bukhari 6322',
+        completedSubtitle: 'Sheltered from the unseen',
+        accentColor: const Color(0xFF475569),
+      ),
+    ),
+    'benefit_daily_007' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Bismillah at the start of your meal keeps Shaytan from sharing it',
+        highlightPhrase: 'keeps Shaytan from sharing',
+        subtitle: 'Sunan Ibn Majah 3264',
+        completedSubtitle: 'Meal sanctified by His name',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_daily_008' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'If you forgot Bismillah at the start, say it any time — it covers both ends',
+        highlightPhrase: 'covers both ends',
+        subtitle: 'Jami at-Tirmidhi 1858',
+        completedSubtitle: 'Forgetfulness atoned by His name',
+        accentColor: const Color(0xFFE8A84A),
+      ),
+    ),
+    'benefit_daily_009' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Praise Allah after eating — your past sins are forgiven',
+        highlightPhrase: 'past sins are forgiven',
+        subtitle: 'Jami at-Tirmidhi 3458',
+        completedSubtitle: 'Sins washed by gratitude',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_daily_013' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'O Allah, I ask You of Your bounty — as you step out of His house',
+        highlightPhrase: 'Your bounty',
+        subtitle: 'Sahih Muslim 713',
+        completedSubtitle: 'Stepped out with hope of His bounty',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_daily_014' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Whoever responds to the mu\'adhin word by word with sincerity will enter Paradise',
+        highlightPhrase: 'enter Paradise',
+        subtitle: 'Sahih Muslim 385',
+        completedSubtitle: 'The caller answered',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_daily_016' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Guide me among those You have guided, protect me, and guard me from the evil You decreed',
+        highlightPhrase: 'guard me from the evil You decreed',
+        subtitle: 'Sunan Abi Dawud 1425',
+        completedSubtitle: 'Guided and protected by Your decree',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_daily_018' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Peace upon you, people of the abodes — asking well-being for them and for us',
+        highlightPhrase: 'well-being',
+        subtitle: 'Sahih Muslim 974',
+        completedSubtitle: 'Greeted those who preceded us',
+        accentColor: const Color(0xFF475569),
+      ),
+    ),
+    'benefit_daily_019' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Glory to Him who has made this subservient to us — and to our Lord we return',
+        highlightPhrase: 'to our Lord we return',
+        subtitle: 'Sahih Muslim 1342',
+        completedSubtitle: 'Journey under His care',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_daily_020' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'We return, repentant, worshipping our Lord, and praising Him',
+        highlightPhrase: 'repentant',
+        subtitle: 'Sahih al-Bukhari 1797',
+        completedSubtitle: 'Returned to Him in praise',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_daily_021' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Allah loves sneezing — say Alhamdulillah, and your brothers must answer with mercy',
+        highlightPhrase: 'Allah loves sneezing',
+        subtitle: 'Sahih al-Bukhari 6224',
+        completedSubtitle: 'Praise that earns His love',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_daily_022' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'When you hear your brother praise Allah after sneezing, say Yarhamukallah — May Allah have mercy on you',
+        highlightPhrase: 'Yarhamukallah',
+        subtitle: 'Sahih al-Bukhari 6225',
+        completedSubtitle: 'Mercy asked for your brother',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_daily_023' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Reply with Yahdikumullah — May Allah guide you and set right your affairs',
+        highlightPhrase: 'Yahdikumullah',
+        subtitle: 'Sunan Abi Dawud 5031',
+        completedSubtitle: 'Guidance prayed in return',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_daily_027' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Pray for forgiveness for your parents — they will be raised in rank by your du\'a',
+        highlightPhrase: 'raised in rank',
+        subtitle: 'Sunan Ibn Majah 3660',
+        completedSubtitle: 'Your parents lifted by your du\'a',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_daily_035' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Allah has been asked by His Greatest Name — when asked thereby, He answers',
+        highlightPhrase: 'Greatest Name',
+        subtitle: 'Sunan Ibn Majah 3856',
+        completedSubtitle: 'Called upon by His Greatest Name',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_daily_036' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Thirst is gone, the veins are moistened, and the reward is sure — if Allah wills',
+        highlightPhrase: 'reward is sure',
+        subtitle: 'Sunan Abi Dawud 2357',
+        completedSubtitle: 'Reward of fasting secured',
+        accentColor: const Color(0xFFE8A84A),
+      ),
+    ),
+    'benefit_daily_041' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Bismillah, O Allah, keep Shaytan far from us — the child is protected from him',
+        highlightPhrase: 'child is protected',
+        subtitle: 'Sahih al-Bukhari 5165',
+        completedSubtitle: 'Lineage safeguarded from harm',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_daily_044' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Ask Allah\'s guidance before any decision — He chooses what is best for you in dunya and akhirah',
+        highlightPhrase: 'He chooses what is best',
+        subtitle: 'Sahih al-Bukhari 1162',
+        completedSubtitle: 'Decision entrusted to His wisdom',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_daily_034' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Allah is Sufficient for us, and He is the Best Disposer of affairs — said by Ibrahim in the fire and by Muhammad ﷺ before battle',
+        highlightPhrase: 'Allah is Sufficient',
+        subtitle: 'Surah Aali Imran 3:173',
+        completedSubtitle: 'Affairs entrusted to the Best Disposer',
+        accentColor: const Color(0xFF7A8C3A),
+      ),
+    ),
+    'benefit_daily_039' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Ask Allah to make the difficult easy — nothing is easy except what He has made so',
+        highlightPhrase: 'make the difficult easy',
+        subtitle: 'Sahih Ibn Hibban 2427',
+        completedSubtitle: 'Ease found in His will',
+        accentColor: const Color(0xFF6366F1),
+      ),
+    ),
+    'benefit_daily_040' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Seek refuge from worry, grief, weakness, laziness, cowardice, miserliness, debt, and being overpowered',
+        highlightPhrase: 'Seek refuge',
+        subtitle: 'Sahih al-Bukhari 6369',
+        completedSubtitle: 'Refuge granted from every burden',
+        accentColor: const Color(0xFF475569),
+      ),
+    ),
+    // ── Remembrance of Allah — text cards for dhikrs without strong M/E match
+    'benefit_dhikr_030' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Say it — it is a treasure from the treasures of Paradise',
+        highlightPhrase: 'treasure of Paradise',
+        subtitle: 'Sahih al-Bukhari 4205',
+        completedSubtitle: 'A treasure deposited for you in Jannah',
+        accentColor: const Color(0xFFD89A1E),
+      ),
+    ),
+    'benefit_dhikr_032' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'The dua of Dhun-Nun in the belly of the whale — no Muslim calls upon Allah with it except that Allah responds',
+        highlightPhrase: 'Allah responds',
+        subtitle: 'Jami at-Tirmidhi 3505',
+        completedSubtitle: 'His response promised by His Messenger ﷺ',
+        accentColor: const Color(0xFF0D9488),
+      ),
+    ),
+    'benefit_salah_freed_slaves' => w(
+      ({
+        required progress,
+        required isComplete,
+        required tapCount,
+        required pointsToday,
+      }) => _BenefitTextIllustration(
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+        benefitText: 'Equal to freeing four slaves — 10 good deeds written, 10 sins erased, 10 ranks raised, security all day',
+        highlightPhrase: 'freeing four slaves',
+        subtitle: 'Jami at-Tirmidhi 3474',
+        completedSubtitle: 'Freed, raised, and shielded for the day',
+        accentColor: const Color(0xFFE8A84A),
+      ),
+    ),
     'doors' => w(
       ({
         required progress,
@@ -7029,9 +7588,10 @@ String _pickTagline(String id) {
 
 /// Per-illustration tagline color — distinct for each category, always readable.
 Color _pickTaglineColor(String id, bool isDark) {
-  // Dark mode: bright honey for contrast on dark bg
-  // Light mode: warm brown-gold — readable on cream/white cards
-  return isDark ? const Color(0xFFFFC83D) : const Color(0xFF8B6914);
+  // Same emerald/mint as the dashboard Seal-the-Day button so the
+  // tagline pill reads as part of the same "accomplishment" visual
+  // language. (Was a muddy brown-gold, then briefly honey-yellow.)
+  return const Color(0xFF4A9B8E);
 }
 
 /// Arabic calligraphy text style used inside illustration canvases.
@@ -12124,16 +12684,17 @@ class _RepellingLightPainter extends CustomPainter {
       canvas.restore();
     }
 
-    // 7b. Protection label
-    if (progress > 0.05) {
-      final labelAlpha = (progress / 0.3).clamp(0.0, 1.0);
+    // 7b. Protection label — always fully visible (was gated on progress > 0.05
+    // with a 0..30% progress fade, leaving the label hidden until well into
+    // counting).
+    {
       final tp = TextPainter(
         text: TextSpan(
           text: 'Protection from Evil Eye',
           style: GoogleFonts.outfit(
             fontSize: 12.5,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFFFCA5A5).withValues(alpha: labelAlpha * 0.80),
+            color: const Color(0xFFFCA5A5).withValues(alpha: 0.80),
             letterSpacing: 1.2,
           ),
         ),
@@ -17018,10 +17579,9 @@ class _ThreeVesselsState extends State<_ThreeVessels>
   }) {
     final row = _rows[rowIdx];
     final accent = Color(row.hex);
-    final threshold = rowIdx / total;
-    final rawP = ((progress - threshold) * total).clamp(0.0, 1.0);
-    // Always show a faint ghost so illustration never looks empty
-    final rowP = 0.18 + rawP * 0.82;
+    // All rows fully visible from frame 1 (was 0.18..1.0 reveal as user
+    // counted, leaving the vessel labels ghosted before completion).
+    const double rowP = 1.0;
     return AnimatedOpacity(
       opacity: rowP,
       duration: const Duration(milliseconds: 350),
@@ -17310,11 +17870,10 @@ class _SevenPillarsState extends State<_SevenPillars>
     required bool isComplete,
     bool isDark = false,
   }) {
-    // Each line reveals when progress passes its threshold
-    final threshold = lineIndex / totalLines;
-    final rawLP = ((progress - threshold) * totalLines).clamp(0.0, 1.0);
-    // Always show a faint ghost so illustration never looks empty
-    final lineProgress = 0.18 + rawLP * 0.82;
+    // Lines used to fade in one-by-one as the user counted, leaving the
+    // pillars illustration mostly blank before completion. Render every
+    // line fully visible from frame 1; only the completion state still
+    // shifts colour to gold to celebrate.
 
     // Style varies: two lines big + bold, rest smaller
     final isBig = lineIndex == 0 || lineIndex == totalLines - 1;
@@ -17327,33 +17886,24 @@ class _SevenPillarsState extends State<_SevenPillars>
       textColor = isDark ? const Color(0xFFFFD700) : const Color(0xFF2A2410);
       fontSize = isBig ? 20 : 17;
     } else if (lineIndex == 0) {
-      textColor =
-          isDark
-              ? Colors.white.withValues(alpha: lineProgress)
-              : const Color(0xFF0C3547).withValues(alpha: lineProgress);
+      textColor = isDark ? Colors.white : const Color(0xFF0C3547);
       fontSize = 22;
     } else {
-      textColor =
-          isDark
-              ? Colors.white.withValues(alpha: lineProgress * 0.85)
-              : const Color(0xFF2A2410).withValues(alpha: lineProgress * 0.85);
+      textColor = (isDark ? Colors.white : const Color(0xFF2A2410))
+          .withValues(alpha: 0.85);
       fontSize = isBig ? 19 : 15;
     }
 
-    return AnimatedOpacity(
-      opacity: lineProgress,
-      duration: const Duration(milliseconds: 400),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: GoogleFonts.outfit(
-          fontSize: fontSize * (lineIndex == 0 ? _pulse.value : 1.0),
-          fontWeight:
-              lineIndex == 0 || isComplete ? FontWeight.w800 : FontWeight.w600,
-          color: textColor,
-          letterSpacing: lineIndex == 0 ? 0.5 : 0.2,
-          height: 1.3,
-        ),
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: GoogleFonts.outfit(
+        fontSize: fontSize * (lineIndex == 0 ? _pulse.value : 1.0),
+        fontWeight:
+            lineIndex == 0 || isComplete ? FontWeight.w800 : FontWeight.w600,
+        color: textColor,
+        letterSpacing: lineIndex == 0 ? 0.5 : 0.2,
+        height: 1.3,
       ),
     );
   }
@@ -22742,31 +23292,23 @@ class _BaqarahShieldState extends State<_BaqarahShield>
   Widget _buildLine(int i, double progress, bool isDark) {
     final seg = _lines[i];
     final total = _lines.length;
-    final threshold = i / total;
-    final lineP = ((progress - threshold) * total).clamp(0.0, 1.0);
-    final opacity = lineP.clamp(0.18, 1.0);
+    // Text always fully visible from frame 1.
+    const double opacity = 1.0;
     final isLast = i == total - 1;
     Color color;
     double fontSize;
     FontWeight weight;
     if (isLast || seg.accent) {
-      color =
-          Color.lerp(
-            (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
-                .withValues(alpha: 0.40),
-            isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3),
-            lineP,
-          )!;
+      color = isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3);
       fontSize = 19;
       weight = FontWeight.w800;
     } else if (i == 0) {
-      color = (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
-          .withValues(alpha: lineP.clamp(0.25, 1.0));
+      color = isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA);
       fontSize = 18;
       weight = FontWeight.w700;
     } else {
       color = (isDark ? Colors.white : const Color(0xFF1E293B)).withValues(
-        alpha: lineP.clamp(0.18, isDark ? 0.85 : 0.80),
+        alpha: isDark ? 0.85 : 0.80,
       );
       fontSize = 16;
       weight = FontWeight.w500;
@@ -23075,30 +23617,22 @@ class _BaqarahCloseState extends State<_BaqarahClose>
 
   Widget _buildSegment(int i, double progress, bool isDark) {
     final seg = _segments[i];
-    final total = _segments.length;
-    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
-    final opacity = segP.clamp(0.18, 1.0);
+    // Text always fully visible from frame 1.
+    const double opacity = 1.0;
     Color color;
     double fontSize;
     FontWeight weight;
     if (seg.gold) {
-      color =
-          Color.lerp(
-            (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
-                .withValues(alpha: 0.40),
-            isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3),
-            segP,
-          )!;
+      color = isDark ? const Color(0xFF818CF8) : const Color(0xFF3730A3);
       fontSize = 24.0 * _pulse.value;
       weight = FontWeight.w900;
     } else if (i == 0) {
-      color = (isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA))
-          .withValues(alpha: segP.clamp(0.25, 1.0));
+      color = isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA);
       fontSize = 17;
       weight = FontWeight.w700;
     } else {
       color = (isDark ? Colors.white : const Color(0xFF334155)).withValues(
-        alpha: segP.clamp(0.22, isDark ? 0.80 : 0.75),
+        alpha: isDark ? 0.80 : 0.75,
       );
       fontSize = seg.big ? 17 : 15;
       weight = FontWeight.w500;
@@ -23334,7 +23868,10 @@ class _NightPeacePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
-    final alpha = progress.clamp(0.18, 1.0);
+    // Illustration always fully painted from frame 1 (was 0.18..1.0 fade
+    // on tap progress, leaving the night scene + text labels ghosted
+    // before completion).
+    const double alpha = 1.0;
 
     // Background wall
     canvas.drawRect(
@@ -24119,14 +24656,15 @@ class _DuaHandsState extends State<_DuaHands> with TickerProviderStateMixin {
               CustomPaint(
                 painter: _NasDotPainter(phase: _shimCtrl.value, isDark: isDark),
               ),
-              // Emoji icon — 🤲 dua hands, monochrome tinted
+              // Emoji icon — 🤲 dua hands, monochrome tinted. Always full
+              // opacity; previously it ghosted to 15% before the user tapped.
               Positioned(
                 top: 14,
                 left: 0,
                 right: 0,
                 child: Center(
                   child: Opacity(
-                    opacity: (0.15 + progress * 0.72).clamp(0.0, 1.0),
+                    opacity: 0.92,
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(
                         isDark
@@ -24191,32 +24729,27 @@ class _DuaHandsState extends State<_DuaHands> with TickerProviderStateMixin {
 
   Widget _buildSegment(int i, double progress, bool isDark) {
     final seg = _segments[i];
-    final total = _segments.length;
-    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
-    final opacity = segP.clamp(0.18, 1.0);
+    // Text is always fully visible from frame 1 — no progress-tied fade.
+    // (Previously each segment revealed itself only as the user counted,
+    // which left the card looking blank with ghost text before completion.)
+    const double opacity = 1.0;
 
     Color color;
     double fontSize;
     FontWeight weight;
 
     if (seg.color == 2) {
-      color =
-          Color.lerp(
-            (isDark ? const Color(0xFFFFD060) : const Color(0xFF92400E))
-                .withValues(alpha: 0.35),
-            isDark ? const Color(0xFFFFD060) : const Color(0xFF78350F),
-            segP,
-          )!;
+      color = isDark ? const Color(0xFFFFD060) : const Color(0xFF78350F);
       fontSize = 16.0 * _pulse.value;
       weight = FontWeight.w800;
     } else if (seg.color == 1) {
       color = (isDark ? const Color(0xFFFFD060) : const Color(0xFF92400E))
-          .withValues(alpha: segP.clamp(0.25, 0.80));
+          .withValues(alpha: 0.80);
       fontSize = 13.5;
       weight = FontWeight.w500;
     } else {
       color = (isDark ? Colors.white : const Color(0xFF1C1107)).withValues(
-        alpha: segP.clamp(0.20, isDark ? 0.88 : 0.80),
+        alpha: isDark ? 0.88 : 0.80,
       );
       fontSize = 15.5;
       weight = FontWeight.w700;
@@ -24497,9 +25030,8 @@ class _AlFalaqShieldState extends State<_AlFalaqShield>
 
   Widget _buildSegment(int i, double progress, bool isDark) {
     final seg = _segments[i];
-    final total = _segments.length;
-    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
-    final opacity = segP.clamp(0.18, 1.0);
+    // Text always fully visible from frame 1.
+    const double opacity = 1.0;
 
     Color color;
     double fontSize;
@@ -24507,25 +25039,19 @@ class _AlFalaqShieldState extends State<_AlFalaqShield>
 
     if (seg.color == 2) {
       // Final declaration — large, glowing violet
-      color =
-          Color.lerp(
-            (isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95))
-                .withValues(alpha: 0.35),
-            isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95),
-            segP,
-          )!;
+      color = isDark ? const Color(0xFFA78BFA) : const Color(0xFF4C1D95);
       fontSize = 20.0 * _pulse.value;
       weight = FontWeight.w900;
     } else if (seg.color == 1) {
       // The 4 evils — softer, muted
       color = (isDark ? const Color(0xFFDDD6FE) : const Color(0xFF6D28D9))
-          .withValues(alpha: segP.clamp(0.25, 0.85));
+          .withValues(alpha: 0.85);
       fontSize = 13.5;
       weight = FontWeight.w500;
     } else {
       // Opening declaration — white/dark, prominent
       color = (isDark ? Colors.white : const Color(0xFF1E1B4B)).withValues(
-        alpha: segP.clamp(0.20, isDark ? 0.90 : 0.80),
+        alpha: isDark ? 0.90 : 0.80,
       );
       fontSize = 15.5;
       weight = FontWeight.w700;
@@ -24834,9 +25360,8 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
 
   Widget _buildSegment(int i, double progress, bool isDark) {
     final seg = _segments[i];
-    final total = _segments.length;
-    final segP = ((progress - i / total) * total).clamp(0.0, 1.0);
-    final opacity = segP.clamp(0.18, 1.0);
+    // Text always fully visible from frame 1.
+    const double opacity = 1.0;
 
     Color color;
     double fontSize;
@@ -24844,29 +25369,22 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
     double? letterSpacing;
 
     if (seg.color == 2) {
-      // "I have done so" â€” green accent, larger, pulsing
-      color =
-          Color.lerp(
-            (isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A))
-                .withValues(alpha: 0.35),
-            (isDark ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D))
-                .withValues(alpha: 0.35),
-            segP,
-          )!;
+      // "I have done so" — green accent, larger, pulsing
+      color = isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
       fontSize = 22.0 * _pulse.value;
       weight = FontWeight.w900;
       letterSpacing = 0.8;
     } else if (seg.color == 1) {
-      // Transition text â€” muted green/teal
+      // Transition text — muted green/teal
       color = (isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534))
-          .withValues(alpha: segP.clamp(0.25, 0.88));
+          .withValues(alpha: 0.88);
       fontSize = 15;
       weight = FontWeight.w600;
       letterSpacing = 0.3;
     } else {
       // Body text
       color = (isDark ? Colors.white : const Color(0xFF1E293B)).withValues(
-        alpha: segP.clamp(0.20, isDark ? 0.80 : 0.75),
+        alpha: isDark ? 0.80 : 0.75,
       );
       fontSize = seg.big ? 17 : 15.5;
       weight = FontWeight.w500;
@@ -25479,7 +25997,10 @@ class _DawnDuskPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
     final mid = w / 2;
-    final alpha = progress.clamp(0.18, 1.0);
+    // Illustration always fully painted from frame 1 (was 0.18..1.0 fade
+    // on tap progress, leaving the dawn/dusk artwork + labels ghosted
+    // before completion).
+    const double alpha = 1.0;
 
     // â”€â”€ LEFT HALF: DAWN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     final dawnRect = Rect.fromLTWH(0, 0, mid, h);
@@ -25676,16 +26197,17 @@ class _DawnDuskPainter extends CustomPainter {
     canvas.restore();
 
     // â”€â”€ CENTRE TEXT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    if (progress > 0.10) {
-      final txtAlpha = ((progress - 0.10) / 0.40).clamp(0.0, 1.0);
-      // Al-Ikhlas key virtue — equals reading the whole Quran
+    // Al-Ikhlas key virtue — equals reading the whole Quran.
+    // Always visible from frame 1 (was gated on progress > 0.10 with a
+    // 0..40% progress fade).
+    {
       final tp = TextPainter(
         text: TextSpan(
           text: 'Equals the whole Quran × 3',
           style: GoogleFonts.outfit(
             fontSize: 12.0,
             fontWeight: FontWeight.w700,
-            color: Colors.white.withValues(alpha: txtAlpha * 0.85),
+            color: Colors.white.withValues(alpha: 0.85),
             letterSpacing: 0.8,
           ),
         ),
