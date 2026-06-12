@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
 import '../theme/y4_theme.dart';
@@ -252,22 +253,29 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
   }
 
   Widget _familySection() {
+    final l = AppLocalizations.of(context);
     final items = <Widget>[];
     if (_orphan.fatherPassedCause != null &&
         _orphan.fatherPassedCause!.isNotEmpty) {
-      items.add(_familyRow('Father', _orphan.fatherPassedCause!));
+      items.add(_familyRow(
+        l?.fatherLabel ?? 'Father',
+        _orphan.fatherPassedCause!,
+      ));
     }
     if (_orphan.motherStatus != null && _orphan.motherStatus!.isNotEmpty) {
-      items.add(_familyRow('Mother', _orphan.motherStatus!));
+      items.add(_familyRow(
+        l?.motherLabel ?? 'Mother',
+        _orphan.motherStatus!,
+      ));
     }
     if (_orphan.siblingsCount > 0) {
       items.add(_familyRow(
-        'Siblings',
+        l?.siblingsLabel ?? 'Siblings',
         '${_orphan.siblingsCount} ${_orphan.siblingsCount == 1 ? 'brother or sister' : 'brothers & sisters'}',
       ));
     }
     if (items.isEmpty) return const SizedBox.shrink();
-    return _section('Family', Column(children: items));
+    return _section(l?.familySection ?? 'Family', Column(children: items));
   }
 
   Widget _familyRow(String label, String value) {
@@ -307,14 +315,15 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
         (_orphan.school == null || _orphan.school!.isEmpty)) {
       return const SizedBox.shrink();
     }
+    final l = AppLocalizations.of(context);
     return _section(
-      'Education',
+      l?.educationSection ?? 'Education',
       Column(
         children: [
           if (_orphan.grade != null && _orphan.grade!.isNotEmpty)
-            _familyRow('Grade', _orphan.grade!),
+            _familyRow(l?.gradeLabel ?? 'Grade', _orphan.grade!),
           if (_orphan.school != null && _orphan.school!.isNotEmpty)
-            _familyRow('School', _orphan.school!),
+            _familyRow(l?.schoolLabel ?? 'School', _orphan.school!),
         ],
       ),
     );
@@ -325,7 +334,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       return const SizedBox.shrink();
     }
     return _section(
-      'Their story',
+      AppLocalizations.of(context)?.theirStorySection ?? 'Their story',
       Text(
         _orphan.story!,
         style: GoogleFonts.outfit(
@@ -546,7 +555,8 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Your balance',
+                    AppLocalizations.of(context)?.yourBalanceLabel ??
+                        'Your balance',
                     style: GoogleFonts.outfit(
                       fontSize: 11,
                       color: Y4.inkSoft,
@@ -578,8 +588,12 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               ),
               child: Text(
                 hasEnough
-                    ? 'Sponsor ${_orphan.firstName}'
-                    : 'Not enough Seeds',
+                    ? (AppLocalizations.of(
+                            context,
+                          )?.sponsorCta(_orphan.firstName) ??
+                        'Sponsor ${_orphan.firstName}')
+                    : (AppLocalizations.of(context)?.notEnoughSeeds ??
+                        'Not enough Seeds'),
                 style: GoogleFonts.outfit(
                   fontWeight: FontWeight.w800,
                   fontSize: 14,
@@ -781,8 +795,8 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
-              labelText: 'Custom',
-              suffixText: 'Seeds',
+              labelText: AppLocalizations.of(context)?.customLabel ?? 'Custom',
+              suffixText: AppLocalizations.of(context)?.seedsSuffix ?? 'Seeds',
               filled: true, fillColor: Y4.cream,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

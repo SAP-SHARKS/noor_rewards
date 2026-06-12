@@ -4,6 +4,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../services/streak_service.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/noor_icons.dart';
@@ -73,6 +74,7 @@ class _StreakScreenState extends State<StreakScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final best = [
       _snap.login,
       _snap.dhikr,
@@ -113,7 +115,7 @@ class _StreakScreenState extends State<StreakScreen>
                       ),
                       Expanded(
                         child: Text(
-                          'YOUR STREAKS',
+                          l?.yourStreaksTitle ?? 'YOUR STREAKS',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.rajdhani(
                             fontSize: 18,
@@ -131,10 +133,10 @@ class _StreakScreenState extends State<StreakScreen>
                 Expanded(
                   child:
                       _loading
-                          ? const NoorInlineLoader(
+                          ? NoorInlineLoader(
                             height: double.infinity,
                             color: Y4.honeyDeep,
-                            label: 'Loading streaks…',
+                            label: l?.streakLoading ?? 'Loading streaks…',
                           )
                           : SingleChildScrollView(
                             padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
@@ -333,10 +335,13 @@ class _HeroFlame extends StatelessWidget {
               const SizedBox(height: 14),
               Text(
                 streak == 0
-                    ? 'Start your streak today!'
+                    ? (AppLocalizations.of(context)?.startStreakToday ??
+                        'Start your streak today!')
                     : streak >= 100
-                    ? 'Centurion, Masha\'Allah!'
-                    : 'Current best streak',
+                    ? (AppLocalizations.of(context)?.centurionMashaAllah ??
+                        'Centurion, Masha\'Allah!')
+                    : (AppLocalizations.of(context)?.currentBestStreak ??
+                        'Current best streak'),
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   color: Y4.inkSoft,
@@ -497,6 +502,7 @@ class _SevenDayCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final today = DateTime.now();
     final days = List.generate(
       7,
@@ -514,7 +520,7 @@ class _SevenDayCalendar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'LAST 7 DAYS',
+            l?.last7Days ?? 'LAST 7 DAYS',
             style: GoogleFonts.rajdhani(
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -698,7 +704,7 @@ class _MilestoneProgress extends StatelessWidget {
           Row(
             children: [
               Text(
-                'NEXT MILESTONE',
+                AppLocalizations.of(context)?.nextMilestone ?? 'NEXT MILESTONE',
                 style: GoogleFonts.rajdhani(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -785,7 +791,7 @@ class _MilestoneList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ALL MILESTONES',
+            AppLocalizations.of(context)?.allMilestones ?? 'ALL MILESTONES',
             style: GoogleFonts.rajdhani(
               fontSize: 13,
               fontWeight: FontWeight.w700,

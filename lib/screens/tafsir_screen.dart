@@ -1130,7 +1130,8 @@ class _TafsirScreenState extends State<TafsirScreen> {
           IconButton(
             icon: Icon(Icons.tune_rounded, color: sub, size: 24),
             onPressed: _openSettings,
-            tooltip: 'Settings',
+            tooltip:
+                AppLocalizations.of(context)?.settingsTooltip ?? 'Settings',
           ),
         ],
       ),

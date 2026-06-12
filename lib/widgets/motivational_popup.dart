@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/y4_theme.dart';
 import 'noor_icons.dart';
 
@@ -321,7 +322,8 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        'Coins Sealed! ماشاء الله',
+                        AppLocalizations.of(context)?.coinsSealedTitle ??
+                            'Coins Sealed! ماشاء الله',
                         maxLines: 1,
                         textAlign: TextAlign.center,
                         style: Y4.display(
@@ -336,8 +338,11 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     const SizedBox(height: 6),
                     Text(
                       total > 0
-                          ? 'You have been rewarded for\nyour consistency today!'
-                          : 'Your Seeds are sealed and safe\nfor the Akhirah.',
+                          ? (AppLocalizations.of(context)
+                                  ?.rewardedForConsistency ??
+                              'You have been rewarded for\nyour consistency today!')
+                          : (AppLocalizations.of(context)?.seedsSealedSafe ??
+                              'Your Seeds are sealed and safe\nfor the Akhirah.'),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.outfit(
                         fontSize: 13,
@@ -370,14 +375,14 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                       child: Column(
                         children: [
                           _RewardRow(
-                            '⚡ Validation Seeds',
+                            '⚡ ${AppLocalizations.of(context)?.validationSeedsLabel ?? 'Validation Seeds'}',
                             '+${widget.pointsEarned} Seeds',
                             Y4.honeyDeep,
                           ),
                           if (widget.bonusPoints > 0) ...[
                             const SizedBox(height: 10),
                             _RewardRow(
-                              '🔥 Streak Bonus',
+                              '🔥 ${AppLocalizations.of(context)?.streakBonusLabel ?? 'Streak Bonus'}',
                               '+${widget.bonusPoints} Seeds',
                               Y4.honeyDeep,
                             ),
@@ -385,7 +390,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                             const Divider(color: Y4.border, height: 1),
                             const SizedBox(height: 10),
                             _RewardRow(
-                              '✨ Total Earned',
+                              '✨ ${AppLocalizations.of(context)?.totalEarnedLabel ?? 'Total Earned'}',
                               '+$total Seeds',
                               Y4.ink,
                               big: true,
@@ -415,7 +420,8 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                           elevation: 0,
                         ),
                         child: Text(
-                          'Alhamdulillah! 🤲',
+                          AppLocalizations.of(context)?.alhamdulillahCta ??
+                              'Alhamdulillah! 🤲',
                           style: GoogleFonts.outfit(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
@@ -559,25 +565,26 @@ class _MotivationalPopupBodyState extends State<_MotivationalPopupBody>
     final card = widget.card;
     final size = MediaQuery.of(context).size;
 
+    final l = AppLocalizations.of(context);
     final (String ctaLabel, IconData ctaIcon, Color ctaColor) = switch (card
         .cta) {
       _CtaType.quran => (
-        'Open Quran',
+        l?.openQuranCta ?? 'Open Quran',
         Icons.menu_book_rounded,
         const Color(0xFF0D9488),
       ),
       _CtaType.dhikr => (
-        'Dua & Azkaar',
+        l?.duaAzkaarCta ?? 'Dua & Azkaar',
         Icons.favorite_rounded,
         const Color(0xFFF59E0B),
       ),
       _CtaType.share => (
-        'Share with Friends',
+        l?.shareWithFriendsCta ?? 'Share with Friends',
         Icons.share_rounded,
         const Color(0xFF3B82F6),
       ),
       _CtaType.boost => (
-        'Earn More Seeds',
+        l?.earnMoreSeedsCta ?? 'Earn More Seeds',
         Icons.bolt_rounded,
         const Color(0xFFFFAA00),
       ),

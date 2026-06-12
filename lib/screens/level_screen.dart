@@ -305,7 +305,8 @@ class _LevelScreenState extends State<LevelScreen>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "Couldn't load your Journey",
+                        AppLocalizations.of(context)?.couldntLoadJourney ??
+                            "Couldn't load your Journey",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: 16,
@@ -315,7 +316,8 @@ class _LevelScreenState extends State<LevelScreen>
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Check your connection and try again.',
+                        AppLocalizations.of(context)?.checkConnectionRetry ??
+                            'Check your connection and try again.',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: 13,
@@ -325,7 +327,9 @@ class _LevelScreenState extends State<LevelScreen>
                       const SizedBox(height: 16),
                       FilledButton(
                         onPressed: _loadAll,
-                        child: const Text('Retry'),
+                        child: Text(
+                          AppLocalizations.of(context)?.retryLabel ?? 'Retry',
+                        ),
                       ),
                     ],
                   ),
@@ -537,18 +541,25 @@ class _ProgressTabState extends State<_ProgressTab> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                '${l.level} ${widget.level}',
-                                style: GoogleFonts.rajdhani(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                  height: 1.0,
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '${l.level} ${widget.level}',
+                                  maxLines: 1,
+                                  style: GoogleFonts.rajdhani(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    height: 1.0,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 '${l.dayStreak(widget.streak.toString())} 🔥',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
@@ -639,18 +650,27 @@ class _ProgressTabState extends State<_ProgressTab> {
                                         ),
                                         curve: Curves.easeOut,
                                         builder:
-                                            (_, v, __) => Text(
-                                              '$v Seeds',
-                                              style: GoogleFonts.rajdhani(
-                                                fontSize: 32,
-                                                fontWeight: FontWeight.w900,
-                                                color: Colors.white,
-                                                height: 1.1,
+                                            (_, v, __) => FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                '$v Seeds',
+                                                maxLines: 1,
+                                                style: GoogleFonts.rajdhani(
+                                                  fontSize: 32,
+                                                  fontWeight: FontWeight.w900,
+                                                  color: Colors.white,
+                                                  height: 1.1,
+                                                ),
                                               ),
                                             ),
                                       ),
                                       Text(
-                                        '$_totalActions action${_totalActions == 1 ? '' : 's'}',
+                                        AppLocalizations.of(context)
+                                                ?.actionsCount(_totalActions) ??
+                                            '$_totalActions action${_totalActions == 1 ? '' : 's'}',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(
                                           fontSize: 11,
                                           color: Colors.white60,

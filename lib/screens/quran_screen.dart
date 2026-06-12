@@ -1438,7 +1438,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               color: Y4.ink,
                             ),
                             decoration: InputDecoration(
-                              hintText: 'Search Surah...',
+                              hintText:
+                                  AppLocalizations.of(context)?.searchSurahHint ??
+                                      'Search Surah...',
                               hintStyle: GoogleFonts.outfit(
                                 color: Y4.inkSoft,
                               ),
@@ -4646,7 +4648,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Word-by-Word grid ──────────────────────────────────────────────────────
   Widget _buildWordByWordGrid(Color txt, Color sub) {
-    return LayoutBuilder(
+    // Lock the grid layout to LTR so the manual right-to-left ordering
+    // (rowWords.reversed + insert-at-0 padding) keeps producing the correct
+    // Arabic reading order even when the UI locale is RTL (Arabic / Urdu).
+    // Without this lock, the parent Directionality flips the Row a second
+    // time and word1 ends up on the LEFT instead of the right.
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: LayoutBuilder(
       builder: (ctx, constraints) {
         // 3 cards per row, uniform width, RTL order
         const cols = 3;
@@ -4715,6 +4724,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           children: rows,
         );
       },
+      ),
     );
   }
 

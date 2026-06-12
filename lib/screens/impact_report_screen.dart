@@ -459,9 +459,23 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Each value is derived from actual recorded activity (per-phrase dhikr
   // counts + lifetime ayahs read), not a fraction of total points.
 
-  // Hasanaat — Sahih Muslim 131: every good deed is multiplied by 10.
-  // Every recited dhikr and every ayah read counts as a good deed.
-  int get _hasanaat => (_lifetimeDhikr + _lifetimeAyahs) * 10;
+  // Avg letters per ayah across the whole Quran. The Mushaf has roughly
+  // 330,733 base letters spread across 6,236 ayahs (~53 letters per ayah);
+  // we use 50 as a conservative round number to keep the count honest.
+  static const int _kAvgLettersPerAyah = 50;
+
+  // Hasanaat — combines two hadith:
+  //   • Sahih Muslim 131 — every good deed multiplied by 10. Each dhikr
+  //     recitation counts as one good deed → ×10 hasanat.
+  //   • Tirmidhi 2910 — every LETTER of Quran read = 10 hasanat (Alif,
+  //     Lam, Mim are three letters, not one). One ayah ≈ 50 letters →
+  //     ×500 hasanat per ayah.
+  // Previously this was a flat ×10 across both, which massively
+  // undercounted Quran reading. The corrected per-letter math brings the
+  // Quran contribution in line with the hadith.
+  int get _hasanatFromDhikr => _lifetimeDhikr * 10;
+  int get _hasanatFromQuran => _lifetimeAyahs * _kAvgLettersPerAyah * 10;
+  int get _hasanaat => _hasanatFromDhikr + _hasanatFromQuran;
 
   // Trees in Jannah — Tirmidhi 3464.
   int get _treesPlanted => _sumPhrases(_kTreePhraseIds);
@@ -648,7 +662,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              'Lvl $_level · $_levelTitle',
+                              AppLocalizations.of(context)
+                                      ?.levelTitleFormat(_level, _levelTitle) ??
+                                  'Lvl $_level · $_levelTitle',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w800,
@@ -665,7 +681,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
                   // Label
                   Text(
-                    'AKHIRAH BALANCE',
+                    AppLocalizations.of(context)?.akhirahBalanceUpper ??
+                        'AKHIRAH BALANCE',
                     style: GoogleFonts.outfit(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -761,7 +778,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       if (_bestStreak > 0)
                         _HeroBadge(
                           NoorIcon.fire(size: 14),
-                          'Best: $_bestStreak day streak',
+                          AppLocalizations.of(context)
+                                  ?.bestDayStreakBadge(_bestStreak) ??
+                              'Best: $_bestStreak day streak',
                           Colors.white.withValues(alpha: 0.78),
                           const Color(0xFFB45309),
                         ),
@@ -833,14 +852,19 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     key: ValueKey(widget.visitCount),
     children: [
       Expanded(
-        child: _MiniStat(NoorIcon.star(size: 20), _hasanaat, 'DEEDS', _C.gold),
+        child: _MiniStat(
+          NoorIcon.star(size: 20),
+          _hasanaat,
+          AppLocalizations.of(context)?.deedsLabel ?? 'DEEDS',
+          _C.gold,
+        ),
       ),
       const SizedBox(width: 10),
       Expanded(
         child: _MiniStat(
           NoorIcon.tree(size: 20),
           _treesPlanted,
-          'TREES',
+          AppLocalizations.of(context)?.treesLabel ?? 'TREES',
           const Color(0xFF2D7A45),
         ),
       ),
@@ -849,7 +873,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         child: _MiniStat(
           NoorIcon.drop(size: 20),
           _sinsWiped,
-          'FORGIVEN',
+          AppLocalizations.of(context)?.forgivenLabel ?? 'FORGIVEN',
           _C.teal,
         ),
       ),
@@ -878,7 +902,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
               child: Text(
                 _holdingsExpanded
-                    ? 'Show Less ←'
+                    ? (AppLocalizations.of(context)?.showLessAction ??
+                        'Show Less ←')
                     : (AppLocalizations.of(context)?.seeAll ?? 'See All →'),
                 style: GoogleFonts.outfit(
                   fontSize: 13,
@@ -975,7 +1000,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         Icon(Icons.menu_book_rounded, size: 16, color: color),
                         const SizedBox(width: 8),
                         Text(
-                          'Hadith Reference',
+                          AppLocalizations.of(context)?.hadithReference ??
+                              'Hadith Reference',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -1000,7 +1026,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               const SizedBox(height: 20),
               // Breakdown
               Text(
-                'How you earned this',
+                AppLocalizations.of(context)?.howYouEarnedThis ??
+                    'How you earned this',
                 style: GoogleFonts.outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -1077,13 +1104,39 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             title: 'Hasanaat Earned',
             value: _hasanaat,
             color: _C.gold,
-            hadith: '"Whoever does a good deed shall have ten times the like thereof.", Sahih Muslim 131',
-            breakdown: 'Every dhikr you recited and every ayah you read is counted as a good deed, then multiplied by 10 as hasanaat in your record.\n\n'
-                'Dhikr recited (lifetime): ${_fmt(_lifetimeDhikr)}\n'
-                'Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
-                'Good deeds: ${_fmt(_lifetimeDhikr + _lifetimeAyahs)}\n'
-                'Multiplier: ×10\n'
+            hadith: '"Whoever does a good deed shall have ten times the like thereof." (Sahih Muslim 131)\n'
+                '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten." (Tirmidhi 2910)',
+            breakdown: 'Two hadith grow this number side by side:\n\n'
+                'From dhikr — every recitation is one good deed × 10:\n'
+                '  Dhikr recited (lifetime): ${_fmt(_lifetimeDhikr)}\n'
+                '  → Hasanat: ${_fmt(_hasanatFromDhikr)}\n\n'
+                'From Quran — every letter recited × 10 (≈ $_kAvgLettersPerAyah letters per ayah):\n'
+                '  Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
+                '  → Hasanat: ${_fmt(_hasanatFromQuran)}\n\n'
                 'Total hasanaat: ${_fmt(_hasanaat)}',
+          ),
+        ),
+        _HoldingRow(
+          icon: NoorIcon.book(size: 24),
+          color: const Color(0xFF1F7A6B),
+          bgColor: const Color(0xFFE0F2EE),
+          title: 'Hasanat from Quran',
+          subtitle: '10 per letter, $_kAvgLettersPerAyah per ayah',
+          value: _hasanatFromQuran,
+          change: '${_fmt(_lifetimeAyahs)} ayahs',
+          positive: true,
+          isFirst: false,
+          isLast: false,
+          onTap: () => _showHoldingDetail(
+            title: 'Hasanat from Quran',
+            value: _hasanatFromQuran,
+            color: const Color(0xFF1F7A6B),
+            hadith: '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten. I do not say that Alif-Lam-Mim is one letter — rather Alif is a letter, Lam is a letter, and Mim is a letter." (Tirmidhi 2910)',
+            breakdown: 'Every single letter of the Quran you recite is rewarded with 10 hasanat. The whole Mushaf holds ~330,733 letters across 6,236 ayahs, so the app uses a conservative $_kAvgLettersPerAyah-letter-per-ayah average to count this honestly.\n\n'
+                'Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
+                'Letters (≈): ${_fmt(_lifetimeAyahs * _kAvgLettersPerAyah)}\n'
+                'Multiplier: ×10\n'
+                'Total hasanat from Quran: ${_fmt(_hasanatFromQuran)}',
           ),
         ),
         _HoldingRow(
@@ -2436,7 +2489,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
         surfaceTintColor: Y4.bg,
         foregroundColor: Y4.ink,
         title: Text(
-          'Every Recitation Can\nChange a Life',
+          AppLocalizations.of(context)?.everyRecitationCanChangeLife ??
+              'Every Recitation Can\nChange a Life',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w800,
             color: Y4.ink,
@@ -2467,9 +2521,13 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     // 2. Sponsor an Orphan
     if (_orphans.isNotEmpty) {
       rows.add(_sectionHeader(
-        title: 'Sponsor an Orphan',
-        subtitle: 'Real children, their stories, their lives',
-        actionLabel: _orphans.length > 1 ? 'See all' : null,
+        title: AppLocalizations.of(context)?.sponsorAnOrphan ??
+            'Sponsor an Orphan',
+        subtitle: AppLocalizations.of(context)?.realChildrenSubtitle ??
+            'Real children, their stories, their lives',
+        actionLabel: _orphans.length > 1
+            ? (AppLocalizations.of(context)?.seeAllAction ?? 'See all')
+            : null,
         onAction: () => OrphansStrip.openGrid(
           context,
           availablePoints: _myAvailablePoints,
@@ -2493,8 +2551,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     // 3. Active Campaigns
     if (_projects.isNotEmpty) {
       rows.add(_sectionHeader(
-        title: 'Active Campaigns',
-        subtitle: 'Pool your Seeds toward lasting impact',
+        title: AppLocalizations.of(context)?.activeCampaigns ??
+            'Active Campaigns',
+        subtitle: AppLocalizations.of(context)?.poolSeedsImpact ??
+            'Pool your Seeds toward lasting impact',
       ));
       for (int i = 0; i < _projects.length; i++) {
         rows.add(_buildProjectRow(_projects[i]));
@@ -2584,7 +2644,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
-                      'Featured · Sponsor a child',
+                      AppLocalizations.of(context)?.featuredSponsorChild ??
+                          'Featured · Sponsor a child',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -2601,7 +2662,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Meet ${o.firstName}, ${o.age}',
+                        AppLocalizations.of(context)
+                                ?.meetOrphanAge(o.firstName, o.age) ??
+                            'Meet ${o.firstName}, ${o.age}',
                         style: GoogleFonts.fraunces(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
@@ -2629,7 +2692,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
-                          'Sponsor ${o.firstName} →',
+                          AppLocalizations.of(context)
+                                  ?.sponsorNameArrow(o.firstName) ??
+                              'Sponsor ${o.firstName} →',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
@@ -2688,7 +2753,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
-                      'Featured Campaign',
+                      AppLocalizations.of(context)?.featuredCampaign ??
+                          'Featured Campaign',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -2831,7 +2897,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 const Text('💝', style: TextStyle(fontSize: 18)),
                 const SizedBox(width: 8),
                 Text(
-                  'Your Giving',
+                  AppLocalizations.of(context)?.yourGiving ?? 'Your Giving',
                   style: GoogleFonts.outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
@@ -2843,7 +2909,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
             const SizedBox(height: 12),
             if (!hasGiving)
               Text(
-                "You haven't given yet. Pick someone above to begin your journey of impact.",
+                AppLocalizations.of(context)?.havenNotGivenYet ??
+                    "You haven't given yet. Pick someone above to begin your journey of impact.",
                 style: GoogleFonts.outfit(
                   fontSize: 13,
                   color: Y4.inkSoft,
@@ -2856,7 +2923,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   Expanded(
                     child: _statTile(
                       _fmt(_myTotalSeedsLifetime),
-                      'Seeds donated',
+                      AppLocalizations.of(context)?.seedsDonatedLabel ??
+                          'Seeds donated',
                     ),
                   ),
                   Container(
@@ -2867,9 +2935,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   Expanded(
                     child: _statTile(
                       '$_myOrphansSponsoredCount',
-                      _myOrphansSponsoredCount == 1
-                          ? 'Orphan'
-                          : 'Orphans',
+                      AppLocalizations.of(context)?.orphanCount(
+                            _myOrphansSponsoredCount,
+                          ) ??
+                          (_myOrphansSponsoredCount == 1 ? 'Orphan' : 'Orphans'),
                     ),
                   ),
                   Container(
@@ -2880,9 +2949,12 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   Expanded(
                     child: _statTile(
                       '$_myProjectsSupportedCount',
-                      _myProjectsSupportedCount == 1
-                          ? 'Project'
-                          : 'Projects',
+                      AppLocalizations.of(context)?.projectCount(
+                            _myProjectsSupportedCount,
+                          ) ??
+                          (_myProjectsSupportedCount == 1
+                              ? 'Project'
+                              : 'Projects'),
                     ),
                   ),
                 ],
@@ -3000,7 +3072,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         Row(
                           children: [
                             Text(
-                              'Community Progress',
+                              AppLocalizations.of(context)?.communityProgress ??
+                                  'Community Progress',
                               style: GoogleFonts.outfit(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -3122,7 +3195,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                   style: TextStyle(fontSize: 14),
                                 ),
                                 label: Text(
-                                  'Donate & Earn Reward',
+                                  AppLocalizations.of(context)?.donateEarnReward ??
+                                      'Donate & Earn Reward',
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,

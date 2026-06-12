@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,11 +31,20 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
       // measure (they can't verify the embedder's identity), so the default
       // platformDefault mode results in a stuck blue progress bar after
       // the user reaches the consent screen.
+      // Web cannot resolve a custom mobile scheme like
+      // io.supabase.flutterquickstart://, so on Flutter Web we redirect back
+      // to the current origin (which Supabase then completes the PKCE flow on).
+      // The native mobile builds keep the custom scheme that's registered in
+      // AndroidManifest.xml / Info.plist.
       await Supabase.instance.client.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: 'io.supabase.flutterquickstart://login-callback/',
+        redirectTo: kIsWeb
+            ? Uri.base.origin
+            : 'io.supabase.flutterquickstart://login-callback/',
         queryParams: {'prompt': 'select_account'},
-        authScreenLaunchMode: LaunchMode.externalApplication,
+        authScreenLaunchMode: kIsWeb
+            ? LaunchMode.platformDefault
+            : LaunchMode.externalApplication,
       );
     } on AuthException catch (error) {
       if (mounted) {
@@ -429,7 +439,11 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                                     context: context,
                                     builder:
                                         (c) => AlertDialog(
-                                          title: const Text('Auth Error'),
+                                          title: Text(
+                                            AppLocalizations.of(c)
+                                                    ?.authErrorTitle ??
+                                                'Auth Error',
+                                          ),
                                           content: SingleChildScrollView(
                                             child: Text(e.toString()),
                                           ),

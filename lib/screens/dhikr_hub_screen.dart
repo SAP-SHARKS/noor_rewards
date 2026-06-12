@@ -229,12 +229,6 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'icon': '✨',
       },
       {
-        'title': 'Remembrance of Allah',
-        'id': 'remembrance_of_allah',
-        'color': Y4.amberY,
-        'icon': '🤲',
-      },
-      {
         'title': 'Ruquiya',
         'id': 'ruquiya',
         'color': Y4.primaryDeep,
@@ -611,7 +605,6 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       'duas_before_sleep',
       'duas_after_salah',
       'daily_duas',
-      'remembrance_of_allah',
       'rabbana_40',
       'ruquiya',
     };
@@ -788,7 +781,6 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       'duas_before_sleep',
       'duas_after_salah',
       'daily_duas',
-      'remembrance_of_allah',
       'rabbana_40',
       'ruquiya',
     };

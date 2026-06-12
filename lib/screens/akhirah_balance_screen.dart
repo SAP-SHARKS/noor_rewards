@@ -15,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/sabiq_coin.dart';
 import 'impact_report_screen.dart';
@@ -328,7 +329,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'A REMINDER',
+                  AppLocalizations.of(context)?.aReminderLabel ?? 'A REMINDER',
                   style: GoogleFonts.outfit(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w800,
@@ -362,14 +363,14 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
         children: [
           IconButton(
             icon: const Icon(Icons.close_rounded, color: Y4.ink),
-            tooltip: 'Done',
+            tooltip: AppLocalizations.of(context)?.doneLabel ?? 'Done',
             onPressed: _done,
           ),
           const Spacer(),
           TextButton(
             onPressed: _done,
             child: Text(
-              'Done',
+              AppLocalizations.of(context)?.doneLabel ?? 'Done',
               style: GoogleFonts.outfit(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
@@ -405,7 +406,8 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
       child: Column(
         children: [
           Text(
-            'YOUR AKHIRAH BALANCE',
+            AppLocalizations.of(context)?.yourAkhirahBalance ??
+                'YOUR AKHIRAH BALANCE',
             style: GoogleFonts.outfit(
               fontSize: 11,
               fontWeight: FontWeight.w800,
@@ -435,7 +437,8 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Seeds collected since you joined',
+            AppLocalizations.of(context)?.seedsCollectedSinceJoined ??
+                'Seeds collected since you joined',
             style: GoogleFonts.outfit(
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -524,7 +527,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TODAY',
+            AppLocalizations.of(context)?.todayLabel ?? 'TODAY',
             style: GoogleFonts.outfit(
               fontSize: 11,
               fontWeight: FontWeight.w800,
@@ -699,7 +702,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'LAST 7 DAYS',
+                AppLocalizations.of(context)?.last7Days ?? 'LAST 7 DAYS',
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
@@ -708,7 +711,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 ),
               ),
               Text(
-                'azkaar per day',
+                AppLocalizations.of(context)?.azkaarPerDay ?? 'azkaar per day',
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -831,7 +834,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'View full stats',
+              AppLocalizations.of(context)?.viewFullStats ?? 'View full stats',
               style: GoogleFonts.outfit(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,

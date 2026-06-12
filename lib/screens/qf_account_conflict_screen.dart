@@ -7,6 +7,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 class QfAccountConflictScreen extends StatefulWidget {
   /// The email that caused the conflict.
@@ -49,6 +50,7 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF0A1628),
       body: Stack(
@@ -115,7 +117,7 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
 
                   // Title
                   Text(
-                    'Account Already Exists',
+                    l?.qfConflictTitle ?? 'Account Already Exists',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 28,
@@ -168,7 +170,8 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
 
                   // Explanation
                   Text(
-                    'This email is already registered with Sabiq Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Sabiq Seeds, please sign in using your original method.',
+                    l?.qfConflictExplanation ??
+                        'This email is already registered with Sabiq Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Sabiq Seeds, please sign in using your original method.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -193,20 +196,25 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
                       children: [
                         _StepRow(
                           number: '1',
-                          text: 'Go back to the login screen',
+                          text:
+                              l?.qfConflictStep1 ??
+                              'Go back to the login screen',
                           color: const Color(0xFF2BAE99),
                         ),
                         const SizedBox(height: 14),
                         _StepRow(
                           number: '2',
                           text:
+                              l?.qfConflictStep2(widget.email) ??
                               'Sign in with Email or Google using\n${widget.email}',
                           color: const Color(0xFF5856D6),
                         ),
                         const SizedBox(height: 14),
                         _StepRow(
                           number: '3',
-                          text: 'All your progress will be right there',
+                          text:
+                              l?.qfConflictStep3 ??
+                              'All your progress will be right there',
                           color: const Color(0xFFFFAA00),
                         ),
                       ],
@@ -247,7 +255,7 @@ class _QfAccountConflictScreenState extends State<QfAccountConflictScreen>
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'Back to Sign In',
+                              l?.qfConflictBackButton ?? 'Back to Sign In',
                               style: GoogleFonts.outfit(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
