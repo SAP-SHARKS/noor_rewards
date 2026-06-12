@@ -3686,7 +3686,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 Text(
                                   AppLocalizations.of(context)
                                           ?.contributorCount(donorCount) ??
-                                      '${fmt(donorCount)} ${donorCount == 1 ? 'contributor' : 'contributors'}',
+                                      '$donorCount ${donorCount == 1 ? 'contributor' : 'contributors'}',
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,

@@ -459,7 +459,7 @@
   "howWeProtectData": "Comment nous protégeons vos données",
   "bugReportBody": "Vous avez trouvé un problème ? Envoyez-nous un e-mail et nous le corrigerons dès que possible.",
   "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.",
-  "howToEarnQuestion": "How to earn Sabiq Seeds?",
+  "howToEarnQuestion": "Comment gagner des Graines ?",
   "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn Seeds.",
   "whatIsValidateQuestion": "Qu'est-ce que Valider les Coins ?",
   "whatIsValidateAnswer": "Appuyez sur le bouton Valider sur la page d'accueil une fois par jour pour sceller vos coins.",
@@ -583,7 +583,7 @@
   "allCaughtUp": "All caught up",
   "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\nit'll show up here.",
   "justNow": "Just now",
-  "mAgo": "{delta}m ago",
+  "mAgo": "il y a {delta}m",
   "@mAgo": {
     "placeholders": {
       "delta": {
@@ -591,7 +591,7 @@
       }
     }
   },
-  "hAgo": "{delta}h ago",
+  "hAgo": "il y a {delta}h",
   "@hAgo": {
     "placeholders": {
       "delta": {
@@ -599,7 +599,7 @@
       }
     }
   },
-  "dAgo": "{delta}d ago",
+  "dAgo": "il y a {delta}j",
   "@dAgo": {
     "placeholders": {
       "delta": {
@@ -895,5 +895,35 @@
   "goodDeedTitle": "Bonne Action",
   "goodDeedSubtitle": "Gagnez du Sawab\nà chaque lecture",
   "realImpactTitle": "Impact Réel",
-  "realImpactSubtitle": "Les pièces financent\ndes causes nobles"
+  "realImpactSubtitle": "Les pièces financent\ndes causes nobles",
+  "plusDeedsTodayBadge": "+{count} bonnes actions aujourd'hui",
+  "equivalentChange": "{count} équivalent",
+  "receivedChange": "{count} reçus",
+  "readAyahsPlusTimeToday": "{count, plural, =1{Lu 1 verset plus {time} de lecture du Coran aujourd'hui} other{Lu {count} versets plus {time} de lecture du Coran aujourd'hui}}",
+  "readAyahsToday": "{count, plural, =1{Lu 1 verset aujourd'hui} other{Lu {count} versets aujourd'hui}}",
+  "spentTimeReadingQuranToday": "Passé {time} à lire le Coran aujourd'hui",
+  "everyDeedRecordedKeepGoing": "🌙  Chaque action est enregistrée. Continuez !",
+  "viewAllDonors": "Voir tous les {count} donateurs",
+  "nextMilestoneInfo": "Suivant : {label} ({days} jours)",
+  "bestN": "Meilleur {n}",
+  "streakMilestoneWarmingUp": "Démarrage",
+  "streakMilestoneOneWeek": "Une Semaine",
+  "streakMilestoneTwoWeeks": "Deux Semaines",
+  "streakMilestoneOneMonth": "Un Mois",
+  "streakMilestoneTwoMonths": "Deux Mois",
+  "streakMilestoneCenturion": "Le Centurion",
+  "firstTrackedWeek": "Votre première semaine suivie — continuez !",
+  "rightOnSevenDayPace": "Pile dans votre rythme de 7 jours",
+  "aboveSevenDayAvg": "{pct} % au-dessus de votre moyenne sur 7 jours",
+  "belowSevenDayAvg": "{pct} % en dessous de votre moyenne sur 7 jours",
+  "sponsoredBy": "Parrainé par",
+  "currentOverDays": "{current} / {days} jours",
+  "daysWord": "{count, plural, =1{jour} other{jours}}",
+  "dayAbbrMon": "Lu",
+  "dayAbbrTue": "Ma",
+  "dayAbbrWed": "Me",
+  "dayAbbrThu": "Je",
+  "dayAbbrFri": "Ve",
+  "dayAbbrSat": "Sa",
+  "dayAbbrSun": "Di"
 }

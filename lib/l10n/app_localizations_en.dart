@@ -2609,4 +2609,139 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get realImpactSubtitle => 'Coins fund\nnoble causes';
+
+  @override
+  String plusDeedsTodayBadge(String count) {
+    return '+$count deeds today';
+  }
+
+  @override
+  String equivalentChange(String count) {
+    return '$count equivalent';
+  }
+
+  @override
+  String receivedChange(String count) {
+    return '$count received';
+  }
+
+  @override
+  String readAyahsPlusTimeToday(int count, String time) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Read $count ayahs plus $time reading Quran today',
+      one: 'Read 1 ayah plus $time reading Quran today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String readAyahsToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Read $count ayahs today',
+      one: 'Read 1 ayah today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spentTimeReadingQuranToday(String time) {
+    return 'Spent $time reading Quran today';
+  }
+
+  @override
+  String get everyDeedRecordedKeepGoing =>
+      '🌙  Every deed is recorded. Keep going!';
+
+  @override
+  String viewAllDonors(int count) {
+    return 'View all $count donors';
+  }
+
+  @override
+  String nextMilestoneInfo(String label, int days) {
+    return 'Next: $label ($days days)';
+  }
+
+  @override
+  String bestN(int n) {
+    return 'Best $n';
+  }
+
+  @override
+  String get streakMilestoneWarmingUp => 'Warming Up';
+
+  @override
+  String get streakMilestoneOneWeek => 'One Week';
+
+  @override
+  String get streakMilestoneTwoWeeks => 'Two Weeks';
+
+  @override
+  String get streakMilestoneOneMonth => 'One Month';
+
+  @override
+  String get streakMilestoneTwoMonths => 'Two Months';
+
+  @override
+  String get streakMilestoneCenturion => 'The Centurion';
+
+  @override
+  String get firstTrackedWeek => 'Your first tracked week — keep going!';
+
+  @override
+  String get rightOnSevenDayPace => 'Right on your 7-day pace';
+
+  @override
+  String aboveSevenDayAvg(int pct) {
+    return '$pct% above your 7-day average';
+  }
+
+  @override
+  String belowSevenDayAvg(int pct) {
+    return '$pct% below your 7-day average';
+  }
+
+  @override
+  String get sponsoredBy => 'Sponsored by';
+
+  @override
+  String currentOverDays(int current, int days) {
+    return '$current / $days days';
+  }
+
+  @override
+  String daysWord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'days',
+      one: 'day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dayAbbrMon => 'Mo';
+
+  @override
+  String get dayAbbrTue => 'Tu';
+
+  @override
+  String get dayAbbrWed => 'We';
+
+  @override
+  String get dayAbbrThu => 'Th';
+
+  @override
+  String get dayAbbrFri => 'Fr';
+
+  @override
+  String get dayAbbrSat => 'Sa';
+
+  @override
+  String get dayAbbrSun => 'Su';
 }

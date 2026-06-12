@@ -499,19 +499,27 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
     final Color comparisonColor;
     final IconData comparisonIcon;
     if (avgAzkaar == 0) {
-      comparison = 'Your first tracked week — keep going!';
+      comparison = AppLocalizations.of(context)?.firstTrackedWeek ??
+          'Your first tracked week — keep going!';
       comparisonColor = Y4.inkSoft;
       comparisonIcon = Icons.auto_awesome_rounded;
     } else if (equal) {
-      comparison = 'Right on your 7-day pace';
+      comparison = AppLocalizations.of(context)?.rightOnSevenDayPace ??
+          'Right on your 7-day pace';
       comparisonColor = Y4.honeyDeep;
       comparisonIcon = Icons.horizontal_rule_rounded;
     } else if (above) {
-      comparison = '${azkaarDelta!.abs()}% above your 7-day average';
+      final pct = azkaarDelta!.abs();
+      comparison =
+          AppLocalizations.of(context)?.aboveSevenDayAvg(pct) ??
+              '$pct% above your 7-day average';
       comparisonColor = Y4.primaryDeep;
       comparisonIcon = Icons.trending_up_rounded;
     } else {
-      comparison = '${azkaarDelta!.abs()}% below your 7-day average';
+      final pct = azkaarDelta!.abs();
+      comparison =
+          AppLocalizations.of(context)?.belowSevenDayAvg(pct) ??
+              '$pct% below your 7-day average';
       comparisonColor = Y4.amberY;
       comparisonIcon = Icons.trending_down_rounded;
     }

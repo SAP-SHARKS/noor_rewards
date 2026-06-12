@@ -459,7 +459,7 @@
   "howWeProtectData": "كيف نحمي بياناتك",
   "bugReportBody": "وجدت خللًا؟ يرجى مراسلتنا وسنصلحه في أقرب وقت ممكن.",
   "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.",
-  "howToEarnQuestion": "How to earn Sabiq Seeds?",
+  "howToEarnQuestion": "كيف تكسب البذور؟",
   "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn Seeds.",
   "whatIsValidateQuestion": "ما هو تصديق العملات؟",
   "whatIsValidateAnswer": "اضغط زر التصديق في الصفحة الرئيسية مرة واحدة يوميًا لختم عملاتك.",
@@ -582,8 +582,8 @@
   "notificationsOff": "Notifications off",
   "allCaughtUp": "All caught up",
   "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\nit'll show up here.",
-  "justNow": "Just now",
-  "mAgo": "{delta}m ago",
+  "justNow": "الآن",
+  "mAgo": "منذ {delta}د",
   "@mAgo": {
     "placeholders": {
       "delta": {
@@ -591,7 +591,7 @@
       }
     }
   },
-  "hAgo": "{delta}h ago",
+  "hAgo": "منذ {delta}س",
   "@hAgo": {
     "placeholders": {
       "delta": {
@@ -599,7 +599,7 @@
       }
     }
   },
-  "dAgo": "{delta}d ago",
+  "dAgo": "منذ {delta}ي",
   "@dAgo": {
     "placeholders": {
       "delta": {
@@ -895,5 +895,35 @@
   "goodDeedTitle": "عمل صالح",
   "goodDeedSubtitle": "اكسب ثواباً\nمع كل قراءة",
   "realImpactTitle": "أثر حقيقي",
-  "realImpactSubtitle": "العملات تموّل\nقضايا نبيلة"
+  "realImpactSubtitle": "العملات تموّل\nقضايا نبيلة",
+  "plusDeedsTodayBadge": "+{count} حسنة اليوم",
+  "equivalentChange": "{count} ما يعادل",
+  "receivedChange": "{count} مستلمة",
+  "readAyahsPlusTimeToday": "{count, plural, =1{قرأت آية واحدة و{time} من تلاوة القرآن اليوم} other{قرأت {count} آيات و{time} من تلاوة القرآن اليوم}}",
+  "readAyahsToday": "{count, plural, =1{قرأت آية واحدة اليوم} other{قرأت {count} آيات اليوم}}",
+  "spentTimeReadingQuranToday": "قضيت {time} في تلاوة القرآن اليوم",
+  "everyDeedRecordedKeepGoing": "🌙  كل عمل مسجَّل. واصل المسير!",
+  "viewAllDonors": "عرض كل {count} متبرعين",
+  "nextMilestoneInfo": "التالي: {label} ({days} يوم)",
+  "bestN": "الأفضل {n}",
+  "streakMilestoneWarmingUp": "بداية النشاط",
+  "streakMilestoneOneWeek": "أسبوع واحد",
+  "streakMilestoneTwoWeeks": "أسبوعان",
+  "streakMilestoneOneMonth": "شهر واحد",
+  "streakMilestoneTwoMonths": "شهران",
+  "streakMilestoneCenturion": "المئوي",
+  "firstTrackedWeek": "أول أسبوع مسجّل لك — واصل المسير!",
+  "rightOnSevenDayPace": "تسير على نفس وتيرة أسبوعك",
+  "aboveSevenDayAvg": "{pct}٪ فوق متوسط أسبوعك",
+  "belowSevenDayAvg": "{pct}٪ تحت متوسط أسبوعك",
+  "sponsoredBy": "كفله",
+  "currentOverDays": "{current} / {days} يوم",
+  "daysWord": "{count, plural, =1{يوم} other{أيام}}",
+  "dayAbbrMon": "إث",
+  "dayAbbrTue": "ث",
+  "dayAbbrWed": "أر",
+  "dayAbbrThu": "خ",
+  "dayAbbrFri": "ج",
+  "dayAbbrSat": "س",
+  "dayAbbrSun": "أح"
 }

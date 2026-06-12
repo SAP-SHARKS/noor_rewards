@@ -765,7 +765,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     children: [
                       _HeroBadge(
                         NoorIcon.sunrise(size: 14),
-                        '+${_fmt(_todayPoints)} deeds today',
+                        AppLocalizations.of(context)
+                                ?.plusDeedsTodayBadge(_fmt(_todayPoints)) ??
+                            '+${_fmt(_todayPoints)} deeds today',
                         Colors.white.withValues(alpha: 0.78),
                         Y4.primaryDeep,
                       ),
@@ -1097,7 +1099,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.recordedInBookOfDeeds ??
               'Recorded in your Book of Deeds',
           value: _hasanaat,
-          change: 'All time',
+          change: AppLocalizations.of(context)?.allTimeLabel ?? 'All time',
           positive: true,
           isFirst: true,
           isLast: false,
@@ -1250,7 +1252,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.equivalentRewardEarned ??
               'Equivalent reward earned',
           value: _slavesFreed,
-          change: '${_fmt(_slavesFreed)} equivalent',
+          change: AppLocalizations.of(context)
+                  ?.equivalentChange(_fmt(_slavesFreed)) ??
+              '${_fmt(_slavesFreed)} equivalent',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1300,7 +1304,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.salawatTenReturned ??
               'Salawat × 10 returned',
           value: _blessingsReceived,
-          change: '${_fmt(_blessingsReceived)} received',
+          change: AppLocalizations.of(context)
+                  ?.receivedChange(_fmt(_blessingsReceived)) ??
+              '${_fmt(_blessingsReceived)} received',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1358,7 +1364,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.viaSurahIkhlas ??
               'Via Surah Al-Ikhlas ×3',
           value: _quranCompletionsViaIkhlas,
-          change: '${_fmt(_quranCompletionsViaIkhlas)} equivalent',
+          change: AppLocalizations.of(context)
+                  ?.equivalentChange(_fmt(_quranCompletionsViaIkhlas)) ??
+              '${_fmt(_quranCompletionsViaIkhlas)} equivalent',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1445,13 +1453,17 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
     final hasAyahs = _todayAyahs > 0;
     final hasTime = liveQuranSec > 0;
+    final l = AppLocalizations.of(context);
     if (hasAyahs && hasTime) {
-      return 'Read ${_fmt(_todayAyahs)} ayah${_todayAyahs == 1 ? '' : 's'} plus ${timePart()} reading Quran today';
+      return l?.readAyahsPlusTimeToday(_todayAyahs, timePart()) ??
+          'Read ${_fmt(_todayAyahs)} ayah${_todayAyahs == 1 ? '' : 's'} plus ${timePart()} reading Quran today';
     }
     if (hasAyahs) {
-      return 'Read ${_fmt(_todayAyahs)} ayah${_todayAyahs == 1 ? '' : 's'} today';
+      return l?.readAyahsToday(_todayAyahs) ??
+          'Read ${_fmt(_todayAyahs)} ayah${_todayAyahs == 1 ? '' : 's'} today';
     }
-    return 'Spent ${timePart()} reading Quran today';
+    return l?.spentTimeReadingQuranToday(timePart()) ??
+        'Spent ${timePart()} reading Quran today';
   }
 
   // ── Activity card (session time) ───────────────────────────────────────────
@@ -1810,7 +1822,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           ),
           child: Center(
             child: Text(
-              '🌙  Every deed is recorded. Keep going!',
+              AppLocalizations.of(context)?.everyDeedRecordedKeepGoing ??
+                  '🌙  Every deed is recorded. Keep going!',
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -2123,7 +2136,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
               ),
               const SizedBox(width: 6),
               Text(
-                '$count ${count == 1 ? 'contributor' : 'contributors'}',
+                AppLocalizations.of(context)?.contributorCount(count) ??
+                    '$count ${count == 1 ? 'contributor' : 'contributors'}',
                 style: GoogleFonts.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
@@ -2165,8 +2179,11 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       children: [
                         Text(
                           expanded
-                              ? 'Show less'
-                              : 'View all ${donors.length} donors',
+                              ? (AppLocalizations.of(context)?.showLess ??
+                                  'Show less')
+                              : (AppLocalizations.of(context)
+                                      ?.viewAllDonors(donors.length) ??
+                                  'View all ${donors.length} donors'),
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
