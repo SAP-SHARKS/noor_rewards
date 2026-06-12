@@ -1316,5 +1316,103 @@
   "goodDeedTitle": "Good Deed",
   "goodDeedSubtitle": "Earn Sawab\nwith every read",
   "realImpactTitle": "Real Impact",
-  "realImpactSubtitle": "Coins fund\nnoble causes"
+  "realImpactSubtitle": "Coins fund\nnoble causes",
+  "plusDeedsTodayBadge": "+{count} deeds today",
+  "@plusDeedsTodayBadge": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "equivalentChange": "{count} equivalent",
+  "@equivalentChange": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "receivedChange": "{count} received",
+  "@receivedChange": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "readAyahsPlusTimeToday": "{count, plural, =1{Read 1 ayah plus {time} reading Quran today} other{Read {count} ayahs plus {time} reading Quran today}}",
+  "@readAyahsPlusTimeToday": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "time": { "type": "String" }
+    }
+  },
+  "readAyahsToday": "{count, plural, =1{Read 1 ayah today} other{Read {count} ayahs today}}",
+  "@readAyahsToday": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "spentTimeReadingQuranToday": "Spent {time} reading Quran today",
+  "@spentTimeReadingQuranToday": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "everyDeedRecordedKeepGoing": "🌙  Every deed is recorded. Keep going!",
+  "viewAllDonors": "View all {count} donors",
+  "@viewAllDonors": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "nextMilestoneInfo": "Next: {label} ({days} days)",
+  "@nextMilestoneInfo": {
+    "placeholders": {
+      "label": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "bestN": "Best {n}",
+  "@bestN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "streakMilestoneWarmingUp": "Warming Up",
+  "streakMilestoneOneWeek": "One Week",
+  "streakMilestoneTwoWeeks": "Two Weeks",
+  "streakMilestoneOneMonth": "One Month",
+  "streakMilestoneTwoMonths": "Two Months",
+  "streakMilestoneCenturion": "The Centurion",
+  "firstTrackedWeek": "Your first tracked week — keep going!",
+  "rightOnSevenDayPace": "Right on your 7-day pace",
+  "aboveSevenDayAvg": "{pct}% above your 7-day average",
+  "@aboveSevenDayAvg": {
+    "placeholders": {
+      "pct": { "type": "int" }
+    }
+  },
+  "belowSevenDayAvg": "{pct}% below your 7-day average",
+  "@belowSevenDayAvg": {
+    "placeholders": {
+      "pct": { "type": "int" }
+    }
+  },
+  "sponsoredBy": "Sponsored by",
+  "currentOverDays": "{current} / {days} days",
+  "@currentOverDays": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "days": { "type": "int" }
+    }
+  },
+  "daysWord": "{count, plural, =1{day} other{days}}",
+  "@daysWord": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dayAbbrMon": "Mo",
+  "dayAbbrTue": "Tu",
+  "dayAbbrWed": "We",
+  "dayAbbrThu": "Th",
+  "dayAbbrFri": "Fr",
+  "dayAbbrSat": "Sa",
+  "dayAbbrSun": "Su"
 }

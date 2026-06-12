@@ -4789,6 +4789,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coins fund\nnoble causes'**
   String get realImpactSubtitle;
+
+  /// No description provided for @plusDeedsTodayBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} deeds today'**
+  String plusDeedsTodayBadge(String count);
+
+  /// No description provided for @equivalentChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} equivalent'**
+  String equivalentChange(String count);
+
+  /// No description provided for @receivedChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} received'**
+  String receivedChange(String count);
+
+  /// No description provided for @readAyahsPlusTimeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Read 1 ayah plus {time} reading Quran today} other{Read {count} ayahs plus {time} reading Quran today}}'**
+  String readAyahsPlusTimeToday(int count, String time);
+
+  /// No description provided for @readAyahsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Read 1 ayah today} other{Read {count} ayahs today}}'**
+  String readAyahsToday(int count);
+
+  /// No description provided for @spentTimeReadingQuranToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {time} reading Quran today'**
+  String spentTimeReadingQuranToday(String time);
+
+  /// No description provided for @everyDeedRecordedKeepGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'🌙  Every deed is recorded. Keep going!'**
+  String get everyDeedRecordedKeepGoing;
+
+  /// No description provided for @viewAllDonors.
+  ///
+  /// In en, this message translates to:
+  /// **'View all {count} donors'**
+  String viewAllDonors(int count);
+
+  /// No description provided for @nextMilestoneInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {label} ({days} days)'**
+  String nextMilestoneInfo(String label, int days);
+
+  /// No description provided for @bestN.
+  ///
+  /// In en, this message translates to:
+  /// **'Best {n}'**
+  String bestN(int n);
+
+  /// No description provided for @streakMilestoneWarmingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Warming Up'**
+  String get streakMilestoneWarmingUp;
+
+  /// No description provided for @streakMilestoneOneWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'One Week'**
+  String get streakMilestoneOneWeek;
+
+  /// No description provided for @streakMilestoneTwoWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Two Weeks'**
+  String get streakMilestoneTwoWeeks;
+
+  /// No description provided for @streakMilestoneOneMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'One Month'**
+  String get streakMilestoneOneMonth;
+
+  /// No description provided for @streakMilestoneTwoMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Two Months'**
+  String get streakMilestoneTwoMonths;
+
+  /// No description provided for @streakMilestoneCenturion.
+  ///
+  /// In en, this message translates to:
+  /// **'The Centurion'**
+  String get streakMilestoneCenturion;
+
+  /// No description provided for @firstTrackedWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first tracked week — keep going!'**
+  String get firstTrackedWeek;
+
+  /// No description provided for @rightOnSevenDayPace.
+  ///
+  /// In en, this message translates to:
+  /// **'Right on your 7-day pace'**
+  String get rightOnSevenDayPace;
+
+  /// No description provided for @aboveSevenDayAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% above your 7-day average'**
+  String aboveSevenDayAvg(int pct);
+
+  /// No description provided for @belowSevenDayAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% below your 7-day average'**
+  String belowSevenDayAvg(int pct);
+
+  /// No description provided for @sponsoredBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsored by'**
+  String get sponsoredBy;
+
+  /// No description provided for @currentOverDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {days} days'**
+  String currentOverDays(int current, int days);
+
+  /// No description provided for @daysWord.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{day} other{days}}'**
+  String daysWord(int count);
+
+  /// No description provided for @dayAbbrMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mo'**
+  String get dayAbbrMon;
+
+  /// No description provided for @dayAbbrTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tu'**
+  String get dayAbbrTue;
+
+  /// No description provided for @dayAbbrWed.
+  ///
+  /// In en, this message translates to:
+  /// **'We'**
+  String get dayAbbrWed;
+
+  /// No description provided for @dayAbbrThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Th'**
+  String get dayAbbrThu;
+
+  /// No description provided for @dayAbbrFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fr'**
+  String get dayAbbrFri;
+
+  /// No description provided for @dayAbbrSat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sa'**
+  String get dayAbbrSat;
+
+  /// No description provided for @dayAbbrSun.
+  ///
+  /// In en, this message translates to:
+  /// **'Su'**
+  String get dayAbbrSun;
 }
 
 class _AppLocalizationsDelegate

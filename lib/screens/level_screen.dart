@@ -83,6 +83,59 @@ String _localTierTitle(BuildContext context, String title) {
   }
 }
 
+// Localize tier unlock perk from the English key stored in data.
+String _localTierUnlocks(BuildContext context, String unlocks) {
+  final l = AppLocalizations.of(context)!;
+  switch (unlocks) {
+    case 'Basic features':
+      return l.basicFeatures;
+    case 'Custom profile themes':
+      return l.customProfileThemes;
+    case 'Leaderboard badge':
+      return l.leaderboardBadge;
+    case 'Exclusive voting rights':
+      return l.exclusiveVotingRights;
+    case 'Hall of Fame listing':
+      return l.hallOfFameListing;
+    default:
+      return unlocks;
+  }
+}
+
+// Localize StreakType.label ("Daily Login" / "Zikr" / "Quran").
+String _localStreakTypeLabel(BuildContext context, StreakType type) {
+  final l = AppLocalizations.of(context)!;
+  switch (type) {
+    case StreakType.login:
+      return l.dailyLogin;
+    case StreakType.dhikr:
+      return l.zikr;
+    case StreakType.quran:
+      return l.readQuran;
+  }
+}
+
+// Localize streak milestone label (kStreakMilestones in streak_service.dart).
+String _localMilestoneLabel(BuildContext context, String label) {
+  final l = AppLocalizations.of(context)!;
+  switch (label) {
+    case 'Warming Up':
+      return l.streakMilestoneWarmingUp;
+    case 'One Week':
+      return l.streakMilestoneOneWeek;
+    case 'Two Weeks':
+      return l.streakMilestoneTwoWeeks;
+    case 'One Month':
+      return l.streakMilestoneOneMonth;
+    case 'Two Months':
+      return l.streakMilestoneTwoMonths;
+    case 'The Centurion':
+      return l.streakMilestoneCenturion;
+    default:
+      return label;
+  }
+}
+
 // Activity type → readable label + emoji + colour
 ({String label, Widget icon, Color color}) _activityMeta(
   BuildContext context,
@@ -1118,7 +1171,9 @@ class _TierCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Unlocks: ${tier.unlocks}',
+                  AppLocalizations.of(context)
+                          ?.unlocks(_localTierUnlocks(context, tier.unlocks)) ??
+                      'Unlocks: ${tier.unlocks}',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -2435,7 +2490,11 @@ class _StreakHeroFlame extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'Next: ${milestone!.label} (${milestone!.days} days)',
+                    AppLocalizations.of(context)?.nextMilestoneInfo(
+                          _localMilestoneLabel(context, milestone!.label),
+                          milestone!.days,
+                        ) ??
+                        'Next: ${milestone!.label} (${milestone!.days} days)',
                     style: GoogleFonts.rajdhani(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -2514,7 +2573,8 @@ class _StreakFlameCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'day${streak == 1 ? '' : 's'}',
+                AppLocalizations.of(context)?.daysWord(streak) ??
+                    'day${streak == 1 ? '' : 's'}',
                 style: GoogleFonts.outfit(
                   fontSize: 10,
                   color: Y4.inkSoft,
@@ -2529,7 +2589,7 @@ class _StreakFlameCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Best $best',
+                  AppLocalizations.of(context)?.bestN(best) ?? 'Best $best',
                   style: GoogleFonts.outfit(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
@@ -2539,7 +2599,7 @@ class _StreakFlameCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                type.label,
+                _localStreakTypeLabel(context, type),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
                   fontSize: 9,
@@ -2606,15 +2666,18 @@ class _StreakCalendar extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          [
-                            'Mo',
-                            'Tu',
-                            'We',
-                            'Th',
-                            'Fr',
-                            'Sa',
-                            'Su',
-                          ][day.weekday - 1],
+                          (() {
+                            final l = AppLocalizations.of(context);
+                            return [
+                              l?.dayAbbrMon ?? 'Mo',
+                              l?.dayAbbrTue ?? 'Tu',
+                              l?.dayAbbrWed ?? 'We',
+                              l?.dayAbbrThu ?? 'Th',
+                              l?.dayAbbrFri ?? 'Fr',
+                              l?.dayAbbrSat ?? 'Sa',
+                              l?.dayAbbrSun ?? 'Su',
+                            ][day.weekday - 1];
+                          })(),
                           style: GoogleFonts.outfit(
                             fontSize: 9,
                             color: Y4.inkSoft,
@@ -2705,7 +2768,7 @@ class _StreakCalendar extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          t.label,
+                          _localStreakTypeLabel(context, t),
                           style: GoogleFonts.outfit(
                             fontSize: 10,
                             color: Y4.ink,
@@ -2783,7 +2846,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  milestone.label,
+                  _localMilestoneLabel(context, milestone.label),
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -2907,7 +2970,7 @@ class _StreakMilestoneList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          m.label,
+                          _localMilestoneLabel(context, m.label),
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,

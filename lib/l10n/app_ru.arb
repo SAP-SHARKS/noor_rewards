@@ -459,7 +459,7 @@
   "howWeProtectData": "Как мы защищаем ваши данные",
   "bugReportBody": "Нашли ошибку? Напишите нам, и мы исправим её как можно скорее.",
   "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.",
-  "howToEarnQuestion": "How to earn Sabiq Seeds?",
+  "howToEarnQuestion": "Как заработать Семена?",
   "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn Seeds.",
   "whatIsValidateQuestion": "Что такое «Подтвердить монеты»?",
   "whatIsValidateAnswer": "Нажмите кнопку «Подтвердить» на главной странице раз в день, чтобы закрепить свои монеты.",
@@ -583,7 +583,7 @@
   "allCaughtUp": "All caught up",
   "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\nit'll show up here.",
   "justNow": "Just now",
-  "mAgo": "{delta}m ago",
+  "mAgo": "{delta} мин назад",
   "@mAgo": {
     "placeholders": {
       "delta": {
@@ -591,7 +591,7 @@
       }
     }
   },
-  "hAgo": "{delta}h ago",
+  "hAgo": "{delta} ч назад",
   "@hAgo": {
     "placeholders": {
       "delta": {
@@ -599,7 +599,7 @@
       }
     }
   },
-  "dAgo": "{delta}d ago",
+  "dAgo": "{delta} дн назад",
   "@dAgo": {
     "placeholders": {
       "delta": {
@@ -895,5 +895,35 @@
   "goodDeedTitle": "Доброе Дело",
   "goodDeedSubtitle": "Зарабатывайте Саваб\nс каждым чтением",
   "realImpactTitle": "Реальное Влияние",
-  "realImpactSubtitle": "Монеты финансируют\nблагородные дела"
+  "realImpactSubtitle": "Монеты финансируют\nблагородные дела",
+  "plusDeedsTodayBadge": "+{count} деяний сегодня",
+  "equivalentChange": "{count} эквивалент",
+  "receivedChange": "{count} получено",
+  "readAyahsPlusTimeToday": "{count, plural, =1{Прочитан 1 аят плюс {time} чтения Корана сегодня} other{Прочитано {count} аятов плюс {time} чтения Корана сегодня}}",
+  "readAyahsToday": "{count, plural, =1{Прочитан 1 аят сегодня} other{Прочитано {count} аятов сегодня}}",
+  "spentTimeReadingQuranToday": "Потрачено {time} на чтение Корана сегодня",
+  "everyDeedRecordedKeepGoing": "🌙  Каждое деяние записано. Продолжайте!",
+  "viewAllDonors": "Показать всех {count} жертвователей",
+  "nextMilestoneInfo": "Далее: {label} ({days} дней)",
+  "bestN": "Лучший {n}",
+  "streakMilestoneWarmingUp": "Разогрев",
+  "streakMilestoneOneWeek": "Одна Неделя",
+  "streakMilestoneTwoWeeks": "Две Недели",
+  "streakMilestoneOneMonth": "Один Месяц",
+  "streakMilestoneTwoMonths": "Два Месяца",
+  "streakMilestoneCenturion": "Центурион",
+  "firstTrackedWeek": "Ваша первая отслеженная неделя — продолжайте!",
+  "rightOnSevenDayPace": "Точно по вашему 7-дневному темпу",
+  "aboveSevenDayAvg": "На {pct}% выше вашего 7-дневного среднего",
+  "belowSevenDayAvg": "На {pct}% ниже вашего 7-дневного среднего",
+  "sponsoredBy": "Спонсировано",
+  "currentOverDays": "{current} / {days} дней",
+  "daysWord": "{count, plural, =1{день} other{дней}}",
+  "dayAbbrMon": "Пн",
+  "dayAbbrTue": "Вт",
+  "dayAbbrWed": "Ср",
+  "dayAbbrThu": "Чт",
+  "dayAbbrFri": "Пт",
+  "dayAbbrSat": "Сб",
+  "dayAbbrSun": "Вс"
 }

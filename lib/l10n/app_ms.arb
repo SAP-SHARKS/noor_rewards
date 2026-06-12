@@ -459,7 +459,7 @@
   "howWeProtectData": "Cara kami melindungi data anda",
   "bugReportBody": "Jumpa sesuatu yang salah? Sila e-mel kami dan kami akan membetulkannya secepat mungkin.",
   "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.",
-  "howToEarnQuestion": "How to earn Sabiq Seeds?",
+  "howToEarnQuestion": "Bagaimana memperoleh Biji?",
   "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn Seeds.",
   "whatIsValidateQuestion": "Apakah itu Validate Coins?",
   "whatIsValidateAnswer": "Tekan butang Sahkan di halaman utama sekali sehari untuk memeterai syiling anda.",
@@ -583,7 +583,7 @@
   "allCaughtUp": "All caught up",
   "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\nit'll show up here.",
   "justNow": "Just now",
-  "mAgo": "{delta}m ago",
+  "mAgo": "{delta}m lalu",
   "@mAgo": {
     "placeholders": {
       "delta": {
@@ -591,7 +591,7 @@
       }
     }
   },
-  "hAgo": "{delta}h ago",
+  "hAgo": "{delta}j lalu",
   "@hAgo": {
     "placeholders": {
       "delta": {
@@ -599,7 +599,7 @@
       }
     }
   },
-  "dAgo": "{delta}d ago",
+  "dAgo": "{delta}h lalu",
   "@dAgo": {
     "placeholders": {
       "delta": {
@@ -895,5 +895,35 @@
   "goodDeedTitle": "Amal Baik",
   "goodDeedSubtitle": "Peroleh Sawab\nsetiap bacaan",
   "realImpactTitle": "Impak Sebenar",
-  "realImpactSubtitle": "Syiling membiayai\nperjuangan mulia"
+  "realImpactSubtitle": "Syiling membiayai\nperjuangan mulia",
+  "plusDeedsTodayBadge": "+{count} amalan hari ini",
+  "equivalentChange": "{count} setara",
+  "receivedChange": "{count} diterima",
+  "readAyahsPlusTimeToday": "{count, plural, =1{Membaca 1 ayat tambah {time} membaca Quran hari ini} other{Membaca {count} ayat tambah {time} membaca Quran hari ini}}",
+  "readAyahsToday": "{count, plural, =1{Membaca 1 ayat hari ini} other{Membaca {count} ayat hari ini}}",
+  "spentTimeReadingQuranToday": "Menghabiskan {time} membaca Quran hari ini",
+  "everyDeedRecordedKeepGoing": "🌙  Setiap amalan dicatat. Teruskan!",
+  "viewAllDonors": "Lihat semua {count} penderma",
+  "nextMilestoneInfo": "Seterusnya: {label} ({days} hari)",
+  "bestN": "Terbaik {n}",
+  "streakMilestoneWarmingUp": "Memanaskan Badan",
+  "streakMilestoneOneWeek": "Satu Minggu",
+  "streakMilestoneTwoWeeks": "Dua Minggu",
+  "streakMilestoneOneMonth": "Satu Bulan",
+  "streakMilestoneTwoMonths": "Dua Bulan",
+  "streakMilestoneCenturion": "Centurion",
+  "firstTrackedWeek": "Minggu pertama anda yang dijejaki — teruskan!",
+  "rightOnSevenDayPace": "Tepat pada kadar 7-hari anda",
+  "aboveSevenDayAvg": "{pct}% di atas purata 7-hari anda",
+  "belowSevenDayAvg": "{pct}% di bawah purata 7-hari anda",
+  "sponsoredBy": "Ditaja oleh",
+  "currentOverDays": "{current} / {days} hari",
+  "daysWord": "{count, plural, =1{hari} other{hari}}",
+  "dayAbbrMon": "Is",
+  "dayAbbrTue": "Sl",
+  "dayAbbrWed": "Ra",
+  "dayAbbrThu": "Kh",
+  "dayAbbrFri": "Ju",
+  "dayAbbrSat": "Sa",
+  "dayAbbrSun": "Ah"
 }

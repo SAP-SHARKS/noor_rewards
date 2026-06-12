@@ -388,7 +388,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
     if (_loadingRecent) return const SizedBox.shrink();
     if (_recent.isEmpty) return const SizedBox.shrink();
     return _section(
-      'Sponsored by',
+      AppLocalizations.of(context)?.sponsoredBy ?? 'Sponsored by',
       Column(
         children: _recent
             .map(

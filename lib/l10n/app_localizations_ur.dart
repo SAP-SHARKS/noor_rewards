@@ -1485,7 +1485,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.';
 
   @override
-  String get howToEarnQuestion => 'How to earn Sabiq Seeds?';
+  String get howToEarnQuestion => 'بیج کیسے کمائیں؟';
 
   @override
   String get howToEarnAnswer =>
@@ -2612,4 +2612,139 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get realImpactSubtitle => 'سکے نیک کاموں کو\nمالی امداد دیتے ہیں';
+
+  @override
+  String plusDeedsTodayBadge(String count) {
+    return 'آج +$count نیکیاں';
+  }
+
+  @override
+  String equivalentChange(String count) {
+    return '$count برابر';
+  }
+
+  @override
+  String receivedChange(String count) {
+    return '$count موصول';
+  }
+
+  @override
+  String readAyahsPlusTimeToday(int count, String time) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'آج $count آیات پڑھیں اور $time قرآن پڑھنے میں صرف کیے',
+      one: 'آج 1 آیت پڑھی اور $time قرآن پڑھنے میں صرف کیے',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String readAyahsToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'آج $count آیات پڑھیں',
+      one: 'آج 1 آیت پڑھی',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spentTimeReadingQuranToday(String time) {
+    return 'آج $time قرآن پڑھنے میں صرف کیے';
+  }
+
+  @override
+  String get everyDeedRecordedKeepGoing =>
+      '🌙  ہر نیکی درج ہو رہی ہے۔ جاری رکھیں!';
+
+  @override
+  String viewAllDonors(int count) {
+    return 'تمام $count عطیہ دہندگان دیکھیں';
+  }
+
+  @override
+  String nextMilestoneInfo(String label, int days) {
+    return 'اگلا: $label ($days دن)';
+  }
+
+  @override
+  String bestN(int n) {
+    return 'بہترین $n';
+  }
+
+  @override
+  String get streakMilestoneWarmingUp => 'ابتدا';
+
+  @override
+  String get streakMilestoneOneWeek => 'ایک ہفتہ';
+
+  @override
+  String get streakMilestoneTwoWeeks => 'دو ہفتے';
+
+  @override
+  String get streakMilestoneOneMonth => 'ایک مہینہ';
+
+  @override
+  String get streakMilestoneTwoMonths => 'دو مہینے';
+
+  @override
+  String get streakMilestoneCenturion => 'سو دنوں کا چیمپئن';
+
+  @override
+  String get firstTrackedWeek => 'آپ کا پہلا ٹریک شدہ ہفتہ — جاری رکھیں!';
+
+  @override
+  String get rightOnSevenDayPace => 'اپنے 7-دن کی رفتار پر بالکل صحیح';
+
+  @override
+  String aboveSevenDayAvg(int pct) {
+    return 'آپ کے 7-دن اوسط سے $pct٪ اوپر';
+  }
+
+  @override
+  String belowSevenDayAvg(int pct) {
+    return 'آپ کے 7-دن اوسط سے $pct٪ کم';
+  }
+
+  @override
+  String get sponsoredBy => 'کفالت کرنے والے';
+
+  @override
+  String currentOverDays(int current, int days) {
+    return '$current / $days دن';
+  }
+
+  @override
+  String daysWord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'دن',
+      one: 'دن',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dayAbbrMon => 'پیر';
+
+  @override
+  String get dayAbbrTue => 'منگل';
+
+  @override
+  String get dayAbbrWed => 'بدھ';
+
+  @override
+  String get dayAbbrThu => 'جمع';
+
+  @override
+  String get dayAbbrFri => 'جمعہ';
+
+  @override
+  String get dayAbbrSat => 'ہفت';
+
+  @override
+  String get dayAbbrSun => 'اتو';
 }

@@ -459,7 +459,7 @@
   "howWeProtectData": "Verilerinizi nasıl koruyoruz",
   "bugReportBody": "Bir sorun mu buldunuz? Lütfen bize e-posta gönderin, en kısa sürede düzeltelim.",
   "aboutBody": "Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.",
-  "howToEarnQuestion": "How to earn Sabiq Seeds?",
+  "howToEarnQuestion": "Tohum nasıl kazanılır?",
   "howToEarnAnswer": "Complete Quran reading, Dhikr sets, and daily login to earn Seeds.",
   "whatIsValidateQuestion": "Doğrulama Coinleri nedir?",
   "whatIsValidateAnswer": "Coinlerini mühürlemek için ana sayfadaki Doğrula düğmesine günde bir kez bas.",
@@ -583,7 +583,7 @@
   "allCaughtUp": "All caught up",
   "whenYouEarnRewards": "When you earn rewards, hit a streak, or unlock a badge,\nit'll show up here.",
   "justNow": "Just now",
-  "mAgo": "{delta}m ago",
+  "mAgo": "{delta}dk önce",
   "@mAgo": {
     "placeholders": {
       "delta": {
@@ -591,7 +591,7 @@
       }
     }
   },
-  "hAgo": "{delta}h ago",
+  "hAgo": "{delta}sa önce",
   "@hAgo": {
     "placeholders": {
       "delta": {
@@ -599,7 +599,7 @@
       }
     }
   },
-  "dAgo": "{delta}d ago",
+  "dAgo": "{delta}g önce",
   "@dAgo": {
     "placeholders": {
       "delta": {
@@ -895,5 +895,35 @@
   "goodDeedTitle": "İyi Amel",
   "goodDeedSubtitle": "Her okumayla\nSevap kazanın",
   "realImpactTitle": "Gerçek Etki",
-  "realImpactSubtitle": "Tohumlar asil davaları\nfinanse eder"
+  "realImpactSubtitle": "Tohumlar asil davaları\nfinanse eder",
+  "plusDeedsTodayBadge": "+{count} amel bugün",
+  "equivalentChange": "{count} eşdeğer",
+  "receivedChange": "{count} alındı",
+  "readAyahsPlusTimeToday": "{count, plural, =1{Bugün 1 ayet okundu ve {time} Kuran okumaya harcandı} other{Bugün {count} ayet okundu ve {time} Kuran okumaya harcandı}}",
+  "readAyahsToday": "{count, plural, =1{Bugün 1 ayet okundu} other{Bugün {count} ayet okundu}}",
+  "spentTimeReadingQuranToday": "Bugün Kuran okumaya {time} harcandı",
+  "everyDeedRecordedKeepGoing": "🌙  Her amel kaydediliyor. Devam edin!",
+  "viewAllDonors": "Tüm {count} bağışçıyı göster",
+  "nextMilestoneInfo": "Sonraki: {label} ({days} gün)",
+  "bestN": "En İyi {n}",
+  "streakMilestoneWarmingUp": "Isınma",
+  "streakMilestoneOneWeek": "Bir Hafta",
+  "streakMilestoneTwoWeeks": "İki Hafta",
+  "streakMilestoneOneMonth": "Bir Ay",
+  "streakMilestoneTwoMonths": "İki Ay",
+  "streakMilestoneCenturion": "Yüzbaşı",
+  "firstTrackedWeek": "İlk takip edilen haftanız — devam edin!",
+  "rightOnSevenDayPace": "Tam 7 günlük temponuzda",
+  "aboveSevenDayAvg": "7 günlük ortalamanızın %{pct} üzerinde",
+  "belowSevenDayAvg": "7 günlük ortalamanızın %{pct} altında",
+  "sponsoredBy": "Sponsor",
+  "currentOverDays": "{current} / {days} gün",
+  "daysWord": "{count, plural, =1{gün} other{gün}}",
+  "dayAbbrMon": "Pt",
+  "dayAbbrTue": "Sa",
+  "dayAbbrWed": "Ça",
+  "dayAbbrThu": "Pe",
+  "dayAbbrFri": "Cu",
+  "dayAbbrSat": "Ct",
+  "dayAbbrSun": "Pz"
 }

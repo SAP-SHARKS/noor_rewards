@@ -10,6 +10,40 @@ import '../theme/y4_theme.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 
+// Localize StreakType.label ("Daily Login" / "Zikr" / "Quran").
+String _localStreakTypeLabel(BuildContext context, StreakType type) {
+  final l = AppLocalizations.of(context)!;
+  switch (type) {
+    case StreakType.login:
+      return l.dailyLogin;
+    case StreakType.dhikr:
+      return l.zikr;
+    case StreakType.quran:
+      return l.readQuran;
+  }
+}
+
+// Localize streak milestone label (kStreakMilestones in streak_service.dart).
+String _localMilestoneLabel(BuildContext context, String label) {
+  final l = AppLocalizations.of(context)!;
+  switch (label) {
+    case 'Warming Up':
+      return l.streakMilestoneWarmingUp;
+    case 'One Week':
+      return l.streakMilestoneOneWeek;
+    case 'Two Weeks':
+      return l.streakMilestoneTwoWeeks;
+    case 'One Month':
+      return l.streakMilestoneOneMonth;
+    case 'Two Months':
+      return l.streakMilestoneTwoMonths;
+    case 'The Centurion':
+      return l.streakMilestoneCenturion;
+    default:
+      return label;
+  }
+}
+
 class StreakScreen extends StatefulWidget {
   const StreakScreen({super.key});
   @override
@@ -263,7 +297,9 @@ class _HeroFlame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = milestone?.label ?? 'Legend';
+    final label = milestone != null
+        ? _localMilestoneLabel(context, milestone!.label)
+        : (AppLocalizations.of(context)?.levelLegend ?? 'Legend');
     return AnimatedBuilder(
       animation: Listenable.merge([flameScale, pulse]),
       builder:
@@ -362,7 +398,11 @@ class _HeroFlame extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'Next: ${milestone!.label} (${milestone!.days} days)',
+                    AppLocalizations.of(context)?.nextMilestoneInfo(
+                          _localMilestoneLabel(context, milestone!.label),
+                          milestone!.days,
+                        ) ??
+                        'Next: ${milestone!.label} (${milestone!.days} days)',
                     style: GoogleFonts.rajdhani(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -468,7 +508,7 @@ class _FlameCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Best $best',
+                    AppLocalizations.of(context)?.bestN(best) ?? 'Best $best',
                     style: GoogleFonts.outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
@@ -478,7 +518,7 @@ class _FlameCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  type.label,
+                  _localStreakTypeLabel(context, type),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
                     fontSize: 10,
@@ -540,15 +580,18 @@ class _SevenDayCalendar extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          [
-                            'Mo',
-                            'Tu',
-                            'We',
-                            'Th',
-                            'Fr',
-                            'Sa',
-                            'Su',
-                          ][day.weekday - 1],
+                          (() {
+                            final l = AppLocalizations.of(context);
+                            return [
+                              l?.dayAbbrMon ?? 'Mo',
+                              l?.dayAbbrTue ?? 'Tu',
+                              l?.dayAbbrWed ?? 'We',
+                              l?.dayAbbrThu ?? 'Th',
+                              l?.dayAbbrFri ?? 'Fr',
+                              l?.dayAbbrSat ?? 'Sa',
+                              l?.dayAbbrSun ?? 'Su',
+                            ][day.weekday - 1];
+                          })(),
                           style: GoogleFonts.outfit(
                             fontSize: 10,
                             color: Y4.muted,
@@ -594,7 +637,7 @@ class _SevenDayCalendar extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              t.label,
+                              _localStreakTypeLabel(context, t),
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
                                 color: Y4.inkSoft,
@@ -728,7 +771,7 @@ class _MilestoneProgress extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  milestone.label,
+                  _localMilestoneLabel(context, milestone.label),
                   style: GoogleFonts.outfit(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -737,7 +780,9 @@ class _MilestoneProgress extends StatelessWidget {
                 ),
               ),
               Text(
-                '$current / ${milestone.days} days',
+                AppLocalizations.of(context)
+                        ?.currentOverDays(current, milestone.days) ??
+                    '$current / ${milestone.days} days',
                 style: GoogleFonts.outfit(fontSize: 12, color: Y4.inkSoft),
               ),
             ],
@@ -841,7 +886,7 @@ class _MilestoneList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          m.label,
+                          _localMilestoneLabel(context, m.label),
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,

@@ -1144,7 +1144,8 @@ class _DonorsSectionState extends State<_DonorsSection> {
             const Icon(Icons.people_alt_rounded, size: 18, color: Y4.honeyDeep),
             const SizedBox(width: 6),
             Text(
-              '${_fmtCount(count)} ${count == 1 ? 'contributor' : 'contributors'}',
+              AppLocalizations.of(context)?.contributorCount(count) ??
+                  '${_fmtCount(count)} ${count == 1 ? 'contributor' : 'contributors'}',
               style: GoogleFonts.outfit(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,

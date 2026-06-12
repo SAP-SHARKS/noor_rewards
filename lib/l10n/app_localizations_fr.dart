@@ -1494,7 +1494,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.';
 
   @override
-  String get howToEarnQuestion => 'How to earn Sabiq Seeds?';
+  String get howToEarnQuestion => 'Comment gagner des Graines ?';
 
   @override
   String get howToEarnAnswer =>
@@ -1736,17 +1736,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String mAgo(String delta) {
-    return '${delta}m ago';
+    return 'il y a ${delta}m';
   }
 
   @override
   String hAgo(String delta) {
-    return '${delta}h ago';
+    return 'il y a ${delta}h';
   }
 
   @override
   String dAgo(String delta) {
-    return '${delta}d ago';
+    return 'il y a ${delta}j';
   }
 
   @override
@@ -2623,4 +2623,139 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get realImpactSubtitle => 'Les pièces financent\ndes causes nobles';
+
+  @override
+  String plusDeedsTodayBadge(String count) {
+    return '+$count bonnes actions aujourd\'hui';
+  }
+
+  @override
+  String equivalentChange(String count) {
+    return '$count équivalent';
+  }
+
+  @override
+  String receivedChange(String count) {
+    return '$count reçus';
+  }
+
+  @override
+  String readAyahsPlusTimeToday(int count, String time) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Lu $count versets plus $time de lecture du Coran aujourd\'hui',
+      one: 'Lu 1 verset plus $time de lecture du Coran aujourd\'hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String readAyahsToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Lu $count versets aujourd\'hui',
+      one: 'Lu 1 verset aujourd\'hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spentTimeReadingQuranToday(String time) {
+    return 'Passé $time à lire le Coran aujourd\'hui';
+  }
+
+  @override
+  String get everyDeedRecordedKeepGoing =>
+      '🌙  Chaque action est enregistrée. Continuez !';
+
+  @override
+  String viewAllDonors(int count) {
+    return 'Voir tous les $count donateurs';
+  }
+
+  @override
+  String nextMilestoneInfo(String label, int days) {
+    return 'Suivant : $label ($days jours)';
+  }
+
+  @override
+  String bestN(int n) {
+    return 'Meilleur $n';
+  }
+
+  @override
+  String get streakMilestoneWarmingUp => 'Démarrage';
+
+  @override
+  String get streakMilestoneOneWeek => 'Une Semaine';
+
+  @override
+  String get streakMilestoneTwoWeeks => 'Deux Semaines';
+
+  @override
+  String get streakMilestoneOneMonth => 'Un Mois';
+
+  @override
+  String get streakMilestoneTwoMonths => 'Deux Mois';
+
+  @override
+  String get streakMilestoneCenturion => 'Le Centurion';
+
+  @override
+  String get firstTrackedWeek => 'Votre première semaine suivie — continuez !';
+
+  @override
+  String get rightOnSevenDayPace => 'Pile dans votre rythme de 7 jours';
+
+  @override
+  String aboveSevenDayAvg(int pct) {
+    return '$pct % au-dessus de votre moyenne sur 7 jours';
+  }
+
+  @override
+  String belowSevenDayAvg(int pct) {
+    return '$pct % en dessous de votre moyenne sur 7 jours';
+  }
+
+  @override
+  String get sponsoredBy => 'Parrainé par';
+
+  @override
+  String currentOverDays(int current, int days) {
+    return '$current / $days jours';
+  }
+
+  @override
+  String daysWord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'jours',
+      one: 'jour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dayAbbrMon => 'Lu';
+
+  @override
+  String get dayAbbrTue => 'Ma';
+
+  @override
+  String get dayAbbrWed => 'Me';
+
+  @override
+  String get dayAbbrThu => 'Je';
+
+  @override
+  String get dayAbbrFri => 'Ve';
+
+  @override
+  String get dayAbbrSat => 'Sa';
+
+  @override
+  String get dayAbbrSun => 'Di';
 }
