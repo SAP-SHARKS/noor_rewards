@@ -1731,7 +1731,8 @@ class _SettingsSheetState extends State<_SettingsSheet> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Reading Settings',
+                AppLocalizations.of(context)?.readingSettings ??
+                    'Reading Settings',
                 style: GoogleFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -1739,7 +1740,10 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                 ),
               ),
 
-              sHead('TAFSIR SOURCE', Icons.menu_book_rounded),
+              sHead(
+                AppLocalizations.of(context)?.tafsirSource ?? 'TAFSIR SOURCE',
+                Icons.menu_book_rounded,
+              ),
               for (int i = 0; i < _tafsirEditions.length; i++)
                 GestureDetector(
                   onTap: () {
@@ -1780,9 +1784,15 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                               Text(
                                 _tafsirEditions[i].rtl
                                     ? (_tafsirEditions[i].id.startsWith('ar')
-                                        ? 'Arabic'
-                                        : 'Urdu')
-                                    : 'English',
+                                        ? (AppLocalizations.of(context)
+                                                ?.arabicLanguageLabel ??
+                                            'Arabic')
+                                        : (AppLocalizations.of(context)
+                                                ?.urduLanguageLabel ??
+                                            'Urdu'))
+                                    : (AppLocalizations.of(context)
+                                            ?.englishLanguageLabel ??
+                                        'English'),
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   color: sub,
@@ -1802,7 +1812,10 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                   ),
                 ),
 
-              sHead('RECITER', Icons.mic_rounded),
+              sHead(
+                AppLocalizations.of(context)?.reciter ?? 'RECITER',
+                Icons.mic_rounded,
+              ),
               Row(
                 children: [
                   for (int i = 0; i < _tReciters.length; i++) ...[
@@ -1840,18 +1853,33 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                 ],
               ),
 
-              sHead('DISPLAY', Icons.text_fields_rounded),
-              sw('Show Arabic Text', _arabic, (v) {
-                setState(() => _arabic = v);
-                widget.onArabic(v);
-              }),
+              sHead(
+                AppLocalizations.of(context)?.displayLabel ?? 'DISPLAY',
+                Icons.text_fields_rounded,
+              ),
+              sw(
+                AppLocalizations.of(context)?.showArabicText ??
+                    'Show Arabic Text',
+                _arabic,
+                (v) {
+                  setState(() => _arabic = v);
+                  widget.onArabic(v);
+                },
+              ),
               const SizedBox(height: 8),
-              sw('Dark Mode', _dark, (v) {
-                setState(() => _dark = v);
-                widget.onDarkMode(v);
-              }),
+              sw(
+                AppLocalizations.of(context)?.darkMode ?? 'Dark Mode',
+                _dark,
+                (v) {
+                  setState(() => _dark = v);
+                  widget.onDarkMode(v);
+                },
+              ),
 
-              sHead('FONT SIZE', Icons.format_size_rounded),
+              sHead(
+                AppLocalizations.of(context)?.fontSize ?? 'FONT SIZE',
+                Icons.format_size_rounded,
+              ),
               Row(
                 children: [
                   Text(

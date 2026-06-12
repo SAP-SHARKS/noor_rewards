@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 import 'sabiq_coin.dart';
 
@@ -287,7 +288,7 @@ class _SealCoinOverlayState extends State<_SealCoinOverlay>
                     children: [
                       Text(
                         '+${widget.pointsSealed} '
-                        '${widget.pointsSealed == 1 ? 'Seed' : 'Seeds'}',
+                        '${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 30,

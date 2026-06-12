@@ -303,10 +303,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (lastReminder == today) return;
 
     await prefs.setString('pending_reminder_date', today);
+    if (!mounted) return;
+    final l = AppLocalizations.of(context);
     NotificationCenter.instance.add(
       kind: NoorNotifKind.validation,
-      title: 'Seeds expiring at midnight!',
-      body: 'You have $pending Seeds pending. Seal the Day now or they expire!',
+      title: l?.seedsExpiringNotificationTitle ??
+          'Seeds expiring at midnight!',
+      body: l?.seedsExpiringNotificationBody(pending) ??
+          'You have $pending Seeds pending. Seal the Day now or they expire!',
       route: '/home',
     );
   }
@@ -1164,7 +1168,7 @@ class _HomeTabState extends State<_HomeTab> {
         _recentBadgeName != null
             ? (l10n?.lastAchievement(_recentBadgeName!) ??
                 'Last: ${_recentBadgeName!}')
-            : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} Seeds';
+            : 'Lv ${widget.level} · ${_fmt(widget.totalXp)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}';
     final inviteSub = l10n?.earnPerFriend ?? 'Earn +500 per friend';
 
     return Container(
@@ -3120,7 +3124,8 @@ class _ProgBar extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: '/ $goal Seeds',
+                      text:
+                          '/ $goal ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                       style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
                     ),
                   ],
@@ -3581,7 +3586,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 const SabiqCoin(size: 22),
                                 const SizedBox(width: 6),
                                 Text(
-                                  '${fmt(current)} Seeds',
+                                  '${fmt(current)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                   style: Y4.display(
                                     fontSize: 22,
                                     color: Y4.honeyDeep,
@@ -3664,7 +3669,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 const SabiqCoin(size: 22),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${fmt(target)} Seeds',
+                                  '${fmt(target)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
@@ -3694,7 +3699,7 @@ class _MyDonationsSection extends StatelessWidget {
                             if (myPts > 0) ...[
                               const SizedBox(height: 6),
                               Text(
-                                '${AppLocalizations.of(context)?.youDonated ?? 'You donated'} ${fmt(myPts)} ${myPts == 1 ? 'Seed' : 'Seeds'}',
+                                '${AppLocalizations.of(context)?.youDonated ?? 'You donated'} ${fmt(myPts)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                 style: GoogleFonts.outfit(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
@@ -3802,7 +3807,7 @@ class _Y4DonateChip extends StatelessWidget {
                 const SabiqCoin(size: 22),
                 const SizedBox(width: 4),
                 Text(
-                  '$amount Seeds',
+                  '$amount ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -4599,7 +4604,7 @@ class _ProjectCard extends StatelessWidget {
                       const SabiqCoin(size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        '${fmtM(current)} / ${fmtM(target)} Seeds',
+                        '${fmtM(current)} / ${fmtM(target)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                         style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
                       ),
                       const Spacer(),
@@ -4894,8 +4899,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '${widget.availablePoints} '
-                        '${widget.availablePoints == 1 ? 'Seed' : 'Seeds'}',
+                        '${widget.availablePoints} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -4976,7 +4980,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
-                        'Seeds',
+                        AppLocalizations.of(context)?.seedsUnit ?? 'Seeds',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -5246,7 +5250,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                   ),
                                 ),
                                 Text(
-                                  'Top contributors by lifetime Seeds',
+                                  AppLocalizations.of(context)?.topContribByLifetimeSeeds ?? 'Top contributors by lifetime Seeds',
                                   style: GoogleFonts.outfit(
                                     fontSize: 12,
                                     color: _C.sub,
@@ -5276,7 +5280,8 @@ class _RankingSheetState extends State<_RankingSheet> {
                           ? NoorInlineLoader(
                             height: double.infinity,
                             color: _C.navRanking,
-                            label: 'Loading…',
+                            label: AppLocalizations.of(context)?.loading ??
+                                'Loading…',
                           )
                           : ListView(
                             controller: scrollCtrl,
@@ -5486,7 +5491,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                             ),
                                           ),
                                           Text(
-                                            '$pts Seeds',
+                                            '$pts ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                             style: GoogleFonts.outfit(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w700,
@@ -5932,7 +5937,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                         AppLocalizations.of(
                                               context,
                                             )?.topContributors ??
-                                            'Top contributors by lifetime Seeds',
+                                            AppLocalizations.of(context)?.topContribByLifetimeSeeds ?? 'Top contributors by lifetime Seeds',
                                         style: GoogleFonts.outfit(
                                           fontSize: 11,
                                           color: _C.sub,
@@ -6141,7 +6146,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                       ),
                                     ),
                                     Text(
-                                      '$pts Seeds',
+                                      '$pts ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                       style: GoogleFonts.outfit(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
@@ -6901,7 +6906,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       Text(
                         AppLocalizations.of(context)
                                 ?.seedsPendingCount(pending) ??
-                            '$pending ${pending == 1 ? 'Seed' : 'Seeds'} pending',
+                            '$pending ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'} pending',
                         style: GoogleFonts.outfit(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
@@ -7157,7 +7162,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                                             ?.jazakAllahPlusSeeds(
                                               PointReward.validate,
                                             ) ??
-                                        'JazakAllah!  +${PointReward.validate} Seeds')
+                                        'JazakAllah!  +${PointReward.validate} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}')
                                     : (AppLocalizations.of(context)
                                             ?.jazakAllahDaySealed ??
                                         'JazakAllah!  Day sealed'))

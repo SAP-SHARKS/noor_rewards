@@ -886,7 +886,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                               const SabiqCoin(size: 22),
                               const SizedBox(width: 5),
                               Text(
-                                '${widget.availablePoints} ${widget.availablePoints == 1 ? 'Seed' : 'Seeds'}',
+                                '${widget.availablePoints} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                 style: GoogleFonts.outfit(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
@@ -932,7 +932,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                               const SabiqCoin(size: 38),
                               const SizedBox(width: 10),
                               Text(
-                                '$_amount ${_amount == 1 ? 'Seed' : 'Seeds'}',
+                                '$_amount ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                 style: GoogleFonts.outfit(
                                   fontSize: 42,
                                   fontWeight: FontWeight.w900,
@@ -1003,7 +1003,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                                       ),
                                     )
                                     : Text(
-                                      'Donate $_amount ${_amount == 1 ? 'Seed' : 'Seeds'}',
+                                      'Donate $_amount ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                       style: GoogleFonts.outfit(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,

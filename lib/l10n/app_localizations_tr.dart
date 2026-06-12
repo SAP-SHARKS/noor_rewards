@@ -964,7 +964,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get resume => 'Devam Et';
 
   @override
-  String get loadingWordTranslations => 'Kelime çevirileri yükleniyor...';
+  String get loadingWordTranslations => 'Kelime çevirileri yükleniyor…';
 
   @override
   String get wordDataUnavailable =>
@@ -1206,7 +1206,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get hasanaatEarned => 'Kazanılan Hasenat';
 
   @override
-  String get recordedInBookOfDeeds => 'Amel defterine kaydedildi';
+  String get recordedInBookOfDeeds => 'Amel Defterinize kaydedildi';
 
   @override
   String get treesInJannah => 'Cennetteki Ağaçlar';
@@ -2017,8 +2017,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get yourAkhirahBalance => 'AHİRET BAKİYENİZ';
 
   @override
-  String get seedsCollectedSinceJoined =>
-      'Katıldığınızdan beri toplanan Sabiq Seeds';
+  String get seedsCollectedSinceJoined => 'Katıldığınızdan beri toplanan Tohum';
 
   @override
   String get todayLabel => 'BUGÜN';
@@ -2062,7 +2061,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get notEnoughSeeds => 'Yeterli Sabiq Seeds yok';
+  String get notEnoughSeeds => 'Yeterli Tohum yok';
 
   @override
   String get bookmarkSyncDialogTitle => 'Quran.com Yer İmi Senkronizasyonu';
@@ -2083,7 +2082,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get customLabel => 'Özel';
 
   @override
-  String get seedsSuffix => 'Seeds';
+  String get seedsSuffix => 'Tohum';
 
   @override
   String get settingsTooltip => 'Ayarlar';
@@ -2131,8 +2130,8 @@ class AppLocalizationsTr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Seeds bekliyor',
-      one: '1 Seed bekliyor',
+      other: '$count Tohum bekliyor',
+      one: '1 Tohum bekliyor',
     );
     return '$_temp0';
   }
@@ -2153,11 +2152,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get whatsappLabel => 'WhatsApp';
 
   @override
-  String get youBothEarnSeeds => 'İkiniz de 500 Sabiq Seeds kazanırsınız!';
+  String get youBothEarnSeeds => 'İkiniz de 500 Tohum kazanırsınız!';
 
   @override
   String jazakAllahPlusSeeds(int seeds) {
-    return 'JazakAllah!  +$seeds Seeds';
+    return 'JazakAllah!  +$seeds Tohum';
   }
 
   @override
@@ -2180,7 +2179,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String setTargetSeeds(int defaultVal) {
-    return 'Hedef Seeds belirleyin (varsayılan: $defaultVal)';
+    return 'Hedef Tohum belirleyin (varsayılan: $defaultVal)';
   }
 
   @override
@@ -2224,8 +2223,8 @@ class AppLocalizationsTr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Katkım: $count Seeds',
-      one: 'Katkım: 1 Seed',
+      other: 'Katkım: $count Tohum',
+      one: 'Katkım: 1 Tohum',
     );
     return '$_temp0';
   }
@@ -2235,8 +2234,8 @@ class AppLocalizationsTr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       amount,
       locale: localeName,
-      other: 'JazakAllah Khayran! $amount Seeds bağışlandı.',
-      one: 'JazakAllah Khayran! 1 Seed bağışlandı.',
+      other: 'JazakAllah Khayran! $amount Tohum bağışlandı.',
+      one: 'JazakAllah Khayran! 1 Tohum bağışlandı.',
     );
     return '$_temp0';
   }
@@ -2246,10 +2245,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get seedsSealedSafe =>
-      'Seeds\'iniz mühürlendi ve Ahiret için\ngüvende.';
+      'Tohumlarınız mühürlendi ve Ahiret için\ngüvende.';
 
   @override
-  String get validationSeedsLabel => 'Doğrulama Seeds';
+  String get validationSeedsLabel => 'Doğrulama Tohumları';
 
   @override
   String get streakBonusLabel => 'Seri Bonusu';
@@ -2270,7 +2269,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get shareWithFriendsCta => 'Arkadaşlarla Paylaş';
 
   @override
-  String get earnMoreSeedsCta => 'Daha Fazla Seeds Kazan';
+  String get earnMoreSeedsCta => 'Daha Fazla Tohum Kazan';
 
   @override
   String levelTitleFormat(int level, String title) {
@@ -2307,7 +2306,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get activeCampaigns => 'Aktif Kampanyalar';
 
   @override
-  String get poolSeedsImpact => 'Kalıcı etki için Seeds\'lerinizi birleştirin';
+  String get poolSeedsImpact => 'Kalıcı etki için Tohumlarınızı birleştirin';
 
   @override
   String get featuredSponsorChild => 'Öne çıkan · Bir çocuğa sponsor ol';
@@ -2333,7 +2332,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Henüz bağış yapmadınız. Etki yolculuğunuza başlamak için yukarıdan birini seçin.';
 
   @override
-  String get seedsDonatedLabel => 'Bağışlanan Seeds';
+  String get seedsDonatedLabel => 'Bağışlanan Tohum';
 
   @override
   String orphanCount(int count) {
@@ -2383,4 +2382,236 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get howYouEarnedThis => 'Bunu nasıl kazandınız';
+
+  @override
+  String seedsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tohum',
+      one: '1 Tohum',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seedsUnit => 'Tohum';
+
+  @override
+  String get topContribByLifetimeSeeds =>
+      'Tüm zamanların en iyi Tohum katılımcıları';
+
+  @override
+  String get romanisedPronunciation =>
+      'Her kelimenin altında Latin alfabesi telaffuzu';
+
+  @override
+  String get displayLabel => 'GÖRÜNÜM';
+
+  @override
+  String get arabicLanguageLabel => 'Arapça';
+
+  @override
+  String get urduLanguageLabel => 'Urduca';
+
+  @override
+  String get englishLanguageLabel => 'İngilizce';
+
+  @override
+  String get earnPerVerseRead => 'Okunan her ayet için +10 Tohum kazanın';
+
+  @override
+  String get surahPickerLabel => 'Sure';
+
+  @override
+  String versesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ayet',
+      one: '1 ayet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get startFromVerse => 'Ayetten Başla';
+
+  @override
+  String verseN(int n) {
+    return 'Ayet $n';
+  }
+
+  @override
+  String ofN(int n) {
+    return '/ $n';
+  }
+
+  @override
+  String surahHasNVerses(String name, int count) {
+    return '$name Suresi $count ayet içerir';
+  }
+
+  @override
+  String noXYet(String label) {
+    return 'Henüz $label yok';
+  }
+
+  @override
+  String get tapHeartToSave =>
+      'Ayetleri kaydetmek için okurken kalp/yer imi simgesine dokunun.';
+
+  @override
+  String surahVerseRow(int surah, int ayah) {
+    return 'Sure $surah  •  Ayet $ayah';
+  }
+
+  @override
+  String get hasanatFromQuran => 'Kuran\'dan Hasenat';
+
+  @override
+  String tenPerLetterSubtitle(int count) {
+    return 'Harf başına 10, ayet başına $count';
+  }
+
+  @override
+  String get fromSubhanAllahTasbih => 'SubhanAllah & Tesbihten';
+
+  @override
+  String get likeFoamOfSea => 'Deniz köpüğü gibi';
+
+  @override
+  String get fromSurahIkhlasRecitation => 'İhlas Suresi okunuşundan';
+
+  @override
+  String get laHawlaSubtitle => 'La Havla Ve La Kuvvete';
+
+  @override
+  String get equivalentRewardEarned => 'Eşdeğer ödül kazanıldı';
+
+  @override
+  String get gatesOfParadise => 'Cennet Kapıları';
+
+  @override
+  String get afterPerfectWudu => 'Mükemmel abdestten sonra';
+
+  @override
+  String get blessingsFromAllah => 'Allah\'tan rahmetler';
+
+  @override
+  String get salawatTenReturned => 'Salavat × 10 iade edildi';
+
+  @override
+  String get timesProtected => 'Korunma Kereleri';
+
+  @override
+  String get refugeInvokedFromHarm => 'Zarardan sığınma';
+
+  @override
+  String get quranCompletions => 'Hatim Sayısı';
+
+  @override
+  String get viaSurahIkhlas => 'İhlas Suresi ×3 yoluyla';
+
+  @override
+  String get bonusHasanaat => 'Bonus Hasenat';
+
+  @override
+  String get marketplaceDua => 'Çarşı duası';
+
+  @override
+  String get seedsDonatedToCommunity => 'Topluluğa bağışlanan Tohum';
+
+  @override
+  String get yourMonth => 'Ayınız';
+
+  @override
+  String get ayahsReadLabel => 'Okunan Ayet';
+
+  @override
+  String get dhikrCount => 'Zikir Sayısı';
+
+  @override
+  String get quranTime => 'Kuran Süresi';
+
+  @override
+  String get dhikrTime => 'Zikir Süresi';
+
+  @override
+  String get activeDays => 'Aktif Günler';
+
+  @override
+  String get treesShortLabel => 'Ağaçlar';
+
+  @override
+  String get palacesShortLabel => 'Saraylar';
+
+  @override
+  String get freedShortLabel => 'Özgürleştirilenler';
+
+  @override
+  String get blessingsShortLabel => 'Rahmetler';
+
+  @override
+  String get dailyWordPrefix => 'Günlük ';
+
+  @override
+  String get essentialsWord => 'Temeller';
+
+  @override
+  String get seedsExpiringNotificationTitle => 'Tohumlar gece yarısı bitiyor!';
+
+  @override
+  String seedsExpiringNotificationBody(int pending) {
+    return '$pending Tohumunuz bekliyor. Şimdi Günü mühürleyin yoksa süresi dolacak!';
+  }
+
+  @override
+  String get okButton => 'Tamam';
+
+  @override
+  String get signUpTitle => 'Kayıt Ol';
+
+  @override
+  String get signInTitle => 'Giriş Yap';
+
+  @override
+  String get emailFieldLabel => 'E-posta';
+
+  @override
+  String get passwordFieldLabel => 'Şifre';
+
+  @override
+  String get enterEmailValidator => 'Lütfen e-postanızı girin';
+
+  @override
+  String get enterPasswordValidator => 'Lütfen şifrenizi girin';
+
+  @override
+  String get passwordTooShortValidator => 'Şifre en az 6 karakter olmalı';
+
+  @override
+  String get signUpSuccessMessage =>
+      'Kayıt başarılı! Lütfen onay için e-postanızı kontrol edin.';
+
+  @override
+  String get unexpectedAuthError => 'Beklenmeyen bir hata oluştu';
+
+  @override
+  String get sawabLabel => 'Sevap';
+
+  @override
+  String get impactLabel => 'Etki';
+
+  @override
+  String get goodDeedTitle => 'İyi Amel';
+
+  @override
+  String get goodDeedSubtitle => 'Her okumayla\nSevap kazanın';
+
+  @override
+  String get realImpactTitle => 'Gerçek Etki';
+
+  @override
+  String get realImpactSubtitle => 'Tohumlar asil davaları\nfinanse eder';
 }

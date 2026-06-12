@@ -967,7 +967,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get resume => 'Sambung';
 
   @override
-  String get loadingWordTranslations => 'Memuatkan terjemahan perkataan...';
+  String get loadingWordTranslations => 'Memuatkan terjemahan perkataan…';
 
   @override
   String get wordDataUnavailable =>
@@ -1209,7 +1209,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get hasanaatEarned => 'Hasanat Diperoleh';
 
   @override
-  String get recordedInBookOfDeeds => 'Direkodkan dalam Kitab Amalan anda';
+  String get recordedInBookOfDeeds => 'Tercatat dalam Buku Amalan anda';
 
   @override
   String get treesInJannah => 'Pokok di Syurga';
@@ -2019,8 +2019,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get yourAkhirahBalance => 'BAKI AKHIRAT ANDA';
 
   @override
-  String get seedsCollectedSinceJoined =>
-      'Sabiq Seeds dikumpul sejak anda menyertai';
+  String get seedsCollectedSinceJoined => 'Biji dikumpul sejak anda menyertai';
 
   @override
   String get todayLabel => 'HARI INI';
@@ -2064,7 +2063,7 @@ class AppLocalizationsMs extends AppLocalizations {
   }
 
   @override
-  String get notEnoughSeeds => 'Sabiq Seeds tidak mencukupi';
+  String get notEnoughSeeds => 'Biji tidak mencukupi';
 
   @override
   String get bookmarkSyncDialogTitle => 'Penyegerakan Penanda Buku Quran.com';
@@ -2085,7 +2084,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get customLabel => 'Tersuai';
 
   @override
-  String get seedsSuffix => 'Seeds';
+  String get seedsSuffix => 'Biji';
 
   @override
   String get settingsTooltip => 'Tetapan';
@@ -2133,8 +2132,8 @@ class AppLocalizationsMs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Seeds menunggu',
-      one: '1 Seed menunggu',
+      other: '$count Biji menunggu',
+      one: '1 Biji menunggu',
     );
     return '$_temp0';
   }
@@ -2155,11 +2154,11 @@ class AppLocalizationsMs extends AppLocalizations {
   String get whatsappLabel => 'WhatsApp';
 
   @override
-  String get youBothEarnSeeds => 'Anda berdua dapat 500 Sabiq Seeds!';
+  String get youBothEarnSeeds => 'Anda berdua dapat 500 Biji!';
 
   @override
   String jazakAllahPlusSeeds(int seeds) {
-    return 'JazakAllah!  +$seeds Seeds';
+    return 'JazakAllah!  +$seeds Biji';
   }
 
   @override
@@ -2182,7 +2181,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String setTargetSeeds(int defaultVal) {
-    return 'Tetapkan sasaran Seeds anda (lalai: $defaultVal)';
+    return 'Tetapkan sasaran Biji anda (lalai: $defaultVal)';
   }
 
   @override
@@ -2226,8 +2225,8 @@ class AppLocalizationsMs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Sumbangan saya: $count Seeds',
-      one: 'Sumbangan saya: 1 Seed',
+      other: 'Sumbangan saya: $count Biji',
+      one: 'Sumbangan saya: 1 Biji',
     );
     return '$_temp0';
   }
@@ -2237,8 +2236,8 @@ class AppLocalizationsMs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       amount,
       locale: localeName,
-      other: 'JazakAllah Khayran! $amount Seeds disumbangkan.',
-      one: 'JazakAllah Khayran! 1 Seed disumbangkan.',
+      other: 'JazakAllah Khayran! $amount Biji disumbangkan.',
+      one: 'JazakAllah Khayran! 1 Biji disumbangkan.',
     );
     return '$_temp0';
   }
@@ -2248,10 +2247,10 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get seedsSealedSafe =>
-      'Seeds anda telah disegel dan selamat\nuntuk Akhirat.';
+      'Biji anda telah disegel dan selamat\nuntuk Akhirat.';
 
   @override
-  String get validationSeedsLabel => 'Seeds Pengesahan';
+  String get validationSeedsLabel => 'Biji Pengesahan';
 
   @override
   String get streakBonusLabel => 'Bonus Streak';
@@ -2272,7 +2271,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get shareWithFriendsCta => 'Kongsi dengan Rakan';
 
   @override
-  String get earnMoreSeedsCta => 'Dapatkan Lebih Banyak Seeds';
+  String get earnMoreSeedsCta => 'Dapatkan Lebih Banyak Biji';
 
   @override
   String levelTitleFormat(int level, String title) {
@@ -2310,7 +2309,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get activeCampaigns => 'Kempen Aktif';
 
   @override
-  String get poolSeedsImpact => 'Kumpulkan Seeds anda untuk impak berkekalan';
+  String get poolSeedsImpact => 'Kumpulkan Biji anda untuk impak berkekalan';
 
   @override
   String get featuredSponsorChild => 'Pilihan · Tajalah seorang kanak-kanak';
@@ -2336,7 +2335,7 @@ class AppLocalizationsMs extends AppLocalizations {
       'Anda belum menyumbang lagi. Pilih seseorang di atas untuk memulakan perjalanan impak anda.';
 
   @override
-  String get seedsDonatedLabel => 'Seeds disumbangkan';
+  String get seedsDonatedLabel => 'Biji disumbangkan';
 
   @override
   String orphanCount(int count) {
@@ -2385,4 +2384,237 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get howYouEarnedThis => 'Bagaimana anda perolehinya';
+
+  @override
+  String seedsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Biji',
+      one: '1 Biji',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seedsUnit => 'Biji';
+
+  @override
+  String get topContribByLifetimeSeeds =>
+      'Penyumbang teratas mengikut jumlah Biji';
+
+  @override
+  String get romanisedPronunciation => 'Sebutan rumi di bawah setiap perkataan';
+
+  @override
+  String get displayLabel => 'PAPARAN';
+
+  @override
+  String get arabicLanguageLabel => 'Arab';
+
+  @override
+  String get urduLanguageLabel => 'Urdu';
+
+  @override
+  String get englishLanguageLabel => 'Inggeris';
+
+  @override
+  String get earnPerVerseRead => 'Peroleh +10 Biji setiap ayat yang dibaca';
+
+  @override
+  String get surahPickerLabel => 'Surah';
+
+  @override
+  String versesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ayat',
+      one: '1 ayat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get startFromVerse => 'Mulakan dari Ayat';
+
+  @override
+  String verseN(int n) {
+    return 'Ayat $n';
+  }
+
+  @override
+  String ofN(int n) {
+    return 'daripada $n';
+  }
+
+  @override
+  String surahHasNVerses(String name, int count) {
+    return 'Surah $name mempunyai $count ayat';
+  }
+
+  @override
+  String noXYet(String label) {
+    return 'Belum ada $label';
+  }
+
+  @override
+  String get tapHeartToSave =>
+      'Ketik ikon hati/penanda buku semasa membaca untuk menyimpan ayat.';
+
+  @override
+  String surahVerseRow(int surah, int ayah) {
+    return 'Surah $surah  •  Ayat $ayah';
+  }
+
+  @override
+  String get hasanatFromQuran => 'Hasanat dari Quran';
+
+  @override
+  String tenPerLetterSubtitle(int count) {
+    return '10 setiap huruf, $count setiap ayat';
+  }
+
+  @override
+  String get fromSubhanAllahTasbih => 'Dari SubhanAllah & Tasbih';
+
+  @override
+  String get likeFoamOfSea => 'Seperti buih di laut';
+
+  @override
+  String get fromSurahIkhlasRecitation => 'Dari bacaan Surah Ikhlas';
+
+  @override
+  String get laHawlaSubtitle => 'La Hawla Wa La Quwwata';
+
+  @override
+  String get equivalentRewardEarned => 'Ganjaran setara diperoleh';
+
+  @override
+  String get gatesOfParadise => 'Pintu Syurga';
+
+  @override
+  String get afterPerfectWudu => 'Selepas wuduk yang sempurna';
+
+  @override
+  String get blessingsFromAllah => 'Berkat daripada Allah';
+
+  @override
+  String get salawatTenReturned => 'Selawat × 10 dikembalikan';
+
+  @override
+  String get timesProtected => 'Kali Dilindungi';
+
+  @override
+  String get refugeInvokedFromHarm => 'Memohon perlindungan dari bahaya';
+
+  @override
+  String get quranCompletions => 'Khatam Quran';
+
+  @override
+  String get viaSurahIkhlas => 'Melalui Surah Al-Ikhlas ×3';
+
+  @override
+  String get bonusHasanaat => 'Bonus Hasanat';
+
+  @override
+  String get marketplaceDua => 'Doa pasar';
+
+  @override
+  String get seedsDonatedToCommunity => 'Biji disumbangkan kepada komuniti';
+
+  @override
+  String get yourMonth => 'Bulan Anda';
+
+  @override
+  String get ayahsReadLabel => 'Ayat Dibaca';
+
+  @override
+  String get dhikrCount => 'Bilangan Zikir';
+
+  @override
+  String get quranTime => 'Masa Quran';
+
+  @override
+  String get dhikrTime => 'Masa Zikir';
+
+  @override
+  String get activeDays => 'Hari Aktif';
+
+  @override
+  String get treesShortLabel => 'Pokok';
+
+  @override
+  String get palacesShortLabel => 'Istana';
+
+  @override
+  String get freedShortLabel => 'Dibebaskan';
+
+  @override
+  String get blessingsShortLabel => 'Berkat';
+
+  @override
+  String get dailyWordPrefix => 'Harian ';
+
+  @override
+  String get essentialsWord => 'Asas';
+
+  @override
+  String get seedsExpiringNotificationTitle =>
+      'Biji akan tamat tempoh tengah malam!';
+
+  @override
+  String seedsExpiringNotificationBody(int pending) {
+    return 'Anda mempunyai $pending Biji menunggu. Segel Hari sekarang atau akan tamat tempoh!';
+  }
+
+  @override
+  String get okButton => 'OK';
+
+  @override
+  String get signUpTitle => 'Daftar';
+
+  @override
+  String get signInTitle => 'Log Masuk';
+
+  @override
+  String get emailFieldLabel => 'E-mel';
+
+  @override
+  String get passwordFieldLabel => 'Kata Laluan';
+
+  @override
+  String get enterEmailValidator => 'Sila masukkan e-mel anda';
+
+  @override
+  String get enterPasswordValidator => 'Sila masukkan kata laluan anda';
+
+  @override
+  String get passwordTooShortValidator =>
+      'Kata laluan mestilah sekurang-kurangnya 6 aksara';
+
+  @override
+  String get signUpSuccessMessage =>
+      'Pendaftaran berjaya! Sila semak e-mel anda untuk pengesahan.';
+
+  @override
+  String get unexpectedAuthError => 'Ralat tidak dijangka berlaku';
+
+  @override
+  String get sawabLabel => 'Sawab';
+
+  @override
+  String get impactLabel => 'Impak';
+
+  @override
+  String get goodDeedTitle => 'Amal Baik';
+
+  @override
+  String get goodDeedSubtitle => 'Peroleh Sawab\nsetiap bacaan';
+
+  @override
+  String get realImpactTitle => 'Impak Sebenar';
+
+  @override
+  String get realImpactSubtitle => 'Syiling membiayai\nperjuangan mulia';
 }

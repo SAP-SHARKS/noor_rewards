@@ -1201,5 +1201,120 @@
   },
   "showLessAction": "Show Less ←",
   "hadithReference": "Hadith Reference",
-  "howYouEarnedThis": "How you earned this"
+  "howYouEarnedThis": "How you earned this",
+  "seedsCount": "{count, plural, =1{1 Seed} other{{count} Seeds}}",
+  "@seedsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "seedsUnit": "Seeds",
+  "topContribByLifetimeSeeds": "Top contributors by lifetime Seeds",
+  "romanisedPronunciation": "Romanised pronunciation under each word",
+  "displayLabel": "DISPLAY",
+  "arabicLanguageLabel": "Arabic",
+  "urduLanguageLabel": "Urdu",
+  "englishLanguageLabel": "English",
+  "earnPerVerseRead": "Earn +10 Sabiq Seeds per verse read",
+  "surahPickerLabel": "Surah",
+  "versesCount": "{count, plural, =1{1 verse} other{{count} verses}}",
+  "@versesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "startFromVerse": "Start from Verse",
+  "verseN": "Verse {n}",
+  "@verseN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "ofN": "of {n}",
+  "@ofN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "surahHasNVerses": "{name} has {count} verses",
+  "@surahHasNVerses": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "noXYet": "No {label} yet",
+  "@noXYet": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "tapHeartToSave": "Tap the heart/bookmark icon while reading to save verses.",
+  "surahVerseRow": "Surah {surah}  •  Verse {ayah}",
+  "@surahVerseRow": {
+    "placeholders": {
+      "surah": { "type": "int" },
+      "ayah": { "type": "int" }
+    }
+  },
+  "recordedInBookOfDeeds": "Recorded in your Book of Deeds",
+  "hasanatFromQuran": "Hasanat from Quran",
+  "tenPerLetterSubtitle": "10 per letter, {count} per ayah",
+  "@tenPerLetterSubtitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "fromSubhanAllahTasbih": "From SubhanAllah & Tasbih",
+  "likeFoamOfSea": "Like the foam of the sea",
+  "fromSurahIkhlasRecitation": "From Surah Ikhlas recitation",
+  "laHawlaSubtitle": "La Hawla Wa La Quwwata",
+  "equivalentRewardEarned": "Equivalent reward earned",
+  "gatesOfParadise": "Gates of Paradise",
+  "afterPerfectWudu": "After perfect wudu",
+  "blessingsFromAllah": "Blessings from Allah",
+  "salawatTenReturned": "Salawat × 10 returned",
+  "timesProtected": "Times Protected",
+  "refugeInvokedFromHarm": "Refuge invoked from harm",
+  "quranCompletions": "Quran Completions",
+  "viaSurahIkhlas": "Via Surah Al-Ikhlas ×3",
+  "bonusHasanaat": "Bonus Hasanaat",
+  "marketplaceDua": "Marketplace du'a",
+  "seedsDonatedToCommunity": "Seeds donated to community",
+  "yourMonth": "Your Month",
+  "ayahsReadLabel": "Ayahs Read",
+  "dhikrCount": "Dhikr Count",
+  "quranTime": "Quran Time",
+  "dhikrTime": "Dhikr Time",
+  "activeDays": "Active Days",
+  "treesShortLabel": "Trees",
+  "palacesShortLabel": "Palaces",
+  "freedShortLabel": "Freed",
+  "blessingsShortLabel": "Blessings",
+  "dailyWordPrefix": "Daily ",
+  "essentialsWord": "Essentials",
+  "loadingWordTranslations": "Loading word translations…",
+  "seedsExpiringNotificationTitle": "Seeds expiring at midnight!",
+  "seedsExpiringNotificationBody": "You have {pending} Seeds pending. Seal the Day now or they expire!",
+  "@seedsExpiringNotificationBody": {
+    "placeholders": {
+      "pending": { "type": "int" }
+    }
+  },
+  "okButton": "OK",
+  "signUpTitle": "Sign Up",
+  "signInTitle": "Sign In",
+  "emailFieldLabel": "Email",
+  "passwordFieldLabel": "Password",
+  "enterEmailValidator": "Please enter your email",
+  "enterPasswordValidator": "Please enter your password",
+  "passwordTooShortValidator": "Password must be at least 6 characters",
+  "signUpSuccessMessage": "Sign up successful! Please check your email for confirmation.",
+  "unexpectedAuthError": "An unexpected error occurred",
+  "sawabLabel": "Sawab",
+  "impactLabel": "Impact",
+  "goodDeedTitle": "Good Deed",
+  "goodDeedSubtitle": "Earn Sawab\nwith every read",
+  "realImpactTitle": "Real Impact",
+  "realImpactSubtitle": "Coins fund\nnoble causes"
 }

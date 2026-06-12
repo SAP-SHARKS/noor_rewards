@@ -2623,7 +2623,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx),
                                   child: Text(
-                                    'Done',
+                                    AppLocalizations.of(context)?.doneLabel ??
+                                        'Done',
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.w700,
                                       color: _accent,
@@ -3122,8 +3123,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   },
                                 ),
                                 sTile(
-                                  'Show Transliteration',
-                                  'Romanised pronunciation under each word',
+                                  AppLocalizations.of(context)
+                                          ?.showTransliteration ??
+                                      'Show Transliteration',
+                                  AppLocalizations.of(context)
+                                          ?.romanisedPronunciation ??
+                                      'Romanised pronunciation under each word',
                                   Icons.spellcheck_rounded,
                                   _showTransliteration,
                                   (v) {
@@ -3332,7 +3337,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                                     ),
                                                   ),
                                                   Text(
-                                                    '${_translations.length} translations available',
+                                                    AppLocalizations.of(context)
+                                                            ?.translationsAvailable(
+                                                              _translations.length.toString(),
+                                                            ) ??
+                                                        '${_translations.length} translations available',
                                                     style: GoogleFonts.outfit(
                                                       fontSize: 10,
                                                       color: const Color(
@@ -3859,7 +3868,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                   onPressed: _handleExitQuran,
                 ),
                 title: Text(
-                  'Read Quran',
+                  AppLocalizations.of(context)?.readQuran ?? 'Read Quran',
                   style: GoogleFonts.outfit(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
@@ -4233,10 +4242,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                             else if (_wordByWord) ...[
                               // ── Word-by-Word Mode ────────────────────────────────────
                               if (_wbwLoading)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 32),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 32),
                                   child: NoorInlineLoader(
-                                    label: 'Loading word translations…',
+                                    label: AppLocalizations.of(context)
+                                            ?.loadingWordTranslations ??
+                                        'Loading word translations…',
                                   ),
                                 )
                               else if (_wbwWords.isEmpty)
@@ -4444,7 +4455,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                         const SabiqCoin(size: 18),
                                         const SizedBox(width: 4),
                                         Text(
-                                          '+$_pointsToday ${_pointsToday == 1 ? 'Seed' : 'Seeds'}',
+                                          '+$_pointsToday ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                           style: GoogleFonts.outfit(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
@@ -4596,7 +4607,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   ? (AppLocalizations.of(context)?.next ??
                                       AppLocalizations.of(context)?.nextPage ??
                                       'Next Page')
-                                  : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 Seeds',
+                                  : '${AppLocalizations.of(context)?.next ?? 'Next'} +10 ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                               style: GoogleFonts.outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,

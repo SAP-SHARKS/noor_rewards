@@ -1889,7 +1889,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadingWordTranslations.
   ///
   /// In en, this message translates to:
-  /// **'Loading word translations...'**
+  /// **'Loading word translations…'**
   String get loadingWordTranslations;
 
   /// No description provided for @wordDataUnavailable.
@@ -4393,6 +4393,402 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'How you earned this'**
   String get howYouEarnedThis;
+
+  /// No description provided for @seedsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Seed} other{{count} Seeds}}'**
+  String seedsCount(int count);
+
+  /// No description provided for @seedsUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeds'**
+  String get seedsUnit;
+
+  /// No description provided for @topContribByLifetimeSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Top contributors by lifetime Seeds'**
+  String get topContribByLifetimeSeeds;
+
+  /// No description provided for @romanisedPronunciation.
+  ///
+  /// In en, this message translates to:
+  /// **'Romanised pronunciation under each word'**
+  String get romanisedPronunciation;
+
+  /// No description provided for @displayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DISPLAY'**
+  String get displayLabel;
+
+  /// No description provided for @arabicLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabicLanguageLabel;
+
+  /// No description provided for @urduLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Urdu'**
+  String get urduLanguageLabel;
+
+  /// No description provided for @englishLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get englishLanguageLabel;
+
+  /// No description provided for @earnPerVerseRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn +10 Sabiq Seeds per verse read'**
+  String get earnPerVerseRead;
+
+  /// No description provided for @surahPickerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah'**
+  String get surahPickerLabel;
+
+  /// No description provided for @versesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 verse} other{{count} verses}}'**
+  String versesCount(int count);
+
+  /// No description provided for @startFromVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from Verse'**
+  String get startFromVerse;
+
+  /// No description provided for @verseN.
+  ///
+  /// In en, this message translates to:
+  /// **'Verse {n}'**
+  String verseN(int n);
+
+  /// No description provided for @ofN.
+  ///
+  /// In en, this message translates to:
+  /// **'of {n}'**
+  String ofN(int n);
+
+  /// No description provided for @surahHasNVerses.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has {count} verses'**
+  String surahHasNVerses(String name, int count);
+
+  /// No description provided for @noXYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No {label} yet'**
+  String noXYet(String label);
+
+  /// No description provided for @tapHeartToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart/bookmark icon while reading to save verses.'**
+  String get tapHeartToSave;
+
+  /// No description provided for @surahVerseRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah {surah}  •  Verse {ayah}'**
+  String surahVerseRow(int surah, int ayah);
+
+  /// No description provided for @hasanatFromQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Hasanat from Quran'**
+  String get hasanatFromQuran;
+
+  /// No description provided for @tenPerLetterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'10 per letter, {count} per ayah'**
+  String tenPerLetterSubtitle(int count);
+
+  /// No description provided for @fromSubhanAllahTasbih.
+  ///
+  /// In en, this message translates to:
+  /// **'From SubhanAllah & Tasbih'**
+  String get fromSubhanAllahTasbih;
+
+  /// No description provided for @likeFoamOfSea.
+  ///
+  /// In en, this message translates to:
+  /// **'Like the foam of the sea'**
+  String get likeFoamOfSea;
+
+  /// No description provided for @fromSurahIkhlasRecitation.
+  ///
+  /// In en, this message translates to:
+  /// **'From Surah Ikhlas recitation'**
+  String get fromSurahIkhlasRecitation;
+
+  /// No description provided for @laHawlaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'La Hawla Wa La Quwwata'**
+  String get laHawlaSubtitle;
+
+  /// No description provided for @equivalentRewardEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Equivalent reward earned'**
+  String get equivalentRewardEarned;
+
+  /// No description provided for @gatesOfParadise.
+  ///
+  /// In en, this message translates to:
+  /// **'Gates of Paradise'**
+  String get gatesOfParadise;
+
+  /// No description provided for @afterPerfectWudu.
+  ///
+  /// In en, this message translates to:
+  /// **'After perfect wudu'**
+  String get afterPerfectWudu;
+
+  /// No description provided for @blessingsFromAllah.
+  ///
+  /// In en, this message translates to:
+  /// **'Blessings from Allah'**
+  String get blessingsFromAllah;
+
+  /// No description provided for @salawatTenReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Salawat × 10 returned'**
+  String get salawatTenReturned;
+
+  /// No description provided for @timesProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'Times Protected'**
+  String get timesProtected;
+
+  /// No description provided for @refugeInvokedFromHarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Refuge invoked from harm'**
+  String get refugeInvokedFromHarm;
+
+  /// No description provided for @quranCompletions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran Completions'**
+  String get quranCompletions;
+
+  /// No description provided for @viaSurahIkhlas.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Surah Al-Ikhlas ×3'**
+  String get viaSurahIkhlas;
+
+  /// No description provided for @bonusHasanaat.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus Hasanaat'**
+  String get bonusHasanaat;
+
+  /// No description provided for @marketplaceDua.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketplace du\'a'**
+  String get marketplaceDua;
+
+  /// No description provided for @seedsDonatedToCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeds donated to community'**
+  String get seedsDonatedToCommunity;
+
+  /// No description provided for @yourMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Month'**
+  String get yourMonth;
+
+  /// No description provided for @ayahsReadLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayahs Read'**
+  String get ayahsReadLabel;
+
+  /// No description provided for @dhikrCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikr Count'**
+  String get dhikrCount;
+
+  /// No description provided for @quranTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran Time'**
+  String get quranTime;
+
+  /// No description provided for @dhikrTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikr Time'**
+  String get dhikrTime;
+
+  /// No description provided for @activeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Days'**
+  String get activeDays;
+
+  /// No description provided for @treesShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trees'**
+  String get treesShortLabel;
+
+  /// No description provided for @palacesShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Palaces'**
+  String get palacesShortLabel;
+
+  /// No description provided for @freedShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Freed'**
+  String get freedShortLabel;
+
+  /// No description provided for @blessingsShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Blessings'**
+  String get blessingsShortLabel;
+
+  /// No description provided for @dailyWordPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily '**
+  String get dailyWordPrefix;
+
+  /// No description provided for @essentialsWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Essentials'**
+  String get essentialsWord;
+
+  /// No description provided for @seedsExpiringNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeds expiring at midnight!'**
+  String get seedsExpiringNotificationTitle;
+
+  /// No description provided for @seedsExpiringNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {pending} Seeds pending. Seal the Day now or they expire!'**
+  String seedsExpiringNotificationBody(int pending);
+
+  /// No description provided for @okButton.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get okButton;
+
+  /// No description provided for @signUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUpTitle;
+
+  /// No description provided for @signInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signInTitle;
+
+  /// No description provided for @emailFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailFieldLabel;
+
+  /// No description provided for @passwordFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordFieldLabel;
+
+  /// No description provided for @enterEmailValidator.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get enterEmailValidator;
+
+  /// No description provided for @enterPasswordValidator.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get enterPasswordValidator;
+
+  /// No description provided for @passwordTooShortValidator.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShortValidator;
+
+  /// No description provided for @signUpSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up successful! Please check your email for confirmation.'**
+  String get signUpSuccessMessage;
+
+  /// No description provided for @unexpectedAuthError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get unexpectedAuthError;
+
+  /// No description provided for @sawabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sawab'**
+  String get sawabLabel;
+
+  /// No description provided for @impactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Impact'**
+  String get impactLabel;
+
+  /// No description provided for @goodDeedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Deed'**
+  String get goodDeedTitle;
+
+  /// No description provided for @goodDeedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn Sawab\nwith every read'**
+  String get goodDeedSubtitle;
+
+  /// No description provided for @realImpactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Real Impact'**
+  String get realImpactTitle;
+
+  /// No description provided for @realImpactSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins fund\nnoble causes'**
+  String get realImpactSubtitle;
 }
 
 class _AppLocalizationsDelegate

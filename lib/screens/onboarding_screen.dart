@@ -667,7 +667,7 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
                   size: 44,
                   emoji: '✨',
                   color: const Color(0xFFFFC94D),
-                  label: 'Sawab',
+                  label: AppLocalizations.of(context)?.sawabLabel ?? 'Sawab',
                 ),
               ),
 
@@ -679,7 +679,7 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
                   size: 44,
                   emoji: '🪙',
                   color: const Color(0xFF00E5AA),
-                  label: 'Impact',
+                  label: AppLocalizations.of(context)?.impactLabel ?? 'Impact',
                 ),
               ),
 
@@ -693,15 +693,19 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
                   children: [
                     _MiniCard(
                       icon: '✨',
-                      title: 'Good Deed',
-                      sub: 'Earn Sawab\nwith every read',
+                      title: AppLocalizations.of(context)?.goodDeedTitle ??
+                          'Good Deed',
+                      sub: AppLocalizations.of(context)?.goodDeedSubtitle ??
+                          'Earn Sawab\nwith every read',
                       glow: const Color(0xFFFFC94D),
                     ),
                     const SizedBox(width: 10),
                     _MiniCard(
                       icon: '🪙',
-                      title: 'Real Impact',
-                      sub: 'Coins fund\nnoble causes',
+                      title: AppLocalizations.of(context)?.realImpactTitle ??
+                          'Real Impact',
+                      sub: AppLocalizations.of(context)?.realImpactSubtitle ??
+                          'Coins fund\nnoble causes',
                       glow: const Color(0xFF00E5AA),
                     ),
                   ],

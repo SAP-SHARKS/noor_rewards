@@ -968,8 +968,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get resume => 'Reprendre';
 
   @override
-  String get loadingWordTranslations =>
-      'Chargement des traductions mot à mot...';
+  String get loadingWordTranslations => 'Chargement des traductions des mots…';
 
   @override
   String get wordDataUnavailable =>
@@ -1211,7 +1210,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get hasanaatEarned => 'Hassanate gagnées';
 
   @override
-  String get recordedInBookOfDeeds => 'Inscrites dans votre Livre des actes';
+  String get recordedInBookOfDeeds => 'Enregistré dans votre Livre des Actes';
 
   @override
   String get treesInJannah => 'Arbres au Paradis';
@@ -2026,7 +2025,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get seedsCollectedSinceJoined =>
-      'Sabiq Seeds collectées depuis votre inscription';
+      'Graines collectées depuis votre inscription';
 
   @override
   String get todayLabel => 'AUJOURD\'HUI';
@@ -2070,7 +2069,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get notEnoughSeeds => 'Pas assez de Sabiq Seeds';
+  String get notEnoughSeeds => 'Pas assez de Graines';
 
   @override
   String get bookmarkSyncDialogTitle => 'Synchronisation des favoris Quran.com';
@@ -2091,7 +2090,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get customLabel => 'Personnalisé';
 
   @override
-  String get seedsSuffix => 'Seeds';
+  String get seedsSuffix => 'Graines';
 
   @override
   String get settingsTooltip => 'Paramètres';
@@ -2139,8 +2138,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Seeds en attente',
-      one: '1 Seed en attente',
+      other: '$count Graines en attente',
+      one: '1 Graine en attente',
     );
     return '$_temp0';
   }
@@ -2161,11 +2160,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get whatsappLabel => 'WhatsApp';
 
   @override
-  String get youBothEarnSeeds => 'Vous gagnez tous les deux 500 Sabiq Seeds !';
+  String get youBothEarnSeeds => 'Vous gagnez tous les deux 500 Graines !';
 
   @override
   String jazakAllahPlusSeeds(int seeds) {
-    return 'JazakAllah !  +$seeds Seeds';
+    return 'JazakAllah !  +$seeds Graines';
   }
 
   @override
@@ -2188,7 +2187,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String setTargetSeeds(int defaultVal) {
-    return 'Définissez votre objectif Seeds (par défaut : $defaultVal)';
+    return 'Définissez votre objectif de Graines (par défaut : $defaultVal)';
   }
 
   @override
@@ -2232,8 +2231,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Ma contribution : $count Seeds',
-      one: 'Ma contribution : 1 Seed',
+      other: 'Ma contribution : $count Graines',
+      one: 'Ma contribution : 1 Graine',
     );
     return '$_temp0';
   }
@@ -2243,8 +2242,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       amount,
       locale: localeName,
-      other: 'JazakAllah Khayran ! $amount Seeds donnés.',
-      one: 'JazakAllah Khayran ! 1 Seed donné.',
+      other: 'JazakAllah Khayran ! $amount Graines données.',
+      one: 'JazakAllah Khayran ! 1 Graine donnée.',
     );
     return '$_temp0';
   }
@@ -2254,10 +2253,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get seedsSealedSafe =>
-      'Vos Seeds sont scellées et en sécurité\npour l\'Akhirah.';
+      'Vos Graines sont scellées et en sécurité\npour l\'Akhirah.';
 
   @override
-  String get validationSeedsLabel => 'Seeds de validation';
+  String get validationSeedsLabel => 'Graines de validation';
 
   @override
   String get streakBonusLabel => 'Bonus de série';
@@ -2278,7 +2277,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get shareWithFriendsCta => 'Partager avec des amis';
 
   @override
-  String get earnMoreSeedsCta => 'Gagner plus de Seeds';
+  String get earnMoreSeedsCta => 'Gagner plus de Graines';
 
   @override
   String levelTitleFormat(int level, String title) {
@@ -2316,7 +2315,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get activeCampaigns => 'Campagnes actives';
 
   @override
-  String get poolSeedsImpact => 'Réunissez vos Seeds pour un impact durable';
+  String get poolSeedsImpact => 'Réunissez vos Graines pour un impact durable';
 
   @override
   String get featuredSponsorChild => 'En vedette · Parrainer un enfant';
@@ -2342,7 +2341,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vous n\'avez pas encore donné. Choisissez quelqu\'un ci-dessus pour commencer votre parcours d\'impact.';
 
   @override
-  String get seedsDonatedLabel => 'Seeds données';
+  String get seedsDonatedLabel => 'Graines données';
 
   @override
   String orphanCount(int count) {
@@ -2391,4 +2390,237 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get howYouEarnedThis => 'Comment vous avez gagné cela';
+
+  @override
+  String seedsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Graines',
+      one: '1 Graine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seedsUnit => 'Graines';
+
+  @override
+  String get topContribByLifetimeSeeds =>
+      'Meilleurs contributeurs par Graines cumulées';
+
+  @override
+  String get romanisedPronunciation =>
+      'Prononciation romanisée sous chaque mot';
+
+  @override
+  String get displayLabel => 'AFFICHAGE';
+
+  @override
+  String get arabicLanguageLabel => 'Arabe';
+
+  @override
+  String get urduLanguageLabel => 'Ourdou';
+
+  @override
+  String get englishLanguageLabel => 'Anglais';
+
+  @override
+  String get earnPerVerseRead => 'Gagnez +10 Graines par verset lu';
+
+  @override
+  String get surahPickerLabel => 'Sourate';
+
+  @override
+  String versesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count versets',
+      one: '1 verset',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get startFromVerse => 'Commencer au verset';
+
+  @override
+  String verseN(int n) {
+    return 'Verset $n';
+  }
+
+  @override
+  String ofN(int n) {
+    return 'sur $n';
+  }
+
+  @override
+  String surahHasNVerses(String name, int count) {
+    return 'Sourate $name contient $count versets';
+  }
+
+  @override
+  String noXYet(String label) {
+    return 'Aucun $label pour le moment';
+  }
+
+  @override
+  String get tapHeartToSave =>
+      'Appuyez sur l\'icône cœur/favori pendant la lecture pour sauvegarder des versets.';
+
+  @override
+  String surahVerseRow(int surah, int ayah) {
+    return 'Sourate $surah  •  Verset $ayah';
+  }
+
+  @override
+  String get hasanatFromQuran => 'Hasanat du Coran';
+
+  @override
+  String tenPerLetterSubtitle(int count) {
+    return '10 par lettre, $count par verset';
+  }
+
+  @override
+  String get fromSubhanAllahTasbih => 'De SubhanAllah & Tasbih';
+
+  @override
+  String get likeFoamOfSea => 'Comme l\'écume de la mer';
+
+  @override
+  String get fromSurahIkhlasRecitation => 'De la récitation de Sourate Ikhlas';
+
+  @override
+  String get laHawlaSubtitle => 'La Hawla Wa La Quwwata';
+
+  @override
+  String get equivalentRewardEarned => 'Récompense équivalente obtenue';
+
+  @override
+  String get gatesOfParadise => 'Portes du Paradis';
+
+  @override
+  String get afterPerfectWudu => 'Après un wudu parfait';
+
+  @override
+  String get blessingsFromAllah => 'Bénédictions d\'Allah';
+
+  @override
+  String get salawatTenReturned => 'Salawat × 10 retournées';
+
+  @override
+  String get timesProtected => 'Fois Protégé';
+
+  @override
+  String get refugeInvokedFromHarm => 'Refuge invoqué contre le mal';
+
+  @override
+  String get quranCompletions => 'Lectures complètes du Coran';
+
+  @override
+  String get viaSurahIkhlas => 'Via Sourate Al-Ikhlas ×3';
+
+  @override
+  String get bonusHasanaat => 'Hasanaat Bonus';
+
+  @override
+  String get marketplaceDua => 'Du\'a du marché';
+
+  @override
+  String get seedsDonatedToCommunity => 'Graines données à la communauté';
+
+  @override
+  String get yourMonth => 'Votre Mois';
+
+  @override
+  String get ayahsReadLabel => 'Versets Lus';
+
+  @override
+  String get dhikrCount => 'Compte de Dhikr';
+
+  @override
+  String get quranTime => 'Temps Coran';
+
+  @override
+  String get dhikrTime => 'Temps Dhikr';
+
+  @override
+  String get activeDays => 'Jours Actifs';
+
+  @override
+  String get treesShortLabel => 'Arbres';
+
+  @override
+  String get palacesShortLabel => 'Palais';
+
+  @override
+  String get freedShortLabel => 'Libérés';
+
+  @override
+  String get blessingsShortLabel => 'Bénédictions';
+
+  @override
+  String get dailyWordPrefix => 'Quotidiens ';
+
+  @override
+  String get essentialsWord => 'Essentiels';
+
+  @override
+  String get seedsExpiringNotificationTitle => 'Graines expirant à minuit !';
+
+  @override
+  String seedsExpiringNotificationBody(int pending) {
+    return 'Vous avez $pending Graines en attente. Scellez la journée maintenant ou elles expireront !';
+  }
+
+  @override
+  String get okButton => 'OK';
+
+  @override
+  String get signUpTitle => 'S\'inscrire';
+
+  @override
+  String get signInTitle => 'Se connecter';
+
+  @override
+  String get emailFieldLabel => 'E-mail';
+
+  @override
+  String get passwordFieldLabel => 'Mot de passe';
+
+  @override
+  String get enterEmailValidator => 'Veuillez saisir votre e-mail';
+
+  @override
+  String get enterPasswordValidator => 'Veuillez saisir votre mot de passe';
+
+  @override
+  String get passwordTooShortValidator =>
+      'Le mot de passe doit comporter au moins 6 caractères';
+
+  @override
+  String get signUpSuccessMessage =>
+      'Inscription réussie ! Veuillez vérifier votre e-mail pour confirmation.';
+
+  @override
+  String get unexpectedAuthError => 'Une erreur inattendue s\'est produite';
+
+  @override
+  String get sawabLabel => 'Sawab';
+
+  @override
+  String get impactLabel => 'Impact';
+
+  @override
+  String get goodDeedTitle => 'Bonne Action';
+
+  @override
+  String get goodDeedSubtitle => 'Gagnez du Sawab\nà chaque lecture';
+
+  @override
+  String get realImpactTitle => 'Impact Réel';
+
+  @override
+  String get realImpactSubtitle => 'Les pièces financent\ndes causes nobles';
 }
