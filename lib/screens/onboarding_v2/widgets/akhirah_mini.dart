@@ -7,6 +7,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import 'onboarding_tokens.dart';
 
 class AkhirahMini extends StatelessWidget {
@@ -66,13 +67,17 @@ class AkhirahMini extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _Tile(width: w, icon: Icons.park_outlined,
-                      label: 'Trees', value: '127'),
+                      label: AppLocalizations.of(context)?.treesShortLabel ?? 'Trees',
+                      value: '127'),
                   _Tile(width: w, icon: Icons.castle_outlined,
-                      label: 'Palaces', value: '3'),
+                      label: AppLocalizations.of(context)?.palacesShortLabel ?? 'Palaces',
+                      value: '3'),
                   _Tile(width: w, icon: Icons.favorite_outline_rounded,
-                      label: 'Freed', value: '11'),
+                      label: AppLocalizations.of(context)?.freedShortLabel ?? 'Freed',
+                      value: '11'),
                   _Tile(width: w, icon: Icons.auto_awesome_outlined,
-                      label: 'Blessings', value: '∞'),
+                      label: AppLocalizations.of(context)?.blessingsShortLabel ?? 'Blessings',
+                      value: '∞'),
                 ],
               ),
             ),

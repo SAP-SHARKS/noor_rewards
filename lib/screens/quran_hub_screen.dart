@@ -9,7 +9,6 @@ import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
 import '../services/quran_api_service.dart';
 import '../models/app_config.dart';
-import '../l10n/app_localizations.dart';
 import '../theme/y4_theme.dart';
 
 // ── Palette (reads from admin-controlled AppConfig) ─────────────────────────
@@ -683,7 +682,11 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          '${_surahNames[_selSurah]} has $maxAyah verses',
+                          AppLocalizations.of(context)?.surahHasNVerses(
+                                _surahNames[_selSurah],
+                                maxAyah,
+                              ) ??
+                              '${_surahNames[_selSurah]} has $maxAyah verses',
                           style: GoogleFonts.outfit(fontSize: 13, color: _kSub),
                         ),
                       ),
@@ -828,7 +831,8 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'No $title yet',
+                                  AppLocalizations.of(context)?.noXYet(title) ??
+                                      'No $title yet',
                                   style: GoogleFonts.outfit(
                                     fontSize: 16,
                                     color: _kSub,
@@ -836,7 +840,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Tap the heart/bookmark icon while reading to save verses.',
+                                  AppLocalizations.of(context)
+                                          ?.tapHeartToSave ??
+                                      'Tap the heart/bookmark icon while reading to save verses.',
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
                                     color: Colors.grey.shade400,
@@ -909,7 +915,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                               ),
                                             ),
                                             Text(
-                                              'Surah $s  •  Verse $a',
+                                              AppLocalizations.of(context)
+                                                      ?.surahVerseRow(s, a) ??
+                                                  'Surah $s  •  Verse $a',
                                               style: GoogleFonts.outfit(
                                                 fontSize: 12,
                                                 color: _kSub,
@@ -999,7 +1007,8 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Earn +10 Sabiq Seeds per verse read',
+                        AppLocalizations.of(context)?.earnPerVerseRead ??
+                            'Earn +10 Sabiq Seeds per verse read',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           color: Y4.inkSoft,
@@ -1051,9 +1060,11 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                 _PickerRow(
                   icon: Icons.menu_book_rounded,
                   iconColor: Y4.honeyDeep,
-                  label: 'Surah',
+                  label: AppLocalizations.of(context)?.surahPickerLabel ?? 'Surah',
                   value: _surahNames[_selSurah],
-                  subtitle: '${_surahLengths[_selSurah]} verses',
+                  subtitle: AppLocalizations.of(context)
+                          ?.versesCount(_surahLengths[_selSurah]) ??
+                      '${_surahLengths[_selSurah]} verses',
                   onTap: _pickSurah,
                 ),
                 const SizedBox(height: 10),
@@ -1062,9 +1073,14 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                 _PickerRow(
                   icon: Icons.format_list_numbered_rounded,
                   iconColor: Y4.honeyDeep,
-                  label: 'Start from Verse',
-                  value: 'Verse $_selAyah',
-                  subtitle: 'of ${_surahLengths[_selSurah]}',
+                  label:
+                      AppLocalizations.of(context)?.startFromVerse ??
+                          'Start from Verse',
+                  value: AppLocalizations.of(context)?.verseN(_selAyah) ??
+                      'Verse $_selAyah',
+                  subtitle: AppLocalizations.of(context)
+                          ?.ofN(_surahLengths[_selSurah]) ??
+                      'of ${_surahLengths[_selSurah]}',
                   onTap: _pickAyah,
                 ),
                 const SizedBox(height: 20),

@@ -1173,7 +1173,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 icon: Icons.auto_awesome_rounded,
                                 iconWidget: const SabiqCoin(size: 18),
                                 value: '+$pts',
-                                label: 'Seeds',
+                                label: AppLocalizations.of(context)?.seedsUnit ?? 'Seeds',
                                 color: kGold,
                                 isDark: isDark,
                               ),
@@ -4930,7 +4930,7 @@ class _RewardCounters extends StatelessWidget {
                 const SabiqCoin(size: 18),
                 const SizedBox(width: 4),
                 Text(
-                  '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
+                  '+$pointsToday ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -5185,7 +5185,7 @@ class _AzkarCard extends StatelessWidget {
                           const SabiqCoin(size: 18),
                           const SizedBox(width: 4),
                           Text(
-                            '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
+                            '+$pointsToday ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                             style: GoogleFonts.outfit(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
@@ -27105,7 +27105,7 @@ class _PinnedIllustration extends StatelessWidget {
                     const SabiqCoin(size: 18),
                     const SizedBox(width: 4),
                     Text(
-                      '+$pointsToday ${pointsToday == 1 ? 'Seed' : 'Seeds'}',
+                      '+$pointsToday ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,

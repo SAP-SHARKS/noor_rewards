@@ -1094,7 +1094,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: _C.gold,
           bgColor: const Color(0xFFFDF6E3),
           title: AppLocalizations.of(context)?.hasanaatEarned ?? 'Hasanaat Earned',
-          subtitle: 'Recorded in your Book of Deeds',
+          subtitle: AppLocalizations.of(context)?.recordedInBookOfDeeds ??
+              'Recorded in your Book of Deeds',
           value: _hasanaat,
           change: 'All time',
           positive: true,
@@ -1120,8 +1121,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           icon: NoorIcon.book(size: 24),
           color: const Color(0xFF1F7A6B),
           bgColor: const Color(0xFFE0F2EE),
-          title: 'Hasanat from Quran',
-          subtitle: '10 per letter, $_kAvgLettersPerAyah per ayah',
+          title: AppLocalizations.of(context)?.hasanatFromQuran ??
+              'Hasanat from Quran',
+          subtitle: AppLocalizations.of(context)
+                  ?.tenPerLetterSubtitle(_kAvgLettersPerAyah) ??
+              '10 per letter, $_kAvgLettersPerAyah per ayah',
           value: _hasanatFromQuran,
           change: '${_fmt(_lifetimeAyahs)} ayahs',
           positive: true,
@@ -1144,7 +1148,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: const Color(0xFF2D7A45),
           bgColor: const Color(0xFFE8F5EC),
           title: AppLocalizations.of(context)?.treesInJannah ?? 'Trees in Jannah',
-          subtitle: 'From SubhanAllah & Tasbih',
+          subtitle: AppLocalizations.of(context)?.fromSubhanAllahTasbih ??
+              'From SubhanAllah & Tasbih',
           value: _treesPlanted,
           change: '${_fmt(_treesPlanted)} planted',
           positive: true,
@@ -1169,7 +1174,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: _C.teal,
           bgColor: const Color(0xFFE0F7F4),
           title: AppLocalizations.of(context)?.sinsForgiven ?? 'Sins Forgiven',
-          subtitle: 'Like the foam of the sea',
+          subtitle: AppLocalizations.of(context)?.likeFoamOfSea ??
+              'Like the foam of the sea',
           value: _sinsWiped,
           change: '${_fmt(_sinsWiped)} cycles',
           positive: true,
@@ -1193,7 +1199,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: const Color(0xFF4A90E2),
           bgColor: const Color(0xFFEAF2F8),
           title: AppLocalizations.of(context)?.palacesBuilt ?? 'Palaces Built',
-          subtitle: 'From Surah Ikhlas recitation',
+          subtitle: AppLocalizations.of(context)?.fromSurahIkhlasRecitation ??
+              'From Surah Ikhlas recitation',
           value: _palacesBuilt,
           change: '${_fmt(_palacesBuilt)} built',
           positive: true,
@@ -1217,7 +1224,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: const Color(0xFF9B59B6),
           bgColor: const Color(0xFFF5EEF8),
           title: AppLocalizations.of(context)?.treasuresOfJannah ?? 'Treasures of Jannah',
-          subtitle: 'La Hawla Wa La Quwwata',
+          subtitle: AppLocalizations.of(context)?.laHawlaSubtitle ??
+              'La Hawla Wa La Quwwata',
           value: _treasures,
           change: '${_fmt(_treasures)} earned',
           positive: true,
@@ -1239,7 +1247,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: _C.purple,
           bgColor: const Color(0xFFEEEAF8),
           title: AppLocalizations.of(context)?.slavesFreedom ?? 'Slaves Freed',
-          subtitle: 'Equivalent reward earned',
+          subtitle: AppLocalizations.of(context)?.equivalentRewardEarned ??
+              'Equivalent reward earned',
           value: _slavesFreed,
           change: '${_fmt(_slavesFreed)} equivalent',
           positive: true,
@@ -1263,8 +1272,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           icon: NoorIcon.kaaba(size: 24),
           color: const Color(0xFFD4A017),
           bgColor: const Color(0xFFFFF8E1),
-          title: 'Gates of Paradise',
-          subtitle: 'After perfect wudu',
+          title: AppLocalizations.of(context)?.gatesOfParadise ??
+              'Gates of Paradise',
+          subtitle: AppLocalizations.of(context)?.afterPerfectWudu ??
+              'After perfect wudu',
           value: _gatesOpened,
           change: '${_fmt(_gatesOpened)} opened',
           positive: true,
@@ -1284,8 +1295,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           icon: NoorIcon.heart(size: 24),
           color: const Color(0xFFE91E63),
           bgColor: const Color(0xFFFCE4EC),
-          title: 'Blessings from Allah',
-          subtitle: 'Salawat × 10 returned',
+          title: AppLocalizations.of(context)?.blessingsFromAllah ??
+              'Blessings from Allah',
+          subtitle: AppLocalizations.of(context)?.salawatTenReturned ??
+              'Salawat × 10 returned',
           value: _blessingsReceived,
           change: '${_fmt(_blessingsReceived)} received',
           positive: true,
@@ -1309,8 +1322,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           icon: NoorIcon.shield(size: 24),
           color: const Color(0xFF455A64),
           bgColor: const Color(0xFFECEFF1),
-          title: 'Times Protected',
-          subtitle: 'Refuge invoked from harm',
+          title: AppLocalizations.of(context)?.timesProtected ??
+              'Times Protected',
+          subtitle: AppLocalizations.of(context)?.refugeInvokedFromHarm ??
+              'Refuge invoked from harm',
           value: _protectionInvocations,
           change: '${_fmt(_protectionInvocations)} invocations',
           positive: true,
@@ -1338,8 +1353,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           icon: NoorIcon.greenBook(size: 24),
           color: const Color(0xFF2E7D32),
           bgColor: const Color(0xFFE8F5E9),
-          title: 'Quran Completions',
-          subtitle: 'Via Surah Al-Ikhlas ×3',
+          title: AppLocalizations.of(context)?.quranCompletions ??
+              'Quran Completions',
+          subtitle: AppLocalizations.of(context)?.viaSurahIkhlas ??
+              'Via Surah Al-Ikhlas ×3',
           value: _quranCompletionsViaIkhlas,
           change: '${_fmt(_quranCompletionsViaIkhlas)} equivalent',
           positive: true,
@@ -1363,8 +1380,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             icon: NoorIcon.trophy(size: 24),
             color: const Color(0xFFB8860B),
             bgColor: const Color(0xFFFFFBE6),
-            title: 'Bonus Hasanaat',
-            subtitle: 'Marketplace du\'a',
+            title: AppLocalizations.of(context)?.bonusHasanaat ??
+                'Bonus Hasanaat',
+            subtitle: AppLocalizations.of(context)?.marketplaceDua ??
+                "Marketplace du'a",
             value: _millionHasanaat,
             change: '${_fmt(_shoppingDuaCount)} recitations',
             positive: true,
@@ -1385,7 +1404,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           color: const Color(0xFFE67E22),
           bgColor: const Color(0xFFFEF5E7),
           title: AppLocalizations.of(context)?.sadaqahGiven ?? 'Sadaqah Given',
-          subtitle: 'Seeds donated to community',
+          subtitle: AppLocalizations.of(context)?.seedsDonatedToCommunity ??
+              'Seeds donated to community',
           value: _totalDonated,
           change: AppLocalizations.of(context)?.allTimeLabel ?? 'All time',
           positive: true,
@@ -1396,7 +1416,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             value: _totalDonated,
             color: const Color(0xFFE67E22),
             hadith: '"Sadaqah does not decrease wealth.", Muslim 2588',
-            breakdown: 'Seeds you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} ${_totalDonated == 1 ? 'Seed' : 'Seeds'}',
+            breakdown: 'Seeds you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
           ),
         ),
       ];
@@ -1474,7 +1494,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Your Month',
+                    AppLocalizations.of(context)?.yourMonth ?? 'Your Month',
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
@@ -1491,7 +1511,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             children: [
               Expanded(
                 child: _MonthStat(
-                  label: 'Ayahs Read',
+                  label: AppLocalizations.of(context)?.ayahsReadLabel ?? 'Ayahs Read',
                   value: _fmt(_monthAyahs),
                   delta: '',
                   icon: Icons.menu_book_rounded,
@@ -1501,7 +1521,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _MonthStat(
-                  label: 'Dhikr Count',
+                  label: AppLocalizations.of(context)?.dhikrCount ?? 'Dhikr Count',
                   value: _fmt(_monthDhikrCount),
                   delta: '',
                   icon: Icons.spa_rounded,
@@ -1515,7 +1535,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             children: [
               Expanded(
                 child: _MonthStat(
-                  label: 'Quran Time',
+                  label: AppLocalizations.of(context)?.quranTime ?? 'Quran Time',
                   value: MonthlyStats.formatDuration(
                       _monthQuranTimeSec +
                           StatsService.instance.optimisticTodaySec),
@@ -1527,7 +1547,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _MonthStat(
-                  label: 'Dhikr Time',
+                  label: AppLocalizations.of(context)?.dhikrTime ?? 'Dhikr Time',
                   value: MonthlyStats.formatDuration(_monthDhikrTimeSec),
                   delta: '',
                   icon: Icons.access_time_rounded,
@@ -1541,7 +1561,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             children: [
               Expanded(
                 child: _MonthStat(
-                  label: 'Active Days',
+                  label: AppLocalizations.of(context)?.activeDays ?? 'Active Days',
                   value: '$_monthActiveDays',
                   delta: '',
                   icon: Icons.check_circle_outline_rounded,
@@ -1551,7 +1571,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _MonthStat(
-                  label: 'Total Seeds',
+                  label: AppLocalizations.of(context)?.totalPoints ?? 'Total Seeds',
                   value: _fmt(_monthPoints),
                   delta: '',
                   icon: Icons.star_rounded,
@@ -2316,7 +2336,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Your available: ${_fmt(_myAvailablePoints)} Seeds',
+                        'Your available: ${_fmt(_myAvailablePoints)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                         style: GoogleFonts.outfit(fontSize: 13, color: _C.sub),
                       ),
                       const SizedBox(height: 20),
@@ -2348,7 +2368,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                       const SabiqCoin(size: 18),
                                       const SizedBox(width: 4),
                                       Text(
-                                        '$amt Seeds',
+                                        '$amt ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                         style: GoogleFonts.outfit(
                                           fontWeight: FontWeight.w700,
                                           color:
@@ -2413,7 +2433,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                           ).showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                'JazakAllah! ${_fmt(selected)} Seeds donated 🤲',
+                                                'JazakAllah! ${_fmt(selected)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'} donated 🤲',
                                                 style: GoogleFonts.outfit(
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -2445,7 +2465,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     },
                             child: _myAvailablePoints < selected
                                 ? Text(
-                                    'Insufficient Seeds',
+                                    AppLocalizations.of(context)?.notEnoughSeeds ?? 'Insufficient Seeds',
                                     style: GoogleFonts.outfit(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w800,
@@ -2459,7 +2479,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                       const SabiqCoin(size: 22),
                                       const SizedBox(width: 6),
                                       Text(
-                                        'Donate $selected ${selected == 1 ? 'Seed' : 'Seeds'} 🤲',
+                                        'Donate $selected ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'} 🤲',
                                         style: GoogleFonts.outfit(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w800,
@@ -2925,6 +2945,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       _fmt(_myTotalSeedsLifetime),
                       AppLocalizations.of(context)?.seedsDonatedLabel ??
                           'Seeds donated',
+                      // localized via key
                     ),
                   ),
                   Container(
@@ -3083,7 +3104,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             const Spacer(),
                             Flexible(
                               child: Text(
-                                '${_fmt(cur)} / ${_fmt(tgt)} Seeds',
+                                '${_fmt(cur)} / ${_fmt(tgt)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(
@@ -3135,7 +3156,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     const SizedBox(width: 5),
                                     Flexible(
                                       child: Text(
-                                        'My contribution: ${_fmt(myPts)} Seeds',
+                                        AppLocalizations.of(context)?.myContributionSeeds(myPts) ?? 'My contribution: ${_fmt(myPts)} Seeds',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(

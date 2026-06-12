@@ -963,7 +963,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resume => 'Resume';
 
   @override
-  String get loadingWordTranslations => 'Loading word translations...';
+  String get loadingWordTranslations => 'Loading word translations…';
 
   @override
   String get wordDataUnavailable =>
@@ -2377,4 +2377,236 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howYouEarnedThis => 'How you earned this';
+
+  @override
+  String seedsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Seeds',
+      one: '1 Seed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seedsUnit => 'Seeds';
+
+  @override
+  String get topContribByLifetimeSeeds => 'Top contributors by lifetime Seeds';
+
+  @override
+  String get romanisedPronunciation =>
+      'Romanised pronunciation under each word';
+
+  @override
+  String get displayLabel => 'DISPLAY';
+
+  @override
+  String get arabicLanguageLabel => 'Arabic';
+
+  @override
+  String get urduLanguageLabel => 'Urdu';
+
+  @override
+  String get englishLanguageLabel => 'English';
+
+  @override
+  String get earnPerVerseRead => 'Earn +10 Sabiq Seeds per verse read';
+
+  @override
+  String get surahPickerLabel => 'Surah';
+
+  @override
+  String versesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verses',
+      one: '1 verse',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get startFromVerse => 'Start from Verse';
+
+  @override
+  String verseN(int n) {
+    return 'Verse $n';
+  }
+
+  @override
+  String ofN(int n) {
+    return 'of $n';
+  }
+
+  @override
+  String surahHasNVerses(String name, int count) {
+    return '$name has $count verses';
+  }
+
+  @override
+  String noXYet(String label) {
+    return 'No $label yet';
+  }
+
+  @override
+  String get tapHeartToSave =>
+      'Tap the heart/bookmark icon while reading to save verses.';
+
+  @override
+  String surahVerseRow(int surah, int ayah) {
+    return 'Surah $surah  •  Verse $ayah';
+  }
+
+  @override
+  String get hasanatFromQuran => 'Hasanat from Quran';
+
+  @override
+  String tenPerLetterSubtitle(int count) {
+    return '10 per letter, $count per ayah';
+  }
+
+  @override
+  String get fromSubhanAllahTasbih => 'From SubhanAllah & Tasbih';
+
+  @override
+  String get likeFoamOfSea => 'Like the foam of the sea';
+
+  @override
+  String get fromSurahIkhlasRecitation => 'From Surah Ikhlas recitation';
+
+  @override
+  String get laHawlaSubtitle => 'La Hawla Wa La Quwwata';
+
+  @override
+  String get equivalentRewardEarned => 'Equivalent reward earned';
+
+  @override
+  String get gatesOfParadise => 'Gates of Paradise';
+
+  @override
+  String get afterPerfectWudu => 'After perfect wudu';
+
+  @override
+  String get blessingsFromAllah => 'Blessings from Allah';
+
+  @override
+  String get salawatTenReturned => 'Salawat × 10 returned';
+
+  @override
+  String get timesProtected => 'Times Protected';
+
+  @override
+  String get refugeInvokedFromHarm => 'Refuge invoked from harm';
+
+  @override
+  String get quranCompletions => 'Quran Completions';
+
+  @override
+  String get viaSurahIkhlas => 'Via Surah Al-Ikhlas ×3';
+
+  @override
+  String get bonusHasanaat => 'Bonus Hasanaat';
+
+  @override
+  String get marketplaceDua => 'Marketplace du\'a';
+
+  @override
+  String get seedsDonatedToCommunity => 'Seeds donated to community';
+
+  @override
+  String get yourMonth => 'Your Month';
+
+  @override
+  String get ayahsReadLabel => 'Ayahs Read';
+
+  @override
+  String get dhikrCount => 'Dhikr Count';
+
+  @override
+  String get quranTime => 'Quran Time';
+
+  @override
+  String get dhikrTime => 'Dhikr Time';
+
+  @override
+  String get activeDays => 'Active Days';
+
+  @override
+  String get treesShortLabel => 'Trees';
+
+  @override
+  String get palacesShortLabel => 'Palaces';
+
+  @override
+  String get freedShortLabel => 'Freed';
+
+  @override
+  String get blessingsShortLabel => 'Blessings';
+
+  @override
+  String get dailyWordPrefix => 'Daily ';
+
+  @override
+  String get essentialsWord => 'Essentials';
+
+  @override
+  String get seedsExpiringNotificationTitle => 'Seeds expiring at midnight!';
+
+  @override
+  String seedsExpiringNotificationBody(int pending) {
+    return 'You have $pending Seeds pending. Seal the Day now or they expire!';
+  }
+
+  @override
+  String get okButton => 'OK';
+
+  @override
+  String get signUpTitle => 'Sign Up';
+
+  @override
+  String get signInTitle => 'Sign In';
+
+  @override
+  String get emailFieldLabel => 'Email';
+
+  @override
+  String get passwordFieldLabel => 'Password';
+
+  @override
+  String get enterEmailValidator => 'Please enter your email';
+
+  @override
+  String get enterPasswordValidator => 'Please enter your password';
+
+  @override
+  String get passwordTooShortValidator =>
+      'Password must be at least 6 characters';
+
+  @override
+  String get signUpSuccessMessage =>
+      'Sign up successful! Please check your email for confirmation.';
+
+  @override
+  String get unexpectedAuthError => 'An unexpected error occurred';
+
+  @override
+  String get sawabLabel => 'Sawab';
+
+  @override
+  String get impactLabel => 'Impact';
+
+  @override
+  String get goodDeedTitle => 'Good Deed';
+
+  @override
+  String get goodDeedSubtitle => 'Earn Sawab\nwith every read';
+
+  @override
+  String get realImpactTitle => 'Real Impact';
+
+  @override
+  String get realImpactSubtitle => 'Coins fund\nnoble causes';
 }

@@ -442,7 +442,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Daily ',
+                        text: AppLocalizations.of(context)?.dailyWordPrefix ??
+                            'Daily ',
                         style: Y4.display(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,
@@ -451,7 +452,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: 'Essentials',
+                        text: AppLocalizations.of(context)?.essentialsWord ??
+                            'Essentials',
                         style: Y4.display(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,

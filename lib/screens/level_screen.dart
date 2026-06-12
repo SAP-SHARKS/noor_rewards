@@ -654,7 +654,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                                               fit: BoxFit.scaleDown,
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                '$v Seeds',
+                                                '$v ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                                 maxLines: 1,
                                                 style: GoogleFonts.rajdhani(
                                                   fontSize: 32,
@@ -852,12 +852,12 @@ class _ProgressTabState extends State<_ProgressTab> {
                 _XpRow(
                   NoorIcon.book(size: 20),
                   l.readOneAyah,
-                  '+${PointReward.ayahRead} Seeds',
+                  '+${PointReward.ayahRead} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                 ),
                 _XpRow(
                   NoorIcon.books(size: 20),
                   l.completeOneJuz,
-                  '+${PointReward.juzComplete} Seeds',
+                  '+${PointReward.juzComplete} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                 ),
                 if (_showAllXpGuide) ...[
                   _XpRow(

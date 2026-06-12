@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -35,9 +36,10 @@ class _AuthScreenState extends State<AuthScreen> {
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Sign up successful! Please check your email for confirmation.',
+                AppLocalizations.of(context)?.signUpSuccessMessage ??
+                    'Sign up successful! Please check your email for confirmation.',
               ),
             ),
           );
@@ -61,7 +63,10 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('An unexpected error occurred'),
+            content: Text(
+              AppLocalizations.of(context)?.unexpectedAuthError ??
+                  'An unexpected error occurred',
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -98,7 +103,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 children: [
                   const SizedBox(height: 48),
                   Text(
-                    _isSignUp ? 'Sign Up' : 'Sign In',
+                    _isSignUp
+                        ? (AppLocalizations.of(context)?.signUpTitle ??
+                            'Sign Up')
+                        : (AppLocalizations.of(context)?.signInTitle ??
+                            'Sign In'),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 32,
@@ -114,7 +123,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     keyboardType: TextInputType.emailAddress,
                     style: GoogleFonts.outfit(fontSize: 16),
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText:
+                          AppLocalizations.of(context)?.emailFieldLabel ??
+                              'Email',
                       labelStyle: GoogleFonts.outfit(color: Colors.grey[600]),
                       enabledBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
@@ -128,7 +139,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return AppLocalizations.of(context)
+                                ?.enterEmailValidator ??
+                            'Please enter your email';
                       }
                       return null;
                     },
@@ -141,7 +154,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     obscureText: true,
                     style: GoogleFonts.outfit(fontSize: 16),
                     decoration: InputDecoration(
-                      labelText: 'Password',
+                      labelText:
+                          AppLocalizations.of(context)?.passwordFieldLabel ??
+                              'Password',
                       labelStyle: GoogleFonts.outfit(color: Colors.grey[600]),
                       enabledBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
@@ -155,10 +170,14 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
+                        return AppLocalizations.of(context)
+                                ?.enterPasswordValidator ??
+                            'Please enter your password';
                       }
                       if (_isSignUp && value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return AppLocalizations.of(context)
+                                ?.passwordTooShortValidator ??
+                            'Password must be at least 6 characters';
                       }
                       return null;
                     },
@@ -193,7 +212,13 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                               )
                               : Text(
-                                _isSignUp ? 'Sign Up' : 'Sign In',
+                                _isSignUp
+                                    ? (AppLocalizations.of(context)
+                                            ?.signUpTitle ??
+                                        'Sign Up')
+                                    : (AppLocalizations.of(context)
+                                            ?.signInTitle ??
+                                        'Sign In'),
                                 style: GoogleFonts.outfit(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,

@@ -450,7 +450,10 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                                           actions: [
                                             TextButton(
                                               onPressed: () => Navigator.pop(c),
-                                              child: const Text('OK'),
+                                              child: Text(
+                                                AppLocalizations.of(c)?.okButton ??
+                                                    'OK',
+                                              ),
                                             ),
                                           ],
                                         ),

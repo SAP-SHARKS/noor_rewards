@@ -966,7 +966,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get resume => 'Продолжить';
 
   @override
-  String get loadingWordTranslations => 'Загрузка пословного перевода...';
+  String get loadingWordTranslations => 'Загрузка пословных переводов…';
 
   @override
   String get wordDataUnavailable =>
@@ -1208,7 +1208,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hasanaatEarned => 'Заработанные хасанаты';
 
   @override
-  String get recordedInBookOfDeeds => 'Записано в вашей Книге деяний';
+  String get recordedInBookOfDeeds => 'Записано в вашу Книгу Деяний';
 
   @override
   String get treesInJannah => 'Деревья в Джаннате';
@@ -2016,8 +2016,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get yourAkhirahBalance => 'ВАШ БАЛАНС АХИРАТА';
 
   @override
-  String get seedsCollectedSinceJoined =>
-      'Sabiq Seeds собрано с момента регистрации';
+  String get seedsCollectedSinceJoined => 'Семян собрано с момента регистрации';
 
   @override
   String get todayLabel => 'СЕГОДНЯ';
@@ -2061,7 +2060,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get notEnoughSeeds => 'Недостаточно Sabiq Seeds';
+  String get notEnoughSeeds => 'Недостаточно Семян';
 
   @override
   String get bookmarkSyncDialogTitle => 'Синхронизация закладок Quran.com';
@@ -2082,7 +2081,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get customLabel => 'Своё';
 
   @override
-  String get seedsSuffix => 'Seeds';
+  String get seedsSuffix => 'Семена';
 
   @override
   String get settingsTooltip => 'Настройки';
@@ -2130,8 +2129,8 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Seeds ожидают',
-      one: '1 Seed ожидает',
+      other: '$count Семян ожидают',
+      one: '1 Семя ожидает',
     );
     return '$_temp0';
   }
@@ -2152,11 +2151,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get whatsappLabel => 'WhatsApp';
 
   @override
-  String get youBothEarnSeeds => 'Вы оба получаете 500 Sabiq Seeds!';
+  String get youBothEarnSeeds => 'Вы оба получаете 500 Семян!';
 
   @override
   String jazakAllahPlusSeeds(int seeds) {
-    return 'JazakAllah!  +$seeds Seeds';
+    return 'JazakAllah!  +$seeds Семян';
   }
 
   @override
@@ -2179,7 +2178,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String setTargetSeeds(int defaultVal) {
-    return 'Установите целевые Seeds (по умолчанию: $defaultVal)';
+    return 'Установите целевые Семена (по умолчанию: $defaultVal)';
   }
 
   @override
@@ -2223,8 +2222,8 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Мой вклад: $count Seeds',
-      one: 'Мой вклад: 1 Seed',
+      other: 'Мой вклад: $count Семян',
+      one: 'Мой вклад: 1 Семя',
     );
     return '$_temp0';
   }
@@ -2234,8 +2233,8 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       amount,
       locale: localeName,
-      other: 'JazakAllah Khayran! Пожертвовано $amount Seeds.',
-      one: 'JazakAllah Khayran! Пожертвован 1 Seed.',
+      other: 'JazakAllah Khayran! Пожертвовано $amount Семян.',
+      one: 'JazakAllah Khayran! Пожертвовано 1 Семя.',
     );
     return '$_temp0';
   }
@@ -2245,10 +2244,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get seedsSealedSafe =>
-      'Ваши Seeds запечатаны и сохранены\nдля Ахирата.';
+      'Ваши Семена запечатаны и сохранены\nдля Ахирата.';
 
   @override
-  String get validationSeedsLabel => 'Seeds валидации';
+  String get validationSeedsLabel => 'Семена валидации';
 
   @override
   String get streakBonusLabel => 'Бонус серии';
@@ -2269,7 +2268,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shareWithFriendsCta => 'Поделиться с друзьями';
 
   @override
-  String get earnMoreSeedsCta => 'Заработать больше Seeds';
+  String get earnMoreSeedsCta => 'Заработать больше Семян';
 
   @override
   String levelTitleFormat(int level, String title) {
@@ -2307,7 +2306,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get poolSeedsImpact =>
-      'Объедините свои Seeds для долгосрочного эффекта';
+      'Объедините свои Семена для долгосрочного эффекта';
 
   @override
   String get featuredSponsorChild => 'Рекомендуем · Поддержи ребёнка';
@@ -2333,7 +2332,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Вы ещё не делали пожертвований. Выберите кого-то выше, чтобы начать свой путь.';
 
   @override
-  String get seedsDonatedLabel => 'Seeds пожертвовано';
+  String get seedsDonatedLabel => 'Семян пожертвовано';
 
   @override
   String orphanCount(int count) {
@@ -2383,4 +2382,238 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get howYouEarnedThis => 'Как вы это заработали';
+
+  @override
+  String seedsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Семян',
+      one: '1 Семя',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seedsUnit => 'Семена';
+
+  @override
+  String get topContribByLifetimeSeeds =>
+      'Лучшие участники по Семенам за всё время';
+
+  @override
+  String get romanisedPronunciation =>
+      'Латинская транскрипция под каждым словом';
+
+  @override
+  String get displayLabel => 'ОТОБРАЖЕНИЕ';
+
+  @override
+  String get arabicLanguageLabel => 'Арабский';
+
+  @override
+  String get urduLanguageLabel => 'Урду';
+
+  @override
+  String get englishLanguageLabel => 'Английский';
+
+  @override
+  String get earnPerVerseRead =>
+      'Получайте +10 Семян за каждый прочитанный аят';
+
+  @override
+  String get surahPickerLabel => 'Сура';
+
+  @override
+  String versesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count аятов',
+      one: '1 аят',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get startFromVerse => 'Начать с аята';
+
+  @override
+  String verseN(int n) {
+    return 'Аят $n';
+  }
+
+  @override
+  String ofN(int n) {
+    return 'из $n';
+  }
+
+  @override
+  String surahHasNVerses(String name, int count) {
+    return 'Сура $name содержит $count аятов';
+  }
+
+  @override
+  String noXYet(String label) {
+    return 'Нет $label пока';
+  }
+
+  @override
+  String get tapHeartToSave =>
+      'Нажмите на иконку сердца/закладки при чтении, чтобы сохранить аяты.';
+
+  @override
+  String surahVerseRow(int surah, int ayah) {
+    return 'Сура $surah  •  Аят $ayah';
+  }
+
+  @override
+  String get hasanatFromQuran => 'Хасанат из Корана';
+
+  @override
+  String tenPerLetterSubtitle(int count) {
+    return '10 за букву, $count за аят';
+  }
+
+  @override
+  String get fromSubhanAllahTasbih => 'От СубханАллах и тасбиха';
+
+  @override
+  String get likeFoamOfSea => 'Как морская пена';
+
+  @override
+  String get fromSurahIkhlasRecitation => 'От чтения суры Ихлас';
+
+  @override
+  String get laHawlaSubtitle => 'Ля Хавля Ва Ля Куввата';
+
+  @override
+  String get equivalentRewardEarned => 'Эквивалентная награда получена';
+
+  @override
+  String get gatesOfParadise => 'Врата Рая';
+
+  @override
+  String get afterPerfectWudu => 'После идеального вуду';
+
+  @override
+  String get blessingsFromAllah => 'Благословения от Аллаха';
+
+  @override
+  String get salawatTenReturned => 'Салават × 10 возвращён';
+
+  @override
+  String get timesProtected => 'Раз защищён';
+
+  @override
+  String get refugeInvokedFromHarm => 'Прибежище призвано от вреда';
+
+  @override
+  String get quranCompletions => 'Хатм Корана';
+
+  @override
+  String get viaSurahIkhlas => 'Через суру аль-Ихлас ×3';
+
+  @override
+  String get bonusHasanaat => 'Бонус Хасанат';
+
+  @override
+  String get marketplaceDua => 'Дуа рынка';
+
+  @override
+  String get seedsDonatedToCommunity => 'Семена пожертвованы сообществу';
+
+  @override
+  String get yourMonth => 'Ваш Месяц';
+
+  @override
+  String get ayahsReadLabel => 'Прочитано аятов';
+
+  @override
+  String get dhikrCount => 'Количество зикра';
+
+  @override
+  String get quranTime => 'Время Корана';
+
+  @override
+  String get dhikrTime => 'Время Зикра';
+
+  @override
+  String get activeDays => 'Активные дни';
+
+  @override
+  String get treesShortLabel => 'Деревья';
+
+  @override
+  String get palacesShortLabel => 'Дворцы';
+
+  @override
+  String get freedShortLabel => 'Освобождены';
+
+  @override
+  String get blessingsShortLabel => 'Благословения';
+
+  @override
+  String get dailyWordPrefix => 'Ежедневные ';
+
+  @override
+  String get essentialsWord => 'Основы';
+
+  @override
+  String get seedsExpiringNotificationTitle => 'Семена истекают в полночь!';
+
+  @override
+  String seedsExpiringNotificationBody(int pending) {
+    return 'У вас $pending Семян ожидают. Запечатайте День сейчас или они истекут!';
+  }
+
+  @override
+  String get okButton => 'ОК';
+
+  @override
+  String get signUpTitle => 'Регистрация';
+
+  @override
+  String get signInTitle => 'Вход';
+
+  @override
+  String get emailFieldLabel => 'Email';
+
+  @override
+  String get passwordFieldLabel => 'Пароль';
+
+  @override
+  String get enterEmailValidator => 'Пожалуйста, введите ваш email';
+
+  @override
+  String get enterPasswordValidator => 'Пожалуйста, введите ваш пароль';
+
+  @override
+  String get passwordTooShortValidator =>
+      'Пароль должен содержать минимум 6 символов';
+
+  @override
+  String get signUpSuccessMessage =>
+      'Регистрация успешна! Пожалуйста, проверьте вашу почту для подтверждения.';
+
+  @override
+  String get unexpectedAuthError => 'Произошла непредвиденная ошибка';
+
+  @override
+  String get sawabLabel => 'Саваб';
+
+  @override
+  String get impactLabel => 'Влияние';
+
+  @override
+  String get goodDeedTitle => 'Доброе Дело';
+
+  @override
+  String get goodDeedSubtitle => 'Зарабатывайте Саваб\nс каждым чтением';
+
+  @override
+  String get realImpactTitle => 'Реальное Влияние';
+
+  @override
+  String get realImpactSubtitle => 'Монеты финансируют\nблагородные дела';
 }
