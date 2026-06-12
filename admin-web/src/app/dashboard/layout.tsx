@@ -7,6 +7,7 @@ import { supabase, ADMIN_EMAILS } from "@/lib/supabase";
 import { ConfigProvider } from "@/lib/config-context";
 import type { User } from "@supabase/supabase-js";
 import SabiqLogo from "@/components/SabiqLogo";
+import { TONE_LIGHT, TONE_DARK, type Tone } from "@/lib/admin-tones";
 
 // SVG icon paths (Heroicons outline style)
 const ICONS: Record<string, string> = {
@@ -40,21 +41,25 @@ const ICONS: Record<string, string> = {
     "M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25",
 };
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Overview", icon: "overview" },
-  { href: "/dashboard/economy", label: "Economy", icon: "economy" },
-  { href: "/dashboard/donor-pool", label: "Donor Pool", icon: "donor_pool" },
-  { href: "/dashboard/theme", label: "Theme & Colors", icon: "theme" },
-  { href: "/dashboard/projects", label: "Projects", icon: "projects" },
-  { href: "/dashboard/orphans", label: "Orphans", icon: "orphans" },
-  { href: "/dashboard/users", label: "Users", icon: "users" },
-  { href: "/dashboard/features", label: "Feature Flags", icon: "features" },
-  { href: "/dashboard/banners", label: "Banners", icon: "banners" },
-  { href: "/dashboard/config", label: "Raw Config", icon: "config" },
-  { href: "/dashboard/analytics", label: "Analytics", icon: "analytics" },
-  { href: "/dashboard/categories", label: "Azkar Categories", icon: "categories" },
-  { href: "/dashboard/azkar", label: "Azkar Library", icon: "azkar" },
-  { href: "/dashboard/onboarding", label: "Onboarding Images", icon: "onboarding" },
+// Per-section color tint. Each nav item owns a tone so the active sidebar
+// pill and the top-bar section chip stay visually linked. Page bodies can
+// import TONE_LIGHT/TONE_DARK from "@/lib/admin-tones" to use the same
+// palette ad-hoc (stat cards, pills, badges).
+const NAV_ITEMS: { href: string; label: string; icon: string; tone: Tone }[] = [
+  { href: "/dashboard",            label: "Overview",          icon: "overview",   tone: "teal" },
+  { href: "/dashboard/economy",    label: "Economy",           icon: "economy",    tone: "amber" },
+  { href: "/dashboard/donor-pool", label: "Donor Pool",        icon: "donor_pool", tone: "emerald" },
+  { href: "/dashboard/theme",      label: "Theme & Colors",    icon: "theme",      tone: "violet" },
+  { href: "/dashboard/projects",   label: "Projects",          icon: "projects",   tone: "sky" },
+  { href: "/dashboard/orphans",    label: "Orphans",           icon: "orphans",    tone: "rose" },
+  { href: "/dashboard/users",      label: "Users",             icon: "users",      tone: "indigo" },
+  { href: "/dashboard/features",   label: "Feature Flags",     icon: "features",   tone: "fuchsia" },
+  { href: "/dashboard/banners",    label: "Banners",           icon: "banners",    tone: "orange" },
+  { href: "/dashboard/config",     label: "Raw Config",        icon: "config",     tone: "slate" },
+  { href: "/dashboard/analytics",  label: "Analytics",         icon: "analytics",  tone: "cyan" },
+  { href: "/dashboard/categories", label: "Azkar Categories",  icon: "categories", tone: "lime" },
+  { href: "/dashboard/azkar",      label: "Azkar Library",     icon: "azkar",      tone: "emerald" },
+  { href: "/dashboard/onboarding", label: "Onboarding Images", icon: "onboarding", tone: "pink" },
 ];
 
 function NavIcon({ name, className }: { name: string; className?: string }) {
@@ -128,8 +133,10 @@ export default function DashboardLayout({
     );
   }
 
-  const currentLabel =
-    NAV_ITEMS.find((n) => n.href === pathname)?.label ?? "Dashboard";
+  const currentItem = NAV_ITEMS.find((n) => n.href === pathname);
+  const currentLabel = currentItem?.label ?? "Dashboard";
+  const currentTone: Tone = currentItem?.tone ?? "teal";
+  const currentToneStyle = dark ? TONE_DARK[currentTone] : TONE_LIGHT[currentTone];
 
   return (
     <div className={`min-h-screen flex ${dark ? "bg-slate-900" : "bg-slate-50"}`}>
@@ -151,13 +158,27 @@ export default function DashboardLayout({
             : "bg-white border-r border-slate-200"
         }`}
       >
-        {/* Logo */}
-        <div className={`px-6 py-5 border-b ${dark ? "border-slate-700" : "border-slate-100"}`}>
-          <div className="flex items-center gap-2.5">
+        {/* Logo — soft gradient backdrop ties the brand into the colorful theme. */}
+        <div
+          className={`relative px-6 py-5 border-b overflow-hidden ${
+            dark ? "border-slate-700" : "border-slate-100"
+          }`}
+        >
+          <div
+            className={`absolute inset-0 pointer-events-none ${
+              dark
+                ? "bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent"
+                : "bg-gradient-to-r from-teal-50 via-emerald-50/60 to-transparent"
+            }`}
+          />
+          <div className="relative flex items-center gap-2.5">
             <div className="w-8 h-8 flex items-center justify-center filter drop-shadow-sm">
               <SabiqLogo size={32} />
             </div>
-            <span className={`text-lg font-bold tracking-tight ${dark ? "text-white" : "text-slate-800"}`} style={{ fontFamily: "Outfit, sans-serif" }}>
+            <span
+              className={`text-lg font-bold tracking-tight ${dark ? "text-white" : "text-slate-800"}`}
+              style={{ fontFamily: "Outfit, sans-serif" }}
+            >
               Sabiq Admin
             </span>
           </div>
@@ -168,6 +189,8 @@ export default function DashboardLayout({
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
             const pending = isPending && clickedHref === item.href;
+            const t = dark ? TONE_DARK[item.tone] : TONE_LIGHT[item.tone];
+            const dotTone = TONE_LIGHT[item.tone].dot;
             return (
               <Link
                 key={item.href}
@@ -181,20 +204,25 @@ export default function DashboardLayout({
                     router.push(item.href);
                   });
                 }}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
+                className={`group relative flex items-center gap-3 pl-3 pr-3 py-2.5 rounded-lg text-sm transition ${
                   active || pending
-                    ? dark
-                      ? "bg-teal-600/20 text-teal-400 font-medium"
-                      : "bg-teal-50 text-teal-700 font-medium"
+                    ? `${t.bg} ${t.text} font-medium`
                     : dark
-                      ? "text-slate-400 hover:bg-slate-700 hover:text-white"
+                      ? "text-slate-400 hover:bg-slate-700/60 hover:text-white"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
-                <NavIcon name={item.icon} />
+                {/* Always-visible colored dot to give each nav row a hint of its
+                    section tone, even when inactive. Subtle but adds life. */}
+                <span
+                  className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full transition-all ${
+                    active || pending ? `${dotTone} h-6 opacity-100` : `${dotTone} h-3 opacity-40 group-hover:opacity-70`
+                  }`}
+                />
+                <NavIcon name={item.icon} className={`w-5 h-5 ${active || pending ? "" : "opacity-80"}`} />
                 {item.label}
                 {pending && (
-                  <span className="ml-auto w-3.5 h-3.5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+                  <span className={`ml-auto w-3.5 h-3.5 border-2 border-t-transparent rounded-full animate-spin ${t.text}`} style={{ borderTopColor: "transparent" }} />
                 )}
               </Link>
             );
@@ -231,9 +259,19 @@ export default function DashboardLayout({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className={`text-lg font-semibold flex-1 ${dark ? "text-white" : "text-slate-800"}`}>
-            {currentLabel}
-          </h1>
+          <div className="flex-1 flex items-center gap-2.5 min-w-0">
+            {/* Colored section chip — mirrors the active nav row tone so users
+                always know which area they're in. */}
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${currentToneStyle.bg} ${currentToneStyle.text} ${currentToneStyle.ring}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${TONE_LIGHT[currentTone].dot}`} />
+              {currentLabel}
+            </span>
+            <h1 className={`text-lg font-semibold truncate ${dark ? "text-white" : "text-slate-800"}`}>
+              {currentLabel}
+            </h1>
+          </div>
           {/* Dark mode toggle */}
           <button
             onClick={() => setDark(!dark)}

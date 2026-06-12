@@ -467,7 +467,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           const SizedBox(height: 12),
                           _buildNotificationsCard(l),
                           const SizedBox(height: 28),
-                          _sectionLabel('POINTS GOALS'),
+                          _sectionLabel(
+                            AppLocalizations.of(context)?.pointsGoals ??
+                                'POINTS GOALS',
+                          ),
                           const SizedBox(height: 12),
                           _buildGoalsCard(l),
                           const SizedBox(height: 28),
@@ -1057,7 +1060,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Edit',
+                  AppLocalizations.of(context)?.editLabel ?? 'Edit',
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -1222,7 +1225,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         color: _pText,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Search…',
+                        hintText:
+                            AppLocalizations.of(context)?.searchHint ??
+                                'Search…',
                         hintStyle: GoogleFonts.outfit(
                           color: const Color(0xFFB0A898),
                         ),
@@ -1596,7 +1601,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
-                  'Language',
+                  AppLocalizations.of(context)?.languageLabel ?? 'Language',
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -1617,10 +1622,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   fontWeight: FontWeight.w600,
                 ),
                 alignment: Alignment.centerRight,
-                items: const [
+                items: [
                   DropdownMenuItem(
                     value: 'system',
-                    child: Text('System Default'),
+                    child: Text(
+                      AppLocalizations.of(context)?.systemDefault ??
+                          'System Default',
+                    ),
                   ),
                   DropdownMenuItem(value: 'en', child: Text('English')),
                   DropdownMenuItem(value: 'ar', child: Text('العربية')),
@@ -1666,12 +1674,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         children: [
           _goalRow(
             icon: Icons.wb_sunny_rounded,
-            label: 'Daily Goal',
+            label: AppLocalizations.of(context)?.dailyGoal ?? 'Daily Goal',
             value: '${ss.dayGoal} Seeds',
             color: const Color(0xFF00897B),
             isFirst: true,
             onTap: () => _showGoalEditor(
-              title: 'Daily Goal',
+              title: AppLocalizations.of(context)?.dailyGoal ?? 'Daily Goal',
               current: ss.dayGoal,
               defaultVal: SettingsService.defaultDayGoal,
               onSave: (v) => ss.setGoals(day: v),
@@ -1680,11 +1688,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           const Divider(height: 1, thickness: 1, color: Y4.border),
           _goalRow(
             icon: Icons.date_range_rounded,
-            label: 'Weekly Goal',
+            label: AppLocalizations.of(context)?.weeklyGoal ?? 'Weekly Goal',
             value: '${ss.weekGoal} Seeds',
             color: const Color(0xFF5C6BC0),
             onTap: () => _showGoalEditor(
-              title: 'Weekly Goal',
+              title: AppLocalizations.of(context)?.weeklyGoal ?? 'Weekly Goal',
               current: ss.weekGoal,
               defaultVal: SettingsService.defaultWeekGoal,
               onSave: (v) => ss.setGoals(week: v),
@@ -1693,12 +1701,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           const Divider(height: 1, thickness: 1, color: Y4.border),
           _goalRow(
             icon: Icons.calendar_month_rounded,
-            label: 'Monthly Goal',
+            label: AppLocalizations.of(context)?.monthlyGoal ?? 'Monthly Goal',
             value: '${ss.monthGoal} Seeds',
             color: const Color(0xFFE91E8C),
             isLast: true,
             onTap: () => _showGoalEditor(
-              title: 'Monthly Goal',
+              title:
+                  AppLocalizations.of(context)?.monthlyGoal ?? 'Monthly Goal',
               current: ss.monthGoal,
               defaultVal: SettingsService.defaultMonthGoal,
               onSave: (v) => ss.setGoals(month: v),
@@ -1812,7 +1821,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Set your target Seeds (default: $defaultVal)',
+                  AppLocalizations.of(context)?.setTargetSeeds(defaultVal) ??
+                      'Set your target Seeds (default: $defaultVal)',
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     color: _pSub,
@@ -2045,8 +2055,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
     showDialog<void>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Quran.com Bookmark Sync'),
+      builder: (dialogCtx) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(dialogCtx)?.bookmarkSyncDialogTitle ??
+              'Quran.com Bookmark Sync',
+        ),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2079,7 +2092,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(
+              AppLocalizations.of(context)?.closeLabel ?? 'Close',
+            ),
           ),
         ],
       ),

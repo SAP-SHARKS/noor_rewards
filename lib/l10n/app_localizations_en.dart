@@ -1944,4 +1944,437 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onbV2_3step_S3Text => 'Feed Orphans';
+
+  @override
+  String get languageLabel => 'Language';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get yourStreaksTitle => 'YOUR STREAKS';
+
+  @override
+  String get streakLoading => 'Loading streaks…';
+
+  @override
+  String get startStreakToday => 'Start your streak today!';
+
+  @override
+  String get centurionMashaAllah => 'Centurion, Masha\'Allah!';
+
+  @override
+  String get qfConflictTitle => 'Account Already Exists';
+
+  @override
+  String get qfConflictExplanation =>
+      'This email is already registered with Sabiq Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Sabiq Seeds, please sign in using your original method.';
+
+  @override
+  String get qfConflictStep1 => 'Go back to the login screen';
+
+  @override
+  String qfConflictStep2(String email) {
+    return 'Sign in with Email or Google using\n$email';
+  }
+
+  @override
+  String get qfConflictStep3 => 'All your progress will be right there';
+
+  @override
+  String get qfConflictBackButton => 'Back to Sign In';
+
+  @override
+  String get sponsorAnOrphan => 'Sponsor an Orphan';
+
+  @override
+  String get noOrphansListed => 'No orphans listed yet';
+
+  @override
+  String get checkBackForOrphans =>
+      'Check back soon, new sponsorship opportunities are added regularly.';
+
+  @override
+  String get orphanVerseTranslation =>
+      '\"And as for the orphan, do not oppress him.\", Qur\'an 93:9';
+
+  @override
+  String get orphanCardOpen => 'Open';
+
+  @override
+  String get doneLabel => 'Done';
+
+  @override
+  String get aReminderLabel => 'A REMINDER';
+
+  @override
+  String get yourAkhirahBalance => 'YOUR AKHIRAH BALANCE';
+
+  @override
+  String get seedsCollectedSinceJoined => 'Seeds collected since you joined';
+
+  @override
+  String get todayLabel => 'TODAY';
+
+  @override
+  String get azkaarPerDay => 'azkaar per day';
+
+  @override
+  String get viewFullStats => 'View full stats';
+
+  @override
+  String get fatherLabel => 'Father';
+
+  @override
+  String get motherLabel => 'Mother';
+
+  @override
+  String get siblingsLabel => 'Siblings';
+
+  @override
+  String get familySection => 'Family';
+
+  @override
+  String get educationSection => 'Education';
+
+  @override
+  String get gradeLabel => 'Grade';
+
+  @override
+  String get schoolLabel => 'School';
+
+  @override
+  String get theirStorySection => 'Their story';
+
+  @override
+  String get yourBalanceLabel => 'Your balance';
+
+  @override
+  String sponsorCta(String name) {
+    return 'Sponsor $name';
+  }
+
+  @override
+  String get notEnoughSeeds => 'Not enough Seeds';
+
+  @override
+  String get bookmarkSyncDialogTitle => 'Quran.com Bookmark Sync';
+
+  @override
+  String get closeLabel => 'Close';
+
+  @override
+  String get searchHint => 'Search…';
+
+  @override
+  String get enterCodeHint => 'Enter code…';
+
+  @override
+  String get searchSurahHint => 'Search Surah...';
+
+  @override
+  String get customLabel => 'Custom';
+
+  @override
+  String get seedsSuffix => 'Seeds';
+
+  @override
+  String get settingsTooltip => 'Settings';
+
+  @override
+  String get retryLabel => 'Retry';
+
+  @override
+  String get authErrorTitle => 'Auth Error';
+
+  @override
+  String sealWithinHours(int hours) {
+    return 'Seal within ${hours}h';
+  }
+
+  @override
+  String sealWithinMinutes(int minutes) {
+    return 'Seal within ${minutes}m';
+  }
+
+  @override
+  String get sealNow => 'Seal now';
+
+  @override
+  String get goalLabel => 'Goal';
+
+  @override
+  String contributorCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count contributors',
+      one: '1 contributor',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dayStreakCount(int streak) {
+    return '$streak Day Streak 🔥';
+  }
+
+  @override
+  String seedsPendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Seeds pending',
+      one: '1 Seed pending',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sealToSave => 'Seal to save';
+
+  @override
+  String get top10Contributors => 'Top 10 Contributors';
+
+  @override
+  String get copyLabel => 'Copy';
+
+  @override
+  String get copiedLabel => 'Copied!';
+
+  @override
+  String get whatsappLabel => 'WhatsApp';
+
+  @override
+  String get youBothEarnSeeds => 'You both earn 500 Sabiq Seeds!';
+
+  @override
+  String jazakAllahPlusSeeds(int seeds) {
+    return 'JazakAllah!  +$seeds Seeds';
+  }
+
+  @override
+  String get jazakAllahDaySealed => 'JazakAllah!  Day sealed';
+
+  @override
+  String get pointsGoals => 'POINTS GOALS';
+
+  @override
+  String get editLabel => 'Edit';
+
+  @override
+  String get dailyGoal => 'Daily Goal';
+
+  @override
+  String get weeklyGoal => 'Weekly Goal';
+
+  @override
+  String get monthlyGoal => 'Monthly Goal';
+
+  @override
+  String setTargetSeeds(int defaultVal) {
+    return 'Set your target Seeds (default: $defaultVal)';
+  }
+
+  @override
+  String get noInternetTitle => 'No Internet Connection';
+
+  @override
+  String get connectingTitle => 'Connecting…';
+
+  @override
+  String get somethingWentWrongTitle => 'Something Went Wrong';
+
+  @override
+  String get noInternetSubtitle =>
+      'This feature needs internet.\nCheck your Wi-Fi or mobile data.';
+
+  @override
+  String get connectingSubtitle =>
+      'Fetching your data…\nHanging on for a moment';
+
+  @override
+  String get errorSubtitle =>
+      'An unexpected error occurred.\nTap retry to try again.';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get everyRecitationCanChangeLife =>
+      'Every Recitation Can\nChange a Life';
+
+  @override
+  String get givenLabel => 'GIVEN';
+
+  @override
+  String get goalUpper => 'GOAL';
+
+  @override
+  String get aboutThisCause => 'About this Cause';
+
+  @override
+  String myContributionSeeds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'My contribution: $count Seeds',
+      one: 'My contribution: 1 Seed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String jazakAllahKhayranDonated(int amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      amount,
+      locale: localeName,
+      other: 'JazakAllah Khayran! $amount Seeds donated.',
+      one: 'JazakAllah Khayran! 1 Seed donated.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get coinsSealedTitle => 'Coins Sealed! ماشاء الله';
+
+  @override
+  String get seedsSealedSafe =>
+      'Your Seeds are sealed and safe\nfor the Akhirah.';
+
+  @override
+  String get validationSeedsLabel => 'Validation Seeds';
+
+  @override
+  String get streakBonusLabel => 'Streak Bonus';
+
+  @override
+  String get totalEarnedLabel => 'Total Earned';
+
+  @override
+  String get alhamdulillahCta => 'Alhamdulillah! 🤲';
+
+  @override
+  String get openQuranCta => 'Open Quran';
+
+  @override
+  String get duaAzkaarCta => 'Dua & Azkaar';
+
+  @override
+  String get shareWithFriendsCta => 'Share with Friends';
+
+  @override
+  String get earnMoreSeedsCta => 'Earn More Seeds';
+
+  @override
+  String levelTitleFormat(int level, String title) {
+    return 'Lvl $level · $title';
+  }
+
+  @override
+  String get akhirahBalanceUpper => 'AKHIRAH BALANCE';
+
+  @override
+  String bestDayStreakBadge(int streak) {
+    return 'Best: $streak day streak';
+  }
+
+  @override
+  String get deedsLabel => 'DEEDS';
+
+  @override
+  String get treesLabel => 'TREES';
+
+  @override
+  String get forgivenLabel => 'FORGIVEN';
+
+  @override
+  String get navCause => 'Cause';
+
+  @override
+  String get realChildrenSubtitle =>
+      'Real children, their stories, their lives';
+
+  @override
+  String get seeAllAction => 'See all';
+
+  @override
+  String get activeCampaigns => 'Active Campaigns';
+
+  @override
+  String get poolSeedsImpact => 'Pool your Seeds toward lasting impact';
+
+  @override
+  String get featuredSponsorChild => 'Featured · Sponsor a child';
+
+  @override
+  String meetOrphanAge(String name, int age) {
+    return 'Meet $name, $age';
+  }
+
+  @override
+  String sponsorNameArrow(String name) {
+    return 'Sponsor $name →';
+  }
+
+  @override
+  String get featuredCampaign => 'Featured Campaign';
+
+  @override
+  String get yourGiving => 'Your Giving';
+
+  @override
+  String get havenNotGivenYet =>
+      'You haven\'t given yet. Pick someone above to begin your journey of impact.';
+
+  @override
+  String get seedsDonatedLabel => 'Seeds donated';
+
+  @override
+  String orphanCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Orphans',
+      one: 'Orphan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Projects',
+      one: 'Project',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get couldntLoadJourney => 'Couldn\'t load your Journey';
+
+  @override
+  String get checkConnectionRetry => 'Check your connection and try again.';
+
+  @override
+  String actionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count actions',
+      one: '1 action',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showLessAction => 'Show Less ←';
+
+  @override
+  String get hadithReference => 'Hadith Reference';
+
+  @override
+  String get howYouEarnedThis => 'How you earned this';
 }

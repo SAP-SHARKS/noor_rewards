@@ -8,6 +8,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -105,26 +106,31 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
           ? const Color(0xFFE53935)
           : const Color(0xFFC9921A)); // Y4 honey-deep
 
-  String get _title {
+  String _titleFor(BuildContext context) {
     if (widget.customMessage != null) return widget.customMessage!;
+    final l = AppLocalizations.of(context);
     switch (widget.mode) {
       case NoorOfflineMode.noInternet:
-        return 'No Internet Connection';
+        return l?.noInternetTitle ?? 'No Internet Connection';
       case NoorOfflineMode.loading:
-        return 'Connecting…';
+        return l?.connectingTitle ?? 'Connecting…';
       case NoorOfflineMode.error:
-        return 'Something Went Wrong';
+        return l?.somethingWentWrongTitle ?? 'Something Went Wrong';
     }
   }
 
-  String get _subtitle {
+  String _subtitleFor(BuildContext context) {
+    final l = AppLocalizations.of(context);
     switch (widget.mode) {
       case NoorOfflineMode.noInternet:
-        return 'This feature needs internet.\nCheck your Wi-Fi or mobile data.';
+        return l?.noInternetSubtitle ??
+            'This feature needs internet.\nCheck your Wi-Fi or mobile data.';
       case NoorOfflineMode.loading:
-        return 'Fetching your data…\nHanging on for a moment';
+        return l?.connectingSubtitle ??
+            'Fetching your data…\nHanging on for a moment';
       case NoorOfflineMode.error:
-        return 'An unexpected error occurred.\nTap retry to try again.';
+        return l?.errorSubtitle ??
+            'An unexpected error occurred.\nTap retry to try again.';
     }
   }
 
@@ -169,7 +175,7 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
               child: Column(
                 children: [
                   Text(
-                    _title,
+                    _titleFor(context),
                     style: GoogleFonts.rajdhani(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
@@ -180,7 +186,7 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    _subtitle,
+                    _subtitleFor(context),
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       color: const Color(0xFF8E8E93),
@@ -234,7 +240,7 @@ class _NoorOfflineWidgetState extends State<NoorOfflineWidget>
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Try Again',
+                          AppLocalizations.of(context)?.tryAgain ?? 'Try Again',
                           style: GoogleFonts.outfit(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,

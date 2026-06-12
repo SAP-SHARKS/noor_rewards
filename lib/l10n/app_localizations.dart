@@ -3703,6 +3703,696 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Feed Orphans'**
   String get onbV2_3step_S3Text;
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get systemDefault;
+
+  /// No description provided for @yourStreaksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR STREAKS'**
+  String get yourStreaksTitle;
+
+  /// No description provided for @streakLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading streaks…'**
+  String get streakLoading;
+
+  /// No description provided for @startStreakToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your streak today!'**
+  String get startStreakToday;
+
+  /// No description provided for @centurionMashaAllah.
+  ///
+  /// In en, this message translates to:
+  /// **'Centurion, Masha\'Allah!'**
+  String get centurionMashaAllah;
+
+  /// No description provided for @qfConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Already Exists'**
+  String get qfConflictTitle;
+
+  /// No description provided for @qfConflictExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered with Sabiq Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Sabiq Seeds, please sign in using your original method.'**
+  String get qfConflictExplanation;
+
+  /// No description provided for @qfConflictStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back to the login screen'**
+  String get qfConflictStep1;
+
+  /// No description provided for @qfConflictStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Email or Google using\n{email}'**
+  String qfConflictStep2(String email);
+
+  /// No description provided for @qfConflictStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'All your progress will be right there'**
+  String get qfConflictStep3;
+
+  /// No description provided for @qfConflictBackButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sign In'**
+  String get qfConflictBackButton;
+
+  /// No description provided for @sponsorAnOrphan.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsor an Orphan'**
+  String get sponsorAnOrphan;
+
+  /// No description provided for @noOrphansListed.
+  ///
+  /// In en, this message translates to:
+  /// **'No orphans listed yet'**
+  String get noOrphansListed;
+
+  /// No description provided for @checkBackForOrphans.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back soon, new sponsorship opportunities are added regularly.'**
+  String get checkBackForOrphans;
+
+  /// No description provided for @orphanVerseTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'\"And as for the orphan, do not oppress him.\", Qur\'an 93:9'**
+  String get orphanVerseTranslation;
+
+  /// No description provided for @orphanCardOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get orphanCardOpen;
+
+  /// No description provided for @doneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneLabel;
+
+  /// No description provided for @aReminderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'A REMINDER'**
+  String get aReminderLabel;
+
+  /// No description provided for @yourAkhirahBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR AKHIRAH BALANCE'**
+  String get yourAkhirahBalance;
+
+  /// No description provided for @seedsCollectedSinceJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeds collected since you joined'**
+  String get seedsCollectedSinceJoined;
+
+  /// No description provided for @todayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TODAY'**
+  String get todayLabel;
+
+  /// No description provided for @azkaarPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'azkaar per day'**
+  String get azkaarPerDay;
+
+  /// No description provided for @viewFullStats.
+  ///
+  /// In en, this message translates to:
+  /// **'View full stats'**
+  String get viewFullStats;
+
+  /// No description provided for @fatherLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Father'**
+  String get fatherLabel;
+
+  /// No description provided for @motherLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mother'**
+  String get motherLabel;
+
+  /// No description provided for @siblingsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Siblings'**
+  String get siblingsLabel;
+
+  /// No description provided for @familySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familySection;
+
+  /// No description provided for @educationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get educationSection;
+
+  /// No description provided for @gradeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade'**
+  String get gradeLabel;
+
+  /// No description provided for @schoolLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'School'**
+  String get schoolLabel;
+
+  /// No description provided for @theirStorySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Their story'**
+  String get theirStorySection;
+
+  /// No description provided for @yourBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your balance'**
+  String get yourBalanceLabel;
+
+  /// No description provided for @sponsorCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsor {name}'**
+  String sponsorCta(String name);
+
+  /// No description provided for @notEnoughSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough Seeds'**
+  String get notEnoughSeeds;
+
+  /// No description provided for @bookmarkSyncDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran.com Bookmark Sync'**
+  String get bookmarkSyncDialogTitle;
+
+  /// No description provided for @closeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get closeLabel;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search…'**
+  String get searchHint;
+
+  /// No description provided for @enterCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code…'**
+  String get enterCodeHint;
+
+  /// No description provided for @searchSurahHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Surah...'**
+  String get searchSurahHint;
+
+  /// No description provided for @customLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get customLabel;
+
+  /// No description provided for @seedsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeds'**
+  String get seedsSuffix;
+
+  /// No description provided for @settingsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTooltip;
+
+  /// No description provided for @retryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryLabel;
+
+  /// No description provided for @authErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auth Error'**
+  String get authErrorTitle;
+
+  /// No description provided for @sealWithinHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal within {hours}h'**
+  String sealWithinHours(int hours);
+
+  /// No description provided for @sealWithinMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal within {minutes}m'**
+  String sealWithinMinutes(int minutes);
+
+  /// No description provided for @sealNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal now'**
+  String get sealNow;
+
+  /// No description provided for @goalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get goalLabel;
+
+  /// No description provided for @contributorCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 contributor} other{{count} contributors}}'**
+  String contributorCount(int count);
+
+  /// No description provided for @dayStreakCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{streak} Day Streak 🔥'**
+  String dayStreakCount(int streak);
+
+  /// No description provided for @seedsPendingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Seed pending} other{{count} Seeds pending}}'**
+  String seedsPendingCount(int count);
+
+  /// No description provided for @sealToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal to save'**
+  String get sealToSave;
+
+  /// No description provided for @top10Contributors.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 10 Contributors'**
+  String get top10Contributors;
+
+  /// No description provided for @copyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyLabel;
+
+  /// No description provided for @copiedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied!'**
+  String get copiedLabel;
+
+  /// No description provided for @whatsappLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsappLabel;
+
+  /// No description provided for @youBothEarnSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'You both earn 500 Sabiq Seeds!'**
+  String get youBothEarnSeeds;
+
+  /// No description provided for @jazakAllahPlusSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'JazakAllah!  +{seeds} Seeds'**
+  String jazakAllahPlusSeeds(int seeds);
+
+  /// No description provided for @jazakAllahDaySealed.
+  ///
+  /// In en, this message translates to:
+  /// **'JazakAllah!  Day sealed'**
+  String get jazakAllahDaySealed;
+
+  /// No description provided for @pointsGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'POINTS GOALS'**
+  String get pointsGoals;
+
+  /// No description provided for @editLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get editLabel;
+
+  /// No description provided for @dailyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Goal'**
+  String get dailyGoal;
+
+  /// No description provided for @weeklyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Goal'**
+  String get weeklyGoal;
+
+  /// No description provided for @monthlyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Goal'**
+  String get monthlyGoal;
+
+  /// No description provided for @setTargetSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your target Seeds (default: {defaultVal})'**
+  String setTargetSeeds(int defaultVal);
+
+  /// No description provided for @noInternetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Internet Connection'**
+  String get noInternetTitle;
+
+  /// No description provided for @connectingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get connectingTitle;
+
+  /// No description provided for @somethingWentWrongTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something Went Wrong'**
+  String get somethingWentWrongTitle;
+
+  /// No description provided for @noInternetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature needs internet.\nCheck your Wi-Fi or mobile data.'**
+  String get noInternetSubtitle;
+
+  /// No description provided for @connectingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching your data…\nHanging on for a moment'**
+  String get connectingSubtitle;
+
+  /// No description provided for @errorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred.\nTap retry to try again.'**
+  String get errorSubtitle;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @everyRecitationCanChangeLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Recitation Can\nChange a Life'**
+  String get everyRecitationCanChangeLife;
+
+  /// No description provided for @givenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'GIVEN'**
+  String get givenLabel;
+
+  /// No description provided for @goalUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'GOAL'**
+  String get goalUpper;
+
+  /// No description provided for @aboutThisCause.
+  ///
+  /// In en, this message translates to:
+  /// **'About this Cause'**
+  String get aboutThisCause;
+
+  /// No description provided for @myContributionSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{My contribution: 1 Seed} other{My contribution: {count} Seeds}}'**
+  String myContributionSeeds(int count);
+
+  /// No description provided for @jazakAllahKhayranDonated.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount, plural, =1{JazakAllah Khayran! 1 Seed donated.} other{JazakAllah Khayran! {amount} Seeds donated.}}'**
+  String jazakAllahKhayranDonated(int amount);
+
+  /// No description provided for @coinsSealedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins Sealed! ماشاء الله'**
+  String get coinsSealedTitle;
+
+  /// No description provided for @seedsSealedSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Seeds are sealed and safe\nfor the Akhirah.'**
+  String get seedsSealedSafe;
+
+  /// No description provided for @validationSeedsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation Seeds'**
+  String get validationSeedsLabel;
+
+  /// No description provided for @streakBonusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Bonus'**
+  String get streakBonusLabel;
+
+  /// No description provided for @totalEarnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earned'**
+  String get totalEarnedLabel;
+
+  /// No description provided for @alhamdulillahCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Alhamdulillah! 🤲'**
+  String get alhamdulillahCta;
+
+  /// No description provided for @openQuranCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Quran'**
+  String get openQuranCta;
+
+  /// No description provided for @duaAzkaarCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Dua & Azkaar'**
+  String get duaAzkaarCta;
+
+  /// No description provided for @shareWithFriendsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with Friends'**
+  String get shareWithFriendsCta;
+
+  /// No description provided for @earnMoreSeedsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn More Seeds'**
+  String get earnMoreSeedsCta;
+
+  /// No description provided for @levelTitleFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Lvl {level} · {title}'**
+  String levelTitleFormat(int level, String title);
+
+  /// No description provided for @akhirahBalanceUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'AKHIRAH BALANCE'**
+  String get akhirahBalanceUpper;
+
+  /// No description provided for @bestDayStreakBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Best: {streak} day streak'**
+  String bestDayStreakBadge(int streak);
+
+  /// No description provided for @deedsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DEEDS'**
+  String get deedsLabel;
+
+  /// No description provided for @treesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TREES'**
+  String get treesLabel;
+
+  /// No description provided for @forgivenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGIVEN'**
+  String get forgivenLabel;
+
+  /// No description provided for @navCause.
+  ///
+  /// In en, this message translates to:
+  /// **'Cause'**
+  String get navCause;
+
+  /// No description provided for @realChildrenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Real children, their stories, their lives'**
+  String get realChildrenSubtitle;
+
+  /// No description provided for @seeAllAction.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAllAction;
+
+  /// No description provided for @activeCampaigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Campaigns'**
+  String get activeCampaigns;
+
+  /// No description provided for @poolSeedsImpact.
+  ///
+  /// In en, this message translates to:
+  /// **'Pool your Seeds toward lasting impact'**
+  String get poolSeedsImpact;
+
+  /// No description provided for @featuredSponsorChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured · Sponsor a child'**
+  String get featuredSponsorChild;
+
+  /// No description provided for @meetOrphanAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Meet {name}, {age}'**
+  String meetOrphanAge(String name, int age);
+
+  /// No description provided for @sponsorNameArrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsor {name} →'**
+  String sponsorNameArrow(String name);
+
+  /// No description provided for @featuredCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Campaign'**
+  String get featuredCampaign;
+
+  /// No description provided for @yourGiving.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Giving'**
+  String get yourGiving;
+
+  /// No description provided for @havenNotGivenYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t given yet. Pick someone above to begin your journey of impact.'**
+  String get havenNotGivenYet;
+
+  /// No description provided for @seedsDonatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeds donated'**
+  String get seedsDonatedLabel;
+
+  /// No description provided for @orphanCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Orphan} other{Orphans}}'**
+  String orphanCount(int count);
+
+  /// No description provided for @projectCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Project} other{Projects}}'**
+  String projectCount(int count);
+
+  /// No description provided for @couldntLoadJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your Journey'**
+  String get couldntLoadJourney;
+
+  /// No description provided for @checkConnectionRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get checkConnectionRetry;
+
+  /// No description provided for @actionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 action} other{{count} actions}}'**
+  String actionsCount(int count);
+
+  /// No description provided for @showLessAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Less ←'**
+  String get showLessAction;
+
+  /// No description provided for @hadithReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Hadith Reference'**
+  String get hadithReference;
+
+  /// No description provided for @howYouEarnedThis.
+  ///
+  /// In en, this message translates to:
+  /// **'How you earned this'**
+  String get howYouEarnedThis;
 }
 
 class _AppLocalizationsDelegate

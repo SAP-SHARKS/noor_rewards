@@ -1908,7 +1908,8 @@ class _InviteSheetState extends State<_InviteSheet>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Invite Friends',
+                                AppLocalizations.of(context)?.inviteFriends ??
+                                    'Invite Friends',
                                 style: Y4.display(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
@@ -1918,7 +1919,8 @@ class _InviteSheetState extends State<_InviteSheet>
                                 ),
                               ),
                               Text(
-                                'You both earn 500 Sabiq Seeds!',
+                                AppLocalizations.of(context)?.youBothEarnSeeds ??
+                                    'You both earn 500 Sabiq Seeds!',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   color: Y4.inkSoft,
@@ -1963,7 +1965,9 @@ class _InviteSheetState extends State<_InviteSheet>
                                 children: [
                                   _RewardPill(
                                     icon: NoorIcon.pointing(size: 20),
-                                    label: 'You get',
+                                    label:
+                                        AppLocalizations.of(context)?.youGet ??
+                                            'You get',
                                     points: '+500',
                                   ),
                                   Container(
@@ -1973,7 +1977,9 @@ class _InviteSheetState extends State<_InviteSheet>
                                   ),
                                   _RewardPill(
                                     icon: NoorIcon.people(size: 20),
-                                    label: 'Friend gets',
+                                    label:
+                                        AppLocalizations.of(context)?.friendGets ??
+                                            'Friend gets',
                                     points: '+500',
                                   ),
                                 ],
@@ -1986,7 +1992,8 @@ class _InviteSheetState extends State<_InviteSheet>
 
                       // ── Your Code ────────────────────────────────────────────────
                       Text(
-                        'YOUR REFERRAL CODE',
+                        AppLocalizations.of(context)?.yourReferralCode ??
+                            'YOUR REFERRAL CODE',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -2058,7 +2065,13 @@ class _InviteSheetState extends State<_InviteSheet>
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      _codeCopied ? 'Copied!' : 'Copy',
+                                      _codeCopied
+                                          ? (AppLocalizations.of(context)
+                                                  ?.copiedLabel ??
+                                              'Copied!')
+                                          : (AppLocalizations.of(context)
+                                                  ?.copyLabel ??
+                                              'Copy'),
                                       style: GoogleFonts.outfit(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
@@ -2124,7 +2137,13 @@ class _InviteSheetState extends State<_InviteSheet>
                                   ),
                                 ),
                                 child: Text(
-                                  _linkCopied ? 'Copied!' : 'Copy Link',
+                                  _linkCopied
+                                      ? (AppLocalizations.of(context)
+                                              ?.copiedLabel ??
+                                          'Copied!')
+                                      : (AppLocalizations.of(context)
+                                              ?.copyLink ??
+                                          'Copy Link'),
                                   style: GoogleFonts.outfit(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -2144,7 +2163,7 @@ class _InviteSheetState extends State<_InviteSheet>
 
                       // ── Share Buttons ─────────────────────────────────────────────
                       Text(
-                        'SHARE VIA',
+                        AppLocalizations.of(context)?.shareVia ?? 'SHARE VIA',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -2189,7 +2208,9 @@ class _InviteSheetState extends State<_InviteSheet>
                                     NoorIcon.chat(size: 26),
                                     const SizedBox(height: 6),
                                     Text(
-                                      'WhatsApp',
+                                      AppLocalizations.of(context)
+                                              ?.whatsappLabel ??
+                                          'WhatsApp',
                                       style: GoogleFonts.outfit(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
@@ -2284,7 +2305,9 @@ class _InviteSheetState extends State<_InviteSheet>
                                 letterSpacing: 2,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'Enter code…',
+                                hintText:
+                                    AppLocalizations.of(context)?.enterCodeHint ??
+                                        'Enter code…',
                                 hintStyle: GoogleFonts.outfit(
                                   fontSize: 15,
                                   color: Y4.muted,
@@ -2991,7 +3014,7 @@ class _ProgressCard extends StatelessWidget {
 
           // Three progress bars
           _ProgBar(
-            label: 'Today',
+            label: AppLocalizations.of(context)?.todayTab ?? 'Today',
             pts: todayPts,
             goal: dayGoal,
             color: const Color(0xFF00897B),
@@ -3000,7 +3023,7 @@ class _ProgressCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _ProgBar(
-            label: 'This Week',
+            label: AppLocalizations.of(context)?.thisWeek ?? 'This Week',
             pts: weekPts,
             goal: weekGoal,
             color: const Color(0xFF5C6BC0),
@@ -3009,7 +3032,7 @@ class _ProgressCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _ProgBar(
-            label: 'This Month',
+            label: AppLocalizations.of(context)?.thisMonth ?? 'This Month',
             pts: monthPts,
             goal: monthGoal,
             color: const Color(0xFFE91E8C),
@@ -3076,7 +3099,7 @@ class _ProgBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Goal',
+                  AppLocalizations.of(context)?.goalLabel ?? 'Goal',
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
@@ -3631,7 +3654,7 @@ class _MyDonationsSection extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  'Goal: ',
+                                  '${AppLocalizations.of(context)?.goalLabel ?? 'Goal'}: ',
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
@@ -3656,7 +3679,9 @@ class _MyDonationsSection extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${fmt(donorCount)} ${donorCount == 1 ? 'contributor' : 'contributors'}',
+                                  AppLocalizations.of(context)
+                                          ?.contributorCount(donorCount) ??
+                                      '${fmt(donorCount)} ${donorCount == 1 ? 'contributor' : 'contributors'}',
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
@@ -5310,7 +5335,9 @@ class _RankingSheetState extends State<_RankingSheet> {
                               const SizedBox(height: 20),
 
                               Text(
-                                'Top 10 Contributors',
+                                AppLocalizations.of(context)
+                                        ?.top10Contributors ??
+                                    'Top 10 Contributors',
                                 style: GoogleFonts.outfit(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -5987,7 +6014,9 @@ class _ProfileTabState extends State<_ProfileTab> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
                               child: Text(
-                                'Top 10 Contributors',
+                                AppLocalizations.of(context)
+                                        ?.top10Contributors ??
+                                    'Top 10 Contributors',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
@@ -6174,8 +6203,12 @@ class _ProfileTabState extends State<_ProfileTab> {
                                 children: [
                                   Text(
                                     streak > 0
-                                        ? '$streak Day Streak 🔥'
-                                        : 'Start your streak today!',
+                                        ? (AppLocalizations.of(context)
+                                                ?.dayStreakCount(streak) ??
+                                            '$streak Day Streak 🔥')
+                                        : (AppLocalizations.of(context)
+                                                ?.startStreakToday ??
+                                            'Start your streak today!'),
                                     style: GoogleFonts.rajdhani(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w800,
@@ -6253,7 +6286,7 @@ class _BottomNav extends StatelessWidget {
           1,
           Icons.volunteer_activism_rounded,
           Icons.volunteer_activism_outlined,
-          'Cause',
+          AppLocalizations.of(context)?.navCause ?? 'Cause',
           _C.navRanking,
         ),
       if (FeatureFlags.journeyTab)
@@ -6748,9 +6781,15 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
     final now = DateTime.now();
     final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     final diff = nextMidnight.difference(now);
-    if (diff.inHours >= 1) return 'Seal within ${diff.inHours}h';
-    if (diff.inMinutes >= 1) return 'Seal within ${diff.inMinutes}m';
-    return 'Seal now';
+    final l = AppLocalizations.of(context);
+    if (diff.inHours >= 1) {
+      return l?.sealWithinHours(diff.inHours) ?? 'Seal within ${diff.inHours}h';
+    }
+    if (diff.inMinutes >= 1) {
+      return l?.sealWithinMinutes(diff.inMinutes) ??
+          'Seal within ${diff.inMinutes}m';
+    }
+    return l?.sealNow ?? 'Seal now';
   }
 
   // Builds a single chevron with the staggered pulse-wave animation that
@@ -6820,7 +6859,12 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       ),
                     ],
                   ),
-                  child: Row(
+                  // FittedBox auto-shrinks the whole pill when the localized
+                  // text is wider than English (Urdu / Arabic / Russian),
+                  // preventing horizontal overflow on narrow phones.
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Bright butter-coin badge — pops against emerald.
@@ -6855,7 +6899,9 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       ),
                       const SizedBox(width: 9),
                       Text(
-                        '$pending ${pending == 1 ? 'Seed' : 'Seeds'} pending',
+                        AppLocalizations.of(context)
+                                ?.seedsPendingCount(pending) ??
+                            '$pending ${pending == 1 ? 'Seed' : 'Seeds'} pending',
                         style: GoogleFonts.outfit(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
@@ -6871,7 +6917,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Seal to save',
+                        AppLocalizations.of(context)?.sealToSave ??
+                            'Seal to save',
                         style: GoogleFonts.outfit(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -6890,6 +6937,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               ),
@@ -7105,10 +7153,16 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         child: Text(
                           _freshXp
                               ? (XpService.instance.lastSealAwardedBonus
-                                    ? 'JazakAllah!  +${PointReward.validate} Seeds'
-                                    : 'JazakAllah!  Day sealed')
-                              : AppLocalizations.of(context)?.alreadySealed ??
-                                  'Already sealed today',
+                                    ? (AppLocalizations.of(context)
+                                            ?.jazakAllahPlusSeeds(
+                                              PointReward.validate,
+                                            ) ??
+                                        'JazakAllah!  +${PointReward.validate} Seeds')
+                                    : (AppLocalizations.of(context)
+                                            ?.jazakAllahDaySealed ??
+                                        'JazakAllah!  Day sealed'))
+                              : (AppLocalizations.of(context)?.alreadySealed ??
+                                  'Already sealed today'),
                           style: GoogleFonts.rajdhani(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w700,

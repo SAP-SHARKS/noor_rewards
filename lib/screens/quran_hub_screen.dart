@@ -519,7 +519,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                 color: _kText,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'Search Surah...',
+                                hintText:
+                                    AppLocalizations.of(context)?.searchSurahHint ??
+                                        'Search Surah...',
                                 hintStyle: GoogleFonts.outfit(
                                   color: Colors.grey.shade500,
                                 ),

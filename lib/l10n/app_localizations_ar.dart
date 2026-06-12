@@ -400,7 +400,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get points => 'Seeds';
 
   @override
-  String get donateEarnReward => 'تبرع واكسب المكافأة';
+  String get donateEarnReward => 'تبرع واكسب مكافأة';
 
   @override
   String get max => 'الأقصى';
@@ -612,13 +612,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currentBestStreak => 'أفضل سلسلة حالية';
 
   @override
-  String get last7Days => 'آخر 7 أيام';
+  String get last7Days => 'آخر ٧ أيام';
 
   @override
-  String get nextMilestone => 'المعلم التالي';
+  String get nextMilestone => 'الإنجاز التالي';
 
   @override
-  String get allMilestones => 'جميع المعالم';
+  String get allMilestones => 'جميع الإنجازات';
 
   @override
   String moreDaysToGo(String count) {
@@ -1505,7 +1505,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get coinsSealedMashaAllah => 'تم ختم العملات!';
 
   @override
-  String get rewardedForConsistency => 'لقد كُوفئت على\nاستمراريتك اليوم!';
+  String get rewardedForConsistency => 'لقد كوفئت\nعلى ثباتك اليوم!';
 
   @override
   String get validationPoints => 'نقاط التصديق';
@@ -1935,4 +1935,431 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onbV2_3step_S3Text => 'Feed Orphans';
+
+  @override
+  String get languageLabel => 'اللغة';
+
+  @override
+  String get systemDefault => 'لغة النظام الافتراضية';
+
+  @override
+  String get yourStreaksTitle => 'سلاسلك اليومية';
+
+  @override
+  String get streakLoading => 'جارٍ تحميل السلاسل…';
+
+  @override
+  String get startStreakToday => 'ابدأ سلسلتك اليوم!';
+
+  @override
+  String get centurionMashaAllah => 'مئوي، ما شاء الله!';
+
+  @override
+  String get qfConflictTitle => 'الحساب موجود بالفعل';
+
+  @override
+  String get qfConflictExplanation =>
+      'هذا البريد الإلكتروني مسجل بالفعل في Sabiq Rewards باستخدام طريقة تسجيل دخول مختلفة (بريد إلكتروني أو Google).\n\nلحماية تقدمك الحالي وسلاسلك وSabiq Seeds، يرجى تسجيل الدخول باستخدام طريقتك الأصلية.';
+
+  @override
+  String get qfConflictStep1 => 'عد إلى شاشة تسجيل الدخول';
+
+  @override
+  String qfConflictStep2(String email) {
+    return 'سجّل الدخول ببريد إلكتروني أو Google باستخدام\n$email';
+  }
+
+  @override
+  String get qfConflictStep3 => 'كل تقدمك سيكون هناك';
+
+  @override
+  String get qfConflictBackButton => 'العودة إلى تسجيل الدخول';
+
+  @override
+  String get sponsorAnOrphan => 'كفّل يتيمًا';
+
+  @override
+  String get noOrphansListed => 'لا توجد أيتام مدرجون بعد';
+
+  @override
+  String get checkBackForOrphans =>
+      'تحقق قريبًا، تُضاف فرص كفالة جديدة بانتظام.';
+
+  @override
+  String get orphanVerseTranslation => '«وأمّا اليتيم فلا تقهر»، القرآن ٩٣:٩';
+
+  @override
+  String get orphanCardOpen => 'مفتوح';
+
+  @override
+  String get doneLabel => 'تم';
+
+  @override
+  String get aReminderLabel => 'تذكير';
+
+  @override
+  String get yourAkhirahBalance => 'رصيد آخرتك';
+
+  @override
+  String get seedsCollectedSinceJoined => 'Sabiq Seeds مجموعة منذ انضمامك';
+
+  @override
+  String get todayLabel => 'اليوم';
+
+  @override
+  String get azkaarPerDay => 'أذكار في اليوم';
+
+  @override
+  String get viewFullStats => 'عرض الإحصائيات الكاملة';
+
+  @override
+  String get fatherLabel => 'الأب';
+
+  @override
+  String get motherLabel => 'الأم';
+
+  @override
+  String get siblingsLabel => 'الإخوة';
+
+  @override
+  String get familySection => 'العائلة';
+
+  @override
+  String get educationSection => 'التعليم';
+
+  @override
+  String get gradeLabel => 'الصف';
+
+  @override
+  String get schoolLabel => 'المدرسة';
+
+  @override
+  String get theirStorySection => 'قصته';
+
+  @override
+  String get yourBalanceLabel => 'رصيدك';
+
+  @override
+  String sponsorCta(String name) {
+    return 'كفّل $name';
+  }
+
+  @override
+  String get notEnoughSeeds => 'Sabiq Seeds غير كافية';
+
+  @override
+  String get bookmarkSyncDialogTitle => 'مزامنة إشارات Quran.com';
+
+  @override
+  String get closeLabel => 'إغلاق';
+
+  @override
+  String get searchHint => 'بحث…';
+
+  @override
+  String get enterCodeHint => 'أدخل الرمز…';
+
+  @override
+  String get searchSurahHint => 'ابحث عن سورة...';
+
+  @override
+  String get customLabel => 'مخصص';
+
+  @override
+  String get seedsSuffix => 'Seeds';
+
+  @override
+  String get settingsTooltip => 'الإعدادات';
+
+  @override
+  String get retryLabel => 'إعادة المحاولة';
+
+  @override
+  String get authErrorTitle => 'خطأ في المصادقة';
+
+  @override
+  String sealWithinHours(int hours) {
+    return 'اختم خلال $hours ساعة';
+  }
+
+  @override
+  String sealWithinMinutes(int minutes) {
+    return 'اختم خلال $minutes دقيقة';
+  }
+
+  @override
+  String get sealNow => 'اختم الآن';
+
+  @override
+  String get goalLabel => 'الهدف';
+
+  @override
+  String contributorCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مساهمون',
+      one: 'مساهم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dayStreakCount(int streak) {
+    return 'سلسلة $streak يوم 🔥';
+  }
+
+  @override
+  String seedsPendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Seeds معلقة',
+      one: 'Seed واحد معلق',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sealToSave => 'اختم للحفظ';
+
+  @override
+  String get top10Contributors => 'أعلى ١٠ مساهمين';
+
+  @override
+  String get copyLabel => 'نسخ';
+
+  @override
+  String get copiedLabel => 'تم النسخ!';
+
+  @override
+  String get whatsappLabel => 'واتساب';
+
+  @override
+  String get youBothEarnSeeds => 'كلاكما يكسب ٥٠٠ Sabiq Seeds!';
+
+  @override
+  String jazakAllahPlusSeeds(int seeds) {
+    return 'جزاك الله!  +$seeds Seeds';
+  }
+
+  @override
+  String get jazakAllahDaySealed => 'جزاك الله!  تم ختم اليوم';
+
+  @override
+  String get pointsGoals => 'أهداف النقاط';
+
+  @override
+  String get editLabel => 'تعديل';
+
+  @override
+  String get dailyGoal => 'الهدف اليومي';
+
+  @override
+  String get weeklyGoal => 'الهدف الأسبوعي';
+
+  @override
+  String get monthlyGoal => 'الهدف الشهري';
+
+  @override
+  String setTargetSeeds(int defaultVal) {
+    return 'حدد هدفك من Seeds (افتراضي: $defaultVal)';
+  }
+
+  @override
+  String get noInternetTitle => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get connectingTitle => 'جارٍ الاتصال…';
+
+  @override
+  String get somethingWentWrongTitle => 'حدث خطأ ما';
+
+  @override
+  String get noInternetSubtitle =>
+      'هذه الميزة تتطلب الإنترنت.\nتحقق من Wi-Fi أو بيانات الجوال.';
+
+  @override
+  String get connectingSubtitle => 'جارٍ جلب بياناتك…\nانتظر لحظة';
+
+  @override
+  String get errorSubtitle => 'حدث خطأ غير متوقع.\nاضغط إعادة المحاولة.';
+
+  @override
+  String get tryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get everyRecitationCanChangeLife => 'كل تلاوة\nيمكن أن تغير حياة';
+
+  @override
+  String get givenLabel => 'تم التبرع';
+
+  @override
+  String get goalUpper => 'الهدف';
+
+  @override
+  String get aboutThisCause => 'عن هذه القضية';
+
+  @override
+  String myContributionSeeds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'مساهمتي: $count Seeds',
+      one: 'مساهمتي: Seed واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String jazakAllahKhayranDonated(int amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      amount,
+      locale: localeName,
+      other: 'جزاك الله خيراً! تم التبرع بـ $amount Seeds.',
+      one: 'جزاك الله خيراً! تم التبرع بـ Seed واحد.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get coinsSealedTitle => 'تم ختم النقاط! ما شاء الله';
+
+  @override
+  String get seedsSealedSafe => 'Seeds الخاصة بك مختومة وآمنة\nللآخرة.';
+
+  @override
+  String get validationSeedsLabel => 'Seeds التحقق';
+
+  @override
+  String get streakBonusLabel => 'مكافأة السلسلة';
+
+  @override
+  String get totalEarnedLabel => 'إجمالي المكتسب';
+
+  @override
+  String get alhamdulillahCta => 'الحمد لله! 🤲';
+
+  @override
+  String get openQuranCta => 'افتح القرآن';
+
+  @override
+  String get duaAzkaarCta => 'الأدعية والأذكار';
+
+  @override
+  String get shareWithFriendsCta => 'شارك مع الأصدقاء';
+
+  @override
+  String get earnMoreSeedsCta => 'اكسب المزيد من Seeds';
+
+  @override
+  String levelTitleFormat(int level, String title) {
+    return 'المستوى $level · $title';
+  }
+
+  @override
+  String get akhirahBalanceUpper => 'رصيد الآخرة';
+
+  @override
+  String bestDayStreakBadge(int streak) {
+    return 'الأفضل: سلسلة $streak يوم';
+  }
+
+  @override
+  String get deedsLabel => 'أعمال';
+
+  @override
+  String get treesLabel => 'أشجار';
+
+  @override
+  String get forgivenLabel => 'مغفور';
+
+  @override
+  String get navCause => 'العطاء';
+
+  @override
+  String get realChildrenSubtitle => 'أطفال حقيقيون، قصصهم، حياتهم';
+
+  @override
+  String get seeAllAction => 'عرض الكل';
+
+  @override
+  String get activeCampaigns => 'الحملات النشطة';
+
+  @override
+  String get poolSeedsImpact => 'اجمع Seeds من أجل أثر دائم';
+
+  @override
+  String get featuredSponsorChild => 'مميز · كفّل طفلاً';
+
+  @override
+  String meetOrphanAge(String name, int age) {
+    return 'تعرّف على $name، $age';
+  }
+
+  @override
+  String sponsorNameArrow(String name) {
+    return 'كفّل $name ←';
+  }
+
+  @override
+  String get featuredCampaign => 'حملة مميزة';
+
+  @override
+  String get yourGiving => 'عطاؤك';
+
+  @override
+  String get havenNotGivenYet =>
+      'لم تتبرع بعد. اختر شخصاً أعلاه لتبدأ رحلة عطائك.';
+
+  @override
+  String get seedsDonatedLabel => 'Seeds متبرَّع بها';
+
+  @override
+  String orphanCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'أيتام',
+      one: 'يتيم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'مشاريع',
+      one: 'مشروع',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get couldntLoadJourney => 'تعذّر تحميل رحلتك';
+
+  @override
+  String get checkConnectionRetry => 'تحقق من اتصالك وحاول مرة أخرى.';
+
+  @override
+  String actionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إجراءات',
+      one: 'إجراء واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showLessAction => 'عرض أقل ←';
+
+  @override
+  String get hadithReference => 'مرجع الحديث';
+
+  @override
+  String get howYouEarnedThis => 'كيف اكتسبت هذا';
 }

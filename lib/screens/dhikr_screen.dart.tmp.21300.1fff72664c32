@@ -3989,33 +3989,6 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          // ── Close button: stops audio and dismisses the bar entirely ───
-          Material(
-            color: speedBg,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () async {
-                try {
-                  await _audioPlayer.stop();
-                } catch (_) {}
-                if (!mounted) return;
-                setState(() {
-                  _playAllMode = false;
-                  _currentlyLoadedAudio = null;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Icon(
-                  Icons.close_rounded,
-                  color: speedFg,
-                  size: 22,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -4110,13 +4083,13 @@ String _stripBismillahPrefix(String s) {
   // first period is far past that, we're inside actual content and should
   // leave the string alone.
   if (dotIdx == -1 || dotIdx > 50) return s;
-  final stripped = s.substring(dotIdx + 1).trim();
-  // If the entire input was the Bismillah opener (nothing after the
-  // period), keep the original — better to show "Bismillahi..." than
-  // an empty title row. Hits duas whose actual text IS a Bismillah
-  // variant, e.g. daily_dua_008 "Bismillahi fee awwalihi wa aakhirih."
-  if (stripped.isEmpty) return s;
-  return stripped;
+  final remainder = s.substring(dotIdx + 1).trim();
+  // When the dua IS just "Bismillah" (e.g. daily_dua_008
+  // "Bismillahi fee awwalihi wa aakhirih."), stripping the Bismillah
+  // prefix leaves an empty string. Fall back to the original so the
+  // list view never shows a blank title.
+  if (remainder.length < 10) return s;
+  return remainder;
 }
 
 /// Normalize a transliteration so the same Quranic dua matches whether it

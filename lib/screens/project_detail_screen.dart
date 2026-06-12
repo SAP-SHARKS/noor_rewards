@@ -345,7 +345,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Every Recitation Can\nChange a Life',
+          AppLocalizations.of(context)?.everyRecitationCanChangeLife ??
+              'Every Recitation Can\nChange a Life',
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 16,
@@ -430,7 +431,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'GIVEN',
+                            AppLocalizations.of(context)?.givenLabel ?? 'GIVEN',
                             style: GoogleFonts.outfit(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
@@ -467,7 +468,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          'GOAL',
+                          AppLocalizations.of(context)?.goalUpper ?? 'GOAL',
                           style: GoogleFonts.outfit(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
@@ -536,7 +537,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
 
                 // ── About this Cause (with Read more / Show less) ───────
                 Text(
-                  'About this Cause',
+                  AppLocalizations.of(context)?.aboutThisCause ??
+                      'About this Cause',
                   style: GoogleFonts.outfit(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
@@ -578,7 +580,9 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'My contribution: ${_fmtN(userPoints)} ${userPoints == 1 ? 'Seed' : 'Seeds'}',
+                        AppLocalizations.of(context)
+                                ?.myContributionSeeds(userPoints) ??
+                            'My contribution: ${_fmtN(userPoints)} ${userPoints == 1 ? 'Seed' : 'Seeds'}',
                         style: GoogleFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -660,7 +664,9 @@ class _DonateBar extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'JazakAllah Khayran! $amount ${amount == 1 ? 'Seed' : 'Seeds'} donated.',
+                          AppLocalizations.of(context)
+                                  ?.jazakAllahKhayranDonated(amount) ??
+                              'JazakAllah Khayran! $amount ${amount == 1 ? 'Seed' : 'Seeds'} donated.',
                           style: GoogleFonts.outfit(
                             fontWeight: FontWeight.w600,
                           ),

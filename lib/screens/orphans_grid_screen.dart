@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
 import '../theme/y4_theme.dart';
@@ -50,6 +51,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Y4.bg,
       appBar: AppBar(
@@ -57,7 +59,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
         elevation: 0,
         foregroundColor: Y4.ink,
         title: Text(
-          'Sponsor an Orphan',
+          l?.sponsorAnOrphan ?? 'Sponsor an Orphan',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w800,
             fontSize: 18,
@@ -77,6 +79,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
   }
 
   Widget _emptyState() {
+    final l = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -84,7 +87,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
         Icon(Icons.favorite_rounded, size: 56, color: Y4.muted),
         const SizedBox(height: 16),
         Text(
-          'No orphans listed yet',
+          l?.noOrphansListed ?? 'No orphans listed yet',
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 17,
@@ -94,7 +97,8 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
         ),
         const SizedBox(height: 6),
         Text(
-          'Check back soon, new sponsorship opportunities are added regularly.',
+          l?.checkBackForOrphans ??
+              'Check back soon, new sponsorship opportunities are added regularly.',
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 13.5,
@@ -157,7 +161,8 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              '"And as for the orphan, do not oppress him.", Qur’an 93:9',
+              AppLocalizations.of(context)?.orphanVerseTranslation ??
+                  '"And as for the orphan, do not oppress him.", Qur’an 93:9',
               style: GoogleFonts.outfit(
                 fontSize: 12.5,
                 fontStyle: FontStyle.italic,
@@ -350,7 +355,10 @@ class OrphanCard extends StatelessWidget {
                             ),
                             Text(
                               orphan.sponsorCount == 0
-                                  ? 'Open'
+                                  ? (AppLocalizations.of(
+                                          context,
+                                        )?.orphanCardOpen ??
+                                      'Open')
                                   : '${orphan.sponsorCount}',
                               style: GoogleFonts.outfit(
                                 fontSize: 10.5,

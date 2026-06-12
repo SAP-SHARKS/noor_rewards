@@ -959,5 +959,247 @@
   "onbV2_3step_S2Label": "Step 2",
   "onbV2_3step_S2Text": "Earn Seeds",
   "onbV2_3step_S3Label": "Step 3",
-  "onbV2_3step_S3Text": "Feed Orphans"
+  "onbV2_3step_S3Text": "Feed Orphans",
+  "languageLabel": "Language",
+  "systemDefault": "System Default",
+  "yourStreaksTitle": "YOUR STREAKS",
+  "streakLoading": "Loading streaks…",
+  "startStreakToday": "Start your streak today!",
+  "centurionMashaAllah": "Centurion, Masha'Allah!",
+  "currentBestStreak": "Current best streak",
+  "last7Days": "LAST 7 DAYS",
+  "nextMilestone": "NEXT MILESTONE",
+  "allMilestones": "ALL MILESTONES",
+  "qfConflictTitle": "Account Already Exists",
+  "qfConflictExplanation": "This email is already registered with Sabiq Rewards using a different sign-in method (Email or Google).\n\nTo protect your existing progress, streaks, and Sabiq Seeds, please sign in using your original method.",
+  "qfConflictStep1": "Go back to the login screen",
+  "qfConflictStep2": "Sign in with Email or Google using\n{email}",
+  "@qfConflictStep2": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "qfConflictStep3": "All your progress will be right there",
+  "qfConflictBackButton": "Back to Sign In",
+  "sponsorAnOrphan": "Sponsor an Orphan",
+  "noOrphansListed": "No orphans listed yet",
+  "checkBackForOrphans": "Check back soon, new sponsorship opportunities are added regularly.",
+  "orphanVerseTranslation": "\"And as for the orphan, do not oppress him.\", Qur'an 93:9",
+  "orphanCardOpen": "Open",
+  "doneLabel": "Done",
+  "aReminderLabel": "A REMINDER",
+  "yourAkhirahBalance": "YOUR AKHIRAH BALANCE",
+  "seedsCollectedSinceJoined": "Seeds collected since you joined",
+  "todayLabel": "TODAY",
+  "azkaarPerDay": "azkaar per day",
+  "viewFullStats": "View full stats",
+  "fatherLabel": "Father",
+  "motherLabel": "Mother",
+  "siblingsLabel": "Siblings",
+  "familySection": "Family",
+  "educationSection": "Education",
+  "gradeLabel": "Grade",
+  "schoolLabel": "School",
+  "theirStorySection": "Their story",
+  "yourBalanceLabel": "Your balance",
+  "sponsorCta": "Sponsor {name}",
+  "@sponsorCta": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notEnoughSeeds": "Not enough Seeds",
+  "bookmarkSyncDialogTitle": "Quran.com Bookmark Sync",
+  "closeLabel": "Close",
+  "searchHint": "Search…",
+  "enterCodeHint": "Enter code…",
+  "searchSurahHint": "Search Surah...",
+  "customLabel": "Custom",
+  "seedsSuffix": "Seeds",
+  "settingsTooltip": "Settings",
+  "retryLabel": "Retry",
+  "authErrorTitle": "Auth Error",
+  "sealWithinHours": "Seal within {hours}h",
+  "@sealWithinHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "sealWithinMinutes": "Seal within {minutes}m",
+  "@sealWithinMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sealNow": "Seal now",
+  "goalLabel": "Goal",
+  "contributorCount": "{count, plural, =1{1 contributor} other{{count} contributors}}",
+  "@contributorCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dayStreakCount": "{streak} Day Streak 🔥",
+  "@dayStreakCount": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "seedsPendingCount": "{count, plural, =1{1 Seed pending} other{{count} Seeds pending}}",
+  "@seedsPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sealToSave": "Seal to save",
+  "top10Contributors": "Top 10 Contributors",
+  "copyLabel": "Copy",
+  "copiedLabel": "Copied!",
+  "whatsappLabel": "WhatsApp",
+  "youBothEarnSeeds": "You both earn 500 Sabiq Seeds!",
+  "jazakAllahPlusSeeds": "JazakAllah!  +{seeds} Seeds",
+  "@jazakAllahPlusSeeds": {
+    "placeholders": {
+      "seeds": {
+        "type": "int"
+      }
+    }
+  },
+  "jazakAllahDaySealed": "JazakAllah!  Day sealed",
+  "pointsGoals": "POINTS GOALS",
+  "editLabel": "Edit",
+  "dailyGoal": "Daily Goal",
+  "weeklyGoal": "Weekly Goal",
+  "monthlyGoal": "Monthly Goal",
+  "setTargetSeeds": "Set your target Seeds (default: {defaultVal})",
+  "@setTargetSeeds": {
+    "placeholders": {
+      "defaultVal": {
+        "type": "int"
+      }
+    }
+  },
+  "noInternetTitle": "No Internet Connection",
+  "connectingTitle": "Connecting…",
+  "somethingWentWrongTitle": "Something Went Wrong",
+  "noInternetSubtitle": "This feature needs internet.\nCheck your Wi-Fi or mobile data.",
+  "connectingSubtitle": "Fetching your data…\nHanging on for a moment",
+  "errorSubtitle": "An unexpected error occurred.\nTap retry to try again.",
+  "tryAgain": "Try Again",
+  "everyRecitationCanChangeLife": "Every Recitation Can\nChange a Life",
+  "givenLabel": "GIVEN",
+  "goalUpper": "GOAL",
+  "aboutThisCause": "About this Cause",
+  "myContributionSeeds": "{count, plural, =1{My contribution: 1 Seed} other{My contribution: {count} Seeds}}",
+  "@myContributionSeeds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jazakAllahKhayranDonated": "{amount, plural, =1{JazakAllah Khayran! 1 Seed donated.} other{JazakAllah Khayran! {amount} Seeds donated.}}",
+  "@jazakAllahKhayranDonated": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "coinsSealedTitle": "Coins Sealed! ماشاء الله",
+  "rewardedForConsistency": "You have been rewarded for\nyour consistency today!",
+  "seedsSealedSafe": "Your Seeds are sealed and safe\nfor the Akhirah.",
+  "validationSeedsLabel": "Validation Seeds",
+  "streakBonusLabel": "Streak Bonus",
+  "totalEarnedLabel": "Total Earned",
+  "alhamdulillahCta": "Alhamdulillah! 🤲",
+  "openQuranCta": "Open Quran",
+  "duaAzkaarCta": "Dua & Azkaar",
+  "shareWithFriendsCta": "Share with Friends",
+  "earnMoreSeedsCta": "Earn More Seeds",
+  "levelTitleFormat": "Lvl {level} · {title}",
+  "@levelTitleFormat": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "akhirahBalanceUpper": "AKHIRAH BALANCE",
+  "bestDayStreakBadge": "Best: {streak} day streak",
+  "@bestDayStreakBadge": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "deedsLabel": "DEEDS",
+  "treesLabel": "TREES",
+  "forgivenLabel": "FORGIVEN",
+  "navCause": "Cause",
+  "realChildrenSubtitle": "Real children, their stories, their lives",
+  "seeAllAction": "See all",
+  "activeCampaigns": "Active Campaigns",
+  "poolSeedsImpact": "Pool your Seeds toward lasting impact",
+  "featuredSponsorChild": "Featured · Sponsor a child",
+  "meetOrphanAge": "Meet {name}, {age}",
+  "@meetOrphanAge": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "age": { "type": "int" }
+    }
+  },
+  "sponsorNameArrow": "Sponsor {name} →",
+  "@sponsorNameArrow": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "featuredCampaign": "Featured Campaign",
+  "yourGiving": "Your Giving",
+  "havenNotGivenYet": "You haven't given yet. Pick someone above to begin your journey of impact.",
+  "seedsDonatedLabel": "Seeds donated",
+  "orphanCount": "{count, plural, =1{Orphan} other{Orphans}}",
+  "@orphanCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "projectCount": "{count, plural, =1{Project} other{Projects}}",
+  "@projectCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "communityProgress": "Community Progress",
+  "donateEarnReward": "Donate & Earn Reward",
+  "couldntLoadJourney": "Couldn't load your Journey",
+  "checkConnectionRetry": "Check your connection and try again.",
+  "actionsCount": "{count, plural, =1{1 action} other{{count} actions}}",
+  "@actionsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "showLessAction": "Show Less ←",
+  "hadithReference": "Hadith Reference",
+  "howYouEarnedThis": "How you earned this"
 }
