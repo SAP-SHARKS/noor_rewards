@@ -2752,4 +2752,40 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get dayAbbrSun => 'Вс';
+
+  @override
+  String get favoritesCategory => 'Избранное';
+
+  @override
+  String get sleepingCategory => 'Сон';
+
+  @override
+  String get dailyWord => 'Ежедневный';
+
+  @override
+  String get dailyDuasCategory => 'Ежедневные Дуа';
+
+  @override
+  String get ruquiyaCategory => 'Рукыя';
+
+  @override
+  String get duasBeforeSleep => 'Дуа перед сном';
+
+  @override
+  String get duasAfterSalah => 'Дуа после Салята';
+
+  @override
+  String get rabbana40Duas => '40 Дуа Раббана';
+
+  @override
+  String get thisWorld => 'Этот мир';
+
+  @override
+  String get dunyaArabic => 'Dunya';
+
+  @override
+  String get hereafter => 'Ахира';
+
+  @override
+  String get akhirahArabic => 'Akhirah';
 }

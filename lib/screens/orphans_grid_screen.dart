@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
+import '../utils/name_localizer.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/sabiq_coin.dart';
 import 'orphan_detail_screen.dart';
@@ -230,7 +231,7 @@ class OrphanCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  _photo(),
+                  _photo(context),
                   if (orphan.grade != null && orphan.grade!.isNotEmpty)
                     Positioned(
                       top: 8, right: 8,
@@ -275,7 +276,7 @@ class OrphanCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${orphan.firstName} · ${orphan.age}',
+                          '${localizeName(context, orphan.firstName)} · ${orphan.age}',
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -389,13 +390,16 @@ class OrphanCard extends StatelessWidget {
     );
   }
 
-  Widget _photo() {
+  Widget _photo(BuildContext context) {
     if (orphan.photoUrl == null || orphan.photoUrl!.isEmpty) {
       return Container(
         color: Y4.butter,
         alignment: Alignment.center,
         child: Text(
-          orphan.firstName.isNotEmpty ? orphan.firstName[0].toUpperCase() : '?',
+          (() {
+            final n = localizeName(context, orphan.firstName);
+            return n.isNotEmpty ? n[0].toUpperCase() : '?';
+          })(),
           style: GoogleFonts.fraunces(
             fontSize: 42,
             fontWeight: FontWeight.w500,

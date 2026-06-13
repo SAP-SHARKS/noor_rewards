@@ -2744,4 +2744,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dayAbbrSun => 'Su';
+
+  @override
+  String get favoritesCategory => 'Favorites';
+
+  @override
+  String get sleepingCategory => 'Sleeping';
+
+  @override
+  String get dailyWord => 'Daily';
+
+  @override
+  String get dailyDuasCategory => 'Daily Duas';
+
+  @override
+  String get ruquiyaCategory => 'Ruquiya';
+
+  @override
+  String get duasBeforeSleep => 'Duas before Sleep';
+
+  @override
+  String get duasAfterSalah => 'Duas after Salah';
+
+  @override
+  String get rabbana40Duas => '40 Rabbana Duas';
+
+  @override
+  String get thisWorld => 'This World';
+
+  @override
+  String get dunyaArabic => 'Dunya';
+
+  @override
+  String get hereafter => 'Hereafter';
+
+  @override
+  String get akhirahArabic => 'Akhirah';
 }

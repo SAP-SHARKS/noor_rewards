@@ -133,11 +133,84 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     return false;
   }
 
-  String _localTitle(String title) {
+  // Translates a category by its stable Supabase `id` (not the English label).
+  // Fallback is the original English title so unmapped admin-added categories
+  // still render.
+  String _localTitle(String title, [String? id]) {
     final l = AppLocalizations.of(context);
-    if (title == 'Morning') return l?.morning ?? title;
-    if (title == 'Evening') return l?.evening ?? title;
-    return title;
+    if (l == null) return title;
+    switch (id ?? '') {
+      case 'morning':
+        return l.morning;
+      case 'evening':
+        return l.evening;
+      case 'ummah':
+        return l.duasOfUmmah;
+      case 'duas_before_sleep':
+        return l.duasBeforeSleep;
+      case 'tahajjud':
+        return l.tahajjud;
+      case 'duas_after_salah':
+        return l.duasAfterSalah;
+      case 'salawat':
+        return l.salawat;
+      case 'sunnah':
+        return l.sunnahDuas;
+      case 'rabbana_40':
+        return l.rabbana40Duas;
+      case 'istighfar':
+        return l.istighfar;
+      case 'daily_duas':
+        return l.dailyDuasCategory;
+      case 'ruquiya':
+        return l.ruquiyaCategory;
+      case 'general':
+        return l.dhikarAllTimes;
+      case 'asmaul_husna':
+        return l.namesOfAllah;
+      case 'nightmares':
+        return l.nightmares;
+      case 'waking_up':
+        return l.wakingUp;
+      case 'clothes':
+        return l.clothes;
+      case 'wudu':
+        return l.wudu;
+      case 'food_drink':
+        return l.foodAndDrink;
+      case 'home':
+        return l.home;
+      case 'istikharah':
+        return l.istikharah;
+      case 'masjid':
+        return l.adaanAndMasjid;
+      case 'difficulty':
+        return l.diffAndHappy;
+      case 'iman_protection':
+        return l.imanProtect;
+      case 'travel':
+        return l.travel;
+      case 'shopping':
+        return l.shopping;
+      case 'family':
+        return l.marriage;
+      case 'social':
+        return l.social;
+      case 'nature':
+        return l.nature;
+      case 'death':
+        return l.death;
+      case 'gatherings':
+        return l.gatherings;
+      case 'hajj':
+        return l.hajjAndUmrah;
+      default:
+        // Legacy fallback for the few places still passing only the English
+        // title without an id.
+        if (title == 'Morning') return l.morning;
+        if (title == 'Evening') return l.evening;
+        return title;
+    }
   }
 
   Future<void> _loadVisibility() async {
@@ -171,56 +244,56 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'title': AppLocalizations.of(context)?.duasOfUmmah ?? 'Duas of Ummah',
         'id': 'ummah',
         'color': Y4.primary,
-        'icon': 'ðŸŒ',
+        'icon': '🌍',
       },
       {
         'title': 'Morning',
         'id': 'morning',
         'color': Y4.honeyDeep,
-        'icon': 'ðŸŒ…',
+        'icon': '🌅',
       },
-      {'title': 'Evening', 'id': 'evening', 'color': Y4.amberY, 'icon': 'ðŸŒ‡'},
+      {'title': 'Evening', 'id': 'evening', 'color': Y4.amberY, 'icon': '🌇'},
       {
         'title': 'Duas before Sleep',
         'id': 'duas_before_sleep',
         'color': Y4.primaryDeep,
-        'icon': 'ðŸŒŒ',
+        'icon': '🌌',
       },
       {
         'title': AppLocalizations.of(context)?.tahajjud ?? 'Tahajjud',
         'id': 'tahajjud',
         'color': Y4.primaryDeep,
-        'icon': 'ðŸŒ‘',
+        'icon': '🌑',
       },
       {
         'title': 'Duas after Salah',
         'id': 'duas_after_salah',
         'color': Y4.primary,
-        'icon': 'ðŸ•Œ',
+        'icon': '🕌',
       },
       {
         'title': AppLocalizations.of(context)?.salawat ?? 'Salawat',
         'id': 'salawat',
         'color': Y4.honeyDeep,
-        'icon': 'â¤ï¸',
+        'icon': '❤️',
       },
       {
         'title': AppLocalizations.of(context)?.sunnahDuas ?? 'Sunnah Duas',
         'id': 'sunnah',
         'color': Y4.primary,
-        'icon': 'ðŸ“–',
+        'icon': '📖',
       },
       {
         'title': '40 Rabbana Duas',
         'id': 'rabbana_40',
         'color': Y4.primaryDeep,
-        'icon': 'ðŸ“,',
+        'icon': '📜',
       },
       {
         'title': AppLocalizations.of(context)?.istighfar ?? 'Istighfar',
         'id': 'istighfar',
         'color': Y4.soil,
-        'icon': 'ðŸ“¿',
+        'icon': '📿',
       },
       {
         'title': 'Daily Duas',
@@ -239,13 +312,13 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
             AppLocalizations.of(context)?.dhikarAllTimes ?? 'Dhikar All Times',
         'id': 'general',
         'color': Y4.amberY,
-        'icon': 'ðŸ¤²',
+        'icon': '🤲',
       },
       {
         'title': AppLocalizations.of(context)?.namesOfAllah ?? 'Names of Allah',
         'id': 'asmaul_husna',
         'color': Y4.honeyDeep,
-        'icon': 'âœ¨',
+        'icon': '✨',
       },
     ];
 
@@ -264,110 +337,110 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         'title': AppLocalizations.of(context)?.nightmares ?? 'Nightmares',
         'id': 'nightmares',
         'color': altSoilD,
-        'icon': 'ðŸŒ©ï¸',
+        'icon': '🌩️',
       },
       {
         'title': AppLocalizations.of(context)?.wakingUp ?? 'Waking up',
         'id': 'waking_up',
         'color': altHoney,
-        'icon': 'â˜€ï¸',
+        'icon': '☀️',
       },
       {
         'title': AppLocalizations.of(context)?.clothes ?? 'Clothes',
         'id': 'clothes',
         'color': altPrimary,
-        'icon': 'ðŸ‘•',
+        'icon': '👕',
       },
       {
         'title': AppLocalizations.of(context)?.wudu ?? 'Wudu',
         'id': 'wudu',
         'color': altPrimary,
-        'icon': 'ðŸ’§',
+        'icon': '💧',
       },
       {
         'title': AppLocalizations.of(context)?.foodAndDrink ?? 'Food & Drink',
         'id': 'food_drink',
         'color': altAmber,
-        'icon': 'ðŸ½ï¸',
+        'icon': '🍽️',
       },
       {
         'title': AppLocalizations.of(context)?.home ?? 'Home',
         'id': 'home',
         'color': altPrimary,
-        'icon': 'ðŸ ',
+        'icon': '🏠',
       },
       {
         'title': AppLocalizations.of(context)?.istikharah ?? 'Istikharah',
         'id': 'istikharah',
         'color': altPrimaryD,
-        'icon': 'ðŸ§­',
+        'icon': '🧭',
       },
       {
         'title':
             AppLocalizations.of(context)?.adaanAndMasjid ?? 'Adaan & Masjid',
         'id': 'masjid',
         'color': altPrimary,
-        'icon': 'ðŸ•Œ',
+        'icon': '🕌',
       },
       {
         'title': AppLocalizations.of(context)?.diffAndHappy ?? 'Diff & Happy',
         'id': 'difficulty',
         'color': altHoney,
-        'icon': 'âš–ï¸',
+        'icon': '⚖️',
       },
       {
         'title': AppLocalizations.of(context)?.imanProtect ?? 'Iman Protect',
         'id': 'iman_protection',
         'color': altPrimaryD,
-        'icon': 'ðŸ›¡ï¸',
+        'icon': '🛡️',
       },
       {
         'title': AppLocalizations.of(context)?.travel ?? 'Travel',
         'id': 'travel',
         'color': altPrimary,
-        'icon': 'âœˆï¸',
+        'icon': '✈️',
       },
       {
         'title': AppLocalizations.of(context)?.shopping ?? 'Shopping',
         'id': 'shopping',
         'color': altAmber,
-        'icon': 'ðŸ›ï¸',
+        'icon': '🛍️',
       },
       {
         'title': AppLocalizations.of(context)?.marriage ?? 'Marriage',
         'id': 'family',
         'color': altHoney,
-        'icon': 'ðŸ‘¨â€ðŸ‘©â€ðŸ‘§',
+        'icon': '👨‍👩‍👧',
       },
       {
         'title': AppLocalizations.of(context)?.social ?? 'Social',
         'id': 'social',
         'color': altPrimary,
-        'icon': 'ðŸ¤',
+        'icon': '🤝',
       },
       {
         'title': AppLocalizations.of(context)?.nature ?? 'Nature',
         'id': 'nature',
         'color': altPrimary,
-        'icon': 'ðŸŒ¿',
+        'icon': '🌿',
       },
       {
         'title': AppLocalizations.of(context)?.death ?? 'Death',
         'id': 'death',
         'color': altSoil,
-        'icon': 'ðŸ¥€',
+        'icon': '🥀',
       },
       {
         'title': AppLocalizations.of(context)?.gatherings ?? 'Gatherings',
         'id': 'gatherings',
         'color': altHoney,
-        'icon': 'ðŸ‘¥',
+        'icon': '👥',
       },
       {
         'title': AppLocalizations.of(context)?.hajjAndUmrah ?? 'Hajj & Umrah',
         'id': 'hajj',
         'color': altPrimaryD,
-        'icon': 'ðŸ•‹',
+        'icon': '🕋',
       },
     ];
 
@@ -397,7 +470,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
           onPressed: _handleHubExit,
         ),
         title: Text(
-          'Dhikar & Dua',
+          AppLocalizations.of(context)?.dhikarAndDua ?? 'Dhikar & Dua',
           style: Y4.display(
             fontSize: 22,
             fontWeight: FontWeight.w500,
@@ -488,9 +561,13 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                     itemCount: visibleEssentials.length,
                     itemBuilder: (context, index) {
                       final item = visibleEssentials[index];
+                      // Pass the ENGLISH title — the card builder needs it
+                      // for asset filename lookup (e.g. "Duas before Sleep.png").
+                      // It computes the localized display label internally
+                      // using the stable category id.
                       return _buildGradientCard(
                         context,
-                        _localTitle(item['title']),
+                        item['title'] as String,
                         item['id'],
                         item['icon'],
                         item['color'],
@@ -562,9 +639,11 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                     itemCount: visibleOthers.length,
                     itemBuilder: (context, index) {
                       final item = visibleOthers[index];
+                      // Pass the ENGLISH title — see _buildGradientCard
+                      // comment above for the reason.
                       return _buildMiniGradientCard(
                         context,
-                        _localTitle(item['title']),
+                        item['title'] as String,
                         item['id'],
                         item['icon'],
                         item['color'],
@@ -743,7 +822,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      title,
+                      _localTitle(title, id),
                       style: GoogleFonts.outfit(
                         fontSize: titleSize,
                         fontWeight: FontWeight.w900,
@@ -862,7 +941,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: Text(
-                    title,
+                    _localTitle(title, id),
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,

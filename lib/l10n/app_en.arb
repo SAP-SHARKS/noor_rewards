@@ -1414,5 +1414,17 @@
   "dayAbbrThu": "Th",
   "dayAbbrFri": "Fr",
   "dayAbbrSat": "Sa",
-  "dayAbbrSun": "Su"
+  "dayAbbrSun": "Su",
+  "favoritesCategory": "Favorites",
+  "sleepingCategory": "Sleeping",
+  "dailyWord": "Daily",
+  "dailyDuasCategory": "Daily Duas",
+  "ruquiyaCategory": "Ruquiya",
+  "duasBeforeSleep": "Duas before Sleep",
+  "duasAfterSalah": "Duas after Salah",
+  "rabbana40Duas": "40 Rabbana Duas",
+  "thisWorld": "This World",
+  "dunyaArabic": "Dunya",
+  "hereafter": "Hereafter",
+  "akhirahArabic": "Akhirah"
 }

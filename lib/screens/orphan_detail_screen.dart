@@ -9,6 +9,7 @@ import '../l10n/app_localizations.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
 import '../theme/y4_theme.dart';
+import '../utils/name_localizer.dart';
 import '../widgets/sabiq_coin.dart';
 
 class OrphanDetailScreen extends StatefulWidget {
@@ -132,9 +133,10 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                     color: Y4.butter,
                     alignment: Alignment.center,
                     child: Text(
-                      _orphan.firstName.isNotEmpty
-                          ? _orphan.firstName[0].toUpperCase()
-                          : '?',
+                      (() {
+                        final n = localizeName(context, _orphan.firstName);
+                        return n.isNotEmpty ? n[0].toUpperCase() : '?';
+                      })(),
                       style: GoogleFonts.fraunces(
                         fontSize: 120,
                         color: Y4.honeyDeep,
@@ -165,7 +167,16 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _orphan.displayName,
+            (() {
+              final loc = localizeName(context, _orphan.firstName);
+              final init = _orphan.lastInitial;
+              if (init == null || init.isEmpty) return loc;
+              final locInit = localizeName(context, init);
+              // Append trailing period only when the field is still a true
+              // single-letter initial; otherwise (full second name like
+              // "Haris" / "حارث") the period would look wrong.
+              return locInit.length == 1 ? '$loc $locInit.' : '$loc $locInit';
+            })(),
             style: GoogleFonts.fraunces(
               fontSize: 32,
               fontWeight: FontWeight.w500,
@@ -404,9 +415,12 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                           : null,
                       child: s.avatarUrl == null || s.avatarUrl!.isEmpty
                           ? Text(
-                              s.displayName.isNotEmpty
-                                  ? s.displayName[0].toUpperCase()
-                                  : '?',
+                              (() {
+                                final n = localizeName(context, s.displayName);
+                                return n.isNotEmpty
+                                    ? n[0].toUpperCase()
+                                    : '?';
+                              })(),
                               style: GoogleFonts.outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -421,7 +435,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            s.displayName,
+                            localizeName(context, s.displayName),
                             style: GoogleFonts.outfit(
                               fontSize: 13.5,
                               color: Y4.ink,
@@ -590,8 +604,8 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                 hasEnough
                     ? (AppLocalizations.of(
                             context,
-                          )?.sponsorCta(_orphan.firstName) ??
-                        'Sponsor ${_orphan.firstName}')
+                          )?.sponsorCta(localizeName(context, _orphan.firstName)) ??
+                        'Sponsor ${localizeName(context, _orphan.firstName)}')
                     : (AppLocalizations.of(context)?.notEnoughSeeds ??
                         'Not enough Seeds'),
                 style: GoogleFonts.outfit(
@@ -735,7 +749,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Sponsor ${widget.orphan.firstName}',
+            'Sponsor ${localizeName(context, widget.orphan.firstName)}',
             style: GoogleFonts.fraunces(
               fontSize: 22,
               fontWeight: FontWeight.w500,

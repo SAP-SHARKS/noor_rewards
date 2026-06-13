@@ -2749,4 +2749,40 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dayAbbrSun => 'Pz';
+
+  @override
+  String get favoritesCategory => 'Favoriler';
+
+  @override
+  String get sleepingCategory => 'Uyku';
+
+  @override
+  String get dailyWord => 'Günlük';
+
+  @override
+  String get dailyDuasCategory => 'Günlük Dualar';
+
+  @override
+  String get ruquiyaCategory => 'Rukye';
+
+  @override
+  String get duasBeforeSleep => 'Uykudan önce dualar';
+
+  @override
+  String get duasAfterSalah => 'Namazdan sonra dualar';
+
+  @override
+  String get rabbana40Duas => '40 Rabbana Duası';
+
+  @override
+  String get thisWorld => 'Bu Dünya';
+
+  @override
+  String get dunyaArabic => 'Dunya';
+
+  @override
+  String get hereafter => 'Ahiret';
+
+  @override
+  String get akhirahArabic => 'Akhirah';
 }

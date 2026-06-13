@@ -2747,4 +2747,40 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dayAbbrSun => 'اتو';
+
+  @override
+  String get favoritesCategory => 'پسندیدہ';
+
+  @override
+  String get sleepingCategory => 'سونا';
+
+  @override
+  String get dailyWord => 'روزانہ';
+
+  @override
+  String get dailyDuasCategory => 'روزانہ کی دعائیں';
+
+  @override
+  String get ruquiyaCategory => 'رقیہ';
+
+  @override
+  String get duasBeforeSleep => 'سونے سے پہلے کی دعائیں';
+
+  @override
+  String get duasAfterSalah => 'نماز کے بعد کی دعائیں';
+
+  @override
+  String get rabbana40Duas => '40 ربنا دعائیں';
+
+  @override
+  String get thisWorld => 'دنیا';
+
+  @override
+  String get dunyaArabic => 'Dunya';
+
+  @override
+  String get hereafter => 'آخرت';
+
+  @override
+  String get akhirahArabic => 'Akhirah';
 }

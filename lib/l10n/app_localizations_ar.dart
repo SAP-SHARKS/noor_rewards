@@ -2728,4 +2728,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dayAbbrSun => 'أح';
+
+  @override
+  String get favoritesCategory => 'المفضلة';
+
+  @override
+  String get sleepingCategory => 'النوم';
+
+  @override
+  String get dailyWord => 'يومي';
+
+  @override
+  String get dailyDuasCategory => 'أدعية يومية';
+
+  @override
+  String get ruquiyaCategory => 'الرقية';
+
+  @override
+  String get duasBeforeSleep => 'أدعية قبل النوم';
+
+  @override
+  String get duasAfterSalah => 'أدعية بعد الصلاة';
+
+  @override
+  String get rabbana40Duas => '٤٠ دعاء ربّنا';
+
+  @override
+  String get thisWorld => 'الدنيا';
+
+  @override
+  String get dunyaArabic => 'Dunya';
+
+  @override
+  String get hereafter => 'الآخرة';
+
+  @override
+  String get akhirahArabic => 'Akhirah';
 }
