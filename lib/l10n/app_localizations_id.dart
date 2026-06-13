@@ -2753,4 +2753,40 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dayAbbrSun => 'Mg';
+
+  @override
+  String get favoritesCategory => 'Favorit';
+
+  @override
+  String get sleepingCategory => 'Tidur';
+
+  @override
+  String get dailyWord => 'Harian';
+
+  @override
+  String get dailyDuasCategory => 'Doa Harian';
+
+  @override
+  String get ruquiyaCategory => 'Ruqyah';
+
+  @override
+  String get duasBeforeSleep => 'Doa sebelum tidur';
+
+  @override
+  String get duasAfterSalah => 'Doa setelah Salat';
+
+  @override
+  String get rabbana40Duas => '40 Doa Rabbana';
+
+  @override
+  String get thisWorld => 'Dunia';
+
+  @override
+  String get dunyaArabic => 'Dunya';
+
+  @override
+  String get hereafter => 'Akhirat';
+
+  @override
+  String get akhirahArabic => 'Akhirah';
 }

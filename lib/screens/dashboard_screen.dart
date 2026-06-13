@@ -19,6 +19,7 @@ import 'profile_settings_screen.dart';
 import '../features/auth/data/qf_auth_service.dart';
 
 import '../services/xp_service.dart';
+import '../utils/name_localizer.dart';
 import '../services/tracking_service.dart';
 import '../services/donation_service.dart';
 import '../services/streak_service.dart';
@@ -561,13 +562,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     return _supabase.auth.currentUser?.email?.split('@').first ??
                         'User';
                   })();
+                  final localDisplayName =
+                      localizeName(context, displayName);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder:
                           (_) => Scaffold(
                             body: _ProfileTab(
-                              name: displayName,
+                              name: localDisplayName,
                               noorPoints: _noorPoints ?? 0,
                               totalXp: _totalPts ?? 0,
                               level: _level,
@@ -1115,9 +1118,16 @@ class _HomeTabState extends State<_HomeTab> {
   /// card already renders for community projects. `_type` is set to
   /// `'orphan'` so the tap handler routes to OrphanDetailScreen.
   Map<String, dynamic> _orphanToDonationMap(Orphan o) {
-    final name = o.lastInitial != null && o.lastInitial!.isNotEmpty
-        ? '${o.firstName} ${o.lastInitial}.'
-        : o.firstName;
+    final loc = localizeName(context, o.firstName);
+    String name;
+    if (o.lastInitial != null && o.lastInitial!.isNotEmpty) {
+      final locInit = localizeName(context, o.lastInitial!);
+      // Append the trailing period only when the field is actually a single
+      // letter; full second names (e.g. "Haris") shouldn't get a stray dot.
+      name = locInit.length == 1 ? '$loc $locInit.' : '$loc $locInit';
+    } else {
+      name = loc;
+    }
     return {
       '_type': 'orphan',
       '_orphan': o,
@@ -1211,9 +1221,11 @@ class _HomeTabState extends State<_HomeTab> {
                                 builder: (context, override, _) {
                                   final overrideFirst =
                                       override?.trim().split(' ').first ?? '';
-                                  final display = overrideFirst.isNotEmpty
+                                  final rawDisplay = overrideFirst.isNotEmpty
                                       ? overrideFirst
                                       : (firstName.isEmpty ? 'Friend' : firstName);
+                                  final display =
+                                      localizeName(context, rawDisplay);
                                   // Diagnostic: confirms whether this Text
                                   // widget actually rebuilds when the
                                   // notifier fires. Remove once verified.
@@ -1328,9 +1340,15 @@ class _HomeTabState extends State<_HomeTab> {
                                     widget.avatarUrl == null
                                         ? Center(
                                           child: Text(
-                                            firstName.isNotEmpty
-                                                ? firstName[0].toUpperCase()
-                                                : 'N',
+                                            (() {
+                                              final n = localizeName(
+                                                context,
+                                                firstName,
+                                              );
+                                              return n.isNotEmpty
+                                                  ? n[0].toUpperCase()
+                                                  : 'N';
+                                            })(),
                                             style: GoogleFonts.outfit(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w800,

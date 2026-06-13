@@ -191,6 +191,86 @@ class _Category {
   const _Category(this.id, this.label, this.icon);
 }
 
+// Translates a category by its stable id (favorites / morning / evening / etc.).
+// Falls back to the original English label so unmapped admin-added categories
+// still render.
+String _localCategoryName(BuildContext context, String id, String label) {
+  final l = AppLocalizations.of(context);
+  if (l == null) return label;
+  switch (id) {
+    case 'favorites':
+      return l.favoritesCategory;
+    case 'general':
+      return l.dhikarAllTimes;
+    case 'morning':
+      return l.morning;
+    case 'evening':
+      return l.evening;
+    case 'sleeping':
+      return l.sleepingCategory;
+    case 'ummah':
+      return l.duasOfUmmah;
+    case 'duas_before_sleep':
+      return l.duasBeforeSleep;
+    case 'tahajjud':
+      return l.tahajjud;
+    case 'duas_after_salah':
+      return l.duasAfterSalah;
+    case 'salawat':
+      return l.salawat;
+    case 'sunnah':
+      return l.sunnahDuas;
+    case 'rabbana_40':
+      return l.rabbana40Duas;
+    case 'istighfar':
+      return l.istighfar;
+    case 'daily_duas':
+      return l.dailyDuasCategory;
+    case 'ruquiya':
+      return l.ruquiyaCategory;
+    case 'asmaul_husna':
+      return l.namesOfAllah;
+    case 'nightmares':
+      return l.nightmares;
+    case 'waking_up':
+      return l.wakingUp;
+    case 'clothes':
+      return l.clothes;
+    case 'wudu':
+      return l.wudu;
+    case 'food_drink':
+      return l.foodAndDrink;
+    case 'home':
+      return l.home;
+    case 'istikharah':
+      return l.istikharah;
+    case 'masjid':
+      return l.adaanAndMasjid;
+    case 'difficulty':
+      return l.diffAndHappy;
+    case 'iman_protection':
+      return l.imanProtect;
+    case 'travel':
+      return l.travel;
+    case 'shopping':
+      return l.shopping;
+    case 'family':
+      return l.marriage;
+    case 'social':
+      return l.social;
+    case 'nature':
+      return l.nature;
+    case 'death':
+      return l.death;
+    case 'gatherings':
+      return l.gatherings;
+    case 'hajj':
+      return l.hajjAndUmrah;
+    default:
+      return label;
+  }
+}
+
 class _DhikrSettings {
   double arabicFontSize = 32.0;
   double translationFontSize = 17.0;
@@ -382,14 +462,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
       await prefs.remove('dhikr_incomplete_ts');
       // Only nudge if the same category they left is what they opened now
       if (incompleteCat != _selectedCat) return;
+      if (!mounted) return;
+      final l = AppLocalizations.of(context);
       final catLabel =
           incompleteCat == 'morning'
-              ? 'Morning'
+              ? (l?.morning ?? 'Morning')
               : incompleteCat == 'evening'
-              ? 'Evening'
+              ? (l?.evening ?? 'Evening')
               : incompleteCat == 'sleeping'
-              ? 'Sleeping'
-              : 'Daily';
+              ? (l?.sleepingCategory ?? 'Sleeping')
+              : (l?.dailyWord ?? 'Daily');
       // Small delay so the list finishes loading first
       await Future.delayed(const Duration(milliseconds: 600));
       if (!mounted) return;
@@ -2114,7 +2196,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                     : null,
                           ),
                           child: Text(
-                            cat.label,
+                            _localCategoryName(context, cat.id, cat.label),
                             style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight:
@@ -12106,11 +12188,25 @@ class _AfiyahGuardState extends State<_AfiyahGuard>
                       Row(
                         children: [
                           Expanded(
-                            child: heroCard('This World', 'Dunya', teal, 0.00),
+                            child: heroCard(
+                              AppLocalizations.of(context)?.thisWorld ??
+                                  'This World',
+                              AppLocalizations.of(context)?.dunyaArabic ??
+                                  'Dunya',
+                              teal,
+                              0.00,
+                            ),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
-                            child: heroCard('Hereafter', 'Akhirah', gold, 0.18),
+                            child: heroCard(
+                              AppLocalizations.of(context)?.hereafter ??
+                                  'Hereafter',
+                              AppLocalizations.of(context)?.akhirahArabic ??
+                                  'Akhirah',
+                              gold,
+                              0.18,
+                            ),
                           ),
                         ],
                       ),

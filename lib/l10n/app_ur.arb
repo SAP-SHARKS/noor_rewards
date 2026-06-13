@@ -925,5 +925,17 @@
   "dayAbbrThu": "جمع",
   "dayAbbrFri": "جمعہ",
   "dayAbbrSat": "ہفت",
-  "dayAbbrSun": "اتو"
+  "dayAbbrSun": "اتو",
+  "favoritesCategory": "پسندیدہ",
+  "sleepingCategory": "سونا",
+  "dailyWord": "روزانہ",
+  "dailyDuasCategory": "روزانہ کی دعائیں",
+  "ruquiyaCategory": "رقیہ",
+  "duasBeforeSleep": "سونے سے پہلے کی دعائیں",
+  "duasAfterSalah": "نماز کے بعد کی دعائیں",
+  "rabbana40Duas": "40 ربنا دعائیں",
+  "thisWorld": "دنیا",
+  "dunyaArabic": "Dunya",
+  "hereafter": "آخرت",
+  "akhirahArabic": "Akhirah"
 }

@@ -4969,6 +4969,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Su'**
   String get dayAbbrSun;
+
+  /// No description provided for @favoritesCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesCategory;
+
+  /// No description provided for @sleepingCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleeping'**
+  String get sleepingCategory;
+
+  /// No description provided for @dailyWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get dailyWord;
+
+  /// No description provided for @dailyDuasCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Duas'**
+  String get dailyDuasCategory;
+
+  /// No description provided for @ruquiyaCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruquiya'**
+  String get ruquiyaCategory;
+
+  /// No description provided for @duasBeforeSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Duas before Sleep'**
+  String get duasBeforeSleep;
+
+  /// No description provided for @duasAfterSalah.
+  ///
+  /// In en, this message translates to:
+  /// **'Duas after Salah'**
+  String get duasAfterSalah;
+
+  /// No description provided for @rabbana40Duas.
+  ///
+  /// In en, this message translates to:
+  /// **'40 Rabbana Duas'**
+  String get rabbana40Duas;
+
+  /// No description provided for @thisWorld.
+  ///
+  /// In en, this message translates to:
+  /// **'This World'**
+  String get thisWorld;
+
+  /// No description provided for @dunyaArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Dunya'**
+  String get dunyaArabic;
+
+  /// No description provided for @hereafter.
+  ///
+  /// In en, this message translates to:
+  /// **'Hereafter'**
+  String get hereafter;
+
+  /// No description provided for @akhirahArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Akhirah'**
+  String get akhirahArabic;
 }
 
 class _AppLocalizationsDelegate

@@ -925,5 +925,17 @@
   "dayAbbrThu": "Чт",
   "dayAbbrFri": "Пт",
   "dayAbbrSat": "Сб",
-  "dayAbbrSun": "Вс"
+  "dayAbbrSun": "Вс",
+  "favoritesCategory": "Избранное",
+  "sleepingCategory": "Сон",
+  "dailyWord": "Ежедневный",
+  "dailyDuasCategory": "Ежедневные Дуа",
+  "ruquiyaCategory": "Рукыя",
+  "duasBeforeSleep": "Дуа перед сном",
+  "duasAfterSalah": "Дуа после Салята",
+  "rabbana40Duas": "40 Дуа Раббана",
+  "thisWorld": "Этот мир",
+  "dunyaArabic": "Dunya",
+  "hereafter": "Ахира",
+  "akhirahArabic": "Akhirah"
 }

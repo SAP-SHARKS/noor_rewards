@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
 import '../services/stats_service.dart';
 import '../services/donation_service.dart';
+import '../utils/name_localizer.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/project_media_carousel.dart';
@@ -2211,9 +2212,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
   }
 
   Widget _impactDonorRow(_DonorAgg d) {
-    final initial = d.displayName.trim().isEmpty
+    final localName = localizeName(context, d.displayName);
+    final initial = localName.trim().isEmpty
         ? '?'
-        : d.displayName.trim().substring(0, 1).toUpperCase();
+        : localName.trim().substring(0, 1).toUpperCase();
     final subtitle = _timeAgo(d.lastDonatedAt);
     return Row(
       children: [
@@ -2238,7 +2240,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                d.displayName,
+                localName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.outfit(
@@ -2700,8 +2702,11 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     children: [
                       Text(
                         AppLocalizations.of(context)
-                                ?.meetOrphanAge(o.firstName, o.age) ??
-                            'Meet ${o.firstName}, ${o.age}',
+                                ?.meetOrphanAge(
+                                  localizeName(context, o.firstName),
+                                  o.age,
+                                ) ??
+                            'Meet ${localizeName(context, o.firstName)}, ${o.age}',
                         style: GoogleFonts.fraunces(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
@@ -2730,8 +2735,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         ),
                         child: Text(
                           AppLocalizations.of(context)
-                                  ?.sponsorNameArrow(o.firstName) ??
-                              'Sponsor ${o.firstName} →',
+                                  ?.sponsorNameArrow(
+                                    localizeName(context, o.firstName),
+                                  ) ??
+                              'Sponsor ${localizeName(context, o.firstName)} →',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,

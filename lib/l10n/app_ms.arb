@@ -925,5 +925,17 @@
   "dayAbbrThu": "Kh",
   "dayAbbrFri": "Ju",
   "dayAbbrSat": "Sa",
-  "dayAbbrSun": "Ah"
+  "dayAbbrSun": "Ah",
+  "favoritesCategory": "Kegemaran",
+  "sleepingCategory": "Tidur",
+  "dailyWord": "Harian",
+  "dailyDuasCategory": "Doa Harian",
+  "ruquiyaCategory": "Ruqyah",
+  "duasBeforeSleep": "Doa sebelum tidur",
+  "duasAfterSalah": "Doa selepas Solat",
+  "rabbana40Duas": "40 Doa Rabbana",
+  "thisWorld": "Dunia",
+  "dunyaArabic": "Dunya",
+  "hereafter": "Akhirat",
+  "akhirahArabic": "Akhirah"
 }

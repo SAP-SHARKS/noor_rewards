@@ -925,5 +925,17 @@
   "dayAbbrThu": "خ",
   "dayAbbrFri": "ج",
   "dayAbbrSat": "س",
-  "dayAbbrSun": "أح"
+  "dayAbbrSun": "أح",
+  "favoritesCategory": "المفضلة",
+  "sleepingCategory": "النوم",
+  "dailyWord": "يومي",
+  "dailyDuasCategory": "أدعية يومية",
+  "ruquiyaCategory": "الرقية",
+  "duasBeforeSleep": "أدعية قبل النوم",
+  "duasAfterSalah": "أدعية بعد الصلاة",
+  "rabbana40Duas": "٤٠ دعاء ربّنا",
+  "thisWorld": "الدنيا",
+  "dunyaArabic": "Dunya",
+  "hereafter": "الآخرة",
+  "akhirahArabic": "Akhirah"
 }

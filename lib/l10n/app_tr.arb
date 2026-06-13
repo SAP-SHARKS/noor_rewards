@@ -925,5 +925,17 @@
   "dayAbbrThu": "Pe",
   "dayAbbrFri": "Cu",
   "dayAbbrSat": "Ct",
-  "dayAbbrSun": "Pz"
+  "dayAbbrSun": "Pz",
+  "favoritesCategory": "Favoriler",
+  "sleepingCategory": "Uyku",
+  "dailyWord": "Günlük",
+  "dailyDuasCategory": "Günlük Dualar",
+  "ruquiyaCategory": "Rukye",
+  "duasBeforeSleep": "Uykudan önce dualar",
+  "duasAfterSalah": "Namazdan sonra dualar",
+  "rabbana40Duas": "40 Rabbana Duası",
+  "thisWorld": "Bu Dünya",
+  "dunyaArabic": "Dunya",
+  "hereafter": "Ahiret",
+  "akhirahArabic": "Akhirah"
 }
