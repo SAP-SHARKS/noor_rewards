@@ -152,15 +152,17 @@ serve(async (req: Request) => {
     // Step 4: Send Firebase Notifications in bulk loop
     const results = [];
     for (let idx = 0; idx < dedupedTokens.length; idx++) {
-      const token = dedupedTokens[idx];
+      const token  = dedupedTokens[idx];
       const userId = dedupedUsers[idx];
+      const nid    = crypto.randomUUID();
+      const title  = '🌙 Points expiring at midnight!';
+      const body   = "You have unclaimed points from today's deeds. Seal the Day now or they'll expire!";
+
       const fcmPayload = {
         message: {
           token: token,
-          notification: {
-            title: '🌙 Points expiring at midnight!',
-            body: "You have unclaimed points from today's deeds. Seal the Day now or they'll expire!"
-          },
+          notification: { title, body },
+          data: { nid },
           android: {
             priority: 'high',
             notification: { sound: 'default' }
@@ -189,6 +191,9 @@ serve(async (req: Request) => {
         await supabase.from('notification_log').insert({
           user_id: userId,
           notification_type: 'nightly_checkin',
+          notification_id: nid,
+          title,
+          body,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

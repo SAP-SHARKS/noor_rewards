@@ -144,10 +144,12 @@ serve(async (_req: Request) => {
     for (const uid of finalUsers) {
       const stats = userStats.get(uid)!;
       const hasanatStr = formatNumber(stats.hasanat);
-      
+
       const title = 'SubhanAllah! 🚀';
       const body = `This month you read ${stats.verses} verses, gained ${hasanatStr} Hasanat! May Allah accept all our deeds! Ameen 💜`;
-      
+      const route = 'quran';
+      const nid = crypto.randomUUID();
+
       const tokens = tokensMap.get(uid)!;
       let anySuccess = false;
 
@@ -164,14 +166,14 @@ serve(async (_req: Request) => {
               message: {
                 token,
                 notification: { title, body },
-                data: { route: 'quran' },
+                data: { route, nid },
                 android: { priority: 'high', notification: { sound: 'default' } },
                 apns: { payload: { aps: { sound: 'default' } } },
               },
             }),
           }
         );
-        
+
         const resJson = await res.json();
         results.push({ userId: uid, token, success: res.ok, result: resJson });
         if (res.ok) anySuccess = true;
@@ -182,6 +184,10 @@ serve(async (_req: Request) => {
           await supabase.from('notification_log').insert({
             user_id: uid,
             notification_type: 'monthly_quran',
+            notification_id: nid,
+            title,
+            body,
+            route,
             sent_at: now.toISOString(),
           });
         } catch (_) {}

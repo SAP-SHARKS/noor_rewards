@@ -113,6 +113,10 @@ serve(async (_req: Request) => {
 
     for (const u of toNotify) {
       const surahName = SURAH_NAMES[u.surah] || `Surah ${u.surah}`;
+      const nid   = crypto.randomUUID();
+      const title = 'Continue where you left off';
+      const body  = `You were reading ${surahName}, Ayah ${u.ayah}. Pick up where you stopped.`;
+      const route = 'quran';
 
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -125,11 +129,8 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: {
-                title: 'Continue where you left off',
-                body: `You were reading ${surahName}, Ayah ${u.ayah}. Pick up where you stopped.`,
-              },
-              data: { route: 'quran' },
+              notification: { title, body },
+              data: { route, nid },
               android: { priority: 'high', notification: { sound: 'default' } },
               apns: { payload: { aps: { sound: 'default' } } },
             },
@@ -142,6 +143,10 @@ serve(async (_req: Request) => {
         await supabase.from('notification_log').insert({
           user_id: u.userId,
           notification_type: 'resume_reading',
+          notification_id: nid,
+          title,
+          body,
+          route,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

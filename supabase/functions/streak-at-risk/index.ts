@@ -92,6 +92,11 @@ serve(async (_req: Request) => {
     let sent = 0;
 
     for (const u of toNotify) {
+      const nid   = crypto.randomUUID();
+      const title = "Don't break your streak!";
+      const body  = `You've been consistent for ${u.streak} days with ${u.type}. Open now to keep it alive!`;
+      const route = u.type === 'Quran' ? 'quran' : 'dhikr';
+
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
         {
@@ -103,11 +108,8 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: {
-                title: "Don't break your streak!",
-                body: `You've been consistent for ${u.streak} days with ${u.type}. Open now to keep it alive!`,
-              },
-              data: { route: u.type === 'Quran' ? 'quran' : 'dhikr' },
+              notification: { title, body },
+              data: { route, nid },
               android: { priority: 'high', notification: { sound: 'default' } },
               apns: { payload: { aps: { sound: 'default' } } },
             },
@@ -120,6 +122,10 @@ serve(async (_req: Request) => {
         await supabase.from('notification_log').insert({
           user_id: u.userId,
           notification_type: 'streak_at_risk',
+          notification_id: nid,
+          title,
+          body,
+          route,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }
