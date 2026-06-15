@@ -104,6 +104,8 @@ serve(async (req: Request) => {
     const accessToken = tokenDataRes.access_token;
 
     // 4. Send the Push Notification via Firebase HTTP v1 API
+    const nid = crypto.randomUUID();
+    const dataWithNid = { ...(data || {}), nid };
     const fcmPayload = {
       message: {
         token: fcmToken,
@@ -111,7 +113,7 @@ serve(async (req: Request) => {
           title: title,
           body: body,
         },
-        data: data || {}, // Optional data map
+        data: dataWithNid,
         android: {
           priority: 'high',
           notification: {
@@ -139,6 +141,17 @@ serve(async (req: Request) => {
     if (!fcmResponse.ok) {
       throw new Error(`FCM API Error: ${JSON.stringify(fcmResult)}`);
     }
+
+    // Log the send so the admin can show sent/opened analytics.
+    await supabase.from('notification_log').insert({
+      user_id: user_id,
+      notification_type: (data && (data as any).type) || 'manual_send',
+      notification_id: nid,
+      title,
+      body,
+      route: (data && (data as any).route) || null,
+      sent_at: new Date().toISOString(),
+    }).catch(() => {});
 
     return new Response(
       JSON.stringify({ success: true, result: fcmResult }),

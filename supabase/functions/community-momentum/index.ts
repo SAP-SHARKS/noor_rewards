@@ -91,6 +91,11 @@ serve(async (_req: Request) => {
     let sent = 0;
 
     for (const u of toNotify) {
+      const nid = crypto.randomUUID();
+      const title = `${readers} believers read Quran yesterday`;
+      const body  = `They read ${ayahs} ayahs together. Join them today — your morning adhkar is waiting.`;
+      const route = 'morning';
+
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
         {
@@ -102,11 +107,8 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: {
-                title: `${readers} believers read Quran yesterday`,
-                body: `They read ${ayahs} ayahs together. Join them today — your morning adhkar is waiting.`,
-              },
-              data: { route: 'morning' },
+              notification: { title, body },
+              data: { route, nid },
               android: { priority: 'high', notification: { sound: 'default' } },
               apns: { payload: { aps: { sound: 'default' } } },
             },
@@ -119,6 +121,10 @@ serve(async (_req: Request) => {
         await supabase.from('notification_log').insert({
           user_id: u.userId,
           notification_type: 'community_momentum',
+          notification_id: nid,
+          title,
+          body,
+          route,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

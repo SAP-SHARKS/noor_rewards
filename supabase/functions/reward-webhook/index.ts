@@ -109,16 +109,18 @@ serve(async (req: Request) => {
     const accessToken = tokenDataRes.access_token;
 
     // 5. Send Firebase Push Notification
+    const nid   = crypto.randomUUID();
+    const title = 'Reward Unlocked 🎉';
+    const body  = pushMessage;
+
     const fcmPayload = {
       message: {
         token: fcmToken,
-        notification: {
-          title: 'Reward Unlocked 🎉',
-          body: pushMessage
-        },
+        notification: { title, body },
         data: {
           type: 'webhook_reward',
-          record_id: String(record.id || '')
+          record_id: String(record.id || ''),
+          nid,
         },
         android: {
           priority: 'high',
@@ -142,15 +144,26 @@ serve(async (req: Request) => {
 
     const fcmResult = await fcmResponse.json();
 
+    if (fcmResponse.ok) {
+      await supabase.from('notification_log').insert({
+        user_id: userId,
+        notification_type: 'webhook_reward',
+        notification_id: nid,
+        title,
+        body,
+        sent_at: new Date().toISOString(),
+      }).catch(() => {});
+    }
+
     // CRITICAL: We return 200 OK regardless of FCM success.
     // Database Webhooks will indefinitely retry if they receive a 4xx or 5xx code,
     // which could result in massive spam if Firebase drops the request.
-    return new Response(JSON.stringify({ 
-      success: fcmResponse.ok, 
+    return new Response(JSON.stringify({
+      success: fcmResponse.ok,
       sent_to: userId,
-      result: fcmResult 
+      result: fcmResult
     }), {
-      status: 200, 
+      status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
 

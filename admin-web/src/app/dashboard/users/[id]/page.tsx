@@ -57,6 +57,17 @@ type DailyStat = {
 
 type PhraseCount = { phrase_id: string; count: number };
 
+type NotificationRow = {
+  id: string;
+  notification_id: string | null;
+  notification_type: string | null;
+  title: string | null;
+  body: string | null;
+  route: string | null;
+  sent_at: string | null;
+  opened_at: string | null;
+};
+
 type FcmToken = {
   user_id: string;
   token: string | null;
@@ -125,6 +136,7 @@ export default function UserDetailPage() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [badges, setBadges] = useState<Badge[]>([]);
+  const [notifications, setNotifications] = useState<NotificationRow[]>([]);
 
   async function loadAll() {
     setLoading(true);
@@ -146,6 +158,7 @@ export default function UserDetailPage() {
         bookmarksRes,
         activitiesRes,
         badgesRes,
+        notificationsRes,
       ] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
         supabase
@@ -192,6 +205,14 @@ export default function UserDetailPage() {
           .order("created_at", { ascending: false })
           .limit(25),
         supabase.from("badges").select("*").eq("user_id", uid),
+        supabase
+          .from("notification_log")
+          .select(
+            "id, notification_id, notification_type, title, body, route, sent_at, opened_at",
+          )
+          .eq("user_id", uid)
+          .order("sent_at", { ascending: false })
+          .limit(200),
       ]);
 
       setProfile((profileRes.data as Profile) ?? null);
@@ -204,6 +225,7 @@ export default function UserDetailPage() {
       setBookmarks((bookmarksRes.data as Bookmark[]) ?? []);
       setActivities((activitiesRes.data as Activity[]) ?? []);
       setBadges((badgesRes.data as Badge[]) ?? []);
+      setNotifications((notificationsRes.data as NotificationRow[]) ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -579,6 +601,9 @@ export default function UserDetailPage() {
         )}
       </Card>
 
+      {/* Push notifications — sent vs opened analytics */}
+      <NotificationsCard rows={notifications} />
+
       {/* Device / notifications / privacy-relevant info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card title="Account & device">
@@ -845,6 +870,171 @@ function Legend({ color, label }: { color: string; label: string }) {
     <div className="flex items-center gap-1.5">
       <span className={`w-3 h-3 rounded-sm ${color}`} />
       <span className="text-slate-600 dark:text-slate-300">{label}</span>
+    </div>
+  );
+}
+
+function NotificationsCard({ rows }: { rows: NotificationRow[] }) {
+  const totalSent = rows.length;
+  const totalOpened = rows.filter((r) => r.opened_at).length;
+  const openRate = totalSent === 0
+    ? 0
+    : Math.round((totalOpened / totalSent) * 1000) / 10;
+
+  // Per-template aggregate (helps spot which campaign performs best)
+  const byTemplate = new Map<string, { sent: number; opened: number }>();
+  for (const r of rows) {
+    const key = r.notification_type ?? "(uncategorized)";
+    const cur = byTemplate.get(key) ?? { sent: 0, opened: 0 };
+    cur.sent += 1;
+    if (r.opened_at) cur.opened += 1;
+    byTemplate.set(key, cur);
+  }
+  const templateRows = Array.from(byTemplate.entries())
+    .map(([type, v]) => ({
+      type,
+      sent: v.sent,
+      opened: v.opened,
+      rate: v.sent === 0 ? 0 : Math.round((v.opened / v.sent) * 1000) / 10,
+    }))
+    .sort((a, b) => b.sent - a.sent);
+
+  return (
+    <Card title={`Push notifications (${totalSent})`}>
+      {totalSent === 0 ? (
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          No notifications sent to this user yet.
+        </p>
+      ) : (
+        <>
+          {/* Top-level summary */}
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            <SummaryStat label="Sent" value={totalSent.toString()} />
+            <SummaryStat label="Opened" value={totalOpened.toString()} />
+            <SummaryStat label="Open rate" value={`${openRate}%`} accent />
+          </div>
+
+          {/* Per-template breakdown */}
+          {templateRows.length > 0 && (
+            <div className="mb-5">
+              <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+                By template
+              </h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                      <th className="py-2 pr-3 font-medium">Template</th>
+                      <th className="py-2 px-2 font-medium text-right">Sent</th>
+                      <th className="py-2 px-2 font-medium text-right">Opened</th>
+                      <th className="py-2 pl-2 font-medium text-right">Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {templateRows.map((t) => (
+                      <tr
+                        key={t.type}
+                        className="border-b border-slate-100 dark:border-slate-700 last:border-0"
+                      >
+                        <td className="py-2 pr-3 font-mono text-slate-700 dark:text-slate-200 truncate max-w-[260px]">
+                          {t.type}
+                        </td>
+                        <td className="py-2 px-2 text-right tabular-nums text-slate-800 dark:text-white">
+                          {t.sent}
+                        </td>
+                        <td className="py-2 px-2 text-right tabular-nums text-slate-800 dark:text-white">
+                          {t.opened}
+                        </td>
+                        <td className="py-2 pl-2 text-right tabular-nums text-slate-600 dark:text-slate-300">
+                          {t.rate}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Recent 20 messages */}
+          <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+            Recent (latest {Math.min(20, rows.length)})
+          </h4>
+          <ul className="space-y-1 max-h-96 overflow-y-auto">
+            {rows.slice(0, 20).map((r) => (
+              <li
+                key={r.id}
+                className="border-b border-slate-100 dark:border-slate-700 last:border-0 py-2"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-800 dark:text-white truncate">
+                      {r.title || "(no title)"}
+                    </p>
+                    {r.body && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                        {r.body}
+                      </p>
+                    )}
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
+                      {r.notification_type ?? "—"}
+                      {r.route ? ` · route: ${r.route}` : ""}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <span
+                      className={`inline-block px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                        r.opened_at
+                          ? "bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300"
+                          : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
+                      }`}
+                    >
+                      {r.opened_at ? "opened" : "sent"}
+                    </span>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                      {r.sent_at
+                        ? new Date(r.sent_at).toLocaleString()
+                        : "—"}
+                    </p>
+                    {r.opened_at && (
+                      <p className="text-[10px] text-teal-600 dark:text-teal-400">
+                        opened {new Date(r.opened_at).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </Card>
+  );
+}
+
+function SummaryStat({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="bg-slate-50 dark:bg-slate-900/40 rounded-lg p-3 text-center">
+      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+        {label}
+      </p>
+      <p
+        className={`text-xl font-semibold mt-1 tabular-nums ${
+          accent
+            ? "text-teal-600 dark:text-teal-300"
+            : "text-slate-800 dark:text-white"
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

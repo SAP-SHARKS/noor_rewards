@@ -130,6 +130,8 @@ serve(async (_req: Request) => {
       body: string,
       logType: string,
     ) => {
+      const nid   = crypto.randomUUID();
+      const route = logType === 'morning_azkaar' ? 'morning' : 'evening';
       let anySuccess = false;
       for (const token of tokens) {
         const res = await fetch(
@@ -144,7 +146,7 @@ serve(async (_req: Request) => {
               message: {
                 token,
                 notification: { title, body },
-                data: { route: logType === 'morning_azkaar' ? 'morning' : 'evening' },
+                data: { route, nid },
                 android: { priority: 'high', notification: { sound: 'default' } },
                 apns: { payload: { aps: { sound: 'default' } } },
               },
@@ -161,6 +163,10 @@ serve(async (_req: Request) => {
           await supabase.from('notification_log').insert({
             user_id: userId,
             notification_type: logType,
+            notification_id: nid,
+            title,
+            body,
+            route,
             sent_at: now.toISOString(),
           });
         } catch (_) {}

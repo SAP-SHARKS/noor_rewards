@@ -223,7 +223,19 @@ class NotificationService {
   // ── Notification tap → deep link ────────────────────────────────────────────
   void _handleMessageTap(RemoteMessage message) {
     final route = message.data['route'] as String?;
-    debugPrint('FCM tap, route: $route');
+    final nid = message.data['nid'] as String?;
+    debugPrint('FCM tap, route: $route, nid: $nid');
+
+    // Log the open. Fire-and-forget; auth + RLS guarantee the row only
+    // updates for the signed-in user. Wrapped in try/catch so a logging
+    // failure never blocks the navigation below.
+    if (nid != null && nid.isNotEmpty) {
+      Supabase.instance.client
+          .rpc('mark_notification_opened', params: {'p_nid': nid})
+          .then((_) {}, onError: (e) {
+        debugPrint('mark_notification_opened failed: $e');
+      });
+    }
 
     final nav = notificationNavigatorKey.currentState;
     if (nav == null) return;
