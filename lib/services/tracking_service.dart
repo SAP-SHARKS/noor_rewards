@@ -9,6 +9,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
@@ -73,10 +74,23 @@ class TrackingService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
 
+    // Resolve country + device independently so one failure can't kill the
+    // other. Each helper has its own try/catch and returns sane defaults.
+    String? country;
     try {
-      final country = await _resolveCountryCode();
-      final deviceInfo = await _resolveDevice();
+      country = await _resolveCountryCode();
+    } catch (e) {
+      debugPrint('[TrackingService] country resolve failed: $e');
+    }
 
+    (String, String) deviceInfo = ('Unknown', Platform.operatingSystem);
+    try {
+      deviceInfo = await _resolveDevice();
+    } catch (e) {
+      debugPrint('[TrackingService] device resolve failed: $e');
+    }
+
+    try {
       await _sb.from('user_analytics').upsert({
         'user_id': uid,
         'country_code': country,
@@ -84,21 +98,58 @@ class TrackingService {
         'device_type': deviceInfo.$2,
         'last_active_at': DateTime.now().toIso8601String(),
       }, onConflict: 'user_id');
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[TrackingService] upsert failed: $e');
+    }
   }
 
-  /// Returns ISO 3166-1 alpha-2 country code ('PK', 'GB', …) using ip-api.
-  /// The raw IP is NEVER stored — we only keep the country code.
+  /// Returns ISO 3166-1 alpha-2 country code ('PK', 'GB', …).
+  ///
+  /// Tries two HTTPS-only free providers in order so a single outage or rate
+  /// limit on one doesn't blank out everyone's country. The raw IP is NEVER
+  /// stored — we only keep the country code.
   Future<String?> _resolveCountryCode() async {
+    // Provider 1: api.country.is — simplest, no rate limit, returns
+    // {"ip":"...","country":"PK"}.
+    final fromCountryIs = await _fetchCountry(
+      Uri.parse('https://api.country.is/'),
+      jsonKey: 'country',
+    );
+    if (fromCountryIs != null) return fromCountryIs;
+
+    // Provider 2: ipapi.co — free 1000/day, returns
+    // {"country_code":"PK", ...}.
+    final fromIpApi = await _fetchCountry(
+      Uri.parse('https://ipapi.co/json/'),
+      jsonKey: 'country_code',
+    );
+    if (fromIpApi != null) return fromIpApi;
+
+    debugPrint('[TrackingService] both country providers failed');
+    return null;
+  }
+
+  Future<String?> _fetchCountry(Uri url, {required String jsonKey}) async {
     try {
       final res = await http
-          .get(Uri.parse('http://ip-api.com/json/?fields=countryCode'))
-          .timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        return data['countryCode'] as String?;
+          .get(
+            url,
+            headers: const {'User-Agent': 'noor-rewards/1.0'},
+          )
+          .timeout(const Duration(seconds: 6));
+      if (res.statusCode != 200) {
+        debugPrint(
+          '[TrackingService] $url returned HTTP ${res.statusCode}: ${res.body.substring(0, res.body.length < 120 ? res.body.length : 120)}',
+        );
+        return null;
       }
-    } catch (_) {}
+      final data = jsonDecode(res.body) as Map<String, dynamic>;
+      final code = data[jsonKey] as String?;
+      if (code != null && code.length == 2) return code.toUpperCase();
+      debugPrint('[TrackingService] $url returned unexpected body: ${res.body}');
+    } catch (e) {
+      debugPrint('[TrackingService] $url fetch threw: $e');
+    }
     return null;
   }
 

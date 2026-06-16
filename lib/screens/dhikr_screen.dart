@@ -119,7 +119,17 @@ class _Azkar {
   /// primary line in the list view so users can recognize the azkar by name
   /// rather than by its opening transliteration (which is often "Bismillah
   /// hir Rahmaan ir Raheem..." — identical for many surahs).
+  ///
+  /// May be Urdu / Arabic when the active locale has a populated
+  /// `title_<locale>` column. Use [englishTitle] when you need the English
+  /// original for pattern matching (e.g. `_titleIsRealName`).
   final String title;
+  /// English original of [title] — always the base `azkar_items.title`
+  /// column, never the per-locale variant. Required so legacy code that
+  /// inspects the title text (the `_titleIsRealName` allow-list of "Surah",
+  /// "Ayatul..." prefixes, the `_wellKnownAzkarName` recognizer, etc.)
+  /// keeps working when the displayed [title] is in Urdu / Arabic.
+  final String englishTitle;
   /// Optional segmented-counter structure. Non-null for compound dhikr
   /// (e.g. Tasbih Fatima 33+33+34). Each phrase is its own count, but
   /// the overall counter still goes 0..sum(phrase.count).
@@ -142,29 +152,46 @@ class _Azkar {
     this.audioUrl,
     this.sortOrder = 0,
     this.title = '',
+    this.englishTitle = '',
     this.phrases,
     this.quranSurah,
   });
 
-  factory _Azkar.fromJson(Map<String, dynamic> j) => _Azkar(
+  /// [locale] is the active language code (e.g. 'ar', 'ur'). When non-null
+  /// and the matching `title_<locale>` / `translation_<locale>` /
+  /// `reward_<locale>` column has a non-empty value, that locale-specific
+  /// text is used instead of the English original. Falls back to English
+  /// for any row that hasn't had its translation filled in yet, so the
+  /// list never goes blank during the gradual translation rollout.
+  factory _Azkar.fromJson(Map<String, dynamic> j, {String? locale}) {
+    String pick(String baseKey) {
+      final base = (j[baseKey] as String?)?.trim() ?? '';
+      if (locale == null || locale.isEmpty) return base;
+      final localized = (j['${baseKey}_$locale'] as String?)?.trim() ?? '';
+      return localized.isNotEmpty ? localized : base;
+    }
+
+    return _Azkar(
     id: j['id'] as String? ?? '',
     arabic: j['arabic'] as String? ?? '',
     transliteration: j['transliteration'] as String? ?? '',
-    translation: j['translation'] as String? ?? '',
+    translation: pick('translation'),
     recommendedCount: j['recommended_count'] as int? ?? 1,
     category:
         j['category_id'] as String? ?? j['category']?.toString() ?? 'general',
-    reward: j['reward'] as String? ?? '',
+    reward: pick('reward'),
     reference: j['reference'] as String? ?? '',
     hadithFull: j['hadith_full'] as String? ?? '',
     audioUrl: j['audio_url'] as String?,
     sortOrder: j['sort_order'] as int? ?? 0,
-    title: (j['title'] as String?)?.trim() ?? '',
+    title: pick('title'),
+    englishTitle: (j['title'] as String?)?.trim() ?? '',
     phrases: (j['phrases'] as List?)
         ?.map((e) => _Phrase.fromJson(e as Map<String, dynamic>))
         .toList(),
     quranSurah: (j['quran_surah'] as num?)?.toInt(),
   );
+  }
 
   /// Returns which phrase is active for [tapCount] taps. Null when this
   /// azkar isn't segmented.
@@ -409,6 +436,25 @@ class _DhikrScreenState extends State<DhikrScreen> {
     );
     _selectedCat = widget.initialCategory;
     _initData();
+  }
+
+  /// Tracks the language code the azkar list was last loaded for. When the
+  /// user switches locale (e.g. via Settings), `didChangeDependencies` fires
+  /// with a different value and we re-fetch so the new locale's
+  /// `title_<code>` / `translation_<code>` / `reward_<code>` columns get
+  /// picked up.
+  String? _lastLoadedLang;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final lang = Localizations.maybeLocaleOf(context)?.languageCode;
+    if (_lastLoadedLang != null && _lastLoadedLang != lang) {
+      // Language switched at runtime — drop cached data and reload so the
+      // app pulls the matching localized columns from Supabase.
+      _initData();
+    }
+    _lastLoadedLang = lang;
   }
 
   @override
@@ -891,8 +937,15 @@ class _DhikrScreenState extends State<DhikrScreen> {
           )
           .toList();
 
-      final fetchedItems =
-          results[1].map((i) => _Azkar.fromJson(i)).toList();
+      // Pick the per-locale title/translation/reward columns when present
+      // (currently only Arabic + Urdu have those columns populated; other
+      // locales just fall through to the English base columns).
+      final locale =
+          Localizations.maybeLocaleOf(context)?.languageCode;
+      final localeKey = (locale == 'ar' || locale == 'ur') ? locale : null;
+      final fetchedItems = results[1]
+          .map((i) => _Azkar.fromJson(i, locale: localeKey))
+          .toList();
 
       if (fetchedCats.isNotEmpty && fetchedItems.isNotEmpty) {
         _categories = fetchedCats;
@@ -931,6 +984,9 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
   Future<void> _loadLocalFallback() async {
     final raw = await rootBundle.loadString('assets/data/azkar.json');
+    // Local fallback only has English text (the bundled JSON), so we don't
+    // pass a locale — it would lookup `title_<locale>` fields that simply
+    // don't exist in the asset file.
     final list =
         (jsonDecode(raw) as List)
             .map((e) => _Azkar.fromJson(e as Map<String, dynamic>))
@@ -2377,7 +2433,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                         //      so the actual dua text shows.
                                                         Text(
                                                           () {
-                                                            if (_titleIsRealName(azkar.title)) {
+                                                            // Use the English title for the recognizer
+                                                            // (its allow-list is English prefixes), but
+                                                            // show the localized one if the row's
+                                                            // title_<locale> column was filled.
+                                                            if (_titleIsRealName(azkar.englishTitle)) {
                                                               return azkar.title;
                                                             }
                                                             final wellKnown =
@@ -2385,7 +2445,40 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                   azkar,
                                                                 );
                                                             if (wellKnown.isNotEmpty) {
-                                                              return wellKnown;
+                                                              return _localizeWellKnownAzkarName(
+                                                                context,
+                                                                wellKnown,
+                                                              );
+                                                            }
+                                                            // In Arabic / Urdu locale, prefer the actual
+                                                            // Arabic text over the Latin transliteration
+                                                            // for nameless azkar — reading "أصبحنا..." in
+                                                            // a fully Arabic-script UI is far less jarring
+                                                            // than "Asbahna...".
+                                                            final lang =
+                                                                Localizations.maybeLocaleOf(
+                                                                      context,
+                                                                    )?.languageCode;
+                                                            if ((lang == 'ar' ||
+                                                                    lang ==
+                                                                        'ur') &&
+                                                                azkar.arabic
+                                                                    .trim()
+                                                                    .isNotEmpty) {
+                                                              final ar = _cleanArabic(
+                                                                azkar.arabic,
+                                                                azkarId:
+                                                                    azkar.id,
+                                                              )
+                                                                  .replaceAll(
+                                                                    '\n',
+                                                                    ' ',
+                                                                  )
+                                                                  .trim();
+                                                              return ar.length >
+                                                                      40
+                                                                  ? '${ar.substring(0, 40).trimRight()}..'
+                                                                  : ar;
                                                             }
                                                             final src =
                                                                 _stripBismillahPrefix(
@@ -4248,6 +4341,39 @@ String _normalizeTranslit(String s) {
 ///
 /// Returns empty string when no well-known pattern matches — caller then
 /// falls back to the Bismillah-stripped transliteration snippet.
+/// Translates a hardcoded English name returned by [_wellKnownAzkarName]
+/// into the active locale (Arabic / Urdu) when possible. Falls back to the
+/// original English string for any name not in the map and for any locale
+/// other than ar/ur.
+String _localizeWellKnownAzkarName(BuildContext context, String englishName) {
+  if (englishName.isEmpty) return englishName;
+  final lang = Localizations.maybeLocaleOf(context)?.languageCode;
+  if (lang != 'ar' && lang != 'ur') return englishName;
+
+  // Urdu (and Arabic — same Quranic surah names work for both since they're
+  // already Arabic phrases written in the Perso-Arabic script).
+  const map = <String, String>{
+    'Surah Al-Fatihah': 'سورۃ الفاتحہ',
+    'Surah Al-Ikhlas': 'سورۃ الاخلاص',
+    'Surah Al-Falaq': 'سورۃ الفلق',
+    'Surah An-Nas': 'سورۃ الناس',
+    'Surah Al-Kafirun': 'سورۃ الکافرون',
+    'Surah Al-Mulk': 'سورۃ الملک',
+    'Surah As-Sajdah': 'سورۃ السجدہ',
+    'Ayatul Kursi': 'آیت الکرسی',
+    'Al-Baqarah 285 (Amana ar-Rasool)': 'سورۃ البقرہ ۲۸۵',
+    'Al-Baqarah 286': 'سورۃ البقرہ ۲۸۶',
+    'Al-Baqarah 1-5 (Alif Lam Mim)': 'سورۃ البقرہ ۱-۵',
+    'Al-Baqarah 256 (La Ikraha)': 'سورۃ البقرہ ۲۵۶',
+    'Al-Baqarah 257 (Allahu Waliyy)': 'سورۃ البقرہ ۲۵۷',
+    'Al-Baqarah 284': 'سورۃ البقرہ ۲۸۴',
+    'Sayyid al-Istighfar': 'سید الاستغفار',
+    "Hasbunallahu wa ni'mal Wakeel": 'حسبنا اللہ ونعم الوکیل',
+    'Salawat Ibrahimiyya (Durood)': 'صلاۃِ ابراہیمی (درود)',
+  };
+  return map[englishName] ?? englishName;
+}
+
 String _wellKnownAzkarName(_Azkar azkar) {
   final raw = azkar.transliteration;
   if (raw.isEmpty) return '';
@@ -6017,6 +6143,28 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
 // =============================================================================
 // Illustration picker — returns the right visual for each Azkar
 // =============================================================================
+
+/// Public wrapper so the preview-generator entry point
+/// (lib/preview_gen_main.dart) can render any illustration by its key without
+/// poking at the private switch below. Defaults to a mid-progress state so
+/// the snapshot captures the most visually interesting moment.
+Widget buildIllustrationForPreview({
+  required String key,
+  double progress = 0.6,
+  bool isComplete = false,
+  int tapCount = 12,
+  int pointsToday = 50,
+}) {
+  return _buildIllustration(
+    azkarId: '',
+    progress: progress,
+    isComplete: isComplete,
+    tapCount: tapCount,
+    pointsToday: pointsToday,
+    animationKeyOverride: key,
+  );
+}
+
 Widget _buildIllustration({
   required String azkarId,
   required double progress,

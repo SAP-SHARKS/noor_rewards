@@ -53,6 +53,17 @@ type SortKey =
 type SortDir = "asc" | "desc";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+// Always render dates as MM/DD/YYYY regardless of browser locale.
+function fmtMDY(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "—";
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${mm}/${dd}/${yyyy}`;
+}
+
 function fmtAgo(iso: string | null): string {
   if (!iso) return "—";
   const t = new Date(iso).getTime();
@@ -64,7 +75,7 @@ function fmtAgo(iso: string | null): string {
   if (days < 7) return `${days}d ago`;
   if (days < 30) return `${Math.floor(days / 7)}w ago`;
   if (days < 365) return `${Math.floor(days / 30)}mo ago`;
-  return new Date(iso).toLocaleDateString();
+  return fmtMDY(iso);
 }
 
 // ─── Page ───────────────────────────────────────────────────────────────────
@@ -434,7 +445,7 @@ export default function UsersPage() {
                   {fmtAgo(u.last_active_at)}
                 </td>
                 <td className="px-4 py-3 text-right text-slate-500 text-xs">
-                  {new Date(u.created_at).toLocaleDateString()}
+                  {fmtMDY(u.created_at)}
                 </td>
                 <td className="px-4 py-3 text-right">
                   {grantUserId === u.id ? (
