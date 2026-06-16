@@ -102,14 +102,26 @@ function fmtDuration(sec: number | null | undefined) {
   if (m > 0) return `${m}m ${s}s`;
   return `${s}s`;
 }
-function fmtDate(s: string | null | undefined) {
+// Always render dates as MM/DD/YYYY (with optional 24-hr time) regardless
+// of browser locale, so the admin sees a consistent US-style format.
+function fmtMDY(s: string | null | undefined, withTime = false): string {
   if (!s) return "—";
   try {
-    return new Date(s).toLocaleString();
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return s;
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const date = `${mm}/${dd}/${yyyy}`;
+    if (!withTime) return date;
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mi = String(d.getMinutes()).padStart(2, "0");
+    return `${date}, ${hh}:${mi}`;
   } catch {
     return s;
   }
 }
+const fmtDate = (s: string | null | undefined) => fmtMDY(s, true);
 function countryFlag(iso: string | null | undefined) {
   if (!iso || iso.length !== 2) return "";
   const codePoints = [...iso.toUpperCase()].map(
@@ -211,6 +223,7 @@ export default function UserDetailPage() {
             "id, notification_id, notification_type, title, body, route, sent_at, opened_at",
           )
           .eq("user_id", uid)
+          .not("notification_id", "is", null)
           .order("sent_at", { ascending: false })
           .limit(200),
       ]);
@@ -602,7 +615,11 @@ export default function UserDetailPage() {
       </Card>
 
       {/* Push notifications — sent vs opened analytics */}
-      <NotificationsCard rows={notifications} />
+      <NotificationsCard
+        rows={notifications}
+        userId={uid}
+        onAfterSend={loadAll}
+      />
 
       {/* Device / notifications / privacy-relevant info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -874,7 +891,59 @@ function Legend({ color, label }: { color: string; label: string }) {
   );
 }
 
-function NotificationsCard({ rows }: { rows: NotificationRow[] }) {
+function NotificationsCard({
+  rows,
+  userId,
+  onAfterSend,
+}: {
+  rows: NotificationRow[];
+  userId: string;
+  onAfterSend: () => void;
+}) {
+  const [testTitle, setTestTitle] = useState("🔔 Admin test push");
+  const [testBody, setTestBody] = useState(
+    "Tap this to verify open-tracking is wired up.",
+  );
+  const [sending, setSending] = useState(false);
+  const [sendMsg, setSendMsg] = useState<string | null>(null);
+
+  async function sendTest() {
+    setSending(true);
+    setSendMsg(null);
+    try {
+      // Grab the currently signed-in admin's email — the edge function
+      // verifies this is in its ADMIN_EMAILS allowlist.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const adminEmail = sessionData?.session?.user?.email ?? "";
+      if (!adminEmail) {
+        throw new Error(
+          "Could not read admin email from session — sign out and back in.",
+        );
+      }
+
+      const { data, error } = await supabase.functions.invoke(
+        "admin-test-push",
+        {
+          body: {
+            user_id: userId,
+            title: testTitle,
+            body: testBody,
+            admin_email: adminEmail,
+          },
+        },
+      );
+      if (error) throw error;
+      const result = data as { success?: boolean; error?: string } | null;
+      if (result?.error) throw new Error(result.error);
+      setSendMsg("Sent — tap it on the device, then click Refresh on this page.");
+      onAfterSend();
+    } catch (e) {
+      setSendMsg(`Failed: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setSending(false);
+    }
+  }
+
   const totalSent = rows.length;
   const totalOpened = rows.filter((r) => r.opened_at).length;
   const openRate = totalSent === 0
@@ -901,6 +970,49 @@ function NotificationsCard({ rows }: { rows: NotificationRow[] }) {
 
   return (
     <Card title={`Push notifications (${totalSent})`}>
+      {/* Send-test panel — works for any user the admin opens */}
+      <div className="mb-5 p-3 rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/40">
+        <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide mb-2">
+          Send test notification
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+          <input
+            type="text"
+            value={testTitle}
+            onChange={(e) => setTestTitle(e.target.value)}
+            placeholder="Title"
+            className="md:col-span-1 px-2.5 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-800"
+          />
+          <input
+            type="text"
+            value={testBody}
+            onChange={(e) => setTestBody(e.target.value)}
+            placeholder="Body"
+            className="md:col-span-2 px-2.5 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-800"
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={sendTest}
+            disabled={sending || !testTitle.trim() || !testBody.trim()}
+            className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white text-sm rounded cursor-pointer disabled:cursor-not-allowed"
+          >
+            {sending ? "Sending…" : "Send test push"}
+          </button>
+          {sendMsg && (
+            <p
+              className={`text-xs ${
+                sendMsg.startsWith("Failed")
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-teal-600 dark:text-teal-400"
+              }`}
+            >
+              {sendMsg}
+            </p>
+          )}
+        </div>
+      </div>
+
       {totalSent === 0 ? (
         <p className="text-sm text-slate-500 dark:text-slate-400">
           No notifications sent to this user yet.
@@ -992,13 +1104,11 @@ function NotificationsCard({ rows }: { rows: NotificationRow[] }) {
                       {r.opened_at ? "opened" : "sent"}
                     </span>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
-                      {r.sent_at
-                        ? new Date(r.sent_at).toLocaleString()
-                        : "—"}
+                      {fmtMDY(r.sent_at, true)}
                     </p>
                     {r.opened_at && (
                       <p className="text-[10px] text-teal-600 dark:text-teal-400">
-                        opened {new Date(r.opened_at).toLocaleString()}
+                        opened {fmtMDY(r.opened_at, true)}
                       </p>
                     )}
                   </div>
