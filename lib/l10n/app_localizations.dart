@@ -5041,6 +5041,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Akhirah'**
   String get akhirahArabic;
+
+  /// No description provided for @bookOfCompletePrayer.
+  ///
+  /// In en, this message translates to:
+  /// **'The Book of Complete Prayer'**
+  String get bookOfCompletePrayer;
 }
 
 class _AppLocalizationsDelegate

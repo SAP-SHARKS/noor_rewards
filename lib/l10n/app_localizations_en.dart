@@ -2780,4 +2780,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get akhirahArabic => 'Akhirah';
+
+  @override
+  String get bookOfCompletePrayer => 'The Book of Complete Prayer';
 }
