@@ -1193,6 +1193,46 @@ class _HomeTabState extends State<_HomeTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Admin-controlled top banner (banner_enabled +
+                  // banner_text + banner_color from app_config) ──────────
+                  if (context
+                          .watch<SettingsService>()
+                          .config
+                          .bannerEnabled &&
+                      context
+                          .watch<SettingsService>()
+                          .config
+                          .bannerText
+                          .isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context
+                              .watch<SettingsService>()
+                              .config
+                              .bannerColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          context
+                              .watch<SettingsService>()
+                              .config
+                              .bannerText,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   // ── Header: greeting + bell + avatar tile ───────────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),

@@ -2789,4 +2789,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get akhirahArabic => 'Akhirah';
+
+  @override
+  String get bookOfCompletePrayer => 'Kitab Doa Lengkap';
 }

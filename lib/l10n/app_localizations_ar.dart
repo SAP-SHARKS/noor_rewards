@@ -2764,4 +2764,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get akhirahArabic => 'Akhirah';
+
+  @override
+  String get bookOfCompletePrayer => 'كتاب الدعاء الكامل';
 }

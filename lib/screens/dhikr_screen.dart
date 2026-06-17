@@ -130,6 +130,12 @@ class _Azkar {
   /// "Ayatul..." prefixes, the `_wellKnownAzkarName` recognizer, etc.)
   /// keeps working when the displayed [title] is in Urdu / Arabic.
   final String englishTitle;
+  /// Optional in-list section grouping label (e.g. "Supplications from
+  /// al-Baqarah", "Prophetic Supplications"). When non-empty and different
+  /// from the previous item's `section`, the list inserts a bold divider
+  /// row between items so the user sees the chapter break. Empty = no
+  /// grouping (legacy categories that aren't subdivided).
+  final String section;
   /// Optional segmented-counter structure. Non-null for compound dhikr
   /// (e.g. Tasbih Fatima 33+33+34). Each phrase is its own count, but
   /// the overall counter still goes 0..sum(phrase.count).
@@ -153,6 +159,7 @@ class _Azkar {
     this.sortOrder = 0,
     this.title = '',
     this.englishTitle = '',
+    this.section = '',
     this.phrases,
     this.quranSurah,
   });
@@ -186,6 +193,7 @@ class _Azkar {
     sortOrder: j['sort_order'] as int? ?? 0,
     title: pick('title'),
     englishTitle: (j['title'] as String?)?.trim() ?? '',
+    section: (j['section'] as String?)?.trim() ?? '',
     phrases: (j['phrases'] as List?)
         ?.map((e) => _Phrase.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -257,6 +265,8 @@ String _localCategoryName(BuildContext context, String id, String label) {
       return l.ruquiyaCategory;
     case 'asmaul_husna':
       return l.namesOfAllah;
+    case 'book_of_prayer':
+      return l.bookOfCompletePrayer;
     case 'nightmares':
       return l.nightmares;
     case 'waking_up':
@@ -347,6 +357,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
   List<_Azkar> _filtered = [];
   List<_Category> _categories = [];
   late String _selectedCat;
+
+  // Sections expanded by user. Defaults to empty so all groups start
+  // collapsed — the user sees a compact chapter list and taps to open. Items
+  // with empty `section` (categories that aren't subdivided) are always
+  // shown regardless of this set.
+  final Set<String> _expandedSections = <String>{};
 
   // ── Tag-based categorization (many-to-many from azkar_item_categories) ──
   // azkar_id → list of category_ids. Empty for any azkar that wasn't tagged
@@ -2317,6 +2333,39 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                           _completedIds.contains(azkar.id);
                                       final accent = catColor(azkar.category);
 
+                                      // Insert a bold "section header" row
+                                      // when this item's section differs from
+                                      // the previous one — gives the user the
+                                      // chapter / surah grouping inside a
+                                      // single category list (Book of Complete
+                                      // Prayer, etc.). Items with empty
+                                      // section never trigger a header.
+                                      final prevSection = index > 0
+                                          ? _filtered[index - 1].section
+                                          : '';
+                                      final showSectionHeader =
+                                          azkar.section.isNotEmpty &&
+                                              azkar.section != prevSection;
+
+                                      // Section collapsed by default — only
+                                      // render the item when its section is
+                                      // expanded (or the item has no section).
+                                      final isSectionExpanded =
+                                          azkar.section.isEmpty ||
+                                              _expandedSections
+                                                  .contains(azkar.section);
+
+                                      // Count items in this section so the
+                                      // header can show "Surah X · 12".
+                                      int sectionItemCount = 0;
+                                      if (showSectionHeader) {
+                                        for (final a in _filtered) {
+                                          if (a.section == azkar.section) {
+                                            sectionItemCount++;
+                                          }
+                                        }
+                                      }
+
                                       String titleText =
                                           (azkar.transliteration.isNotEmpty &&
                                                   azkar.transliteration
@@ -2332,6 +2381,27 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       return Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
+                                          if (showSectionHeader)
+                                            _DhikrSectionHeader(
+                                              label: azkar.section,
+                                              isDark: isDark,
+                                              isFirst: index == 0,
+                                              isExpanded: isSectionExpanded,
+                                              itemCount: sectionItemCount,
+                                              onTap: () => setState(() {
+                                                if (_expandedSections
+                                                    .contains(azkar.section)) {
+                                                  _expandedSections
+                                                      .remove(azkar.section);
+                                                } else {
+                                                  _expandedSections
+                                                      .add(azkar.section);
+                                                }
+                                              }),
+                                            ),
+                                          if (!isSectionExpanded)
+                                            const SizedBox.shrink()
+                                          else
                                           GestureDetector(
                                             onTap: () async {
                                               await Navigator.push(
@@ -2580,8 +2650,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                               ),
                                             ),
                                           ),
-                                          // Divider — only between items, not after the last
-                                          if (index < _filtered.length - 1)
+                                          // Divider — only between visible items, never
+                                          // around a collapsed item (otherwise 100 hidden
+                                          // dividers stack into a fat blank gap between
+                                          // section headers).
+                                          if (isSectionExpanded &&
+                                              index < _filtered.length - 1)
                                             Divider(
                                               height: 1,
                                               thickness: 0.5,
@@ -3244,7 +3318,6 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     if (justCompleted) {
       _pagesCompletedInSession++;
       widget.parentState._completeDhikr(azkar.id, tapTarget);
-      _showRewardSecuredToast();
 
       if (!isSwipe) {
         final currentGlobalIndex = widget.azkars.indexOf(azkar);
@@ -27495,6 +27568,70 @@ class _RewardSecuredToastState extends State<_RewardSecuredToast>
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+// ── Section header row used inside the azkar list ────────────────────────
+// Rendered when an item's `section` differs from the previous one. Acts as
+// a quiet typographic divider between chapters (e.g. "Supplications from
+// al-Baqarah" → "Supplications from Aal 'Imran") inside a single category.
+class _DhikrSectionHeader extends StatelessWidget {
+  final String label;
+  final bool isDark;
+  final bool isFirst;
+  final bool isExpanded;
+  final int itemCount;
+  final VoidCallback? onTap;
+  const _DhikrSectionHeader({
+    required this.label,
+    required this.isDark,
+    required this.isFirst,
+    this.isExpanded = true,
+    this.itemCount = 0,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = isDark
+        ? Colors.white.withValues(alpha: 0.78)
+        : const Color(0xFF7A5200); // honey-deep text on cream
+    final bg = isDark
+        ? Colors.white.withValues(alpha: 0.04)
+        : const Color(0xFFFCEFCB); // soft cream-amber stripe
+    return Material(
+      color: bg,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(20, isFirst ? 14 : 22, 16, 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  itemCount > 0 ? '$label  ·  $itemCount' : label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: fg,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              if (onTap != null)
+                Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
+                  size: 20,
+                  color: fg,
+                ),
+            ],
+          ),
         ),
       ),
     );

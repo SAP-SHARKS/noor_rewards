@@ -1,22 +1,89 @@
+// lib/screens/dhikr_hub_screen.dart
+//
+// Dua & Azkar hub — Variant A "Editorial Cards" redesign.
+//
+// • Morning + Evening sit at the top as two painterly hero cards (no
+//   imagery — sun/moon scenes are CustomPainted).
+// • Every other category — both "essentials" and "others" — renders as a
+//   simple white row: gold monoline icon chip · serif name · meta · chevron.
+// • All previous business logic is preserved (visibility filter, session
+//   accumulators, exit celebration, navigation to DhikrScreen).
+//
+// The icon set is a unified monoline gold language (Material outlined +
+// the honey-deep accent), so categories no longer rely on per-tile images.
+
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dhikr_screen.dart';
-import 'akhirah_balance_screen.dart';
-import '../utils/asset_helper.dart';
-import '../widgets/noor_icons.dart';
-import '../widgets/dhikr_exit_celebration.dart';
+
+import '../l10n/app_localizations.dart';
+import '../models/app_config.dart';
 import '../services/settings_service.dart';
 import '../services/streak_service.dart';
-import '../models/app_config.dart';
-import '../l10n/app_localizations.dart';
-import '../widgets/noor_offline.dart';
 import '../theme/y4_theme.dart';
+import '../widgets/dhikr_exit_celebration.dart';
+import '../widgets/noor_offline.dart';
+import 'akhirah_balance_screen.dart';
+import 'dhikr_screen.dart';
 
 AppConfig get _dhcfg => SettingsService.instance.config;
 Color get _kBg => _dhcfg.dashBg;
+
+// ── Editorial palette tokens (local) — sit alongside Y4 ────────────────────
+const Color _kAccentGold = Y4.honeyDeep;
+const Color _kIconChip = Color(0xFFFBF3DC); // soft butter chip for icons
+const Color _kRowBorder = Color(0x0F785F28); // very faint warm hairline
+const Color _kChevron = Color(0xFFCDBF9F);
+const Color _kMetaInk = Y4.inkSoft;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Category metadata — id is the source of truth (used for navigation,
+// localization, count lookup, hidden-flag filter). English `title` is kept
+// as a fallback when a locale doesn't have a string for the id.
+// ─────────────────────────────────────────────────────────────────────────────
+class _Cat {
+  final String id;
+  final String title;
+  const _Cat(this.id, this.title);
+}
+
+const List<_Cat> _kEssentials = [
+  _Cat('ummah', 'Duas of Ummah'),
+  _Cat('duas_before_sleep', 'Duas before Sleep'),
+  _Cat('tahajjud', 'Tahajjud'),
+  _Cat('duas_after_salah', 'Duas after Salah'),
+  _Cat('salawat', 'Salawat'),
+  _Cat('sunnah', 'Sunnah Duas'),
+  _Cat('rabbana_40', '40 Rabbana Duas'),
+  _Cat('istighfar', 'Istighfar'),
+  _Cat('daily_duas', 'Daily Duas'),
+  _Cat('ruquiya', 'Ruquiya'),
+  _Cat('general', 'Dhikar All Times'),
+  _Cat('asmaul_husna', 'Names of Allah'),
+  _Cat('book_of_prayer', 'The Book of Complete Prayer'),
+];
+
+const List<_Cat> _kOthers = [
+  _Cat('nightmares', 'Nightmares'),
+  _Cat('waking_up', 'Waking up'),
+  _Cat('clothes', 'Clothes'),
+  _Cat('wudu', 'Wudu'),
+  _Cat('food_drink', 'Food & Drink'),
+  _Cat('home', 'Home'),
+  _Cat('istikharah', 'Istikharah'),
+  _Cat('masjid', 'Adaan & Masjid'),
+  _Cat('difficulty', 'Diff & Happy'),
+  _Cat('iman_protection', 'Iman Protect'),
+  _Cat('travel', 'Travel'),
+  _Cat('shopping', 'Shopping'),
+  _Cat('family', 'Marriage'),
+  _Cat('social', 'Social'),
+  _Cat('nature', 'Nature'),
+  _Cat('death', 'Death'),
+  _Cat('gatherings', 'Gatherings'),
+  _Cat('hajj', 'Hajj & Umrah'),
+];
 
 class DhikrHubScreen extends StatefulWidget {
   const DhikrHubScreen({super.key});
@@ -26,12 +93,11 @@ class DhikrHubScreen extends StatefulWidget {
 
 class _DhikrHubScreenState extends State<DhikrHubScreen> {
   Set<String>? _hiddenIds;
+  // category_id → number of azkar items mapped to it (best-effort; empty on
+  // failure, in which case the row meta just shows the time hint or nothing).
+  Map<String, int> _counts = const {};
 
   // ── Session accumulators ───────────────────────────────────────────────
-  // Each category visit (DhikrScreen) pops back with the points it earned
-  // and the number of zikr sets completed in that visit. We sum across
-  // visits so the celebration on hub exit reflects the WHOLE Dua & Zikar
-  // session, not the last category alone.
   int _sessionPoints = 0;
   int _sessionSets = 0;
   int _sessionSeconds = 0;
@@ -41,14 +107,13 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
   void initState() {
     super.initState();
     _loadVisibility();
+    _loadCounts();
   }
 
   Future<void> _openCategory(String id) async {
     final result = await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(builder: (_) => DhikrScreen(initialCategory: id)),
     );
-    // DhikrScreen pops with {points, sets, seconds}. Accumulate. (Old
-    // contract was a single int = points, so accept that shape too.)
     if (result is Map) {
       _sessionPoints += (result['points'] as int?) ?? 0;
       _sessionSets += (result['sets'] as int?) ?? 0;
@@ -58,10 +123,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     }
   }
 
-  // Daily dhikr-time persistence. We store accumulated seconds keyed by
-  // today's date so the Akhirah summary can show "Time spent today" that
-  // accurately reflects multiple sessions through the day, not just the
-  // one the user just finished.
+  // Daily dhikr-time persistence (unchanged behaviour from prior version).
   static const String _kDhikrSecondsPrefix = 'dhikr_seconds_';
   static String _todayKey() {
     final n = DateTime.now();
@@ -84,13 +146,11 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
   }
 
   // Fires the two-popup celebration if the user actually completed any zikr
-  // set during this hub session, then pops the hub. Returns false to let
-  // PopScope handle the actual pop after our async work is done.
+  // during this hub session, then transitions to the Akhirah summary.
   Future<bool> _handleHubExit() async {
     if (_isExitingHub) return false;
     _isExitingHub = true;
     if (_sessionSets <= 0) {
-      // No completed sets — just pop silently.
       if (mounted) Navigator.of(context).pop(_sessionPoints);
       return false;
     }
@@ -98,16 +158,12 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     int streakDays = 0;
     try {
       final snap = await StreakService.instance.loadSnapshot().timeout(
-        const Duration(seconds: 2),
-      );
+            const Duration(seconds: 2),
+          );
       streakDays = snap.dhikr;
-    } catch (_) {
-      // Don't block the exit on a network hiccup.
-    }
+    } catch (_) {}
     if (!mounted) return false;
 
-    // Persist session seconds into today's cumulative total before
-    // surfacing the summary so the pill shows the *whole* day.
     final todaySeconds = await _bumpAndReadTodaySeconds(_sessionSeconds);
     if (!mounted) return false;
 
@@ -118,8 +174,6 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     );
     if (!mounted) return false;
 
-    // Replace the hub with the Akhirah Balance summary; it pops back
-    // with `_sessionPoints` so the dashboard refresh path still works.
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => AkhirahBalanceScreen(
@@ -133,13 +187,12 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     return false;
   }
 
-  // Translates a category by its stable Supabase `id` (not the English label).
-  // Fallback is the original English title so unmapped admin-added categories
-  // still render.
-  String _localTitle(String title, [String? id]) {
+  // Translates a category by its stable id, with English fallback for
+  // unmapped admin-added categories.
+  String _localTitle(String fallback, String id) {
     final l = AppLocalizations.of(context);
-    if (l == null) return title;
-    switch (id ?? '') {
+    if (l == null) return fallback;
+    switch (id) {
       case 'morning':
         return l.morning;
       case 'evening':
@@ -168,6 +221,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         return l.dhikarAllTimes;
       case 'asmaul_husna':
         return l.namesOfAllah;
+      case 'book_of_prayer':
+        return l.bookOfCompletePrayer;
       case 'nightmares':
         return l.nightmares;
       case 'waking_up':
@@ -205,11 +260,9 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       case 'hajj':
         return l.hajjAndUmrah;
       default:
-        // Legacy fallback for the few places still passing only the English
-        // title without an id.
-        if (title == 'Morning') return l.morning;
-        if (title == 'Evening') return l.evening;
-        return title;
+        if (fallback == 'Morning') return l.morning;
+        if (fallback == 'Evening') return l.evening;
+        return fallback;
     }
   }
 
@@ -229,6 +282,113 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
     }
   }
 
+  // Counts the items mapped to each category via the many-to-many tag table
+  // (`azkar_item_categories`). Used only to populate the row meta line ("N
+  // duas"); failure is silent so the redesign still renders without it.
+  Future<void> _loadCounts() async {
+    try {
+      final rows = await Supabase.instance.client
+          .from('azkar_item_categories')
+          .select('category_id');
+      if (!mounted) return;
+      final map = <String, int>{};
+      for (final r in (rows as List)) {
+        final id = r['category_id'] as String?;
+        if (id == null) continue;
+        map[id] = (map[id] ?? 0) + 1;
+      }
+      setState(() => _counts = map);
+    } catch (_) {
+      // Leave _counts empty — meta line will simply omit the count.
+    }
+  }
+
+  // Material outlined icons mapped to category ids, in the same monoline
+  // style — the visual unification the mockup calls for.
+  IconData _iconFor(String id) {
+    switch (id) {
+      case 'ummah':
+        return Icons.public_outlined;
+      case 'morning':
+        return Icons.wb_sunny_outlined;
+      case 'evening':
+        return Icons.nights_stay_outlined;
+      case 'duas_before_sleep':
+        return Icons.bedtime_outlined;
+      case 'tahajjud':
+        return Icons.dark_mode_outlined;
+      case 'duas_after_salah':
+        return Icons.mosque_outlined;
+      case 'salawat':
+        return Icons.favorite_outline;
+      case 'sunnah':
+        return Icons.menu_book_outlined;
+      case 'rabbana_40':
+        return Icons.auto_stories_outlined;
+      case 'istighfar':
+        return Icons.spa_outlined;
+      case 'daily_duas':
+        return Icons.front_hand_outlined;
+      case 'ruquiya':
+        return Icons.shield_outlined;
+      case 'general':
+        return Icons.auto_awesome_outlined;
+      case 'asmaul_husna':
+        return Icons.format_quote_outlined;
+      case 'book_of_prayer':
+        return Icons.import_contacts_outlined;
+      case 'nightmares':
+        return Icons.thunderstorm_outlined;
+      case 'waking_up':
+        return Icons.wb_twilight_outlined;
+      case 'clothes':
+        return Icons.checkroom_outlined;
+      case 'wudu':
+        return Icons.water_drop_outlined;
+      case 'food_drink':
+        return Icons.restaurant_outlined;
+      case 'home':
+        return Icons.home_outlined;
+      case 'istikharah':
+        return Icons.explore_outlined;
+      case 'masjid':
+        return Icons.campaign_outlined;
+      case 'difficulty':
+        return Icons.balance_outlined;
+      case 'iman_protection':
+        return Icons.security_outlined;
+      case 'travel':
+        return Icons.flight_outlined;
+      case 'shopping':
+        return Icons.shopping_bag_outlined;
+      case 'family':
+        return Icons.diversity_3_outlined;
+      case 'social':
+        return Icons.handshake_outlined;
+      case 'nature':
+        return Icons.eco_outlined;
+      case 'death':
+        return Icons.local_florist_outlined;
+      case 'gatherings':
+        return Icons.groups_outlined;
+      case 'hajj':
+        return Icons.brightness_5_outlined;
+      default:
+        return Icons.bookmark_outline;
+    }
+  }
+
+  // "N duas" / "N adhkar" — kept short and faithful to the mockup. Returns
+  // an empty string when we don't have a count, so callers can hide the
+  // line cleanly.
+  String _metaFor(String id) {
+    final c = _counts[id];
+    if (c == null || c <= 0) return '';
+    final isAdhkar = id == 'morning' || id == 'evening' || id == 'general';
+    return isAdhkar ? '$c adhkar' : '$c duas';
+  }
+
+  // ── build ────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     if (_hiddenIds == null) {
@@ -237,217 +397,14 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         body: const Center(child: NoorInlineLoader()),
       );
     }
-    // Y4-tuned palette: warm/sun categories use honey, night categories use sage.
-    // Per-category color identity is preserved but routed through the Y4 token set.
-    final List<Map<String, dynamic>> essentials = [
-      {
-        'title': AppLocalizations.of(context)?.duasOfUmmah ?? 'Duas of Ummah',
-        'id': 'ummah',
-        'color': Y4.primary,
-        'icon': '🌍',
-      },
-      {
-        'title': 'Morning',
-        'id': 'morning',
-        'color': Y4.honeyDeep,
-        'icon': '🌅',
-      },
-      {'title': 'Evening', 'id': 'evening', 'color': Y4.amberY, 'icon': '🌇'},
-      {
-        'title': 'Duas before Sleep',
-        'id': 'duas_before_sleep',
-        'color': Y4.primaryDeep,
-        'icon': '🌌',
-      },
-      {
-        'title': AppLocalizations.of(context)?.tahajjud ?? 'Tahajjud',
-        'id': 'tahajjud',
-        'color': Y4.primaryDeep,
-        'icon': '🌑',
-      },
-      {
-        'title': 'Duas after Salah',
-        'id': 'duas_after_salah',
-        'color': Y4.primary,
-        'icon': '🕌',
-      },
-      {
-        'title': AppLocalizations.of(context)?.salawat ?? 'Salawat',
-        'id': 'salawat',
-        'color': Y4.honeyDeep,
-        'icon': '❤️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.sunnahDuas ?? 'Sunnah Duas',
-        'id': 'sunnah',
-        'color': Y4.primary,
-        'icon': '📖',
-      },
-      {
-        'title': '40 Rabbana Duas',
-        'id': 'rabbana_40',
-        'color': Y4.primaryDeep,
-        'icon': '📜',
-      },
-      {
-        'title': AppLocalizations.of(context)?.istighfar ?? 'Istighfar',
-        'id': 'istighfar',
-        'color': Y4.soil,
-        'icon': '📿',
-      },
-      {
-        'title': 'Daily Duas',
-        'id': 'daily_duas',
-        'color': Y4.honeyDeep,
-        'icon': '✨',
-      },
-      {
-        'title': 'Ruquiya',
-        'id': 'ruquiya',
-        'color': Y4.primaryDeep,
-        'icon': '🛡️',
-      },
-      {
-        'title':
-            AppLocalizations.of(context)?.dhikarAllTimes ?? 'Dhikar All Times',
-        'id': 'general',
-        'color': Y4.amberY,
-        'icon': '🤲',
-      },
-      {
-        'title': AppLocalizations.of(context)?.namesOfAllah ?? 'Names of Allah',
-        'id': 'asmaul_husna',
-        'color': Y4.honeyDeep,
-        'icon': '✨',
-      },
-    ];
 
-    // Mini cards in "Other Categories" â€” Y4 palette with subtle hue variation.
-    // We rotate through a small set of Y4 tokens so each tile still feels
-    // distinct without breaking the honey/sage cohesion.
-    const altPrimary = Y4.primary; // sage
-    const altPrimaryD = Y4.primaryDeep; // deep sage
-    const altHoney = Y4.honeyDeep; // honey-deep
-    const altAmber = Y4.amberY; // soft amber
-    const altSoil = Y4.soil; // warm earth
-    const altSoilD = Y4.soilDeep; // deep earth
-
-    final List<Map<String, dynamic>> others = [
-      {
-        'title': AppLocalizations.of(context)?.nightmares ?? 'Nightmares',
-        'id': 'nightmares',
-        'color': altSoilD,
-        'icon': '🌩️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.wakingUp ?? 'Waking up',
-        'id': 'waking_up',
-        'color': altHoney,
-        'icon': '☀️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.clothes ?? 'Clothes',
-        'id': 'clothes',
-        'color': altPrimary,
-        'icon': '👕',
-      },
-      {
-        'title': AppLocalizations.of(context)?.wudu ?? 'Wudu',
-        'id': 'wudu',
-        'color': altPrimary,
-        'icon': '💧',
-      },
-      {
-        'title': AppLocalizations.of(context)?.foodAndDrink ?? 'Food & Drink',
-        'id': 'food_drink',
-        'color': altAmber,
-        'icon': '🍽️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.home ?? 'Home',
-        'id': 'home',
-        'color': altPrimary,
-        'icon': '🏠',
-      },
-      {
-        'title': AppLocalizations.of(context)?.istikharah ?? 'Istikharah',
-        'id': 'istikharah',
-        'color': altPrimaryD,
-        'icon': '🧭',
-      },
-      {
-        'title':
-            AppLocalizations.of(context)?.adaanAndMasjid ?? 'Adaan & Masjid',
-        'id': 'masjid',
-        'color': altPrimary,
-        'icon': '🕌',
-      },
-      {
-        'title': AppLocalizations.of(context)?.diffAndHappy ?? 'Diff & Happy',
-        'id': 'difficulty',
-        'color': altHoney,
-        'icon': '⚖️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.imanProtect ?? 'Iman Protect',
-        'id': 'iman_protection',
-        'color': altPrimaryD,
-        'icon': '🛡️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.travel ?? 'Travel',
-        'id': 'travel',
-        'color': altPrimary,
-        'icon': '✈️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.shopping ?? 'Shopping',
-        'id': 'shopping',
-        'color': altAmber,
-        'icon': '🛍️',
-      },
-      {
-        'title': AppLocalizations.of(context)?.marriage ?? 'Marriage',
-        'id': 'family',
-        'color': altHoney,
-        'icon': '👨‍👩‍👧',
-      },
-      {
-        'title': AppLocalizations.of(context)?.social ?? 'Social',
-        'id': 'social',
-        'color': altPrimary,
-        'icon': '🤝',
-      },
-      {
-        'title': AppLocalizations.of(context)?.nature ?? 'Nature',
-        'id': 'nature',
-        'color': altPrimary,
-        'icon': '🌿',
-      },
-      {
-        'title': AppLocalizations.of(context)?.death ?? 'Death',
-        'id': 'death',
-        'color': altSoil,
-        'icon': '🥀',
-      },
-      {
-        'title': AppLocalizations.of(context)?.gatherings ?? 'Gatherings',
-        'id': 'gatherings',
-        'color': altHoney,
-        'icon': '👥',
-      },
-      {
-        'title': AppLocalizations.of(context)?.hajjAndUmrah ?? 'Hajj & Umrah',
-        'id': 'hajj',
-        'color': altPrimaryD,
-        'icon': '🕋',
-      },
-    ];
-
+    final hidden = _hiddenIds!;
+    final morningVisible = !hidden.contains('morning');
+    final eveningVisible = !hidden.contains('evening');
     final visibleEssentials =
-        essentials.where((e) => !_hiddenIds!.contains(e['id'])).toList();
+        _kEssentials.where((c) => !hidden.contains(c.id)).toList();
     final visibleOthers =
-        others.where((e) => !_hiddenIds!.contains(e['id'])).toList();
+        _kOthers.where((c) => !hidden.contains(c.id)).toList();
 
     return PopScope(
       canPop: false,
@@ -456,503 +413,454 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         _handleHubExit();
       },
       child: Scaffold(
-      backgroundColor: _kBg,
-      appBar: AppBar(
-        backgroundColor: Y4.bg,
-        surfaceTintColor: Y4.bg,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_rounded,
-            color: Y4.ink,
-            size: 20,
+        backgroundColor: _kBg,
+        appBar: AppBar(
+          backgroundColor: Y4.bg,
+          surfaceTintColor: Y4.bg,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Y4.ink,
+              size: 20,
+            ),
+            onPressed: _handleHubExit,
           ),
-          onPressed: _handleHubExit,
-        ),
-        title: Text(
-          AppLocalizations.of(context)?.dhikarAndDua ?? 'Dhikar & Dua',
-          style: Y4.display(
-            fontSize: 22,
-            fontWeight: FontWeight.w500,
-            color: Y4.ink,
-            letterSpacing: -0.3,
+          title: Text(
+            AppLocalizations.of(context)?.dhikarAndDua ?? 'Dhikr & Dua',
+            style: Y4.display(
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              color: Y4.ink,
+              letterSpacing: -0.3,
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Responsive columns for essentials based on count
-          final essCount = visibleEssentials.length;
-          final int essCols;
-          final double essAspect;
-          if (essCount <= 2) {
-            essCols = 1;
-            essAspect = 1.8;
-          } else {
-            essCols = 2;
-            essAspect = 0.9;
-          }
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 36),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Eyebrow above the heroes
+              const _Eyebrow(text: 'DAILY ESSENTIALS'),
+              const SizedBox(height: 12),
 
-          // Responsive columns for others based on count
-          final othCount = visibleOthers.length;
-          final int othCols;
-          final double othAspect;
-          if (othCount <= 2) {
-            othCols = 2;
-            othAspect = 1.1;
-          } else {
-            othCols = 3;
-            othAspect = 0.85;
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
+              // ── Morning + Evening hero row ─────────────────────────────
+              if (morningVisible || eveningVisible) ...[
+                SizedBox(
+                  height: 168,
+                  child: Row(
                     children: [
-                      TextSpan(
-                        text: AppLocalizations.of(context)?.dailyWordPrefix ??
-                            'Daily ',
-                        style: Y4.display(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                          color: Y4.ink,
-                          height: 1.0,
+                      if (morningVisible)
+                        Expanded(
+                          child: _EditorialHero(
+                            title: _localTitle('Morning', 'morning'),
+                            meta: _metaFor('morning'),
+                            kind: _HeroKind.morning,
+                            onTap: () => _openCategory('morning'),
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: AppLocalizations.of(context)?.essentialsWord ??
-                            'Essentials',
-                        style: Y4.display(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                          color: Y4.ink,
-                          fontStyle: FontStyle.italic,
-                          height: 1.0,
+                      if (morningVisible && eveningVisible)
+                        const SizedBox(width: 12),
+                      if (eveningVisible)
+                        Expanded(
+                          child: _EditorialHero(
+                            title: _localTitle('Evening', 'evening'),
+                            meta: _metaFor('evening'),
+                            kind: _HeroKind.evening,
+                            onTap: () => _openCategory('evening'),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                if (visibleEssentials.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      AppLocalizations.of(context)?.noCategoriesAvailable ??
-                          'No categories available.',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  )
-                else
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: essCols,
-                      crossAxisSpacing: 14,
-                      mainAxisSpacing: 14,
-                      childAspectRatio: essAspect,
-                    ),
-                    itemCount: visibleEssentials.length,
-                    itemBuilder: (context, index) {
-                      final item = visibleEssentials[index];
-                      // Pass the ENGLISH title — the card builder needs it
-                      // for asset filename lookup (e.g. "Duas before Sleep.png").
-                      // It computes the localized display label internally
-                      // using the stable category id.
-                      return _buildGradientCard(
-                        context,
-                        item['title'] as String,
-                        item['id'],
-                        item['icon'],
-                        item['color'],
-                        isStacked: essCols == 1,
-                      );
-                    },
-                  ),
-
-                const SizedBox(height: 32),
-                Builder(
-                  builder: (ctx) {
-                    final full =
-                        AppLocalizations.of(ctx)?.otherCategories ??
-                        'Other Categories';
-                    // Split on first space so localized strings still get the
-                    // italic-on-second-word treatment.
-                    final spaceIdx = full.indexOf(' ');
-                    final first =
-                        spaceIdx < 0 ? full : full.substring(0, spaceIdx + 1);
-                    final rest =
-                        spaceIdx < 0 ? '' : full.substring(spaceIdx + 1);
-                    return RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: first,
-                            style: Y4.display(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
-                              color: Y4.ink,
-                              height: 1.0,
-                            ),
-                          ),
-                          TextSpan(
-                            text: rest,
-                            style: Y4.display(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
-                              color: Y4.ink,
-                              fontStyle: FontStyle.italic,
-                              height: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                if (visibleOthers.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      AppLocalizations.of(context)?.noCategoriesAvailable ??
-                          'No categories available.',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  )
-                else
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: othCols,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: othAspect,
-                    ),
-                    itemCount: visibleOthers.length,
-                    itemBuilder: (context, index) {
-                      final item = visibleOthers[index];
-                      // Pass the ENGLISH title — see _buildGradientCard
-                      // comment above for the reason.
-                      return _buildMiniGradientCard(
-                        context,
-                        item['title'] as String,
-                        item['id'],
-                        item['icon'],
-                        item['color'],
-                      );
-                    },
-                  ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 22),
               ],
-            ),
-          );
-        },
-      ),
-      ),
-    );
-  }
 
-  Widget _buildGradientCard(
-    BuildContext context,
-    String title,
-    String id,
-    String emoji,
-    Color baseColor, {
-    bool isStacked = false,
-  }) {
-    // Try the ID first (e.g. 'morning' -> morning_header.png via legacy
-    // map), then fall back to the label (e.g. 'Duas before Sleep' ->
-    // 'Duas before Sleep.png' which the user added with spaces in the
-    // filename, matched via the lowercase query in AssetHelper).
-    String? customImagePath =
-        AssetHelper.getCustomImagePath(id) ??
-        AssetHelper.getCustomImagePath(title);
-    bool isCustomCard = customImagePath != null;
-    Color? customTextColor;
-
-    // New screenshot-imported categories that don't have a PNG yet fall
-    // through to a clean white card with emoji watermark, instead of the
-    // dark colored gradient. Drops out automatically once the user adds
-    // a matching image into assets/images/.
-    const _whiteIds = {
-      'duas_before_sleep',
-      'duas_after_salah',
-      'daily_duas',
-      'rabbana_40',
-      'ruquiya',
-    };
-    final bool isWhiteCard = !isCustomCard && _whiteIds.contains(id);
-
-    if (isCustomCard) {
-      if (id == 'evening') {
-        customTextColor = const Color(0xFF7A5200); // Deep blue
-      } else if (id == 'sleeping') {
-        customTextColor = const Color(0xFF5E3F00); // Midnight blue
-      } else {
-        customTextColor =
-            baseColor.computeLuminance() > 0.5 ? Colors.black87 : baseColor;
-      }
-    }
-
-    final double imgWidth = isStacked ? 180 : 120;
-    final double imgBottom = isStacked ? 10 : 30;
-    final double titleSize = isStacked ? 26 : 18;
-    final double emojiSize = isStacked ? 130 : 90;
-
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
-    return GestureDetector(
-      onTap: () => _openCategory(id),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: (isCustomCard || isWhiteCard) ? Colors.white : null,
-          gradient:
-              (isCustomCard || isWhiteCard)
-                  ? null
-                  : LinearGradient(
-                    colors: [baseColor, baseColor.withValues(alpha: 0.6)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-          boxShadow: [
-            BoxShadow(
-              color: baseColor.withValues(alpha: isWhiteCard ? 0.18 : 0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // Vibrant emoji watermark mimicking a 3D character glow OR custom image
-              if (isCustomCard)
-                Positioned(
-                  top: 0,
-                  right: isRtl ? null : -10,
-                  left: isRtl ? -10 : null,
-                  bottom: imgBottom,
-                  width: imgWidth,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      customImagePath,
-                      fit: BoxFit.contain,
-                      alignment: isRtl ? Alignment.centerLeft : Alignment.centerRight,
+              // ── More collections (the remaining essentials) ────────────
+              if (visibleEssentials.isNotEmpty) ...[
+                const _SectionHeader(first: 'More ', accent: 'collections'),
+                const SizedBox(height: 12),
+                for (final c in visibleEssentials)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 11),
+                    child: _CategoryRow(
+                      title: _localTitle(c.title, c.id),
+                      meta: _metaFor(c.id),
+                      icon: _iconFor(c.id),
+                      onTap: () => _openCategory(c.id),
                     ),
                   ),
-                )
-              else if (isWhiteCard)
-                // Soft emoji watermark in the tile's accent color so the
-                // white card still has visual identity without an image.
-                Positioned(
-                  right: -10,
-                  top: -10,
-                  child: Opacity(
-                    opacity: 0.85,
-                    child: SizedBox(
-                      width: emojiSize * 0.95,
-                      height: emojiSize * 0.95,
-                      child: NoorIcon.fromEmoji(emoji, size: emojiSize * 0.95),
+              ],
+
+              // ── Other categories ────────────────────────────────────────
+              if (visibleOthers.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const _SectionHeader(first: 'Other ', accent: 'categories'),
+                const SizedBox(height: 12),
+                for (final c in visibleOthers)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 11),
+                    child: _CategoryRow(
+                      title: _localTitle(c.title, c.id),
+                      meta: _metaFor(c.id),
+                      icon: _iconFor(c.id),
+                      onTap: () => _openCategory(c.id),
                     ),
                   ),
-                )
-              else
-                Positioned(
-                  right: -20,
-                  bottom: -15,
-                  child: Opacity(
-                    opacity: 0.55,
-                    child: SizedBox(
-                      width: emojiSize,
-                      height: emojiSize,
-                      child: NoorIcon.fromEmoji(emoji, size: emojiSize),
+              ],
+
+              if (visibleEssentials.isEmpty &&
+                  visibleOthers.isEmpty &&
+                  !morningVisible &&
+                  !eveningVisible)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Text(
+                    AppLocalizations.of(context)?.noCategoriesAvailable ??
+                        'No categories available.',
+                    style: GoogleFonts.outfit(
+                      color: _kMetaInk,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-              // Glassmorphic protection mask (only keep it for non-image cards, or make it subtle)
-              if (isCustomCard)
-                // Ensure the text has a solid readable white background area that fades into the image
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height: 70,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.white,
-                            Colors.white.withValues(alpha: 0.8),
-                            Colors.white.withValues(alpha: 0.0),
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              else if (!isWhiteCard)
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.black.withValues(alpha: 0.7),
-                        Colors.transparent,
-                      ],
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                    ),
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      _localTitle(title, id),
-                      style: GoogleFonts.outfit(
-                        fontSize: titleSize,
-                        fontWeight: FontWeight.w900,
-                        color: isCustomCard
-                            ? customTextColor
-                            : (isWhiteCard ? Y4.ink : Colors.white),
-                        height: 1.1,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildMiniGradientCard(
-    BuildContext context,
-    String title,
-    String id,
-    String emoji,
-    Color baseColor,
-  ) {
-    // Mirror _buildGradientCard's image-resolution + white-card logic so
-    // mini-tiles in "Other Categories" can also pick up user-added PNG
-    // headers (e.g. assets/images/Ruquiya.png) and fall back to a white
-    // emoji card when no image exists.
-    final String? customImagePath =
-        AssetHelper.getCustomImagePath(id) ??
-        AssetHelper.getCustomImagePath(title);
-    final bool isCustomCard = customImagePath != null;
-    const _whiteIds = {
-      'duas_before_sleep',
-      'duas_after_salah',
-      'daily_duas',
-      'rabbana_40',
-      'ruquiya',
-    };
-    final bool isWhiteCard = !isCustomCard && _whiteIds.contains(id);
+// ─────────────────────────────────────────────────────────────────────────────
+// Small eyebrow label above the hero row.
+// ─────────────────────────────────────────────────────────────────────────────
+class _Eyebrow extends StatelessWidget {
+  final String text;
+  const _Eyebrow({required this.text});
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: GoogleFonts.outfit(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        color: _kAccentGold,
+        letterSpacing: 2.2,
+      ),
+    );
+  }
+}
 
-    return GestureDetector(
-      onTap: () => _openCategory(id),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: (isCustomCard || isWhiteCard) ? Colors.white : null,
-          gradient: (isCustomCard || isWhiteCard)
-              ? null
-              : LinearGradient(
-                  colors: [baseColor, baseColor.withValues(alpha: 0.6)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-          boxShadow: [
-            BoxShadow(
-              color: baseColor.withValues(alpha: isWhiteCard ? 0.15 : 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
+// ─────────────────────────────────────────────────────────────────────────────
+// Section header — "More collections" / "Other categories" with italic gold
+// accent on the second word, matching the mockup exactly.
+// ─────────────────────────────────────────────────────────────────────────────
+class _SectionHeader extends StatelessWidget {
+  final String first;
+  final String accent;
+  const _SectionHeader({required this.first, required this.accent});
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: first,
+            style: Y4.display(
+              fontSize: 21,
+              fontWeight: FontWeight.w500,
+              color: Y4.ink,
+              height: 1.0,
+              letterSpacing: 0,
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              if (isCustomCard)
-                Positioned.fill(
-                  bottom: 24,
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Image.asset(
-                      customImagePath,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                )
-              else
-                Positioned(
-                  right: isWhiteCard ? -6 : -10,
-                  top: isWhiteCard ? -6 : null,
-                  bottom: isWhiteCard ? null : -10,
-                  child: Opacity(
-                    opacity: isWhiteCard ? 0.85 : 0.6,
-                    child: SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: NoorIcon.fromEmoji(emoji, size: 60),
-                    ),
-                  ),
-                ),
-              // Glassmorphic protection mask — only for colored gradient
-              // cards. White / image cards don't need a dark overlay.
-              if (!isWhiteCard && !isCustomCard)
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.black.withValues(alpha: 0.8),
-                        Colors.transparent,
-                      ],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 12,
-                ),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    _localTitle(title, id),
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: (isWhiteCard || isCustomCard) ? Y4.ink : Colors.white,
-                      height: 1.1,
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                ),
+          ),
+          TextSpan(
+            text: accent,
+            style: Y4.display(
+              fontSize: 21,
+              fontWeight: FontWeight.w500,
+              color: _kAccentGold,
+              fontStyle: FontStyle.italic,
+              height: 1.0,
+              letterSpacing: 0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Editorial hero card (Morning / Evening) — painterly background, name + meta
+// anchored bottom-left, soft drop shadow.
+// ─────────────────────────────────────────────────────────────────────────────
+enum _HeroKind { morning, evening }
+
+class _EditorialHero extends StatelessWidget {
+  final String title;
+  final String meta;
+  final _HeroKind kind;
+  final VoidCallback onTap;
+  const _EditorialHero({
+    required this.title,
+    required this.meta,
+    required this.kind,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isMorning = kind == _HeroKind.morning;
+    final colors = isMorning
+        ? const [Color(0xFFF4C84E), Color(0xFFE89B3C)]
+        : const [Color(0xFF3A506B), Color(0xFF20304A)];
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: colors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              transform: const GradientRotation(2.79), // ≈ 160deg
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: colors.last.withValues(alpha: 0.30),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter:
+                        isMorning ? _MorningScene() : _EveningScene(),
+                  ),
+                ),
+                // Label block — anchored bottom-left
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 14, 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Spacer(),
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.fraunces(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          height: 1.1,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      if (meta.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          meta,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white.withValues(alpha: 0.92),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Morning scene — soft white sun + two layered hill silhouettes.
+class _MorningScene extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size s) {
+    final sun = Paint()..color = Colors.white.withValues(alpha: 0.55);
+    canvas.drawCircle(Offset(s.width - 38, 38), 22, sun);
+
+    final hill1 = Paint()..color = Colors.white.withValues(alpha: 0.18);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, s.height * 0.86)
+        ..quadraticBezierTo(
+            s.width * 0.25, s.height * 0.72, s.width * 0.5, s.height * 0.82)
+        ..quadraticBezierTo(
+            s.width * 0.75, s.height * 0.96, s.width, s.height * 0.80)
+        ..lineTo(s.width, s.height)
+        ..lineTo(0, s.height)
+        ..close(),
+      hill1,
+    );
+
+    final hill2 = Paint()..color = Colors.white.withValues(alpha: 0.14);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, s.height * 0.94)
+        ..quadraticBezierTo(
+            s.width * 0.3, s.height * 0.84, s.width * 0.6, s.height * 0.92)
+        ..quadraticBezierTo(
+            s.width * 0.85, s.height * 0.96, s.width, s.height * 0.90)
+        ..lineTo(s.width, s.height)
+        ..lineTo(0, s.height)
+        ..close(),
+      hill2,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _MorningScene old) => false;
+}
+
+// Evening scene — crescent moon (white circle masked by the bg colour),
+// four pin-prick stars, and a single soft hill at the bottom.
+class _EveningScene extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size s) {
+    final moonCenter = Offset(s.width - 42, 40);
+    final moonColor = Paint()..color = Colors.white.withValues(alpha: 0.88);
+    final cutout = Paint()..color = const Color(0xFF2c3e57);
+    canvas.drawCircle(moonCenter, 18, moonColor);
+    canvas.drawCircle(moonCenter.translate(6, -4), 18, cutout);
+
+    final star = Paint()..color = Colors.white.withValues(alpha: 0.70);
+    canvas.drawCircle(Offset(s.width * 0.25, 32), 1.4, star);
+    canvas.drawCircle(Offset(s.width * 0.45, 22), 1.1, star);
+    canvas.drawCircle(Offset(s.width * 0.60, 44), 1.2, star);
+    canvas.drawCircle(Offset(s.width * 0.15, 56), 1.0, star);
+
+    final hill = Paint()..color = Colors.white.withValues(alpha: 0.10);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, s.height * 0.90)
+        ..quadraticBezierTo(
+            s.width * 0.3, s.height * 0.80, s.width * 0.6, s.height * 0.90)
+        ..quadraticBezierTo(
+            s.width * 0.85, s.height * 0.94, s.width, s.height * 0.88)
+        ..lineTo(s.width, s.height)
+        ..lineTo(0, s.height)
+        ..close(),
+      hill,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _EveningScene old) => false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Category row — gold icon chip · serif name · meta · chevron. White card,
+// soft shadow, hairline border.
+// ─────────────────────────────────────────────────────────────────────────────
+class _CategoryRow extends StatelessWidget {
+  final String title;
+  final String meta;
+  final IconData icon;
+  final VoidCallback onTap;
+  const _CategoryRow({
+    required this.title,
+    required this.meta,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 0,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: _kRowBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Y4.honeyDeep.withValues(alpha: 0.08),
+                blurRadius: 14,
+                spreadRadius: -6,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(
+                    color: _kIconChip,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(icon, color: _kAccentGold, size: 23),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.fraunces(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Y4.ink,
+                          height: 1.15,
+                          letterSpacing: -0.1,
+                        ),
+                      ),
+                      if (meta.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          meta,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: _kMetaInk,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: _kChevron, size: 22),
+              ],
+            ),
           ),
         ),
       ),
