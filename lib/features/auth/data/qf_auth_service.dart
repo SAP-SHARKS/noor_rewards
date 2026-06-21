@@ -327,6 +327,11 @@ class QfAuthService {
           '(incoming=$incomingQfSub stored=$storedSubForSession)',
         );
       } else {
+        // Hand off to the `qf-resolve-session` edge function. It looks up
+        // any existing Supabase user by qf_sub (then email), mints a
+        // magic-link `token_hash` for that user, and we exchange it for a
+        // proper session locally via verifyOTP — no more
+        // signInAnonymously + merge churn.
         if (_supabase.auth.currentSession != null) {
           debugPrint(
             '[QF] confirmed different user → signing out '
@@ -334,7 +339,38 @@ class QfAuthService {
           );
           await _supabase.auth.signOut();
         }
-        await _supabase.auth.signInAnonymously();
+        if (qfAccessToken == null || qfAccessToken.isEmpty) {
+          // Without a QF access token the edge function can't verify
+          // the identity. Fall back to the legacy anon-then-merge path
+          // so login still completes (this path is the source of the
+          // merged-out rows; only fires when QF userinfo isn't
+          // reachable).
+          debugPrint('[QF] no qf_access_token — falling back to signInAnonymously');
+          await _supabase.auth.signInAnonymously();
+        } else {
+          try {
+            final res = await _supabase.functions.invoke(
+              'qf-resolve-session',
+              body: {'qf_access_token': qfAccessToken},
+            );
+            final data = res.data;
+            final tokenHash = (data is Map ? data['token_hash'] : null) as String?;
+            if (tokenHash == null || tokenHash.isEmpty) {
+              throw Exception('qf-resolve-session returned no token_hash: $data');
+            }
+            await _supabase.auth.verifyOTP(
+              type: OtpType.magiclink,
+              tokenHash: tokenHash,
+            );
+            debugPrint(
+              '[QF] qf-resolve-session succeeded — signed in as '
+              '${_supabase.auth.currentUser?.email}',
+            );
+          } catch (e) {
+            debugPrint('[QF] qf-resolve-session failed ($e) — falling back to signInAnonymously');
+            await _supabase.auth.signInAnonymously();
+          }
+        }
       }
 
       // Fetch QF profile and stamp Supabase metadata BEFORE releasing the

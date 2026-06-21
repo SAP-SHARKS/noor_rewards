@@ -20,6 +20,7 @@ import '../widgets/noor_offline.dart';
 import '../widgets/dhikr_exit_celebration.dart';
 import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
+import '../services/translation_service.dart';
 import 'akhirah_balance_screen.dart';
 import 'quran_screen.dart';
 
@@ -145,6 +146,12 @@ class _Azkar {
   /// rows where the actual content is a full Surah (e.g. Sleep #19/#20).
   final int? quranSurah;
 
+  /// Curated short benefit shown as the second line in the list view.
+  /// Sourced from the `short_benefit` column on `azkar_items`. Empty when
+  /// the row has no curated benefit — the list row collapses to a single
+  /// line instead of falling back to raw narrator text from `hadith_full`.
+  final String shortBenefit;
+
   const _Azkar({
     required this.id,
     required this.arabic,
@@ -162,6 +169,7 @@ class _Azkar {
     this.section = '',
     this.phrases,
     this.quranSurah,
+    this.shortBenefit = '',
   });
 
   /// [locale] is the active language code (e.g. 'ar', 'ur'). When non-null
@@ -194,6 +202,7 @@ class _Azkar {
     title: pick('title'),
     englishTitle: (j['title'] as String?)?.trim() ?? '',
     section: (j['section'] as String?)?.trim() ?? '',
+    shortBenefit: pick('short_benefit'),
     phrases: (j['phrases'] as List?)
         ?.map((e) => _Phrase.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -224,6 +233,60 @@ class _Category {
   final String label;
   final IconData icon;
   const _Category(this.id, this.label, this.icon);
+}
+
+/// In-memory catalog cache shared across every DhikrScreen open within the
+/// same process. The catalog (categories + items + tag/animation maps)
+/// only changes when the admin edits Supabase or the user switches locale,
+/// so a single fetch per locale is enough. Cuts subsequent screen-opens
+/// from ~1–2s (network + parse) to instant.
+class _DhikrCatalogEntry {
+  final List<_Category> categories;
+  final List<_Azkar> items;
+  final Map<String, List<String>> categoriesByAzkar;
+  final Map<String, List<String>> animationsByAzkar;
+  const _DhikrCatalogEntry({
+    required this.categories,
+    required this.items,
+    required this.categoriesByAzkar,
+    required this.animationsByAzkar,
+  });
+}
+
+class _DhikrCatalogCache {
+  static final Map<String, _DhikrCatalogEntry> _byLocale = {};
+
+  static _DhikrCatalogEntry? get(String locale) => _byLocale[locale];
+
+  static void put({
+    required String locale,
+    required List<_Category> categories,
+    required List<_Azkar> items,
+    required Map<String, List<String>> categoriesByAzkar,
+    required Map<String, List<String>> animationsByAzkar,
+  }) {
+    // Build explicit-generic copies. `Map.unmodifiable` returns
+    // `Map<dynamic,dynamic>`, which Dart 2.x then refuses to assign back
+    // into a `Map<String, List<String>>` parameter — the cast failure
+    // happens silently mid-fetch and the whole catalog falls back to the
+    // bundled JSON. Plain typed copies sidestep that entirely.
+    _byLocale[locale] = _DhikrCatalogEntry(
+      categories: List<_Category>.unmodifiable(categories),
+      items: List<_Azkar>.unmodifiable(items),
+      categoriesByAzkar: <String, List<String>>{
+        for (final e in categoriesByAzkar.entries)
+          e.key: List<String>.from(e.value),
+      },
+      animationsByAzkar: <String, List<String>>{
+        for (final e in animationsByAzkar.entries)
+          e.key: List<String>.from(e.value),
+      },
+    );
+  }
+
+  /// Clears the entire cache. Hook this when admin pushes a remote
+  /// catalog change you want to pick up without restarting the app.
+  static void invalidate() => _byLocale.clear();
 }
 
 // Translates a category by its stable id (favorites / morning / evening / etc.).
@@ -265,8 +328,18 @@ String _localCategoryName(BuildContext context, String id, String label) {
       return l.ruquiyaCategory;
     case 'asmaul_husna':
       return l.namesOfAllah;
-    case 'book_of_prayer':
-      return l.bookOfCompletePrayer;
+    case 'quranic_duas':
+      return l.quranicDuas;
+    case 'prophetic_duas':
+      return l.propheticDuas;
+    case 'morning_evening_remembrance':
+      return l.morningEveningRemembrance;
+    case 'further_duas':
+      return l.furtherDuas;
+    case 'closing_salawat':
+      return l.closingSalawat;
+    case 'hajj_umrah':
+      return l.hajjAndUmrahCategory;
     case 'nightmares':
       return l.nightmares;
     case 'waking_up':
@@ -889,6 +962,39 @@ class _DhikrScreenState extends State<DhikrScreen> {
 
   // ── Load Supabase Data ─────────────────────────────────────────────────────
   Future<void> _loadDBData() async {
+    // First-pass cache hit: if we already pulled the catalog for this
+    // locale, paint from memory and skip the network entirely. Opening a
+    // category from the hub then becomes instant instead of waiting on a
+    // 4-query parallel fetch + parse of ~300 items. The cache invalidates
+    // automatically when locale changes (different cache key) or when the
+    // process restarts.
+    final cacheLocale =
+        Localizations.maybeLocaleOf(context)?.languageCode ?? 'en';
+    final cached = _DhikrCatalogCache.get(cacheLocale);
+    if (cached != null) {
+      _categories = List<_Category>.from(cached.categories);
+      _allAzkar = List<_Azkar>.from(cached.items);
+      _categoriesByAzkar
+        ..clear()
+        ..addAll(cached.categoriesByAzkar);
+      _animationsByAzkar
+        ..clear()
+        ..addAll(cached.animationsByAzkar);
+      // CRITICAL: the slow-path (network fetch) reaches a setState below
+      // that calls _applyFilter() and clears `_loading`. The cache-hit
+      // path skips that block entirely, so we have to mirror those two
+      // here or the screen renders `_filtered = []` and shows
+      // "No Azkar found here" for every category whose data came from
+      // the cache.
+      if (mounted) {
+        setState(() {
+          _applyFilter();
+          _loading = false;
+        });
+      }
+      return;
+    }
+
     try {
       // 4 independent SELECTs in parallel — categories, items, the new
       // tag-junction, and the animation-pool junction. Network round-trips
@@ -963,6 +1069,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
           .map((i) => _Azkar.fromJson(i, locale: localeKey))
           .toList();
 
+      // TEMP diagnostic — TODO remove after issue is fixed.
+      final fetchedCatsByCat = <String, int>{};
+      for (final a in fetchedItems) {
+        fetchedCatsByCat[a.category] =
+            (fetchedCatsByCat[a.category] ?? 0) + 1;
+      }
+      debugPrint(
+        '[DhikrLoad] fetched cats=${fetchedCats.length} items=${fetchedItems.length} '
+        'breakdown=$fetchedCatsByCat',
+      );
       if (fetchedCats.isNotEmpty && fetchedItems.isNotEmpty) {
         _categories = fetchedCats;
         // "All" tab intentionally omitted — it would surface duplicates
@@ -973,6 +1089,16 @@ class _DhikrScreenState extends State<DhikrScreen> {
           const _Category('favorites', 'Favorites', Icons.favorite_rounded),
         );
         _allAzkar = fetchedItems;
+        // Populate the module-level cache so the next screen-open is
+        // network-free until the app process is killed or the user
+        // switches locale.
+        _DhikrCatalogCache.put(
+          locale: cacheLocale,
+          categories: _categories,
+          items: _allAzkar,
+          categoriesByAzkar: _categoriesByAzkar,
+          animationsByAzkar: _animationsByAzkar,
+        );
       } else {
         await _loadLocalFallback();
       }
@@ -1011,6 +1137,22 @@ class _DhikrScreenState extends State<DhikrScreen> {
   }
 
   void _applyFilter() {
+    // Diagnostic — TEMP. Logs how many items are in memory + how many
+    // pass the filter for the currently-selected category. Helps trace
+    // "No Azkar found here" mysteries to either (a) data not loaded
+    // (_allAzkar is small), (b) selectedCat mismatch, or (c) junction
+    // table rejecting items. Remove once the cause is known.
+    final byCat = <String, int>{};
+    for (final a in _allAzkar) {
+      byCat[a.category] = (byCat[a.category] ?? 0) + 1;
+    }
+    debugPrint(
+      '[DhikrFilter] selectedCat="$_selectedCat" '
+      'allAzkar=${_allAzkar.length} '
+      'categoriesByAzkar=${_categoriesByAzkar.length} '
+      'countForSelected(by .category)=${byCat[_selectedCat] ?? 0}',
+    );
+
     setState(() {
       if (_selectedCat == 'all') {
         _filtered = List.from(_allAzkar);
@@ -1030,6 +1172,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       }
       _filtered.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     });
+    // TEMP diagnostic — see comment above.
+    debugPrint('[DhikrFilter] filtered=${_filtered.length}');
   }
 
   /// Returns the animation `key` that should drive today's illustration for
@@ -2425,7 +2569,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                     horizontal: 16,
-                                                    vertical: 14,
+                                                    vertical: 18,
                                                   ),
                                               child: Row(
                                                 crossAxisAlignment:
@@ -2503,35 +2647,43 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                         //      so the actual dua text shows.
                                                         Text(
                                                           () {
-                                                            // Use the English title for the recognizer
-                                                            // (its allow-list is English prefixes), but
-                                                            // show the localized one if the row's
-                                                            // title_<locale> column was filled.
+                                                            // ── First-line name resolution ──
+                                                            //
+                                                            // Rule: in NON-Arabic locales always use the
+                                                            // English/Latin form. Some rows have garbled
+                                                            // `title_<locale>` values (mojibake / bad
+                                                            // mechanical script-swap), and the
+                                                            // _localizeWellKnownAzkarName map is also
+                                                            // missing translations for many entries.
+                                                            // English Latin is universally readable and
+                                                            // never garbled, so it's the safest source.
+                                                            //
+                                                            // Only the actual Arabic locale shows real
+                                                            // Arabic-script names or the original Arabic
+                                                            // dua text below.
+                                                            final lang =
+                                                                Localizations.maybeLocaleOf(
+                                                                      context,
+                                                                    )?.languageCode ??
+                                                                'en';
                                                             if (_titleIsRealName(azkar.englishTitle)) {
-                                                              return azkar.title;
+                                                              return lang == 'ar'
+                                                                  ? azkar.title
+                                                                  : azkar.englishTitle;
                                                             }
                                                             final wellKnown =
                                                                 _wellKnownAzkarName(
                                                                   azkar,
                                                                 );
                                                             if (wellKnown.isNotEmpty) {
-                                                              return _localizeWellKnownAzkarName(
-                                                                context,
-                                                                wellKnown,
-                                                              );
-                                                            }
-                                                            // In Arabic / Urdu locale, prefer the actual
-                                                            // Arabic text over the Latin transliteration
-                                                            // for nameless azkar — reading "أصبحنا..." in
-                                                            // a fully Arabic-script UI is far less jarring
-                                                            // than "Asbahna...".
-                                                            final lang =
-                                                                Localizations.maybeLocaleOf(
+                                                              return lang == 'ar'
+                                                                  ? _localizeWellKnownAzkarName(
                                                                       context,
-                                                                    )?.languageCode;
-                                                            if ((lang == 'ar' ||
-                                                                    lang ==
-                                                                        'ur') &&
+                                                                      wellKnown,
+                                                                    )
+                                                                  : wellKnown;
+                                                            }
+                                                            if (lang == 'ar' &&
                                                                 azkar.arabic
                                                                     .trim()
                                                                     .isNotEmpty) {
@@ -2577,63 +2729,40 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                     : kText,
                                                           ),
                                                         ),
-                                                        // ── Line 2 (light): benefit / reward snippet ──
-                                                        const SizedBox(
-                                                          height: 3,
-                                                        ),
-                                                        Text(
-                                                          () {
-                                                            // Source priority for the subtitle:
-                                                            //   1) hadith_full — the full narration
-                                                            //      ("Narrated by Ali (RA)...") which is
-                                                            //      what the user expects to see as the
-                                                            //      benefit line. Lives on Morning/Evening
-                                                            //      rows whose `reward` field is just a
-                                                            //      short surah name like "Surah Al-Ikhlas".
-                                                            //   2) reward — the benefit text used by the
-                                                            //      6 newer screenshot-imported categories
-                                                            //      (Sleep, Salah, etc.). Their reward
-                                                            //      IS the proper narration.
-                                                            //   3) translation — last-resort fallback so
-                                                            //      the line is never blank.
-                                                            String raw = azkar.hadithFull.trim();
-                                                            if (raw.isEmpty) raw = azkar.reward.trim();
-                                                            if (raw.isEmpty) raw = azkar.translation.trim();
-                                                            raw = raw.replaceAll('\n', ' ');
-                                                            // Remove bracketed refs like (Sahih Muslim 123)
-                                                            raw = raw.replaceAll(RegExp(r'\([^)]*(?:Muslim|Bukhari|Tirmidhi|Dawud|Majah|Nasai|Ahmad|Quran)[^)]*\)', caseSensitive: false), '');
-                                                            // Remove pipe-separated refs (only when the
-                                                            // string is short — hadith narrations
-                                                            // sometimes legitimately contain "|" inside
-                                                            // long sentences and we don't want to truncate
-                                                            // them at the first occurrence).
-                                                            if (raw.length < 80 && raw.contains('|')) {
-                                                              raw = raw.split('|').first;
-                                                            }
-                                                            raw = raw.replaceAll(RegExp(r'\s+'), ' ').trim();
-                                                            return raw;
-                                                          }(),
-                                                          maxLines: 1,
-                                                          overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
-                                                          style: GoogleFonts.outfit(
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 12,
-                                                            color:
-                                                                isComplete
-                                                                    ? const Color(
-                                                                      0xFFFFC83D,
-                                                                    )
-                                                                    : (isDark
-                                                                        ? Colors
-                                                                            .white38
-                                                                        : const Color(
-                                                                          0xFF9CA3AF,
-                                                                        )),
-                                                          ),
-                                                        ),
+                                                        // ── Line 2 (light): short benefit summary ──
+                                                        // Renders only when the row has a real prose
+                                                        // benefit. Reference-shaped values stored in
+                                                        // `reward` (e.g. "Al Fatihah | Sahih Muslim
+                                                        // 395", "Quran 2:255") are filtered out so the
+                                                        // tile collapses to a single line rather than
+                                                        // showing source citations the user finds
+                                                        // confusing. Helper documented inline below.
+                                                        ...() {
+                                                          // Curated benefit lives in `short_benefit` as
+                                                          // English. For other locales we lazily fetch
+                                                          // a translation via TranslationService (Hive
+                                                          // cache + free Google Translate endpoint) and
+                                                          // re-render once it lands. Cached results are
+                                                          // instant and offline on subsequent launches.
+                                                          final benefit = azkar.shortBenefit.trim();
+                                                          if (benefit.isEmpty) {
+                                                            return const <Widget>[];
+                                                          }
+                                                          final lang =
+                                                              Localizations.maybeLocaleOf(
+                                                                    context,
+                                                                  )?.languageCode ??
+                                                                  'en';
+                                                          return <Widget>[
+                                                            const SizedBox(height: 3),
+                                                            _AutoTranslatedText(
+                                                              text: benefit,
+                                                              locale: lang,
+                                                              isComplete: isComplete,
+                                                              isDark: isDark,
+                                                            ),
+                                                          ];
+                                                        }(),
                                                       ],
                                                     ),
                                                   ),
@@ -2818,6 +2947,11 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
   // mid-play speed change carries to the next rep / next track too.
   static const List<double> _kSpeedOptions = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
   double _audioSpeed = 1.0;
+
+  // ── Loop-current-track toggle (player bar) ────────────────────────────
+  // When on, the active track replays indefinitely instead of advancing to
+  // the next azkar in the Play-All sequence.
+  bool _loopOne = false;
 
   // ── Single-track repeat session ────────────────────────────────────────
   // When the user taps play on one azkar, we play the audio
@@ -3367,10 +3501,14 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
     // Safe index — clamp to valid range
     final safeIndex = _currentIndex.clamp(0, widget.azkars.length - 1);
-    final appBarColor = _illustrationTopColor(
-      widget.azkars[safeIndex].id,
-      isDark,
-    );
+    // Light mode: every category sits on the same Y4 honey wash so the top
+    // header strip blends with the area below the illustration (matches the
+    // Morning/Evening look that previously was the only warm-toned chrome).
+    // Dark mode still uses the illustration-derived tint so the AppBar can
+    // adapt to the painted scene above it.
+    final appBarColor = isDark
+        ? _illustrationTopColor(widget.azkars[safeIndex].id, isDark)
+        : Y4.bg;
 
     return PopScope(
       child: Scaffold(
@@ -3398,16 +3536,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                   );
                 }
               } catch (_) {}
-              // For Morning/Evening, hold the whole AppBar on Y4 honey wash
-              // so there's no visible seam between the header and the
-              // cream body card. For other categories, keep the original
-              // cream-to-white sweep (their body is white).
-              final azkarHere = widget.azkars[ci];
-              final isAkhirahHere = azkarHere.category == 'morning' ||
-                  azkarHere.category == 'evening';
-              final List<Color> gradColors = isAkhirahHere
-                  ? [Y4.bg, Y4.bg, Y4.bg]
-                  : [Y4.cream, Colors.white, Colors.white];
+              // Every category now sits on a solid Y4 honey wash so the
+              // header strip blends seamlessly with the area below the
+              // illustration. Previously only Morning/Evening got this and
+              // every other category fell through to a cream→white sweep,
+              // which left a visible white seam.
+              final List<Color> gradColors = [Y4.bg, Y4.bg, Y4.bg];
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -3538,10 +3672,18 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           ),
           centerTitle: true,
           actions: [
-            // Quick "Play >" entry point on the top-right of the dhikr
-            // detail screen. Routes through the same _toggleAudio() that
-            // the right-hand toolbar's play button uses, so pause/resume
-            // and the bottom play bar work identically.
+            // Top-right Play/Read toggle.
+            //
+            // First tap (label "Play"): kicks off Play All from the current
+            // azkar — audio starts and the bottom play bar appears.
+            //
+            // Second tap (label "Read"): stops audio and hides the bottom
+            // player entirely, returning the screen to its quiet reading
+            // state. Replaces the old separate "X" close affordance on the
+            // play bar.
+            //
+            // Visual cue: gradient flips from honey-gold (Play) to a deep
+            // ink (Read) so the change of state is unmistakable.
             Builder(
               builder: (context) {
                 int ci = safeIndex;
@@ -3558,26 +3700,53 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 final hasAudio =
                     azkar.audioUrl != null && azkar.audioUrl!.isNotEmpty;
                 if (!hasAudio) return const SizedBox.shrink();
-                final isThisPlaying = _audioPlayer.playing &&
-                    _currentlyLoadedAudio == azkar.audioUrl;
+                // The button enters its "Read" (stop) state any time the
+                // play bar is showing — including loading / buffering of
+                // the very first track in Play All mode, before
+                // `_audioPlayer.playing` flips true. That way the user can
+                // immediately tap to cancel and the player won't linger.
+                final isAudioActive = _playAllMode ||
+                    _currentlyLoadedAudio != null ||
+                    _audioPlayer.playing;
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(99),
-                      onTap: () => _playFromHereAsPlayAll(azkar),
+                      onTap: () async {
+                        if (isAudioActive) {
+                          // "Read" tap — stop + hide player completely.
+                          try {
+                            await _audioPlayer.stop();
+                          } catch (_) {}
+                          if (!mounted) return;
+                          setState(() {
+                            _playAllMode = false;
+                            _currentlyLoadedAudio = null;
+                            _playAllRep = 0;
+                            _playAllRepTotal = 0;
+                          });
+                        } else {
+                          _playFromHereAsPlayAll(azkar);
+                        }
+                      },
                       child: Ink(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Y4.honey, Y4.honeyDeep],
+                          gradient: LinearGradient(
+                            colors: isAudioActive
+                                ? const [Color(0xFF3A3A3A), Color(0xFF111111)]
+                                : const [Y4.honey, Y4.honeyDeep],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.honeyDeep.withValues(alpha: 0.35),
+                              color: (isAudioActive
+                                      ? Colors.black
+                                      : Y4.honeyDeep)
+                                  .withValues(alpha: 0.35),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -3589,7 +3758,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                isThisPlaying ? 'Pause' : 'Play',
+                                isAudioActive ? 'Read' : 'Play',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13.5,
                                   fontWeight: FontWeight.w800,
@@ -3599,8 +3768,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                               ),
                               const SizedBox(width: 3),
                               Icon(
-                                isThisPlaying
-                                    ? Icons.pause_rounded
+                                isAudioActive
+                                    ? Icons.menu_book_rounded
                                     : Icons.play_arrow_rounded,
                                 color: Colors.white,
                                 size: 20,
@@ -4141,30 +4310,30 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        16,
         12,
-        16,
-        MediaQuery.of(context).padding.bottom + 12,
+        6,
+        12,
+        MediaQuery.of(context).padding.bottom + 6,
       ),
       decoration: BoxDecoration(
         color: barBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
           ),
         ],
       ),
       child: Row(
         children: [
-          // ── Big Play All / Pause toggle ─────────────────────────────────
+          // ── Compact Play / Pause toggle ─────────────────────────────────
           Expanded(
             child: Material(
               color: btnBg,
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(24),
               child: InkWell(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(24),
                 onTap: () async {
                   if (isPlaying) {
                     try {
@@ -4176,15 +4345,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                       0,
                       widget.azkars.length - 1,
                     )];
-                    // Resumes the parked Play-All loop if the same track is
-                    // paused; otherwise starts a fresh Play-All from here.
                     await _playFromHereAsPlayAll(cur);
                   }
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 18,
+                    horizontal: 16,
+                    vertical: 10,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -4194,13 +4361,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                             ? Icons.pause_rounded
                             : Icons.play_arrow_rounded,
                         color: Colors.white,
-                        size: 26,
+                        size: 20,
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 6),
                       Text(
                         isPlaying ? 'Pause' : 'Play All',
                         style: GoogleFonts.outfit(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                           letterSpacing: 0.3,
@@ -4212,23 +4379,23 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          // ── Speed pill: 1× → 1.25× → 1.5× → 2× → 1× ────────────────────
+          const SizedBox(width: 6),
+          // ── Speed pill (1× → 2× cycle) ─────────────────────────────────
           Material(
             color: speedBg,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(24),
             child: InkWell(
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(24),
               onTap: _cycleAudioSpeed,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 18,
+                  horizontal: 14,
+                  vertical: 10,
                 ),
                 child: Text(
                   _formatSpeed(_audioSpeed),
                   style: GoogleFonts.outfit(
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: speedFg,
                     letterSpacing: 0.3,
@@ -4237,33 +4404,35 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          // ── Close button: stops audio and dismisses the bar entirely ───
+          const SizedBox(width: 6),
+          // ── Loop pill (loops the current track until tapped again) ─────
           Material(
-            color: speedBg,
+            color: _loopOne ? Y4.honeyDeep : speedBg,
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: () async {
+                final next = !_loopOne;
                 try {
-                  await _audioPlayer.stop();
+                  await _audioPlayer.setLoopMode(
+                    next ? LoopMode.one : LoopMode.off,
+                  );
                 } catch (_) {}
                 if (!mounted) return;
-                setState(() {
-                  _playAllMode = false;
-                  _currentlyLoadedAudio = null;
-                });
+                setState(() => _loopOne = next);
               },
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(10),
                 child: Icon(
-                  Icons.close_rounded,
-                  color: speedFg,
-                  size: 22,
+                  Icons.repeat_one_rounded,
+                  color: _loopOne ? Colors.white : speedFg,
+                  size: 20,
                 ),
               ),
             ),
           ),
+          // Close affordance removed — the top-right "Read" button now
+          // doubles as the stop / hide control for the play bar.
         ],
       ),
     );
@@ -4299,10 +4468,10 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
 
 /// Scaffold bg color matching bottom gradient for each category.
-/// Morning/Evening live on the Y4 honey wash so the AppBar, illustration
-/// surround, and body card all read as one continuous warm surface.
-Color _scaffoldBgForCategory(String cat) =>
-    (cat == 'morning' || cat == 'evening') ? Y4.bg : Colors.white;
+/// Every category lives on the Y4 honey wash so the area below the
+/// illustration reads as one continuous warm surface (previously this was
+/// Morning/Evening only and every other category fell through to white).
+Color _scaffoldBgForCategory(String cat) => Y4.bg;
 
 /// True when the DB `azkar_items.title` value is a recognizable dua/surah
 /// NAME (e.g. "Surah Al-Mulk", "Ayatul Kursi", "Dua Qunoot") rather than a
@@ -4414,6 +4583,172 @@ String _normalizeTranslit(String s) {
 ///
 /// Returns empty string when no well-known pattern matches — caller then
 /// falls back to the Bismillah-stripped transliteration snippet.
+/// Returns a one-line benefit summary suitable for the dhikr list's
+/// second row, or '' when no usable benefit text exists in either the
+/// `reward` or `hadith_full` source columns.
+///
+/// Many older rows (Morning/Evening especially) stuff a reference into
+/// `reward` ("Al Fatihah | Sahih Muslim 395") and put the actual benefit
+/// narration into `hadith_full` ("The Prophet ﷺ said: whoever recites…").
+/// Newer rows have the benefit in `reward` directly. This helper tries
+/// reward first, falls back to hadith_full only when reward looks like
+/// a reference, and strips the narrator prefix so what shows is the
+/// benefit clause itself, not "Abu Hurraira (RA) narrated:".
+String _shortBenefitLine({required String reward, String hadithFull = ''}) {
+  // ── Try reward first — newer rows store the short benefit here ──────
+  final fromReward = _polishBenefit(reward, allowShort: false);
+  if (fromReward.isNotEmpty) return fromReward;
+
+  // ── Fall back to hadith_full with the narrator prefix stripped ──────
+  // Patterns like "Abu Hurraira (RA) reported:", "The Prophet ﷺ said:",
+  // "Narrated by Anas (RA):" are pure attribution; the benefit clause
+  // is everything after the colon. If there's no colon, use the whole
+  // string (rare).
+  String body = hadithFull.trim();
+  if (body.isNotEmpty) {
+    // Strip up to the FIRST colon if the prefix looks like narrator
+    // attribution (≤80 chars and mentions a narrator-style word).
+    final colon = body.indexOf(':');
+    if (colon > 0 && colon < 80) {
+      final prefix = body.substring(0, colon).toLowerCase();
+      const narratorWords = [
+        'narrated', 'reported', 'said', 'related', 'told', 'mentioned',
+        'narration', 'prophet', 'messenger', 'abu', 'ibn', 'bint', 'umm',
+        'rasulullah',
+      ];
+      if (narratorWords.any(prefix.contains)) {
+        body = body.substring(colon + 1).trim();
+        // Drop a leading quote mark if the narration is wrapped in quotes.
+        if (body.startsWith('"') || body.startsWith('"')) {
+          body = body.substring(1);
+        }
+      }
+    }
+    // Also strip a leading "The Prophet ﷺ" sentence-start if it survived
+    // the colon strip — keeps "Whoever recites..." as the visible clause.
+    body = body.replaceFirst(
+      RegExp(
+        r'^(?:the\s+)?(?:prophet|messenger)\s*(?:\(?ﷺ\)?|\(?saw\)?)?[\s,.:;-]*',
+        caseSensitive: false,
+      ),
+      '',
+    );
+
+    final fromHadith = _polishBenefit(body, allowShort: true);
+    if (fromHadith.isNotEmpty) return fromHadith;
+  }
+
+  return '';
+}
+
+/// Cleans up a candidate benefit string and returns it ONLY when the
+/// result reads as a real, self-contained sentence. Returns '' for
+/// references, mid-sentence fragments, and generic fillers. Shared by
+/// both the reward and hadith_full paths above.
+///
+/// Why so strict: the user explicitly does NOT want filler ("no specific
+/// conditions") or hacked-off fragments ("of Allah…") under the title —
+/// it's confusing and demotivating. Skipping the line entirely is the
+/// preferred outcome when the source text isn't clean prose.
+String _polishBenefit(String src, {required bool allowShort}) {
+  String raw = src.trim();
+  if (raw.isEmpty) return '';
+
+  // 1) Strip bracketed source refs in any position.
+  raw = raw.replaceAll(
+    RegExp(
+      r'\([^)]*(?:Muslim|Bukhari|Tirmidhi|Dawud|Majah|Nasai|Ahmad|Quran|Qur’an|Sahih|Jami|RA|R\.A\.|peace be upon him|saw\b|ﷺ)[^)]*\)',
+      caseSensitive: false,
+    ),
+    '',
+  );
+  raw = raw
+      .replaceAll('\n', ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(RegExp(r'^["“”\s,;:.-]+'), '')
+      .trim();
+  if (raw.isEmpty) return '';
+
+  // 2) Reject reference-shaped strings.
+  if (raw.contains('|')) return '';
+  final refRe = RegExp(
+    r'^(?:al[- ]?qur’?an|qur’?an|quran|sahih\s+\w+|bukhari|muslim|tirmidhi|abu\s+dawud|ibn\s+majah|nasai|ahmad|jami[ ’]?at[- ]?tirmidhi|sunan|musnad|surah\s+\w+|ayat\s*ul[- ]?\w+|al[- ]?\w+)\b[\s—–:.,\-]*\d',
+    caseSensitive: false,
+  );
+  if (refRe.hasMatch(raw)) return '';
+  if (RegExp(
+    r'^(?:al[- ]?qur’?an|qur’?an|quran|sahih\s+\w+|bukhari|muslim|tirmidhi|abu\s+dawud|ibn\s+majah|nasai|ahmad|sunan|musnad)\s*$',
+    caseSensitive: false,
+  ).hasMatch(raw)) {
+    return '';
+  }
+
+  // 3) Reject mid-sentence fragments. Real benefit lines start with a
+  //    capital-letter subject ("Whoever recites…", "Allah forgives…",
+  //    "Reciting this…"). Anything starting with a preposition,
+  //    conjunction, article, pronoun-particle, or relative clause means
+  //    we sliced into the middle of a sentence somewhere — never
+  //    helpful to the reader.
+  final firstWord = raw.split(RegExp(r'\s+')).first.toLowerCase();
+  const sentenceFragmentStarters = {
+    // prepositions / linkers that can never start a clean line
+    'of', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 'from', 'as',
+    'into', 'onto', 'upon', 'about', 'through', 'within', 'without',
+    'against', 'between', 'among', 'around', 'over', 'under', 'after',
+    'before', 'during', 'until',
+    // conjunctions / continuations
+    'and', 'but', 'or', 'nor', 'yet', 'so', 'because', 'though', 'while',
+    'whereas', 'although', 'since', 'unless',
+    // relative / clause markers that imply prior subject
+    'which', 'that', 'whom', 'whose', 'where',
+    // pronoun-particles dangling without antecedent
+    'it', 'its', 'them', 'their', 'these', 'those',
+  };
+  if (sentenceFragmentStarters.contains(firstWord)) return '';
+
+  // 4) Reject generic non-benefit fillers explicitly.
+  final lower = raw.toLowerCase();
+  const fillerSnippets = [
+    'no specific',
+    'no particular',
+    'any time',
+    'anytime',
+    'all the time',
+    'as much as',
+    'as often as',
+    'whenever you',
+    'recommended to',
+    'recommended dhikr',
+    'general dhikr',
+    'general remembrance',
+    'this is a dua',
+    'this is a dhikr',
+  ];
+  for (final s in fillerSnippets) {
+    if (lower.startsWith(s)) return '';
+  }
+
+  // 5) Require at least N substantive words.
+  final words = raw.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+  if (words.length < (allowShort ? 3 : 4)) return '';
+
+  // 6) Result must begin with a capital letter (in scripts that have
+  //    casing). For Arabic/Urdu strings there's no casing so this is a
+  //    no-op via the regex check.
+  final first = raw.codeUnitAt(0);
+  final isAsciiLowercase = first >= 0x61 && first <= 0x7A;
+  if (isAsciiLowercase) return '';
+
+  // 7) Soft cap to 70 chars at a word boundary.
+  if (raw.length > 70) {
+    var cut = raw.substring(0, 70);
+    final lastSpace = cut.lastIndexOf(' ');
+    if (lastSpace > 40) cut = cut.substring(0, lastSpace);
+    raw = '${cut.trimRight()}…';
+  }
+  return raw;
+}
+
 /// Translates a hardcoded English name returned by [_wellKnownAzkarName]
 /// into the active locale (Arabic / Urdu) when possible. Falls back to the
 /// original English string for any name not in the map and for any locale
@@ -5291,20 +5626,12 @@ class _AzkarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = settings.darkMode;
-    // Card body color:
-    //   Morning/Evening → Y4 honey wash (matches the AppBar gradient and the
-    //     in-banner text-illustration cream so the screen reads as ONE warm
-    //     surface end-to-end). Reverting an earlier "force white" pass that
-    //     made evening_16-style cards show a visible white stripe across the
-    //     illustration band.
-    //   All other categories → pure white. They don't have a cream AppBar
-    //     to match, and the honey wash looked off for azkar without a 260px
-    //     illustration covering the top.
-    final isAkhirahCat =
-        azkar.category == 'morning' || azkar.category == 'evening';
-    final kCardBg = isDark
-        ? const Color(0xFF1E1E1E)
-        : (isAkhirahCat ? Y4.bg : Colors.white);
+    // Card body color: every category uses the Y4 honey wash so the screen
+    // reads as ONE warm surface end-to-end — matches the AppBar gradient
+    // and the scaffold background. Previously only Morning/Evening got this
+    // and the rest fell through to white, which painted a stark slab over
+    // the honey scaffold.
+    final kCardBg = isDark ? const Color(0xFF1E1E1E) : Y4.bg;
     final kText =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
@@ -5713,13 +6040,13 @@ class _AzkarCard extends StatelessWidget {
             bottomRef.isNotEmpty)
           Builder(
             builder: (context) {
-              // Match kCardBg above: cream for Morning/Evening, white for the
-              // rest. Keeps the bottom Benefit/Hadith section on one surface
-              // with the body above it instead of introducing a colour seam.
+              // Match kCardBg above: Y4 honey wash for every category in
+              // light mode so the bottom Benefit/Hadith section stays on the
+              // same surface as the body above it.
               final List<Color> sectionGrad =
                   isDark
                       ? [const Color(0xFF1A1A1A), const Color(0xFF1E1E1E)]
-                      : (isAkhirahCat ? [Y4.bg, Y4.bg] : [Colors.white, Colors.white]);
+                      : [Y4.bg, Y4.bg];
               final textColor =
                   isDark ? Colors.white.withValues(alpha: 0.85) : kText;
               final subColor =
@@ -27569,6 +27896,85 @@ class _RewardSecuredToastState extends State<_RewardSecuredToast>
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+// ── Auto-translating benefit line ────────────────────────────────────────
+// Shows the curated English benefit when the active locale is English;
+// otherwise lazily fetches a translation via [TranslationService] (Hive
+// cache + free Google Translate endpoint) and re-renders once it lands.
+// Pre-translated rows render instantly from cache on subsequent launches.
+class _AutoTranslatedText extends StatefulWidget {
+  final String text;
+  final String locale;
+  final bool isComplete;
+  final bool isDark;
+  const _AutoTranslatedText({
+    required this.text,
+    required this.locale,
+    required this.isComplete,
+    required this.isDark,
+  });
+
+  @override
+  State<_AutoTranslatedText> createState() => _AutoTranslatedTextState();
+}
+
+class _AutoTranslatedTextState extends State<_AutoTranslatedText> {
+  late String _display;
+
+  @override
+  void initState() {
+    super.initState();
+    _display = TranslationService.instance.cached(widget.text, widget.locale) ??
+        widget.text;
+    if (widget.locale != 'en' &&
+        TranslationService.instance.cached(widget.text, widget.locale) ==
+            null) {
+      _fetch();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoTranslatedText old) {
+    super.didUpdateWidget(old);
+    if (old.text != widget.text || old.locale != widget.locale) {
+      _display =
+          TranslationService.instance.cached(widget.text, widget.locale) ??
+              widget.text;
+      if (widget.locale != 'en' &&
+          TranslationService.instance.cached(widget.text, widget.locale) ==
+              null) {
+        _fetch();
+      }
+    }
+  }
+
+  Future<void> _fetch() async {
+    final translated = await TranslationService.instance
+        .translate(widget.text, widget.locale);
+    if (mounted && translated != _display) {
+      setState(() => _display = translated);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _display,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: GoogleFonts.outfit(
+        fontWeight: FontWeight.w400,
+        fontSize: 12,
+        height: 1.3,
+        color: widget.isComplete
+            ? const Color(0xFFFFC83D)
+            : (widget.isDark
+                ? Colors.white38
+                : const Color(0xFF9CA3AF)),
       ),
     );
   }

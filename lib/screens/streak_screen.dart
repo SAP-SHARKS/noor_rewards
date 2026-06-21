@@ -757,7 +757,9 @@ class _MilestoneProgress extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '+${milestone.ptsBonus} Seeds',
+                AppLocalizations.of(context)
+                        ?.streakSeedsBonus(milestone.ptsBonus.toString()) ??
+                    '+${milestone.ptsBonus} Seeds',
                 style: GoogleFonts.rajdhani(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -805,7 +807,9 @@ class _MilestoneProgress extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go, keep it up!',
+            AppLocalizations.of(context)
+                    ?.moreDaysToGo((milestone.days - current).toString()) ??
+                '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go, keep it up!',
             style: GoogleFonts.outfit(
               fontSize: 12,
               color: Y4.inkSoft,
@@ -913,7 +917,9 @@ class _MilestoneList extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      '+${m.ptsBonus} Seeds',
+                      AppLocalizations.of(context)
+                              ?.streakSeedsBonus(m.ptsBonus.toString()) ??
+                          '+${m.ptsBonus} Seeds',
                       style: GoogleFonts.rajdhani(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,

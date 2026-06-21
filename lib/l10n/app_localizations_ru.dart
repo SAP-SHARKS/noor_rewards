@@ -88,13 +88,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Врата света открыты.\nВаш духовный путь начинается сегодня.';
 
   @override
-  String get earnNoorPoints => 'EARN SABIQ SEEDS';
+  String get earnNoorPoints => 'ЗАРАБАТЫВАЙТЕ СЕМЕНА';
 
   @override
   String get yourProgress => 'ВАШ ПРОГРЕСС';
 
   @override
-  String get yourTotalNoorPoints => 'YOUR TOTAL SABIQ SEEDS';
+  String get yourTotalNoorPoints => 'ВАШИ ВСЕ СЕМЕНА';
 
   @override
   String get achievements => 'Достижения';
@@ -112,7 +112,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get streaks => 'СЕРИИ';
 
   @override
-  String get noorPoints => 'Sabiq Seeds';
+  String get noorPoints => 'Семена';
 
   @override
   String get readQuran => 'Читать Коран';
@@ -244,7 +244,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityLeaderboard => 'Таблица лидеров сообщества';
 
   @override
-  String get topContributors => 'Top contributors by lifetime Seeds';
+  String get topContributors => 'Лучшие участники по общим Семенам';
 
   @override
   String get myProfile => 'Мой профиль';
@@ -350,10 +350,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get yourNoorPointsFundProjects =>
-      'Your Sabiq Seeds fund these projects';
+      'Ваши Семена финансируют эти проекты';
 
   @override
-  String get youBothEarnPoints => 'You both earn 500 Sabiq Seeds!';
+  String get youBothEarnPoints => 'Вы оба получаете 500 Семян!';
 
   @override
   String get reward => 'Награда';
@@ -377,7 +377,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get seeDetailsForMore => 'Подробнее о проектах →';
 
   @override
-  String get pts => 'Seeds';
+  String get pts => 'Семена';
 
   @override
   String get funded => 'собрано';
@@ -400,7 +400,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get donationAmount => 'Сумма пожертвования';
 
   @override
-  String get points => 'Seeds';
+  String get points => 'Семена';
 
   @override
   String get donateEarnReward => 'Пожертвовать и получить награду';
@@ -433,7 +433,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get donatePointsToSupport =>
-      'Donate your Sabiq Seeds to support real-world projects';
+      'Пожертвуйте Семена для поддержки реальных проектов';
 
   @override
   String get noActiveProjects => 'Сейчас нет активных проектов';
@@ -468,7 +468,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String ptsToLevel(String pts, String level) {
-    return '$pts Seeds to Level $level';
+    return '$pts Семян до Уровня $level';
   }
 
   @override
@@ -504,10 +504,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Start earning Seeds, read Quran, do Dhikr & Dua.';
+      'Начните зарабатывать Семена: читайте Коран, делайте Зикр и Дуа.';
 
   @override
-  String get howToEarnPts => 'How to Earn Seeds';
+  String get howToEarnPts => 'Как заработать семена';
 
   @override
   String get readOneAyah => 'Прочитать 1 аят';
@@ -599,7 +599,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String ptsBoost(String multiplier) {
-    return '$multiplier× Seeds Boost';
+    return 'Бонус Семян $multiplier×';
   }
 
   @override
@@ -627,7 +627,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String moreDaysToGo(String count) {
-    return 'Ещё $count дн.!';
+    return 'Осталось $count дн., продолжайте!';
   }
 
   @override
@@ -657,7 +657,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get earnPointsTafsir =>
-      'Earn Seeds for every 10 min of Tafsir listening';
+      'Получайте Семена за каждые 10 минут прослушивания Тафсира';
 
   @override
   String get featuredSurahs => 'Избранные суры';
@@ -803,10 +803,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get progressBarAyahCount => 'Прогресс-бар и счётчик аятов';
 
   @override
-  String get showPointsBanner => 'Show Seeds Banner';
+  String get showPointsBanner => 'Показать баннер Семян';
 
   @override
-  String get noorPointsNotificationStrip => '+Sabiq Seeds notification strip';
+  String get noorPointsNotificationStrip => '+ Полоса уведомлений Семян';
 
   @override
   String get showSurahHeader => 'Показать заголовок суры';
@@ -923,7 +923,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadingQuran => 'Загрузка Корана…';
 
   @override
-  String get earnPointsPerVerse => 'Earn +10 Sabiq Seeds per verse read';
+  String get earnPointsPerVerse =>
+      'Получайте +10 Семян за каждый прочитанный аят';
 
   @override
   String get chooseSurah => 'Выберите суру';
@@ -1103,7 +1104,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sunnahDuas => 'Дуа из Сунны';
 
   @override
-  String get quranicDuas => 'Дуа из Корана';
+  String get quranicDuas => 'Коранические дуа';
 
   @override
   String get istighfar => 'Истигфар';
@@ -1241,7 +1242,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sadaqahGiven => 'Садака отдана';
 
   @override
-  String get pointsDonatedToCommunity => 'Seeds donated to community';
+  String get pointsDonatedToCommunity => 'Семена пожертвованы сообществу';
 
   @override
   String get allTimeLabel => 'За всё время';
@@ -1253,10 +1254,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get timeSpentInRemembrance => 'Время, проведённое в поминании';
 
   @override
-  String get noorPointsSummary => 'Sabiq Seeds Summary';
+  String get noorPointsSummary => 'Сводка семян';
 
   @override
-  String get totalPoints => 'Total Seeds';
+  String get totalPoints => 'Всего семян';
 
   @override
   String get title => 'Название';
@@ -1266,20 +1267,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String yourAvailable(String pts) {
-    return 'Your available: $pts Seeds';
+    return 'Доступно: $pts Семян';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'JazakAllah! $pts Seeds donated';
+    return 'ДжазакАллах! $pts Семян пожертвовано';
   }
 
   @override
-  String get insufficientPoints => 'Insufficient Seeds';
+  String get insufficientPoints => 'Недостаточно Семян';
 
   @override
   String donatePoints(String pts) {
-    return 'Donate $pts Seeds';
+    return 'Пожертвовать $pts Семян';
   }
 
   @override
@@ -1289,7 +1290,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fullyFunded => 'Полностью собрано ✓';
 
   @override
-  String get noPointsAvailable => 'No Seeds Available';
+  String get noPointsAvailable => 'Нет доступных Семян';
 
   @override
   String get communityProgress => 'Прогресс сообщества';
@@ -1468,7 +1469,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reportABug => 'Сообщить об ошибке';
 
   @override
-  String get aboutNoorRewards => 'About Sabiq Rewards';
+  String get aboutNoorRewards => 'О Sabiq Rewards';
 
   @override
   String get builtWithLove => 'Создано с любовью для Уммы';
@@ -1485,14 +1486,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.';
+      'Создано с любовью для мировой мусульманской уммы.\nПолучайте Семена, развивая исламские привычки.\nЖертвуйте Семена для поддержки реальных проектов сообщества.';
 
   @override
   String get howToEarnQuestion => 'Как заработать Семена?';
 
   @override
   String get howToEarnAnswer =>
-      'Complete Quran reading, Dhikr sets, and daily login to earn Seeds.';
+      'Завершайте чтение Корана, сеты Зикра и ежедневный вход, чтобы получать Семена.';
 
   @override
   String get whatIsValidateQuestion => 'Что такое «Подтвердить монеты»?';
@@ -1509,11 +1510,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Выполняйте ежедневные задания подряд, чтобы наращивать серию.';
 
   @override
-  String get canDonatQuestion => 'Can I donate my Sabiq Seeds?';
+  String get canDonatQuestion => 'Могу ли я пожертвовать свои Семена?';
 
   @override
   String get canDonateAnswer =>
-      'Yes! Visit the Akhirah tab to donate your Seeds to active community projects.';
+      'Да! Откройте вкладку Ахира, чтобы пожертвовать Семена активным проектам сообщества.';
 
   @override
   String get coinsSealedMashaAllah => 'Монеты подтверждены!';
@@ -1543,7 +1544,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shareWithFriends => 'Поделиться с друзьями';
 
   @override
-  String get earnMoreNoor => 'Earn More Seeds';
+  String get earnMoreNoor => 'Получить больше Семян';
 
   @override
   String get dontDisturb => 'Не беспокоить';
@@ -1555,29 +1556,29 @@ class AppLocalizationsRu extends AppLocalizations {
   String get read5QuranPages => 'Прочитать 5 страниц Корана';
 
   @override
-  String get completeNowBonus => 'Complete now → earn +50 Seeds bonus';
+  String get completeNowBonus => 'Завершите сейчас → бонус +50 Семян';
 
   @override
   String get completeADhikrSet => 'Завершить подход зикра';
 
   @override
-  String get finishAzkaarBonus => 'Finish your Azkaar → earn +30 Seeds bonus';
+  String get finishAzkaarBonus => 'Завершите Азкары → бонус +30 Семян';
 
   @override
   String get inviteAFriend => 'Пригласить друга';
 
   @override
-  String get shareNoorBonus => 'Share Sabiq with someone → earn +100 Seeds';
+  String get shareNoorBonus => 'Поделитесь Sabiq → получите +100 Семян';
 
   @override
-  String get multiplyYour => 'MULTIPLY YOUR';
+  String get multiplyYour => 'УМНОЖЬТЕ ВАШИ';
 
   @override
-  String get noorPointsBang => 'SABIQ SEEDS!';
+  String get noorPointsBang => 'СЕМЕНА!';
 
   @override
   String get keepMomentum =>
-      'Keep your spiritual momentum going\nand watch your Seeds grow';
+      'Сохраняйте духовный импульс\nи смотрите, как растут ваши Семена';
 
   @override
   String get openQuranNow => 'Открыть Коран сейчас';
@@ -1589,13 +1590,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get goodDeed => 'Доброе дело';
 
   @override
-  String get earnSawabWithRead => 'Earn Sawab\nwith every read';
+  String get earnSawabWithRead => 'Получайте Саваб\nс каждым чтением';
 
   @override
   String get realImpact => 'Реальное влияние';
 
   @override
-  String get coinsFundCauses => 'Seeds fund\nnoble causes';
+  String get coinsFundCauses => 'Семена финансируют\nблагородные дела';
 
   @override
   String get unexpectedGoogleError =>
@@ -2052,7 +2053,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get theirStorySection => 'Их история';
 
   @override
-  String get yourBalanceLabel => 'Ваш баланс';
+  String get yourBalanceLabel => 'Ваш баланс:';
 
   @override
   String sponsorCta(String name) {
@@ -2791,4 +2792,148 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get bookOfCompletePrayer => 'Книга полной молитвы';
+
+  @override
+  String get propheticDuas => 'Пророческие дуа';
+
+  @override
+  String get morningEveningRemembrance => 'Утренние и вечерние азкары';
+
+  @override
+  String get furtherDuas => 'Дополнительные дуа';
+
+  @override
+  String get closingSalawat => 'Заключительные азкары и салават';
+
+  @override
+  String get hajjAndUmrahCategory => 'Дуа Хаджа и Умры';
+
+  @override
+  String get azkarSingular => 'зикр';
+
+  @override
+  String get azkarPlural => 'зикры';
+
+  @override
+  String get hourSingular => 'час';
+
+  @override
+  String get hourPlural => 'часов';
+
+  @override
+  String get minuteSingular => 'минута';
+
+  @override
+  String get minutePlural => 'минут';
+
+  @override
+  String get secondSingular => 'секунда';
+
+  @override
+  String get secondPlural => 'секунд';
+
+  @override
+  String seedsThisSession(String count) {
+    return '+$count семян за сессию';
+  }
+
+  @override
+  String sevenDayAvgAzkaar(String count) {
+    return 'ср. за 7 дн.: $count зикров/день';
+  }
+
+  @override
+  String holdingChangeAyahs(String count) {
+    return '$count аятов';
+  }
+
+  @override
+  String holdingChangePlanted(String count) {
+    return '$count посажено';
+  }
+
+  @override
+  String holdingChangeCycles(String count) {
+    return '$count циклов';
+  }
+
+  @override
+  String holdingChangeBuilt(String count) {
+    return '$count построено';
+  }
+
+  @override
+  String holdingChangeEarned(String count) {
+    return '$count заработано';
+  }
+
+  @override
+  String holdingChangeOpened(String count) {
+    return '$count открыто';
+  }
+
+  @override
+  String holdingChangeInvocations(String count) {
+    return '$count призываний';
+  }
+
+  @override
+  String holdingChangeRecitations(String count) {
+    return '$count чтений';
+  }
+
+  @override
+  String bookmarksOnQuranCom(String count) {
+    return 'Закладок на Quran.com: $count';
+  }
+
+  @override
+  String bookmarksInThisApp(String count) {
+    return 'Закладок в приложении: $count';
+  }
+
+  @override
+  String streakSeedsBonus(String count) {
+    return '+$count семян';
+  }
+
+  @override
+  String plusSeedsThisWeek(String count) {
+    return '+$count за неделю';
+  }
+
+  @override
+  String unitDuas(String count) {
+    return '$count дуа';
+  }
+
+  @override
+  String unitAdhkar(String count) {
+    return '$count зикров';
+  }
+
+  @override
+  String get moreCollections => 'Больше коллекций';
+
+  @override
+  String get donateAndEarnReward => 'Пожертвуйте и получите награду';
+
+  @override
+  String donateAmountSeeds(String amount) {
+    return 'Пожертвовать $amount Семян';
+  }
+
+  @override
+  String get readMore => 'Читать дальше';
+
+  @override
+  String get beFirstToContribute => 'Станьте первым, кто внесёт вклад.';
+
+  @override
+  String get showFewer => 'Свернуть ↑';
+
+  @override
+  String viewAllN(String n) {
+    return 'Все $n →';
+  }
 }

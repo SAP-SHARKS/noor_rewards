@@ -268,9 +268,20 @@ const _tSurahNames = [
 //  'cloud'  → api.alquran.cloud/v1/ayah/{ref}/editions/quran-simple,en.sahih,{id}
 //  'cdn'    → cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/{slug}/{surah}.json
 //
-// (id, displayName, emoji, source, slug-for-cdn, isRTL)
+// (id, displayName, emoji, source, slug-for-cdn, isRTL, lang)
+// `lang` is the 2-letter app locale code this tafsir belongs to. Used by the
+// "first-open default" logic and the language/scripture chip labels — drives
+// list-position-independent grouping so adding new entries can't break either.
 typedef _TafsirDef =
-    ({String id, String name, String emoji, String src, String slug, bool rtl});
+    ({
+      String id,
+      String name,
+      String emoji,
+      String src,
+      String slug,
+      bool rtl,
+      String lang,
+    });
 
 const List<_TafsirDef> _tafsirEditions = [
   // ── English ──────────────────────────────────────────────────────────────────
@@ -281,14 +292,34 @@ const List<_TafsirDef> _tafsirEditions = [
     src: 'cdn',
     slug: 'en-tafisr-ibn-kathir',
     rtl: false,
+    lang: 'en',
   ),
   (
     id: 'en-tafsir-maarif-ul-quran',
-    name: "Maarif ul Quran",
+    name: 'Maarif ul Quran',
     emoji: '📚',
     src: 'cdn',
     slug: 'en-tafsir-maarif-ul-quran',
     rtl: false,
+    lang: 'en',
+  ),
+  (
+    id: 'en-al-jalalayn',
+    name: 'Al-Jalalayn (EN)',
+    emoji: '📖',
+    src: 'cdn',
+    slug: 'en-al-jalalayn',
+    rtl: false,
+    lang: 'en',
+  ),
+  (
+    id: 'en-tafsir-al-mukhtasar',
+    name: 'Al-Mukhtasar (EN)',
+    emoji: '✨',
+    src: 'cdn',
+    slug: 'en-tafsir-al-mukhtasar',
+    rtl: false,
+    lang: 'en',
   ),
   // ── Urdu ─────────────────────────────────────────────────────────────────────
   (
@@ -298,6 +329,7 @@ const List<_TafsirDef> _tafsirEditions = [
     src: 'cdn',
     slug: 'ur-tafseer-ibn-e-kaseer',
     rtl: true,
+    lang: 'ur',
   ),
   (
     id: 'ur-tafsir-bayan-ul-quran',
@@ -306,33 +338,151 @@ const List<_TafsirDef> _tafsirEditions = [
     src: 'cdn',
     slug: 'ur-tafsir-bayan-ul-quran',
     rtl: true,
+    lang: 'ur',
   ),
   // ── Arabic (classical) ───────────────────────────────────────────────────────
   (
-    id: 'ar.muyassar',
+    // Switched off alquran.cloud — spa5k is the same tafsir with broader coverage.
+    id: 'ar-tafsir-muyassar',
     name: 'المیسَّر',
     emoji: '🌙',
-    src: 'cloud',
-    slug: '',
+    src: 'cdn',
+    slug: 'ar-tafsir-muyassar',
     rtl: true,
+    lang: 'ar',
   ),
   (
-    id: 'ar.jalalayn',
+    id: 'ar-tafsir-al-jalalayn',
     name: 'الجلالین',
     emoji: '📜',
-    src: 'cloud',
-    slug: '',
+    src: 'cdn',
+    slug: 'ar-tafsir-al-jalalayn',
     rtl: true,
+    lang: 'ar',
   ),
   (
-    id: 'ar.qurtubi',
+    // alquran.cloud's `ar.qurtubi` dataset is sparse (e.g. Surah 30 only has
+    // ayahs 1-3). spa5k's `ar-tafseer-al-qurtubi` is much more complete.
+    id: 'ar-tafseer-al-qurtubi',
     name: 'القرطبی',
     emoji: '🏛️',
-    src: 'cloud',
-    slug: '',
+    src: 'cdn',
+    slug: 'ar-tafseer-al-qurtubi',
     rtl: true,
+    lang: 'ar',
+  ),
+  (
+    id: 'ar-tafsir-al-baghawi',
+    name: 'البغوي',
+    emoji: '📚',
+    src: 'cdn',
+    slug: 'ar-tafsir-al-baghawi',
+    rtl: true,
+    lang: 'ar',
+  ),
+  // Tabari deliberately omitted — spa5k's `ar-tafsir-al-tabari` is extremely
+  // sparse (e.g. Surah 30: 5/60 ayahs covered) so listing it would mostly
+  // surface "tafsir not available" and look like a broken app. Re-add once a
+  // fuller Tabari source is available.
+  // ── French ───────────────────────────────────────────────────────────────────
+  (
+    id: 'french-mokhtasar',
+    name: 'Al-Mokhtasar (FR)',
+    emoji: '✨',
+    src: 'cdn',
+    slug: 'french-mokhtasar',
+    rtl: false,
+    lang: 'fr',
+  ),
+  // ── Indonesian ───────────────────────────────────────────────────────────────
+  (
+    id: 'in-tafsir-jalalayn',
+    name: 'Tafsir Jalalayn (ID)',
+    emoji: '📖',
+    src: 'cdn',
+    slug: 'in-tafsir-jalalayn',
+    rtl: false,
+    lang: 'id',
+  ),
+  (
+    id: 'indonesian-mokhtasar',
+    name: 'Al-Mukhtasar (ID)',
+    emoji: '✨',
+    src: 'cdn',
+    slug: 'indonesian-mokhtasar',
+    rtl: false,
+    lang: 'id',
+  ),
+  // ── Russian ──────────────────────────────────────────────────────────────────
+  (
+    id: 'russian-mokhtasar',
+    name: 'Аль-Мухтасар (RU)',
+    emoji: '✨',
+    src: 'cdn',
+    slug: 'russian-mokhtasar',
+    rtl: false,
+    lang: 'ru',
+  ),
+  // ── Turkish ──────────────────────────────────────────────────────────────────
+  (
+    id: 'turkish-mokhtasar',
+    name: 'El-Muhtasar (TR)',
+    emoji: '✨',
+    src: 'cdn',
+    slug: 'turkish-mokhtasar',
+    rtl: false,
+    lang: 'tr',
   ),
 ];
+
+// Per-tafsir language label used by the small "Arabic Scripture / English
+// Commentary" chip above the body text. Returns a localised string for ar/ur/en
+// (existing l10n keys) and falls back to plain English for the new locales —
+// follow-up l10n pass can add proper keys.
+String _tafsirScriptureLabel(BuildContext context, _TafsirDef def) {
+  final l = AppLocalizations.of(context);
+  switch (def.lang) {
+    case 'ar':
+      return l?.arabicScripture ?? 'Arabic Scripture';
+    case 'ur':
+      return l?.urduScripture ?? 'Urdu Scripture';
+    case 'en':
+      return l?.englishCommentary ?? 'English Commentary';
+    case 'fr':
+      return 'French Commentary';
+    case 'id':
+      return 'Indonesian Commentary';
+    case 'ru':
+      return 'Russian Commentary';
+    case 'tr':
+      return 'Turkish Commentary';
+    default:
+      return 'Commentary';
+  }
+}
+
+// Per-tafsir short language name used as a subtitle in the settings sheet list.
+String _tafsirLangLabel(BuildContext context, _TafsirDef def) {
+  final l = AppLocalizations.of(context);
+  switch (def.lang) {
+    case 'ar':
+      return l?.arabicLanguageLabel ?? 'Arabic';
+    case 'ur':
+      return l?.urduLanguageLabel ?? 'Urdu';
+    case 'en':
+      return l?.englishLanguageLabel ?? 'English';
+    case 'fr':
+      return 'French';
+    case 'id':
+      return 'Indonesian';
+    case 'ru':
+      return 'Russian';
+    case 'tr':
+      return 'Turkish';
+    default:
+      return '';
+  }
+}
 
 // ── Reciters for audio ────────────────────────────────────────────────────────
 const _tReciters = [
@@ -359,7 +509,8 @@ class _TafsirScreenState extends State<TafsirScreen> {
   String _arabic = '';
   String _translation = '';
   String _tafsirText = '';
-  bool _loading = true;
+  bool _loading = true; // Arabic + translation (fast: Supabase)
+  bool _tafsirLoading = true; // tafsir text only (slow: CDN per-surah JSON)
 
   // ── Settings ─────────────────────────────────────────────────────────────────
   int _tafsirIdx = -1; // which tafsir edition
@@ -402,16 +553,37 @@ class _TafsirScreenState extends State<TafsirScreen> {
 
   Future<void> _initCache() async {
     _cache = await Hive.openBox('tafsir_cache');
-    if (_cache?.get('pref_tafsir_idx') == null && mounted) {
-      final lang = Localizations.localeOf(context).languageCode;
-      if (lang == 'ur')
-        _tafsirIdx = 2; // Urdu Ibn Kathir
-      else if (lang == 'ar')
-        _tafsirIdx = 4; // Arabic Muyassar
-      else
-        _tafsirIdx = 0; // English Ibn Kathir
+
+    // Each entry in `_tafsirEditions` carries its own `lang`. We use that to
+    // detect when a saved preference doesn't match the user's current app
+    // locale (e.g. they chose English Ibn Kathir before, then switched the
+    // phone to Urdu).
+    String langOfIdx(int i) => _tafsirEditions[i].lang;
+
+    int defaultIdxFor(String lang) {
+      final idx = _tafsirEditions.indexWhere((t) => t.lang == lang);
+      // Universal fallback when the locale has no curated tafsir
+      // (e.g. ms — Malay isn't on the spa5k CDN): English Ibn Kathir.
+      return idx >= 0 ? idx : 0;
+    }
+
+    final lang =
+        mounted ? Localizations.localeOf(context).languageCode : 'en';
+    final saved = _cache?.get('pref_tafsir_idx') as int?;
+
+    if (saved == null) {
+      // First time the user opens tafsir on this device.
+      _tafsirIdx = defaultIdxFor(lang);
+    } else if (langOfIdx(saved) == lang) {
+      // Saved choice is in the same language as the active locale — keep it.
+      _tafsirIdx = saved;
     } else {
-      _tafsirIdx = _cache?.get('pref_tafsir_idx', defaultValue: 0) as int;
+      // The active locale doesn't match the saved tafsir's language —
+      // surface a locale-appropriate default instead so the screen feels
+      // native to the chosen language. We intentionally do NOT overwrite
+      // `pref_tafsir_idx`; their original pick is preserved for when (if)
+      // they switch the app locale back.
+      _tafsirIdx = defaultIdxFor(lang);
     }
   }
 
@@ -438,158 +610,192 @@ class _TafsirScreenState extends State<TafsirScreen> {
   }
 
   // ── Data loading ─────────────────────────────────────────────────────────────
+  // Two-stage render to minimise perceived load time on cache miss:
+  //   1) Fast leg (Supabase): Arabic verses + English translation → render
+  //      immediately. Audio player gets its URL right after.
+  //   2) Slow leg (CDN, per-surah JSON, can be 100s of KB to a few MB for long
+  //      classical tafsirs): tafsir text → renders into its own card when it
+  //      arrives. The pre-cache loop seeds the next ayahs only after the tafsir
+  //      response lands, so a navigation forward within the same surah is
+  //      instant from then on.
+  // Cache hit short-circuits both legs.
   Future<void> _loadAyah() async {
-    setState(() => _loading = true);
-
     final def = _tafsirEditions[_tafsirIdx];
     final cacheKey = 'tafsir2_${_surah}_${_ayah}_${def.id}';
+    // Snapshot navigation state so a late async response can't overwrite the
+    // screen after the user paged to a different ayah or switched tafsir.
+    final reqSurah = _surah;
+    final reqAyah = _ayah;
+    final reqDefId = def.id;
+    bool stillCurrent() =>
+        mounted &&
+        _surah == reqSurah &&
+        _ayah == reqAyah &&
+        _tafsirEditions[_tafsirIdx].id == reqDefId;
 
-    String arabic = '', translation = '', tafsir = '', audioUrl = '';
+    setState(() {
+      _loading = true;
+      _tafsirLoading = true;
+    });
 
-    // ── Cache hit ────────────────────────────────────────────────────────────
+    // ── Cache hit (instant render of all 3) ──────────────────────────────────
     final cached = _cache?.get(cacheKey);
     if (cached != null) {
       final m = cached as Map;
-      arabic = m['arabic'] ?? '';
-      translation = m['translation'] ?? '';
-      tafsir = m['tafsir'] ?? '';
-      audioUrl = m['audio'] ?? '';
-    } else {
-      try {
-        // ── Fetch Arabic + English translation for the entire Surah ──────────────
-        int startVerseId = 1;
-        for (int i = 1; i < _surah; i++) {
-          startVerseId += _tSurahLengths[i];
-        }
-        int endVerseId = startVerseId + _tSurahLengths[_surah] - 1;
-
-        // ── 3 independent network fetches in parallel ───────────────────
-        // Was sequential: Arabic verses → translation → tafsir CDN.
-        // The tafsir CDN/API is often the slowest leg, and Supabase rows
-        // can come back while it's still in flight. Fire all three at once.
-        final fetches = await Future.wait<dynamic>([
-          // 0: Arabic verses for this surah
-          _sb
-              .from('quran_verses')
-              .select('ayah, text_uthmani')
-              .eq('surah', _surah)
-              .then<List<dynamic>>((v) => v as List)
-              .catchError((_) => const <dynamic>[]),
-          // 1: English translations for the verse-id range
-          _sb
-              .from('quran_translations')
-              .select('verse_id, text')
-              .gte('verse_id', startVerseId)
-              .lte('verse_id', endVerseId)
-              .eq('edition', 'en.sahih')
-              .then<List<dynamic>>((v) => v as List)
-              .catchError((_) => const <dynamic>[]),
-          // 2: tafsir text (CDN or alquran.cloud) — returns Map<int,String>
-          (() async {
-            try {
-              if (def.src == 'cdn') {
-                final cdnUrl =
-                    'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${def.slug}/$_surah.json';
-                final tRes = await http
-                    .get(Uri.parse(cdnUrl))
-                    .timeout(const Duration(seconds: 15));
-                if (tRes.statusCode == 200) {
-                  final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
-                  if (ayahs != null) {
-                    return <int, String>{
-                      for (var a in ayahs)
-                        a['ayah'] as int: a['text'] as String,
-                    };
-                  }
-                }
-              } else {
-                final tUrl =
-                    'https://api.alquran.cloud/v1/surah/$_surah/${def.id}';
-                final tRes = await http
-                    .get(Uri.parse(tUrl))
-                    .timeout(const Duration(seconds: 15));
-                if (tRes.statusCode == 200) {
-                  final ayahs =
-                      jsonDecode(tRes.body)['data']['ayahs'] as List?;
-                  if (ayahs != null) {
-                    return <int, String>{
-                      for (var a in ayahs)
-                        a['numberInSurah'] as int: a['text'] as String,
-                    };
-                  }
-                }
-              }
-            } catch (_) {}
-            return <int, String>{};
-          })(),
-        ]);
-
-        final arabicList = fetches[0] as List;
-        final transList = fetches[1] as List;
-        final tafsirMap = fetches[2] as Map<int, String>;
-
-        final arabicMap = {
-          for (var item in arabicList)
-            item['ayah'] as int: item['text_uthmani'] as String,
-        };
-        final transMap = {
-          for (var item in transList)
-            item['verse_id'] as int: item['text'] as String,
-        };
-
-        final reciter = _tReciters[_reciterIdx].$1;
-
-        // ── Pre-cache all verses in the Surah ────────────────────────────────────
-        for (int a = 1; a <= _tSurahLengths[_surah]; a++) {
-          int vId = startVerseId + a - 1;
-          String aText = arabicMap[a] ?? '';
-          String tText = transMap[vId] ?? '';
-          String audio =
-              'https://cdn.islamic.network/quran/audio/128/$reciter/$vId.mp3';
-
-          String tfsr = tafsirMap[a] ?? '';
-          String cKey = 'tafsir2_${_surah}_${a}_${def.id}';
-          await _cache?.put(cKey, {
-            'arabic': aText,
-            'translation': tText,
-            'tafsir': tfsr,
-            'audio': audio,
-          });
-
-          if (a == _ayah) {
-            arabic = aText;
-            translation = tText;
-            tafsir = tfsr;
-            audioUrl = audio;
-          }
-        }
-      } catch (_) {}
+      final arabic = (m['arabic'] as String?) ?? '';
+      final translation = (m['translation'] as String?) ?? '';
+      final tafsir = (m['tafsir'] as String?) ?? '';
+      final audio = (m['audio'] as String?) ?? '';
+      await _player.stop();
+      if (stillCurrent()) {
+        setState(() {
+          _arabic = arabic;
+          _translation = translation;
+          _tafsirText = tafsir;
+          _audioUrl = audio.isNotEmpty ? audio : null;
+          _pos = Duration.zero;
+          _dur = Duration.zero;
+          _loading = false;
+          _tafsirLoading = false;
+        });
+      }
+      if (audio.isNotEmpty) {
+        try {
+          await _player.setUrl(audio);
+        } catch (_) {}
+      }
+      _saveProgress();
+      return;
     }
 
-    // Stop old player
-    await _player.stop();
+    // ── Cache miss ─────────────────────────────────────────────────────────
+    int startVerseId = 1;
+    for (int i = 1; i < reqSurah; i++) {
+      startVerseId += _tSurahLengths[i];
+    }
+    final endVerseId = startVerseId + _tSurahLengths[reqSurah] - 1;
+    final reciter = _tReciters[_reciterIdx].$1;
 
-    if (mounted) {
+    // Kick off the slow tafsir fetch now so it overlaps with Supabase.
+    final tafsirFuture = _fetchTafsirMap(def, reqSurah);
+
+    // Fast leg: Arabic verses + English translation in parallel from Supabase.
+    final quickFetches = await Future.wait<dynamic>([
+      _sb
+          .from('quran_verses')
+          .select('ayah, text_uthmani')
+          .eq('surah', reqSurah)
+          .then<List<dynamic>>((v) => v as List)
+          .catchError((_) => const <dynamic>[]),
+      _sb
+          .from('quran_translations')
+          .select('verse_id, text')
+          .gte('verse_id', startVerseId)
+          .lte('verse_id', endVerseId)
+          .eq('edition', 'en.sahih')
+          .then<List<dynamic>>((v) => v as List)
+          .catchError((_) => const <dynamic>[]),
+    ]);
+
+    final arabicMap = <int, String>{
+      for (final item in quickFetches[0] as List)
+        item['ayah'] as int: item['text_uthmani'] as String,
+    };
+    final transMap = <int, String>{
+      for (final item in quickFetches[1] as List)
+        item['verse_id'] as int: item['text'] as String,
+    };
+
+    final arabic = arabicMap[reqAyah] ?? '';
+    final translation = transMap[startVerseId + reqAyah - 1] ?? '';
+    final audio =
+        'https://cdn.islamic.network/quran/audio/128/$reciter/${startVerseId + reqAyah - 1}.mp3';
+
+    await _player.stop();
+    if (stillCurrent()) {
       setState(() {
         _arabic = arabic;
         _translation = translation;
-        _tafsirText = tafsir;
-        _audioUrl = audioUrl.isNotEmpty ? audioUrl : null;
+        _audioUrl = audio;
         _pos = Duration.zero;
         _dur = Duration.zero;
-        _loading = false;
+        _loading = false; // ayah + translation visible now
+      });
+    }
+    try {
+      await _player.setUrl(audio);
+    } catch (_) {}
+
+    // Slow leg: await the tafsir map, then update + pre-seed the rest of the
+    // surah's per-ayah cache so subsequent navigation is instant.
+    final tafsirMap = await tafsirFuture;
+    final currentTafsir = tafsirMap[reqAyah] ?? '';
+
+    final surahLen = _tSurahLengths[reqSurah];
+    for (int a = 1; a <= surahLen; a++) {
+      final vId = startVerseId + a - 1;
+      final aText = arabicMap[a] ?? '';
+      final tText = transMap[vId] ?? '';
+      final aud =
+          'https://cdn.islamic.network/quran/audio/128/$reciter/$vId.mp3';
+      final tfsr = tafsirMap[a] ?? '';
+      final cKey = 'tafsir2_${reqSurah}_${a}_$reqDefId';
+      await _cache?.put(cKey, {
+        'arabic': aText,
+        'translation': tText,
+        'tafsir': tfsr,
+        'audio': aud,
       });
     }
 
-    // Pre-load audio
-    if (audioUrl.isNotEmpty) {
-      try {
-        await _player.setUrl(audioUrl);
-      } catch (_) {}
+    if (stillCurrent()) {
+      setState(() {
+        _tafsirText = currentTafsir;
+        _tafsirLoading = false;
+      });
     }
 
-    // Save progress to Supabase
     _saveProgress();
+  }
+
+  // Fetches the tafsir JSON for one surah and returns {ayahNumber → text}.
+  // Returns an empty map on any failure so the caller can render "not
+  // available" without surfacing the error.
+  Future<Map<int, String>> _fetchTafsirMap(_TafsirDef def, int surah) async {
+    try {
+      if (def.src == 'cdn') {
+        final cdnUrl =
+            'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${def.slug}/$surah.json';
+        final tRes = await http
+            .get(Uri.parse(cdnUrl))
+            .timeout(const Duration(seconds: 15));
+        if (tRes.statusCode == 200) {
+          final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
+          if (ayahs != null) {
+            return <int, String>{
+              for (var a in ayahs)
+                a['ayah'] as int: a['text'] as String,
+            };
+          }
+        }
+      } else {
+        final tUrl =
+            'https://api.alquran.cloud/v1/surah/$surah/${def.id}';
+        final tRes = await http
+            .get(Uri.parse(tUrl))
+            .timeout(const Duration(seconds: 15));
+        if (tRes.statusCode == 200) {
+          final ayahs = jsonDecode(tRes.body)['data']['ayahs'] as List?;
+          if (ayahs != null) {
+            return <int, String>{
+              for (var a in ayahs)
+                a['numberInSurah'] as int: a['text'] as String,
+            };
+          }
+        }
+      }
+    } catch (_) {}
+    return <int, String>{};
   }
 
   Future<void> _saveProgress() async {
@@ -1311,7 +1517,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _loading
+                        _tafsirLoading
                             ? Column(
                               children: [
                                 const LinearProgressIndicator(),
@@ -1351,21 +1557,10 @@ class _TafsirScreenState extends State<TafsirScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    _tafsirEditions[_tafsirIdx].rtl
-                                        ? (_tafsirEditions[_tafsirIdx].id
-                                                .startsWith('ar')
-                                            ? AppLocalizations.of(
-                                                  context,
-                                                )?.arabicScripture ??
-                                                'Arabic Scripture'
-                                            : AppLocalizations.of(
-                                                  context,
-                                                )?.urduScripture ??
-                                                'Urdu Scripture')
-                                        : AppLocalizations.of(
-                                              context,
-                                            )?.englishCommentary ??
-                                            'English Commentary',
+                                    _tafsirScriptureLabel(
+                                      context,
+                                      _tafsirEditions[_tafsirIdx],
+                                    ),
                                     style: GoogleFonts.outfit(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
@@ -1782,17 +1977,10 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                                 ),
                               ),
                               Text(
-                                _tafsirEditions[i].rtl
-                                    ? (_tafsirEditions[i].id.startsWith('ar')
-                                        ? (AppLocalizations.of(context)
-                                                ?.arabicLanguageLabel ??
-                                            'Arabic')
-                                        : (AppLocalizations.of(context)
-                                                ?.urduLanguageLabel ??
-                                            'Urdu'))
-                                    : (AppLocalizations.of(context)
-                                            ?.englishLanguageLabel ??
-                                        'English'),
+                                _tafsirLangLabel(
+                                  context,
+                                  _tafsirEditions[i],
+                                ),
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   color: sub,

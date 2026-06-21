@@ -15,6 +15,24 @@ import '../screens/dhikr_screen.dart';
 final GlobalKey<NavigatorState> notificationNavigatorKey =
     GlobalKey<NavigatorState>();
 
+/// Pending deep-link route from a notification tap. Set when the FCM tap
+/// arrives before the navigator is ready (cold start through splash + auth).
+/// The dashboard listens to this on mount and consumes the value by calling
+/// [consumePendingDeepLinkRoute] — only THEN do we navigate, so the route
+/// can't be discarded by the splash → auth → dashboard stack replacement
+/// that happens during boot.
+final ValueNotifier<String?> pendingDeepLinkRoute =
+    ValueNotifier<String?>(null);
+
+/// Pull the pending route, returning it once and clearing it so the same
+/// notification tap doesn't deep-link twice (e.g. if the dashboard rebuilds
+/// after coming back from another screen).
+String? consumePendingDeepLinkRoute() {
+  final r = pendingDeepLinkRoute.value;
+  pendingDeepLinkRoute.value = null;
+  return r;
+}
+
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
@@ -102,10 +120,11 @@ class NotificationService {
     });
 
     // ── Deep-link handling ────────────────────────────────────────────────────
-    // Cold start (app was killed)
+    // Cold start (app was killed). Stash the route in the pending notifier
+    // immediately — the dashboard consumes it once it's mounted, which
+    // survives the splash → auth → dashboard navigator-stack replacement.
     final initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
-      await Future.delayed(const Duration(milliseconds: 500));
       _handleMessageTap(initialMessage);
     }
 
@@ -237,9 +256,18 @@ class NotificationService {
       });
     }
 
+    // Always stash the pending route so the dashboard can drive the deep
+    // link once it's mounted. This survives cold-start splash → auth →
+    // dashboard transitions where a direct nav.push would be lost.
+    if (route != null && route.isNotEmpty) {
+      pendingDeepLinkRoute.value = route;
+    }
+
+    // Best-effort direct push for the warm/background case (app already
+    // sitting on the dashboard). If the navigator isn't ready yet, we rely
+    // on the pendingDeepLinkRoute consumer on dashboard mount.
     final nav = notificationNavigatorKey.currentState;
     if (nav == null) return;
-
     switch (route) {
       case 'morning':
         nav.push(
@@ -247,6 +275,9 @@ class NotificationService {
             builder: (_) => const DhikrScreen(initialCategory: 'morning'),
           ),
         );
+        // Already navigated — clear the pending route so dashboard mount
+        // doesn't re-trigger.
+        pendingDeepLinkRoute.value = null;
         break;
       case 'evening':
         nav.push(
@@ -254,6 +285,7 @@ class NotificationService {
             builder: (_) => const DhikrScreen(initialCategory: 'evening'),
           ),
         );
+        pendingDeepLinkRoute.value = null;
         break;
       case 'sleeping':
         nav.push(
@@ -261,9 +293,12 @@ class NotificationService {
             builder: (_) => const DhikrScreen(initialCategory: 'sleeping'),
           ),
         );
+        pendingDeepLinkRoute.value = null;
         break;
       default:
-        // Nightly check-in or unknown — just brings app to foreground
+        // Nightly check-in or unknown — just brings app to foreground.
+        // Clear so a stale route doesn't trigger a delayed navigation.
+        pendingDeepLinkRoute.value = null;
         break;
     }
   }

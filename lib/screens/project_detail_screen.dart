@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/project_l10n.dart' as proj_l10n;
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -319,12 +320,14 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
   @override
   Widget build(BuildContext context) {
     final p = widget.project;
-    final title = p['title'] as String? ?? 'Food Packs - Palestine';
+    final title = proj_l10n.projectTitle(context, p);
+    final localizedDesc = proj_l10n.projectDescription(context, p);
     final story =
         (p['story'] as String?)?.isNotEmpty == true
             ? p['story'] as String
-            : (p['description'] as String? ??
-                'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...');
+            : (localizedDesc.isNotEmpty
+                ? localizedDesc
+                : 'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...');
     final current = (p['current_points'] as num?)?.toInt() ?? 0;
     final target = (p['target_points'] as num?)?.toInt() ?? 1;
     final pct = (current / target).clamp(0.0, 1.0);
@@ -737,7 +740,8 @@ class _DonateBar extends StatelessWidget {
                     : !hasPoints
                     ? AppLocalizations.of(context)?.noPointsAvailable ??
                         'No Seeds Available'
-                    : 'Donate & Earn Reward',
+                    : AppLocalizations.of(context)?.donateAndEarnReward ??
+                        'Donate & Earn Reward',
                 style: GoogleFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -839,7 +843,8 @@ class _DonateSheetState extends State<_DonateSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Support this Cause',
+                          AppLocalizations.of(context)?.supportThisCause ??
+                              'Support this Cause',
                           style: GoogleFonts.outfit(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
@@ -848,7 +853,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.project['title'] ?? '',
+                          proj_l10n.projectTitle(context, widget.project),
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             color: _PD.sub,
@@ -876,7 +881,8 @@ class _DonateSheetState extends State<_DonateSheet> {
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                'Your balance:',
+                                AppLocalizations.of(context)?.yourBalanceLabel ??
+                                    'Your balance:',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   color: _PD.sub,
@@ -1003,7 +1009,11 @@ class _DonateSheetState extends State<_DonateSheet> {
                                       ),
                                     )
                                     : Text(
-                                      'Donate $_amount ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
+                                      AppLocalizations.of(context)
+                                              ?.donateAmountSeeds(
+                                                _amount.toString(),
+                                              ) ??
+                                          'Donate $_amount ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                       style: GoogleFonts.outfit(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
@@ -1079,7 +1089,9 @@ class _AboutText extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 onTap: onToggle,
                 child: Text(
-                  expanded ? 'Show less' : 'Read more',
+                  expanded
+                      ? (AppLocalizations.of(context)?.showLess ?? 'Show less')
+                      : (AppLocalizations.of(context)?.readMore ?? 'Read more'),
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
@@ -1165,7 +1177,8 @@ class _DonorsSectionState extends State<_DonorsSection> {
               border: Border.all(color: _PD.border),
             ),
             child: Text(
-              'Be the first to contribute.',
+              AppLocalizations.of(context)?.beFirstToContribute ??
+                  'Be the first to contribute.',
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
                 fontSize: 13,
@@ -1212,8 +1225,10 @@ class _DonorsSectionState extends State<_DonorsSection> {
                 ),
                 child: Text(
                   _expanded
-                      ? 'Show fewer ↑'
-                      : 'View all ${donors.length} →',
+                      ? (AppLocalizations.of(context)?.showFewer ?? 'Show fewer ↑')
+                      : (AppLocalizations.of(context)
+                              ?.viewAllN(donors.length.toString()) ??
+                          'View all ${donors.length} →'),
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,

@@ -23,6 +23,11 @@ dependencies:
   http: ^1.6.0
   just_audio: ^0.10.5
   hive_flutter: ^1.1.0
+  # Google Play In-App Updates — checks Play for a newer build on launch
+  # and prompts the user inside the app (flexible) or blocks them with a
+  # mandatory full-screen dialog (immediate) based on the priority that
+  # was set on the Play Console release.
+  in_app_update: ^4.2.3
   audio_session: ^0.2.2
   provider: ^6.1.5+1
   flex_color_picker: ^3.8.0

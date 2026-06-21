@@ -1419,7 +1419,7 @@
   "sleepingCategory": "Sleeping",
   "dailyWord": "Daily",
   "dailyDuasCategory": "Daily Duas",
-  "ruquiyaCategory": "Ruquiya",
+  "ruquiyaCategory": "Ruqya",
   "duasBeforeSleep": "Duas before Sleep",
   "duasAfterSalah": "Duas after Salah",
   "rabbana40Duas": "40 Rabbana Duas",
@@ -1427,5 +1427,101 @@
   "dunyaArabic": "Dunya",
   "hereafter": "Hereafter",
   "akhirahArabic": "Akhirah",
-  "bookOfCompletePrayer": "The Book of Complete Prayer"
+  "bookOfCompletePrayer": "The Book of Complete Prayer",
+  "quranicDuas": "Quranic Supplications",
+  "propheticDuas": "Prophetic Supplications",
+  "morningEveningRemembrance": "Morning & Evening Remembrance",
+  "furtherDuas": "Further Supplications",
+  "closingSalawat": "Closing Remembrance & Salawat",
+  "hajjAndUmrahCategory": "Hajj & Umrah Supplications",
+  "azkarSingular": "azkar",
+  "azkarPlural": "azkaar",
+  "hourSingular": "hour",
+  "hourPlural": "hours",
+  "minuteSingular": "minute",
+  "minutePlural": "minutes",
+  "secondSingular": "second",
+  "secondPlural": "seconds",
+  "seedsThisSession": "+{count} seeds this session",
+  "@seedsThisSession": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "sevenDayAvgAzkaar": "7-day avg: {count} azkaar/day",
+  "@sevenDayAvgAzkaar": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeAyahs": "{count} ayahs",
+  "@holdingChangeAyahs": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangePlanted": "{count} planted",
+  "@holdingChangePlanted": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeCycles": "{count} cycles",
+  "@holdingChangeCycles": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeBuilt": "{count} built",
+  "@holdingChangeBuilt": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeEarned": "{count} earned",
+  "@holdingChangeEarned": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeOpened": "{count} opened",
+  "@holdingChangeOpened": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeInvocations": "{count} invocations",
+  "@holdingChangeInvocations": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "holdingChangeRecitations": "{count} recitations",
+  "@holdingChangeRecitations": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "bookmarksOnQuranCom": "Bookmarks on Quran.com:  {count}",
+  "@bookmarksOnQuranCom": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "bookmarksInThisApp": "Bookmarks in this app:   {count}",
+  "@bookmarksInThisApp": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "streakSeedsBonus": "+{count} Seeds",
+  "@streakSeedsBonus": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "moreDaysToGo": "{count} more days to go, keep it up!",
+  "@moreDaysToGo": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "plusSeedsThisWeek": "+{count} this week",
+  "@plusSeedsThisWeek": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "unitDuas": "{count} duas",
+  "@unitDuas": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "unitAdhkar": "{count} adhkar",
+  "@unitAdhkar": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "moreCollections": "More Collections",
+  "donateAndEarnReward": "Donate & Earn Reward",
+  "yourBalanceLabel": "Your balance:",
+  "donateAmountSeeds": "Donate {amount} Seeds",
+  "@donateAmountSeeds": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "readMore": "Read more",
+  "beFirstToContribute": "Be the first to contribute.",
+  "showFewer": "Show fewer ↑",
+  "viewAllN": "View all {n} →",
+  "@viewAllN": {
+    "placeholders": { "n": { "type": "String" } }
+  }
 }

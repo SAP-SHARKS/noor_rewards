@@ -88,13 +88,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Gerbang cahaya terbuka.\nPerjalanan spiritual Anda dimulai hari ini.';
 
   @override
-  String get earnNoorPoints => 'EARN SABIQ SEEDS';
+  String get earnNoorPoints => 'DAPATKAN BIJI';
 
   @override
   String get yourProgress => 'PERKEMBANGAN ANDA';
 
   @override
-  String get yourTotalNoorPoints => 'YOUR TOTAL SABIQ SEEDS';
+  String get yourTotalNoorPoints => 'TOTAL BIJI ANDA';
 
   @override
   String get achievements => 'Pencapaian';
@@ -244,7 +244,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityLeaderboard => 'Papan Peringkat Komunitas';
 
   @override
-  String get topContributors => 'Top contributors by lifetime Biji';
+  String get topContributors =>
+      'Kontributor teratas berdasarkan Biji seumur hidup';
 
   @override
   String get myProfile => 'Profil Saya';
@@ -349,10 +350,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get helpRealLives => 'HELP REAL LIVES.';
 
   @override
-  String get yourNoorPointsFundProjects => 'Your Biji fund these projects';
+  String get yourNoorPointsFundProjects =>
+      'Biji Anda mendanai proyek-proyek ini';
 
   @override
-  String get youBothEarnPoints => 'You both earn 500 Biji!';
+  String get youBothEarnPoints => 'Kalian berdua mendapatkan 500 Biji!';
 
   @override
   String get reward => 'Hadiah';
@@ -432,7 +434,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get donatePointsToSupport =>
-      'Donate your Biji to support real-world projects';
+      'Donasikan Biji Anda untuk mendukung proyek nyata';
 
   @override
   String get noActiveProjects => 'Tidak ada proyek aktif saat ini';
@@ -466,7 +468,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String ptsToLevel(String pts, String level) {
-    return '$pts Biji to Level $level';
+    return '$pts Biji menuju Level $level';
   }
 
   @override
@@ -502,10 +504,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Start earning Biji, read Quran, do Dhikr & Dua.';
+      'Mulai dapatkan Biji: baca Al-Qur\'an, zikir & doa.';
 
   @override
-  String get howToEarnPts => 'How to Earn Biji';
+  String get howToEarnPts => 'Cara Mendapatkan Biji';
 
   @override
   String get readOneAyah => 'Baca 1 Ayat';
@@ -597,7 +599,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String ptsBoost(String multiplier) {
-    return '$multiplier× Biji Boost';
+    return 'Bonus Biji $multiplier×';
   }
 
   @override
@@ -625,7 +627,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String moreDaysToGo(String count) {
-    return '$count hari lagi!';
+    return '$count hari lagi, terus semangat!';
   }
 
   @override
@@ -655,7 +657,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get earnPointsTafsir =>
-      'Earn Biji for every 10 min of Tafsir listening';
+      'Dapatkan Biji setiap 10 menit mendengarkan Tafsir';
 
   @override
   String get featuredSurahs => 'Surah Pilihan';
@@ -801,10 +803,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get progressBarAyahCount => 'Bilah perkembangan & hitungan ayat';
 
   @override
-  String get showPointsBanner => 'Show Biji Banner';
+  String get showPointsBanner => 'Tampilkan banner Biji';
 
   @override
-  String get noorPointsNotificationStrip => '+Biji notification strip';
+  String get noorPointsNotificationStrip => '+ Strip notifikasi Biji';
 
   @override
   String get showSurahHeader => 'Tampilkan Header Surah';
@@ -921,7 +923,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get loadingQuran => 'Memuat Al-Quran…';
 
   @override
-  String get earnPointsPerVerse => 'Earn +10 Biji per verse read';
+  String get earnPointsPerVerse => 'Dapatkan +10 Biji per ayat dibaca';
 
   @override
   String get chooseSurah => 'Pilih Surah';
@@ -1101,7 +1103,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get sunnahDuas => 'Doa Sunnah';
 
   @override
-  String get quranicDuas => 'Doa Al-Quran';
+  String get quranicDuas => 'Doa-doa dari Al-Quran';
 
   @override
   String get istighfar => 'Istighfar';
@@ -1239,7 +1241,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get sadaqahGiven => 'Sedekah Diberikan';
 
   @override
-  String get pointsDonatedToCommunity => 'Biji donated to community';
+  String get pointsDonatedToCommunity => 'Biji didonasikan ke komunitas';
 
   @override
   String get allTimeLabel => 'Sepanjang masa';
@@ -1252,7 +1254,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Waktu yang dihabiskan dalam mengingat Allah';
 
   @override
-  String get noorPointsSummary => 'Biji Summary';
+  String get noorPointsSummary => 'Ringkasan Biji';
 
   @override
   String get totalPoints => 'Total Biji';
@@ -1265,20 +1267,20 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String yourAvailable(String pts) {
-    return 'Your available: $pts Biji';
+    return 'Tersedia: $pts Biji';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'JazakAllah! $pts Biji donated';
+    return 'JazakAllah! $pts Biji didonasikan';
   }
 
   @override
-  String get insufficientPoints => 'Insufficient Biji';
+  String get insufficientPoints => 'Biji tidak cukup';
 
   @override
   String donatePoints(String pts) {
-    return 'Donate $pts Biji';
+    return 'Donasikan $pts Biji';
   }
 
   @override
@@ -1289,7 +1291,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get fullyFunded => 'Sepenuhnya Terdanai ✓';
 
   @override
-  String get noPointsAvailable => 'No Biji Available';
+  String get noPointsAvailable => 'Tidak ada Biji';
 
   @override
   String get communityProgress => 'Kemajuan Komunitas';
@@ -1468,7 +1470,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get reportABug => 'Laporkan Bug';
 
   @override
-  String get aboutNoorRewards => 'About Sabiq Rewards';
+  String get aboutNoorRewards => 'Tentang Sabiq Rewards';
 
   @override
   String get builtWithLove => 'Dibuat dengan cinta untuk Umat';
@@ -1485,14 +1487,14 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'Built with love for the global Muslim Ummah.\nEarn Biji by building Islamic habits.\nDonate Biji to support real community projects.';
+      'Dibuat dengan cinta untuk umat Muslim global.\nDapatkan Biji dengan membangun kebiasaan Islami.\nDonasikan Biji untuk mendukung proyek komunitas nyata.';
 
   @override
   String get howToEarnQuestion => 'Bagaimana cara mendapatkan Biji?';
 
   @override
   String get howToEarnAnswer =>
-      'Complete Quran reading, Dhikr sets, and daily login to earn Biji.';
+      'Selesaikan bacaan Al-Qur\'an, set Zikir, dan login harian untuk mendapatkan Biji.';
 
   @override
   String get whatIsValidateQuestion => 'Apa itu Validasi Koin?';
@@ -1509,11 +1511,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Selesaikan aktivitas harian Anda secara berturut-turut untuk membangun rangkaian.';
 
   @override
-  String get canDonatQuestion => 'Can I donate my Biji?';
+  String get canDonatQuestion => 'Bisakah saya mendonasikan Biji saya?';
 
   @override
   String get canDonateAnswer =>
-      'Yes! Visit the Akhirah tab to donate your Biji to active community projects.';
+      'Ya! Buka tab Akhirah untuk mendonasikan Biji Anda ke proyek komunitas aktif.';
 
   @override
   String get coinsSealedMashaAllah => 'Koin Dikunci!';
@@ -1543,7 +1545,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get shareWithFriends => 'Bagikan dengan Teman';
 
   @override
-  String get earnMoreNoor => 'Earn More Biji';
+  String get earnMoreNoor => 'Dapatkan Lebih Banyak Biji';
 
   @override
   String get dontDisturb => 'Jangan Ganggu';
@@ -1555,29 +1557,29 @@ class AppLocalizationsId extends AppLocalizations {
   String get read5QuranPages => 'Baca 5 Halaman Al-Quran';
 
   @override
-  String get completeNowBonus => 'Complete now → earn +50 Biji bonus';
+  String get completeNowBonus => 'Selesaikan sekarang → bonus +50 Biji';
 
   @override
   String get completeADhikrSet => 'Selesaikan Satu Set Dzikir';
 
   @override
-  String get finishAzkaarBonus => 'Finish your Azkaar → earn +30 Biji bonus';
+  String get finishAzkaarBonus => 'Selesaikan Azkaar Anda → bonus +30 Biji';
 
   @override
   String get inviteAFriend => 'Undang Teman';
 
   @override
-  String get shareNoorBonus => 'Share Sabiq with someone → earn +100 Biji';
+  String get shareNoorBonus => 'Bagikan Sabiq → dapatkan +100 Biji';
 
   @override
-  String get multiplyYour => 'MULTIPLY YOUR';
+  String get multiplyYour => 'LIPATGANDAKAN';
 
   @override
-  String get noorPointsBang => 'SABIQ SEEDS!';
+  String get noorPointsBang => 'BIJI!';
 
   @override
   String get keepMomentum =>
-      'Keep your spiritual momentum going\nand watch your Biji grow';
+      'Jaga momentum spiritual Anda\ndan lihat Biji Anda tumbuh';
 
   @override
   String get openQuranNow => 'Buka Al-Quran Sekarang';
@@ -1589,13 +1591,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get goodDeed => 'Amal Kebaikan';
 
   @override
-  String get earnSawabWithRead => 'Earn Sawab\nwith every read';
+  String get earnSawabWithRead => 'Dapatkan Sawab\nsetiap kali membaca';
 
   @override
   String get realImpact => 'Dampak Nyata';
 
   @override
-  String get coinsFundCauses => 'Biji fund\nnoble causes';
+  String get coinsFundCauses => 'Biji mendanai\ntujuan mulia';
 
   @override
   String get unexpectedGoogleError =>
@@ -2054,7 +2056,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get theirStorySection => 'Kisah mereka';
 
   @override
-  String get yourBalanceLabel => 'Saldo Anda';
+  String get yourBalanceLabel => 'Saldo Anda:';
 
   @override
   String sponsorCta(String name) {
@@ -2792,4 +2794,148 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get bookOfCompletePrayer => 'Kitab Doa Lengkap';
+
+  @override
+  String get propheticDuas => 'Doa-doa Nabi';
+
+  @override
+  String get morningEveningRemembrance => 'Zikir Pagi & Petang';
+
+  @override
+  String get furtherDuas => 'Doa-doa Lainnya';
+
+  @override
+  String get closingSalawat => 'Zikir Penutup & Salawat';
+
+  @override
+  String get hajjAndUmrahCategory => 'Doa Haji & Umrah';
+
+  @override
+  String get azkarSingular => 'zikir';
+
+  @override
+  String get azkarPlural => 'zikir';
+
+  @override
+  String get hourSingular => 'jam';
+
+  @override
+  String get hourPlural => 'jam';
+
+  @override
+  String get minuteSingular => 'menit';
+
+  @override
+  String get minutePlural => 'menit';
+
+  @override
+  String get secondSingular => 'detik';
+
+  @override
+  String get secondPlural => 'detik';
+
+  @override
+  String seedsThisSession(String count) {
+    return '+$count benih sesi ini';
+  }
+
+  @override
+  String sevenDayAvgAzkaar(String count) {
+    return 'rata-rata 7 hari: $count zikir/hari';
+  }
+
+  @override
+  String holdingChangeAyahs(String count) {
+    return '$count ayat';
+  }
+
+  @override
+  String holdingChangePlanted(String count) {
+    return '$count ditanam';
+  }
+
+  @override
+  String holdingChangeCycles(String count) {
+    return '$count siklus';
+  }
+
+  @override
+  String holdingChangeBuilt(String count) {
+    return '$count dibangun';
+  }
+
+  @override
+  String holdingChangeEarned(String count) {
+    return '$count diperoleh';
+  }
+
+  @override
+  String holdingChangeOpened(String count) {
+    return '$count dibuka';
+  }
+
+  @override
+  String holdingChangeInvocations(String count) {
+    return '$count doa';
+  }
+
+  @override
+  String holdingChangeRecitations(String count) {
+    return '$count bacaan';
+  }
+
+  @override
+  String bookmarksOnQuranCom(String count) {
+    return 'Penanda di Quran.com: $count';
+  }
+
+  @override
+  String bookmarksInThisApp(String count) {
+    return 'Penanda di aplikasi ini: $count';
+  }
+
+  @override
+  String streakSeedsBonus(String count) {
+    return '+$count Biji';
+  }
+
+  @override
+  String plusSeedsThisWeek(String count) {
+    return '+$count minggu ini';
+  }
+
+  @override
+  String unitDuas(String count) {
+    return '$count doa';
+  }
+
+  @override
+  String unitAdhkar(String count) {
+    return '$count zikir';
+  }
+
+  @override
+  String get moreCollections => 'Koleksi Lainnya';
+
+  @override
+  String get donateAndEarnReward => 'Donasi & Dapat Pahala';
+
+  @override
+  String donateAmountSeeds(String amount) {
+    return 'Donasikan $amount Biji';
+  }
+
+  @override
+  String get readMore => 'Baca selengkapnya';
+
+  @override
+  String get beFirstToContribute => 'Jadi yang pertama berkontribusi.';
+
+  @override
+  String get showFewer => 'Tampilkan lebih sedikit ↑';
+
+  @override
+  String viewAllN(String n) {
+    return 'Lihat semua $n →';
+  }
 }

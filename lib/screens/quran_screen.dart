@@ -256,7 +256,15 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool _wordByWord = false; // word-by-word mode
   List<Map<String, dynamic>> _wbwWords = []; // [{arabic, translation}]
   bool _wbwLoading = false;
-  int? _wbwPrefetchedSurah; // surah whose bulk WBW is cached
+  String? _wbwPrefetchedKey; // '<surah>:<lang>' for which bulk WBW is cached
+
+  // Quran.com WBW supports these languages; everything else falls back to en.
+  // Keep en as the safe default — the API ignores the param when it can't honour it.
+  static const _kWbwSupported = {'en', 'ur', 'id', 'tr', 'fr', 'ru', 'ms', 'bn'};
+  String _wbwLang() {
+    final code = Localizations.localeOf(context).languageCode.toLowerCase();
+    return _kWbwSupported.contains(code) ? code : 'en';
+  }
   // Full-page Mushaf — PageView-based (one Quran page per PageView page)
   bool _fullPageMode = false;
   int _currentPage = 1; // current Quran page (1–604)
@@ -330,7 +338,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   final bool _saving = false;
 
   // ── Inline tafsir (bottom-sheet) ──────────────────────────────────────────────
+  // Mirrors tafsir_screen.dart's `_tafsirEditions`. Kept in sync by hand —
+  // adding a tafsir here should also be added there (and vice versa). The
+  // `lang` field drives the locale-default lookup below.
   static const _qTafsirEditions = [
+    // ── English ────────────────────────────────────────────────────────────────
     (
       id: 'en-tafisr-ibn-kathir',
       name: 'Ibn Kathir (EN)',
@@ -338,6 +350,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       src: 'cdn',
       slug: 'en-tafisr-ibn-kathir',
       rtl: false,
+      lang: 'en',
     ),
     (
       id: 'en-tafsir-maarif-ul-quran',
@@ -346,7 +359,27 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       src: 'cdn',
       slug: 'en-tafsir-maarif-ul-quran',
       rtl: false,
+      lang: 'en',
     ),
+    (
+      id: 'en-al-jalalayn',
+      name: 'Al-Jalalayn (EN)',
+      emoji: '📖',
+      src: 'cdn',
+      slug: 'en-al-jalalayn',
+      rtl: false,
+      lang: 'en',
+    ),
+    (
+      id: 'en-tafsir-al-mukhtasar',
+      name: 'Al-Mukhtasar (EN)',
+      emoji: '✨',
+      src: 'cdn',
+      slug: 'en-tafsir-al-mukhtasar',
+      rtl: false,
+      lang: 'en',
+    ),
+    // ── Urdu ───────────────────────────────────────────────────────────────────
     (
       id: 'ur-tafseer-ibn-e-kaseer',
       name: 'ابن کثیر (اردو)',
@@ -354,6 +387,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       src: 'cdn',
       slug: 'ur-tafseer-ibn-e-kaseer',
       rtl: true,
+      lang: 'ur',
     ),
     (
       id: 'ur-tafsir-bayan-ul-quran',
@@ -362,6 +396,96 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       src: 'cdn',
       slug: 'ur-tafsir-bayan-ul-quran',
       rtl: true,
+      lang: 'ur',
+    ),
+    // ── Arabic ─────────────────────────────────────────────────────────────────
+    (
+      // Switched off alquran.cloud — see tafsir_screen.dart.
+      id: 'ar-tafsir-muyassar',
+      name: 'المیسَّر',
+      emoji: '🌙',
+      src: 'cdn',
+      slug: 'ar-tafsir-muyassar',
+      rtl: true,
+      lang: 'ar',
+    ),
+    (
+      id: 'ar-tafsir-al-jalalayn',
+      name: 'الجلالین',
+      emoji: '📜',
+      src: 'cdn',
+      slug: 'ar-tafsir-al-jalalayn',
+      rtl: true,
+      lang: 'ar',
+    ),
+    (
+      // See tafsir_screen.dart — switched off the sparse alquran.cloud source.
+      id: 'ar-tafseer-al-qurtubi',
+      name: 'القرطبی',
+      emoji: '🏛️',
+      src: 'cdn',
+      slug: 'ar-tafseer-al-qurtubi',
+      rtl: true,
+      lang: 'ar',
+    ),
+    (
+      id: 'ar-tafsir-al-baghawi',
+      name: 'البغوي',
+      emoji: '📚',
+      src: 'cdn',
+      slug: 'ar-tafsir-al-baghawi',
+      rtl: true,
+      lang: 'ar',
+    ),
+    // Tabari deliberately omitted — see tafsir_screen.dart.
+    // ── French ─────────────────────────────────────────────────────────────────
+    (
+      id: 'french-mokhtasar',
+      name: 'Al-Mokhtasar (FR)',
+      emoji: '✨',
+      src: 'cdn',
+      slug: 'french-mokhtasar',
+      rtl: false,
+      lang: 'fr',
+    ),
+    // ── Indonesian ─────────────────────────────────────────────────────────────
+    (
+      id: 'in-tafsir-jalalayn',
+      name: 'Tafsir Jalalayn (ID)',
+      emoji: '📖',
+      src: 'cdn',
+      slug: 'in-tafsir-jalalayn',
+      rtl: false,
+      lang: 'id',
+    ),
+    (
+      id: 'indonesian-mokhtasar',
+      name: 'Al-Mukhtasar (ID)',
+      emoji: '✨',
+      src: 'cdn',
+      slug: 'indonesian-mokhtasar',
+      rtl: false,
+      lang: 'id',
+    ),
+    // ── Russian ────────────────────────────────────────────────────────────────
+    (
+      id: 'russian-mokhtasar',
+      name: 'Аль-Мухтасар (RU)',
+      emoji: '✨',
+      src: 'cdn',
+      slug: 'russian-mokhtasar',
+      rtl: false,
+      lang: 'ru',
+    ),
+    // ── Turkish ────────────────────────────────────────────────────────────────
+    (
+      id: 'turkish-mokhtasar',
+      name: 'El-Muhtasar (TR)',
+      emoji: '✨',
+      src: 'cdn',
+      slug: 'turkish-mokhtasar',
+      rtl: false,
+      lang: 'tr',
     ),
   ];
   int _tafsirEditionIdx = 0;
@@ -401,6 +525,19 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     StatsService.instance.enterScreen('quran');
     NoorLiveNotificationService.instance.enterQuranScreen();
     _init();
+    // Pick a locale-matching tafsir on first frame: first entry whose `lang`
+    // matches the active locale; fall back to index 0 (English Ibn Kathir)
+    // when the locale has no curated entry (e.g. ms). Localizations is only
+    // safe to read post-mount, so defer to the next frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final lang = Localizations.localeOf(context).languageCode;
+      final idx = _qTafsirEditions.indexWhere((t) => t.lang == lang);
+      final localeDefault = idx >= 0 ? idx : 0;
+      if (_tafsirEditionIdx != localeDefault) {
+        setState(() => _tafsirEditionIdx = localeDefault);
+      }
+    });
     // Configure audio session so other apps yield to us
     AudioSession.instance.then((session) {
       session.configure(const AudioSessionConfiguration.music());
@@ -422,6 +559,23 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     });
   }
 
+
+  // Tracks the locale active on the last build so we can detect runtime
+  // locale switches (system language change or manual override) and refetch
+  // anything that's keyed to the locale — currently just WBW words.
+  String? _lastLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newLocale = Localizations.localeOf(context).languageCode;
+    if (_lastLocale != null && _lastLocale != newLocale && _wordByWord) {
+      // Already mounted with a different locale → user just switched.
+      // Cache keys + API URL are locale-scoped, so this fetches fresh words.
+      _fetchWordByWord(_surah, _ayah);
+    }
+    _lastLocale = newLocale;
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -1073,8 +1227,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         _wbwWords = [];
       });
 
-    // 1. Check per-ayah cache first (instant)
-    final wbwCacheKey = 'wbw_${surah}_$ayah';
+    final lang = _wbwLang();
+
+    // 1. Check per-ayah cache first (instant). Cache key includes lang so a
+    //    locale switch doesn't surface stale English words for a now-Urdu UI.
+    final wbwCacheKey = 'wbw_v2_${surah}_${ayah}_$lang';
     final cachedWbw = _cache.get(wbwCacheKey);
     if (cachedWbw != null) {
       final cachedAt = DateTime.tryParse((cachedWbw as Map)['ts'] ?? '');
@@ -1088,25 +1245,30 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             _wbwWords = words;
             _wbwLoading = false;
           });
-        // Trigger bulk prefetch in background if not done for this surah
-        if (_wbwPrefetchedSurah != surah) _prefetchSurahWbw(surah);
+        // Trigger bulk prefetch in background if not done for this surah+lang
+        final prefetchKey = '$surah:$lang';
+        if (_wbwPrefetchedKey != prefetchKey) _prefetchSurahWbw(surah);
         return;
       }
     }
 
     // 2. Bulk-fetch entire surah (caches every ayah at once)
-    if (_wbwPrefetchedSurah != surah) {
+    final prefetchKey = '$surah:$lang';
+    if (_wbwPrefetchedKey != prefetchKey) {
       try {
-        final allWords = await QuranApiService.instance.wordsBySurah(surah);
+        final allWords = await QuranApiService.instance.wordsBySurah(
+          surah,
+          wbwLang: lang,
+        );
         if (allWords.isNotEmpty) {
           final ts = DateTime.now().toIso8601String();
           for (final entry in allWords.entries) {
-            await _cache.put('wbw_${surah}_${entry.key}', {
+            await _cache.put('wbw_v2_${surah}_${entry.key}_$lang', {
               'words': entry.value,
               'ts': ts,
             });
           }
-          _wbwPrefetchedSurah = surah;
+          _wbwPrefetchedKey = prefetchKey;
           if (allWords.containsKey(ayah) && mounted) {
             setState(() {
               _wbwWords = allWords[ayah]!;
@@ -1122,7 +1284,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
     // 3. Fallback: single-ayah fetch
     try {
-      final words = await QuranApiService.instance.wordsByKey('$surah:$ayah');
+      final words = await QuranApiService.instance.wordsByKey(
+        '$surah:$ayah',
+        wbwLang: lang,
+      );
       if (words.isNotEmpty) {
         await _cache.put(wbwCacheKey, {
           'words': words,
@@ -1144,16 +1309,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   /// Background bulk prefetch — caches all ayahs for the surah silently
   Future<void> _prefetchSurahWbw(int surah) async {
     try {
-      final allWords = await QuranApiService.instance.wordsBySurah(surah);
+      final lang = _wbwLang();
+      final allWords = await QuranApiService.instance.wordsBySurah(
+        surah,
+        wbwLang: lang,
+      );
       if (allWords.isEmpty) return;
       final ts = DateTime.now().toIso8601String();
       for (final entry in allWords.entries) {
-        await _cache.put('wbw_${surah}_${entry.key}', {
+        await _cache.put('wbw_v2_${surah}_${entry.key}_$lang', {
           'words': entry.value,
           'ts': ts,
         });
       }
-      _wbwPrefetchedSurah = surah;
+      _wbwPrefetchedKey = '$surah:$lang';
     } catch (_) {}
   }
 
