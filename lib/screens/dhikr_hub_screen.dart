@@ -58,10 +58,16 @@ const List<_Cat> _kEssentials = [
   _Cat('rabbana_40', '40 Rabbana Duas'),
   _Cat('istighfar', 'Istighfar'),
   _Cat('daily_duas', 'Daily Duas'),
-  _Cat('ruquiya', 'Ruquiya'),
+  _Cat('ruquiya', 'Ruqya'),
   _Cat('general', 'Dhikar All Times'),
   _Cat('asmaul_husna', 'Names of Allah'),
-  _Cat('book_of_prayer', 'The Book of Complete Prayer'),
+  // ── Book of Complete Prayer — split into 6 standalone categories
+  _Cat('quranic_duas', 'Quranic Supplications'),
+  _Cat('prophetic_duas', 'Prophetic Supplications'),
+  _Cat('morning_evening_remembrance', 'Morning & Evening Remembrance'),
+  _Cat('further_duas', 'Further Supplications'),
+  _Cat('closing_salawat', 'Closing Remembrance & Salawat'),
+  _Cat('hajj_umrah', 'Hajj & Umrah Supplications'),
 ];
 
 const List<_Cat> _kOthers = [
@@ -221,8 +227,18 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
         return l.dhikarAllTimes;
       case 'asmaul_husna':
         return l.namesOfAllah;
-      case 'book_of_prayer':
-        return l.bookOfCompletePrayer;
+      case 'quranic_duas':
+        return l.quranicDuas;
+      case 'prophetic_duas':
+        return l.propheticDuas;
+      case 'morning_evening_remembrance':
+        return l.morningEveningRemembrance;
+      case 'further_duas':
+        return l.furtherDuas;
+      case 'closing_salawat':
+        return l.closingSalawat;
+      case 'hajj_umrah':
+        return l.hajjAndUmrahCategory;
       case 'nightmares':
         return l.nightmares;
       case 'waking_up':
@@ -380,12 +396,15 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
 
   // "N duas" / "N adhkar" — kept short and faithful to the mockup. Returns
   // an empty string when we don't have a count, so callers can hide the
-  // line cleanly.
+  // line cleanly. Localised via `unitDuas` / `unitAdhkar`.
   String _metaFor(String id) {
     final c = _counts[id];
     if (c == null || c <= 0) return '';
     final isAdhkar = id == 'morning' || id == 'evening' || id == 'general';
-    return isAdhkar ? '$c adhkar' : '$c duas';
+    final l = AppLocalizations.of(context);
+    return isAdhkar
+        ? (l?.unitAdhkar(c.toString()) ?? '$c adhkar')
+        : (l?.unitDuas(c.toString()) ?? '$c duas');
   }
 
   // ── build ────────────────────────────────────────────────────────────────
@@ -480,7 +499,11 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
 
               // ── More collections (the remaining essentials) ────────────
               if (visibleEssentials.isNotEmpty) ...[
-                const _SectionHeader(first: 'More ', accent: 'collections'),
+                _SectionHeader(
+                  first: AppLocalizations.of(context)?.moreCollections ??
+                      'More Collections',
+                  accent: '',
+                ),
                 const SizedBox(height: 12),
                 for (final c in visibleEssentials)
                   Padding(
@@ -497,7 +520,11 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
               // ── Other categories ────────────────────────────────────────
               if (visibleOthers.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                const _SectionHeader(first: 'Other ', accent: 'categories'),
+                _SectionHeader(
+                  first: AppLocalizations.of(context)?.otherCategories ??
+                      'Other Categories',
+                  accent: '',
+                ),
                 const SizedBox(height: 12),
                 for (final c in visibleOthers)
                   Padding(

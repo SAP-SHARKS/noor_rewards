@@ -498,9 +498,17 @@ class QuranApiService {
 
   /// Word-by-word data for a single verse key (e.g. "2:255").
   /// Returns [{arabic, transliteration, translation}]
-  Future<List<Map<String, dynamic>>> wordsByKey(String verseKey) async {
+  /// [wbwLang] is the Quran.com word-translation language code (en, ur, id, tr,
+  /// fr, ru, ms, bn, …). The Quran.com v4 API param is `language` — passing the
+  /// wrong name (e.g. `word_translation_language`) is silently ignored and the
+  /// response returns English. Cache key is versioned (_v2) so entries written
+  /// under the broken param name are not served.
+  Future<List<Map<String, dynamic>>> wordsByKey(
+    String verseKey, {
+    String wbwLang = 'en',
+  }) async {
     final box = await _cacheBox;
-    final cacheKey = 'wordsByKey_$verseKey';
+    final cacheKey = 'wordsByKey_v2_${verseKey}_$wbwLang';
     if (box.containsKey(cacheKey)) {
       return (jsonDecode(box.get(cacheKey)) as List)
           .map((e) => Map<String, dynamic>.from(e))
@@ -511,7 +519,7 @@ class QuranApiService {
       '${QuranApiConfig.apiBase}/verses/by_key/$verseKey'
       '?words=true'
       '&word_fields=text_uthmani,text_indopak,transliteration'
-      '&word_translation_language=en',
+      '&language=$wbwLang',
     );
     final res = await http
         .get(url, headers: await _headers())
@@ -540,9 +548,13 @@ class QuranApiService {
   }
 
   /// Bulk word-by-word for an entire surah. Returns `Map<ayahNumber, List<word>>`.
-  Future<Map<int, List<Map<String, dynamic>>>> wordsBySurah(int surah) async {
+  /// Same `language=` quirk and `_v2` cache-key invalidation as `wordsByKey`.
+  Future<Map<int, List<Map<String, dynamic>>>> wordsBySurah(
+    int surah, {
+    String wbwLang = 'en',
+  }) async {
     final box = await _cacheBox;
-    final cacheKey = 'wordsBySurah_$surah';
+    final cacheKey = 'wordsBySurah_v2_${surah}_$wbwLang';
     if (box.containsKey(cacheKey)) {
       final cached = jsonDecode(box.get(cacheKey)) as Map<String, dynamic>;
       return cached.map(
@@ -561,7 +573,7 @@ class QuranApiService {
         '${QuranApiConfig.apiBase}/verses/by_chapter/$surah'
         '?words=true'
         '&word_fields=text_uthmani,text_indopak,transliteration'
-        '&word_translation_language=en'
+        '&language=$wbwLang'
         '&per_page=50'
         '&page=$page',
       );

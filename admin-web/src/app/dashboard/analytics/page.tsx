@@ -171,6 +171,7 @@ export default function AnalyticsPage() {
           supabase
             .from("profiles")
             .select("id, country, noor_points")
+            .is("merged_into_id", null)
             .limit(50_000),
 
           supabase
@@ -184,14 +185,19 @@ export default function AnalyticsPage() {
             .select("device_type")
             .limit(50_000),
 
-          supabase.from("profiles").select("*", { count: "exact", head: true }),
           supabase
             .from("profiles")
             .select("*", { count: "exact", head: true })
+            .is("merged_into_id", null),
+          supabase
+            .from("profiles")
+            .select("*", { count: "exact", head: true })
+            .is("merged_into_id", null)
             .gte("created_at", startOfToday.toISOString()),
           supabase
             .from("profiles")
             .select("*", { count: "exact", head: true })
+            .is("merged_into_id", null)
             .gte("created_at", sevenAgo.toISOString()),
           supabase
             .from("fcm_tokens")
@@ -208,7 +214,8 @@ export default function AnalyticsPage() {
             .from("profiles")
             .select(
               "id, login_streak, dhikr_streak, quran_streak, noor_points, level, created_at",
-            ),
+            )
+            .is("merged_into_id", null),
 
           supabase
             .from("notification_log")
@@ -226,6 +233,7 @@ export default function AnalyticsPage() {
           supabase
             .from("profiles")
             .select("created_at")
+            .is("merged_into_id", null)
             .gte(
               "created_at",
               new Date(now.getTime() - 30 * MS_PER_DAY).toISOString(),

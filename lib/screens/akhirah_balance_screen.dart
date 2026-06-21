@@ -568,7 +568,11 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
-                        today.azkaar == 1 ? 'azkar' : 'azkaar',
+                        today.azkaar == 1
+                            ? (AppLocalizations.of(context)?.azkarSingular ??
+                                'azkar')
+                            : (AppLocalizations.of(context)?.azkarPlural ??
+                                'azkaar'),
                         style: GoogleFonts.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -596,13 +600,25 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                     final String label;
                     if (h > 0) {
                       value = '$h:${m.toString().padLeft(2, '0')}';
-                      label = h == 1 && m == 0 ? 'hour' : 'hours';
+                      label = h == 1 && m == 0
+                          ? (AppLocalizations.of(context)?.hourSingular ??
+                              'hour')
+                          : (AppLocalizations.of(context)?.hourPlural ??
+                              'hours');
                     } else if (m > 0) {
                       value = '$m';
-                      label = m == 1 ? 'minute' : 'minutes';
+                      label = m == 1
+                          ? (AppLocalizations.of(context)?.minuteSingular ??
+                              'minute')
+                          : (AppLocalizations.of(context)?.minutePlural ??
+                              'minutes');
                     } else {
                       value = '$sec';
-                      label = sec == 1 ? 'second' : 'seconds';
+                      label = sec == 1
+                          ? (AppLocalizations.of(context)?.secondSingular ??
+                              'second')
+                          : (AppLocalizations.of(context)?.secondPlural ??
+                              'seconds');
                     }
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -644,7 +660,10 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 const SabiqCoin(size: 14),
                 const SizedBox(width: 5),
                 Text(
-                  '+${widget.sessionPoints} seeds this session',
+                  AppLocalizations.of(context)?.seedsThisSession(
+                        widget.sessionPoints.toString(),
+                      ) ??
+                      '+${widget.sessionPoints} seeds this session',
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -676,7 +695,10 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
           if (avgAzkaar > 0) ...[
             const SizedBox(height: 4),
             Text(
-              '7-day avg: ${avgAzkaar.toStringAsFixed(0)} azkaar/day',
+              AppLocalizations.of(context)?.sevenDayAvgAzkaar(
+                    avgAzkaar.toStringAsFixed(0),
+                  ) ??
+                  '7-day avg: ${avgAzkaar.toStringAsFixed(0)} azkaar/day',
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 color: Y4.muted,

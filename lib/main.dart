@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/auth/data/qf_auth_service.dart';
+import 'services/in_app_update_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/app_config.dart';
@@ -27,6 +28,7 @@ import 'services/quran_api_service.dart';
 import 'services/notification_service.dart';
 import 'services/notification_center.dart';
 import 'services/onboarding_assets_service.dart';
+import 'services/translation_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'widgets/noor_offline.dart';
@@ -58,6 +60,11 @@ Future<void> main() async {
     // In-app notification inbox — small, fast, must be ready before any
     // service tries to enqueue a notification.
     await NotificationCenter.instance.init();
+
+    // Auto-translation cache (used to translate the curated benefit lines
+    // on the dhikr list view when the active locale isn't English). Opens
+    // a Hive box — fast, no network.
+    await TranslationService.instance.init();
 
     try {
       final bytes = await rootBundle.load('assets/lottie/Flower.json');
@@ -388,6 +395,11 @@ class _AuthGateState extends State<AuthGate> {
     super.initState();
     // Restore the persisted QF signed-out flag from secure storage.
     QfAuthService.instance.init();
+    // Ask Google Play whether a newer build is available for this
+    // package. Runs in background; safe no-op on non-Android. Decision
+    // between flexible vs immediate flow is driven entirely by the
+    // "Update priority" set on the Play Console release.
+    InAppUpdateService.instance.checkOnLaunch();
     // If the user already has a live QF session at app start, reconcile
     // bookmarks both ways in the background. Catches the case where the
     // user added a bookmark on quran.com while the app was closed.

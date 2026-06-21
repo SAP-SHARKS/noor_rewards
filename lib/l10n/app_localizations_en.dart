@@ -626,7 +626,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String moreDaysToGo(String count) {
-    return '$count more day(s) to go!';
+    return '$count more days to go, keep it up!';
   }
 
   @override
@@ -1099,7 +1099,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sunnahDuas => 'Sunnah Duas';
 
   @override
-  String get quranicDuas => 'Quranic Duas';
+  String get quranicDuas => 'Quranic Supplications';
 
   @override
   String get istighfar => 'Istighfar';
@@ -2047,7 +2047,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get theirStorySection => 'Their story';
 
   @override
-  String get yourBalanceLabel => 'Your balance';
+  String get yourBalanceLabel => 'Your balance:';
 
   @override
   String sponsorCta(String name) {
@@ -2758,7 +2758,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyDuasCategory => 'Daily Duas';
 
   @override
-  String get ruquiyaCategory => 'Ruquiya';
+  String get ruquiyaCategory => 'Ruqya';
 
   @override
   String get duasBeforeSleep => 'Duas before Sleep';
@@ -2783,4 +2783,148 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookOfCompletePrayer => 'The Book of Complete Prayer';
+
+  @override
+  String get propheticDuas => 'Prophetic Supplications';
+
+  @override
+  String get morningEveningRemembrance => 'Morning & Evening Remembrance';
+
+  @override
+  String get furtherDuas => 'Further Supplications';
+
+  @override
+  String get closingSalawat => 'Closing Remembrance & Salawat';
+
+  @override
+  String get hajjAndUmrahCategory => 'Hajj & Umrah Supplications';
+
+  @override
+  String get azkarSingular => 'azkar';
+
+  @override
+  String get azkarPlural => 'azkaar';
+
+  @override
+  String get hourSingular => 'hour';
+
+  @override
+  String get hourPlural => 'hours';
+
+  @override
+  String get minuteSingular => 'minute';
+
+  @override
+  String get minutePlural => 'minutes';
+
+  @override
+  String get secondSingular => 'second';
+
+  @override
+  String get secondPlural => 'seconds';
+
+  @override
+  String seedsThisSession(String count) {
+    return '+$count seeds this session';
+  }
+
+  @override
+  String sevenDayAvgAzkaar(String count) {
+    return '7-day avg: $count azkaar/day';
+  }
+
+  @override
+  String holdingChangeAyahs(String count) {
+    return '$count ayahs';
+  }
+
+  @override
+  String holdingChangePlanted(String count) {
+    return '$count planted';
+  }
+
+  @override
+  String holdingChangeCycles(String count) {
+    return '$count cycles';
+  }
+
+  @override
+  String holdingChangeBuilt(String count) {
+    return '$count built';
+  }
+
+  @override
+  String holdingChangeEarned(String count) {
+    return '$count earned';
+  }
+
+  @override
+  String holdingChangeOpened(String count) {
+    return '$count opened';
+  }
+
+  @override
+  String holdingChangeInvocations(String count) {
+    return '$count invocations';
+  }
+
+  @override
+  String holdingChangeRecitations(String count) {
+    return '$count recitations';
+  }
+
+  @override
+  String bookmarksOnQuranCom(String count) {
+    return 'Bookmarks on Quran.com:  $count';
+  }
+
+  @override
+  String bookmarksInThisApp(String count) {
+    return 'Bookmarks in this app:   $count';
+  }
+
+  @override
+  String streakSeedsBonus(String count) {
+    return '+$count Seeds';
+  }
+
+  @override
+  String plusSeedsThisWeek(String count) {
+    return '+$count this week';
+  }
+
+  @override
+  String unitDuas(String count) {
+    return '$count duas';
+  }
+
+  @override
+  String unitAdhkar(String count) {
+    return '$count adhkar';
+  }
+
+  @override
+  String get moreCollections => 'More Collections';
+
+  @override
+  String get donateAndEarnReward => 'Donate & Earn Reward';
+
+  @override
+  String donateAmountSeeds(String amount) {
+    return 'Donate $amount Seeds';
+  }
+
+  @override
+  String get readMore => 'Read more';
+
+  @override
+  String get beFirstToContribute => 'Be the first to contribute.';
+
+  @override
+  String get showFewer => 'Show fewer ↑';
+
+  @override
+  String viewAllN(String n) {
+    return 'View all $n →';
+  }
 }

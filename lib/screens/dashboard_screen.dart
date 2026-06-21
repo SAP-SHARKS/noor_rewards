@@ -30,6 +30,7 @@ import 'package:confetti/confetti.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/notification_center.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/project_l10n.dart' as proj_l10n;
 import 'streak_screen.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/plot_illustrations.dart';
@@ -44,6 +45,8 @@ import 'orphan_detail_screen.dart';
 import '../models/orphan.dart';
 import '../services/profile_name_notifier.dart';
 import '../services/live_notification_service.dart';
+import '../services/notification_service.dart';
+import 'dhikr_screen.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/notifications_sheet.dart';
 
@@ -184,6 +187,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
     TrackingService.instance.beginSession();
     // Schedule random motivational popup
     _scheduleMotivationalPopup();
+
+    // If a notification tap was queued during cold-start (before the
+    // navigator was ready), consume it now and deep-link straight to the
+    // matching dhikr category.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _consumePendingNotificationRoute();
+    });
+  }
+
+  void _consumePendingNotificationRoute() {
+    final route = consumePendingDeepLinkRoute();
+    if (route == null || route.isEmpty) return;
+    String? category;
+    switch (route) {
+      case 'morning':
+      case 'evening':
+      case 'sleeping':
+        category = route;
+        break;
+    }
+    if (category == null || !mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => DhikrScreen(initialCategory: category!),
+      ),
+    );
   }
 
   @override
@@ -4477,7 +4506,7 @@ class _ImpactTabState extends State<_ImpactTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              p['title'],
+                              proj_l10n.projectTitle(context, p),
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
@@ -4628,7 +4657,7 @@ class _ProjectCard extends StatelessWidget {
 
                   // Title
                   Text(
-                    p['title'] ?? '',
+                    proj_l10n.projectTitle(context, p),
                     style: GoogleFonts.outfit(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
@@ -4888,7 +4917,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'You donated $_selectedAmount Seeds to\n${widget.project['title']}.',
+                  'You donated $_selectedAmount Seeds to\n${proj_l10n.projectTitle(context, widget.project)}.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
                     fontSize: 16,
@@ -4920,7 +4949,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                   ],
                 ),
                 Text(
-                  widget.project['title'],
+                  proj_l10n.projectTitle(context, widget.project),
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     color: _C.sub,

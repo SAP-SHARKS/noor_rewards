@@ -108,6 +108,10 @@ export default function UsersPage() {
       .select(
         "id, display_name, email, noor_points, level, day_streak, country, created_at",
       )
+      // Hide rows that have been merged into another profile — they're
+      // kept in the table for audit but should never appear in the user
+      // list. `_merge_profile_into` stamps merged_into_id on the source.
+      .is("merged_into_id", null)
       .order("noor_points", { ascending: false })
       .limit(500);
 

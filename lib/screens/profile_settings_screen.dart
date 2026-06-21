@@ -2082,9 +2082,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 if (qfCount != null)
-                  Text('Bookmarks on Quran.com:  $qfCount'),
+                  Text(
+                    AppLocalizations.of(context)
+                            ?.bookmarksOnQuranCom(qfCount.toString()) ??
+                        'Bookmarks on Quran.com:  $qfCount',
+                  ),
                 if (supabaseCount != null)
-                  Text('Bookmarks in this app:   $supabaseCount'),
+                  Text(
+                    AppLocalizations.of(context)
+                            ?.bookmarksInThisApp(supabaseCount.toString()) ??
+                        'Bookmarks in this app:   $supabaseCount',
+                  ),
               ],
             ],
           ),

@@ -25,6 +25,39 @@ Color get _kTealL => _qhcfg.dashTeal.withValues(alpha: 0.25);
 Color get _kGold => _qhcfg.quranGold;
 
 // ── Surah names (1-indexed, index 0 unused) ───────────────────────────────────
+// Arabic-script surah names — surfaced in Urdu locale (most Urdu Islamic
+// apps use Arabic script for surah names, not Latin transliteration). Index 0
+// padded to keep 1-indexed lookups identical to `_surahNames` below.
+const _surahNamesUr = [
+  '',
+  'الفاتحہ', 'البقرہ', 'آل عمران', 'النساء', 'المائدہ',
+  'الانعام', 'الاعراف', 'الانفال', 'التوبہ', 'یونس',
+  'ھود', 'یوسف', 'الرعد', 'ابراہیم', 'الحجر',
+  'النحل', 'الاسراء', 'الکہف', 'مریم', 'طٰہ',
+  'الانبیاء', 'الحج', 'المؤمنون', 'النور', 'الفرقان',
+  'الشعراء', 'النمل', 'القصص', 'العنکبوت', 'الروم',
+  'لقمان', 'السجدہ', 'الاحزاب', 'سبا', 'فاطر',
+  'یسٓ', 'الصافات', 'صٓ', 'الزمر', 'غافر',
+  'فصلت', 'الشوریٰ', 'الزخرف', 'الدخان', 'الجاثیہ',
+  'الاحقاف', 'محمد', 'الفتح', 'الحجرات', 'قٓ',
+  'الذاریات', 'الطور', 'النجم', 'القمر', 'الرحمٰن',
+  'الواقعہ', 'الحدید', 'المجادلہ', 'الحشر', 'الممتحنہ',
+  'الصف', 'الجمعہ', 'المنافقون', 'التغابن', 'الطلاق',
+  'التحریم', 'الملک', 'القلم', 'الحاقہ', 'المعارج',
+  'نوح', 'الجن', 'المزمل', 'المدثر', 'القیامہ',
+  'الانسان', 'المرسلات', 'النبا', 'النازعات', 'عبس',
+  'التکویر', 'الانفطار', 'المطففین', 'الانشقاق', 'البروج',
+  'الطارق', 'الاعلیٰ', 'الغاشیہ', 'الفجر', 'البلد',
+  'الشمس', 'اللیل', 'الضحیٰ', 'الشرح', 'التین',
+  'العلق', 'القدر', 'البینہ', 'الزلزلہ', 'العادیات',
+  'القارعہ', 'التکاثر', 'العصر', 'الھمزہ', 'الفیل',
+  'قریش', 'الماعون', 'الکوثر', 'الکافرون', 'النصر',
+  'اللھب', 'الاخلاص', 'الفلق', 'الناس',
+];
+
+// Latin-script English transliteration — used for en/fr/id/ms/ru/tr fallback
+// and as the canonical search key (search filter on this list to allow
+// typing "fatihah" / "baqara" etc.).
 const _surahNames = [
   '',
   'Al-Fatihah',
@@ -274,6 +307,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
 
   // Last-read / resume position
   int _lastSurah = 2, _lastAyah = 1;
+  // Initialized to English form; replaced with locale-aware name in `_loadData`.
   String _lastSurahName = 'Al-Baqarah';
 
   // Selected position for starting
@@ -290,6 +324,15 @@ class _QuranHubScreenState extends State<QuranHubScreen>
   int _ayahsToday = 0;
 
   bool _loading = true;
+
+  // Returns the surah name localised to the active locale.
+  // Search filter logic intentionally uses `_surahNames` (English) so users
+  // can still type "fatihah"/"baqara" regardless of locale.
+  String _localSurahName(int n) {
+    final lang = Localizations.localeOf(context).languageCode;
+    if (lang == 'ur') return _surahNamesUr[n.clamp(1, 114)];
+    return _surahNames[n.clamp(1, 114)];
+  }
 
   late final AnimationController _fadeCtrl;
   late final Animation<double> _fadeAnim;
@@ -355,7 +398,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       if (prog != null) {
         _lastSurah = prog['current_surah'] ?? 2;
         _lastAyah = prog['current_ayah'] ?? 1;
-        _lastSurahName = _surahNames[_lastSurah.clamp(1, 114)];
+        _lastSurahName = _localSurahName(_lastSurah);
         _selSurah = _lastSurah;
         _selAyah = _lastAyah;
 
@@ -434,7 +477,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       setState(() {
         _lastSurah = s;
         _lastAyah = a;
-        _lastSurahName = _surahNames[s.clamp(1, 114)];
+        _lastSurahName = _localSurahName(s);
       });
     }
 
@@ -541,7 +584,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                             itemCount: filteredSurahs.length,
                             itemBuilder: (_, i) {
                               final n = filteredSurahs[i];
-                              final name = _surahNames[n];
+                              final name = _localSurahName(n);
                               final len = _surahLengths[n];
                               final sel = n == _selSurah;
                               return GestureDetector(
@@ -602,7 +645,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                               ),
                                             ),
                                             Text(
-                                              '$len verses',
+                                              AppLocalizations.of(context)
+                                                      ?.versesCount(len) ??
+                                                  '$len verses',
                                               style: GoogleFonts.outfit(
                                                 fontSize: 12,
                                                 color: _kSub,
@@ -683,10 +728,10 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           AppLocalizations.of(context)?.surahHasNVerses(
-                                _surahNames[_selSurah],
+                                _localSurahName(_selSurah),
                                 maxAyah,
                               ) ??
-                              '${_surahNames[_selSurah]} has $maxAyah verses',
+                              '${_localSurahName(_selSurah)} has $maxAyah verses',
                           style: GoogleFonts.outfit(fontSize: 13, color: _kSub),
                         ),
                       ),
@@ -1061,7 +1106,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                   icon: Icons.menu_book_rounded,
                   iconColor: Y4.honeyDeep,
                   label: AppLocalizations.of(context)?.surahPickerLabel ?? 'Surah',
-                  value: _surahNames[_selSurah],
+                  value: _localSurahName(_selSurah),
                   subtitle: AppLocalizations.of(context)
                           ?.versesCount(_surahLengths[_selSurah]) ??
                       '${_surahLengths[_selSurah]} verses',
@@ -1106,24 +1151,36 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                         ),
                       ],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.auto_stories_rounded,
-                          color: Y4.ink,
-                          size: 22,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          '${AppLocalizations.of(context)?.startReadingFrom ?? 'Start Reading from'} ${_surahNames[_selSurah]} : $_selAyah',
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.auto_stories_rounded,
                             color: Y4.ink,
+                            size: 22,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 12),
+                          // Flexible + ellipsis prevents overflow when the
+                          // translation expands the label (e.g. ur/ru/de).
+                          // The button is visually obvious from the icon, so
+                          // a clipped tail is acceptable.
+                          Flexible(
+                            child: Text(
+                              '${AppLocalizations.of(context)?.startReadingFrom ?? 'Start Reading from'} ${_localSurahName(_selSurah)} : $_selAyah',
+                              style: GoogleFonts.outfit(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Y4.ink,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -1193,7 +1250,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       child: _QuickTile(
                         icon: Icons.water_drop_rounded,
                         color: Y4.honey,
-                        label: 'Al-Fatihah',
+                        label: _localSurahName(1),
                         onTap: () => _startReading(surah: 1, ayah: 1),
                       ),
                     ),
@@ -1202,7 +1259,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       child: _QuickTile(
                         icon: Icons.nights_stay_rounded,
                         color: Y4.primary,
-                        label: 'Al-Kahf',
+                        label: _localSurahName(18),
                         subtitle:
                             AppLocalizations.of(context)?.sunnahFriday ??
                             'Sunnah Friday',

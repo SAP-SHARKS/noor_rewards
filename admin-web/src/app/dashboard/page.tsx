@@ -97,8 +97,17 @@ export default function OverviewPage() {
         { count: projectCount },
         { count: badgeCount },
       ] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("noor_points"),
+        // Exclude merged-out anon profiles from counts everywhere (rows
+        // with `merged_into_id IS NOT NULL` are throwaway anon users
+        // produced by re-login churn — see qf_auth_service).
+        supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true })
+          .is("merged_into_id", null),
+        supabase
+          .from("profiles")
+          .select("noor_points")
+          .is("merged_into_id", null),
         supabase
           .from("community_projects")
           .select("*", { count: "exact", head: true })

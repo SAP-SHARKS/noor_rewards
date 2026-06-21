@@ -1265,7 +1265,7 @@ abstract class AppLocalizations {
   /// No description provided for @moreDaysToGo.
   ///
   /// In en, this message translates to:
-  /// **'{count} more day(s) to go!'**
+  /// **'{count} more days to go, keep it up!'**
   String moreDaysToGo(String count);
 
   /// No description provided for @dayStreakLabel.
@@ -2153,7 +2153,7 @@ abstract class AppLocalizations {
   /// No description provided for @quranicDuas.
   ///
   /// In en, this message translates to:
-  /// **'Quranic Duas'**
+  /// **'Quranic Supplications'**
   String get quranicDuas;
 
   /// No description provided for @istighfar.
@@ -3899,7 +3899,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourBalanceLabel.
   ///
   /// In en, this message translates to:
-  /// **'Your balance'**
+  /// **'Your balance:'**
   String get yourBalanceLabel;
 
   /// No description provided for @sponsorCta.
@@ -4997,7 +4997,7 @@ abstract class AppLocalizations {
   /// No description provided for @ruquiyaCategory.
   ///
   /// In en, this message translates to:
-  /// **'Ruquiya'**
+  /// **'Ruqya'**
   String get ruquiyaCategory;
 
   /// No description provided for @duasBeforeSleep.
@@ -5047,6 +5047,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The Book of Complete Prayer'**
   String get bookOfCompletePrayer;
+
+  /// No description provided for @propheticDuas.
+  ///
+  /// In en, this message translates to:
+  /// **'Prophetic Supplications'**
+  String get propheticDuas;
+
+  /// No description provided for @morningEveningRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning & Evening Remembrance'**
+  String get morningEveningRemembrance;
+
+  /// No description provided for @furtherDuas.
+  ///
+  /// In en, this message translates to:
+  /// **'Further Supplications'**
+  String get furtherDuas;
+
+  /// No description provided for @closingSalawat.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing Remembrance & Salawat'**
+  String get closingSalawat;
+
+  /// No description provided for @hajjAndUmrahCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajj & Umrah Supplications'**
+  String get hajjAndUmrahCategory;
+
+  /// No description provided for @azkarSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'azkar'**
+  String get azkarSingular;
+
+  /// No description provided for @azkarPlural.
+  ///
+  /// In en, this message translates to:
+  /// **'azkaar'**
+  String get azkarPlural;
+
+  /// No description provided for @hourSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'hour'**
+  String get hourSingular;
+
+  /// No description provided for @hourPlural.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get hourPlural;
+
+  /// No description provided for @minuteSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'minute'**
+  String get minuteSingular;
+
+  /// No description provided for @minutePlural.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get minutePlural;
+
+  /// No description provided for @secondSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'second'**
+  String get secondSingular;
+
+  /// No description provided for @secondPlural.
+  ///
+  /// In en, this message translates to:
+  /// **'seconds'**
+  String get secondPlural;
+
+  /// No description provided for @seedsThisSession.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} seeds this session'**
+  String seedsThisSession(String count);
+
+  /// No description provided for @sevenDayAvgAzkaar.
+  ///
+  /// In en, this message translates to:
+  /// **'7-day avg: {count} azkaar/day'**
+  String sevenDayAvgAzkaar(String count);
+
+  /// No description provided for @holdingChangeAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ayahs'**
+  String holdingChangeAyahs(String count);
+
+  /// No description provided for @holdingChangePlanted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} planted'**
+  String holdingChangePlanted(String count);
+
+  /// No description provided for @holdingChangeCycles.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} cycles'**
+  String holdingChangeCycles(String count);
+
+  /// No description provided for @holdingChangeBuilt.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} built'**
+  String holdingChangeBuilt(String count);
+
+  /// No description provided for @holdingChangeEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} earned'**
+  String holdingChangeEarned(String count);
+
+  /// No description provided for @holdingChangeOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} opened'**
+  String holdingChangeOpened(String count);
+
+  /// No description provided for @holdingChangeInvocations.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} invocations'**
+  String holdingChangeInvocations(String count);
+
+  /// No description provided for @holdingChangeRecitations.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} recitations'**
+  String holdingChangeRecitations(String count);
+
+  /// No description provided for @bookmarksOnQuranCom.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks on Quran.com:  {count}'**
+  String bookmarksOnQuranCom(String count);
+
+  /// No description provided for @bookmarksInThisApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks in this app:   {count}'**
+  String bookmarksInThisApp(String count);
+
+  /// No description provided for @streakSeedsBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} Seeds'**
+  String streakSeedsBonus(String count);
+
+  /// No description provided for @plusSeedsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} this week'**
+  String plusSeedsThisWeek(String count);
+
+  /// No description provided for @unitDuas.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} duas'**
+  String unitDuas(String count);
+
+  /// No description provided for @unitAdhkar.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} adhkar'**
+  String unitAdhkar(String count);
+
+  /// No description provided for @moreCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'More Collections'**
+  String get moreCollections;
+
+  /// No description provided for @donateAndEarnReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate & Earn Reward'**
+  String get donateAndEarnReward;
+
+  /// No description provided for @donateAmountSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate {amount} Seeds'**
+  String donateAmountSeeds(String amount);
+
+  /// No description provided for @readMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get readMore;
+
+  /// No description provided for @beFirstToContribute.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to contribute.'**
+  String get beFirstToContribute;
+
+  /// No description provided for @showFewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Show fewer ↑'**
+  String get showFewer;
+
+  /// No description provided for @viewAllN.
+  ///
+  /// In en, this message translates to:
+  /// **'View all {n} →'**
+  String viewAllN(String n);
 }
 
 class _AppLocalizationsDelegate

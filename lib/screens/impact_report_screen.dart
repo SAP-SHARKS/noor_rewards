@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/project_l10n.dart' as proj_l10n;
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -69,7 +70,28 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // Profile
   int _noorPoints = 0;
   int _level = 1;
+  // Raw DB title — English ("Seeker"/"Champion"/etc.). Always run through
+  // `_localizedTitle()` before display so non-English locales see the
+  // translated tier name.
   String _levelTitle = 'Seeker';
+
+  String _localizedTitle() {
+    final l = AppLocalizations.of(context);
+    switch (_levelTitle) {
+      case 'Seeker':
+        return l?.levelSeeker ?? 'Seeker';
+      case 'Believer':
+        return l?.levelBeliever ?? 'Believer';
+      case 'Devoted':
+        return l?.levelDevoted ?? 'Devoted';
+      case 'Champion':
+        return l?.levelChampion ?? 'Champion';
+      case 'Legend':
+        return l?.levelLegend ?? 'Legend';
+      default:
+        return _levelTitle;
+    }
+  }
 
   // Activity
   int _totalDonated = 0;
@@ -664,8 +686,8 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                             const SizedBox(width: 5),
                             Text(
                               AppLocalizations.of(context)
-                                      ?.levelTitleFormat(_level, _levelTitle) ??
-                                  'Lvl $_level · $_levelTitle',
+                                      ?.levelTitleFormat(_level, _localizedTitle()) ??
+                                  'Lvl $_level · ${_localizedTitle()}',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w800,
@@ -774,7 +796,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       ),
                       _HeroBadge(
                         NoorIcon.calendar(size: 14),
-                        '+${_fmt(_weekPoints)} this week',
+                        AppLocalizations.of(context)
+                                ?.plusSeedsThisWeek(_fmt(_weekPoints)) ??
+                            '+${_fmt(_weekPoints)} this week',
                         Colors.white.withValues(alpha: 0.78),
                         Y4.honeyDeep,
                       ),
@@ -1130,7 +1154,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   ?.tenPerLetterSubtitle(_kAvgLettersPerAyah) ??
               '10 per letter, $_kAvgLettersPerAyah per ayah',
           value: _hasanatFromQuran,
-          change: '${_fmt(_lifetimeAyahs)} ayahs',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangeAyahs(_fmt(_lifetimeAyahs)) ??
+              '${_fmt(_lifetimeAyahs)} ayahs',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1154,7 +1180,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.fromSubhanAllahTasbih ??
               'From SubhanAllah & Tasbih',
           value: _treesPlanted,
-          change: '${_fmt(_treesPlanted)} planted',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangePlanted(_fmt(_treesPlanted)) ??
+              '${_fmt(_treesPlanted)} planted',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1180,7 +1208,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.likeFoamOfSea ??
               'Like the foam of the sea',
           value: _sinsWiped,
-          change: '${_fmt(_sinsWiped)} cycles',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangeCycles(_fmt(_sinsWiped)) ??
+              '${_fmt(_sinsWiped)} cycles',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1205,7 +1235,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.fromSurahIkhlasRecitation ??
               'From Surah Ikhlas recitation',
           value: _palacesBuilt,
-          change: '${_fmt(_palacesBuilt)} built',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangeBuilt(_fmt(_palacesBuilt)) ??
+              '${_fmt(_palacesBuilt)} built',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1230,7 +1262,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.laHawlaSubtitle ??
               'La Hawla Wa La Quwwata',
           value: _treasures,
-          change: '${_fmt(_treasures)} earned',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangeEarned(_fmt(_treasures)) ??
+              '${_fmt(_treasures)} earned',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1282,7 +1316,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.afterPerfectWudu ??
               'After perfect wudu',
           value: _gatesOpened,
-          change: '${_fmt(_gatesOpened)} opened',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangeOpened(_fmt(_gatesOpened)) ??
+              '${_fmt(_gatesOpened)} opened',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1334,7 +1370,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           subtitle: AppLocalizations.of(context)?.refugeInvokedFromHarm ??
               'Refuge invoked from harm',
           value: _protectionInvocations,
-          change: '${_fmt(_protectionInvocations)} invocations',
+          change: AppLocalizations.of(context)
+                  ?.holdingChangeInvocations(_fmt(_protectionInvocations)) ??
+              '${_fmt(_protectionInvocations)} invocations',
           positive: true,
           isFirst: false,
           isLast: false,
@@ -1394,7 +1432,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             subtitle: AppLocalizations.of(context)?.marketplaceDua ??
                 "Marketplace du'a",
             value: _millionHasanaat,
-            change: '${_fmt(_shoppingDuaCount)} recitations',
+            change: AppLocalizations.of(context)
+                    ?.holdingChangeRecitations(_fmt(_shoppingDuaCount)) ??
+                '${_fmt(_shoppingDuaCount)} recitations',
             positive: true,
             isFirst: false,
             isLast: false,
@@ -1806,7 +1846,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             Expanded(
               child: _DarkStat(
                 AppLocalizations.of(context)?.title ?? 'Title',
-                _levelTitle,
+                _localizedTitle(),
                 NoorIcon.crown(size: 16),
               ),
             ),
@@ -2345,7 +2385,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        '${project['title'] ?? ''}',
+                        proj_l10n.projectTitle(context, project),
                         style: GoogleFonts.outfit(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
@@ -2814,7 +2854,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${p['title'] ?? ''}',
+                        proj_l10n.projectTitle(context, p),
                         style: GoogleFonts.fraunces(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
@@ -3060,7 +3100,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                '${p['title']}',
+                                proj_l10n.projectTitle(context, p),
                                 style: GoogleFonts.outfit(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
@@ -3091,7 +3131,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${p['description'] ?? ''}',
+                          proj_l10n.projectDescription(context, p),
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
