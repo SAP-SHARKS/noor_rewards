@@ -1035,5 +1035,17 @@
   "viewAllN": "تمام {n} دیکھیں ←",
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
+  },
+  "liveReadersNow": "{count} ابھی پڑھ رہے ہیں",
+  "@liveReadersNow": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityReadingToday": "{count} آج پڑھ رہے ہیں",
+  "@communityReadingToday": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityHasanatToday": "+{count} نیکیاں آج",
+  "@communityHasanatToday": {
+    "placeholders": { "count": { "type": "String" } }
   }
 }

@@ -5263,6 +5263,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View all {n} →'**
   String viewAllN(String n);
+
+  /// No description provided for @liveReadersNow.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reading now'**
+  String liveReadersNow(String count);
+
+  /// No description provided for @communityReadingToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reading today'**
+  String communityReadingToday(String count);
+
+  /// No description provided for @communityHasanatToday.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} hasanat today'**
+  String communityHasanatToday(String count);
 }
 
 class _AppLocalizationsDelegate

@@ -4507,10 +4507,13 @@ class _ImpactTabState extends State<_ImpactTab> {
                           children: [
                             Text(
                               proj_l10n.projectTitle(context, p),
-                              style: GoogleFonts.outfit(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: _C.text,
+                              style: proj_l10n.localeAwareStyle(
+                                context,
+                                GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: _C.text,
+                                ),
                               ),
                             ),
                             Text(
@@ -4658,11 +4661,14 @@ class _ProjectCard extends StatelessWidget {
                   // Title
                   Text(
                     proj_l10n.projectTitle(context, p),
-                    style: GoogleFonts.outfit(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: _C.text,
-                      height: 1.3,
+                    style: proj_l10n.localeAwareStyle(
+                      context,
+                      GoogleFonts.outfit(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: _C.text,
+                        height: 1.3,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -4950,10 +4956,13 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
                 ),
                 Text(
                   proj_l10n.projectTitle(context, widget.project),
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    color: _C.sub,
-                    fontWeight: FontWeight.w500,
+                  style: proj_l10n.localeAwareStyle(
+                    context,
+                    GoogleFonts.outfit(
+                      fontSize: 14,
+                      color: _C.sub,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),

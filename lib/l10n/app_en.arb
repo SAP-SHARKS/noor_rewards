@@ -1523,5 +1523,17 @@
   "viewAllN": "View all {n} →",
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
+  },
+  "liveReadersNow": "{count} reading now",
+  "@liveReadersNow": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityReadingToday": "{count} reading today",
+  "@communityReadingToday": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityHasanatToday": "+{count} hasanat today",
+  "@communityHasanatToday": {
+    "placeholders": { "count": { "type": "String" } }
   }
 }

@@ -1,6 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
+import { getFcmCreds } from '../_shared/fcm.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -65,17 +66,9 @@ serve(async (req: Request) => {
 
     const fcmToken = tokenData.token;
 
-    // 3. Reconstruct Google OAuth2 Token using Service Account Credentials
-    const projectId = Deno.env.get('FCM_PROJECT_ID');
-    const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
-    const privateKeyStr = Deno.env.get('FCM_PRIVATE_KEY');
-
-    if (!projectId || !clientEmail || !privateKeyStr) {
-      throw new Error('FCM secrets are not configured in Supabase (FCM_PROJECT_ID, FCM_CLIENT_EMAIL, FCM_PRIVATE_KEY)');
-    }
-
-    // Fix escaped newlines which happen when saving PEM keys as env secrets
-    const privateKey = privateKeyStr.replace(/\\n/g, '\n');
+    // 3. Reconstruct Google OAuth2 Token using Service Account Credentials.
+    // Reads FIREBASE_SERVICE_ACCOUNT JSON or falls back to FCM_* split secrets.
+    const { projectId, clientEmail, privateKey } = getFcmCreds();
 
     // Generate JWT via npm:jose
     const privateKeyObj = await importPKCS8(privateKey, 'RS256');

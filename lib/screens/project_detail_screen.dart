@@ -854,10 +854,13 @@ class _DonateSheetState extends State<_DonateSheet> {
                         const SizedBox(height: 4),
                         Text(
                           proj_l10n.projectTitle(context, widget.project),
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            color: _PD.sub,
-                            fontWeight: FontWeight.w500,
+                          style: proj_l10n.localeAwareStyle(
+                            context,
+                            GoogleFonts.outfit(
+                              fontSize: 13,
+                              color: _PD.sub,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
