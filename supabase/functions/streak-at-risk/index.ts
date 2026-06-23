@@ -4,6 +4,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
+import { getFcmCreds } from '../_shared/fcm.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -88,7 +89,7 @@ serve(async (_req: Request) => {
 
     // 6. Send FCM
     const accessToken = await getAccessToken();
-    const projectId = Deno.env.get('FCM_PROJECT_ID')!;
+    const { projectId } = getFcmCreds();
     let sent = 0;
 
     for (const u of toNotify) {
@@ -138,8 +139,7 @@ serve(async (_req: Request) => {
 });
 
 async function getAccessToken(): Promise<string> {
-  const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL')!;
-  const privateKey = (Deno.env.get('FCM_PRIVATE_KEY') ?? '').replace(/\\n/g, '\n');
+  const { clientEmail, privateKey } = getFcmCreds();
   const key = await importPKCS8(privateKey, 'RS256');
   const jwt = await new SignJWT({
     iss: clientEmail,

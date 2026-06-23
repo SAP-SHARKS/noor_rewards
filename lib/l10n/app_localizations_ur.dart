@@ -2929,4 +2929,19 @@ class AppLocalizationsUr extends AppLocalizations {
   String viewAllN(String n) {
     return 'تمام $n دیکھیں ←';
   }
+
+  @override
+  String liveReadersNow(String count) {
+    return '$count ابھی پڑھ رہے ہیں';
+  }
+
+  @override
+  String communityReadingToday(String count) {
+    return '$count آج پڑھ رہے ہیں';
+  }
+
+  @override
+  String communityHasanatToday(String count) {
+    return '+$count نیکیاں آج';
+  }
 }

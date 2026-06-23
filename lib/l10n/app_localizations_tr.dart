@@ -2932,4 +2932,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String viewAllN(String n) {
     return 'Tümünü gör ($n) →';
   }
+
+  @override
+  String liveReadersNow(String count) {
+    return '$count şu an okuyor';
+  }
+
+  @override
+  String communityReadingToday(String count) {
+    return '$count bugün okuyor';
+  }
+
+  @override
+  String communityHasanatToday(String count) {
+    return '+$count sevap bugün';
+  }
 }

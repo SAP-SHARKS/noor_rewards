@@ -2936,4 +2936,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String viewAllN(String n) {
     return 'Все $n →';
   }
+
+  @override
+  String liveReadersNow(String count) {
+    return '$count читают сейчас';
+  }
+
+  @override
+  String communityReadingToday(String count) {
+    return '$count читают сегодня';
+  }
+
+  @override
+  String communityHasanatToday(String count) {
+    return '+$count хасанат сегодня';
+  }
 }

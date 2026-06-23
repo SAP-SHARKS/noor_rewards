@@ -2386,10 +2386,13 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       const SizedBox(height: 20),
                       Text(
                         proj_l10n.projectTitle(context, project),
-                        style: GoogleFonts.outfit(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: _C.text,
+                        style: proj_l10n.localeAwareStyle(
+                          context,
+                          GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: _C.text,
+                          ),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -2855,11 +2858,14 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     children: [
                       Text(
                         proj_l10n.projectTitle(context, p),
-                        style: GoogleFonts.fraunces(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                          height: 1.1,
+                        style: proj_l10n.localeAwareStyle(
+                          context,
+                          GoogleFonts.fraunces(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            height: 1.1,
+                          ),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -3101,10 +3107,13 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             Expanded(
                               child: Text(
                                 proj_l10n.projectTitle(context, p),
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: _C.text,
+                                style: proj_l10n.localeAwareStyle(
+                                  context,
+                                  GoogleFonts.outfit(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                    color: _C.text,
+                                  ),
                                 ),
                               ),
                             ),
@@ -3132,11 +3141,14 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         const SizedBox(height: 6),
                         Text(
                           proj_l10n.projectDescription(context, p),
-                          style: GoogleFonts.outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1A1A1A),
-                            height: 1.4,
+                          style: proj_l10n.localeAwareStyle(
+                            context,
+                            GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF1A1A1A),
+                              height: 1.4,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 14),

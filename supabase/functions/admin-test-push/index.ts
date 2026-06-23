@@ -10,6 +10,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
+import { getFcmCreds } from '../_shared/fcm.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -76,16 +77,15 @@ serve(async (req: Request) => {
     }
 
     // 2. Google OAuth2 access token for FCM HTTP v1 API
-    const projectId    = Deno.env.get('FCM_PROJECT_ID');
-    const clientEmail  = Deno.env.get('FCM_CLIENT_EMAIL');
-    const privateKeyStr = Deno.env.get('FCM_PRIVATE_KEY');
-    if (!projectId || !clientEmail || !privateKeyStr) {
+    let projectId: string, clientEmail: string, privateKey: string;
+    try {
+      ({ projectId, clientEmail, privateKey } = getFcmCreds());
+    } catch (e) {
       return new Response(
-        JSON.stringify({ error: 'FCM secrets not configured on the server' }),
+        JSON.stringify({ error: (e as Error).message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
-    const privateKey = privateKeyStr.replace(/\\n/g, '\n');
     const privateKeyObj = await importPKCS8(privateKey, 'RS256');
     const jwt = await new SignJWT({
       iss: clientEmail,

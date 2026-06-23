@@ -10,6 +10,7 @@
 // for the schema this depends on.
 
 import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 String _localizedField(
   BuildContext context,
@@ -31,3 +32,15 @@ String projectTitle(BuildContext context, Map<dynamic, dynamic> row) =>
 /// descriptions are null.
 String projectDescription(BuildContext context, Map<dynamic, dynamic> row) =>
     _localizedField(context, row, 'description');
+
+/// Swaps the font of `baseStyle` to one with proper Arabic/Urdu glyphs when
+/// the active locale is ar or ur. Latin sans-serif fonts like Outfit render
+/// Urdu as garbled disconnected letters — this picks Noto Naskh Arabic for
+/// those locales, leaves other locales untouched.
+TextStyle localeAwareStyle(BuildContext context, TextStyle baseStyle) {
+  final lang = Localizations.localeOf(context).languageCode;
+  if (lang == 'ar' || lang == 'ur') {
+    return GoogleFonts.notoNaskhArabic(textStyle: baseStyle);
+  }
+  return baseStyle;
+}

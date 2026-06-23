@@ -2940,4 +2940,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String viewAllN(String n) {
     return 'Voir les $n →';
   }
+
+  @override
+  String liveReadersNow(String count) {
+    return '$count en train de lire';
+  }
+
+  @override
+  String communityReadingToday(String count) {
+    return '$count lecteurs aujourd\'\'hui';
+  }
+
+  @override
+  String communityHasanatToday(String count) {
+    return '+$count hasanat aujourd\'\'hui';
+  }
 }

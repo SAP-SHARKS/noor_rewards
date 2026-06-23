@@ -1035,5 +1035,17 @@
   "viewAllN": "عرض الكل {n} ←",
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
+  },
+  "liveReadersNow": "{count} يقرأون الآن",
+  "@liveReadersNow": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityReadingToday": "{count} يقرأون اليوم",
+  "@communityReadingToday": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityHasanatToday": "+{count} حسنة اليوم",
+  "@communityHasanatToday": {
+    "placeholders": { "count": { "type": "String" } }
   }
 }

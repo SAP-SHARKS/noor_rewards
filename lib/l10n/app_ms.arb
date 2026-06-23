@@ -1035,5 +1035,17 @@
   "viewAllN": "Lihat semua {n} →",
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
+  },
+  "liveReadersNow": "{count} sedang membaca",
+  "@liveReadersNow": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityReadingToday": "{count} membaca hari ini",
+  "@communityReadingToday": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "communityHasanatToday": "+{count} hasanat hari ini",
+  "@communityHasanatToday": {
+    "placeholders": { "count": { "type": "String" } }
   }
 }

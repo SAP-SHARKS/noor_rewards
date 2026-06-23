@@ -1,6 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
+import { getFcmCreds } from '../_shared/fcm.ts';
 
 serve(async (req: Request) => {
   // ── F-10 fix: require shared-secret header to block public abuse ──
@@ -74,15 +75,7 @@ serve(async (req: Request) => {
     const fcmToken = tokenData.token;
 
     // 4. Build Google OAuth2 Token utilizing Service Account Secrets
-    const projectId = Deno.env.get('FCM_PROJECT_ID');
-    const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
-    const privateKeyStr = Deno.env.get('FCM_PRIVATE_KEY');
-
-    if (!projectId || !clientEmail || !privateKeyStr) {
-      throw new Error('FCM configs missing in Supabase Settings');
-    }
-
-    const privateKey = privateKeyStr.replace(/\\n/g, '\n');
+    const { projectId, clientEmail, privateKey } = getFcmCreds();
     const privateKeyObj = await importPKCS8(privateKey, 'RS256');
     
     const jwt = await new SignJWT({
