@@ -1036,16 +1036,19 @@
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
   },
-  "liveReadersNow": "{count} ابھی پڑھ رہے ہیں",
+  "liveReadersNow": "{count} اس وقت آن لائن",
   "@liveReadersNow": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityReadingToday": "{count} آج پڑھ رہے ہیں",
+  "communityReadingToday": "{count} نے آج پڑھا (کمیونٹی)",
   "@communityReadingToday": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityHasanatToday": "+{count} نیکیاں آج",
+  "communityHasanatToday": "+{count} کمیونٹی نیکیاں آج",
   "@communityHasanatToday": {
     "placeholders": { "count": { "type": "String" } }
-  }
+  },
+  "peopleReadingNow": "ابھی پڑھ رہے ہیں",
+  "readToday": "نے آج پڑھا",
+  "communityHasanat": "کمیونٹی نیکیاں"
 }

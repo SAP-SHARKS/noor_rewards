@@ -19,7 +19,6 @@ import '../l10n/app_localizations.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/quran_exit_celebration.dart';
 import '../widgets/noor_offline.dart';
-import '../widgets/quran_engagement_strip.dart';
 import '../theme/y4_theme.dart';
 import 'akhirah_balance_screen.dart';
 
@@ -4261,9 +4260,6 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         ),
                         const SizedBox(height: 12),
                       ],
-                      // ── Live engagement strip (presence + community stats) ──
-                      QuranEngagementStrip(surah: _surah),
-                      const SizedBox(height: 12),
                       // Ayah card
                       Container(
                         width: double.infinity,

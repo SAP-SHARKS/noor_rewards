@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -15,10 +16,10 @@ serve(async (_req: Request) => {
     // We calculate the stats for the current month.
     const firstDayOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 
-    // ── 1. Load all FCM tokens ───────────────────────────────────────────────
+    // ── 1. Load all FCM tokens (+ user locale for variant lookup) ───────────────
     const { data: fcmTokens, error: fcmError } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token');
+      .select('user_id, token, app_locale');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
     if (!fcmTokens || fcmTokens.length === 0) {
@@ -28,14 +29,14 @@ serve(async (_req: Request) => {
     }
 
     // ── 2. Dedup tokens per user ──────────────────────────────────────────────
-    const tokensMap = new Map<string, string[]>();
+    const userMap = new Map<string, { tokens: string[]; locale: string }>();
     for (const row of fcmTokens) {
-      if (!tokensMap.has(row.user_id)) {
-        tokensMap.set(row.user_id, []);
+      if (!userMap.has(row.user_id)) {
+        userMap.set(row.user_id, { tokens: [], locale: row.app_locale ?? 'en' });
       }
-      tokensMap.get(row.user_id)!.push(row.token);
+      userMap.get(row.user_id)!.tokens.push(row.token);
     }
-    const targetUsers = Array.from(tokensMap.keys());
+    const targetUsers = Array.from(userMap.keys());
 
     // ── 3. Fetch Quran activities for the month ───────────────────────────────
     let allActivities: any[] = [];
@@ -134,19 +135,29 @@ serve(async (_req: Request) => {
       return num.toString();
     };
 
+    const monthName = now.toLocaleString('en-US', { month: 'long' });
+
     for (const uid of finalUsers) {
       const stats = userStats.get(uid)!;
       const hasanatStr = formatNumber(stats.hasanat);
 
-      const title = 'SubhanAllah! 🚀';
-      const body = `This month you read ${stats.verses} verses, gained ${hasanatStr} Hasanat! May Allah accept all our deeds! Ameen 💜`;
-      const route = 'quran';
+      const entry = userMap.get(uid)!;
       const nid = crypto.randomUUID();
+      const variant = await pickVariant(
+        supabase,
+        'monthly_quran',
+        entry.locale,
+        { monthName, verses: stats.verses, hasanat: hasanatStr },
+        {
+          title: 'SubhanAllah! 🚀',
+          body: `This month you read ${stats.verses} verses, gained ${hasanatStr} Hasanat! May Allah accept all our deeds! Ameen 💜`,
+          route: 'quran',
+        },
+      );
 
-      const tokens = tokensMap.get(uid)!;
       let anySuccess = false;
 
-      for (const token of tokens) {
+      for (const token of entry.tokens) {
         const res = await fetch(
           `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
           {
@@ -158,10 +169,23 @@ serve(async (_req: Request) => {
             body: JSON.stringify({
               message: {
                 token,
-                notification: { title, body },
-                data: { route, nid },
-                android: { priority: 'high', notification: { sound: 'default' } },
-                apns: { payload: { aps: { sound: 'default' } } },
+                notification: {
+                  title: variant.title,
+                  body: variant.body,
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+                data: { route: variant.route ?? '', nid },
+                android: {
+                  priority: 'high',
+                  notification: {
+                    sound: 'default',
+                    ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                  },
+                },
+                apns: {
+                  payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                  ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+                },
               },
             }),
           }
@@ -178,9 +202,10 @@ serve(async (_req: Request) => {
             user_id: uid,
             notification_type: 'monthly_quran',
             notification_id: nid,
-            title,
-            body,
-            route,
+            title: variant.title,
+            body: variant.body,
+            route: variant.route,
+            variant_id: variant.id || null,
             sent_at: now.toISOString(),
           });
         } catch (_) {}

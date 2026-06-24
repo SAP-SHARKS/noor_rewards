@@ -1036,16 +1036,19 @@
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
   },
-  "liveReadersNow": "{count} يقرأون الآن",
+  "liveReadersNow": "{count} متصلون الآن",
   "@liveReadersNow": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityReadingToday": "{count} يقرأون اليوم",
+  "communityReadingToday": "{count} قرأوا اليوم (المجتمع)",
   "@communityReadingToday": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityHasanatToday": "+{count} حسنة اليوم",
+  "communityHasanatToday": "+{count} حسنة للمجتمع اليوم",
   "@communityHasanatToday": {
     "placeholders": { "count": { "type": "String" } }
-  }
+  },
+  "peopleReadingNow": "يقرأون الآن",
+  "readToday": "قرأوا اليوم",
+  "communityHasanat": "حسنات المجتمع"
 }

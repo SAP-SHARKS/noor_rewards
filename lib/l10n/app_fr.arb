@@ -1036,16 +1036,19 @@
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
   },
-  "liveReadersNow": "{count} en train de lire",
+  "liveReadersNow": "{count} en ligne",
   "@liveReadersNow": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityReadingToday": "{count} lecteurs aujourd''hui",
+  "communityReadingToday": "{count} ont lu aujourd''hui (communauté)",
   "@communityReadingToday": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityHasanatToday": "+{count} hasanat aujourd''hui",
+  "communityHasanatToday": "+{count} hasanat communauté aujourd''hui",
   "@communityHasanatToday": {
     "placeholders": { "count": { "type": "String" } }
-  }
+  },
+  "peopleReadingNow": "en train de lire",
+  "readToday": "ont lu aujourd''hui",
+  "communityHasanat": "hasanat communauté"
 }

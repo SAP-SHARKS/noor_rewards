@@ -2911,16 +2911,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String liveReadersNow(String count) {
-    return '$count يقرأون الآن';
+    return '$count متصلون الآن';
   }
 
   @override
   String communityReadingToday(String count) {
-    return '$count يقرأون اليوم';
+    return '$count قرأوا اليوم (المجتمع)';
   }
 
   @override
   String communityHasanatToday(String count) {
-    return '+$count حسنة اليوم';
+    return '+$count حسنة للمجتمع اليوم';
   }
+
+  @override
+  String get peopleReadingNow => 'يقرأون الآن';
+
+  @override
+  String get readToday => 'قرأوا اليوم';
+
+  @override
+  String get communityHasanat => 'حسنات المجتمع';
 }

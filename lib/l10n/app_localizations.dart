@@ -5267,20 +5267,38 @@ abstract class AppLocalizations {
   /// No description provided for @liveReadersNow.
   ///
   /// In en, this message translates to:
-  /// **'{count} reading now'**
+  /// **'{count} online now'**
   String liveReadersNow(String count);
 
   /// No description provided for @communityReadingToday.
   ///
   /// In en, this message translates to:
-  /// **'{count} reading today'**
+  /// **'{count} read today (community)'**
   String communityReadingToday(String count);
 
   /// No description provided for @communityHasanatToday.
   ///
   /// In en, this message translates to:
-  /// **'+{count} hasanat today'**
+  /// **'+{count} community hasanat today'**
   String communityHasanatToday(String count);
+
+  /// No description provided for @peopleReadingNow.
+  ///
+  /// In en, this message translates to:
+  /// **'reading right now'**
+  String get peopleReadingNow;
+
+  /// No description provided for @readToday.
+  ///
+  /// In en, this message translates to:
+  /// **'read today'**
+  String get readToday;
+
+  /// No description provided for @communityHasanat.
+  ///
+  /// In en, this message translates to:
+  /// **'community hasanat'**
+  String get communityHasanat;
 }
 
 class _AppLocalizationsDelegate

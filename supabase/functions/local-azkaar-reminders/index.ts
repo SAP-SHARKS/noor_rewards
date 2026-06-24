@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -12,10 +13,10 @@ serve(async (_req: Request) => {
 
     const now = new Date();
 
-    // ── 1. Load all FCM tokens with timezone ──────────────────────────────────
+    // ── 1. Load all FCM tokens with timezone (+ user locale for variant lookup) ──
     const { data: fcmTokens, error: fcmError } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token, timezone');
+      .select('user_id, token, timezone, app_locale');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
     if (!fcmTokens || fcmTokens.length === 0) {
@@ -27,7 +28,7 @@ serve(async (_req: Request) => {
     // ── 2. Bucket users by local hour (8 = morning, 17 = evening) ─────────────
     const morningUsers: string[] = [];
     const eveningUsers: string[] = [];
-    const tokensMap = new Map<string, string>();
+    const userMap = new Map<string, { tokens: string[]; locale: string }>();
 
     for (const row of fcmTokens) {
       const tz = row.timezone || 'UTC';
@@ -45,10 +46,10 @@ serve(async (_req: Request) => {
         hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '-1', 10);
       }
 
-      if (!tokensMap.has(row.user_id)) {
-        tokensMap.set(row.user_id, []);
+      if (!userMap.has(row.user_id)) {
+        userMap.set(row.user_id, { tokens: [], locale: row.app_locale ?? 'en' });
       }
-      tokensMap.get(row.user_id)!.push(row.token);
+      userMap.get(row.user_id)!.tokens.push(row.token);
 
       if (hour === 8)  morningUsers.push(row.user_id);
       if (hour === 17) eveningUsers.push(row.user_id);
@@ -119,12 +120,25 @@ serve(async (_req: Request) => {
     const sendNotification = async (
       userId: string,
       tokens: string[],
-      title: string,
-      body: string,
+      locale: string,
+      fallbackTitle: string,
+      fallbackBody: string,
       logType: string,
     ) => {
       const nid   = crypto.randomUUID();
-      const route = logType === 'morning_azkaar' ? 'morning' : 'evening';
+      const fallbackRoute = logType === 'morning_azkaar' ? 'morning' : 'evening';
+      const variant = await pickVariant(
+        supabase,
+        logType,
+        locale,
+        {},
+        {
+          title: fallbackTitle,
+          body: fallbackBody,
+          route: fallbackRoute,
+        },
+      );
+
       let anySuccess = false;
       for (const token of tokens) {
         const res = await fetch(
@@ -138,10 +152,23 @@ serve(async (_req: Request) => {
             body: JSON.stringify({
               message: {
                 token,
-                notification: { title, body },
-                data: { route, nid },
-                android: { priority: 'high', notification: { sound: 'default' } },
-                apns: { payload: { aps: { sound: 'default' } } },
+                notification: {
+                  title: variant.title,
+                  body: variant.body,
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+                data: { route: variant.route ?? '', nid },
+                android: {
+                  priority: 'high',
+                  notification: {
+                    sound: 'default',
+                    ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                  },
+                },
+                apns: {
+                  payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                  ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+                },
               },
             }),
           }
@@ -157,9 +184,10 @@ serve(async (_req: Request) => {
             user_id: userId,
             notification_type: logType,
             notification_id: nid,
-            title,
-            body,
-            route,
+            title: variant.title,
+            body: variant.body,
+            route: variant.route,
+            variant_id: variant.id || null,
             sent_at: now.toISOString(),
           });
         } catch (_) {}
@@ -167,8 +195,9 @@ serve(async (_req: Request) => {
     };
 
     for (const uid of dedupedMorning) {
+      const entry = userMap.get(uid)!;
       await sendNotification(
-        uid, tokensMap.get(uid)!,
+        uid, entry.tokens, entry.locale,
         '🌅 Morning Azkaar',
         'Start your day with blessings. Tap to read your morning Azkaar.',
         'morning_azkaar',
@@ -176,8 +205,9 @@ serve(async (_req: Request) => {
     }
 
     for (const uid of dedupedEvening) {
+      const entry = userMap.get(uid)!;
       await sendNotification(
-        uid, tokensMap.get(uid)!,
+        uid, entry.tokens, entry.locale,
         '🌇 Evening Azkaar',
         'Protect yourself for the night. Tap to read your evening Azkaar.',
         'evening_azkaar',

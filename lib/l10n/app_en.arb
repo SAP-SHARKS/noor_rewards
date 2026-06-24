@@ -1524,16 +1524,19 @@
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
   },
-  "liveReadersNow": "{count} reading now",
+  "liveReadersNow": "{count} online now",
   "@liveReadersNow": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityReadingToday": "{count} reading today",
+  "communityReadingToday": "{count} read today (community)",
   "@communityReadingToday": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityHasanatToday": "+{count} hasanat today",
+  "communityHasanatToday": "+{count} community hasanat today",
   "@communityHasanatToday": {
     "placeholders": { "count": { "type": "String" } }
-  }
+  },
+  "peopleReadingNow": "reading right now",
+  "readToday": "read today",
+  "communityHasanat": "community hasanat"
 }

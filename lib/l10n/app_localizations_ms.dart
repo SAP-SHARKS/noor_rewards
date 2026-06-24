@@ -2939,16 +2939,25 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String liveReadersNow(String count) {
-    return '$count sedang membaca';
+    return '$count dalam talian';
   }
 
   @override
   String communityReadingToday(String count) {
-    return '$count membaca hari ini';
+    return '$count dibaca hari ini (komuniti)';
   }
 
   @override
   String communityHasanatToday(String count) {
-    return '+$count hasanat hari ini';
+    return '+$count hasanat komuniti hari ini';
   }
+
+  @override
+  String get peopleReadingNow => 'sedang membaca';
+
+  @override
+  String get readToday => 'dibaca hari ini';
+
+  @override
+  String get communityHasanat => 'hasanat komuniti';
 }

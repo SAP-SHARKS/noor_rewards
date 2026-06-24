@@ -78,6 +78,15 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Firebase Messaging — defaults for notifications that arrive with a
+             `notification` payload. Without these, Android 8+ routes FCM
+             messages to an invisible system channel and the push never
+             appears. The channel id must match the one created at app start
+             via flutter_local_notifications in NotificationService.init(). -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="sabiq_default_channel" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

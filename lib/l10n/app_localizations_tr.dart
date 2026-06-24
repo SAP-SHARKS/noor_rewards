@@ -2935,16 +2935,25 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String liveReadersNow(String count) {
-    return '$count şu an okuyor';
+    return '$count çevrimiçi';
   }
 
   @override
   String communityReadingToday(String count) {
-    return '$count bugün okuyor';
+    return '$count bugün okudu (topluluk)';
   }
 
   @override
   String communityHasanatToday(String count) {
-    return '+$count sevap bugün';
+    return '+$count topluluk sevabı bugün';
   }
+
+  @override
+  String get peopleReadingNow => 'şu an okuyor';
+
+  @override
+  String get readToday => 'bugün okudu';
+
+  @override
+  String get communityHasanat => 'topluluk sevabı';
 }
