@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/quran_engagement_strip.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1073,8 +1074,10 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Daily progress strip ─────────────────────────────────────────
-                _ProgressStrip(ayahsToday: _ayahsToday),
+                // ── Live community engagement strip ──────────────────────────────
+                // Replaces the static "Today's Progress" bar with social proof:
+                // live presence + community readers today + community hasanat.
+                const QuranEngagementStrip(),
                 const SizedBox(height: 20),
 
                 // ── Continue reading card ─────────────────────────────────────────
@@ -1294,78 +1297,6 @@ class _SectionLabel extends StatelessWidget {
       color: const Color(0xFF8E8E93),
     ),
   );
-}
-
-class _ProgressStrip extends StatelessWidget {
-  final int ayahsToday;
-  const _ProgressStrip({required this.ayahsToday});
-  @override
-  Widget build(BuildContext context) {
-    final progress = (ayahsToday / 50).clamp(0.0, 1.0);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            _kTeal.withValues(alpha: 0.08),
-            _kTeal.withValues(alpha: 0.04),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _kTeal.withValues(alpha: 0.18)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    NoorIcon.star(size: 14),
-                    const SizedBox(width: 6),
-                    Text(
-                      AppLocalizations.of(context)?.todaysProgress ??
-                          "Today's Progress",
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Y4.honeyDeep,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '+${ayahsToday * 10} Seeds',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: _kGold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 6,
-                    backgroundColor: Y4.butter,
-                    valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  '\u200E$ayahsToday / 50\u200E ${AppLocalizations.of(context)?.versesToday ?? 'verses today'}',
-                  style: GoogleFonts.outfit(fontSize: 11, color: _kSub),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _ContinueCard extends StatefulWidget {

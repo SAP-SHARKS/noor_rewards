@@ -6,6 +6,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -26,12 +27,12 @@ serve(async (_req: Request) => {
       return new Response(JSON.stringify({ message: 'No level data' }));
     }
 
-    // 2. Get FCM tokens, filter for noon local
+    // 2. Get FCM tokens, filter for noon local (+ user locale for variant lookup)
     const { data: fcmTokens } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token, timezone');
+      .select('user_id, token, timezone, app_locale');
 
-    const noonUsers = new Map<string, string>();
+    const noonUsers = new Map<string, { token: string; locale: string }>();
     for (const row of fcmTokens || []) {
       const tz = row.timezone || 'UTC';
       try {
@@ -39,7 +40,12 @@ serve(async (_req: Request) => {
           timeZone: tz, hour: 'numeric', hour12: false,
         }).formatToParts(now);
         const hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '0', 10);
-        if (hour === 12) noonUsers.set(row.user_id, row.token);
+        if (hour === 12) {
+          noonUsers.set(row.user_id, {
+            token: row.token,
+            locale: row.app_locale ?? 'en',
+          });
+        }
       } catch { /* skip */ }
     }
 
@@ -54,7 +60,7 @@ serve(async (_req: Request) => {
       .in('id', [...noonUsers.keys()]);
 
     // 4. Find users within 20% of next level
-    const closeUsers: { userId: string; token: string; ptsNeeded: number; nextLevel: number; nextTitle: string }[] = [];
+    const closeUsers: { userId: string; token: string; locale: string; ptsNeeded: number; nextLevel: number; nextTitle: string }[] = [];
 
     for (const p of profiles || []) {
       const currentXp = p.total_xp ?? 0;
@@ -74,11 +80,12 @@ serve(async (_req: Request) => {
 
       const progress = 1 - (needed / gap);
       if (progress >= 0.8) {
-        const token = noonUsers.get(p.id);
-        if (token) {
+        const entry = noonUsers.get(p.id);
+        if (entry) {
           closeUsers.push({
             userId: p.id,
-            token,
+            token: entry.token,
+            locale: entry.locale,
             ptsNeeded: needed,
             nextLevel: nextLevelData.level,
             nextTitle: nextLevelData.title,
@@ -113,10 +120,18 @@ serve(async (_req: Request) => {
     let sent = 0;
 
     for (const u of toNotify) {
-      const nid   = crypto.randomUUID();
-      const title = `Level ${u.nextLevel} is within reach!`;
-      const body  = `You're just ${u.ptsNeeded} points from becoming "${u.nextTitle}". One session gets you there!`;
-      const route = 'journey';
+      const nid = crypto.randomUUID();
+      const variant = await pickVariant(
+        supabase,
+        'level_up',
+        u.locale,
+        { ptsNeeded: u.ptsNeeded, nextLevel: u.nextLevel, nextTitle: u.nextTitle },
+        {
+          title: `Level ${u.nextLevel} is within reach!`,
+          body: `You're just ${u.ptsNeeded} points from becoming "${u.nextTitle}". One session gets you there!`,
+          route: 'journey',
+        },
+      );
 
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -129,10 +144,23 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: { title, body },
-              data: { route, nid },
-              android: { priority: 'high', notification: { sound: 'default' } },
-              apns: { payload: { aps: { sound: 'default' } } },
+              notification: {
+                title: variant.title,
+                body: variant.body,
+                ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+              },
+              data: { route: variant.route ?? '', nid },
+              android: {
+                priority: 'high',
+                notification: {
+                  sound: 'default',
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+              },
+              apns: {
+                payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+              },
             },
           }),
         }
@@ -145,9 +173,10 @@ serve(async (_req: Request) => {
           user_id: u.userId,
           notification_type: dedupKey,
           notification_id: nid,
-          title,
-          body,
-          route,
+          title: variant.title,
+          body: variant.body,
+          route: variant.route,
+          variant_id: variant.id || null,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

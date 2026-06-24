@@ -1,20 +1,20 @@
 // QuranEngagementStrip
 //
-// Slim social-proof bar shown on the Quran reading screen, just below the
-// surah header. Three rotating chips:
+// Quranly-style live engagement card shown on the Quran hub page in place of
+// the old static "Today's Progress" bar. One unified card with:
 //
-//   1) "X reading now"  — live count of users on this same surah, via a
-//      Supabase Realtime presence channel scoped to the surah number. No
-//      DB writes; presence state is in-memory on the Realtime server.
-//   2) "Y read today"   — global community readers today, from the
-//      existing `StatsService.loadGlobalStats()` RPC. Cached 60s.
-//   3) "+Z hasanat"     — today's community-earned hasanat estimate
-//      (todayAyahs × 10), again from the cached global stats.
+//   • Hero row — animated pulsing green dot + big count, "X reading right
+//     now". Driven by a Supabase Realtime presence channel (per-surah when
+//     a surah is passed, hub-wide otherwise). No DB writes; presence state
+//     is in-memory on the Realtime server.
+//   • Footer row — two slim community chips: today's readers count and the
+//     community-earned hasanat estimate (today's ayahs × 10). Sourced from
+//     the existing `StatsService.loadGlobalStats()` RPC, cached locally and
+//     refreshed every 60s while mounted. Chips with a count of 0 are hidden
+//     so the card doesn't look empty on cold-start days.
 //
-// The widget is self-contained: takes only the surah number, joins/leaves the
-// presence channel as the surah changes, polls global stats every 60s while
-// mounted. Failures degrade silently (chip hides), so a flaky connection
-// never breaks the reading UI.
+// Failures degrade silently — a flaky Realtime or RPC connection never
+// breaks the reading UI.
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -26,22 +26,31 @@ import '../services/stats_service.dart';
 import '../theme/y4_theme.dart';
 
 class QuranEngagementStrip extends StatefulWidget {
-  final int surah;
-  const QuranEngagementStrip({super.key, required this.surah});
+  /// When provided, presence is scoped to readers of this surah. When null
+  /// (e.g. on the Quran hub before any surah is selected), presence joins a
+  /// single `quran-hub` channel — "X reading the Quran right now".
+  final int? surah;
+  const QuranEngagementStrip({super.key, this.surah});
 
   @override
   State<QuranEngagementStrip> createState() => _QuranEngagementStripState();
 }
 
-class _QuranEngagementStripState extends State<QuranEngagementStrip> {
+class _QuranEngagementStripState extends State<QuranEngagementStrip>
+    with SingleTickerProviderStateMixin {
   RealtimeChannel? _channel;
   int _liveReaders = 0;
   GlobalStats _global = const GlobalStats();
   Timer? _globalRefresh;
+  late final AnimationController _pulseCtrl;
 
   @override
   void initState() {
     super.initState();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
     _joinChannel(widget.surah);
     _refreshGlobal();
     _globalRefresh = Timer.periodic(
@@ -61,18 +70,19 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip> {
 
   @override
   void dispose() {
+    _pulseCtrl.dispose();
     _globalRefresh?.cancel();
     _leaveChannel();
     super.dispose();
   }
 
-  void _joinChannel(int surah) {
+  void _joinChannel(int? surah) {
     final sb = Supabase.instance.client;
-    final uid = sb.auth.currentUser?.id ?? 'anon-${DateTime.now().millisecondsSinceEpoch}';
-
-    // Per-surah channel: everyone reading the same surah is in the same room.
+    final uid = sb.auth.currentUser?.id ??
+        'anon-${DateTime.now().millisecondsSinceEpoch}';
+    final channelName = surah != null ? 'quran-surah-$surah' : 'quran-hub';
     final channel = sb.channel(
-      'quran-surah-$surah',
+      channelName,
       opts: RealtimeChannelConfig(key: uid),
     );
 
@@ -82,10 +92,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip> {
 
     channel.subscribe((status, error) {
       if (status == RealtimeSubscribeStatus.subscribed) {
-        // Announce our presence so the count includes us.
-        channel.track({
-          'online_at': DateTime.now().toIso8601String(),
-        });
+        channel.track({'online_at': DateTime.now().toIso8601String()});
       }
     });
 
@@ -94,10 +101,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip> {
 
   void _recomputeReaders(RealtimeChannel ch) {
     try {
-      final state = ch.presenceState();
-      // presenceState returns a list of presences; each entry is a key with
-      // a list of metas. The unique-user count is the number of keys.
-      final count = state.length;
+      final count = ch.presenceState().length;
       if (mounted && count != _liveReaders) {
         setState(() => _liveReaders = count);
       }
@@ -116,9 +120,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip> {
     try {
       final stats = await StatsService.instance.loadGlobalStats();
       if (mounted) setState(() => _global = stats);
-    } catch (_) {
-      // silent — chip will just show stale/zero values
-    }
+    } catch (_) {}
   }
 
   String _formatNumber(int n) {
@@ -131,88 +133,194 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    // Today's global hasanat (rough estimate: ayahs × 10 per the hadith).
     final hasanatToday = _global.todayAyahs * 10;
+    final liveLabel = l?.peopleReadingNow ?? 'reading right now';
+    final readersTodayLabel = l?.readToday ?? 'read today';
+    final hasanatLabel = l?.communityHasanat ?? 'community hasanat';
 
-    final chips = <_Chip>[
-      _Chip(
-        icon: Icons.circle,
-        iconColor: const Color(0xFF22C55E),
-        iconSize: 8,
-        label: (l?.liveReadersNow(_formatNumber(_liveReaders)) ??
-            '$_liveReaders reading now'),
-        accent: const Color(0xFF22C55E),
-      ),
-      _Chip(
-        icon: Icons.menu_book_rounded,
-        iconColor: Y4.honeyDeep,
-        iconSize: 13,
-        label: (l?.communityReadingToday(_formatNumber(_global.todayReaders)) ??
-            '${_formatNumber(_global.todayReaders)} reading today'),
-        accent: Y4.honeyDeep,
-      ),
-      if (hasanatToday > 0)
-        _Chip(
-          icon: Icons.bolt_rounded,
-          iconColor: const Color(0xFFEAB308),
-          iconSize: 13,
-          label: (l?.communityHasanatToday(_formatNumber(hasanatToday)) ??
-              '+${_formatNumber(hasanatToday)} hasanat today'),
-          accent: const Color(0xFFEAB308),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Y4.cream,
+            Y4.butter.withValues(alpha: 0.45),
+          ],
         ),
-    ];
-
-    return SizedBox(
-      height: 32,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.zero,
-        itemCount: chips.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (_, i) => chips[i].build(),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Y4.honey.withValues(alpha: 0.28)),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.honeyDeep.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Hero row: pulsing dot + big count + label ─────────────────
+          Row(
+            children: [
+              _PulsingDot(controller: _pulseCtrl),
+              const SizedBox(width: 10),
+              Text(
+                _formatNumber(_liveReaders),
+                style: GoogleFonts.fraunces(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                  color: Y4.ink,
+                  letterSpacing: -0.5,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  liveLabel,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Y4.inkSoft,
+                  ),
+                  maxLines: 2,
+                ),
+              ),
+            ],
+          ),
+          // ── Divider + community footer row ────────────────────────────
+          if (_global.todayReaders > 0 || hasanatToday > 0) ...[
+            const SizedBox(height: 12),
+            Container(height: 1, color: Y4.honey.withValues(alpha: 0.18)),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                if (_global.todayReaders > 0)
+                  _FooterStat(
+                    icon: Icons.menu_book_rounded,
+                    iconColor: Y4.honeyDeep,
+                    value: _formatNumber(_global.todayReaders),
+                    label: readersTodayLabel,
+                  ),
+                if (_global.todayReaders > 0 && hasanatToday > 0)
+                  Container(
+                    width: 1,
+                    height: 24,
+                    margin: const EdgeInsets.symmetric(horizontal: 14),
+                    color: Y4.honey.withValues(alpha: 0.18),
+                  ),
+                if (hasanatToday > 0)
+                  _FooterStat(
+                    icon: Icons.auto_awesome_rounded,
+                    iconColor: const Color(0xFFD4A017),
+                    value: '+${_formatNumber(hasanatToday)}',
+                    label: hasanatLabel,
+                  ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }
 }
 
-class _Chip {
+// ─────────────────────────────────────────────────────────────────────────────
+// Live-presence pulsing dot — soft halo + solid centre, breathes 1.5s/cycle.
+// ─────────────────────────────────────────────────────────────────────────────
+class _PulsingDot extends StatelessWidget {
+  final AnimationController controller;
+  const _PulsingDot({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    const live = Color(0xFF22C55E);
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (_, __) {
+        final t = controller.value;
+        return SizedBox(
+          width: 18,
+          height: 18,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Soft expanding halo
+              Container(
+                width: 8 + (10 * t),
+                height: 8 + (10 * t),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: live.withValues(alpha: 0.35 * (1 - t)),
+                ),
+              ),
+              // Solid centre
+              Container(
+                width: 9,
+                height: 9,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: live,
+                  boxShadow: [
+                    BoxShadow(
+                      color: live,
+                      blurRadius: 4,
+                      spreadRadius: 0.5,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Footer community-stat: icon + bold number + small label.
+// ─────────────────────────────────────────────────────────────────────────────
+class _FooterStat extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
-  final double iconSize;
+  final String value;
   final String label;
-  final Color accent;
-  _Chip({
+  const _FooterStat({
     required this.icon,
     required this.iconColor,
-    required this.iconSize,
+    required this.value,
     required this.label,
-    required this.accent,
   });
 
-  Widget build() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: accent.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: iconSize, color: iconColor),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF1F2937),
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: iconColor),
+        const SizedBox(width: 6),
+        Text(
+          value,
+          style: GoogleFonts.outfit(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: Y4.ink,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Y4.inkSoft,
+          ),
+        ),
+      ],
     );
   }
 }

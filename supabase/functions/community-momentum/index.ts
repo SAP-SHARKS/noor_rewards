@@ -5,6 +5,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -36,9 +37,9 @@ serve(async (_req: Request) => {
     // 2. Get FCM tokens, filter for 9 AM local
     const { data: fcmTokens } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token, timezone');
+      .select('user_id, token, timezone, app_locale');
 
-    const morningUsers = new Map<string, string>();
+    const morningUsers = new Map<string, { token: string; locale: string }>();
     for (const row of fcmTokens || []) {
       const tz = row.timezone || 'UTC';
       try {
@@ -46,7 +47,12 @@ serve(async (_req: Request) => {
           timeZone: tz, hour: 'numeric', hour12: false,
         }).formatToParts(now);
         const hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '0', 10);
-        if (hour === 9) morningUsers.set(row.user_id, row.token);
+        if (hour === 9) {
+          morningUsers.set(row.user_id, {
+            token: row.token,
+            locale: row.app_locale ?? 'en',
+          });
+        }
       } catch { /* skip */ }
     }
 
@@ -75,10 +81,10 @@ serve(async (_req: Request) => {
 
     const sentSet = new Set((alreadySent || []).map((r: any) => r.user_id));
 
-    const toNotify: { userId: string; token: string }[] = [];
-    for (const [userId, token] of morningUsers) {
+    const toNotify: { userId: string; token: string; locale: string }[] = [];
+    for (const [userId, entry] of morningUsers) {
       if (!activeSet.has(userId) && !sentSet.has(userId)) {
-        toNotify.push({ userId, token });
+        toNotify.push({ userId, token: entry.token, locale: entry.locale });
       }
     }
 
@@ -93,9 +99,17 @@ serve(async (_req: Request) => {
 
     for (const u of toNotify) {
       const nid = crypto.randomUUID();
-      const title = `${readers} believers read Quran yesterday`;
-      const body  = `They read ${ayahs} ayahs together. Join them today — your morning adhkar is waiting.`;
-      const route = 'morning';
+      const variant = await pickVariant(
+        supabase,
+        'community_momentum',
+        u.locale,
+        { count: readers, ayahs },
+        {
+          title: `${readers} believers read Quran yesterday`,
+          body: `They read ${ayahs} ayahs together. Join them today — your morning adhkar is waiting.`,
+          route: 'morning',
+        },
+      );
 
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -108,10 +122,23 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: { title, body },
-              data: { route, nid },
-              android: { priority: 'high', notification: { sound: 'default' } },
-              apns: { payload: { aps: { sound: 'default' } } },
+              notification: {
+                title: variant.title,
+                body: variant.body,
+                ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+              },
+              data: { route: variant.route ?? '', nid },
+              android: {
+                priority: 'high',
+                notification: {
+                  sound: 'default',
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+              },
+              apns: {
+                payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+              },
             },
           }),
         }
@@ -123,9 +150,10 @@ serve(async (_req: Request) => {
           user_id: u.userId,
           notification_type: 'community_momentum',
           notification_id: nid,
-          title,
-          body,
-          route,
+          title: variant.title,
+          body: variant.body,
+          route: variant.route,
+          variant_id: variant.id || null,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

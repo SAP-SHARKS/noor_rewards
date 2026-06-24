@@ -39,6 +39,8 @@ const ICONS: Record<string, string> = {
     "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zM21 9.75l-2.25 2.25M21 9.75l-2.25-2.25",
   azkar:
     "M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25",
+  notifications:
+    "M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0",
 };
 
 // Per-section color tint. Each nav item owns a tone so the active sidebar
@@ -60,6 +62,7 @@ const NAV_ITEMS: { href: string; label: string; icon: string; tone: Tone }[] = [
   { href: "/dashboard/categories", label: "Azkar Categories",  icon: "categories", tone: "lime" },
   { href: "/dashboard/azkar",      label: "Azkar Library",     icon: "azkar",      tone: "emerald" },
   { href: "/dashboard/onboarding", label: "Onboarding Images", icon: "onboarding", tone: "pink" },
+  { href: "/dashboard/notifications", label: "Push Notifications", icon: "notifications", tone: "rose" },
 ];
 
 function NavIcon({ name, className }: { name: string; className?: string }) {

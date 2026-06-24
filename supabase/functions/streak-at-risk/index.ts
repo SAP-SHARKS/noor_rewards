@@ -5,6 +5,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -13,16 +14,16 @@ serve(async (_req: Request) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // 1. Get all FCM tokens
+    // 1. Get all FCM tokens (+ user locale for variant lookup)
     const { data: fcmTokens, error: fcmErr } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token, timezone');
+      .select('user_id, token, timezone, app_locale');
     if (fcmErr) throw new Error(fcmErr.message);
 
     const now = new Date();
 
     // 2. Filter users whose local time is 19:00 (evening reminder)
-    const eveningUsers = new Map<string, string>();
+    const eveningUsers = new Map<string, { token: string; locale: string }>();
     for (const row of fcmTokens || []) {
       const tz = row.timezone || 'UTC';
       try {
@@ -30,7 +31,12 @@ serve(async (_req: Request) => {
           timeZone: tz, hour: 'numeric', hour12: false,
         }).formatToParts(now);
         const hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '0', 10);
-        if (hour === 19) eveningUsers.set(row.user_id, row.token);
+        if (hour === 19) {
+          eveningUsers.set(row.user_id, {
+            token: row.token,
+            locale: row.app_locale ?? 'en',
+          });
+        }
       } catch { /* skip invalid tz */ }
     }
 
@@ -44,15 +50,17 @@ serve(async (_req: Request) => {
       .select('id, login_streak, dhikr_streak, quran_streak')
       .in('id', [...eveningUsers.keys()]);
 
-    const streakUsers: { userId: string; token: string; streak: number; type: string }[] = [];
+    const streakUsers: { userId: string; token: string; locale: string; streak: number; type: string }[] = [];
     for (const p of profiles || []) {
       const best = Math.max(p.login_streak ?? 0, p.dhikr_streak ?? 0, p.quran_streak ?? 0);
       if (best < 3) continue;
 
       const type = (p.quran_streak ?? 0) >= (p.dhikr_streak ?? 0) ? 'Quran' : 'Dhikr';
+      const entry = eveningUsers.get(p.id)!;
       streakUsers.push({
         userId: p.id,
-        token: eveningUsers.get(p.id)!,
+        token: entry.token,
+        locale: entry.locale,
         streak: best,
         type,
       });
@@ -93,10 +101,18 @@ serve(async (_req: Request) => {
     let sent = 0;
 
     for (const u of toNotify) {
-      const nid   = crypto.randomUUID();
-      const title = "Don't break your streak!";
-      const body  = `You've been consistent for ${u.streak} days with ${u.type}. Open now to keep it alive!`;
-      const route = u.type === 'Quran' ? 'quran' : 'dhikr';
+      const nid = crypto.randomUUID();
+      const variant = await pickVariant(
+        supabase,
+        'streak_at_risk',
+        u.locale,
+        { streak: u.streak, type: u.type },
+        {
+          title: "Don't break your streak!",
+          body: `You've been consistent for ${u.streak} days with ${u.type}. Open now to keep it alive!`,
+          route: u.type === 'Quran' ? 'quran' : 'dhikr',
+        },
+      );
 
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -109,10 +125,23 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: { title, body },
-              data: { route, nid },
-              android: { priority: 'high', notification: { sound: 'default' } },
-              apns: { payload: { aps: { sound: 'default' } } },
+              notification: {
+                title: variant.title,
+                body: variant.body,
+                ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+              },
+              data: { route: variant.route ?? '', nid },
+              android: {
+                priority: 'high',
+                notification: {
+                  sound: 'default',
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+              },
+              apns: {
+                payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+              },
             },
           }),
         }
@@ -124,9 +153,10 @@ serve(async (_req: Request) => {
           user_id: u.userId,
           notification_type: 'streak_at_risk',
           notification_id: nid,
-          title,
-          body,
-          route,
+          title: variant.title,
+          body: variant.body,
+          route: variant.route,
+          variant_id: variant.id || null,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

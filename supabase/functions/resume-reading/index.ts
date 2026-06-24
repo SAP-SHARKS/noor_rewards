@@ -6,6 +6,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 const SURAH_NAMES: Record<number, string> = {
   1:'Al-Fatiha',2:'Al-Baqarah',3:'Ali Imran',4:'An-Nisa',5:'Al-Maidah',
@@ -45,9 +46,9 @@ serve(async (_req: Request) => {
     // 1. Get FCM tokens, filter for 2 PM local
     const { data: fcmTokens } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token, timezone');
+      .select('user_id, token, timezone, app_locale');
 
-    const afternoonUsers = new Map<string, string>();
+    const afternoonUsers = new Map<string, { token: string; locale: string }>();
     for (const row of fcmTokens || []) {
       const tz = row.timezone || 'UTC';
       try {
@@ -55,7 +56,12 @@ serve(async (_req: Request) => {
           timeZone: tz, hour: 'numeric', hour12: false,
         }).formatToParts(now);
         const hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '0', 10);
-        if (hour === 14) afternoonUsers.set(row.user_id, row.token);
+        if (hour === 14) {
+          afternoonUsers.set(row.user_id, {
+            token: row.token,
+            locale: row.app_locale ?? 'en',
+          });
+        }
       } catch { /* skip */ }
     }
 
@@ -74,15 +80,16 @@ serve(async (_req: Request) => {
       .select('user_id, current_surah, current_ayah, last_read_date')
       .in('user_id', [...afternoonUsers.keys()]);
 
-    const resumeUsers: { userId: string; token: string; surah: number; ayah: number }[] = [];
+    const resumeUsers: { userId: string; token: string; locale: string; surah: number; ayah: number }[] = [];
     for (const p of progress || []) {
       // Read yesterday (or earlier) but NOT today
       if (p.last_read_date && p.last_read_date !== today && p.current_surah > 0) {
-        const token = afternoonUsers.get(p.user_id);
-        if (token) {
+        const entry = afternoonUsers.get(p.user_id);
+        if (entry) {
           resumeUsers.push({
             userId: p.user_id,
-            token,
+            token: entry.token,
+            locale: entry.locale,
             surah: p.current_surah,
             ayah: p.current_ayah,
           });
@@ -114,10 +121,18 @@ serve(async (_req: Request) => {
 
     for (const u of toNotify) {
       const surahName = SURAH_NAMES[u.surah] || `Surah ${u.surah}`;
-      const nid   = crypto.randomUUID();
-      const title = 'Continue where you left off';
-      const body  = `You were reading ${surahName}, Ayah ${u.ayah}. Pick up where you stopped.`;
-      const route = 'quran';
+      const nid = crypto.randomUUID();
+      const variant = await pickVariant(
+        supabase,
+        'resume_reading',
+        u.locale,
+        { surahName, ayah: u.ayah },
+        {
+          title: 'Continue where you left off',
+          body: `You were reading ${surahName}, Ayah ${u.ayah}. Pick up where you stopped.`,
+          route: 'quran',
+        },
+      );
 
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -130,10 +145,23 @@ serve(async (_req: Request) => {
           body: JSON.stringify({
             message: {
               token: u.token,
-              notification: { title, body },
-              data: { route, nid },
-              android: { priority: 'high', notification: { sound: 'default' } },
-              apns: { payload: { aps: { sound: 'default' } } },
+              notification: {
+                title: variant.title,
+                body: variant.body,
+                ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+              },
+              data: { route: variant.route ?? '', nid },
+              android: {
+                priority: 'high',
+                notification: {
+                  sound: 'default',
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+              },
+              apns: {
+                payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+              },
             },
           }),
         }
@@ -145,9 +173,10 @@ serve(async (_req: Request) => {
           user_id: u.userId,
           notification_type: 'resume_reading',
           notification_id: nid,
-          title,
-          body,
-          route,
+          title: variant.title,
+          body: variant.body,
+          route: variant.route,
+          variant_id: variant.id || null,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

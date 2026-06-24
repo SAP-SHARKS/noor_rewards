@@ -2939,16 +2939,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String liveReadersNow(String count) {
-    return '$count читают сейчас';
+    return '$count онлайн';
   }
 
   @override
   String communityReadingToday(String count) {
-    return '$count читают сегодня';
+    return '$count прочитали сегодня (сообщество)';
   }
 
   @override
   String communityHasanatToday(String count) {
-    return '+$count хасанат сегодня';
+    return '+$count хасанат сообщества сегодня';
   }
+
+  @override
+  String get peopleReadingNow => 'читают прямо сейчас';
+
+  @override
+  String get readToday => 'прочитали сегодня';
+
+  @override
+  String get communityHasanat => 'хасанат сообщества';
 }

@@ -5,6 +5,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -39,12 +40,14 @@ serve(async (_req: Request) => {
 
     const prevMap = new Map((prevStats || []).map((r: any) => [r.user_id, r]));
 
-    // 3. Get FCM tokens
+    // 3. Get FCM tokens (+ user locale for variant lookup)
     const { data: fcmTokens } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token');
+      .select('user_id, token, app_locale');
 
-    const tokenMap = new Map((fcmTokens || []).map((r: any) => [r.user_id, r.token]));
+    const tokenMap = new Map<string, { token: string; locale: string }>(
+      (fcmTokens || []).map((r: any) => [r.user_id, { token: r.token, locale: r.app_locale ?? 'en' }])
+    );
 
     // 4. Dedup
     const monthKey = `monthly_milestone_${lastMonthStr}`;
@@ -64,23 +67,32 @@ serve(async (_req: Request) => {
 
     for (const stat of lastMonthStats) {
       if (sentSet.has(stat.user_id)) continue;
-      const token = tokenMap.get(stat.user_id);
-      if (!token) continue;
+      const entry = tokenMap.get(stat.user_id);
+      if (!entry) continue;
       if (stat.ayahs_read === 0 && stat.dhikr_sets === 0) continue;
 
       const prev = prevMap.get(stat.user_id);
-      let body = `In ${monthName} you read ${stat.ayahs_read} ayahs and completed ${stat.dhikr_sets} dhikr sets.`;
+      let fallbackBody = `In ${monthName} you read ${stat.ayahs_read} ayahs and completed ${stat.dhikr_sets} dhikr sets.`;
 
       if (prev && prev.ayahs_read > 0) {
         const diff = stat.ayahs_read - prev.ayahs_read;
         if (diff > 0) {
-          body += ` That's ${diff} more ayahs than the month before!`;
+          fallbackBody += ` That's ${diff} more ayahs than the month before!`;
         }
       }
 
-      const nid   = crypto.randomUUID();
-      const title = `MashaAllah! Your ${monthName} recap`;
-      const route = 'akhirah';
+      const nid = crypto.randomUUID();
+      const variant = await pickVariant(
+        supabase,
+        'monthly_milestone',
+        entry.locale,
+        { monthName, ayahs: stat.ayahs_read, dhikrSets: stat.dhikr_sets },
+        {
+          title: `MashaAllah! Your ${monthName} recap`,
+          body: fallbackBody,
+          route: 'akhirah',
+        },
+      );
 
       const res = await fetch(
         `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -92,11 +104,24 @@ serve(async (_req: Request) => {
           },
           body: JSON.stringify({
             message: {
-              token,
-              notification: { title, body },
-              data: { route, nid },
-              android: { priority: 'high', notification: { sound: 'default' } },
-              apns: { payload: { aps: { sound: 'default' } } },
+              token: entry.token,
+              notification: {
+                title: variant.title,
+                body: variant.body,
+                ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+              },
+              data: { route: variant.route ?? '', nid },
+              android: {
+                priority: 'high',
+                notification: {
+                  sound: 'default',
+                  ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+                },
+              },
+              apns: {
+                payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+                ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+              },
             },
           }),
         }
@@ -108,9 +133,10 @@ serve(async (_req: Request) => {
           user_id: stat.user_id,
           notification_type: monthKey,
           notification_id: nid,
-          title,
-          body,
-          route,
+          title: variant.title,
+          body: variant.body,
+          route: variant.route,
+          variant_id: variant.id || null,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }

@@ -2932,16 +2932,25 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String liveReadersNow(String count) {
-    return '$count ابھی پڑھ رہے ہیں';
+    return '$count اس وقت آن لائن';
   }
 
   @override
   String communityReadingToday(String count) {
-    return '$count آج پڑھ رہے ہیں';
+    return '$count نے آج پڑھا (کمیونٹی)';
   }
 
   @override
   String communityHasanatToday(String count) {
-    return '+$count نیکیاں آج';
+    return '+$count کمیونٹی نیکیاں آج';
   }
+
+  @override
+  String get peopleReadingNow => 'ابھی پڑھ رہے ہیں';
+
+  @override
+  String get readToday => 'نے آج پڑھا';
+
+  @override
+  String get communityHasanat => 'کمیونٹی نیکیاں';
 }

@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
+import { pickVariant } from '../_shared/variants.ts';
 
 serve(async (req: Request) => {
   try {
@@ -10,22 +11,22 @@ serve(async (req: Request) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get all FCM tokens with their timezone
+    // Get all FCM tokens with their timezone (+ user locale for variant lookup)
     const { data: fcmTokens, error: fcmError } = await supabase
       .from('fcm_tokens')
-      .select('user_id, token, timezone');
+      .select('user_id, token, timezone, app_locale');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
 
     const now = new Date();
     const targetedUsers: string[] = [];
-    const targetedTokensMap = new Map<string, string>();
+    const targetedTokensMap = new Map<string, { token: string; locale: string }>();
 
     // Step 1: Filter users where their local timezone hour is 21 (9:00 PM)
     for (const row of fcmTokens || []) {
       const tz = row.timezone || 'UTC';
       let hourStr;
-      
+
       try {
         const parts = new Intl.DateTimeFormat('en-US', {
           timeZone: tz,
@@ -45,7 +46,10 @@ serve(async (req: Request) => {
 
       if (hourStr && parseInt(hourStr, 10) === 21) {
         targetedUsers.push(row.user_id);
-        targetedTokensMap.set(row.user_id, row.token);
+        targetedTokensMap.set(row.user_id, {
+          token: row.token,
+          locale: row.app_locale ?? 'en',
+        });
       }
     }
 
@@ -69,15 +73,16 @@ serve(async (req: Request) => {
 
     const usersWhoValidated = new Set((recentValidates || []).map(r => r.user_id));
 
-    // Gather final list of tokens to message
-    const tokensToSend: string[] = [];
+    // Gather final list of users to message
+    const usersToSend: { userId: string; token: string; locale: string }[] = [];
     for (const userId of targetedUsers) {
       if (!usersWhoValidated.has(userId)) {
-        tokensToSend.push(targetedTokensMap.get(userId)!);
+        const entry = targetedTokensMap.get(userId)!;
+        usersToSend.push({ userId, token: entry.token, locale: entry.locale });
       }
     }
 
-    if (tokensToSend.length === 0) {
+    if (usersToSend.length === 0) {
       return new Response(JSON.stringify({ message: 'All targeted users have already validated their coins.' }), {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -100,16 +105,14 @@ serve(async (req: Request) => {
     const alreadySentSet = new Set((alreadySent || []).map((r: any) => r.user_id));
 
     // Filter out users who already got today's notification
-    const dedupedUsers: string[] = [];
-    const dedupedTokens: string[] = [];
-    for (const userId of targetedUsers) {
-      if (!usersWhoValidated.has(userId) && !alreadySentSet.has(userId)) {
-        dedupedUsers.push(userId);
-        dedupedTokens.push(targetedTokensMap.get(userId)!);
+    const dedupedUsers: { userId: string; token: string; locale: string }[] = [];
+    for (const u of usersToSend) {
+      if (!alreadySentSet.has(u.userId)) {
+        dedupedUsers.push(u);
       }
     }
 
-    if (dedupedTokens.length === 0) {
+    if (dedupedUsers.length === 0) {
       return new Response(JSON.stringify({ message: 'All targeted users already notified or validated.' }), {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -144,23 +147,40 @@ serve(async (req: Request) => {
 
     // Step 4: Send Firebase Notifications in bulk loop
     const results = [];
-    for (let idx = 0; idx < dedupedTokens.length; idx++) {
-      const token  = dedupedTokens[idx];
-      const userId = dedupedUsers[idx];
-      const nid    = crypto.randomUUID();
-      const title  = '🌙 Points expiring at midnight!';
-      const body   = "You have unclaimed points from today's deeds. Seal the Day now or they'll expire!";
+    for (const u of dedupedUsers) {
+      const nid = crypto.randomUUID();
+      const variant = await pickVariant(
+        supabase,
+        'nightly_checkin',
+        u.locale,
+        {},
+        {
+          title: '🌙 Points expiring at midnight!',
+          body: "You have unclaimed points from today's deeds. Seal the Day now or they'll expire!",
+          route: '',
+        },
+      );
 
       const fcmPayload = {
         message: {
-          token: token,
-          notification: { title, body },
-          data: { nid },
+          token: u.token,
+          notification: {
+            title: variant.title,
+            body: variant.body,
+            ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+          },
+          data: { route: variant.route ?? '', nid },
           android: {
             priority: 'high',
-            notification: { sound: 'default' }
+            notification: {
+              sound: 'default',
+              ...(variant.imageUrl ? { image: variant.imageUrl } : {}),
+            },
           },
-          apns: { payload: { aps: { sound: 'default' } } },
+          apns: {
+            payload: { aps: { sound: 'default', 'mutable-content': 1 } },
+            ...(variant.imageUrl ? { fcm_options: { image: variant.imageUrl } } : {}),
+          },
         }
       };
 
@@ -177,16 +197,18 @@ serve(async (req: Request) => {
       );
 
       const resJson = await fcmResponse.json();
-      results.push({ token, success: fcmResponse.ok, result: resJson });
+      results.push({ token: u.token, success: fcmResponse.ok, result: resJson });
 
       // Log successful sends to prevent duplicates
       if (fcmResponse.ok) {
         await supabase.from('notification_log').insert({
-          user_id: userId,
+          user_id: u.userId,
           notification_type: 'nightly_checkin',
           notification_id: nid,
-          title,
-          body,
+          title: variant.title,
+          body: variant.body,
+          route: variant.route,
+          variant_id: variant.id || null,
           sent_at: now.toISOString(),
         }).catch(() => {});
       }
@@ -194,7 +216,7 @@ serve(async (req: Request) => {
 
     return new Response(JSON.stringify({
       success: true,
-      sent_count: dedupedTokens.length,
+      sent_count: dedupedUsers.length,
       results
     }), {
       headers: { 'Content-Type': 'application/json' },

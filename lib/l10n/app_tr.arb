@@ -1036,16 +1036,19 @@
   "@viewAllN": {
     "placeholders": { "n": { "type": "String" } }
   },
-  "liveReadersNow": "{count} şu an okuyor",
+  "liveReadersNow": "{count} çevrimiçi",
   "@liveReadersNow": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityReadingToday": "{count} bugün okuyor",
+  "communityReadingToday": "{count} bugün okudu (topluluk)",
   "@communityReadingToday": {
     "placeholders": { "count": { "type": "String" } }
   },
-  "communityHasanatToday": "+{count} sevap bugün",
+  "communityHasanatToday": "+{count} topluluk sevabı bugün",
   "@communityHasanatToday": {
     "placeholders": { "count": { "type": "String" } }
-  }
+  },
+  "peopleReadingNow": "şu an okuyor",
+  "readToday": "bugün okudu",
+  "communityHasanat": "topluluk sevabı"
 }
