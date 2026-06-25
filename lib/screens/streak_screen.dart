@@ -3,6 +3,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../services/streak_service.dart';
@@ -429,6 +430,27 @@ class _HeroFlame extends StatelessWidget {
   }
 }
 
+// Returns the icon widget for a streak type. Quran/Dhikr use the SVG
+// illustrations that the rest of the app uses; login keeps its emoji.
+Widget _streakTypeIcon(StreakType type) {
+  switch (type) {
+    case StreakType.quran:
+      return SvgPicture.asset(
+        'assets/icons/stat_quran.svg',
+        width: 28,
+        height: 28,
+      );
+    case StreakType.dhikr:
+      return SvgPicture.asset(
+        'assets/icons/stat_tasbih.svg',
+        width: 28,
+        height: 28,
+      );
+    case StreakType.login:
+      return Text(type.emoji, style: const TextStyle(fontSize: 24));
+  }
+}
+
 // ── Individual flame card (one per streak type) ───────────────────────────────
 class _FlameCard extends StatelessWidget {
   final StreakType type;
@@ -478,7 +500,9 @@ class _FlameCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Text(type.emoji, style: const TextStyle(fontSize: 24)),
+                // Use the stat SVG illustrations for Quran/Dhikr to match the
+                // rest of the app; keep the emoji for the login streak.
+                _streakTypeIcon(type),
                 const SizedBox(height: 6),
                 Text(
                   '$streak',

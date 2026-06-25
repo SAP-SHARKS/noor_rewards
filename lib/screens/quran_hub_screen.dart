@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/quran_engagement_strip.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'quran_screen.dart';
-import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../services/settings_service.dart';
 import '../services/quran_api_service.dart';
@@ -1362,7 +1362,13 @@ class _ContinueCardState extends State<_ContinueCard> {
                     ),
                   ],
                 ),
-                child: Center(child: NoorIcon.book(size: 26)),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/stat_quran.svg',
+                    width: 36,
+                    height: 36,
+                  ),
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(

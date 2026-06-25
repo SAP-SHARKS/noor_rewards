@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get frequentlyReadByCommunity => 'Frequently read';
+
+  @override
   String get viewFullLeaderboard => 'View full leaderboard';
 
   @override

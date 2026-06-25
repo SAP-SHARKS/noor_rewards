@@ -3,6 +3,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/xp_service.dart';
@@ -158,13 +159,21 @@ String _localMilestoneLabel(BuildContext context, String label) {
     case 'quran':
       return (
         label: l.readQuran,
-        icon: NoorIcon.book(size: 22),
+        icon: SvgPicture.asset(
+          'assets/icons/stat_quran.svg',
+          width: 26,
+          height: 26,
+        ),
         color: const Color(0xFF1565C0),
       );
     case 'dhikr':
       return (
         label: l.dhikarAndDua,
-        icon: NoorIcon.beads(size: 22),
+        icon: SvgPicture.asset(
+          'assets/icons/stat_tasbih.svg',
+          width: 26,
+          height: 26,
+        ),
         color: const Color(0xFF558B2F),
       );
     case 'tafsir':
@@ -706,15 +715,26 @@ class _ProgressTabState extends State<_ProgressTab> {
                                             (_, v, __) => FittedBox(
                                               fit: BoxFit.scaleDown,
                                               alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                '$v ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
-                                                maxLines: 1,
-                                                style: GoogleFonts.rajdhani(
-                                                  fontSize: 32,
-                                                  fontWeight: FontWeight.w900,
-                                                  color: Colors.white,
-                                                  height: 1.1,
-                                                ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/images/LOGO.svg',
+                                                    width: 36,
+                                                    height: 36,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    '$v ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
+                                                    maxLines: 1,
+                                                    style: GoogleFonts.rajdhani(
+                                                      fontSize: 32,
+                                                      fontWeight: FontWeight.w900,
+                                                      color: Colors.white,
+                                                      height: 1.1,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                       ),
@@ -2174,6 +2194,27 @@ class _ActivityRow extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // STREAKS TAB — embedded in Journey screen (formerly standalone StreakScreen)
 // ─────────────────────────────────────────────────────────────────────────────
+// Streak-type icon for the Journey/Streaks tab cards. Quran/Dhikr use the
+// stat SVG illustrations; login keeps its sun emoji.
+Widget _journeyStreakIcon(StreakType type) {
+  switch (type) {
+    case StreakType.quran:
+      return SvgPicture.asset(
+        'assets/icons/stat_quran.svg',
+        width: 28,
+        height: 28,
+      );
+    case StreakType.dhikr:
+      return SvgPicture.asset(
+        'assets/icons/stat_tasbih.svg',
+        width: 28,
+        height: 28,
+      );
+    case StreakType.login:
+      return Text(type.emoji, style: const TextStyle(fontSize: 22));
+  }
+}
+
 class _StreaksTab extends StatefulWidget {
   final StreakSnapshot? initialSnap;
   const _StreaksTab({this.initialSnap});
@@ -2561,7 +2602,8 @@ class _StreakFlameCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Text(type.emoji, style: const TextStyle(fontSize: 22)),
+              // SVG illustrations for Quran/Dhikr, emoji for login.
+              _journeyStreakIcon(type),
               const SizedBox(height: 4),
               Text(
                 '$streak',

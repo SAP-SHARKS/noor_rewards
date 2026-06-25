@@ -9,6 +9,9 @@ class AppLocalizationsTr extends AppLocalizations {
   AppLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
+  String get frequentlyReadByCommunity => 'Frequently read';
+
+  @override
   String get viewFullLeaderboard => 'View full leaderboard';
 
   @override

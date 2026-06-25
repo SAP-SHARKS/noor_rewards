@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -5975,31 +5976,40 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                       ),
                     ),
                     const Spacer(),
-                    // Timer
+                    // Timer — white pill so the label is readable on the
+                    // dark Mushaf header; SVG icon supplies the orange accent.
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
+                      padding: const EdgeInsets.fromLTRB(4, 2, 12, 2),
                       decoration: BoxDecoration(
-                        color: honeyGold.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: honeyGold.withValues(alpha: 0.40),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.timer_outlined,
-                            color: honeyGold,
-                            size: 14,
+                          SvgPicture.asset(
+                            'assets/icons/stat_timer.svg',
+                            width: 30,
+                            height: 30,
                           ),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 6),
                           Text(
                             _pageTimerLabel,
                             style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFF1A1A1A),
                             ),
                           ),
                         ],
