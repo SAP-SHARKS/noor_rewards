@@ -22,6 +22,7 @@ type Category = {
   id: string;
   label: string;
   sort_order: number;
+  is_visible: boolean;
 };
 
 type Animation = {
@@ -51,6 +52,10 @@ const EMPTY: Omit<Azkar, "id"> = {
 export default function AzkarPage() {
   const [azkar, setAzkar] = useState<Azkar[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  // When false (default), categories that are toggled off in the Azkar
+  // Categories admin page are hidden from the filter dropdown and item-add
+  // dropdowns here, so the Library mirrors what end users see in the app.
+  const [showHiddenCats, setShowHiddenCats] = useState(false);
   const [animations, setAnimations] = useState<Animation[]>([]);
   // azkar_id → list of category_ids
   const [itemCats, setItemCats] = useState<Record<string, string[]>>({});
@@ -77,7 +82,7 @@ export default function AzkarPage() {
     setLoading(true);
     const [aRes, cRes, animRes, aicRes, aiaRes] = await Promise.all([
       supabase.from("azkar_items").select("*").order("sort_order"),
-      supabase.from("azkar_categories").select("id, label, sort_order").order("sort_order"),
+      supabase.from("azkar_categories").select("id, label, sort_order, is_visible").order("sort_order"),
       supabase.from("azkar_animations").select("*").order("sort_order"),
       supabase.from("azkar_item_categories").select("azkar_id, category_id"),
       supabase.from("azkar_item_animations").select("azkar_id, animation_id"),
@@ -207,6 +212,19 @@ export default function AzkarPage() {
   // ── Filtering ───────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     let list = azkar;
+    // Hide items that belong ONLY to hidden categories (i.e. zero visible
+    // categories), unless the admin asked to see hidden categories.
+    if (!showHiddenCats) {
+      const visibleIds = new Set(
+        categories.filter((c) => c.is_visible).map((c) => c.id),
+      );
+      list = list.filter((a) => {
+        const cats = itemCats[a.id] ?? [];
+        // Items with no category at all stay visible (orphan-safe).
+        if (cats.length === 0) return true;
+        return cats.some((cid) => visibleIds.has(cid));
+      });
+    }
     if (filterCat) {
       list = list.filter((a) => (itemCats[a.id] ?? []).includes(filterCat));
     }
@@ -221,7 +239,7 @@ export default function AzkarPage() {
       );
     }
     return list;
-  }, [azkar, filterCat, search, itemCats]);
+  }, [azkar, filterCat, search, itemCats, categories, showHiddenCats]);
 
   // ── Renders ─────────────────────────────────────────────────────────────
   if (loading) {
@@ -281,12 +299,24 @@ export default function AzkarPage() {
             className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">All categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label}
-              </option>
-            ))}
+            {categories
+              .filter((c) => showHiddenCats || c.is_visible)
+              .map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                  {!c.is_visible ? " (hidden)" : ""}
+                </option>
+              ))}
           </select>
+          <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 self-center cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={showHiddenCats}
+              onChange={(e) => setShowHiddenCats(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-teal-500 focus:ring-teal-500 cursor-pointer"
+            />
+            Show hidden categories
+          </label>
           <div className="text-sm text-slate-500 dark:text-slate-400 self-center">
             <span className="font-semibold">{filtered.length}</span> shown / {azkar.length} total
           </div>

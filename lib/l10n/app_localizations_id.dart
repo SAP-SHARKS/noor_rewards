@@ -9,6 +9,9 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get viewFullLeaderboard => 'View full leaderboard';
+
+  @override
   String get skip => 'Lewati';
 
   @override

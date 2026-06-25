@@ -17,9 +17,12 @@ export default function CategoriesPage() {
   const [toggling, setToggling] = useState<string | null>(null);
 
   async function loadCategories() {
+    // Visible categories first (is_visible = true), hidden ones at the bottom.
+    // Within each group, keep manual sort_order so reorder still works.
     const { data } = await supabase
       .from("azkar_categories")
       .select("*")
+      .order("is_visible", { ascending: false })
       .order("sort_order");
     setCategories(data ?? []);
     setLoading(false);
@@ -31,12 +34,17 @@ export default function CategoriesPage() {
 
   async function toggleVisibility(cat: Category) {
     setToggling(cat.id);
-    // Optimistic update
-    setCategories((prev) =>
-      prev.map((c) =>
-        c.id === cat.id ? { ...c, is_visible: !c.is_visible } : c
-      )
-    );
+    // Optimistic update — flip the flag AND re-sort so visible cards stay
+    // grouped above hidden ones (matches the initial load order).
+    setCategories((prev) => {
+      const next = prev.map((c) =>
+        c.id === cat.id ? { ...c, is_visible: !c.is_visible } : c,
+      );
+      return [...next].sort((a, b) => {
+        if (a.is_visible !== b.is_visible) return a.is_visible ? -1 : 1;
+        return a.sort_order - b.sort_order;
+      });
+    });
     await supabase
       .from("azkar_categories")
       .update({ is_visible: !cat.is_visible })

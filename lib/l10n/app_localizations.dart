@@ -110,6 +110,12 @@ abstract class AppLocalizations {
     Locale('ur'),
   ];
 
+  /// No description provided for @viewFullLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'View full leaderboard'**
+  String get viewFullLeaderboard;
+
   /// No description provided for @skip.
   ///
   /// In en, this message translates to:
