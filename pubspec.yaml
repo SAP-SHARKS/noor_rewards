@@ -73,6 +73,7 @@ flutter:
     - assets/images/
     - assets/lottie/
     - assets/data/
+    - assets/icons/
     - .env                         # Quran Foundation API credentials
   fonts:
     - family: AlQalamQuran

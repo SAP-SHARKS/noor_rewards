@@ -25,6 +25,37 @@ import '../l10n/app_localizations.dart';
 import '../services/stats_service.dart';
 import '../theme/y4_theme.dart';
 
+// English transliterations for the 114 surahs — used by the popular-surah
+// rows. Translator can swap to a localized map later.
+const Map<int, String> _kSurahNames = {
+  1: 'Al-Fatiha', 2: 'Al-Baqarah', 3: 'Ali Imran', 4: 'An-Nisa', 5: 'Al-Maidah',
+  6: 'Al-Anam', 7: 'Al-Araf', 8: 'Al-Anfal', 9: 'At-Tawbah', 10: 'Yunus',
+  11: 'Hud', 12: 'Yusuf', 13: 'Ar-Rad', 14: 'Ibrahim', 15: 'Al-Hijr',
+  16: 'An-Nahl', 17: 'Al-Isra', 18: 'Al-Kahf', 19: 'Maryam', 20: 'Ta-Ha',
+  21: 'Al-Anbiya', 22: 'Al-Hajj', 23: 'Al-Muminun', 24: 'An-Nur', 25: 'Al-Furqan',
+  26: 'Ash-Shuara', 27: 'An-Naml', 28: 'Al-Qasas', 29: 'Al-Ankabut', 30: 'Ar-Rum',
+  31: 'Luqman', 32: 'As-Sajdah', 33: 'Al-Ahzab', 34: 'Saba', 35: 'Fatir',
+  36: 'Ya-Sin', 37: 'As-Saffat', 38: 'Sad', 39: 'Az-Zumar', 40: 'Ghafir',
+  41: 'Fussilat', 42: 'Ash-Shura', 43: 'Az-Zukhruf', 44: 'Ad-Dukhan',
+  45: 'Al-Jathiyah', 46: 'Al-Ahqaf', 47: 'Muhammad', 48: 'Al-Fath',
+  49: 'Al-Hujurat', 50: 'Qaf', 51: 'Adh-Dhariyat', 52: 'At-Tur', 53: 'An-Najm',
+  54: 'Al-Qamar', 55: 'Ar-Rahman', 56: 'Al-Waqiah', 57: 'Al-Hadid',
+  58: 'Al-Mujadilah', 59: 'Al-Hashr', 60: 'Al-Mumtahanah', 61: 'As-Saff',
+  62: 'Al-Jumuah', 63: 'Al-Munafiqun', 64: 'At-Taghabun', 65: 'At-Talaq',
+  66: 'At-Tahrim', 67: 'Al-Mulk', 68: 'Al-Qalam', 69: 'Al-Haqqah',
+  70: 'Al-Maarij', 71: 'Nuh', 72: 'Al-Jinn', 73: 'Al-Muzzammil',
+  74: 'Al-Muddaththir', 75: 'Al-Qiyamah', 76: 'Al-Insan', 77: 'Al-Mursalat',
+  78: 'An-Naba', 79: 'An-Naziat', 80: 'Abasa', 81: 'At-Takwir', 82: 'Al-Infitar',
+  83: 'Al-Mutaffifin', 84: 'Al-Inshiqaq', 85: 'Al-Buruj', 86: 'At-Tariq',
+  87: 'Al-Ala', 88: 'Al-Ghashiyah', 89: 'Al-Fajr', 90: 'Al-Balad',
+  91: 'Ash-Shams', 92: 'Al-Layl', 93: 'Ad-Duha', 94: 'Ash-Sharh', 95: 'At-Tin',
+  96: 'Al-Alaq', 97: 'Al-Qadr', 98: 'Al-Bayyinah', 99: 'Az-Zalzalah',
+  100: 'Al-Adiyat', 101: 'Al-Qariah', 102: 'At-Takathur', 103: 'Al-Asr',
+  104: 'Al-Humazah', 105: 'Al-Fil', 106: 'Quraysh', 107: 'Al-Maun',
+  108: 'Al-Kawthar', 109: 'Al-Kafirun', 110: 'An-Nasr', 111: 'Al-Masad',
+  112: 'Al-Ikhlas', 113: 'Al-Falaq', 114: 'An-Nas',
+};
+
 class QuranEngagementStrip extends StatefulWidget {
   /// When provided, presence is scoped to readers of this surah. When null
   /// (e.g. on the Quran hub before any surah is selected), presence joins a
@@ -41,6 +72,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
   RealtimeChannel? _channel;
   int _liveReaders = 0;
   GlobalStats _global = const GlobalStats();
+  List<({int surah, int count})> _popular = const [];
   Timer? _globalRefresh;
   late final AnimationController _pulseCtrl;
 
@@ -121,6 +153,10 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
       final stats = await StatsService.instance.loadGlobalStats();
       if (mounted) setState(() => _global = stats);
     } catch (_) {}
+    try {
+      final pop = await StatsService.instance.loadPopularSurahs(limit: 3);
+      if (mounted) setState(() => _popular = pop);
+    } catch (_) {}
   }
 
   String _formatNumber(int n) {
@@ -138,91 +174,142 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
     final readersTodayLabel = l?.readToday ?? 'read today';
     final hasanatLabel = l?.communityHasanat ?? 'community hasanat';
 
+    // Fresher palette — cool mint-sage on the right contrasts the honey
+    // brand colour on the left of the card.
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Y4.cream,
-            Y4.butter.withValues(alpha: 0.45),
+            Color(0xFFFFF8E6), // soft cream-honey
+            Color(0xFFEDF8EE), // pale mint
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Y4.honey.withValues(alpha: 0.28)),
+        border: Border.all(color: const Color(0xFFD6E8D5)),
         boxShadow: [
           BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.08),
+            color: const Color(0xFF8FCFA0).withValues(alpha: 0.12),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Hero row: pulsing dot + big count + label ─────────────────
-          Row(
-            children: [
-              _PulsingDot(controller: _pulseCtrl),
-              const SizedBox(width: 10),
-              Text(
-                _formatNumber(_liveReaders),
-                style: GoogleFonts.fraunces(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                  color: Y4.ink,
-                  letterSpacing: -0.5,
-                  height: 1,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── LEFT half: live readers + today's community stats ──────
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        _PulsingDot(controller: _pulseCtrl),
+                        const SizedBox(width: 8),
+                        Text(
+                          _formatNumber(_liveReaders),
+                          style: GoogleFonts.fraunces(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w600,
+                            color: Y4.ink,
+                            letterSpacing: -0.5,
+                            height: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      liveLabel,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Y4.inkSoft,
+                      ),
+                      maxLines: 2,
+                    ),
+                    if (_global.todayReaders > 0 || hasanatToday > 0) ...[
+                      const SizedBox(height: 10),
+                      if (_global.todayReaders > 0)
+                        _FooterStat(
+                          icon: Icons.menu_book_rounded,
+                          iconColor: Y4.honeyDeep,
+                          value: _formatNumber(_global.todayReaders),
+                          label: readersTodayLabel,
+                        ),
+                      if (hasanatToday > 0) ...[
+                        const SizedBox(height: 4),
+                        _FooterStat(
+                          icon: Icons.auto_awesome_rounded,
+                          iconColor: const Color(0xFFD4A017),
+                          value: '+${_formatNumber(hasanatToday)}',
+                          label: hasanatLabel,
+                        ),
+                      ],
+                    ],
+                  ],
                 ),
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  liveLabel,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Y4.inkSoft,
-                  ),
-                  maxLines: 2,
+            ),
+            // ── Divider ──────────────────────────────────────────────
+            Container(
+              width: 1,
+              color: const Color(0xFF8FCFA0).withValues(alpha: 0.30),
+            ),
+            // ── RIGHT half: top 3 surahs the community is reading ────
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l?.frequentlyReadByCommunity ?? 'FREQUENTLY READ',
+                      style: GoogleFonts.rajdhani(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF3F8C5E),
+                        letterSpacing: 1.0,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    if (_popular.isEmpty)
+                      Text(
+                        '—',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: Y4.inkSoft,
+                        ),
+                      )
+                    else
+                      ..._popular.asMap().entries.map((e) {
+                        final idx = e.key + 1;
+                        final p = e.value;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: _PopularSurahRow(
+                            rank: idx,
+                            name: _kSurahNames[p.surah] ?? 'Surah ${p.surah}',
+                            count: _formatNumber(p.count),
+                          ),
+                        );
+                      }),
+                  ],
                 ),
               ),
-            ],
-          ),
-          // ── Divider + community footer row ────────────────────────────
-          if (_global.todayReaders > 0 || hasanatToday > 0) ...[
-            const SizedBox(height: 12),
-            Container(height: 1, color: Y4.honey.withValues(alpha: 0.18)),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                if (_global.todayReaders > 0)
-                  _FooterStat(
-                    icon: Icons.menu_book_rounded,
-                    iconColor: Y4.honeyDeep,
-                    value: _formatNumber(_global.todayReaders),
-                    label: readersTodayLabel,
-                  ),
-                if (_global.todayReaders > 0 && hasanatToday > 0)
-                  Container(
-                    width: 1,
-                    height: 24,
-                    margin: const EdgeInsets.symmetric(horizontal: 14),
-                    color: Y4.honey.withValues(alpha: 0.18),
-                  ),
-                if (hasanatToday > 0)
-                  _FooterStat(
-                    icon: Icons.auto_awesome_rounded,
-                    iconColor: const Color(0xFFD4A017),
-                    value: '+${_formatNumber(hasanatToday)}',
-                    label: hasanatLabel,
-                  ),
-              ],
             ),
           ],
-        ],
+        ),
       ),
     );
   }
@@ -277,6 +364,71 @@ class _PulsingDot extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Popular-surah row — small rank pill + surah name + count, used in the
+// "Frequently read by Community" half of the engagement strip.
+// ─────────────────────────────────────────────────────────────────────────────
+class _PopularSurahRow extends StatelessWidget {
+  final int rank;
+  final String name;
+  final String count;
+  const _PopularSurahRow({
+    required this.rank,
+    required this.name,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 18,
+          height: 18,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [Color(0xFFE2F5DE), Color(0xFF8FCFA0)],
+            ),
+          ),
+          child: Text(
+            '$rank',
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: Y4.ink,
+              height: 1.0,
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Y4.ink,
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          count,
+          style: GoogleFonts.outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Y4.inkSoft,
+          ),
+        ),
+      ],
     );
   }
 }

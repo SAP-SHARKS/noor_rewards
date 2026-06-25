@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:google_fonts/google_fonts.dart';
@@ -5700,7 +5701,6 @@ class _RankingSheetState extends State<_RankingSheet> {
               gradient: const [Y4.butter, Y4.honey],
               avatarSize: 72,
               pillarHeight: 84,
-              showCrown: true,
             ),
           ),
           Expanded(
@@ -5810,11 +5810,33 @@ class _RankingSheetState extends State<_RankingSheet> {
 }
 
 // ─── Leaderboard helpers ──────────────────────────────────────────────────
+// Stat icons (full-colour SVG illustrations, not flat glyphs).
+const String _kIconTimer  = 'assets/icons/stat_timer.svg';
+const String _kIconQuran  = 'assets/icons/stat_quran.svg';
+const String _kIconTasbih = 'assets/icons/stat_tasbih.svg';
+// Seeds icon — uses the official Sabiq "S" coin (gold/emerald) from
+// assets/images/LOGO.svg, so all Seeds counts use the same brand mark.
+const String _kIconSeeds  = 'assets/images/LOGO.svg';
+
 String _fmtCompact(int n) {
   if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
   if (n >= 10000) return '${(n / 1000).round()}k';
   if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}k';
   return '$n';
+}
+
+// Real Quran reading seconds — sourced from user_analytics.quran_time_sec
+// (accumulated by the Mushaf timer via record_activity_stats).
+int _readSecondsOf(Map<String, dynamic> p) =>
+    (p['quran_time_sec'] as num?)?.toInt() ?? 0;
+
+String _fmtReadTime(int seconds) {
+  if (seconds <= 0) return '0m';
+  final mins = (seconds / 60).round();
+  if (mins < 60) return '${mins}m';
+  final hrs = mins / 60;
+  if (hrs < 10) return '${hrs.toStringAsFixed(1)}h';
+  return '${hrs.round()}h';
 }
 
 int _ayahsOf(Map<String, dynamic> p) =>
@@ -5827,15 +5849,17 @@ int _dhikrOf(Map<String, dynamic> p) =>
     (p['dhikr_count'] as num?)?.toInt() ??
     0;
 
-// Small icon + value chip used in podium cards and list rows.
+// Stat chip: SVG illustration + compact value, used in podium + list rows.
 class _MiniStat extends StatelessWidget {
-  final Widget icon;
+  final String asset;
+  final double iconSize;
   final String value;
-  final Color color;
+  final double fontSize;
   const _MiniStat({
-    required this.icon,
+    required this.asset,
     required this.value,
-    required this.color,
+    this.iconSize = 16,
+    this.fontSize = 11,
   });
 
   @override
@@ -5843,14 +5867,14 @@ class _MiniStat extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        icon,
-        const SizedBox(width: 3),
+        SvgPicture.asset(asset, width: iconSize, height: iconSize),
+        const SizedBox(width: 4),
         Text(
           value,
           style: GoogleFonts.outfit(
-            fontSize: 11,
+            fontSize: fontSize,
             fontWeight: FontWeight.w800,
-            color: color,
+            color: _C.text,
           ),
         ),
       ],
@@ -5866,7 +5890,6 @@ class _PodiumSlot extends StatelessWidget {
   final List<Color> gradient;
   final double avatarSize;
   final double pillarHeight;
-  final bool showCrown;
   const _PodiumSlot({
     required this.rank,
     required this.entry,
@@ -5874,7 +5897,6 @@ class _PodiumSlot extends StatelessWidget {
     required this.gradient,
     required this.avatarSize,
     required this.pillarHeight,
-    this.showCrown = false,
   });
 
   @override
@@ -5896,128 +5918,196 @@ class _PodiumSlot extends StatelessWidget {
     final dhikr = _dhikrOf(e);
     final avatarUrl = e['avatar_url'] as String?;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (showCrown)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: NoorIcon.crown(size: 22),
-          ),
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: gradient.last.withValues(alpha: 0.40),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: _Avatar(url: avatarUrl, name: nm, size: avatarSize),
+    // Sizing varies per rank → #1 most prominent.
+    final rankFontSize = rank == 1 ? 24.0 : (rank == 2 ? 22.0 : 20.0);
+    // Card top padding accounts for the floating avatar overlap
+    // (top half of the avatar sits above the card edge).
+    final avatarHalf = avatarSize / 2;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // ── Rank label sits OUTSIDE the card in a small pill that
+          // matches the card's gradient.
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 5,
             ),
-            Positioned(
-              right: -2,
-              bottom: -2,
-              child: Container(
-                width: 22,
-                height: 22,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: gradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: gradient.last.withValues(alpha: 0.35),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Text(
+              _podiumOrdinal(rank),
+              style: GoogleFonts.outfit(
+                fontSize: rankFontSize - 4,
+                fontWeight: FontWeight.w900,
+                color: Y4.ink,
+                height: 1.0,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // ── Card with floating avatar on top ───────────────────────────
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+              // Card body
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(top: avatarHalf),
+                padding: EdgeInsets.fromLTRB(
+                  8,
+                  avatarHalf + 12,
+                  8,
+                  14,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: gradient,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    // Soft outer glow in the gradient's hue
+                    BoxShadow(
+                      color: gradient.last.withValues(alpha: 0.45),
+                      blurRadius: 22,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Name wrapped in a small white pill — visually separated
+                    // from the gradient card background.
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        isMe ? '$nm (you)' : nm,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: Y4.ink,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _MiniStat(
+                      asset: _kIconTimer,
+                      iconSize: 24,
+                      fontSize: 13,
+                      value: _fmtReadTime(_readSecondsOf(e)),
+                    ),
+                    const SizedBox(height: 8),
+                    _MiniStat(
+                      asset: _kIconQuran,
+                      iconSize: 24,
+                      fontSize: 13,
+                      value: _fmtCompact(ayahs),
+                    ),
+                    const SizedBox(height: 8),
+                    _MiniStat(
+                      asset: _kIconTasbih,
+                      iconSize: 24,
+                      fontSize: 13,
+                      value: _fmtCompact(dhikr),
+                    ),
+                    const SizedBox(height: 8),
+                    _MiniStat(
+                      asset: _kIconSeeds,
+                      iconSize: 24,
+                      fontSize: 13,
+                      value: _fmtCompact(pts),
+                    ),
+                  ],
+                ),
+              ),
+              // Floating avatar — half above the card, centered
+              Container(
+                padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(colors: gradient),
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    '$rank',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w900,
-                      color: rank == 1 ? Y4.ink : Colors.white,
-                      height: 1.0,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradient.last.withValues(alpha: 0.55),
+                      blurRadius: 14,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
+                  ],
                 ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Text(
-          isMe ? '$nm (you)' : nm,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            color: _C.text,
-          ),
-        ),
-        const SizedBox(height: 4),
-        // Mini-stats trio — Seeds (heart), ayahs (book), dhikr (beads)
-        _MiniStat(
-          icon: NoorIcon.heart(size: 11),
-          value: _fmtCompact(pts),
-          color: const Color(0xFFE91E63),
-        ),
-        const SizedBox(height: 2),
-        _MiniStat(
-          icon: NoorIcon.book(size: 11),
-          value: _fmtCompact(ayahs),
-          color: const Color(0xFF1565C0),
-        ),
-        const SizedBox(height: 2),
-        _MiniStat(
-          icon: NoorIcon.beads(size: 11),
-          value: _fmtCompact(dhikr),
-          color: const Color(0xFFCC5500),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          height: pillarHeight,
-          margin: const EdgeInsets.symmetric(horizontal: 6),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: gradient,
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(12),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: gradient.last.withValues(alpha: 0.30),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+                child: _Avatar(url: avatarUrl, name: nm, size: avatarSize),
               ),
             ],
           ),
-          child: Center(
-            child: Text(
-              '$rank',
-              style: GoogleFonts.outfit(
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                color: rank == 1 ? Y4.ink : Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
+
+String _podiumOrdinal(int rank) {
+  switch (rank) {
+    case 1:
+      return '1st';
+    case 2:
+      return '2nd';
+    case 3:
+      return '3rd';
+    default:
+      return '$rank';
+  }
+}
+
+// Pastel gradient palette for the list-row rank stickers (rank 4+).
+// Cycles by position so each row gets its own colour.
+const List<List<Color>> _kRankBadgePalette = [
+  [Color(0xFFFFE0DA), Color(0xFFFF9A86)], // soft rose
+  [Color(0xFFDDEEFF), Color(0xFF8AB6E5)], // sky blue
+  [Color(0xFFFFF1B5), Color(0xFFE5B547)], // butter yellow
+  [Color(0xFFE9DFFF), Color(0xFFB7A4F4)], // lavender
+  [Color(0xFFE2F5DE), Color(0xFF8FCFA0)], // mint
+  [Color(0xFFFFE3C7), Color(0xFFE89B5C)], // peach
+];
+
+List<Color> _rankBadgeGradient(int rank) =>
+    _kRankBadgePalette[(rank - 4).abs() % _kRankBadgePalette.length];
 
 // ─── Avatar with initial fallback ──────────────────────────────────────────
 class _Avatar extends StatelessWidget {
@@ -6142,26 +6232,14 @@ class _LeaderboardView extends StatefulWidget {
 class _LeaderboardViewState extends State<_LeaderboardView> {
   final Map<_LbWindow, List<Map<String, dynamic>>> _cache = {};
   final Set<_LbWindow> _loadingTabs = {};
-  _LbWindow _window = _LbWindow.allTime;
+  // Tab UI was removed — leaderboard now shows all-time only. The
+  // _LbWindow plumbing is retained so other time windows can be re-added
+  // later without touching the cache / loading logic.
+  final _LbWindow _window = _LbWindow.allTime;
 
   List<Map<String, dynamic>> get _leaders => _cache[_window] ?? const [];
   bool get _loading =>
       _loadingTabs.contains(_window) && _leaders.isEmpty;
-
-  int get _myRank {
-    final idx = _leaders.indexWhere((p) => p['id'] == widget.currentUserId);
-    return idx < 0 ? 0 : idx + 1;
-  }
-
-  int get _myPoints {
-    final me = _leaders.firstWhere(
-      (p) => p['id'] == widget.currentUserId,
-      orElse: () => const {},
-    );
-    return (me['period_points'] as num?)?.toInt() ??
-        (me['total_xp'] as num?)?.toInt() ??
-        0;
-  }
 
   String _viewFor(_LbWindow w) {
     switch (w) {
@@ -6202,21 +6280,6 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     _load(_window);
   }
 
-  String _windowSubtitle(BuildContext ctx) {
-    final l = AppLocalizations.of(ctx);
-    switch (_window) {
-      case _LbWindow.today:
-        return l?.today ?? 'Today';
-      case _LbWindow.week:
-        return l?.thisWeek ?? 'This Week';
-      case _LbWindow.month:
-        return l?.thisMonth ?? 'This Month';
-      case _LbWindow.allTime:
-        return l?.topContribByLifetimeSeeds ??
-            'Top contributors by lifetime Seeds';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -6235,10 +6298,6 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(context),
-          Divider(height: 1, color: Colors.grey.shade100),
-          _buildTabBar(context),
-          Divider(height: 1, color: Colors.grey.shade100),
           if (_loading)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 40),
@@ -6254,110 +6313,6 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Y4.primaryDeep, Y4.primary],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(child: NoorIcon.trophy(size: 20)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context)?.communityLeaderboard ??
-                      'Leaderboard',
-                  style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    color: _C.text,
-                  ),
-                ),
-                Text(
-                  _windowSubtitle(context),
-                  style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabBar(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final tabs = <(_LbWindow, String)>[
-      (_LbWindow.today, l?.today ?? 'Today'),
-      (_LbWindow.week, l?.thisWeek ?? 'Week'),
-      (_LbWindow.month, l?.thisMonth ?? 'Month'),
-      (_LbWindow.allTime, l?.allTime ?? 'All Time'),
-    ];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-      child: Row(
-        children: tabs.map((t) {
-          final selected = t.$1 == _window;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: GestureDetector(
-              onTap: () {
-                if (_window == t.$1) return;
-                setState(() => _window = t.$1);
-                _load(t.$1);
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  gradient: selected
-                      ? const LinearGradient(
-                          colors: [Y4.primaryDeep, Y4.primary],
-                        )
-                      : null,
-                  color: selected ? null : const Color(0xFFF4F4F8),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: selected
-                      ? [
-                          BoxShadow(
-                            color: Y4.primaryDeep.withValues(alpha: 0.30),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Text(
-                  t.$2,
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: selected ? Colors.white : _C.sub,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   Widget _buildBody(BuildContext ctx) {
     final leaders = _leaders;
     final top3 = leaders.take(3).toList();
@@ -6369,8 +6324,6 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildMyRankCard(ctx),
-        const SizedBox(height: 14),
         if (leaders.isEmpty)
           _buildEmptyState(ctx)
         else ...[
@@ -6398,61 +6351,6 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
           ],
         ],
       ],
-    );
-  }
-
-  Widget _buildMyRankCard(BuildContext ctx) {
-    final unit = AppLocalizations.of(ctx)?.seedsUnit ?? 'Seeds';
-    final rankText = _myRank > 0 ? '#$_myRank' : '—';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Y4.butter, Y4.honey, Y4.honeyDeep],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.35),
-            blurRadius: 14,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          NoorIcon.medal(size: 36),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(ctx)?.yourRank(rankText) ??
-                      'Your Rank: $rankText',
-                  style: GoogleFonts.outfit(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: Y4.ink,
-                  ),
-                ),
-                Text(
-                  _myRank > 0
-                      ? '$_myPoints $unit • ${_windowSubtitle(ctx)}'
-                      : 'No activity yet — earn Seeds to appear',
-                  style: GoogleFonts.outfit(
-                    fontSize: 11,
-                    color: Y4.ink.withValues(alpha: 0.70),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -6492,53 +6390,43 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     final p1 = top3.isNotEmpty ? top3[0] as Map<String, dynamic> : null;
     final p2 = top3.length > 1 ? top3[1] as Map<String, dynamic> : null;
     final p3 = top3.length > 2 ? top3[2] as Map<String, dynamic> : null;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(6, 10, 6, 12),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFFFBF0), Color(0xFFFFF4DA)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _PodiumSlot(
+            rank: 2,
+            entry: p2,
+            currentUserId: widget.currentUserId,
+            // Soft lavender — calm, cool
+            gradient: const [Color(0xFFEFE7FF), Color(0xFFB7A6F4)],
+            avatarSize: 52,
+            pillarHeight: 50,
+          ),
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFFFE7B0)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: _PodiumSlot(
-              rank: 2,
-              entry: p2,
-              currentUserId: widget.currentUserId,
-              gradient: const [Color(0xFFB0BEC5), Color(0xFF78909C)],
-              avatarSize: 52,
-              pillarHeight: 50,
-            ),
+        Expanded(
+          child: _PodiumSlot(
+            rank: 1,
+            entry: p1,
+            currentUserId: widget.currentUserId,
+            // Sunny honey — warmest, most prominent
+            gradient: const [Color(0xFFFFEFB0), Color(0xFFF7B65A)],
+            avatarSize: 64,
+            pillarHeight: 56,
           ),
-          Expanded(
-            child: _PodiumSlot(
-              rank: 1,
-              entry: p1,
-              currentUserId: widget.currentUserId,
-              gradient: const [Y4.butter, Y4.honey],
-              avatarSize: 66,
-              pillarHeight: 74,
-              showCrown: true,
-            ),
+        ),
+        Expanded(
+          child: _PodiumSlot(
+            rank: 3,
+            entry: p3,
+            currentUserId: widget.currentUserId,
+            // Fresh mint — grounded green
+            gradient: const [Color(0xFFE2F5DE), Color(0xFF8FCFA0)],
+            avatarSize: 48,
+            pillarHeight: 50,
           ),
-          Expanded(
-            child: _PodiumSlot(
-              rank: 3,
-              entry: p3,
-              currentUserId: widget.currentUserId,
-              gradient: const [Color(0xFFCD7F32), Color(0xFFA0522D)],
-              avatarSize: 52,
-              pillarHeight: 34,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -6553,6 +6441,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     final pts = _pointsOf(p);
     final ayahs = _ayahsOf(p);
     final dhikr = _dhikrOf(p);
+    final level = (p['level'] as num?)?.toInt() ?? 1;
     final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
     final country = (p['country'] as String?)?.trim() ?? '';
     final avatarUrl = p['avatar_url'] as String?;
@@ -6569,34 +6458,85 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
       ),
       child: Row(
         children: [
-          SizedBox(
-            width: 24,
-            child: Text(
-              '$rank',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
-                color: _C.sub,
+          // Rank shown as a small sticker badge on the top-left of the avatar
+          // (replaces the old separate left column → frees ~30px of width).
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              _Avatar(url: avatarUrl, name: nm, size: 38),
+              Positioned(
+                top: -2,
+                left: -4,
+                child: Builder(
+                  builder: (_) {
+                    final grad = _rankBadgeGradient(rank);
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: grad,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: grad.last.withValues(alpha: 0.40),
+                            blurRadius: 5,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        '$rank',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: Y4.ink,
+                          height: 1.0,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 6),
-          _Avatar(url: avatarUrl, name: nm, size: 34),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  isMe ? '$nm (you)' : nm,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: _C.text,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        isMe ? '$nm (you)' : nm,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: _C.text,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Lvl $level',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: _C.sub,
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 3),
@@ -6605,14 +6545,22 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
                     runSpacing: 3,
                     children: [
                       _MiniStat(
-                        icon: NoorIcon.book(size: 11),
-                        value: _fmtCompact(ayahs),
-                        color: const Color(0xFF1565C0),
+                        asset: _kIconTimer,
+                        iconSize: 22,
+                        fontSize: 12,
+                        value: _fmtReadTime(_readSecondsOf(p)),
                       ),
                       _MiniStat(
-                        icon: NoorIcon.beads(size: 11),
+                        asset: _kIconQuran,
+                        iconSize: 22,
+                        fontSize: 12,
+                        value: _fmtCompact(ayahs),
+                      ),
+                      _MiniStat(
+                        asset: _kIconTasbih,
+                        iconSize: 22,
+                        fontSize: 12,
                         value: _fmtCompact(dhikr),
-                        color: const Color(0xFFCC5500),
                       ),
                       if (streak > 0) _StreakChip(streak: streak),
                       if (country.isNotEmpty) _CountryChip(country: country),
@@ -6624,9 +6572,10 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
           ),
           const SizedBox(width: 6),
           _MiniStat(
-            icon: NoorIcon.heart(size: 14),
+            asset: _kIconSeeds,
+            iconSize: 20,
+            fontSize: 13,
             value: _fmtCompact(pts),
-            color: const Color(0xFFE91E63),
           ),
         ],
       ),
@@ -6670,14 +6619,9 @@ class _ProfileTabState extends State<_ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
-    final first = widget.name.split(' ').first;
-    final name = widget.name;
-    final country = widget.country;
     final level = widget.level;
     final levelTitle = widget.levelTitle;
     final streak = widget.streak;
-    final avatarUrl = widget.avatarUrl;
     final statusBarH = MediaQuery.of(context).padding.top;
 
     return SafeArea(
@@ -6827,106 +6771,6 @@ class _ProfileTabState extends State<_ProfileTab> {
                           ],
                         ),
 
-                        const SizedBox(height: 16),
-
-                        // Avatar (honey gradient circle) — compacted
-                        Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: 64,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: const LinearGradient(
-                                  colors: [Y4.honey, Y4.honeyDeep],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                border: Border.all(color: Y4.surface, width: 3),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.30),
-                                    blurRadius: 24,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                                image:
-                                    avatarUrl != null
-                                        ? DecorationImage(
-                                          image: NetworkImage(avatarUrl),
-                                          fit: BoxFit.cover,
-                                        )
-                                        : null,
-                              ),
-                              child:
-                                  avatarUrl == null
-                                      ? Center(
-                                        child: Text(
-                                          first.isNotEmpty
-                                              ? first[0].toUpperCase()
-                                              : 'N',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.w800,
-                                            color: Y4.ink,
-                                          ),
-                                        ),
-                                      )
-                                      : null,
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        // Name (Fraunces serif) — compacted from 28 → 20
-                        Text(
-                          name,
-                          style: Y4.display(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Y4.ink,
-                            letterSpacing: -0.2,
-                            height: 1.0,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-
-                        // Email / Country
-                        if ((user?.email ?? user?.userMetadata?['qf_email']) !=
-                            null)
-                          Text(
-                            (user?.email ?? user?.userMetadata?['qf_email'])
-                                    as String? ??
-                                '',
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              color: Y4.inkSoft,
-                            ),
-                          ),
-                        if (country != null && country.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.public_rounded,
-                                size: 12,
-                                color: Y4.muted,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                country,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  color: Y4.inkSoft,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ],
                     ),
                   ),

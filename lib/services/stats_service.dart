@@ -538,4 +538,28 @@ class StatsService {
     }
     return const GlobalStats();
   }
+
+  /// Top surahs the community read in the last 7 days.
+  /// Backed by the `popular_surahs_7d` view. Returns at most [limit] entries
+  /// (each: surah number + read count). Silent fallback to empty list.
+  Future<List<({int surah, int count})>> loadPopularSurahs({
+    int limit = 3,
+  }) async {
+    try {
+      final rows = await _sb
+          .from('popular_surahs_7d')
+          .select('surah, read_count')
+          .limit(limit);
+      return (rows as List).map((r) {
+        final m = r as Map<String, dynamic>;
+        return (
+          surah: (m['surah'] as num).toInt(),
+          count: (m['read_count'] as num).toInt(),
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('StatsService.loadPopularSurahs error: $e');
+      return const [];
+    }
+  }
 }
