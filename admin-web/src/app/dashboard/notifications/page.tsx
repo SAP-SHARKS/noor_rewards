@@ -97,9 +97,14 @@ const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
 
 // Supabase project URL is needed to call the Edge Function directly. We avoid
 // `supabase.functions.invoke` so we can pass a custom error toast on 4xx.
+// Hardcoded fallback so a missing NEXT_PUBLIC_SUPABASE_URL doesn't break Test
+// send with a confusing "Failed to fetch" (browser fires the POST at a
+// relative path that 404s).
+const SUPABASE_URL_FALLBACK = "https://fwjzhtcxfiendofnhyzp.supabase.co";
 const FUNCTIONS_BASE =
-  (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(/\/$/, "") +
-  "/functions/v1";
+  (process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL_FALLBACK)
+    .trim()
+    .replace(/\/$/, "") + "/functions/v1";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -182,6 +187,23 @@ export default function NotificationsPage() {
   const [busyRow, setBusyRow] = useState<string | null>(null);
   const [testingRow, setTestingRow] = useState<string | null>(null);
 
+  // ── Test-send picker ─────────────────────────────────────────────────────
+  // Opens when admin clicks "Test send" on a variant row. Lets the admin
+  // pick which user gets the test push (default: themselves) so they don't
+  // accidentally spam the whole audience.
+  const [pickerVariant, setPickerVariant] = useState<Variant | null>(null);
+  const [pickerQuery, setPickerQuery] = useState("");
+  const [pickerResults, setPickerResults] = useState<
+    { id: string; display_name: string | null }[]
+  >([]);
+  const [pickerSearching, setPickerSearching] = useState(false);
+
+  // ── Locale filter ────────────────────────────────────────────────────────
+  // Default to English so the page opens with a short, readable list
+  // (~42 rows instead of ~336 with all locales mixed). Admins switch via
+  // the dropdown to review/edit other languages.
+  const [localeFilter, setLocaleFilter] = useState<Locale | "all">("en");
+
   // Toast
   const [toast, setToast] = useState<{
     kind: "success" | "error";
@@ -236,12 +258,12 @@ export default function NotificationsPage() {
       monthly_milestone: [],
     };
     for (const v of variants) {
-      if (NOTIFICATION_TYPES.includes(v.notification_type)) {
-        map[v.notification_type].push(v);
-      }
+      if (!NOTIFICATION_TYPES.includes(v.notification_type)) continue;
+      if (localeFilter !== "all" && v.locale !== localeFilter) continue;
+      map[v.notification_type].push(v);
     }
     return map;
-  }, [variants]);
+  }, [variants, localeFilter]);
 
   // ── Modal open/close ─────────────────────────────────────────────────────
 
@@ -407,8 +429,50 @@ export default function NotificationsPage() {
 
   // ── Test send ────────────────────────────────────────────────────────────
 
-  async function handleTestSend(v: Variant) {
-    setTestingRow(v.id);
+  // ── Test send ─────────────────────────────────────────────────────────────
+  // Click on a row's "Test send" button opens a small picker — the admin
+  // chooses WHICH user receives the test push. Default option is "Send to
+  // myself" so quick smoke-checks stay one click.
+  function openTestPicker(v: Variant) {
+    setPickerVariant(v);
+    setPickerQuery("");
+    setPickerResults([]);
+  }
+
+  function closeTestPicker() {
+    setPickerVariant(null);
+    setPickerQuery("");
+    setPickerResults([]);
+    setTestingRow(null);
+  }
+
+  async function runProfileSearch(q: string) {
+    setPickerQuery(q);
+    const trimmed = q.trim();
+    if (trimmed.length < 2) {
+      setPickerResults([]);
+      return;
+    }
+    setPickerSearching(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .ilike("display_name", `%${trimmed}%`)
+        .limit(15);
+      if (error) {
+        setPickerResults([]);
+      } else {
+        setPickerResults(data ?? []);
+      }
+    } finally {
+      setPickerSearching(false);
+    }
+  }
+
+  async function sendTestToUser(targetUserId: string, targetLabel: string) {
+    if (!pickerVariant) return;
+    setTestingRow(pickerVariant.id);
     try {
       const { data: sessionData, error: sessErr } =
         await supabase.auth.getSession();
@@ -420,13 +484,17 @@ export default function NotificationsPage() {
         return;
       }
       const accessToken = sessionData.session.access_token;
-      const uid = sessionData.session.user.id;
+      const adminUid = sessionData.session.user.id;
 
       const body = {
-        user_id: uid,
-        admin_user_id: uid,
-        notification_type: v.notification_type,
-        vars: DUMMY_VARS[v.notification_type],
+        user_id: targetUserId,
+        admin_user_id: adminUid,
+        // `variant_id` pins the test to the exact row the admin clicked
+        // (especially needed when verifying an image). `notification_type`
+        // stays for logging + as a fallback if the variant lookup fails.
+        variant_id: pickerVariant.id,
+        notification_type: pickerVariant.notification_type,
+        vars: DUMMY_VARS[pickerVariant.notification_type],
       };
       const res = await fetch(`${FUNCTIONS_BASE}/admin-test-push`, {
         method: "POST",
@@ -446,7 +514,8 @@ export default function NotificationsPage() {
         });
         return;
       }
-      setToast({ kind: "success", msg: "Test push sent to your device." });
+      setToast({ kind: "success", msg: `Test push sent to ${targetLabel}.` });
+      closeTestPicker();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Test send failed.";
       setToast({ kind: "error", msg });
@@ -483,6 +552,29 @@ export default function NotificationsPage() {
             {variants.length} variant{variants.length === 1 ? "" : "s"} across{" "}
             {NOTIFICATION_TYPES.length} notification types.
           </p>
+        </div>
+
+        {/* Locale filter — defaults to English to keep the list short. */}
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor="locale-filter"
+            className="text-xs font-medium text-slate-500 dark:text-slate-400"
+          >
+            Language:
+          </label>
+          <select
+            id="locale-filter"
+            value={localeFilter}
+            onChange={(e) => setLocaleFilter(e.target.value as Locale | "all")}
+            className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/40"
+          >
+            {LOCALES.map((l) => (
+              <option key={l} value={l}>
+                {LOCALE_LABEL[l]}
+              </option>
+            ))}
+            <option value="all">All languages</option>
+          </select>
         </div>
       </div>
 
@@ -714,9 +806,9 @@ export default function NotificationsPage() {
                           </button>
 
                           <button
-                            onClick={() => handleTestSend(v)}
+                            onClick={() => openTestPicker(v)}
                             disabled={rowTesting}
-                            title="Send test push to yourself"
+                            title="Send test push to a specific user"
                             className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 cursor-pointer transition flex items-center gap-1"
                           >
                             {rowTesting ? (
@@ -1017,6 +1109,107 @@ export default function NotificationsPage() {
                 )}
                 {editingId ? "Save changes" : "Create variant"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Test-send picker modal ──────────────────────────────────────── */}
+      {pickerVariant && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={closeTestPicker}
+        >
+          <div
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-white">
+                  Send test push
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {TYPE_LABEL[pickerVariant.notification_type]} ·{" "}
+                  {LOCALE_LABEL[pickerVariant.locale as Locale] ??
+                    pickerVariant.locale}
+                </p>
+              </div>
+              <button
+                onClick={closeTestPicker}
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer text-xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {/* Quick: send to self */}
+              <button
+                onClick={async () => {
+                  const { data } = await supabase.auth.getSession();
+                  const uid = data.session?.user.id;
+                  if (uid) sendTestToUser(uid, "yourself");
+                }}
+                disabled={testingRow === pickerVariant.id}
+                className="w-full px-4 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 disabled:opacity-50 text-white text-sm font-medium cursor-pointer transition"
+              >
+                Send to myself
+              </button>
+
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                <span className="text-[10px] uppercase tracking-wider text-slate-400">
+                  Or pick a user
+                </span>
+                <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+              </div>
+
+              <input
+                type="text"
+                value={pickerQuery}
+                onChange={(e) => runProfileSearch(e.target.value)}
+                placeholder="Search by display name (min 2 chars)…"
+                autoFocus
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40"
+              />
+
+              <div className="max-h-64 overflow-y-auto -mx-1">
+                {pickerSearching && (
+                  <div className="px-3 py-2 text-xs text-slate-400">
+                    Searching…
+                  </div>
+                )}
+                {!pickerSearching &&
+                  pickerQuery.trim().length >= 2 &&
+                  pickerResults.length === 0 && (
+                    <div className="px-3 py-2 text-xs text-slate-400">
+                      No users found.
+                    </div>
+                  )}
+                {pickerResults.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() =>
+                      sendTestToUser(p.id, p.display_name ?? p.id.slice(0, 8))
+                    }
+                    disabled={testingRow === pickerVariant.id}
+                    className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 cursor-pointer text-left transition"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium text-slate-800 dark:text-white truncate">
+                        {p.display_name ?? "(no name)"}
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate font-mono">
+                        {p.id}
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-rose-500 font-medium">
+                      Send →
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

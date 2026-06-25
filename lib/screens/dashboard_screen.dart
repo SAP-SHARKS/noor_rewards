@@ -5266,29 +5266,73 @@ class _RankingSheet extends StatefulWidget {
   State<_RankingSheet> createState() => _RankingSheetState();
 }
 
+enum _LbWindow { today, week, month, allTime }
+
 class _RankingSheetState extends State<_RankingSheet> {
-  List<Map<String, dynamic>> _leaders = [];
-  int _myRank = 0;
-  bool _loading = true;
+  // Per-tab cache so switching tabs after first load is instant.
+  final Map<_LbWindow, List<Map<String, dynamic>>> _cache = {};
+  final Set<_LbWindow> _loadingTabs = {};
+  _LbWindow _window = _LbWindow.allTime;
+
+  List<Map<String, dynamic>> get _leaders => _cache[_window] ?? const [];
+  bool get _loading => _loadingTabs.contains(_window) && _leaders.isEmpty;
+
+  int get _myRank {
+    final idx = _leaders.indexWhere((p) => p['id'] == widget.currentUserId);
+    if (idx < 0) return 0;
+    return idx + 1;
+  }
+
+  int get _myPoints {
+    final me = _leaders.firstWhere(
+      (p) => p['id'] == widget.currentUserId,
+      orElse: () => const {},
+    );
+    return (me['period_points'] as num?)?.toInt() ??
+        (me['total_xp'] as num?)?.toInt() ??
+        0;
+  }
 
   @override
   void initState() {
     super.initState();
-    _load();
+    _load(_window);
   }
 
-  Future<void> _load() async {
+  String _viewFor(_LbWindow w) {
+    switch (w) {
+      case _LbWindow.today:
+        return 'leaderboard_global_daily';
+      case _LbWindow.week:
+        return 'leaderboard_global_weekly';
+      case _LbWindow.month:
+        return 'leaderboard_global_monthly';
+      case _LbWindow.allTime:
+        return 'leaderboard_global_v2';
+    }
+  }
+
+  Future<void> _load(_LbWindow w) async {
+    if (_cache.containsKey(w)) return;
+    setState(() => _loadingTabs.add(w));
     try {
       final res = await Supabase.instance.client
-          .from('leaderboard_global_v2')
+          .from(_viewFor(w))
           .select()
           .limit(100);
-      _leaders = List<Map<String, dynamic>>.from(res);
-      _myRank = _leaders.indexWhere((p) => p['id'] == widget.currentUserId) + 1;
-      if (_myRank == 0) _myRank = _leaders.length + 1;
-    } catch (_) {}
-    if (mounted) setState(() => _loading = false);
+      _cache[w] = List<Map<String, dynamic>>.from(res);
+    } catch (_) {
+      _cache[w] = const [];
+    }
+    if (mounted) {
+      setState(() => _loadingTabs.remove(w));
+    }
   }
+
+  int _pointsOf(Map<String, dynamic> p) =>
+      (p['period_points'] as num?)?.toInt() ??
+      (p['total_xp'] as num?)?.toInt() ??
+      0;
 
   @override
   Widget build(BuildContext context) {
@@ -5346,7 +5390,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                                   ),
                                 ),
                                 Text(
-                                  AppLocalizations.of(context)?.topContribByLifetimeSeeds ?? 'Top contributors by lifetime Seeds',
+                                  _windowSubtitle(context),
                                   style: GoogleFonts.outfit(
                                     fontSize: 12,
                                     color: _C.sub,
@@ -5370,6 +5414,10 @@ class _RankingSheetState extends State<_RankingSheet> {
 
                 Divider(height: 1, color: Colors.grey.shade100),
 
+                _buildTabBar(context),
+
+                Divider(height: 1, color: Colors.grey.shade100),
+
                 Expanded(
                   child:
                       _loading
@@ -5379,233 +5427,1209 @@ class _RankingSheetState extends State<_RankingSheet> {
                             label: AppLocalizations.of(context)?.loading ??
                                 'Loading…',
                           )
-                          : ListView(
-                            controller: scrollCtrl,
-                            padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
-                            children: [
-                              // My rank hero card
-                              Container(
-                                padding: const EdgeInsets.all(18),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Y4.butter, Y4.honey],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(22),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Y4.honeyDeep.withValues(
-                                        alpha: 0.35,
-                                      ),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 6),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    NoorIcon.medal(size: 40),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Your Rank: #$_myRank',
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w800,
-                                              color: Y4.ink,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Out of ${_leaders.length} believers',
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 12,
-                                              color: Y4.inkSoft,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-
-                              Text(
-                                AppLocalizations.of(context)
-                                        ?.top10Contributors ??
-                                    'Top 10 Contributors',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: _C.text,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(22),
-                                  border: Border.all(
-                                    color: const Color(0xFFF0F0F5),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.05,
-                                      ),
-                                      blurRadius: 12,
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: List.generate(_leaders.take(10).length, (
-                                    i,
-                                  ) {
-                                    final p = _leaders[i];
-                                    final isMe =
-                                        p['id'] == widget.currentUserId;
-                                    final badgeColors = [
-                                      [Y4.butter, Y4.honey],
-                                      [
-                                        const Color(0xFFB0BEC5),
-                                        const Color(0xFF78909C),
-                                      ],
-                                      [
-                                        const Color(0xFFCD7F32),
-                                        const Color(0xFFA0522D),
-                                      ],
-                                    ];
-                                    final isTop3 = i < 3;
-                                    final badgeGrad =
-                                        isTop3
-                                            ? badgeColors[i]
-                                            : [
-                                              _C.teal,
-                                              const Color(0xFF1A9E8C),
-                                            ];
-                                    final pts =
-                                        (p['total_xp'] as num?)?.toInt() ?? 0;
-                                    final lv =
-                                        (p['level'] as num?)?.toInt() ?? 1;
-                                    final title =
-                                        (p['level_title'] as String?) ??
-                                        'Seeker';
-                                    final nm =
-                                        (p['display_name'] as String?)
-                                            ?.split(' ')
-                                            .first ??
-                                        'User';
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            isMe
-                                                ? const Color(0xFFFFF3D4)
-                                                : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(22),
-                                        border:
-                                            i < _leaders.take(10).length - 1
-                                                ? const Border(
-                                                  bottom: BorderSide(
-                                                    color: Color(0xFFF5F5F5),
-                                                  ),
-                                                )
-                                                : null,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 40,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              gradient: LinearGradient(
-                                                colors: badgeGrad,
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                              ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: badgeGrad.last
-                                                      .withValues(alpha: 0.35),
-                                                  blurRadius: 8,
-                                                  offset: const Offset(0, 3),
-                                                ),
-                                              ],
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                '${i + 1}',
-                                                style: GoogleFonts.outfit(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w900,
-                                                  color: isTop3
-                                                      ? Y4.ink
-                                                      : Colors.white,
-                                                  height: 1.0,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  isMe ? '$nm (you)' : nm,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: _C.text,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '$title • Lv $lv',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 11,
-                                                    color: _C.sub,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Text(
-                                            '$pts ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w700,
-                                              color: _C.navRanking,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            ],
-                          ),
+                          : _buildBody(context, scrollCtrl),
                 ),
               ],
             ),
           ),
+    );
+  }
+
+  // ── HEADER SUBTITLE PER TAB ────────────────────────────────────────────────
+  String _windowSubtitle(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx);
+    switch (_window) {
+      case _LbWindow.today:
+        return l?.today ?? 'Today';
+      case _LbWindow.week:
+        return l?.thisWeek ?? 'This Week';
+      case _LbWindow.month:
+        return l?.thisMonth ?? 'This Month';
+      case _LbWindow.allTime:
+        return l?.topContribByLifetimeSeeds ??
+            'Top contributors by lifetime Seeds';
+    }
+  }
+
+  // ── SEGMENTED TAB BAR ──────────────────────────────────────────────────────
+  Widget _buildTabBar(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final tabs = <(_LbWindow, String)>[
+      (_LbWindow.today, l?.today ?? 'Today'),
+      (_LbWindow.week, l?.thisWeek ?? 'Week'),
+      (_LbWindow.month, l?.thisMonth ?? 'Month'),
+      (_LbWindow.allTime, l?.allTime ?? 'All Time'),
+    ];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Row(
+        children: tabs.map((t) {
+          final selected = t.$1 == _window;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () {
+                if (_window == t.$1) return;
+                setState(() => _window = t.$1);
+                _load(t.$1);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 9,
+                ),
+                decoration: BoxDecoration(
+                  gradient: selected
+                      ? const LinearGradient(
+                          colors: [Y4.primaryDeep, Y4.primary],
+                        )
+                      : null,
+                  color: selected ? null : const Color(0xFFF4F4F8),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: selected
+                      ? [
+                          BoxShadow(
+                            color: Y4.primaryDeep.withValues(alpha: 0.30),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Text(
+                  t.$2,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: selected ? Colors.white : _C.sub,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // ── BODY ───────────────────────────────────────────────────────────────────
+  Widget _buildBody(BuildContext ctx, ScrollController scrollCtrl) {
+    final leaders = _leaders;
+    final top3 = leaders.take(3).toList();
+    final rest = leaders.length > 3 ? leaders.sublist(3) : const [];
+
+    return ListView(
+      controller: scrollCtrl,
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+      children: [
+        _buildMyRankCard(ctx, leaders.length),
+        const SizedBox(height: 20),
+
+        if (leaders.isEmpty)
+          _buildEmptyState(ctx)
+        else ...[
+          _buildPodium(ctx, top3),
+          if (rest.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(ctx)?.top10Contributors ??
+                  'Top Contributors',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: _C.text,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: const Color(0xFFF0F0F5)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 12,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: List.generate(rest.length, (i) {
+                  final p = rest[i] as Map<String, dynamic>;
+                  return _buildLeaderRow(
+                    ctx,
+                    p,
+                    rank: i + 4,
+                    isLast: i == rest.length - 1,
+                  );
+                }),
+              ),
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+
+  // ── MY RANK HERO CARD ──────────────────────────────────────────────────────
+  Widget _buildMyRankCard(BuildContext ctx, int totalCount) {
+    final unit = AppLocalizations.of(ctx)?.seedsUnit ?? 'Seeds';
+    final rankText = _myRank > 0 ? '#$_myRank' : '—';
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Y4.butter, Y4.honey],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.honeyDeep.withValues(alpha: 0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          NoorIcon.medal(size: 40),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(ctx)?.yourRank(rankText) ??
+                      'Your Rank: $rankText',
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.ink,
+                  ),
+                ),
+                Text(
+                  _myRank > 0
+                      ? '$_myPoints $unit • ${_windowSubtitle(ctx)}'
+                      : 'No activity yet — earn Seeds to appear',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    color: Y4.inkSoft,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── EMPTY STATE ────────────────────────────────────────────────────────────
+  Widget _buildEmptyState(BuildContext ctx) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAFAFC),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: const Color(0xFFF0F0F5)),
+      ),
+      child: Column(
+        children: [
+          NoorIcon.sparkles(size: 42),
+          const SizedBox(height: 12),
+          Text(
+            'Be the first on the board',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: _C.text,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Read an ayah or dhikr to claim the top spot',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── PODIUM (top 3) ─────────────────────────────────────────────────────────
+  Widget _buildPodium(BuildContext ctx, List<dynamic> top3) {
+    // Arrange visually: 2nd, 1st, 3rd
+    final p1 = top3.isNotEmpty ? top3[0] as Map<String, dynamic> : null;
+    final p2 = top3.length > 1 ? top3[1] as Map<String, dynamic> : null;
+    final p3 = top3.length > 2 ? top3[2] as Map<String, dynamic> : null;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 12, 8, 14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFFBF0), Color(0xFFFFF4DA)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFFFE7B0)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: _PodiumSlot(
+              rank: 2,
+              entry: p2,
+              currentUserId: widget.currentUserId,
+              gradient: const [Color(0xFFB0BEC5), Color(0xFF78909C)],
+              avatarSize: 56,
+              pillarHeight: 56,
+            ),
+          ),
+          Expanded(
+            child: _PodiumSlot(
+              rank: 1,
+              entry: p1,
+              currentUserId: widget.currentUserId,
+              gradient: const [Y4.butter, Y4.honey],
+              avatarSize: 72,
+              pillarHeight: 84,
+              showCrown: true,
+            ),
+          ),
+          Expanded(
+            child: _PodiumSlot(
+              rank: 3,
+              entry: p3,
+              currentUserId: widget.currentUserId,
+              gradient: const [Color(0xFFCD7F32), Color(0xFFA0522D)],
+              avatarSize: 56,
+              pillarHeight: 38,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── REGULAR LIST ROW (rank 4+) ─────────────────────────────────────────────
+  Widget _buildLeaderRow(
+    BuildContext ctx,
+    Map<String, dynamic> p, {
+    required int rank,
+    required bool isLast,
+  }) {
+    final isMe = p['id'] == widget.currentUserId;
+    final nm = (p['display_name'] as String?)?.split(' ').first ?? 'User';
+    final pts = _pointsOf(p);
+    final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
+    final country = (p['country'] as String?)?.trim() ?? '';
+    final avatarUrl = p['avatar_url'] as String?;
+    final unit = AppLocalizations.of(ctx)?.seedsUnit ?? 'Seeds';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isMe ? const Color(0xFFFFF3D4) : Colors.transparent,
+        borderRadius: BorderRadius.circular(22),
+        border: isLast
+            ? null
+            : const Border(
+                bottom: BorderSide(color: Color(0xFFF5F5F5)),
+              ),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 28,
+            child: Text(
+              '$rank',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: _C.sub,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          _Avatar(url: avatarUrl, name: nm, size: 36),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isMe ? '$nm (you)' : nm,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: _C.text,
+                  ),
+                ),
+                if (streak > 0 || country.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: Row(
+                      children: [
+                        if (streak > 0) ...[
+                          _StreakChip(streak: streak),
+                          const SizedBox(width: 6),
+                        ],
+                        if (country.isNotEmpty)
+                          Flexible(
+                            child: _CountryChip(country: country),
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '$pts $unit',
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: _C.navRanking,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Leaderboard helpers ──────────────────────────────────────────────────
+String _fmtCompact(int n) {
+  if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
+  if (n >= 10000) return '${(n / 1000).round()}k';
+  if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}k';
+  return '$n';
+}
+
+int _ayahsOf(Map<String, dynamic> p) =>
+    (p['period_ayahs'] as num?)?.toInt() ??
+    (p['ayahs_read'] as num?)?.toInt() ??
+    0;
+
+int _dhikrOf(Map<String, dynamic> p) =>
+    (p['period_dhikr'] as num?)?.toInt() ??
+    (p['dhikr_count'] as num?)?.toInt() ??
+    0;
+
+// Small icon + value chip used in podium cards and list rows.
+class _MiniStat extends StatelessWidget {
+  final Widget icon;
+  final String value;
+  final Color color;
+  const _MiniStat({
+    required this.icon,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        const SizedBox(width: 3),
+        Text(
+          value,
+          style: GoogleFonts.outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Podium card (rank 1/2/3) ──────────────────────────────────────────────
+class _PodiumSlot extends StatelessWidget {
+  final int rank;
+  final Map<String, dynamic>? entry;
+  final String currentUserId;
+  final List<Color> gradient;
+  final double avatarSize;
+  final double pillarHeight;
+  final bool showCrown;
+  const _PodiumSlot({
+    required this.rank,
+    required this.entry,
+    required this.currentUserId,
+    required this.gradient,
+    required this.avatarSize,
+    required this.pillarHeight,
+    this.showCrown = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final e = entry;
+    if (e == null) {
+      return SizedBox(
+        height: avatarSize + pillarHeight + 80,
+        child: const SizedBox.shrink(),
+      );
+    }
+    final isMe = e['id'] == currentUserId;
+    final nm = (e['display_name'] as String?)?.split(' ').first ?? 'User';
+    final pts =
+        (e['period_points'] as num?)?.toInt() ??
+        (e['total_xp'] as num?)?.toInt() ??
+        0;
+    final ayahs = _ayahsOf(e);
+    final dhikr = _dhikrOf(e);
+    final avatarUrl = e['avatar_url'] as String?;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showCrown)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: NoorIcon.crown(size: 22),
+          ),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: gradient,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: gradient.last.withValues(alpha: 0.40),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: _Avatar(url: avatarUrl, name: nm, size: avatarSize),
+            ),
+            Positioned(
+              right: -2,
+              bottom: -2,
+              child: Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(colors: gradient),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: Center(
+                  child: Text(
+                    '$rank',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: rank == 1 ? Y4.ink : Colors.white,
+                      height: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          isMe ? '$nm (you)' : nm,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: _C.text,
+          ),
+        ),
+        const SizedBox(height: 4),
+        // Mini-stats trio — Seeds (heart), ayahs (book), dhikr (beads)
+        _MiniStat(
+          icon: NoorIcon.heart(size: 11),
+          value: _fmtCompact(pts),
+          color: const Color(0xFFE91E63),
+        ),
+        const SizedBox(height: 2),
+        _MiniStat(
+          icon: NoorIcon.book(size: 11),
+          value: _fmtCompact(ayahs),
+          color: const Color(0xFF1565C0),
+        ),
+        const SizedBox(height: 2),
+        _MiniStat(
+          icon: NoorIcon.beads(size: 11),
+          value: _fmtCompact(dhikr),
+          color: const Color(0xFFCC5500),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          height: pillarHeight,
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: gradient,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(12),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: gradient.last.withValues(alpha: 0.30),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              '$rank',
+              style: GoogleFonts.outfit(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: rank == 1 ? Y4.ink : Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Avatar with initial fallback ──────────────────────────────────────────
+class _Avatar extends StatelessWidget {
+  final String? url;
+  final String name;
+  final double size;
+  const _Avatar({required this.url, required this.name, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: url == null
+            ? const LinearGradient(
+                colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+              )
+            : null,
+        image: url != null
+            ? DecorationImage(image: NetworkImage(url!), fit: BoxFit.cover)
+            : null,
+      ),
+      child: url == null
+          ? Center(
+              child: Text(
+                initial,
+                style: GoogleFonts.outfit(
+                  fontSize: size * 0.42,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF1565C0),
+                ),
+              ),
+            )
+          : null,
+    );
+  }
+}
+
+// ─── Streak chip (flame + days) ────────────────────────────────────────────
+class _StreakChip extends StatelessWidget {
+  final int streak;
+  const _StreakChip({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF0E6),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          NoorIcon.fire(size: 12),
+          const SizedBox(width: 3),
+          Text(
+            '$streak',
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFFCC5500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Country chip ──────────────────────────────────────────────────────────
+class _CountryChip extends StatelessWidget {
+  final String country;
+  const _CountryChip({required this.country});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F7FF),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          NoorIcon.globe(size: 11),
+          const SizedBox(width: 3),
+          Flexible(
+            child: Text(
+              country,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1565C0),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LEADERBOARD VIEW — inline widget on Profile tab. Same UX as the old modal
+// (4 time-window tabs, podium for top 3, avatars + streak/country chips for
+// the rest). Renders inside the existing Column scroll, so no internal scroll.
+// ─────────────────────────────────────────────────────────────────────────────
+class _LeaderboardView extends StatefulWidget {
+  final String currentUserId;
+  const _LeaderboardView({required this.currentUserId});
+  @override
+  State<_LeaderboardView> createState() => _LeaderboardViewState();
+}
+
+class _LeaderboardViewState extends State<_LeaderboardView> {
+  final Map<_LbWindow, List<Map<String, dynamic>>> _cache = {};
+  final Set<_LbWindow> _loadingTabs = {};
+  _LbWindow _window = _LbWindow.allTime;
+
+  List<Map<String, dynamic>> get _leaders => _cache[_window] ?? const [];
+  bool get _loading =>
+      _loadingTabs.contains(_window) && _leaders.isEmpty;
+
+  int get _myRank {
+    final idx = _leaders.indexWhere((p) => p['id'] == widget.currentUserId);
+    return idx < 0 ? 0 : idx + 1;
+  }
+
+  int get _myPoints {
+    final me = _leaders.firstWhere(
+      (p) => p['id'] == widget.currentUserId,
+      orElse: () => const {},
+    );
+    return (me['period_points'] as num?)?.toInt() ??
+        (me['total_xp'] as num?)?.toInt() ??
+        0;
+  }
+
+  String _viewFor(_LbWindow w) {
+    switch (w) {
+      case _LbWindow.today:
+        return 'leaderboard_global_daily';
+      case _LbWindow.week:
+        return 'leaderboard_global_weekly';
+      case _LbWindow.month:
+        return 'leaderboard_global_monthly';
+      case _LbWindow.allTime:
+        return 'leaderboard_global_v2';
+    }
+  }
+
+  int _pointsOf(Map<String, dynamic> p) =>
+      (p['period_points'] as num?)?.toInt() ??
+      (p['total_xp'] as num?)?.toInt() ??
+      0;
+
+  Future<void> _load(_LbWindow w) async {
+    if (_cache.containsKey(w)) return;
+    setState(() => _loadingTabs.add(w));
+    try {
+      final res = await Supabase.instance.client
+          .from(_viewFor(w))
+          .select()
+          .limit(100);
+      _cache[w] = List<Map<String, dynamic>>.from(res);
+    } catch (_) {
+      _cache[w] = const [];
+    }
+    if (mounted) setState(() => _loadingTabs.remove(w));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _load(_window);
+  }
+
+  String _windowSubtitle(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx);
+    switch (_window) {
+      case _LbWindow.today:
+        return l?.today ?? 'Today';
+      case _LbWindow.week:
+        return l?.thisWeek ?? 'This Week';
+      case _LbWindow.month:
+        return l?.thisMonth ?? 'This Month';
+      case _LbWindow.allTime:
+        return l?.topContribByLifetimeSeeds ??
+            'Top contributors by lifetime Seeds';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _C.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context),
+          Divider(height: 1, color: Colors.grey.shade100),
+          _buildTabBar(context),
+          Divider(height: 1, color: Colors.grey.shade100),
+          if (_loading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 40),
+              child: Center(child: NoorInlineLoader()),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 16, 14, 14),
+              child: _buildBody(context),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Y4.primaryDeep, Y4.primary],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(child: NoorIcon.trophy(size: 20)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)?.communityLeaderboard ??
+                      'Leaderboard',
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: _C.text,
+                  ),
+                ),
+                Text(
+                  _windowSubtitle(context),
+                  style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabBar(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final tabs = <(_LbWindow, String)>[
+      (_LbWindow.today, l?.today ?? 'Today'),
+      (_LbWindow.week, l?.thisWeek ?? 'Week'),
+      (_LbWindow.month, l?.thisMonth ?? 'Month'),
+      (_LbWindow.allTime, l?.allTime ?? 'All Time'),
+    ];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      child: Row(
+        children: tabs.map((t) {
+          final selected = t.$1 == _window;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () {
+                if (_window == t.$1) return;
+                setState(() => _window = t.$1);
+                _load(t.$1);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  gradient: selected
+                      ? const LinearGradient(
+                          colors: [Y4.primaryDeep, Y4.primary],
+                        )
+                      : null,
+                  color: selected ? null : const Color(0xFFF4F4F8),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: selected
+                      ? [
+                          BoxShadow(
+                            color: Y4.primaryDeep.withValues(alpha: 0.30),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Text(
+                  t.$2,
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: selected ? Colors.white : _C.sub,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext ctx) {
+    final leaders = _leaders;
+    final top3 = leaders.take(3).toList();
+    // Cap inline list at top 10 so the rest of Profile tab isn't pushed off.
+    final rest = leaders.length > 3
+        ? leaders.sublist(3, leaders.length.clamp(3, 10))
+        : const [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildMyRankCard(ctx),
+        const SizedBox(height: 14),
+        if (leaders.isEmpty)
+          _buildEmptyState(ctx)
+        else ...[
+          _buildPodium(ctx, top3),
+          if (rest.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFFF0F0F5)),
+              ),
+              child: Column(
+                children: List.generate(rest.length, (i) {
+                  final p = rest[i] as Map<String, dynamic>;
+                  return _buildLeaderRow(
+                    ctx,
+                    p,
+                    rank: i + 4,
+                    isLast: i == rest.length - 1,
+                  );
+                }),
+              ),
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+
+  Widget _buildMyRankCard(BuildContext ctx) {
+    final unit = AppLocalizations.of(ctx)?.seedsUnit ?? 'Seeds';
+    final rankText = _myRank > 0 ? '#$_myRank' : '—';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Y4.butter, Y4.honey, Y4.honeyDeep],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.honeyDeep.withValues(alpha: 0.35),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          NoorIcon.medal(size: 36),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(ctx)?.yourRank(rankText) ??
+                      'Your Rank: $rankText',
+                  style: GoogleFonts.outfit(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.ink,
+                  ),
+                ),
+                Text(
+                  _myRank > 0
+                      ? '$_myPoints $unit • ${_windowSubtitle(ctx)}'
+                      : 'No activity yet — earn Seeds to appear',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    color: Y4.ink.withValues(alpha: 0.70),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext ctx) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAFAFC),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFF0F0F5)),
+      ),
+      child: Column(
+        children: [
+          NoorIcon.sparkles(size: 38),
+          const SizedBox(height: 10),
+          Text(
+            'Be the first on the board',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: _C.text,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Read an ayah or dhikr to claim the top spot',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPodium(BuildContext ctx, List<dynamic> top3) {
+    final p1 = top3.isNotEmpty ? top3[0] as Map<String, dynamic> : null;
+    final p2 = top3.length > 1 ? top3[1] as Map<String, dynamic> : null;
+    final p3 = top3.length > 2 ? top3[2] as Map<String, dynamic> : null;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(6, 10, 6, 12),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFFBF0), Color(0xFFFFF4DA)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFFFE7B0)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: _PodiumSlot(
+              rank: 2,
+              entry: p2,
+              currentUserId: widget.currentUserId,
+              gradient: const [Color(0xFFB0BEC5), Color(0xFF78909C)],
+              avatarSize: 52,
+              pillarHeight: 50,
+            ),
+          ),
+          Expanded(
+            child: _PodiumSlot(
+              rank: 1,
+              entry: p1,
+              currentUserId: widget.currentUserId,
+              gradient: const [Y4.butter, Y4.honey],
+              avatarSize: 66,
+              pillarHeight: 74,
+              showCrown: true,
+            ),
+          ),
+          Expanded(
+            child: _PodiumSlot(
+              rank: 3,
+              entry: p3,
+              currentUserId: widget.currentUserId,
+              gradient: const [Color(0xFFCD7F32), Color(0xFFA0522D)],
+              avatarSize: 52,
+              pillarHeight: 34,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLeaderRow(
+    BuildContext ctx,
+    Map<String, dynamic> p, {
+    required int rank,
+    required bool isLast,
+  }) {
+    final isMe = p['id'] == widget.currentUserId;
+    final nm = (p['display_name'] as String?)?.split(' ').first ?? 'User';
+    final pts = _pointsOf(p);
+    final ayahs = _ayahsOf(p);
+    final dhikr = _dhikrOf(p);
+    final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
+    final country = (p['country'] as String?)?.trim() ?? '';
+    final avatarUrl = p['avatar_url'] as String?;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: isMe ? const Color(0xFFFFF3D4) : Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        border: isLast
+            ? null
+            : const Border(
+                bottom: BorderSide(color: Color(0xFFF5F5F5)),
+              ),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            child: Text(
+              '$rank',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: _C.sub,
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          _Avatar(url: avatarUrl, name: nm, size: 34),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isMe ? '$nm (you)' : nm,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: _C.text,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 3,
+                    children: [
+                      _MiniStat(
+                        icon: NoorIcon.book(size: 11),
+                        value: _fmtCompact(ayahs),
+                        color: const Color(0xFF1565C0),
+                      ),
+                      _MiniStat(
+                        icon: NoorIcon.beads(size: 11),
+                        value: _fmtCompact(dhikr),
+                        color: const Color(0xFFCC5500),
+                      ),
+                      if (streak > 0) _StreakChip(streak: streak),
+                      if (country.isNotEmpty) _CountryChip(country: country),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          _MiniStat(
+            icon: NoorIcon.heart(size: 14),
+            value: _fmtCompact(pts),
+            color: const Color(0xFFE91E63),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -5636,72 +6660,12 @@ class _ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<_ProfileTab> {
-  List<Map<String, dynamic>> _leaders = [];
-  int _myRank = 0;
-  bool _lbLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLeaderboard();
-  }
-
   Future<void> _openSettings(BuildContext context) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const ProfileSettingsScreen()),
     );
-    // Reload leaderboard in case anything changed
-    _loadLeaderboard();
     widget.onRefresh();
-  }
-
-  Future<void> _loadLeaderboard() async {
-    try {
-      // Fire both queries in parallel — total time = max(t1,t2) not t1+t2
-      final results = await Future.wait([
-        // Query 1: top 10 contributors (v2 = filtered view, no merged dupes)
-        Supabase.instance.client
-            .from('leaderboard_global_v2')
-            .select()
-            .order('total_xp', ascending: false)
-            .limit(10),
-        // Query 2: my own row. If my auth.uid() row got merged into a
-        // canonical (cross-method dedup), the v2 view hides me — fall
-        // back to reading from `profiles` directly and follow
-        // merged_into_id to the canonical.
-        Supabase.instance.client
-            .from('profiles')
-            .select('total_xp, merged_into_id')
-            .eq('id', widget.currentUserId)
-            .maybeSingle(),
-      ]);
-
-      _leaders = List<Map<String, dynamic>>.from(results[0] as List);
-      final myRow = results[1] as Map<String, dynamic>?;
-      final myXp = (myRow?['total_xp'] as num?)?.toInt() ?? 0;
-      // If this user's auth.uid() row was merged into a canonical, follow
-      // the pointer so rank / XP reflect the consolidated identity.
-      // (Not strictly needed for rank math, but keeps display consistent.)
-      final canonicalId =
-          (myRow?['merged_into_id'] as String?) ?? widget.currentUserId;
-
-      // Rank within top-10: count how many have more Seeds than me + 1
-      final posInTop10 = _leaders.indexWhere(
-        (p) => p['id'] == widget.currentUserId || p['id'] == canonicalId,
-      );
-      if (posInTop10 >= 0) {
-        _myRank = posInTop10 + 1;
-      } else {
-        // Not in top 10 — count how many top-10 members beat my Seeds total
-        final beatenBy =
-            _leaders
-                .where((p) => ((p['total_xp'] as num?)?.toInt() ?? 0) > myXp)
-                .length;
-        _myRank = beatenBy + 1;
-      }
-    } catch (_) {}
-    if (mounted) setState(() => _lbLoading = false);
   }
 
   @override
@@ -5977,287 +6941,8 @@ class _ProfileTabState extends State<_ProfileTab> {
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
                 child: Column(
                   children: [
-                    // ── Community Leaderboard — inline card ─────────────────
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: _C.border),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Header row
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Y4.primaryDeep, Y4.primary],
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Center(
-                                    child: NoorIcon.trophy(size: 20),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        AppLocalizations.of(
-                                              context,
-                                            )?.communityLeaderboard ??
-                                            'Community Leaderboard',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w800,
-                                          color: _C.text,
-                                        ),
-                                      ),
-                                      Text(
-                                        AppLocalizations.of(
-                                              context,
-                                            )?.topContributors ??
-                                            AppLocalizations.of(context)?.topContribByLifetimeSeeds ?? 'Top contributors by lifetime Seeds',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 11,
-                                          color: _C.sub,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // My rank hero — honey theme
-                          if (!_lbLoading)
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Y4.butter, Y4.honey, Y4.honeyDeep],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Y4.honeyDeep.withValues(alpha: 0.35),
-                                      blurRadius: 14,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    NoorIcon.medal(size: 36),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Your Rank: #$_myRank',
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w800,
-                                              color: Y4.ink,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Out of ${_leaders.length} believers',
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 11,
-                                              color: Y4.ink.withValues(alpha: 0.70),
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                          // Loading indicator — fixed height to prevent layout shift
-                          if (_lbLoading)
-                            const SizedBox(
-                              height: 80,
-                              child: Center(child: NoorInlineLoader()),
-                            ),
-
-                          // Top 10 list
-                          if (!_lbLoading && _leaders.isNotEmpty) ...[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-                              child: Text(
-                                AppLocalizations.of(context)
-                                        ?.top10Contributors ??
-                                    'Top 10 Contributors',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: _C.sub,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ),
-                            ...List.generate(_leaders.take(10).length, (i) {
-                              final p = _leaders[i];
-                              final isMe = p['id'] == widget.currentUserId;
-                              final isTop3 = i < 3;
-                              final badgeColors = [
-                                [Y4.butter, Y4.honey],
-                                [
-                                  const Color(0xFFB0BEC5),
-                                  const Color(0xFF78909C),
-                                ],
-                                [
-                                  const Color(0xFFCD7F32),
-                                  const Color(0xFFA0522D),
-                                ],
-                              ];
-                              final badgeGrad =
-                                  isTop3
-                                      ? badgeColors[i]
-                                      : [_C.teal, const Color(0xFF1A9E8C)];
-                              final pts = (p['total_xp'] as num?)?.toInt() ?? 0;
-                              final lv = (p['level'] as num?)?.toInt() ?? 1;
-                              final title = _localizeLevel(
-                                context,
-                                p['level_title'] as String?,
-                              );
-                              final nm =
-                                  (p['display_name'] as String?)
-                                      ?.split(' ')
-                                      .first ??
-                                  'User';
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 11,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      isMe
-                                          ? const Color(0xFFFFF3D4)
-                                          : Colors.transparent,
-                                  borderRadius:
-                                      i == _leaders.take(10).length - 1
-                                          ? const BorderRadius.vertical(
-                                            bottom: Radius.circular(22),
-                                          )
-                                          : BorderRadius.zero,
-                                  border:
-                                      i < _leaders.take(10).length - 1
-                                          ? const Border(
-                                            bottom: BorderSide(
-                                              color: Color(0xFFF5F5F5),
-                                            ),
-                                          )
-                                          : null,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 38,
-                                      height: 38,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        gradient: LinearGradient(
-                                          colors: badgeGrad,
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: badgeGrad.last.withValues(
-                                              alpha: 0.35,
-                                            ),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 3),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${i + 1}',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w900,
-                                            color: isTop3 ? Y4.ink : Colors.white,
-                                            height: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            isMe ? '$nm (you)' : nm,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w700,
-                                              color: _C.text,
-                                            ),
-                                          ),
-                                          Text(
-                                            '$title • Lv $lv',
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 11,
-                                              color: _C.sub,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Text(
-                                      '$pts ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                        color: _C.navRanking,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ],
-                          const SizedBox(height: 8),
-                        ],
-                      ),
-                    ),
+                    // ── Leaderboard — tabs / podium / avatars (single source)
+                    _LeaderboardView(currentUserId: widget.currentUserId),
                     const SizedBox(height: 14),
 
                     // Streak card — warm beige with amber/teal accents
