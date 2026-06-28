@@ -83,7 +83,7 @@
   </g>
 
   <g id="text">
-    <rect x="96" y="14" width="248" height="30" rx="15" fill="#FBF3DE" opacity="0.75"/>
-    <text x="220" y="35" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="19" fill="#C99114" stroke="#A8781C" stroke-width="0.4">Young Believers of the Cave</text>
+    <rect x="60" y="14" width="320" height="30" rx="15" fill="#FBF3DE" opacity="0.75"/>
+    <text x="220" y="34" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="17" fill="#C99114" stroke="#A8781C" stroke-width="0.4">Young Believers of the Cave</text>
   </g>
 </svg>

@@ -53,26 +53,25 @@
       <line class="rain rg" x1="372" y1="78" x2="372" y2="95" style="animation-delay:1.3s"/>
     </g>
 
-    <!-- ground -->
-    <rect x="-200" y="300" width="830" height="100" fill="#D9CFB7"/>
-    <line x1="0" y1="300" x2="430" y2="300" stroke="#C7BC9E" stroke-width="2"/>
+    <!-- ground (shorter basement so the figure shows full-length down to feet) -->
+    <rect x="-200" y="350" width="830" height="50" fill="#D9CFB7"/>
+    <line x1="0" y1="350" x2="430" y2="350" stroke="#C7BC9E" stroke-width="2"/>
 
-    <!-- figure standing firm -->
-    <circle class="glowfeet" cx="215" cy="300" r="34" fill="url(#feet)" opacity="0"/>
+    <!-- figure in long Juba — extends from shoulders to the new ground line -->
+    <circle class="glowfeet" cx="215" cy="350" r="34" fill="url(#feet)" opacity="0"/>
     <g fill="#4a4a44">
       <circle cx="215" cy="222" r="14"/>
-      <path d="M188 300 Q188 244 215 244 Q242 244 242 300 Z"/>
+      <!-- long Juba: shoulders at y=244, widens slightly toward hem at y=350 -->
+      <path d="M180 350 Q182 290 188 244 Q215 238 242 244 Q248 290 250 350 Z"/>
     </g>
-    <g stroke="#8a6f2c" stroke-width="2.5" stroke-linecap="round">
-      <line x1="205" y1="300" x2="198" y2="320"/><line x1="215" y1="300" x2="215" y2="324"/><line x1="225" y1="300" x2="232" y2="320"/>
-    </g>
+    <!-- subtle hem highlight on the Juba -->
+    <path d="M180 348 Q215 354 250 348" stroke="#2e2e28" stroke-width="1.5" fill="none" opacity="0.7"/>
   </g>
 
   <g id="text">
     <g class="htext">
-      <rect x="56" y="128" width="318" height="34" rx="10" fill="#FDF7E2" opacity="0.55"/>
-      <text x="215" y="151" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="600" font-size="19" fill="#9c7d1e">Shower us with perseverance</text>
+      <rect x="24" y="128" width="382" height="34" rx="10" fill="#FDF7E2" opacity="0.55"/>
+      <text x="215" y="151" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="600" font-size="15" fill="#9c7d1e">Shower us with perseverance &amp; make our steps firm</text>
     </g>
-    <text x="215" y="350" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#7a6f55">…and make our steps firm</text>
   </g>
 </svg>

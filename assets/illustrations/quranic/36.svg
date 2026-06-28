@@ -93,10 +93,12 @@
       <!-- hijab drape: head -> shoulders (connects head to body) -->
       <path d="M232,244 Q228,202 250,184 Q272,202 268,244 Q269,252 257,252 L243,252 Q231,252 232,244 Z" fill="#E8B7A8"/>
       <!-- blank face (visible oval, like the mother) -->
-      <ellipse cx="250" cy="212" rx="11" ry="13" fill="#E9BB8E"/>
-      <!-- hijab frame: forehead + chin -->
-      <path d="M239,212 Q238,194 250,189 Q262,194 261,212 Q261,199 250,196 Q239,199 239,212 Z" fill="#E8B7A8"/>
-      <path d="M241,223 Q250,233 259,223 Q261,231 250,234 Q239,231 241,223 Z" fill="#E8B7A8"/>
+      <ellipse cx="250" cy="212" rx="13" ry="15" fill="#E9BB8E"/>
+      <!-- hijab frame: forehead only (thin band so the face stays visible) -->
+      <path d="M239,205 Q238,194 250,189 Q262,194 261,205 Q261,199 250,196 Q239,199 239,205 Z" fill="#E8B7A8"/>
+      <!-- visible face oval on top of the hijab frames — sized to match the
+           other family members' faces -->
+      <ellipse cx="250" cy="214" rx="12" ry="14" fill="#E9BB8E"/>
     </g>
 
     <!-- blessing motes -->
