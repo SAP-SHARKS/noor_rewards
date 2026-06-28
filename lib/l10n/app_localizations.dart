@@ -110,6 +110,114 @@ abstract class AppLocalizations {
     Locale('ur'),
   ];
 
+  /// No description provided for @youSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'(you)'**
+  String get youSuffix;
+
+  /// No description provided for @userFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get userFallback;
+
+  /// No description provided for @youHaveDone.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve Done!'**
+  String get youHaveDone;
+
+  /// No description provided for @playAllBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Play All'**
+  String get playAllBtn;
+
+  /// No description provided for @playBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get playBtn;
+
+  /// No description provided for @readBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get readBtn;
+
+  /// No description provided for @readOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Read once'**
+  String get readOnce;
+
+  /// No description provided for @readNTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Read {count} times'**
+  String readNTimes(int count);
+
+  /// No description provided for @seedsEarnedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} Sabiq Seeds earned today!'**
+  String seedsEarnedToday(int count);
+
+  /// No description provided for @catDailyRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'DAILY REMEMBRANCE'**
+  String get catDailyRemembrance;
+
+  /// No description provided for @catNightlyRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'NIGHTLY REMEMBRANCE'**
+  String get catNightlyRemembrance;
+
+  /// No description provided for @catYourSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR SELECTION'**
+  String get catYourSelection;
+
+  /// No description provided for @catContinuousRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTINUOUS REMEMBRANCE'**
+  String get catContinuousRemembrance;
+
+  /// No description provided for @bannerDailyRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Remembrance\nbrings peace to the soul.'**
+  String get bannerDailyRemembrance;
+
+  /// No description provided for @bannerMorningAdhkar.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Adhkar\nbrings peace to the soul and light to the path.'**
+  String get bannerMorningAdhkar;
+
+  /// No description provided for @bannerEveningAdhkar.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Adhkar\nbrings tranquility and protection for the night.'**
+  String get bannerEveningAdhkar;
+
+  /// No description provided for @bannerYourSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Your beloved words\nof remembrance to keep close to your heart.'**
+  String get bannerYourSelection;
+
+  /// No description provided for @bannerContinuousRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember Allah\nmuch, that you may be successful.'**
+  String get bannerContinuousRemembrance;
+
   /// No description provided for @frequentlyReadByCommunity.
   ///
   /// In en, this message translates to:

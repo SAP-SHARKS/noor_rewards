@@ -4141,7 +4141,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               const SabiqCoin(size: 18),
                               const SizedBox(width: 8),
                               Text(
-                                '+$_pointsToday Sabiq Seeds earned today!',
+                                AppLocalizations.of(
+                                      context,
+                                    )?.seedsEarnedToday(_pointsToday) ??
+                                    '+$_pointsToday Sabiq Seeds earned today!',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
@@ -4987,7 +4990,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         color: Colors.white,
                       ),
               label: Text(
-                '${AppLocalizations.of(context)?.next ?? 'Next'} +10 Seeds',
+                '${AppLocalizations.of(context)?.next ?? 'Next'} +10 ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -5995,24 +5998,29 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           ),
                         ],
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/stat_timer.svg',
-                            width: 30,
-                            height: 30,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            _pageTimerLabel,
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                              color: const Color(0xFF1A1A1A),
+                      // Locked LTR so the timer icon sits left of the
+                      // count in Urdu/Arabic RTL locales.
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/stat_timer.svg',
+                              width: 30,
+                              height: 30,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 6),
+                            Text(
+                              _pageTimerLabel,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF1A1A1A),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

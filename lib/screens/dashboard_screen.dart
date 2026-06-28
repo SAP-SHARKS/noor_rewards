@@ -5830,6 +5830,52 @@ String _fmtCompact(int n) {
 int _readSecondsOf(Map<String, dynamic> p) =>
     (p['quran_time_sec'] as num?)?.toInt() ?? 0;
 
+// True if [s] contains any Arabic-script characters (Arabic, Urdu, Pashto…).
+// Used to pick the right font for user-entered display names.
+bool _hasArabicScript(String s) {
+  for (final r in s.runes) {
+    if ((r >= 0x0600 && r <= 0x06FF) ||
+        (r >= 0x0750 && r <= 0x077F) ||
+        (r >= 0xFB50 && r <= 0xFDFF) ||
+        (r >= 0xFE70 && r <= 0xFEFF)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Leaderboard display-name style — uses an Arabic-script font (Amiri) for
+// names that contain Arabic/Urdu characters, Outfit for everything else.
+// Locale-agnostic: an Urdu name still renders correctly even if the app
+// is set to English, and vice-versa.
+TextStyle _nameStyle(
+  BuildContext ctx,
+  String name, {
+  double fontSize = 13,
+  FontWeight weight = FontWeight.w700,
+  Color? color,
+}) {
+  // Use the Arabic-script font when EITHER the name itself contains
+  // Arabic/Urdu chars OR the active locale is Arabic/Urdu/Pashto/Farsi.
+  // Keeps the row visually consistent with the surrounding UI in those
+  // locales even when the user's display name is in Latin script.
+  final lang = Localizations.localeOf(ctx).languageCode;
+  const arabicScriptLangs = {'ar', 'ur', 'fa', 'ps'};
+  if (_hasArabicScript(name) || arabicScriptLangs.contains(lang)) {
+    return GoogleFonts.amiri(
+      fontSize: fontSize + 1,
+      fontWeight: weight,
+      color: color ?? _C.text,
+      height: 1.1,
+    );
+  }
+  return GoogleFonts.outfit(
+    fontSize: fontSize,
+    fontWeight: weight,
+    color: color ?? _C.text,
+  );
+}
+
 String _fmtReadTime(int seconds) {
   if (seconds <= 0) return '0m';
   final mins = (seconds / 60).round();
@@ -5908,8 +5954,10 @@ class _PodiumSlot extends StatelessWidget {
         child: const SizedBox.shrink(),
       );
     }
+    final l10n = AppLocalizations.of(context);
     final isMe = e['id'] == currentUserId;
-    final nm = (e['display_name'] as String?)?.split(' ').first ?? 'User';
+    final nm = (e['display_name'] as String?)?.split(' ').first ??
+        (l10n?.userFallback ?? 'User');
     final pts =
         (e['period_points'] as num?)?.toInt() ??
         (e['total_xp'] as num?)?.toInt() ??
@@ -6016,12 +6064,16 @@ class _PodiumSlot extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        isMe ? '$nm (you)' : nm,
+                        isMe
+                            ? '$nm ${l10n?.youSuffix ?? '(you)'}'
+                            : nm,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: _nameStyle(
+                          context,
+                          nm,
                           fontSize: 12,
-                          fontWeight: FontWeight.w800,
+                          weight: FontWeight.w800,
                           color: Y4.ink,
                         ),
                       ),
@@ -6282,7 +6334,12 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // Force LTR for the whole leaderboard so RTL locales (Urdu/Arabic)
+    // don't mirror the podium (2nd-1st-3rd) or flip stat rows so the
+    // S coin and other icons land on the wrong side.
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
@@ -6310,6 +6367,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
             ),
         ],
       ),
+    ),
     );
   }
 
@@ -6436,8 +6494,10 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     required int rank,
     required bool isLast,
   }) {
+    final l10n = AppLocalizations.of(ctx);
     final isMe = p['id'] == widget.currentUserId;
-    final nm = (p['display_name'] as String?)?.split(' ').first ?? 'User';
+    final nm = (p['display_name'] as String?)?.split(' ').first ??
+        (l10n?.userFallback ?? 'User');
     final pts = _pointsOf(p);
     final ayahs = _ayahsOf(p);
     final dhikr = _dhikrOf(p);
@@ -6517,19 +6577,23 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
                   children: [
                     Flexible(
                       child: Text(
-                        isMe ? '$nm (you)' : nm,
+                        isMe
+                            ? '$nm ${l10n?.youSuffix ?? '(you)'}'
+                            : nm,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: _nameStyle(
+                          ctx,
+                          nm,
                           fontSize: 13,
-                          fontWeight: FontWeight.w700,
+                          weight: FontWeight.w700,
                           color: _C.text,
                         ),
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Lvl $level',
+                      '${l10n?.lvl ?? 'Lvl'} $level',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,

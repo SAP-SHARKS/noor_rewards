@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +25,47 @@ import '../services/stats_service.dart';
 import '../services/translation_service.dart';
 import 'akhirah_balance_screen.dart';
 import 'quran_screen.dart';
+
+// Returns a localized azkar-category title for the given category id.
+// Mirrors `_localTitle` in dhikr_hub_screen.dart so the player header and
+// the hub cards stay in sync.
+String _localizedCategoryLabel(
+  String id,
+  AppLocalizations? l,
+  String? fallback,
+) {
+  if (l == null) return fallback ?? id;
+  switch (id) {
+    case 'morning':
+      return l.morning;
+    case 'evening':
+      return l.evening;
+    case 'ummah':
+      return l.duasOfUmmah;
+    case 'duas_before_sleep':
+      return l.duasBeforeSleep;
+    case 'tahajjud':
+      return l.tahajjud;
+    case 'duas_after_salah':
+      return l.duasAfterSalah;
+    case 'salawat':
+      return l.salawat;
+    case 'sunnah':
+      return l.sunnahDuas;
+    case 'rabbana_40':
+      return l.rabbana40Duas;
+    case 'istighfar':
+      return l.istighfar;
+    case 'daily_duas':
+      return l.dailyDuasCategory;
+    case 'ruquiya':
+      return l.ruquiyaCategory;
+    case 'general':
+      return l.dhikarAllTimes;
+    default:
+      return fallback ?? id;
+  }
+}
 
 // ── Arabic font options (shared with Quran screen) ────────────────────────────
 typedef _ArabicFont =
@@ -2140,28 +2183,36 @@ class _DhikrScreenState extends State<DhikrScreen> {
     };
 
     // Banner Text Setup
-    String bannerTitle = "Daily Remembrance\nbrings peace to the soul.";
-    String catLabel = "DAILY REMEMBRANCE";
+    final l = AppLocalizations.of(context);
+    String bannerTitle =
+        l?.bannerDailyRemembrance ??
+        "Daily Remembrance\nbrings peace to the soul.";
+    String catLabel = l?.catDailyRemembrance ?? "DAILY REMEMBRANCE";
     IconData waterMark = Icons.spa_rounded;
 
     if (_selectedCat == 'morning') {
-      catLabel = "DAILY REMEMBRANCE";
+      catLabel = l?.catDailyRemembrance ?? "DAILY REMEMBRANCE";
       bannerTitle =
+          l?.bannerMorningAdhkar ??
           "Morning Adhkar\nbrings peace to the soul and light to the path.";
       waterMark = Icons.wb_sunny_rounded;
     } else if (_selectedCat == 'evening') {
-      catLabel = "NIGHTLY REMEMBRANCE";
+      catLabel = l?.catNightlyRemembrance ?? "NIGHTLY REMEMBRANCE";
       bannerTitle =
+          l?.bannerEveningAdhkar ??
           "Evening Adhkar\nbrings tranquility and protection for the night.";
       waterMark = Icons.nights_stay_rounded;
     } else if (_selectedCat == 'favorites') {
-      catLabel = "YOUR SELECTION";
+      catLabel = l?.catYourSelection ?? "YOUR SELECTION";
       bannerTitle =
+          l?.bannerYourSelection ??
           "Your beloved words\nof remembrance to keep close to your heart.";
       waterMark = Icons.favorite_rounded;
     } else {
-      catLabel = "CONTINUOUS REMEMBRANCE";
-      bannerTitle = "Remember Allah\nmuch, that you may be successful.";
+      catLabel = l?.catContinuousRemembrance ?? "CONTINUOUS REMEMBRANCE";
+      bannerTitle =
+          l?.bannerContinuousRemembrance ??
+          "Remember Allah\nmuch, that you may be successful.";
       waterMark = Icons.grid_view_rounded;
     }
 
@@ -2176,7 +2227,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
           onPressed: _handleExitDhikr,
         ),
         title: Text(
-          'Dua & Azkar',
+          AppLocalizations.of(context)?.duaAzkaarCta ?? 'Dua & Azkar',
           style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w800,
@@ -2331,7 +2382,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                   size: 18,
                                 ),
                                 label: Text(
-                                  'Play All',
+                                  AppLocalizations.of(context)?.playAllBtn ??
+                                      'Play All',
                                   style: GoogleFonts.outfit(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 13,
@@ -3585,14 +3637,20 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final catObj = widget.parentState._categories
                   .cast<_Category?>()
                   .firstWhere((c) => c?.id == catId, orElse: () => null);
-              final String catLabel = catObj?.label ?? 'Dhikr & Dua';
+              final lc = AppLocalizations.of(context);
+              final String catLabel = _localizedCategoryLabel(
+                catId,
+                lc,
+                catObj?.label,
+              );
               final isMorning = catId == 'morning';
               final readCount = widget.parentState._getTarget(
                 azkar.id,
                 azkar.recommendedCount,
               );
-              final String readLabel =
-                  readCount == 1 ? 'Read once' : 'Read $readCount times';
+              final String readLabel = readCount == 1
+                  ? (lc?.readOnce ?? 'Read once')
+                  : (lc?.readNTimes(readCount) ?? 'Read $readCount times');
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -3758,7 +3816,11 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                isAudioActive ? 'Read' : 'Play',
+                                isAudioActive
+                                    ? (AppLocalizations.of(context)?.readBtn ??
+                                        'Read')
+                                    : (AppLocalizations.of(context)?.playBtn ??
+                                        'Play'),
                                 style: GoogleFonts.outfit(
                                   fontSize: 13.5,
                                   fontWeight: FontWeight.w800,
@@ -4093,7 +4155,10 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            "You've Done!",
+                                            AppLocalizations.of(
+                                                  context,
+                                                )?.youHaveDone ??
+                                                "You've Done!",
                                             style: GoogleFonts.outfit(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w700,
@@ -6591,6 +6656,38 @@ Widget _buildIllustration({
     tapCount: tapCount,
     pointsToday: pointsToday,
   );
+
+  // Quranic supplications: each numbered SVG in assets/illustrations/quranic/
+  // is wired via animation key `quranic_svg_<n>` (set in azkar_item_animations).
+  // Short-circuit here so we don't have to enumerate every key in the switch.
+  if (ill.startsWith('quranic_svg_')) {
+    final n = int.tryParse(ill.substring('quranic_svg_'.length));
+    if (n != null) {
+      return _QuranicSvgIllustration(
+        assetPath: 'assets/illustrations/quranic/$n.svg',
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+      );
+    }
+  }
+
+  // Text-based Quranic supplications — one of 6 visual variants chosen by
+  // position so adjacent supplications look distinct. Texts hard-coded in
+  // the widget keyed by position.
+  if (ill.startsWith('quranic_text_')) {
+    final n = int.tryParse(ill.substring('quranic_text_'.length));
+    if (n != null) {
+      return _QuranicTextIllustration(
+        position: n,
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+      );
+    }
+  }
 
   return switch (ill) {
     'dua_scene' => w(
@@ -22039,6 +22136,702 @@ class _FloralOrnamentPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _FloralOrnamentPainter old) =>
       old.color != color || old.isComplete != isComplete;
+}
+
+// =============================================================================
+// Quranic Supplication SVG Illustration — renders a numbered SVG inside a
+// transparent WebView so the SVG's own embedded CSS / SMIL animations
+// actually play (flutter_svg can only render the static first frame).
+//
+// The asset SVG is loaded as a string, wrapped in a minimal HTML document
+// (no scrollbars, transparent body, SVG sized to viewport), and handed to
+// the WebView via loadHtmlString. The animations are entirely browser-side,
+// so no Dart-side AnimationControllers are needed.
+//
+// Trade-off: each WebView instance is heavier than a CustomPaint scene
+// (~5-10 MB), but only one illustration is on screen at a time in this
+// flow, so the cost is acceptable.
+// =============================================================================
+class _QuranicSvgIllustration extends StatefulWidget {
+  final String assetPath;
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+
+  const _QuranicSvgIllustration({
+    required this.assetPath,
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+
+  @override
+  State<_QuranicSvgIllustration> createState() =>
+      _QuranicSvgIllustrationState();
+}
+
+class _QuranicSvgIllustrationState extends State<_QuranicSvgIllustration> {
+  WebViewController? _ctrl;
+  String? _lastAsset;
+  // Reconstructed Flutter Gradient that mirrors the SVG's first defined
+  // bg gradient (radial or linear). Painted on the outer Container so the
+  // left/right letterbox gap blends seamlessly with the SVG's own edges.
+  Gradient? _bgGradient;
+  // Fallback solid colour if the SVG has no gradient.
+  Color _bgColor = Colors.transparent;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSvg();
+  }
+
+  @override
+  void didUpdateWidget(covariant _QuranicSvgIllustration old) {
+    super.didUpdateWidget(old);
+    if (widget.assetPath != _lastAsset) _loadSvg();
+  }
+
+  // Parses a #RGB / #RRGGBB / #AARRGGBB hex string into a Color. Returns
+  // [fallback] if [hex] is malformed.
+  static Color _hex(String hex, Color fallback) {
+    var h = hex.replaceFirst('#', '').trim();
+    if (h.length == 3) {
+      h = h.split('').map((c) => '$c$c').join();
+    }
+    if (h.length == 6) h = 'FF$h';
+    if (h.length != 8) return fallback;
+    final v = int.tryParse(h, radix: 16);
+    return v == null ? fallback : Color(v);
+  }
+
+  // Best-effort solid colour from the first <stop> or <fill> in the SVG —
+  // only used if no gradient could be parsed.
+  Color _extractBgColor(String svg) {
+    final stop = RegExp(
+      r'stop-color\s*=\s*"(#[0-9a-fA-F]{3,8})"',
+    ).firstMatch(svg);
+    if (stop != null) return _hex(stop.group(1)!, Colors.transparent);
+    final fill = RegExp(
+      r'fill\s*=\s*"(#[0-9a-fA-F]{3,8})"',
+    ).firstMatch(svg);
+    if (fill != null) return _hex(fill.group(1)!, Colors.transparent);
+    return Colors.transparent;
+  }
+
+  // Parses the SVG's first <linearGradient> or <radialGradient> and rebuilds
+  // it as a Flutter Gradient. The first gradient defined is almost always
+  // the sky / page background, so painting it on the outer container makes
+  // any left/right gap look like an extension of the SVG itself.
+  Gradient? _extractBgGradient(String svg) {
+    final linearM = RegExp(
+      r'<linearGradient\s+([^>]*?)>(.*?)</linearGradient>',
+      dotAll: true,
+    ).firstMatch(svg);
+    final radialM = RegExp(
+      r'<radialGradient\s+([^>]*?)>(.*?)</radialGradient>',
+      dotAll: true,
+    ).firstMatch(svg);
+    // Pick whichever appears first in the file.
+    final Match? first;
+    final bool isRadial;
+    if (linearM != null && radialM != null) {
+      if (linearM.start <= radialM.start) {
+        first = linearM;
+        isRadial = false;
+      } else {
+        first = radialM;
+        isRadial = true;
+      }
+    } else if (linearM != null) {
+      first = linearM;
+      isRadial = false;
+    } else if (radialM != null) {
+      first = radialM;
+      isRadial = true;
+    } else {
+      return null;
+    }
+
+    final attrs = first.group(1) ?? '';
+    final body = first.group(2) ?? '';
+
+    final stops = <({double offset, Color color, double opacity})>[];
+    for (final s in RegExp(r'<stop\s+([^/>]+)\s*/?\s*>').allMatches(body)) {
+      final inner = s.group(1) ?? '';
+      final off = double.tryParse(
+            RegExp(r'offset\s*=\s*"([\d.]+)"').firstMatch(inner)?.group(1) ?? '',
+          ) ??
+          0;
+      final col = RegExp(
+        r'stop-color\s*=\s*"(#[0-9a-fA-F]{3,8})"',
+      ).firstMatch(inner)?.group(1);
+      final op = double.tryParse(
+            RegExp(
+              r'stop-opacity\s*=\s*"([\d.]+)"',
+            ).firstMatch(inner)?.group(1) ??
+                '',
+          ) ??
+          1.0;
+      if (col != null) {
+        stops.add((offset: off, color: _hex(col, Colors.transparent), opacity: op));
+      }
+    }
+    if (stops.length < 2) return null;
+    stops.sort((a, b) => a.offset.compareTo(b.offset));
+
+    final colors = stops
+        .map((s) => s.color.withValues(alpha: s.color.a * s.opacity))
+        .toList();
+    final offsets = stops.map((s) => s.offset).toList();
+
+    if (isRadial) {
+      final cx = _pct(attrs, 'cx', 0.5);
+      final cy = _pct(attrs, 'cy', 0.5);
+      final r = _pct(attrs, 'r', 0.5);
+      return RadialGradient(
+        center: Alignment((cx - 0.5) * 2, (cy - 0.5) * 2),
+        radius: r,
+        colors: colors,
+        stops: offsets,
+      );
+    } else {
+      final x1 = _pct(attrs, 'x1', 0);
+      final y1 = _pct(attrs, 'y1', 0);
+      final x2 = _pct(attrs, 'x2', 1);
+      final y2 = _pct(attrs, 'y2', 1);
+      return LinearGradient(
+        begin: Alignment((x1 - 0.5) * 2, (y1 - 0.5) * 2),
+        end: Alignment((x2 - 0.5) * 2, (y2 - 0.5) * 2),
+        colors: colors,
+        stops: offsets,
+      );
+    }
+  }
+
+  // Pulls an SVG attribute like `cx="50%"` or `cx="0.5"` as a 0..1 fraction.
+  static double _pct(String attrs, String name, double fallback) {
+    final m = RegExp('$name\\s*=\\s*"([^"]+)"').firstMatch(attrs);
+    if (m == null) return fallback;
+    var v = m.group(1)!.trim();
+    if (v.endsWith('%')) {
+      return (double.tryParse(v.substring(0, v.length - 1)) ?? fallback * 100) /
+          100.0;
+    }
+    return double.tryParse(v) ?? fallback;
+  }
+
+  Future<void> _loadSvg() async {
+    final asset = widget.assetPath;
+    _lastAsset = asset;
+    try {
+      var svg = await rootBundle.loadString(asset);
+      final bgGradient = _extractBgGradient(svg);
+      final bgColor = _extractBgColor(svg);
+      // Use `meet` so nothing inside the SVG is ever cropped. The
+      // AspectRatio + matching parent bg colour make the centred WebView
+      // look edge-to-edge against the surrounding card.
+      final hasAttr = RegExp(r'preserveAspectRatio\s*=\s*"[^"]*"');
+      if (hasAttr.hasMatch(svg)) {
+        svg = svg.replaceFirst(
+          hasAttr,
+          'preserveAspectRatio="xMidYMid meet"',
+        );
+      } else {
+        svg = svg.replaceFirstMapped(
+          RegExp(r'<svg(\s|>)'),
+          (m) => '<svg preserveAspectRatio="xMidYMid meet"${m.group(1)}',
+        );
+      }
+      const html1 = '''<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><style>
+html,body{margin:0;padding:0;height:100%;background:transparent;overflow:hidden;}
+svg{width:100%;height:100%;display:block;overflow:visible;}
+</style></head><body>''';
+      const html2 = '</body></html>';
+      final ctrl = WebViewController()
+        ..setBackgroundColor(const Color(0x00000000))
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..loadHtmlString(html1 + svg + html2);
+      if (!mounted) return;
+      setState(() {
+        _ctrl = ctrl;
+        _bgGradient = bgGradient;
+        _bgColor = bgColor;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _ctrl = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = _ctrl;
+    if (ctrl == null) {
+      return SizedBox.expand(
+        child: SvgPicture.asset(widget.assetPath, fit: BoxFit.contain),
+      );
+    }
+    // Outer Container painted with the SVG's own bg gradient (or solid
+    // fallback). The WebView now FILLS the container (no AspectRatio); SVG
+    // uses `meet` so its content stays at native viewBox scale, centered.
+    // For SVGs with overflow elements (e.g. extended sky / water past
+    // viewBox bounds + overflow="visible"), those fill the side gap; for
+    // SVGs without extensions, the container's gradient bg shows through.
+    return Container(
+      decoration: _bgGradient != null
+          ? BoxDecoration(gradient: _bgGradient)
+          : BoxDecoration(color: _bgColor),
+      child: WebViewWidget(controller: ctrl),
+    );
+  }
+}
+
+// =============================================================================
+// Quranic Supplication TEXT illustration — used for the supplications that
+// don't (yet) have an SVG. Cycles through 6 visual variants by position so
+// adjacent supplications look distinct (different bg, font, color, motion).
+// Texts are short English benefit / translation excerpts hard-coded below.
+// =============================================================================
+
+// Position → (English line, fallback variant). When variant is null we cycle
+// by `position % _kQuranicTextVariantCount` so neighbours never repeat.
+const Map<int, String> _kQuranicTextLines = {
+  3:  'Do not burden us beyond what we can bear, pardon us and have mercy',
+  5:  'We have believed — forgive our sins and protect us from the Fire',
+  6:  'O Owner of Sovereignty — in Your Hand is all good, You are Most Capable',
+  9:  'Forgive our sins and excess, make us firm and grant us victory',
+  10: 'You created not in vain — protect us from the punishment of the Fire',
+  12: 'We have wronged ourselves — without Your mercy we are lost',
+  13: 'Our Lord, do not place us with the wrongdoing people',
+  14: 'Do not make us a trial for the oppressors',
+  17: 'Make me steadfast in prayer — and my descendants too',
+  18: 'Forgive me, my parents, and the believers on the Day of Reckoning',
+  20: 'Bring me in by an entrance of truth and out by an exit of truth',
+  22: 'My Lord, increase me in knowledge',
+  26: 'I seek refuge in You from the whispers of devils',
+  27: 'We have believed — forgive us, You are the Best of the Merciful',
+  28: 'Forgive and have mercy — You are the Best of the Merciful',
+  29: 'Enable me to be grateful for Your favour on me and my parents',
+  30: 'My Lord, I have wronged myself — so forgive me',
+  31: 'My Lord, I will never be a supporter of the criminals',
+  32: 'My Lord, save me from the wrongdoing people',
+  33: 'My Lord, I am in need of any good You send down to me',
+  34: 'My Lord, help me against the corrupting people',
+  35: 'Our Lord, avert from us the punishment of Hell',
+  37: 'Our Lord, You encompass all things in mercy and knowledge',
+  38: 'Enable me to thank You and make my offspring righteous',
+  39: 'My Lord, grant me of the righteous',
+  40: 'Forgive us and our brothers who came before us in faith',
+  41: 'Upon You we rely, to You we turn, and to You is the destination',
+};
+
+const int _kQuranicTextVariantCount = 6;
+
+class _QuranicTextIllustration extends StatefulWidget {
+  final int position;
+  final double progress;
+  final bool isComplete;
+  final int tapCount;
+  final int pointsToday;
+  const _QuranicTextIllustration({
+    required this.position,
+    required this.progress,
+    required this.isComplete,
+    required this.tapCount,
+    this.pointsToday = 0,
+  });
+  @override
+  State<_QuranicTextIllustration> createState() =>
+      _QuranicTextIllustrationState();
+}
+
+class _QuranicTextIllustrationState extends State<_QuranicTextIllustration>
+    with TickerProviderStateMixin {
+  late AnimationController _breath; // continuous slow loop
+  late AnimationController _accent; // variant-specific accent loop
+  late AnimationController _punch;  // tap feedback
+  late AnimationController _enter;  // fade-in on first build
+  int _tapSnap = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _breath = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3500),
+    )..repeat(reverse: true);
+    _accent = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4000),
+    )..repeat();
+    _punch = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+    );
+    _enter = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..forward();
+    _tapSnap = widget.tapCount;
+  }
+
+  @override
+  void didUpdateWidget(covariant _QuranicTextIllustration old) {
+    super.didUpdateWidget(old);
+    if (widget.tapCount != _tapSnap) {
+      _tapSnap = widget.tapCount;
+      _punch
+        ..reset()
+        ..forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _breath.dispose();
+    _accent.dispose();
+    _punch.dispose();
+    _enter.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = _kQuranicTextLines[widget.position] ??
+        'Pause. Remember Allah.';
+    final variant = (widget.position - 1) % _kQuranicTextVariantCount;
+    return AnimatedBuilder(
+      animation: Listenable.merge([_breath, _accent, _punch, _enter]),
+      builder: (_, __) {
+        switch (variant) {
+          case 0:  return _buildHoneyScroll(text);
+          case 1:  return _buildNightSky(text);
+          case 2:  return _buildMintRipple(text);
+          case 3:  return _buildCrimsonReverence(text);
+          case 4:  return _buildSkyDawn(text);
+          case 5:  return _buildLavenderDusk(text);
+          default: return _buildHoneyScroll(text);
+        }
+      },
+    );
+  }
+
+  // Shared helpers
+  double get _punchScale {
+    final p = _punch.value;
+    if (p == 0) return 1.0;
+    final dip = 1.0 - (0.04 * Curves.easeOutBack
+        .transform((1.0 - (p - 0.4).abs() * 2.5).clamp(0.0, 1.0)));
+    return dip;
+  }
+
+  double get _enterOpacity => Curves.easeOut.transform(_enter.value);
+
+  Widget _wrap({required Widget child, required Gradient bg}) {
+    return SizedBox.expand(
+      child: DecoratedBox(
+        decoration: BoxDecoration(gradient: bg),
+        child: Opacity(
+          opacity: _enterOpacity,
+          child: Transform.scale(
+            scale: _punchScale,
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── 0. Honey scroll — cream bg, fraunces serif italic, golden underline ──
+  Widget _buildHoneyScroll(String text) {
+    final breath = Curves.easeInOut.transform(_breath.value);
+    final glow = 0.25 + 0.20 * breath;
+    return _wrap(
+      bg: const LinearGradient(
+        colors: [Color(0xFFFFF8E6), Color(0xFFFFE7B5)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.fraunces(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.italic,
+                  color: const Color(0xFF5C3A0A),
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                height: 2,
+                width: 60 + (40 * breath),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE5B547), Color(0xFFC9A227)],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFE5B547).withValues(alpha: glow),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── 1. Night sky — deep navy, white serif, twinkling stars ─────────────
+  Widget _buildNightSky(String text) {
+    return _wrap(
+      bg: const LinearGradient(
+        colors: [Color(0xFF1E2D4A), Color(0xFF0A1426)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      child: Stack(
+        children: [
+          // 8 twinkling stars at fixed positions, brightness driven by accent
+          for (int i = 0; i < 8; i++)
+            Positioned(
+              left: 30.0 + (i * 41) % 280,
+              top: 30.0 + (i * 71) % 200,
+              child: Opacity(
+                opacity: 0.35 + 0.6 *
+                    (0.5 + 0.5 * math.sin((_accent.value * 2 * math.pi) + i)),
+                child: const Icon(
+                  Icons.star,
+                  color: Color(0xFFFFFFE6),
+                  size: 6,
+                ),
+              ),
+            ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 24),
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  height: 1.45,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── 2. Mint ripple — sage gradient, expanding rings, outfit bold ───────
+  Widget _buildMintRipple(String text) {
+    return _wrap(
+      bg: const LinearGradient(
+        colors: [Color(0xFFE8F5E8), Color(0xFFA8D8B0)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // 3 expanding mint rings, phase-staggered
+          for (int i = 0; i < 3; i++)
+            Builder(builder: (_) {
+              final phase = (_accent.value + (i / 3)) % 1.0;
+              final size = 80 + 220 * phase;
+              return Opacity(
+                opacity: (1.0 - phase) * 0.45,
+                child: Container(
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF3F8C5E),
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1F4F3D),
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── 3. Crimson reverence — wine gradient, breathing scale, italic ──────
+  Widget _buildCrimsonReverence(String text) {
+    final breath = Curves.easeInOut.transform(_breath.value);
+    final glow = 0.20 + 0.25 * breath;
+    return _wrap(
+      bg: const LinearGradient(
+        colors: [Color(0xFFFFE0E0), Color(0xFFC44569)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.18),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFC44569).withValues(alpha: glow),
+                blurRadius: 24,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.fraunces(
+              fontSize: 19,
+              fontWeight: FontWeight.w600,
+              fontStyle: FontStyle.italic,
+              color: Colors.white,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── 4. Sky dawn — pastel blue→pink, floating circles, outfit bold ──────
+  Widget _buildSkyDawn(String text) {
+    return _wrap(
+      bg: const LinearGradient(
+        colors: [Color(0xFFD6EBFF), Color(0xFFFFD9E8)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      child: Stack(
+        children: [
+          // 6 drifting circles, drift phase from accent
+          for (int i = 0; i < 6; i++)
+            Builder(builder: (_) {
+              final basePhase = (i / 6);
+              final phase = ((_accent.value + basePhase) % 1.0);
+              return Positioned(
+                left: 20.0 + (i * 53) % 300,
+                top: 200 - (160 * phase),
+                child: Opacity(
+                  opacity: (1.0 - phase) * 0.55,
+                  child: Container(
+                    width: 12 + (i % 3) * 6,
+                    height: 12 + (i % 3) * 6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.65),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A3A6E),
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── 5. Lavender dusk — purple gradient, slow rotating halo, serif ──────
+  Widget _buildLavenderDusk(String text) {
+    final breath = Curves.easeInOut.transform(_breath.value);
+    return _wrap(
+      bg: LinearGradient(
+        colors: const [Color(0xFFEBE0FF), Color(0xFF6B4EBB)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        transform: GradientRotation(_accent.value * 2 * math.pi),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Opacity(
+                opacity: 0.65 + 0.30 * breath,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  height: 1.45,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // =============================================================================

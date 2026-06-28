@@ -1,5 +1,33 @@
 {
   "@@locale": "en",
+  "youSuffix": "(you)",
+  "userFallback": "User",
+  "youHaveDone": "You've Done!",
+  "playAllBtn": "Play All",
+  "playBtn": "Play",
+  "readBtn": "Read",
+  "readOnce": "Read once",
+  "readNTimes": "Read {count} times",
+  "@readNTimes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "seedsEarnedToday": "+{count} Sabiq Seeds earned today!",
+  "@seedsEarnedToday": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "catDailyRemembrance": "DAILY REMEMBRANCE",
+  "catNightlyRemembrance": "NIGHTLY REMEMBRANCE",
+  "catYourSelection": "YOUR SELECTION",
+  "catContinuousRemembrance": "CONTINUOUS REMEMBRANCE",
+  "bannerDailyRemembrance": "Daily Remembrance\nbrings peace to the soul.",
+  "bannerMorningAdhkar": "Morning Adhkar\nbrings peace to the soul and light to the path.",
+  "bannerEveningAdhkar": "Evening Adhkar\nbrings tranquility and protection for the night.",
+  "bannerYourSelection": "Your beloved words\nof remembrance to keep close to your heart.",
+  "bannerContinuousRemembrance": "Remember Allah\nmuch, that you may be successful.",
   "frequentlyReadByCommunity": "Frequently read",
   "viewFullLeaderboard": "View full leaderboard",
   "skip": "Skip",

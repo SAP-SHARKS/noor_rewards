@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "Prayer of Ibrahim (as) for Mecca & his descendants" · du'a 14:35 — populated scene.
+  Kaaba ringed by pilgrims in ihram (seen from behind, faceless), Masjid colonnade + minarets, doves.
+  RESPECT: the Kaaba is still; its gold band & door are ABSTRACT gold ornament — NO kiswah Arabic
+  is approximated. Pilgrims are faceless backs. Only doves & light move. No JS.
+  - #illustration : the scene.   #text : the title — remove/translate freely (serif fallback).
+  - Scales via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 400" width="440" height="400" overflow="visible" role="img" aria-label="Pilgrims in white ihram gathered around the Kaaba in the Sacred Mosque">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBDDDD"/><stop offset="1" stop-color="#FBEBC8"/></linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".6"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="kfront" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1C1C20"/><stop offset="0.5" stop-color="#2B2A31"/><stop offset="1" stop-color="#1C1C20"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0CE63"/><stop offset="1" stop-color="#C9A227"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EADCBF"/><stop offset="1" stop-color="#DCC9A3"/></linearGradient>
+    <style>
+      .glowP{animation:soft 3.8s ease-in-out infinite;}
+      .flock{animation:flock 9s ease-in-out infinite;}
+      .flap{transform-box:fill-box;transform-origin:center;animation:flap .7s ease-in-out infinite;}
+      .d2{animation-delay:.2s;} .d3{animation-delay:.38s;} .d4{animation-delay:.12s;}
+      @keyframes soft{0%,100%{opacity:.5;}50%{opacity:.9;}}
+      @keyframes flock{0%,100%{transform:translate(0,0);}50%{transform:translate(-14px,4px);}}
+      @keyframes flap{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.5);}}
+      @media (prefers-reduced-motion:reduce){.glowP,.flock,.flap{animation:none;}}
+    </style>
+  </defs>
+
+  <rect x="-200" y="0" width="840" height="400" fill="url(#sky)"/>
+
+  <g id="illustration">
+    <!-- minarets -->
+    <g>
+      <g><rect x="105" y="60" width="14" height="68" fill="#D8C4A0"/><rect x="103" y="86" width="18" height="5" fill="#C9A227"/><rect x="107" y="44" width="10" height="18" fill="#D8C4A0"/><rect x="105" y="60" width="14" height="4" fill="#C9A227"/><path d="M105 44 Q103 30 112 24 Q121 30 119 44 Z" fill="#3E7D5E"/><line x1="112" y1="24" x2="112" y2="14" stroke="#C9A227" stroke-width="2"/><circle cx="112" cy="13" r="3" fill="#C9A227"/></g>
+      <g><rect x="369" y="60" width="14" height="68" fill="#D8C4A0"/><rect x="367" y="86" width="18" height="5" fill="#C9A227"/><rect x="371" y="44" width="10" height="18" fill="#D8C4A0"/><rect x="369" y="60" width="14" height="4" fill="#C9A227"/><path d="M369 44 Q367 30 376 24 Q385 30 383 44 Z" fill="#3E7D5E"/><line x1="376" y1="24" x2="376" y2="14" stroke="#C9A227" stroke-width="2"/><circle cx="376" cy="13" r="3" fill="#C9A227"/></g>
+      <g opacity="0.92"><rect x="26" y="78" width="11" height="50" fill="#CDB893"/><path d="M26 78 Q24 66 31 60 Q38 66 37 78 Z" fill="#3E7D5E"/><circle cx="31" cy="55" r="2.4" fill="#C9A227"/></g>
+      <g opacity="0.92"><rect x="404" y="78" width="11" height="50" fill="#CDB893"/><path d="M404 78 Q402 66 409 60 Q416 66 415 78 Z" fill="#3E7D5E"/><circle cx="409" cy="55" r="2.4" fill="#C9A227"/></g>
+    </g>
+
+    <!-- colonnade — wall + cornice extend beyond viewBox so the masjid
+         backdrop carries across the full WebView width -->
+    <rect x="-200" y="128" width="840" height="104" fill="#D8C4A0"/>
+    <rect x="-200" y="128" width="840" height="6" fill="#C2AB81"/>
+    <g fill="#6E5E46">
+      <!-- left flank extension columns (x=-200 .. 0) -->
+      <path d="M-198 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M-162 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M-126 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M-90 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M-54 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M-18 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <!-- original columns -->
+      <path d="M6 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M42 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M78 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M114 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M300 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M336 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M372 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M408 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <!-- right flank extension columns (x=444 .. 624) -->
+      <path d="M444 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M480 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M516 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M552 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+      <path d="M588 232 v-22 a13 13 0 0 1 26 0 v22 Z"/><path d="M624 232 v-22 a13 13 0 0 1 26 0 v22 Z"/>
+    </g>
+    <!-- merlons on cornice — extended to the flanks -->
+    <g fill="#C2AB81">
+      <rect x="-198" y="120" width="10" height="8"/><rect x="-174" y="120" width="10" height="8"/>
+      <rect x="-150" y="120" width="10" height="8"/><rect x="-126" y="120" width="10" height="8"/>
+      <rect x="-102" y="120" width="10" height="8"/><rect x="-78" y="120" width="10" height="8"/>
+      <rect x="-54" y="120" width="10" height="8"/><rect x="-30" y="120" width="10" height="8"/>
+      <rect x="6" y="120" width="10" height="8"/><rect x="30" y="120" width="10" height="8"/>
+      <rect x="54" y="120" width="10" height="8"/>
+      <rect x="380" y="120" width="10" height="8"/><rect x="404" y="120" width="10" height="8"/>
+      <rect x="428" y="120" width="10" height="8"/>
+      <rect x="452" y="120" width="10" height="8"/><rect x="476" y="120" width="10" height="8"/>
+      <rect x="500" y="120" width="10" height="8"/><rect x="524" y="120" width="10" height="8"/>
+      <rect x="548" y="120" width="10" height="8"/><rect x="572" y="120" width="10" height="8"/>
+      <rect x="596" y="120" width="10" height="8"/><rect x="620" y="120" width="10" height="8"/>
+    </g>
+
+    <!-- floor (mataf) -->
+    <rect x="-200" y="230" width="840" height="170" fill="url(#floor)"/>
+    <g fill="none" stroke="#CBB78F" stroke-width="1.5" opacity="0.6"><path d="M-180 258 Q220 240 620 258"/></g>
+
+    <!-- light behind Kaaba -->
+    <circle class="glowP" cx="220" cy="180" r="150" fill="url(#glow)"/>
+
+    <!-- KAABA — door on the right (NE) wall beside the Black Stone; front face left blank.
+         Outer silhouette (x145..x322, y98..y270) UNCHANGED — minarets, colonnade, crowd untouched;
+         only the internal corner swung left so the door wall is wide enough to carry the door. -->
+    <!-- top face -->
+    <polygon points="145,98 235,98 322,108 232,108" fill="#201F25"/>
+    <!-- right (door) wall, receding -->
+    <polygon points="235,98 322,108 322,262 235,270" fill="#19181D"/>
+    <!-- front (blank) wall -->
+    <rect x="145" y="98" width="90" height="172" fill="url(#kfront)"/>
+    <!-- corner edge highlight -->
+    <line x1="235" y1="99" x2="235" y2="269" stroke="#34333B" stroke-width="2"/>
+    <!-- hizam band across both walls -->
+    <rect x="145" y="150" width="90" height="16" fill="url(#gold)"/>
+    <polygon points="235,150 322,155 322,171 235,166" fill="#B8902A"/>
+    <rect x="145" y="146" width="90" height="2.5" fill="#C9A227" opacity="0.7"/>
+    <polygon points="235,148 322,153 322,155.5 235,150.5" fill="#C9A227" opacity="0.7"/>
+    <g fill="#9c7d1e" opacity="0.55"><path d="M161 158 l4 -4 l4 4 l-4 4 z"/><path d="M185 158 l4 -4 l4 4 l-4 4 z"/><path d="M209 158 l4 -4 l4 4 l-4 4 z"/></g>
+    <g fill="#9c7d1e" opacity="0.45"><path d="M263 160 l3.5 -3.5 l3.5 3.5 l-3.5 3.5 z"/><path d="M293 162 l3.5 -3.5 l3.5 3.5 l-3.5 3.5 z"/></g>
+    <!-- Black Stone at the eastern corner (beside the door) -->
+    <path d="M235 216 q-11 3 -9 15 q11 3 13 -5 q1 -10 -4 -10z" fill="#D8B85A"/>
+    <path d="M235 218 q-9 3 -7 12 q9 2 11 -4 q1 -8 -4 -8z" fill="#C7C7CE"/>
+    <path d="M236 221 q-6 3 -5 9 q6 1 8 -4 q1 -6 -3 -6z" fill="#26262C"/>
+    <!-- door on the right wall, just past the Black Stone (raised; abstract gold ornament — no kiswah text) -->
+    <polygon points="244,181 282,182 282,259 244,262" fill="url(#gold)" stroke="#9c7d1e" stroke-width="1.5"/>
+    <polygon points="250,187 276,188 276,253 250,256" fill="#E7C257"/>
+    <g stroke="#B8902A" stroke-width="1">
+      <line x1="257" y1="193" x2="257" y2="250"/><line x1="263" y1="193" x2="263" y2="249"/><line x1="269" y1="194" x2="269" y2="249"/>
+    </g>
+    <circle cx="263" cy="197" r="3.4" fill="#9c7d1e"/>
+
+    <!-- CROWD (pilgrims from behind, ihram) -->
+    <!-- back row -->
+    <g fill="#F4EFE6">
+      <path d="M79.8,330 Q79.8,272 95,270 Q110.2,272 110.2,330 Z"/><path d="M134.8,330 Q134.8,270 150,268 Q165.2,270 165.2,330 Z"/>
+      <path d="M276.8,330 Q276.8,270 292,268 Q307.2,270 307.2,330 Z"/><path d="M334.8,330 Q334.8,272 350,270 Q365.2,272 365.2,330 Z"/>
+    </g>
+    <circle cx="95" cy="262" r="8" fill="#2A2622"/>
+    <circle cx="150" cy="260" r="8" fill="#CC9866"/><path d="M142 260 a8 8 0 0 1 16 0 Z" fill="#EFEADF"/>
+    <circle cx="292" cy="260" r="8" fill="#2A2622"/>
+    <circle cx="350" cy="262" r="8" fill="#4A4540"/>
+
+    <!-- mid row -->
+    <g fill="#F4EFE6">
+      <path d="M53,366 Q53,304 72,302 Q91,304 91,366 Z"/><path d="M116,366 Q116,302 135,300 Q154,302 154,366 Z"/>
+      <path d="M196,366 Q196,300 215,298 Q234,300 234,366 Z"/><path d="M281,366 Q281,302 300,300 Q319,302 319,366 Z"/>
+      <path d="M341,366 Q341,304 360,302 Q379,304 379,366 Z"/>
+    </g>
+    <g stroke="#DCD3C0" stroke-width="3" stroke-linecap="round">
+      <path d="M55 320 L88 313"/><path d="M118 318 L151 311"/><path d="M198 316 L231 309"/><path d="M283 318 L316 311"/><path d="M343 320 L376 313"/>
+    </g>
+    <circle cx="72" cy="292" r="10" fill="#2A2622"/>
+    <circle cx="135" cy="290" r="10" fill="#8A5E3C"/><path d="M125 290 a10 10 0 0 1 20 0 Z" fill="#EFEADF"/>
+    <circle cx="215" cy="288" r="10" fill="#2A2622"/>
+    <circle cx="300" cy="290" r="10" fill="#F0CBA2"/>
+    <circle cx="360" cy="292" r="10" fill="#2A2622"/>
+    <!-- bare shoulders (mid) -->
+    <g>
+      <path d="M86,304 Q91,305 90.5,313 Q86,309 81,308 Z" fill="#CC9866"/>
+      <path d="M149,302 Q154,303 153.5,311 Q149,307 144,306 Z" fill="#8A5E3C"/>
+      <path d="M229,300 Q234,301 233.5,309 Q229,305 224,304 Z" fill="#E8B98E"/>
+      <path d="M314,302 Q319,303 318.5,311 Q314,307 309,306 Z" fill="#F0CBA2"/>
+      <path d="M374,304 Q379,305 378.5,313 Q374,309 369,308 Z" fill="#9A6B45"/>
+    </g>
+
+    <!-- front row -->
+    <g fill="#F4EFE6">
+      <path d="M35.3,400 Q35.3,346 60,344 Q84.7,346 84.7,400 Z"/><path d="M105.3,400 Q105.3,348 130,346 Q154.7,348 154.7,400 Z"/>
+      <path d="M180.3,400 Q180.3,346 205,344 Q229.7,346 229.7,400 Z"/><path d="M250.3,400 Q250.3,348 275,346 Q299.7,348 299.7,400 Z"/>
+      <path d="M320.3,400 Q320.3,346 345,344 Q369.7,346 369.7,400 Z"/><path d="M381,400 Q381,350 405,348 Q429,350 429,400 Z"/>
+    </g>
+    <g stroke="#DCD3C0" stroke-width="4" stroke-linecap="round">
+      <path d="M38 350 L82 340"/><path d="M108 352 L152 342"/><path d="M183 350 L227 340"/><path d="M253 352 L297 342"/><path d="M323 350 L367 340"/><path d="M383 354 L427 344"/>
+    </g>
+    <g>
+      <path d="M82,346 Q89,347 88,357 Q82,352 76,351 Z" fill="#E8B98E"/>
+      <path d="M152,348 Q159,349 158,359 Q152,354 146,353 Z" fill="#CC9866"/>
+      <path d="M227,346 Q234,347 233,357 Q227,352 221,351 Z" fill="#8A5E3C"/>
+      <path d="M297,348 Q304,349 303,359 Q297,354 291,353 Z" fill="#F0CBA2"/>
+      <path d="M367,346 Q374,347 373,357 Q367,352 361,351 Z" fill="#CC9866"/>
+    </g>
+    <circle cx="60" cy="330" r="13" fill="#2A2622"/>
+    <circle cx="130" cy="332" r="13" fill="#2A2622"/>
+    <circle cx="205" cy="330" r="13" fill="#8A5E3C"/><path d="M192 330 a13 13 0 0 1 26 0 Z" fill="#EFEADF"/>
+    <circle cx="275" cy="332" r="13" fill="#4A4540"/>
+    <circle cx="345" cy="330" r="13" fill="#2A2622"/>
+    <circle cx="405" cy="334" r="12" fill="#9A6B45"/><path d="M393 334 a12 12 0 0 1 24 0 Z" fill="#EFEADF"/>
+    <!-- child -->
+    <path d="M224.8,400 Q224.8,366 240,364 Q255.2,366 255.2,400 Z" fill="#F4EFE6"/>
+    <circle cx="240" cy="356" r="8" fill="#2A2622"/>
+  </g>
+
+  <!-- doves -->
+  <g class="flock" stroke="#9FA890" stroke-width="2.5" stroke-linecap="round" fill="none">
+    <g transform="translate(170,60)"><path class="flap" d="M-11,0 Q-5,-7 0,-1 Q5,-7 11,0"/></g>
+    <g transform="translate(230,46) scale(.85)"><path class="flap d2" d="M-11,0 Q-5,-7 0,-1 Q5,-7 11,0"/></g>
+    <g transform="translate(280,70) scale(.9)"><path class="flap d3" d="M-11,0 Q-5,-7 0,-1 Q5,-7 11,0"/></g>
+    <g transform="translate(150,86) scale(.7)"><path class="flap d4" d="M-11,0 Q-5,-7 0,-1 Q5,-7 11,0"/></g>
+  </g>
+
+  <g id="text">
+    <rect x="0" y="0" width="440" height="50" fill="#FBF3DE" opacity="0.82"/>
+    <text x="220" y="22" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="18" fill="#2B2A26">Prayer of Ibrahim (as)</text>
+    <text x="220" y="42" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="18" fill="#2B2A26">for Mecca &amp; His Descendants</text>
+  </g>
+</svg>

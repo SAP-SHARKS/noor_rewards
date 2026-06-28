@@ -18,6 +18,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -169,15 +170,13 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final hasanatToday = _global.todayAyahs * 10;
     final liveLabel = l?.peopleReadingNow ?? 'reading right now';
     final readersTodayLabel = l?.readToday ?? 'read today';
-    final hasanatLabel = l?.communityHasanat ?? 'community hasanat';
 
     // Fresher palette — cool mint-sage on the right contrasts the honey
     // brand colour on the left of the card.
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -188,35 +187,46 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFD6E8D5)),
+        border: Border.all(color: const Color(0xFF8FCFA0).withValues(alpha: 0.55), width: 1.2),
         boxShadow: [
+          // Mint halo
           BoxShadow(
-            color: const Color(0xFF8FCFA0).withValues(alpha: 0.12),
+            color: const Color(0xFF8FCFA0).withValues(alpha: 0.28),
             blurRadius: 16,
+          ),
+          // Subtle green drop
+          BoxShadow(
+            color: const Color(0xFF3F8C5E).withValues(alpha: 0.12),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
             // ── LEFT half: live readers + today's community stats ──────
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.only(right: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
                       children: [
+                        SvgPicture.asset(
+                          'assets/icons/stat_quran.svg',
+                          width: 22,
+                          height: 22,
+                        ),
+                        const SizedBox(width: 5),
                         _PulsingDot(controller: _pulseCtrl),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 5),
                         Text(
                           _formatNumber(_liveReaders),
                           style: GoogleFonts.fraunces(
-                            fontSize: 26,
+                            fontSize: 22,
                             fontWeight: FontWeight.w600,
                             color: Y4.ink,
                             letterSpacing: -0.5,
@@ -225,48 +235,42 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       liveLabel,
                       style: GoogleFonts.outfit(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: Y4.inkSoft,
+                        height: 1.0,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    if (_global.todayReaders > 0 || hasanatToday > 0) ...[
-                      const SizedBox(height: 10),
-                      if (_global.todayReaders > 0)
-                        _FooterStat(
-                          icon: Icons.menu_book_rounded,
-                          iconColor: Y4.honeyDeep,
-                          value: _formatNumber(_global.todayReaders),
-                          label: readersTodayLabel,
-                        ),
-                      if (hasanatToday > 0) ...[
-                        const SizedBox(height: 4),
-                        _FooterStat(
-                          icon: Icons.auto_awesome_rounded,
-                          iconColor: const Color(0xFFD4A017),
-                          value: '+${_formatNumber(hasanatToday)}',
-                          label: hasanatLabel,
-                        ),
-                      ],
+                    if (_global.todayReaders > 0) ...[
+                      const SizedBox(height: 4),
+                      _FooterStat(
+                        icon: Icons.menu_book_rounded,
+                        iconColor: Y4.honeyDeep,
+                        value: _formatNumber(_global.todayReaders),
+                        label: readersTodayLabel,
+                      ),
                     ],
                   ],
                 ),
               ),
             ),
-            // ── Divider ──────────────────────────────────────────────
-            Container(
-              width: 1,
-              color: const Color(0xFF8FCFA0).withValues(alpha: 0.30),
+            // ── Dotted vertical separator — fixed-height column of mint
+            // dots so layout doesn't depend on shared intrinsic heights.
+            const SizedBox(
+              width: 10,
+              height: 56,
+              child: _DottedDivider(),
             ),
             // ── RIGHT half: top 3 surahs the community is reading ────
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 12),
+                padding: const EdgeInsets.only(left: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -274,15 +278,16 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                     Text(
                       l?.frequentlyReadByCommunity ?? 'FREQUENTLY READ',
                       style: GoogleFonts.rajdhani(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: const Color(0xFF3F8C5E),
-                        letterSpacing: 1.0,
+                        letterSpacing: 0.8,
+                        height: 1.0,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 3),
                     if (_popular.isEmpty)
                       Text(
                         '—',
@@ -296,7 +301,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                         final idx = e.key + 1;
                         final p = e.value;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
+                          padding: const EdgeInsets.only(bottom: 2),
                           child: _PopularSurahRow(
                             rank: idx,
                             name: _kSurahNames[p.surah] ?? 'Surah ${p.surah}',
@@ -310,7 +315,6 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -369,6 +373,35 @@ class _PulsingDot extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Dotted vertical divider — renders a column of evenly-spaced mint dots that
+// fill the parent's height (sized via SizedBox + LayoutBuilder).
+// ─────────────────────────────────────────────────────────────────────────────
+class _DottedDivider extends StatelessWidget {
+  const _DottedDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    // Fixed count of dots spread evenly. LayoutBuilder was reporting
+    // unbounded constraints inside the engagement-strip IntrinsicHeight,
+    // which made the whole header render at zero size.
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(
+        9,
+        (_) => Container(
+          width: 3,
+          height: 3,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF8FCFA0).withValues(alpha: 0.55),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Popular-surah row — small rank pill + surah name + count, used in the
 // "Frequently read by Community" half of the engagement strip.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -387,8 +420,8 @@ class _PopularSurahRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 18,
-          height: 18,
+          width: 15,
+          height: 15,
           alignment: Alignment.center,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
@@ -399,14 +432,14 @@ class _PopularSurahRow extends StatelessWidget {
           child: Text(
             '$rank',
             style: GoogleFonts.outfit(
-              fontSize: 10,
+              fontSize: 9,
               fontWeight: FontWeight.w900,
               color: Y4.ink,
               height: 1.0,
             ),
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 5),
         Expanded(
           child: Text(
             name,
@@ -453,23 +486,29 @@ class _FooterStat extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: iconColor),
-        const SizedBox(width: 6),
+        Icon(icon, size: 12, color: iconColor),
+        const SizedBox(width: 4),
         Text(
           value,
           style: GoogleFonts.outfit(
-            fontSize: 13,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             color: Y4.ink,
           ),
         ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Y4.inkSoft,
+        const SizedBox(width: 3),
+        // Flexible so the label can ellipsize when the card is narrow,
+        // instead of overflowing the row.
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: Y4.inkSoft,
+            ),
           ),
         ),
       ],

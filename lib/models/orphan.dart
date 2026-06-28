@@ -14,6 +14,9 @@ class Orphan {
   final String? motherStatus;
   final int siblingsCount;
   final String? story;
+  // Per-locale translations of `story` (filled by auto-translate-orphan).
+  // NULL for any locale = fall back to English `story` via [storyForLocale].
+  final Map<String, String?> storyByLang;
   final String? photoUrl;
   final int targetSeeds;
   final int minSponsorship;
@@ -43,6 +46,7 @@ class Orphan {
     this.motherStatus,
     this.siblingsCount = 0,
     this.story,
+    this.storyByLang = const {},
     this.photoUrl,
     this.partnerOrg,
     this.currentSeeds = 0,
@@ -63,6 +67,15 @@ class Orphan {
         motherStatus: m['mother_status'] as String?,
         siblingsCount: (m['siblings_count'] as num?)?.toInt() ?? 0,
         story: m['story'] as String?,
+        storyByLang: {
+          'ar': m['story_ar'] as String?,
+          'ur': m['story_ur'] as String?,
+          'fr': m['story_fr'] as String?,
+          'id': m['story_id'] as String?,
+          'ms': m['story_ms'] as String?,
+          'ru': m['story_ru'] as String?,
+          'tr': m['story_tr'] as String?,
+        },
         photoUrl: m['photo_url'] as String?,
         targetSeeds: (m['target_seeds'] as num?)?.toInt() ?? 1000,
         minSponsorship: (m['min_sponsorship'] as num?)?.toInt() ?? 50,
@@ -85,4 +98,13 @@ class Orphan {
 
   double get progressRatio =>
       targetSeeds <= 0 ? 0 : (currentSeeds / targetSeeds).clamp(0.0, 1.0);
+
+  /// Locale-aware story. Returns the translated `story_<lang>` when the
+  /// active locale has a non-empty value, otherwise falls back to the
+  /// canonical English `story`.
+  String? storyForLocale(String lang) {
+    final t = storyByLang[lang];
+    if (t != null && t.trim().isNotEmpty) return t;
+    return story;
+  }
 }

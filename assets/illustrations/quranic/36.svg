@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "Bless us with pious spouses & offspring" · du'a 25:74 (the prayer of the servants of the Most Merciful)
+  A warm Muslim family — father, mother, two children — close together in soft blessing-light.
+  FACES ARE FULLY BLANK by design (no eyes, nose, mouth). Age/role carried by dress, cap, hijab, hair.
+  - Animation self-starts (CSS): the blessing-light breathes; soft motes drift up. Figures stay still. No JS.
+  - #illustration : the scene.   #text : the heading — remove/translate freely (serif fallback).
+  - Scales via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 400" width="430" height="400" role="img" aria-label="A Muslim family of four, faces left blank, in warm light">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#FDF8EC"/><stop offset="1" stop-color="#FBEFCD"/></radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".7"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="thobe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6BA899"/><stop offset="1" stop-color="#4E8676"/></linearGradient>
+    <linearGradient id="dress" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C98456"/><stop offset="1" stop-color="#A4663A"/></linearGradient>
+    <linearGradient id="hijab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E7B0A1"/><stop offset="1" stop-color="#CE8E7E"/></linearGradient>
+    <linearGradient id="boy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FB6A6"/><stop offset="1" stop-color="#5E9483"/></linearGradient>
+    <linearGradient id="girl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2C078"/><stop offset="1" stop-color="#C79E50"/></linearGradient>
+    <style>
+      .haloP{animation:soft 3.8s ease-in-out infinite;}
+      .m1{animation:rise 5s ease-in-out infinite;} .m2{animation:rise 6s ease-in-out infinite;animation-delay:1.3s;}
+      .m3{animation:rise 5.6s ease-in-out infinite;animation-delay:2.4s;} .m4{animation:rise 6.4s ease-in-out infinite;animation-delay:.7s;}
+      @keyframes soft{0%,100%{opacity:.5;}50%{opacity:.9;}}
+      @keyframes rise{0%{transform:translateY(8px);opacity:0;}25%{opacity:.85;}100%{transform:translateY(-40px);opacity:0;}}
+      @media (prefers-reduced-motion:reduce){.haloP,.m1,.m2,.m3,.m4{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="430" height="400" fill="url(#bg)"/>
+
+  <g id="illustration">
+    <circle class="haloP" cx="215" cy="240" r="186" fill="url(#halo)"/>
+    <ellipse cx="215" cy="392" rx="160" ry="12" fill="#000" opacity="0.08"/>
+
+    <!-- FATHER (left) -->
+    <g>
+      <path d="M114,388 Q112,262 120,202 Q128,180 140,178 Q152,180 160,202 Q168,262 166,388 Z" fill="url(#thobe)"/>
+      <path d="M140,178 Q128,180 120,202 Q112,262 114,388 L132,388 Q126,262 130,206 Q134,186 140,184 Z" fill="#4E8676" opacity="0.45"/>
+      <path d="M140,182 L134,196 M140,182 L146,196" stroke="#3F6F61" stroke-width="2" fill="none"/>
+      <!-- outer arm -->
+      <path d="M122,200 Q108,236 110,288 Q110,298 120,298 Q126,250 134,210 Z" fill="url(#thobe)"/>
+      <ellipse cx="115" cy="294" rx="8" ry="7" fill="#E9BB8E"/>
+      <!-- inner arm resting on child -->
+      <path d="M158,202 Q172,224 178,250 Q180,260 170,260 Q160,234 148,212 Z" fill="url(#thobe)"/>
+      <ellipse cx="174" cy="256" rx="8" ry="7" fill="#E9BB8E"/>
+      <!-- sandals -->
+      <path d="M124,388 h18 q5 0 5 6 q0 4 -5 4 h-18z" fill="#6E5238"/><path d="M148,388 h18 q5 0 5 6 q0 4 -5 4 h-18z" fill="#6E5238"/>
+      <!-- neck + blank face -->
+      <rect x="132" y="166" width="16" height="14" fill="#DDAE80"/>
+      <ellipse cx="140" cy="150" rx="16" ry="19" fill="#E9BB8E"/>
+      <!-- beard -->
+      <path d="M124,156 Q126,176 140,182 Q154,176 156,156 Q147,168 140,168 Q133,168 124,156 Z" fill="#5A4634"/>
+      <!-- kufi -->
+      <path d="M122,138 Q124,118 140,116 Q156,118 158,138 Q148,132 140,132 Q132,132 122,138 Z" fill="#EDE6D3"/>
+      <path d="M122,138 Q140,131 158,138 L158,142 Q140,135 122,142 Z" fill="#D8CDB2"/>
+    </g>
+
+    <!-- MOTHER (right) -->
+    <g>
+      <path d="M274,388 Q272,262 280,202 Q288,180 300,178 Q312,180 320,202 Q328,262 326,388 Z" fill="url(#dress)"/>
+      <path d="M300,178 Q288,180 280,202 Q272,262 274,388 L292,388 Q286,262 290,206 Q294,186 300,184 Z" fill="#A4663A" opacity="0.45"/>
+      <!-- outer arm -->
+      <path d="M320,202 Q332,238 330,288 Q330,298 320,298 Q314,250 306,210 Z" fill="url(#dress)"/>
+      <ellipse cx="325" cy="294" rx="8" ry="7" fill="#E9BB8E"/>
+      <!-- inner arm resting on child -->
+      <path d="M282,202 Q268,224 262,252 Q260,262 270,262 Q280,236 292,212 Z" fill="url(#dress)"/>
+      <ellipse cx="266" cy="258" rx="8" ry="7" fill="#E9BB8E"/>
+      <!-- sandals -->
+      <path d="M284,388 h18 q5 0 5 6 q0 4 -5 4 h-18z" fill="#6E5238"/><path d="M308,388 h18 q5 0 5 6 q0 4 -5 4 h-18z" fill="#6E5238"/>
+      <!-- hijab head+shoulders -->
+      <path d="M268,210 Q264,150 300,116 Q336,150 332,210 Q334,232 314,236 L286,236 Q266,232 268,210 Z" fill="url(#hijab)"/>
+      <!-- blank face -->
+      <ellipse cx="300" cy="152" rx="15" ry="18" fill="#E9BB8E"/>
+      <!-- hijab frame edges -->
+      <path d="M285,152 Q284,126 300,118 Q316,126 315,152 Q315,134 300,130 Q285,134 285,152 Z" fill="url(#hijab)"/>
+      <path d="M287,168 Q300,180 313,168 Q316,178 300,182 Q284,178 287,168 Z" fill="url(#hijab)"/>
+    </g>
+
+    <!-- CHILD 1 (boy, front-left) -->
+    <g>
+      <path d="M180,388 Q179,284 188,236 Q194,226 200,224 Q206,226 212,236 Q221,284 220,388 Z" fill="url(#boy)"/>
+      <path d="M186,390 h13 v8 h-13z M201,390 h13 v8 h-13z" fill="#6E5238"/>
+      <rect x="195" y="220" width="10" height="9" fill="#DDAE80"/>
+      <ellipse cx="200" cy="208" rx="12" ry="14" fill="#E9BB8E"/>
+      <ellipse cx="189" cy="209" rx="2.6" ry="3.4" fill="#E9BB8E"/><ellipse cx="211" cy="209" rx="2.6" ry="3.4" fill="#E9BB8E"/>
+      <path d="M188,208 Q187,191 200,189 Q213,191 212,208 Q205,199 200,199 Q195,199 188,208 Z" fill="#5A3E28"/>
+    </g>
+
+    <!-- CHILD 2 (girl, front-right) -->
+    <g>
+      <path d="M230,388 Q229,284 238,238 Q244,228 250,226 Q256,228 262,238 Q271,284 270,388 Z" fill="url(#girl)"/>
+      <path d="M236,390 h13 v8 h-13z M251,390 h13 v8 h-13z" fill="#6E5238"/>
+      <!-- hijab drape: head -> shoulders (connects head to body) -->
+      <path d="M232,244 Q228,202 250,184 Q272,202 268,244 Q269,252 257,252 L243,252 Q231,252 232,244 Z" fill="#E8B7A8"/>
+      <!-- blank face (visible oval, like the mother) -->
+      <ellipse cx="250" cy="212" rx="11" ry="13" fill="#E9BB8E"/>
+      <!-- hijab frame: forehead + chin -->
+      <path d="M239,212 Q238,194 250,189 Q262,194 261,212 Q261,199 250,196 Q239,199 239,212 Z" fill="#E8B7A8"/>
+      <path d="M241,223 Q250,233 259,223 Q261,231 250,234 Q239,231 241,223 Z" fill="#E8B7A8"/>
+    </g>
+
+    <!-- blessing motes -->
+    <g fill="#F5E7B0">
+      <circle class="m1" cx="160" cy="120" r="3"/><circle class="m2" cx="280" cy="110" r="2.4"/>
+      <circle class="m3" cx="215" cy="96" r="2.6"/><circle class="m4" cx="330" cy="150" r="2.2"/>
+    </g>
+  </g>
+
+  <g id="text">
+    <text x="215" y="30" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="18" fill="#9c7d1e">Bless us with pious</text>
+    <text x="215" y="52" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="18" fill="#9c7d1e">spouses &amp; offspring</text>
+  </g>
+</svg>

@@ -9,6 +9,69 @@ class AppLocalizationsTr extends AppLocalizations {
   AppLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
+  String get youSuffix => '(you)';
+
+  @override
+  String get userFallback => 'User';
+
+  @override
+  String get youHaveDone => 'You\'ve Done!';
+
+  @override
+  String get playAllBtn => 'Play All';
+
+  @override
+  String get playBtn => 'Play';
+
+  @override
+  String get readBtn => 'Read';
+
+  @override
+  String get readOnce => 'Read once';
+
+  @override
+  String readNTimes(int count) {
+    return 'Read $count times';
+  }
+
+  @override
+  String seedsEarnedToday(int count) {
+    return '+$count Sabiq Seeds earned today!';
+  }
+
+  @override
+  String get catDailyRemembrance => 'DAILY REMEMBRANCE';
+
+  @override
+  String get catNightlyRemembrance => 'NIGHTLY REMEMBRANCE';
+
+  @override
+  String get catYourSelection => 'YOUR SELECTION';
+
+  @override
+  String get catContinuousRemembrance => 'CONTINUOUS REMEMBRANCE';
+
+  @override
+  String get bannerDailyRemembrance =>
+      'Daily Remembrance\nbrings peace to the soul.';
+
+  @override
+  String get bannerMorningAdhkar =>
+      'Morning Adhkar\nbrings peace to the soul and light to the path.';
+
+  @override
+  String get bannerEveningAdhkar =>
+      'Evening Adhkar\nbrings tranquility and protection for the night.';
+
+  @override
+  String get bannerYourSelection =>
+      'Your beloved words\nof remembrance to keep close to your heart.';
+
+  @override
+  String get bannerContinuousRemembrance =>
+      'Remember Allah\nmuch, that you may be successful.';
+
+  @override
   String get frequentlyReadByCommunity => 'Frequently read';
 
   @override

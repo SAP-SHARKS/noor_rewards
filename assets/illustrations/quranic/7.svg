@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Du'a of Zakariyya for a child · 3:38 — an empty, prepared cradle (longing/hope), no baby.
+  - Animations self-start (CSS inside): the cradle sways slowly; birds bob; glow breathes. No JS.
+  - #illustration : scene. The .rock group (cords + cradle + cushions + inner bunting) sways.
+  - #text : title — remove/translate freely (serif fallback).
+  - Scales to any size via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 400" width="430" height="400" role="img" aria-label="An empty hanging cradle with bunting, birds and flowers">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="52%" r="72%"><stop offset="0" stop-color="#FDF8EC"/><stop offset="1" stop-color="#FBF1D8"/></radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9DC4B8"/><stop offset="1" stop-color="#6E9E90"/></linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".55"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <style>
+      .rock{animation:rock 4.8s ease-in-out infinite;transform-box:view-box;transform-origin:215px 70px;}
+      .glowP{animation:soft 3.6s ease-in-out infinite;}
+      .bird{animation:bob 3s ease-in-out infinite;} .bird2{animation:bob 3.4s ease-in-out infinite;animation-delay:.6s;}
+      @keyframes rock{0%,100%{transform:rotate(-3.4deg);}50%{transform:rotate(3.4deg);}}
+      @keyframes soft{0%,100%{opacity:.45;}50%{opacity:.8;}}
+      @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+      @media (prefers-reduced-motion:reduce){.rock,.glowP,.bird,.bird2{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="430" height="400" fill="url(#bg)"/>
+
+  <g id="illustration">
+    <circle class="glowP" cx="215" cy="318" r="135" fill="url(#halo)"/>
+
+    <!-- main bunting (static) -->
+    <path d="M48,78 Q215,128 382,78" fill="none" stroke="#C9A76A" stroke-width="2"/>
+    <g stroke="#B8915A" stroke-width="0.6">
+      <polygon points="50,80 78,80 64,112" fill="#9DC4B8"/>
+      <polygon points="92,90 120,90 106,121" fill="#F4EAD0"/>
+      <polygon points="134,98 162,98 148,128" fill="#9DC4B8"/>
+      <polygon points="176,103 204,103 190,132" fill="#F4EAD0"/>
+      <polygon points="218,103 246,103 232,132" fill="#9DC4B8"/>
+      <polygon points="260,99 288,99 274,128" fill="#F4EAD0"/>
+      <polygon points="302,91 330,91 316,120" fill="#9DC4B8"/>
+      <polygon points="344,82 372,82 358,112" fill="#F4EAD0"/>
+    </g>
+    <g fill="#E9B84A"><circle cx="64" cy="92" r="1.4"/><circle cx="148" cy="110" r="1.4"/><circle cx="232" cy="114" r="1.4"/><circle cx="316" cy="102" r="1.4"/></g>
+
+    <!-- florals behind base -->
+    <g>
+      <path d="M86 350 q-10 -26 -4 -46" stroke="#8FB8A0" stroke-width="2" fill="none"/>
+      <circle cx="80" cy="300" r="5" fill="#E9B84A"/><circle cx="80" cy="300" r="2" fill="#C9892A"/>
+      <circle cx="96" cy="322" r="4" fill="#ECC6A2"/>
+      <path d="M344 352 q10 -26 4 -48" stroke="#8FB8A0" stroke-width="2" fill="none"/>
+      <circle cx="350" cy="300" r="5" fill="#E9B84A"/><circle cx="350" cy="300" r="2" fill="#C9892A"/>
+      <circle cx="336" cy="324" r="4" fill="#ECC6A2"/>
+    </g>
+
+    <!-- the swing (sways around hub 215,70) -->
+    <g class="rock">
+      <!-- cords -->
+      <g stroke="#C9A76A" stroke-width="2.4" fill="none">
+        <line x1="215" y1="72" x2="108" y2="300"/><line x1="215" y1="72" x2="150" y2="296"/>
+        <line x1="215" y1="72" x2="280" y2="296"/><line x1="215" y1="72" x2="322" y2="300"/>
+      </g>
+      <circle cx="215" cy="70" r="5" fill="#C9A76A"/>
+
+      <!-- inner mini-bunting -->
+      <path d="M152,250 Q215,266 278,250" fill="none" stroke="#C9A76A" stroke-width="1.2"/>
+      <g>
+        <polygon points="158,252 172,252 165,266" fill="#F4EAD0"/>
+        <polygon points="182,256 196,256 189,270" fill="#ECC6A2"/>
+        <polygon points="206,258 220,258 213,272" fill="#9DC4B8"/>
+        <polygon points="230,258 244,258 237,272" fill="#F4EAD0"/>
+        <polygon points="254,255 268,255 261,269" fill="#ECC6A2"/>
+      </g>
+
+      <!-- cradle body -->
+      <path d="M95,300 C95,358 145,388 215,388 C285,388 335,358 335,300 L95,300 Z" fill="url(#body)"/>
+      <ellipse cx="215" cy="372" rx="92" ry="16" fill="#5A8A7C" opacity="0.35"/>
+      <!-- plush rim -->
+      <ellipse cx="215" cy="300" rx="120" ry="30" fill="#BCD9CE"/>
+      <ellipse cx="215" cy="300" rx="98" ry="22" fill="#5E8C7E"/>
+      <path d="M124 308 Q215 336 306 308" fill="none" stroke="#4F7B6E" stroke-width="6" opacity="0.4"/>
+      <path d="M108 320 Q215 350 322 320" fill="none" stroke="#D2E6DD" stroke-width="3" opacity="0.7"/>
+
+      <!-- cushions (no baby) -->
+      <path d="M150,302 Q146,274 176,274 Q206,274 202,302 Q176,312 150,302 Z" fill="#F4EAD0" stroke="#E2D3B2" stroke-width="1"/>
+      <ellipse cx="168" cy="294" rx="6" ry="4" fill="#E8B89A" opacity="0.7"/>
+      <path d="M232,302 Q228,274 258,274 Q288,274 284,302 Q258,312 232,302 Z" fill="#F0D9BE" stroke="#E0C7A2" stroke-width="1"/>
+      <ellipse cx="262" cy="294" rx="6" ry="4" fill="#E8B89A" opacity="0.7"/>
+    </g>
+
+    <!-- birds -->
+    <g class="bird">
+      <ellipse cx="58" cy="216" rx="15" ry="10" fill="#8FB8AC"/>
+      <circle cx="46" cy="208" r="7" fill="#8FB8AC"/>
+      <polygon points="40,208 32,210 40,213" fill="#E9B84A"/>
+      <circle cx="45" cy="206" r="1.4" fill="#3a4a44"/>
+      <path d="M58 214 q10 -6 16 2 q-9 4 -16 -2z" fill="#6E9E90"/>
+      <polygon points="70,216 82,212 74,222" fill="#6E9E90"/>
+      <ellipse cx="56" cy="222" rx="8" ry="4" fill="#EAF2EC"/>
+    </g>
+    <g class="bird2">
+      <ellipse cx="372" cy="232" rx="15" ry="10" fill="#8FB8AC"/>
+      <circle cx="384" cy="224" r="7" fill="#8FB8AC"/>
+      <polygon points="390,224 398,226 390,229" fill="#E9B84A"/>
+      <circle cx="385" cy="222" r="1.4" fill="#3a4a44"/>
+      <path d="M372 230 q-10 -6 -16 2 q9 4 16 -2z" fill="#6E9E90"/>
+      <polygon points="360,232 348,228 356,238" fill="#6E9E90"/>
+      <ellipse cx="374" cy="238" rx="8" ry="4" fill="#EAF2EC"/>
+    </g>
+  </g>
+
+  <g id="text">
+    <text x="215" y="30" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="19" fill="#9c7d1e">The Du&#8217;a of Zakariyya</text>
+  </g>
+</svg>
