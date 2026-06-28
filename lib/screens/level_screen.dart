@@ -342,11 +342,10 @@ class _LevelScreenState extends State<LevelScreen>
             fontWeight: FontWeight.w700,
           ),
           tabs: [
-            Tab(text: '🔥 ${l.tabStreaks}'),
-            Tab(text: '📈 ${l.tabProgress}'),
-            Tab(text: '🏅 ${l.tabBadges}'),
-            if (_showChallenges)
-              Tab(text: '⚡ ${l.tabChallenges}'),
+            Tab(text: l.tabStreaks),
+            Tab(text: l.tabProgress),
+            Tab(text: l.tabBadges),
+            if (_showChallenges) Tab(text: l.tabChallenges),
           ],
         ),
       ),
@@ -715,26 +714,36 @@ class _ProgressTabState extends State<_ProgressTab> {
                                             (_, v, __) => FittedBox(
                                               fit: BoxFit.scaleDown,
                                               alignment: Alignment.centerLeft,
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/images/LOGO.svg',
-                                                    width: 36,
-                                                    height: 36,
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Text(
-                                                    '$v ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
-                                                    maxLines: 1,
-                                                    style: GoogleFonts.rajdhani(
-                                                      fontSize: 32,
-                                                      fontWeight: FontWeight.w900,
-                                                      color: Colors.white,
-                                                      height: 1.1,
+                                              // Locked LTR so the S coin
+                                              // stays on the left of the
+                                              // Seeds number in RTL locales.
+                                              child: Directionality(
+                                                textDirection:
+                                                    TextDirection.ltr,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'assets/images/LOGO.svg',
+                                                      width: 36,
+                                                      height: 36,
                                                     ),
-                                                  ),
-                                                ],
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      '$v ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
+                                                      maxLines: 1,
+                                                      style:
+                                                          GoogleFonts.rajdhani(
+                                                        fontSize: 32,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        color: Colors.white,
+                                                        height: 1.1,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                       ),

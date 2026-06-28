@@ -9,6 +9,68 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get youSuffix => '(آپ)';
+
+  @override
+  String get userFallback => 'صارف';
+
+  @override
+  String get youHaveDone => 'آپ نے مکمل کر لیا!';
+
+  @override
+  String get playAllBtn => 'سب چلائیں';
+
+  @override
+  String get playBtn => 'چلائیں';
+
+  @override
+  String get readBtn => 'پڑھیں';
+
+  @override
+  String get readOnce => 'ایک بار پڑھیں';
+
+  @override
+  String readNTimes(int count) {
+    return '$count بار پڑھیں';
+  }
+
+  @override
+  String seedsEarnedToday(int count) {
+    return 'آج +$count سابق سیڈز حاصل کیے!';
+  }
+
+  @override
+  String get catDailyRemembrance => 'روزمرہ ذکر';
+
+  @override
+  String get catNightlyRemembrance => 'رات کا ذکر';
+
+  @override
+  String get catYourSelection => 'آپ کا انتخاب';
+
+  @override
+  String get catContinuousRemembrance => 'مسلسل ذکر';
+
+  @override
+  String get bannerDailyRemembrance => 'روزمرہ ذکر\nروح کو سکون بخشتا ہے۔';
+
+  @override
+  String get bannerMorningAdhkar =>
+      'صبح کے اذکار\nروح کو سکون اور راہ کو نور دیتے ہیں۔';
+
+  @override
+  String get bannerEveningAdhkar =>
+      'شام کے اذکار\nسکون اور رات بھر کی حفاظت لاتے ہیں۔';
+
+  @override
+  String get bannerYourSelection =>
+      'آپ کے محبوب کلمات\nذکر جنہیں دل کے قریب رکھیں۔';
+
+  @override
+  String get bannerContinuousRemembrance =>
+      'اللہ کو کثرت سے یاد کرو\nتاکہ تم کامیاب ہو۔';
+
+  @override
   String get frequentlyReadByCommunity => 'Frequently read';
 
   @override

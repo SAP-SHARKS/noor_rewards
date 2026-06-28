@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "The prayer of Yunus" · du'a 21:87 (La ilaha illa anta, subhanaka, inni kuntu mina-z-zalimin)
+  The whale in the deep sea — the "three darknesses" (night, sea, whale) — with one warm light:
+  the du'a glowing from within the whale and rising toward the moonlit surface (the call being heard).
+  - Animation self-starts (CSS): the whale swims gently; the inner light & rays breathe; bubbles rise. No JS.
+  - #illustration : the scene.   #text : the title — remove/translate freely (serif fallback).
+  - Scales via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 400" width="430" height="400" role="img" aria-label="A whale in the deep sea with a warm light glowing from within, rising toward the moonlit surface">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#52A597"/><stop offset="0.45" stop-color="#2E6E68"/><stop offset="1" stop-color="#133338"/></linearGradient>
+    <radialGradient id="duaGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".95"/><stop offset="0.5" stop-color="#FCE8A8" stop-opacity=".6"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="moonG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCEFC0" stop-opacity=".9"/><stop offset="1" stop-color="#FCEFC0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6F0E8" stop-opacity=".5"/><stop offset="1" stop-color="#D6F0E8" stop-opacity="0"/></linearGradient>
+    <style>
+      .whale{animation:swim 7.5s ease-in-out infinite;transform-box:view-box;transform-origin:210px 252px;}
+      .glowP{animation:soft 3.4s ease-in-out infinite;} .rayP{animation:soft 4s ease-in-out infinite;} .shaftP{animation:soft 5s ease-in-out infinite;}
+      .moonP{animation:soft 4.6s ease-in-out infinite;}
+      .b1{animation:rise 5s ease-in infinite;} .b2{animation:rise 6s ease-in infinite;animation-delay:1.4s;}
+      .b3{animation:rise 5.6s ease-in infinite;animation-delay:2.6s;} .b4{animation:rise 6.4s ease-in infinite;animation-delay:.7s;}
+      @keyframes swim{0%,100%{transform:translate(0,0) rotate(0);}50%{transform:translate(-6px,-5px) rotate(-1.3deg);}}
+      @keyframes soft{0%,100%{opacity:.45;}50%{opacity:.9;}}
+      @keyframes rise{0%{transform:translateY(0);opacity:0;}20%{opacity:.7;}100%{transform:translateY(-150px);opacity:0;}}
+      @media (prefers-reduced-motion:reduce){.whale,.glowP,.rayP,.shaftP,.moonP,.b1,.b2,.b3,.b4{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="430" height="400" fill="url(#sea)"/>
+
+  <g id="illustration">
+    <!-- surface light + moon (night) -->
+    <rect width="430" height="56" fill="#6FBCAE" opacity="0.35"/>
+    <g opacity="0.5" stroke="#CFEDE4" stroke-width="2" fill="none"><path d="M20 50 q26 -7 52 0 t52 0"/><path d="M150 54 q26 -7 52 0 t52 0"/><path d="M300 50 q26 -7 52 0 t52 0"/></g>
+    <circle class="moonP" cx="346" cy="40" r="34" fill="url(#moonG)"/>
+    <path d="M338 26 a17 17 0 1 0 9 31 a14 14 0 1 1 -9 -31z" fill="#F6EFD8"/>
+
+    <!-- light shafts from the surface -->
+    <g class="shaftP">
+      <polygon points="120,56 96,330 132,330 156,56" fill="url(#shaft)"/>
+      <polygon points="250,56 236,330 268,330 288,56" fill="url(#shaft)"/>
+      <polygon points="40,56 30,300 54,300 70,56" fill="url(#shaft)" opacity="0.7"/>
+    </g>
+
+    <!-- du'a rays rising from within the whale -->
+    <g class="rayP">
+      <polygon points="200,270 176,70 188,68 206,268" fill="#FFF3C4" opacity="0.45"/>
+      <polygon points="206,270 212,66 224,66 214,270" fill="#FFF3C4" opacity="0.4"/>
+      <polygon points="210,270 244,76 256,80 220,272" fill="#FFF3C4" opacity="0.35"/>
+    </g>
+
+    <!-- bubbles rising -->
+    <g fill="#DFF2EC">
+      <circle class="b1" cx="206" cy="262" r="3.4"/><circle class="b2" cx="216" cy="258" r="2.4"/>
+      <circle class="b3" cx="198" cy="260" r="2.8"/><circle class="b4" cx="212" cy="264" r="2"/>
+    </g>
+
+    <!-- WHALE -->
+    <g class="whale">
+      <!-- pectoral fin (behind body) -->
+      <path d="M174,272 Q150,300 138,332 Q133,340 144,337 Q172,311 190,284 Z" fill="#3A6460"/>
+      <!-- body -->
+      <path d="M96,226 C98,206 120,194 144,198 C210,206 270,238 306,276 C314,284 312,290 304,290
+               C260,300 200,304 156,296 C126,290 106,272 98,252 C94,242 94,234 96,226 Z" fill="#2C4E52"/>
+      <!-- pale belly -->
+      <path d="M108,256 C140,288 220,300 292,282 C262,298 200,304 156,296 C126,290 108,272 108,256 Z" fill="#5A8682"/>
+      <!-- belly grooves -->
+      <g stroke="#3A6460" stroke-width="1.5" fill="none" opacity="0.7"><path d="M112,250 Q150,280 196,290"/><path d="M118,242 Q156,272 200,282"/><path d="M124,234 Q162,264 206,274"/></g>
+      <!-- dorsal hump -->
+      <path d="M240,246 Q252,232 266,244 Q252,242 240,246 Z" fill="#264A4E"/>
+      <!-- fluke -->
+      <path d="M300,278 C330,266 350,256 358,260 C352,272 336,282 318,286 C338,290 352,300 356,312 C346,318 320,306 302,292 Z" fill="#284A4E"/>
+      <!-- blowhole -->
+      <ellipse cx="134" cy="200" rx="3" ry="2" fill="#1E3C40"/>
+      <!-- mouth line -->
+      <path d="M98,234 Q124,246 158,250" fill="none" stroke="#1E3C40" stroke-width="2" stroke-linecap="round"/>
+      <!-- eye -->
+      <circle cx="140" cy="224" r="3.2" fill="#16302E"/><circle cx="141" cy="223" r="1" fill="#CFEDE4"/>
+      <!-- the du'a light from within -->
+      <circle class="glowP" cx="200" cy="276" r="44" fill="url(#duaGlow)"/>
+    </g>
+  </g>
+
+  <g id="text">
+    <text x="215" y="30" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="18" fill="#FCEFC0" stroke="#1E3C40" stroke-width="0.5">The prayer of Yunus</text>
+  </g>
+</svg>

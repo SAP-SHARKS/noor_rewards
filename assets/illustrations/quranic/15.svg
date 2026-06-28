@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "The prayer of Nuh after the Flood" · du'a 11:47
+  The ark riding the great waters as the storm breaks into light (waters subsiding, Mount al-Judi hinted).
+  - Animation self-starts (CSS inside): the ark rocks & bobs; swells drift; the mercy-beam shimmers. No JS.
+  - #illustration : the scene.   #text : the title — remove/translate freely (serif fallback).
+  - Waves extend beyond the frame so their drift never reveals edges. Scales via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 380" width="430" height="380" overflow="visible" role="img" aria-label="Noah's ark on subsiding flood waters as light breaks through the clouds">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDF8EC"/><stop offset="1" stop-color="#FBE6A6"/></linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4AA38E"/><stop offset="1" stop-color="#2C7868"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3C4" stop-opacity=".75"/><stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF3C4" stop-opacity=".7"/><stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient>
+    <style>
+      .ark{animation:rock 4.4s ease-in-out infinite;transform-box:view-box;transform-origin:215px 270px;}
+      .sMid{animation:drift 5.6s ease-in-out infinite;} .sFront{animation:drift2 5s ease-in-out infinite;}
+      .beamP{animation:soft 3.4s ease-in-out infinite;} .glowP{animation:soft 3.8s ease-in-out infinite;} .bird{animation:fly 6s linear infinite;}
+      @keyframes rock{0%,100%{transform:rotate(-1.8deg) translateY(0);}50%{transform:rotate(1.8deg) translateY(-4px);}}
+      @keyframes drift{0%,100%{transform:translateX(0);}50%{transform:translateX(10px);}}
+      @keyframes drift2{0%,100%{transform:translateX(0);}50%{transform:translateX(-12px);}}
+      @keyframes soft{0%,100%{opacity:.45;}50%{opacity:.85;}}
+      @keyframes fly{0%{transform:translate(0,0);}100%{transform:translate(-30px,-6px);}}
+      @media (prefers-reduced-motion:reduce){.ark,.sMid,.sFront,.beamP,.glowP,.bird{animation:none;}}
+    </style>
+  </defs>
+
+  <rect x="-200" y="0" width="830" height="380" fill="url(#sky)"/>
+
+  <g id="illustration">
+    <!-- receding storm clouds, parting -->
+    <g>
+      <ellipse cx="70" cy="80" rx="62" ry="26" fill="#C9BFC9"/><ellipse cx="110" cy="92" rx="50" ry="20" fill="#D8CFD6"/>
+      <ellipse cx="370" cy="74" rx="58" ry="24" fill="#D2C9D0"/><ellipse cx="338" cy="88" rx="44" ry="18" fill="#E2DAE0"/>
+    </g>
+    <!-- distant Mount al-Judi -->
+    <path d="M-200 250 L-130 200 L-80 224 L-30 196 L20 222 L60 198 L100 250 Z" fill="#9FB0A6" opacity="0.7"/>
+    <path d="M300 250 L350 206 L380 230 L410 200 L430 250 Z" fill="#9FB0A6" opacity="0.7"/>
+    <path d="M430 250 L470 218 L520 238 L580 210 L630 250 Z" fill="#9FB0A6" opacity="0.7"/>
+    <!-- distant birds (returning life) -->
+    <g class="bird" stroke="#6A655F" stroke-width="2" fill="none" stroke-linecap="round">
+      <path d="M300 120 q6 -6 12 0 q6 -6 12 0"/><path d="M330 134 q5 -5 10 0 q5 -5 10 0"/>
+    </g>
+
+    <!-- mercy beam -->
+    <path class="beamP" d="M200 20 L150 250 L300 250 L240 20 Z" fill="url(#beam)"/>
+
+    <!-- sea base + far crest (behind ark) -->
+    <rect x="-200" y="250" width="830" height="130" fill="url(#water)"/>
+    <path d="M-40,256 C60,248 120,260 200,254 C280,248 360,260 470,254 L470,272 L-40,272 Z" fill="#5CB3A0" opacity="0.85"/>
+
+    <!-- glow behind ark -->
+    <circle class="glowP" cx="215" cy="205" r="86" fill="url(#glow)"/>
+
+    <!-- THE ARK -->
+    <g class="ark">
+      <!-- roof -->
+      <polygon points="176,172 254,172 240,154 190,154" fill="#7A4630"/>
+      <rect x="190" y="151" width="50" height="4" rx="2" fill="#E9B84A"/>
+      <circle cx="215" cy="146" r="4" fill="#E9B84A"/>
+      <!-- upper cabin -->
+      <rect x="182" y="172" width="66" height="30" fill="#A8784A" stroke="#5E3F22" stroke-width="1.5"/>
+      <rect x="207" y="180" width="16" height="14" rx="2" fill="#FBD98A" stroke="#6E4A28" stroke-width="1.5"/>
+      <!-- lower cabin -->
+      <rect x="150" y="202" width="130" height="42" fill="#9A6B3E" stroke="#5E3F22" stroke-width="1.5"/>
+      <rect x="166" y="212" width="18" height="16" rx="2" fill="#FBD98A" stroke="#6E4A28" stroke-width="1.5"/>
+      <rect x="246" y="212" width="18" height="16" rx="2" fill="#FBD98A" stroke="#6E4A28" stroke-width="1.5"/>
+      <path d="M201 244 V222 a14 14 0 0 1 28 0 V244 Z" fill="#6E4A28"/>
+      <!-- hull -->
+      <path d="M105,244 C108,232 128,232 135,244 L295,244 C302,232 322,232 325,244
+               C322,272 280,286 215,286 C150,286 108,272 105,244 Z" fill="#8A5E34" stroke="#5E3F22" stroke-width="2"/>
+      <path d="M118,246 L312,246" stroke="#E9B84A" stroke-width="3"/>
+      <path d="M112,258 C150,268 280,268 318,258" fill="none" stroke="#6E4A28" stroke-width="1.5"/>
+      <path d="M120,270 C156,278 274,278 310,270" fill="none" stroke="#6E4A28" stroke-width="1.5"/>
+    </g>
+
+    <!-- mid swell (front of hull) -->
+    <g class="sMid">
+      <path d="M-240,266 C-180,256 -120,272 -60,264 C0,256 60,272 130,264 C200,256 270,272 340,264 C410,256 480,272 550,264 C610,256 660,272 720,266 L720,300 L-240,300 Z" fill="#357E70"/>
+      <path d="M-240,266 C-180,256 -120,272 -60,264 C0,256 60,272 130,264 C200,256 270,272 340,264 C410,256 480,272 550,264 C610,256 660,272 720,266" fill="none" stroke="#CFE8DE" stroke-width="2" opacity="0.7"/>
+    </g>
+
+    <!-- front swell (foreground) + bigger left swell -->
+    <g class="sFront">
+      <path d="M-240,300 C-180,286 -120,292 -60,302 C0,310 60,290 120,300 C180,310 240,294 300,300 C360,306 420,290 480,300 C540,310 600,294 660,302 C690,306 710,298 720,300 L720,380 L-240,380 Z" fill="#27705F"/>
+      <path d="M-240,300 C-180,286 -120,292 -60,302 C0,310 60,290 120,300 C180,310 240,294 300,300 C360,306 420,290 480,300 C540,310 600,294 660,302 C690,306 710,298 720,300" fill="none" stroke="#EAF5EF" stroke-width="2.5" opacity="0.8"/>
+      <path d="M30,300 C40,278 70,276 84,294 C70,300 48,302 30,300 Z" fill="#3A8675" opacity="0.8"/>
+      <g fill="#EAF5EF" opacity="0.8"><circle cx="-120" cy="298" r="2"/><circle cx="120" cy="298" r="2"/><circle cx="300" cy="300" r="2"/><circle cx="380" cy="296" r="2"/><circle cx="540" cy="298" r="2"/><circle cx="650" cy="296" r="2"/></g>
+    </g>
+  </g>
+
+  <g id="text">
+    <text x="215" y="34" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="18" fill="#9c7d1e">The prayer of Nuh after the Flood</text>
+  </g>
+</svg>

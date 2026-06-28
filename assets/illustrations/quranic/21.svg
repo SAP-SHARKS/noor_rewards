@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "Young Believers of the Cave" · Ashab al-Kahf (Surah al-Kahf; du'a 18:10)
+  A clear cave mouth framing the youths in shadow; their faces are GLOWING LIGHT (no features).
+  The dog rests at the threshold with forelegs stretched (Qur'an 18:18), made cute.
+  - Animation self-starts (CSS): glowing faces breathe; the dog's tail wags gently. No JS.
+  - #illustration : the scene.   #text : the title — remove/translate freely (serif fallback).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 300" width="440" height="300" overflow="visible" role="img" aria-label="Young believers with glowing faces at a cave mouth, with a dog resting at the entrance">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE6E0"/><stop offset="1" stop-color="#FBEAC0"/></linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C7650"/><stop offset="1" stop-color="#7A5838"/></linearGradient>
+    <radialGradient id="cave" cx="50%" cy="42%" r="65%"><stop offset="0" stop-color="#3A2C20"/><stop offset="0.7" stop-color="#241B14"/><stop offset="1" stop-color="#16100B"/></radialGradient>
+    <radialGradient id="face" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFFCEF"/><stop offset="0.5" stop-color="#FDEBB4"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <style>
+      .fg{animation:pulse 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+      .f2{animation-delay:.3s;}.f3{animation-delay:.6s;}.f4{animation-delay:.15s;}.f5{animation-delay:.45s;}.f6{animation-delay:.75s;}
+      .tail{transform-box:view-box;transform-origin:409px 256px;animation:wag 1.5s ease-in-out infinite;}
+      .mote{animation:rise 5s ease-in-out infinite;}
+      @keyframes pulse{0%,100%{opacity:.78;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
+      @keyframes wag{0%,100%{transform:rotate(-9deg);}50%{transform:rotate(9deg);}}
+      @keyframes rise{0%{transform:translateY(6px);opacity:0;}30%{opacity:.8;}100%{transform:translateY(-22px);opacity:0;}}
+      @media (prefers-reduced-motion:reduce){.fg,.tail,.mote{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="440" height="300" fill="url(#sky)"/>
+
+  <g id="illustration">
+    <path d="M300,300 L300,150 Q360,120 440,140 L440,300 Z" fill="#9CC074"/>
+    <path d="M300,300 L300,176 Q370,158 440,176 L440,300 Z" fill="#84AD5E"/>
+    <g fill="#DAC68E" opacity="0.9">
+      <rect x="392" y="120" width="16" height="40"/><rect x="410" y="110" width="14" height="50"/><rect x="426" y="124" width="12" height="36"/>
+      <rect x="392" y="116" width="16" height="5"/><rect x="410" y="106" width="14" height="5"/>
+    </g>
+
+    <!-- Mountain peak rising behind the cliff — darker tone, extends well
+         above the rock face so the whole top reads as a tall mountain. -->
+    <path d="M-200,300 L-200,150 L-60,80 L40,-20 L160,20 L240,-30 L330,40 L440,90 L440,300 Z" fill="#241B14"/>
+    <path d="M-200,150 L-60,80 L40,-20 L160,20 L240,-30 L330,40 L440,90" fill="none" stroke="#16100B" stroke-width="2" opacity="0.6"/>
+    <!-- Original rock cliff sits in front of the peak -->
+    <path d="M-20,300 L-20,108 Q40,46 140,52 Q244,44 322,96 L322,300 Z" fill="url(#rock)" stroke="#5E422C" stroke-width="2"/>
+    <path d="M-20,108 Q40,46 140,52 Q244,44 322,96" fill="none" stroke="#B58C62" stroke-width="3" opacity="0.6"/>
+    <g stroke="#6E4E34" stroke-width="2" fill="none" opacity="0.5"><path d="M60 120 q20 18 14 40"/><path d="M300 140 q-16 16 -8 36"/></g>
+
+    <path d="M44,270 Q40,150 92,92 Q160,44 232,74 Q300,100 300,182 Q300,250 292,270 Z" fill="url(#cave)"/>
+    <path d="M44,270 Q40,150 92,92 Q160,44 232,74 Q300,100 300,182 Q300,250 292,270" fill="none" stroke="#5E422C" stroke-width="3" opacity="0.7"/>
+    <g fill="#7A5838"><path d="M120 86 l6 22 l6 -22 z"/><path d="M168 78 l5 26 l5 -26 z"/><path d="M214 84 l6 20 l6 -20 z"/></g>
+
+    <rect y="266" width="440" height="34" fill="#C6A671"/>
+    <rect y="266" width="440" height="5" fill="#B58F5E"/>
+    <path d="M44,270 Q170,258 300,270 L300,300 L44,300 Z" fill="#A8855A" opacity="0.4"/>
+
+    <g><path d="M54,268 Q53,190 70,184 Q87,190 86,268 Z" fill="#EDE3CE"/><circle cx="70" cy="167" r="13" fill="#E9BB8E"/><path d="M57,167 a13 13 0 0 1 26 0 Z" fill="#6A4A2E"/><circle class="fg" cx="70" cy="170" r="12" fill="url(#face)"/><path d="M62 268 h6 v6 h-6z M73 268 h6 v6 h-6z" fill="#6E5238"/></g>
+    <g><path d="M92,268 Q91,190 108,184 Q125,190 124,268 Z" fill="#EDE3CE"/><circle cx="108" cy="167" r="13" fill="#E9BB8E"/><path d="M95,167 a13 13 0 0 1 26 0 Z" fill="#3E2C1E"/><circle class="fg f2" cx="108" cy="170" r="12" fill="url(#face)"/><path d="M100 268 h6 v6 h-6z M111 268 h6 v6 h-6z" fill="#6E5238"/></g>
+    <g><path d="M130,268 Q129,190 146,184 Q163,190 162,268 Z" fill="#EDE3CE"/><circle cx="146" cy="167" r="13" fill="#E9BB8E"/><path d="M133,167 a13 13 0 0 1 26 0 Z" fill="#7A4A2E"/><circle class="fg f3" cx="146" cy="170" r="12" fill="url(#face)"/><path d="M138 268 h6 v6 h-6z M149 268 h6 v6 h-6z" fill="#6E5238"/></g>
+    <g><path d="M168,268 Q167,190 184,184 Q201,190 200,268 Z" fill="#EDE3CE"/><circle cx="184" cy="167" r="13" fill="#E9BB8E"/><path d="M171,167 a13 13 0 0 1 26 0 Z" fill="#3E2C1E"/><circle class="fg f4" cx="184" cy="170" r="12" fill="url(#face)"/><path d="M176 268 h6 v6 h-6z M187 268 h6 v6 h-6z" fill="#6E5238"/></g>
+    <g><path d="M206,268 Q205,190 222,184 Q239,190 238,268 Z" fill="#EDE3CE"/><circle cx="222" cy="167" r="13" fill="#E9BB8E"/><path d="M209,167 a13 13 0 0 1 26 0 Z" fill="#5A3E28"/><circle class="fg f5" cx="222" cy="170" r="12" fill="url(#face)"/><path d="M214 268 h6 v6 h-6z M225 268 h6 v6 h-6z" fill="#6E5238"/></g>
+    <g><path d="M244,268 Q243,190 260,184 Q277,190 276,268 Z" fill="#EDE3CE"/><circle cx="260" cy="167" r="13" fill="#E9BB8E"/><path d="M247,167 a13 13 0 0 1 26 0 Z" fill="#4A3320"/><circle class="fg f6" cx="260" cy="170" r="12" fill="url(#face)"/><path d="M252 268 h6 v6 h-6z M263 268 h6 v6 h-6z" fill="#6E5238"/></g>
+
+    <g>
+      <ellipse cx="380" cy="276" rx="46" ry="8" fill="#000" opacity="0.10"/>
+      <path class="tail" d="M404,260 Q424,254 426,236 Q420,250 406,256 Z" fill="#E0A85E" stroke="#C2884A" stroke-width="1.5"/>
+      <ellipse cx="382" cy="264" rx="33" ry="15" fill="#E2A860" stroke="#C2884A" stroke-width="1.5"/>
+      <ellipse cx="402" cy="262" rx="15" ry="13" fill="#E2A860" stroke="#C2884A" stroke-width="1.5"/>
+      <path d="M360,262 Q344,266 332,276 L344,278 Q356,270 366,268 Z" fill="#E2A860" stroke="#C2884A" stroke-width="1.5"/>
+      <path d="M364,266 Q350,270 340,279 L352,280 Q362,273 370,271 Z" fill="#EDB873" stroke="#C2884A" stroke-width="1.5"/>
+      <g stroke="#C2884A" stroke-width="1"><line x1="333" y1="276" x2="335" y2="280"/><line x1="338" y1="277" x2="340" y2="281"/></g>
+      <ellipse cx="360" cy="262" rx="9" ry="11" fill="#F2E0BE"/>
+      <circle cx="350" cy="244" r="17" fill="#E2A860" stroke="#C2884A" stroke-width="1.5"/>
+      <path d="M336,234 Q328,236 330,252 Q338,248 340,238 Z" fill="#C2884A"/>
+      <path d="M364,234 Q372,236 370,252 Q362,248 360,238 Z" fill="#C2884A"/>
+      <ellipse cx="343" cy="250" rx="12" ry="9" fill="#F2E0BE"/>
+      <ellipse cx="334" cy="249" rx="3.4" ry="2.8" fill="#2E2620"/>
+      <circle cx="345" cy="240" r="2.6" fill="#2E2620"/><circle cx="355" cy="241" r="2.6" fill="#2E2620"/>
+      <circle cx="345.8" cy="239.2" r="0.9" fill="#fff"/><circle cx="355.8" cy="240.2" r="0.9" fill="#fff"/>
+      <path d="M337 254 Q343 259 349 254" fill="none" stroke="#7A5232" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M338,258 Q350,264 363,257" fill="none" stroke="#C44A3A" stroke-width="4"/>
+      <circle cx="350" cy="262" r="2.4" fill="#E9B84A"/>
+    </g>
+
+    <g fill="#F5E7B0"><circle class="mote" cx="160" cy="130" r="2.4"/><circle class="mote f3" cx="232" cy="120" r="2"/></g>
+  </g>
+
+  <g id="text">
+    <rect x="96" y="14" width="248" height="30" rx="15" fill="#FBF3DE" opacity="0.75"/>
+    <text x="220" y="35" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="19" fill="#C99114" stroke="#A8781C" stroke-width="0.4">Young Believers of the Cave</text>
+  </g>
+</svg>

@@ -324,6 +324,11 @@ class _QuranHubScreenState extends State<QuranHubScreen>
   // Today progress
   int _ayahsToday = 0;
 
+  // Header pill — user lifetime totals
+  int _userSeeds = 0;
+  int _userAyahs = 0;
+  int _userReadSec = 0;
+
   bool _loading = true;
 
   // Returns the surah name localised to the active locale.
@@ -393,6 +398,22 @@ class _QuranHubScreenState extends State<QuranHubScreen>
             .order('created_at', ascending: false)
             .then<List<dynamic>>((v) => v as List)
             .catchError((_) => const <dynamic>[]),
+        // 3: lifetime totals for the header pill (Seeds + ayahs + read time)
+        _sb
+            .from('profiles')
+            .select('total_xp, ayahs_read')
+            .eq('id', uid)
+            .maybeSingle()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
+        // 4: lifetime quran_time_sec (Mushaf timer accumulator)
+        _sb
+            .from('user_analytics')
+            .select('quran_time_sec')
+            .eq('user_id', uid)
+            .maybeSingle()
+            .then<Map<String, dynamic>?>((v) => v)
+            .catchError((_) => null),
       ]);
 
       final prog = results[0] as Map<String, dynamic>?;
@@ -413,6 +434,16 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       _bookmarkCount = _bookmarks.length;
       _favourites = List<Map<String, dynamic>>.from(results[2] as List);
       _favouriteCount = _favourites.length;
+
+      final profile = results[3] as Map<String, dynamic>?;
+      if (profile != null) {
+        _userSeeds = (profile['total_xp'] as num?)?.toInt() ?? 0;
+        _userAyahs = (profile['ayahs_read'] as num?)?.toInt() ?? 0;
+      }
+      final analytics = results[4] as Map<String, dynamic>?;
+      if (analytics != null) {
+        _userReadSec = (analytics['quran_time_sec'] as num?)?.toInt() ?? 0;
+      }
 
       // QF bookmarks pulled in the background so a slow QF API can't stall
       // this screen — Supabase data is already canonical and shown above.
@@ -1013,10 +1044,14 @@ class _QuranHubScreenState extends State<QuranHubScreen>
       slivers: [
         // ── Sticky header ─ honey wash hero ────────────────────────────────
         SliverAppBar(
-          expandedHeight: 120,
+          expandedHeight: 192,
           pinned: true,
-          backgroundColor: Y4.bg,
-          surfaceTintColor: Y4.bg,
+          toolbarHeight: 44,
+          backgroundColor: _kBg,
+          surfaceTintColor: _kBg,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          shadowColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_ios_rounded,
@@ -1027,59 +1062,81 @@ class _QuranHubScreenState extends State<QuranHubScreen>
           ),
           flexibleSpace: FlexibleSpaceBar(
             collapseMode: CollapseMode.pin,
-            background: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
+            // Force LTR for the whole header so RTL locales (Urdu/Arabic)
+            // don't flip icon rows or push SVGs out of position.
+            background: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Container(
+              color: _kBg,
               child: SafeArea(
+                bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Arabic header
-                      Text(
-                        'القرآن الكريم',
-                        style: GoogleFonts.amiri(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: Y4.honeyDeep,
+                      // Stylish wordmark in a soft cream-honey banner — keeps
+                      // the warm header colour on just the title row.
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 4,
                         ),
-                        textDirection: TextDirection.rtl,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Y4.cream,
+                              Y4.honey.withValues(alpha: 0.40),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: Y4.honey.withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: Text(
+                          'Al-Quran',
+                          style: GoogleFonts.fraunces(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            color: Y4.honeyDeep,
+                            letterSpacing: -0.5,
+                            height: 1.1,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        AppLocalizations.of(context)?.earnPerVerseRead ??
-                            'Earn +10 Sabiq Seeds per verse read',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: Y4.inkSoft,
+                      const SizedBox(height: 6),
+                      Center(
+                        child: _UserStatsPill(
+                          seeds: _userSeeds,
+                          ayahs: _userAyahs,
+                          readSeconds: _userReadSec,
                         ),
+                      ),
+                      const SizedBox(height: 6),
+                      // Narrower than the page width so it reads as a
+                      // distinct centered card.
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 28),
+                        child: QuranEngagementStrip(),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
+            ),
           ),
         ),
 
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Live community engagement strip ──────────────────────────────
-                // Replaces the static "Today's Progress" bar with social proof:
-                // live presence + community readers today + community hasanat.
-                const QuranEngagementStrip(),
-                const SizedBox(height: 20),
-
                 // ── Continue reading card ─────────────────────────────────────────
                 _SectionLabel(
                   label:
@@ -1285,6 +1342,125 @@ class _QuranHubScreenState extends State<QuranHubScreen>
 // Supporting Widgets
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Header stat pill — Seeds + ayahs read + reading time, separated by dividers.
+// Replaces the old "Al Quran al Kareem" Arabic header.
+// ─────────────────────────────────────────────────────────────────────────────
+class _UserStatsPill extends StatelessWidget {
+  final int seeds;
+  final int ayahs;
+  final int readSeconds;
+  const _UserStatsPill({
+    required this.seeds,
+    required this.ayahs,
+    required this.readSeconds,
+  });
+
+  String _fmt(int n) {
+    if (n < 1000) return '$n';
+    if (n < 10000) return '${(n / 1000).toStringAsFixed(1)}k';
+    if (n < 1000000) return '${(n / 1000).round()}k';
+    return '${(n / 1000000).toStringAsFixed(1)}M';
+  }
+
+  String _fmtTime(int sec) {
+    if (sec <= 0) return '0:00';
+    final h = sec ~/ 3600;
+    final m = (sec % 3600) ~/ 60;
+    if (h > 0) return '$h:${m.toString().padLeft(2, '0')}';
+    return '0:${m.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Y4.honey.withValues(alpha: 0.55), width: 1.2),
+        boxShadow: [
+          // Soft warm halo
+          BoxShadow(
+            color: Y4.honey.withValues(alpha: 0.32),
+            blurRadius: 14,
+          ),
+          // Subtle honey drop
+          BoxShadow(
+            color: Y4.honeyDeep.withValues(alpha: 0.18),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      // Locked LTR so the cell order (Seeds → Quran → Timer) stays the
+      // same in RTL locales like Urdu/Arabic, and the SVG icons sit on
+      // the correct side of their numbers.
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _StatCell(
+              asset: 'assets/images/LOGO.svg',
+              value: _fmt(seeds),
+            ),
+            _PillDivider(),
+            _StatCell(
+              asset: 'assets/icons/stat_quran.svg',
+              value: _fmt(ayahs),
+            ),
+            _PillDivider(),
+            _StatCell(
+              asset: 'assets/icons/stat_timer.svg',
+              value: _fmtTime(readSeconds),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatCell extends StatelessWidget {
+  final String asset;
+  final String value;
+  const _StatCell({required this.asset, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(asset, width: 26, height: 26),
+          const SizedBox(width: 6),
+          Text(
+            value,
+            style: GoogleFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: Y4.ink,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PillDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 20,
+      color: Y4.honey.withValues(alpha: 0.35),
+    );
+  }
+}
+
 class _SectionLabel extends StatelessWidget {
   final String label;
   const _SectionLabel({required this.label});
@@ -1345,12 +1521,16 @@ class _ContinueCardState extends State<_ContinueCard> {
               ),
             ],
           ),
-          child: Row(
-            children: [
-              // Book icon circle (white on honey)
-              Container(
-                width: 52,
-                height: 52,
+          // Locked LTR so the icon circle stays on the left of the surah
+          // info in Urdu/Arabic RTL locales.
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Row(
+              children: [
+                // Book icon circle (white on honey)
+                Container(
+                  width: 52,
+                  height: 52,
                 decoration: BoxDecoration(
                   color: Y4.surface,
                   borderRadius: BorderRadius.circular(16),
@@ -1424,6 +1604,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                 ),
               ),
             ],
+          ),
           ),
         ),
       ),

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Kaaba · Yemeni Corner → Black Stone (du'a 2:201)
+  Drawn to verified proportions: height 13.1m, Yemeni→Black Stone wall 10.18m.
+  - Animations self-start (CSS inside, all looping). No JS or external assets needed.
+  - #labels  : English corner labels — remove or translate freely.
+  - #dimensions : measurement overlay, hidden by default (opacity 0). Set opacity:1 to show.
+  - Scales to any size via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 400" width="430" height="400" overflow="visible" role="img" aria-label="The Kaaba focused on the Yemeni Corner and Black Stone">
+  <defs>
+    <radialGradient id="sky" cx="50%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#FDF7E2"/><stop offset="1" stop-color="#FBEEC4"/>
+    </radialGradient>
+    <linearGradient id="hizam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E9B84A"/><stop offset="0.5" stop-color="#C9A227"/><stop offset="1" stop-color="#9c7d1e"/>
+    </linearGradient>
+    <radialGradient id="ycorner" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFF1C4" stop-opacity=".9"/><stop offset="1" stop-color="#FFF1C4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bsGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFF6D8" stop-opacity=".8"/><stop offset="1" stop-color="#FFF6D8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="door" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F0CF6A"/><stop offset="1" stop-color="#B8922A"/>
+    </linearGradient>
+    <style>
+      .yglow{animation:breathe 3.4s ease infinite;}
+      .yedge{animation:edgePulse 3.4s ease infinite;}
+      .sweep{animation:sweep 4s ease 0.6s infinite;}
+      .bsglow{animation:bsOn 4s ease 0.6s infinite;}
+      .pil{animation:drift 6s ease-in-out infinite;}
+      .pil:nth-of-type(2){animation-delay:1s;}.pil:nth-of-type(3){animation-delay:2s;}
+      .pil:nth-of-type(4){animation-delay:.5s;}.pil:nth-of-type(5){animation-delay:2.5s;}.pil:nth-of-type(6){animation-delay:1.5s;}
+      @keyframes breathe{0%,100%{opacity:.4;}50%{opacity:.7;}}
+      @keyframes edgePulse{0%,100%{opacity:.5;stroke:#FFE9A8;}50%{opacity:1;stroke:#FFF6D8;}}
+      @keyframes sweep{0%{opacity:0;transform:translateX(0);}10%{opacity:1;}90%{opacity:1;}100%{opacity:0;transform:translateX(160px);}}
+      @keyframes bsOn{0%,70%{opacity:0;}88%{opacity:1;}100%{opacity:0;}}
+      @keyframes drift{0%,100%{transform:translateX(0);}50%{transform:translateX(-7px);}}
+      @media (prefers-reduced-motion:reduce){.yglow,.yedge,.sweep,.bsglow,.pil{animation:none;}}
+    </style>
+  </defs>
+
+  <rect x="-200" y="0" width="830" height="400" fill="url(#sky)"/>
+
+  <g id="illustration">
+    <!-- mataf marble + concentric tawaf rings -->
+    <rect x="-200" y="278" width="830" height="122" fill="#EFE7D3"/>
+    <g stroke="#E3D8BC" fill="none" stroke-width="1.4">
+      <ellipse cx="240" cy="318" rx="150" ry="34"/>
+      <ellipse cx="240" cy="330" rx="200" ry="46"/>
+      <ellipse cx="240" cy="344" rx="250" ry="58"/>
+    </g>
+
+    <!-- soft Yemeni-corner aura -->
+    <circle class="yglow" cx="155" cy="170" r="78" fill="url(#ycorner)" opacity="0.55"/>
+
+    <!-- KAABA — front face 170w x 220h ≈ 1.29 (real 13.1m / 10.18m) -->
+    <polygon points="155,58 325,58 385,38 215,38" fill="#1a1813"/>
+    <polygon points="325,58 385,38 385,258 325,278" fill="#100f0b"/>
+    <polygon points="155,58 325,58 325,278 155,278" fill="#15140f"/>
+    <g opacity="0.5"><rect x="188" y="58" width="10" height="220" fill="#26241c"/><rect x="262" y="58" width="8" height="220" fill="#26241c"/></g>
+
+    <!-- shadharwan base ledge -->
+    <polygon points="151,278 325,278 327,288 149,288" fill="#D8CFB8"/>
+    <polygon points="325,278 385,258 387,268 327,288" fill="#CFC6AE"/>
+
+    <!-- hizam gold band ~2/3 up -->
+    <rect x="155" y="128" width="170" height="15" fill="url(#hizam)"/>
+    <polygon points="325,128 385,108 385,123 325,143" fill="url(#hizam)"/>
+    <g opacity="0.55" stroke="#7a5e10" stroke-width="1">
+      <line x1="166" y1="135.5" x2="314" y2="135.5"/>
+      <g fill="#7a5e10" stroke="none"><circle cx="180" cy="135.5" r="1.4"/><circle cx="215" cy="135.5" r="1.4"/><circle cx="250" cy="135.5" r="1.4"/><circle cx="285" cy="135.5" r="1.4"/></g>
+    </g>
+
+    <!-- gold door on façade (2.25m up, ~3.1m tall) -->
+    <polygon points="337,237 355,231 355,178 337,184" fill="url(#door)" stroke="#8a6b18" stroke-width="1"/>
+    <line x1="346" y1="207" x2="346" y2="234" stroke="#8a6b18" stroke-width="1"/>
+
+    <!-- BLACK STONE in silver frame at eastern corner (~1.5m up) -->
+    <circle class="bsglow" cx="325" cy="250" r="20" fill="url(#bsGlow)" opacity="0"/>
+    <ellipse cx="325" cy="250" rx="7" ry="12" fill="none" stroke="#C8CCD0" stroke-width="3"/>
+    <ellipse cx="325" cy="250" rx="3.5" ry="8" fill="#0a0a0a"/>
+
+    <!-- Yemeni corner edge highlight (no stone — touched only) -->
+    <line class="yedge" x1="155" y1="60" x2="155" y2="276" stroke="#FFE9A8" stroke-width="2.5" opacity="0.7"/>
+
+    <!-- recitation stretch: glow sweeps Yemeni -> Black Stone -->
+    <line x1="160" y1="300" x2="320" y2="300" stroke="#E9B84A" stroke-width="2" stroke-dasharray="3 5" opacity="0.5"/>
+    <circle class="sweep" cx="160" cy="300" r="5" fill="#F5E037" opacity="0"/>
+
+    <!-- pilgrims (faceless ihram silhouettes) -->
+    <g fill="#F4F1EA" stroke="#D8CFB8" stroke-width="1">
+      <g class="pil"><circle cx="120" cy="312" r="6"/><path d="M112 334 Q112 320 120 320 Q128 320 128 334 Z"/></g>
+      <g class="pil"><circle cx="150" cy="318" r="6"/><path d="M142 340 Q142 326 150 326 Q158 326 158 340 Z"/></g>
+      <g class="pil"><circle cx="200" cy="322" r="7"/><path d="M191 346 Q191 330 200 330 Q209 330 209 346 Z"/></g>
+      <g class="pil"><circle cx="255" cy="320" r="6"/><path d="M247 342 Q247 328 255 328 Q263 328 263 342 Z"/></g>
+      <g class="pil"><circle cx="300" cy="316" r="6"/><path d="M292 338 Q292 324 300 324 Q308 324 308 338 Z"/></g>
+      <g class="pil"><circle cx="340" cy="320" r="6.5"/><path d="M331 343 Q331 328 340 328 Q349 328 349 343 Z"/></g>
+    </g>
+  </g>
+
+  <g id="labels" font-family="system-ui, sans-serif" font-size="10" fill="#6e5a2e">
+    <line x1="155" y1="276" x2="120" y2="360" stroke="#C9A227" stroke-width="1"/>
+    <text x="60" y="372" font-style="italic" font-family="Georgia, serif" fill="#9c7d1e">Rukn al-Yamani</text>
+    <text x="60" y="384">Yemeni Corner</text>
+    <line x1="325" y1="250" x2="372" y2="300" stroke="#C9A227" stroke-width="1"/>
+    <text x="350" y="318" font-style="italic" font-family="Georgia, serif" fill="#9c7d1e" text-anchor="middle">al-Hajar</text>
+    <text x="350" y="330" text-anchor="middle">Black Stone</text>
+  </g>
+
+  <g id="dimensions" opacity="0" font-family="system-ui, sans-serif" font-size="10" fill="#7a5e1e">
+    <line x1="132" y1="58" x2="132" y2="278" stroke="#C9A227" stroke-width="1"/>
+    <line x1="128" y1="58" x2="136" y2="58" stroke="#C9A227" stroke-width="1"/>
+    <line x1="128" y1="278" x2="136" y2="278" stroke="#C9A227" stroke-width="1"/>
+    <text x="100" y="172" transform="rotate(-90 100 172)" text-anchor="middle" font-weight="600">13.1 m</text>
+    <line x1="155" y1="296" x2="325" y2="296" stroke="#C9A227" stroke-width="1"/>
+    <line x1="155" y1="292" x2="155" y2="300" stroke="#C9A227" stroke-width="1"/>
+    <line x1="325" y1="292" x2="325" y2="300" stroke="#C9A227" stroke-width="1"/>
+    <rect x="198" y="288" width="84" height="15" rx="4" fill="#FBEEC4"/>
+    <text x="240" y="299" text-anchor="middle" font-weight="600">10.18 m</text>
+  </g>
+</svg>

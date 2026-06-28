@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "Qur'an Prayers for one's Parents" · (central du'a 17:24)
+  An elderly couple — father with cap/beard/cane, mother in hijab leaning close.
+  FACES ARE FULLY BLANK by design — no eyes, nose, mouth, or glasses anywhere.
+  - Animation self-starts (CSS): a warm mercy-light breathes; soft motes drift down. Figures stay still. No JS.
+  - #illustration : the scene.   #text : the title — remove/translate freely (serif fallback).
+  - Scales via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 440" width="430" height="440" role="img" aria-label="An elderly couple, faces left blank, in soft warm light">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#FDF8EC"/><stop offset="1" stop-color="#FBEFCD"/></radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".7"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="baju" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6BA899"/><stop offset="1" stop-color="#4E8676"/></linearGradient>
+    <linearGradient id="dress" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C98456"/><stop offset="1" stop-color="#A4663A"/></linearGradient>
+    <linearGradient id="hijab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E7B0A1"/><stop offset="1" stop-color="#CE8E7E"/></linearGradient>
+    <linearGradient id="sarong" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C7A464"/><stop offset="1" stop-color="#AC8845"/></linearGradient>
+    <style>
+      .haloP{animation:soft 3.8s ease-in-out infinite;}
+      .m1{animation:fall 5s ease-in infinite;} .m2{animation:fall 6s ease-in infinite;animation-delay:1.2s;}
+      .m3{animation:fall 5.6s ease-in infinite;animation-delay:2.2s;} .m4{animation:fall 6.4s ease-in infinite;animation-delay:.6s;}
+      @keyframes soft{0%,100%{opacity:.5;}50%{opacity:.9;}}
+      @keyframes fall{0%{transform:translateY(-8px);opacity:0;}20%{opacity:.9;}100%{transform:translateY(40px);opacity:0;}}
+      @media (prefers-reduced-motion:reduce){.haloP,.m1,.m2,.m3,.m4{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="430" height="440" fill="url(#bg)"/>
+
+  <g id="illustration">
+    <circle class="haloP" cx="212" cy="210" r="180" fill="url(#halo)"/>
+    <ellipse cx="210" cy="418" rx="125" ry="13" fill="#000" opacity="0.10"/>
+
+    <!-- MOTHER (right, behind) -->
+    <g>
+      <!-- dress -->
+      <path d="M230,402 Q228,300 240,232 Q250,182 262,180 Q274,182 284,232 Q296,300 294,402 Z" fill="url(#dress)"/>
+      <path d="M262,180 Q250,182 240,232 Q230,300 232,402 L250,402 Q244,300 250,232 Q256,196 262,190 Z" fill="#A4663A" opacity="0.5"/>
+      <!-- sandals -->
+      <path d="M246,402 h18 q5 0 5 6 q0 4 -5 4 h-18 z" fill="#6E5A44"/>
+      <path d="M272,402 h18 q5 0 5 6 q0 4 -5 4 h-18 z" fill="#6E5A44"/>
+      <!-- hijab over head + shoulders -->
+      <path d="M226,206 Q222,150 262,98 Q302,150 298,206 Q300,232 280,236 L244,236 Q224,232 226,206 Z" fill="url(#hijab)"/>
+      <path d="M262,98 Q230,128 226,206 Q224,232 244,236 L256,236 Q240,232 242,206 Q244,140 262,108 Z" fill="#CE8E7E" opacity="0.45"/>
+      <!-- BLANK face -->
+      <ellipse cx="262" cy="138" rx="21" ry="25" fill="#E9BB8E"/>
+      <!-- hijab frame edges over the face -->
+      <path d="M241,138 Q240,110 262,100 Q284,110 283,138 Q283,118 262,114 Q241,118 241,138 Z" fill="url(#hijab)"/>
+      <path d="M244,156 Q262,170 280,156 Q284,168 262,172 Q240,168 244,156 Z" fill="url(#hijab)"/>
+      <!-- her near hand resting on his arm -->
+      <ellipse cx="214" cy="266" rx="9" ry="7" fill="#E9BB8E"/>
+    </g>
+
+    <!-- FATHER (left, front) -->
+    <g>
+      <!-- cane -->
+      <path d="M104,238 Q100,220 110,216 Q121,214 121,226" fill="none" stroke="#7A5230" stroke-width="5" stroke-linecap="round"/>
+      <line x1="118" y1="226" x2="122" y2="406" stroke="#7A5230" stroke-width="5" stroke-linecap="round"/>
+      <!-- sarong (plaid) -->
+      <path d="M132,400 Q130,332 135,290 L195,290 Q200,332 198,400 Z" fill="url(#sarong)"/>
+      <g stroke="#8A6B34" stroke-width="2" opacity="0.6"><line x1="150" y1="292" x2="150" y2="400"/><line x1="178" y1="292" x2="178" y2="400"/></g>
+      <g stroke="#8A6B34" stroke-width="2" opacity="0.5"><line x1="134" y1="320" x2="198" y2="320"/><line x1="133" y1="360" x2="198" y2="360"/></g>
+      <!-- shoes -->
+      <path d="M134,400 h22 q6 0 6 7 q0 5 -6 5 h-22 z" fill="#3A352E"/>
+      <path d="M168,400 h22 q6 0 6 7 q0 5 -6 5 h-22 z" fill="#3A352E"/>
+      <!-- baju (teal tunic) -->
+      <path d="M126,292 Q124,200 140,166 Q150,156 162,156 Q174,156 184,166 Q200,200 198,292 Z" fill="url(#baju)"/>
+      <path d="M162,156 Q150,156 140,166 Q124,200 126,292 L146,292 Q142,200 150,170 Q156,160 162,160 Z" fill="#4E8676" opacity="0.5"/>
+      <!-- placket + buttons -->
+      <path d="M162,162 L156,176 M162,162 L168,176" stroke="#3F6F61" stroke-width="2" fill="none"/>
+      <line x1="162" y1="178" x2="162" y2="214" stroke="#3F6F61" stroke-width="2"/>
+      <circle cx="162" cy="186" r="2" fill="#3F6F61"/><circle cx="162" cy="200" r="2" fill="#3F6F61"/>
+      <!-- right arm to cane -->
+      <path d="M138,170 Q120,196 116,230 Q116,240 126,240 Q134,210 150,184 Z" fill="url(#baju)"/>
+      <ellipse cx="119" cy="234" rx="9" ry="8" fill="#E9BB8E"/>
+      <!-- left arm resting toward mother -->
+      <path d="M188,170 Q206,196 206,252 Q206,262 196,262 Q188,214 174,186 Z" fill="url(#baju)"/>
+      <ellipse cx="201" cy="258" rx="9" ry="8" fill="#E9BB8E"/>
+      <!-- neck -->
+      <rect x="153" y="146" width="18" height="16" fill="#DDAE80"/>
+      <!-- BLANK face -->
+      <ellipse cx="162" cy="118" rx="25" ry="29" fill="#E9BB8E"/>
+      <!-- white beard (lower face only) -->
+      <path d="M139,124 Q141,152 162,160 Q183,152 185,124 Q173,140 162,140 Q151,140 139,124 Z" fill="#E4DFD5"/>
+      <!-- white side hair -->
+      <path d="M137,112 Q132,124 140,132 Q142,120 146,114 Z" fill="#E4DFD5"/>
+      <path d="M187,112 Q192,124 184,132 Q182,120 178,114 Z" fill="#E4DFD5"/>
+      <!-- kufi cap -->
+      <path d="M136,100 Q138,76 162,74 Q186,76 188,100 Q174,92 162,92 Q150,92 136,100 Z" fill="#EDE6D3"/>
+      <path d="M136,100 Q150,93 162,93 Q174,93 188,100 L188,104 Q162,96 136,104 Z" fill="#D8CDB2"/>
+      <g fill="#D8CDB2" opacity="0.7"><circle cx="152" cy="88" r="1.3"/><circle cx="162" cy="84" r="1.3"/><circle cx="172" cy="88" r="1.3"/></g>
+    </g>
+
+    <!-- mercy-light motes -->
+    <g fill="#F5E7B0">
+      <circle class="m1" cx="150" cy="120" r="3"/><circle class="m2" cx="280" cy="150" r="2.4"/>
+      <circle class="m3" cx="210" cy="100" r="2.6"/><circle class="m4" cx="320" cy="180" r="2.2"/>
+    </g>
+  </g>
+
+  <g id="text">
+    <text x="215" y="34" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="18" fill="#9c7d1e">Qur&#8217;an Prayers for one&#8217;s Parents</text>
+  </g>
+</svg>

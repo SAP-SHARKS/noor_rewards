@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Heart upon Allah · du'a 3:8 (Rabbana la tuzigh qulubana… — keep the heart firm upon guidance)
+  - Animations self-start (CSS inside, slow/looping). No JS.
+  - #illustration : heart, halo, rays.   #name : the word الله.
+  - FONT NOTE: the sacred name is real Unicode text (الله), not hand-drawn paths, so it stays correct.
+    It needs an Arabic font present to form the lafz al-jalalah ligature — your app's Amiri does this.
+    Fallbacks are listed; if no Arabic font is available the host must supply one.
+  - Scales to any size via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 400" width="430" height="400" role="img" aria-label="A glowing heart bearing the name of Allah">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="48%" r="65%"><stop offset="0" stop-color="#FDF7E2"/><stop offset="1" stop-color="#FBEEC4"/></radialGradient>
+    <radialGradient id="heartFill" cx="50%" cy="42%" r="62%">
+      <stop offset="0" stop-color="#FDF6E0"/><stop offset="0.6" stop-color="#FBE6A6"/><stop offset="1" stop-color="#E9B84A"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".8"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="nameGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".9"/><stop offset="1" stop-color="#FFF6D8" stop-opacity="0"/></radialGradient>
+    <style>
+      .haloP{animation:soft 2.6s ease-in-out infinite;transform-box:view-box;transform-origin:215px 205px;}
+      .ray{animation:shimmer 3.4s ease-in-out infinite;}
+      .beat{animation:beat 2.6s ease-in-out infinite;transform-box:view-box;transform-origin:215px 205px;}
+      .glowP{animation:soft 2.6s ease-in-out infinite;}
+      @keyframes beat{0%,100%{transform:scale(1);}50%{transform:scale(1.035);}}
+      @keyframes soft{0%,100%{opacity:.55;}50%{opacity:1;}}
+      @keyframes shimmer{0%,100%{opacity:.25;}50%{opacity:.6;}}
+      @media (prefers-reduced-motion:reduce){.haloP,.ray,.beat,.glowP{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="430" height="400" fill="url(#bg)"/>
+
+  <g id="illustration">
+    <!-- radiating light behind -->
+    <g class="ray" stroke="#E9B84A" stroke-width="2" stroke-linecap="round" opacity="0.35">
+      <line x1="215" y1="205" x2="215" y2="50"/><line x1="215" y1="205" x2="340" y2="90"/><line x1="215" y1="205" x2="385" y2="205"/>
+      <line x1="215" y1="205" x2="340" y2="330"/><line x1="215" y1="205" x2="215" y2="360"/><line x1="215" y1="205" x2="90" y2="330"/>
+      <line x1="215" y1="205" x2="45" y2="205"/><line x1="215" y1="205" x2="90" y2="90"/>
+    </g>
+    <circle class="haloP" cx="215" cy="205" r="150" fill="url(#halo)"/>
+
+    <g class="beat">
+      <!-- heart -->
+      <path d="M215,300 C175,265 120,228 120,170 C120,135 150,116 178,120 C198,123 210,138 215,152
+               C220,138 232,123 252,120 C280,116 310,135 310,170 C310,228 255,265 215,300 Z"
+            fill="url(#heartFill)" stroke="#C9A227" stroke-width="3"/>
+      <!-- delicate inner border -->
+      <path transform="translate(215 205) scale(.84) translate(-215 -205)"
+            d="M215,300 C175,265 120,228 120,170 C120,135 150,116 178,120 C198,123 210,138 215,152
+               C220,138 232,123 252,120 C280,116 310,135 310,170 C310,228 255,265 215,300 Z"
+            fill="none" stroke="#C9A227" stroke-width="1" opacity="0.45"/>
+      <!-- small ornament dots -->
+      <g fill="#B8922A"><circle cx="215" cy="138" r="2.4"/><circle cx="178" cy="134" r="1.8"/><circle cx="252" cy="134" r="1.8"/></g>
+
+      <!-- glow behind the name -->
+      <circle class="glowP" cx="215" cy="208" r="52" fill="url(#nameGlow)"/>
+
+      <g id="name">
+        <text x="215" y="232" text-anchor="middle"
+          font-family="'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif"
+          font-weight="700" font-size="68" fill="#8a6b18">الله</text>
+      </g>
+    </g>
+  </g>
+</svg>

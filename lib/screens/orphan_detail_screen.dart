@@ -341,13 +341,15 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
   }
 
   Widget _storySection() {
-    if (_orphan.story == null || _orphan.story!.isEmpty) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final text = _orphan.storyForLocale(lang);
+    if (text == null || text.isEmpty) {
       return const SizedBox.shrink();
     }
     return _section(
       AppLocalizations.of(context)?.theirStorySection ?? 'Their story',
       Text(
-        _orphan.story!,
+        text,
         style: GoogleFonts.outfit(
           fontSize: 14,
           color: Y4.ink,

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "Count us among the believers" · du'a 3:53
+  - Animation self-starts (CSS inside): a figure crosses to JOIN the believers; their light breathes; a join-sparkle.
+  - The other group is neutral (cool tone), NOT villainised, and carries no label. No JS.
+  - #illustration : the scene.   #text : the title — remove/translate freely (serif fallback).
+  - Scales via viewBox.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 340" width="430" height="340" role="img" aria-label="A figure joining the group of believers who stand in light">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="55%" r="75%"><stop offset="0" stop-color="#FDF8EC"/><stop offset="1" stop-color="#FBF1D8"/></radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".85"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <style>
+      .halo{animation:breathe 3.2s ease-in-out infinite;}
+      .joiner{animation:glide 4.4s ease-in-out infinite;}
+      .jspark{animation:jspark 4.4s ease-in-out infinite;transform-box:view-box;transform-origin:280px 226px;}
+      @keyframes breathe{0%,100%{opacity:.45;}50%{opacity:.85;}}
+      @keyframes glide{0%{transform:translateX(0);opacity:0;}10%{opacity:1;}62%{transform:translateX(74px);opacity:1;}78%{transform:translateX(74px);opacity:0;}100%{transform:translateX(0);opacity:0;}}
+      @keyframes jspark{0%,58%{opacity:0;transform:scale(.3);}70%{opacity:1;transform:scale(1.1);}84%,100%{opacity:0;transform:scale(1);}}
+      @media (prefers-reduced-motion:reduce){.halo,.joiner,.jspark{animation:none;}.joiner{opacity:1;transform:translateX(74px);}}
+    </style>
+  </defs>
+
+  <rect width="430" height="340" fill="url(#bg)"/>
+
+  <g id="illustration">
+    <!-- believers' light side (subtle warm wash) -->
+    <rect x="250" y="0" width="180" height="340" fill="#FCE8A8" opacity="0.12"/>
+    <!-- ground -->
+    <line x1="40" y1="272" x2="392" y2="272" stroke="#E6D8B6" stroke-width="2"/>
+
+    <!-- light above believers -->
+    <circle class="halo" cx="330" cy="206" r="86" fill="url(#halo)"/>
+    <circle cx="330" cy="150" r="9" fill="#F5E037"/>
+    <g stroke="#E9B84A" stroke-width="2" stroke-linecap="round" opacity="0.6">
+      <line x1="330" y1="132" x2="330" y2="122"/><line x1="350" y1="140" x2="357" y2="133"/><line x1="310" y1="140" x2="303" y2="133"/>
+    </g>
+
+    <!-- OTHER group (left) — neutral, cool tone, dignified -->
+    <g>
+      <g><circle cx="72" cy="226" r="8" fill="#C7C2BA"/><path d="M59,272 Q60,244 72,240 Q84,244 85,272 Z" fill="#95A0AE"/></g>
+      <g><circle cx="102" cy="222" r="8" fill="#C7C2BA"/><path d="M89,272 Q90,242 102,238 Q114,242 115,272 Z" fill="#8A93A0"/></g>
+      <g><circle cx="132" cy="226" r="8" fill="#C7C2BA"/><path d="M119,272 Q120,244 132,240 Q144,244 145,272 Z" fill="#9AA3AE"/></g>
+    </g>
+
+    <!-- BELIEVERS group (right) — warm, with light -->
+    <g>
+      <g><circle cx="298" cy="226" r="8" fill="#EBD0A8"/><path d="M285,272 Q286,244 298,240 Q310,244 311,272 Z" fill="#E4B84E"/><path d="M290,250 Q298,246 306,250" fill="none" stroke="#6FB0A0" stroke-width="2.5"/></g>
+      <g><circle cx="330" cy="221" r="8" fill="#EBD0A8"/><path d="M317,272 Q318,241 330,237 Q342,241 343,272 Z" fill="#E9C055"/><path d="M322,248 Q330,244 338,248" fill="none" stroke="#6FB0A0" stroke-width="2.5"/></g>
+      <g><circle cx="362" cy="226" r="8" fill="#EBD0A8"/><path d="M349,272 Q350,244 362,240 Q374,244 375,272 Z" fill="#E4B84E"/><path d="M354,250 Q362,246 370,250" fill="none" stroke="#6FB0A0" stroke-width="2.5"/></g>
+    </g>
+
+    <!-- join sparkle -->
+    <path class="jspark" d="M280 226 l2.5 6 l6.5 .8 l-4.8 4.6 l1.3 6.4 l-5.5 -3.2 l-5.5 3.2 l1.3 -6.4 l-4.8 -4.6 l6.5 -.8z" fill="#F5E037"/>
+
+    <!-- the supplicant ("us") crossing to join the believers -->
+    <g class="joiner">
+      <circle cx="206" cy="220" r="10" fill="#FCE8A8" opacity="0.5"/>
+      <circle cx="206" cy="223" r="8.5" fill="#F0DBB4"/>
+      <path d="M191,272 Q192,238 206,234 Q220,238 221,272 Z" fill="#F0C75A"/>
+      <path d="M197,248 Q206,243 215,248" fill="none" stroke="#6FB0A0" stroke-width="2.5"/>
+    </g>
+  </g>
+
+  <g id="text">
+    <text x="215" y="38" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="20" fill="#9c7d1e">Count us among the believers</text>
+  </g>
+</svg>
