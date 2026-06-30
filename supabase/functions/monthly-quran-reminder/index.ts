@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
+import { filterPausedUsers } from '../_shared/disengagement.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -17,12 +18,13 @@ serve(async (_req: Request) => {
     const firstDayOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 
     // ── 1. Load all FCM tokens (+ user locale for variant lookup) ───────────────
-    const { data: fcmTokens, error: fcmError } = await supabase
+    const { data: fcmTokensRaw, error: fcmError } = await supabase
       .from('fcm_tokens')
       .select('user_id, token, app_locale');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
-    if (!fcmTokens || fcmTokens.length === 0) {
+    const fcmTokens = await filterPausedUsers(supabase, fcmTokensRaw ?? []);
+    if (fcmTokens.length === 0) {
       return new Response(JSON.stringify({ message: 'No FCM tokens found in database.' }), {
         headers: { 'Content-Type': 'application/json' },
       });

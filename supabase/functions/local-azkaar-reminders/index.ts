@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
+import { filterPausedUsers } from '../_shared/disengagement.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -14,20 +15,22 @@ serve(async (_req: Request) => {
     const now = new Date();
 
     // ── 1. Load all FCM tokens with timezone (+ user locale for variant lookup) ──
-    const { data: fcmTokens, error: fcmError } = await supabase
+    const { data: fcmTokensRaw, error: fcmError } = await supabase
       .from('fcm_tokens')
       .select('user_id, token, timezone, app_locale');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
-    if (!fcmTokens || fcmTokens.length === 0) {
+    const fcmTokens = await filterPausedUsers(supabase, fcmTokensRaw ?? []);
+    if (fcmTokens.length === 0) {
       return new Response(JSON.stringify({ message: 'No FCM tokens found in database.' }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // ── 2. Bucket users by local hour (8 = morning, 17 = evening) ─────────────
+    // ── 2. Bucket users by local hour (8 = morning, 17 = evening, 21 = sleep) ─
     const morningUsers: string[] = [];
     const eveningUsers: string[] = [];
+    const sleepUsers: string[] = [];
     const userMap = new Map<string, { tokens: string[]; locale: string }>();
 
     for (const row of fcmTokens) {
@@ -53,11 +56,12 @@ serve(async (_req: Request) => {
 
       if (hour === 8)  morningUsers.push(row.user_id);
       if (hour === 17) eveningUsers.push(row.user_id);
+      if (hour === 21) sleepUsers.push(row.user_id);
     }
 
-    if (morningUsers.length === 0 && eveningUsers.length === 0) {
+    if (morningUsers.length === 0 && eveningUsers.length === 0 && sleepUsers.length === 0) {
       return new Response(JSON.stringify({
-        message: 'No users at 08:00 or 17:00 right now.',
+        message: 'No users at 08:00, 17:00, or 21:00 right now.',
         server_utc_hour: now.getUTCHours(),
       }), { headers: { 'Content-Type': 'application/json' } });
     }
@@ -69,20 +73,23 @@ serve(async (_req: Request) => {
     const { data: alreadySent } = await supabase
       .from('notification_log')
       .select('user_id, notification_type')
-      .in('notification_type', ['morning_azkaar', 'evening_azkaar'])
+      .in('notification_type', ['morning_azkaar', 'evening_azkaar', 'sleep_azkar'])
       .gte('sent_at', todayStart.toISOString());
 
     const sentMorning = new Set<string>();
     const sentEvening = new Set<string>();
+    const sentSleep   = new Set<string>();
     for (const r of alreadySent || []) {
       if (r.notification_type === 'morning_azkaar') sentMorning.add(r.user_id);
       if (r.notification_type === 'evening_azkaar') sentEvening.add(r.user_id);
+      if (r.notification_type === 'sleep_azkar')    sentSleep.add(r.user_id);
     }
 
     const dedupedMorning = morningUsers.filter(uid => !sentMorning.has(uid));
     const dedupedEvening = eveningUsers.filter(uid => !sentEvening.has(uid));
+    const dedupedSleep   = sleepUsers.filter(uid => !sentSleep.has(uid));
 
-    if (dedupedMorning.length === 0 && dedupedEvening.length === 0) {
+    if (dedupedMorning.length === 0 && dedupedEvening.length === 0 && dedupedSleep.length === 0) {
       return new Response(JSON.stringify({ message: 'All targeted users already notified today.' }), {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -126,7 +133,11 @@ serve(async (_req: Request) => {
       logType: string,
     ) => {
       const nid   = crypto.randomUUID();
-      const fallbackRoute = logType === 'morning_azkaar' ? 'morning' : 'evening';
+      const fallbackRoute = logType === 'morning_azkaar'
+        ? 'morning'
+        : logType === 'evening_azkaar'
+        ? 'evening'
+        : 'dhikr'; // sleep_azkar lands on the Dhikr hub
       const variant = await pickVariant(
         supabase,
         logType,
@@ -214,11 +225,22 @@ serve(async (_req: Request) => {
       );
     }
 
+    for (const uid of dedupedSleep) {
+      const entry = userMap.get(uid)!;
+      await sendNotification(
+        uid, entry.tokens, entry.locale,
+        '🌙 Time to wind down',
+        'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.',
+        'sleep_azkar',
+      );
+    }
+
     return new Response(JSON.stringify({
       success: true,
       server_utc_hour: now.getUTCHours(),
       morning_sent: dedupedMorning.length,
       evening_sent: dedupedEvening.length,
+      sleep_sent:   dedupedSleep.length,
       results,
     }), { headers: { 'Content-Type': 'application/json' } });
 

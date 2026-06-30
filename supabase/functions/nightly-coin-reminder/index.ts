@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
+import { filterPausedUsers } from '../_shared/disengagement.ts';
 
 serve(async (req: Request) => {
   try {
@@ -12,18 +13,19 @@ serve(async (req: Request) => {
     );
 
     // Get all FCM tokens with their timezone (+ user locale for variant lookup)
-    const { data: fcmTokens, error: fcmError } = await supabase
+    const { data: fcmTokensRaw, error: fcmError } = await supabase
       .from('fcm_tokens')
       .select('user_id, token, timezone, app_locale');
 
     if (fcmError) throw new Error(`FCM load error: ${fcmError.message}`);
+    const fcmTokens = await filterPausedUsers(supabase, fcmTokensRaw ?? []);
 
     const now = new Date();
     const targetedUsers: string[] = [];
     const targetedTokensMap = new Map<string, { token: string; locale: string }>();
 
     // Step 1: Filter users where their local timezone hour is 21 (9:00 PM)
-    for (const row of fcmTokens || []) {
+    for (const row of fcmTokens) {
       const tz = row.timezone || 'UTC';
       let hourStr;
 

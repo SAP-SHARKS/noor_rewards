@@ -10,6 +10,7 @@ import '../l10n/app_localizations.dart';
 import '../utils/project_l10n.dart' as proj_l10n;
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/streak_service.dart';
 import '../services/stats_service.dart';
@@ -224,6 +225,145 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   late Animation<double> _fade;
   final ScrollController _scrollCtrl = ScrollController();
 
+  // ── Rotating reminder pool (Akhirah / Jannah / sadaqah themed) ────────
+  // One sentence is picked per app launch — never the same as the last
+  // (persisted via SharedPreferences). Mirrors the pattern used in
+  // akhirah_balance_screen.dart but with hereafter-themed content.
+  static const String _kPrefKeyLastReminderIdx = 'impact_last_reminder_idx';
+  static const List<String> _kReminderPool = [
+    // — Quranic —
+    '“Whoever does an atom\'s weight of good will see it.” — Surah Az-Zalzalah 99:7',
+    '“The home of the Hereafter — that is the eternal life, if only they knew.” — Surah Al-Ankabut 29:64',
+    '“Race towards forgiveness from your Lord and a Garden as wide as the heavens and the earth.” — Surah Al-Hadid 57:21',
+    '“And what is the life of this world except amusement of delusion?” — Surah Ali Imran 3:185',
+    '“Indeed, with hardship comes ease.” — Surah Ash-Sharh 94:6',
+    // — Hadith-anchored —
+    '“A single good deed in Ramadan equals 70 in any other month.” Stack while the door is open.',
+    'The Prophet ✍ said: charity does not decrease wealth — it grows it. (Muslim)',
+    '“Smiling at your brother is sadaqah.” You can earn even when your pockets are empty. (Tirmidhi)',
+    '“The most beloved deeds to Allah are the most consistent, even if small.” (Bukhari)',
+    '“In Jannah is what no eye has seen, no ear has heard, and no heart has imagined.” (Bukhari)',
+    'Two rakats at Fajr are better than the world and everything in it. (Muslim)',
+    'Every step toward salah erases a sin and raises a rank. (Muslim)',
+    // — Coaching / motivation —
+    'Every seed you donate plants a tree in someone else\'s Jannah — and in yours.',
+    'You can\'t take wealth with you. Only the deeds it bought.',
+    'The angels record nothing too small. One Subhanallah may outweigh a mountain.',
+    'Today\'s sadaqah is tomorrow\'s shade on the day there is no shade.',
+    'A heart that gives is a heart Allah keeps full. Don\'t close it.',
+    'Death isn\'t the end — it\'s the receipt. What did you send ahead?',
+    'Imagine your scale on Yawm al-Qiyamah. What weight are you adding today?',
+    'The world is borrowed. The Akhirah is owned. Invest accordingly.',
+    'You bury the body — but not the deeds. Send them ahead while you can.',
+    'A righteous child who prays for you, a charity that flows, or knowledge that benefits — three eternal investments. (Muslim)',
+    'You will meet Allah with your record. Make sure today\'s page is one you want Him to read.',
+    'No deed is too small for the One who counts atoms.',
+  ];
+  String _reminder = _kReminderPool[0];
+
+  // Pick a random reminder different from the last shown one. Persist the
+  // chosen index so the next launch can avoid repeating it.
+  Future<void> _loadReminder() async {
+    int lastIdx = -1;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      lastIdx = prefs.getInt(_kPrefKeyLastReminderIdx) ?? -1;
+    } catch (_) {/* fall through with -1 */}
+    final rand = math.Random();
+    int idx;
+    do {
+      idx = rand.nextInt(_kReminderPool.length);
+    } while (idx == lastIdx && _kReminderPool.length > 1);
+    if (mounted) setState(() => _reminder = _kReminderPool[idx]);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_kPrefKeyLastReminderIdx, idx);
+    } catch (_) {/* best-effort */}
+  }
+
+  // Styled reminder card — same visual language as akhirah_balance_screen
+  // ("A REMINDER" eyebrow + sparkle icon + warm honey gradient).
+  Widget _reminderCard() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFFCEC), Color(0xFFFFF6D6)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Y4.primary.withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.primary.withValues(alpha: 0.16),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Y4.primary, Y4.primaryDeep],
+              ),
+              borderRadius: BorderRadius.circular(11),
+              boxShadow: [
+                BoxShadow(
+                  color: Y4.primaryDeep.withValues(alpha: 0.30),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.auto_awesome_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)?.aReminderLabel ?? 'A REMINDER',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Y4.primaryDeep,
+                    letterSpacing: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  _reminder,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Y4.ink,
+                    height: 1.45,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -232,6 +372,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       duration: const Duration(milliseconds: 700),
     )..forward();
     _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
+    _loadReminder();
     // Listen for any new dhikr / ayah recorded in this session.
     // StatsService bumps `revision` synchronously after each record(),
     // so this fires the instant the user completes a set — even while the
@@ -715,68 +856,44 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   ),
                   const SizedBox(height: 6),
 
-                  // Main value (Fraunces serif for "Priceless")
+                  // "+N today" pill on its own line (replaces the Priceless
+                  // heading + "Beyond what the world can hold" subtitle).
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)?.priceless ?? 'Priceless',
-                        style: Y4.display(
-                          fontSize: 44,
-                          fontWeight: FontWeight.w500,
-                          color: Y4.ink,
-                          letterSpacing: -0.5,
-                          height: 1.0,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Y4.primaryDeep.withValues(alpha: 0.6),
+                            width: 1,
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.85),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                              color: Y4.primaryDeep.withValues(alpha: 0.6),
-                              width: 1,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.trending_up_rounded,
+                              color: Y4.primaryDeep,
+                              size: 14,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.trending_up_rounded,
-                                color: Y4.primaryDeep,
-                                size: 13,
+                            const SizedBox(width: 4),
+                            Text(
+                              '+${_todayPoints > 0 ? _todayPoints : 0} today',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: Y4.ink,
                               ),
-                              const SizedBox(width: 3),
-                              Text(
-                                '+${_todayPoints > 0 ? _todayPoints : 0} today',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: Y4.ink,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    AppLocalizations.of(context)?.beyondWorldCanHold ??
-                        'Beyond what the world can hold',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: Y4.inkSoft,
-                      fontStyle: FontStyle.italic,
-                    ),
                   ),
 
                   const SizedBox(height: 22),
@@ -813,6 +930,12 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         ),
                     ],
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // Rotating Akhirah/Jannah/good-deeds reminder — same
+                  // visual language as the akhirah_balance reflection card.
+                  _reminderCard(),
 
                   const SizedBox(height: 18),
 

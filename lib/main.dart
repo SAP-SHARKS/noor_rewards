@@ -27,6 +27,7 @@ import 'services/quran_api_config.dart'; // Quran Foundation credentials
 import 'services/quran_api_service.dart';
 import 'services/notification_service.dart';
 import 'services/notification_center.dart';
+import 'services/local_reminder_scheduler.dart';
 import 'services/onboarding_assets_service.dart';
 import 'services/translation_service.dart';
 
@@ -357,7 +358,7 @@ class AuthGate extends StatefulWidget {
   State<AuthGate> createState() => _AuthGateState();
 }
 
-class _AuthGateState extends State<AuthGate> {
+class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
   bool _onboardingDone = false;
   bool _profileSetupDone = false;
   bool _welcomeShown = false;
@@ -366,6 +367,24 @@ class _AuthGateState extends State<AuthGate> {
   // Per-user once-per-session guard for the dedup RPC. Without this we'd
   // hit the network on every StreamBuilder rebuild.
   final Set<String> _dedupedUserIds = <String>{};
+
+  /// Bumps `profiles.last_seen_at` and auto-resumes notifications if they
+  /// were paused. Fire-and-forget — called on launch and whenever the app
+  /// returns to the foreground. Drives the disengagement-pause system.
+  void _markUserActive() {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
+    Supabase.instance.client.rpc('mark_user_active').catchError((e) {
+      debugPrint('[AuthGate] mark_user_active failed: $e');
+    });
+  }
+
+  /// Re-schedules local azkar + Friday-Kahf reminders. Idempotent — each
+  /// notification id is cancelled before being re-scheduled so we never
+  /// duplicate. Cheap; safe to call on every launch.
+  void _scheduleLocalReminders() {
+    LocalReminderScheduler.instance.scheduleAll();
+  }
 
   /// Calls `dedupe_profile_on_login` so any older profile that shares the
   /// caller's email (from a different auth method) is merged INTO the
@@ -393,6 +412,7 @@ class _AuthGateState extends State<AuthGate> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Restore the persisted QF signed-out flag from secure storage.
     QfAuthService.instance.init();
     // Ask Google Play whether a newer build is available for this
@@ -404,6 +424,25 @@ class _AuthGateState extends State<AuthGate> {
     // bookmarks both ways in the background. Catches the case where the
     // user added a bookmark on quran.com while the app was closed.
     _syncQfBookmarksIfLinked();
+    // Mark active on cold-start so the disengagement check counts this run.
+    _markUserActive();
+    // Schedule the fixed-time local reminders (azkar + Friday Kahf). They
+    // recur on the device's AlarmManager so they fire even when FCM is
+    // throttled or the device is in Doze.
+    _scheduleLocalReminders();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _markUserActive();
+    }
   }
 
   Future<void> _syncQfBookmarksIfLinked() async {

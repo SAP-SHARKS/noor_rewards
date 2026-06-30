@@ -6,6 +6,12 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- Required by LocalReminderScheduler to fire azkar + Friday-Kahf
+         reminders at exact wall-clock times via AlarmManager
+         (`AndroidScheduleMode.exactAllowWhileIdle`). USE_EXACT_ALARM is
+         granted by default on Play Store installs and survives Doze. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <application
         android:label="Sabiq"
