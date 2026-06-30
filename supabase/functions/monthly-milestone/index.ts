@@ -6,6 +6,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
+import { filterPausedUsers } from '../_shared/disengagement.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -41,12 +42,13 @@ serve(async (_req: Request) => {
     const prevMap = new Map((prevStats || []).map((r: any) => [r.user_id, r]));
 
     // 3. Get FCM tokens (+ user locale for variant lookup)
-    const { data: fcmTokens } = await supabase
+    const { data: fcmTokensRaw } = await supabase
       .from('fcm_tokens')
       .select('user_id, token, app_locale');
+    const fcmTokens = await filterPausedUsers(supabase, fcmTokensRaw ?? []);
 
     const tokenMap = new Map<string, { token: string; locale: string }>(
-      (fcmTokens || []).map((r: any) => [r.user_id, { token: r.token, locale: r.app_locale ?? 'en' }])
+      fcmTokens.map((r: any) => [r.user_id, { token: r.token, locale: r.app_locale ?? 'en' }])
     );
 
     // 4. Dedup

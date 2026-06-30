@@ -133,3 +133,40 @@ assets/
 ### Key Dependencies
 
 Core: `supabase_flutter`, `provider`, `google_fonts`, `hive_flutter`, `flutter_dotenv`, `just_audio`, `lottie`, `confetti`, `shared_preferences`, `share_plus`, `fl_chart`, `flutter_local_notifications`, `device_info_plus`.
+
+### Notification Scheduling Policy (IMPORTANT)
+
+Two delivery paths exist — pick the right one per use-case:
+
+**Local scheduling (preferred for fixed wall-clock times).** Use
+`LocalReminderScheduler` in `lib/services/local_reminder_scheduler.dart`
+to register notifications with Android's `AlarmManager` via
+`flutter_local_notifications` + `AndroidScheduleMode.exactAllowWhileIdle`.
+These fire reliably even under Doze and on OEM battery-killers
+(Xiaomi/Oppo/Vivo/Samsung) because they're queued by the OS itself,
+not delivered over the network.
+
+Currently local-scheduled: `morning_azkaar` (08:00), `evening_azkaar`
+(17:00), `sleep_azkar` (21:00), `surah_kahf_friday` (Fri 07:00 + 16:00).
+
+Requires `USE_EXACT_ALARM` + `SCHEDULE_EXACT_ALARM` in
+`AndroidManifest.xml` (already added). Re-scheduled on every app
+launch by `_AuthGateState._scheduleLocalReminders()`.
+
+**FCM push (only for event-driven / unpredictable notifications).** Server-side
+Edge Functions + pg_cron — when the firing time depends on user state we
+can't compute on-device:
+- `streak-at-risk` — depends on today's streak status
+- `resume-reading` — depends on last_read_date
+- `level-up-close` — depends on XP delta
+- `community-momentum` — cohort timing
+- `nightly-coin-reminder` — last-chance flow
+- `monthly-quran-reminder`, `monthly-milestone` — monthly summaries
+- `check-disengaged-users` — pauses notifications for inactive users
+- `disengagement_pause` — the goodbye push itself
+
+**Rule of thumb:** if the notification fires at the same local wall-clock
+moment for every user every day, schedule it locally. If the firing
+condition is "user state X is true," push it from the server. Never
+implement a hybrid for the same notification type — duplicates are
+worse than misses.

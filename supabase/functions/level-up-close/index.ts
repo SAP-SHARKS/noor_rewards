@@ -7,6 +7,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
+import { filterPausedUsers } from '../_shared/disengagement.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -28,12 +29,13 @@ serve(async (_req: Request) => {
     }
 
     // 2. Get FCM tokens, filter for noon local (+ user locale for variant lookup)
-    const { data: fcmTokens } = await supabase
+    const { data: fcmTokensRaw } = await supabase
       .from('fcm_tokens')
       .select('user_id, token, timezone, app_locale');
+    const fcmTokens = await filterPausedUsers(supabase, fcmTokensRaw ?? []);
 
     const noonUsers = new Map<string, { token: string; locale: string }>();
-    for (const row of fcmTokens || []) {
+    for (const row of fcmTokens) {
       const tz = row.timezone || 'UTC';
       try {
         const parts = new Intl.DateTimeFormat('en-US', {

@@ -7,6 +7,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
+import { filterPausedUsers } from '../_shared/disengagement.ts';
 
 const SURAH_NAMES: Record<number, string> = {
   1:'Al-Fatiha',2:'Al-Baqarah',3:'Ali Imran',4:'An-Nisa',5:'Al-Maidah',
@@ -44,12 +45,13 @@ serve(async (_req: Request) => {
     const now = new Date();
 
     // 1. Get FCM tokens, filter for 2 PM local
-    const { data: fcmTokens } = await supabase
+    const { data: fcmTokensRaw } = await supabase
       .from('fcm_tokens')
       .select('user_id, token, timezone, app_locale');
+    const fcmTokens = await filterPausedUsers(supabase, fcmTokensRaw ?? []);
 
     const afternoonUsers = new Map<string, { token: string; locale: string }>();
-    for (const row of fcmTokens || []) {
+    for (const row of fcmTokens) {
       const tz = row.timezone || 'UTC';
       try {
         const parts = new Intl.DateTimeFormat('en-US', {
