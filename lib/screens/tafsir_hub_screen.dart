@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -84,6 +85,7 @@ class _TafsirHubScreenState extends State<TafsirHubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Scaffold(
       backgroundColor: _kBg,
       body: CustomScrollView(
@@ -472,6 +474,7 @@ class _ResumeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final name = surah < _names.length ? _names[surah] : 'Surah $surah';
     return GestureDetector(
       onTap: onTap,
@@ -562,6 +565,7 @@ class _SurahCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return GestureDetector(
       onTap: onTap,
       child: Container(

@@ -282,12 +282,12 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
         ),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Y4.primary.withValues(alpha: 0.55),
+          color: Y4.palette.primary.withValues(alpha: 0.55),
           width: 1.4,
         ),
         boxShadow: [
           BoxShadow(
-            color: Y4.primary.withValues(alpha: 0.18),
+            color: Y4.palette.primary.withValues(alpha: 0.18),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -311,7 +311,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Y4.primaryDeep.withValues(alpha: 0.35),
+                  color: Y4.palette.primaryDeep.withValues(alpha: 0.35),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -333,7 +333,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                   style: GoogleFonts.outfit(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w800,
-                    color: Y4.primaryDeep,
+                    color: Y4.palette.primaryDeep,
                     letterSpacing: 1.6,
                   ),
                 ),
@@ -343,7 +343,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                   style: GoogleFonts.outfit(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                     height: 1.45,
                   ),
                 ),
@@ -374,7 +374,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
               style: GoogleFonts.outfit(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
-                color: Y4.honeyDeep,
+                color: Y4.palette.honeyDeep,
               ),
             ),
           ),
@@ -394,10 +394,10 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Y4.honey.withValues(alpha: 0.45)),
+        border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.45)),
         boxShadow: [
           BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.12),
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.12),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -412,7 +412,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
               fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.6,
-              color: Y4.honeyDeep,
+              color: Y4.palette.honeyDeep,
             ),
           ),
           const SizedBox(height: 10),
@@ -427,7 +427,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 style: GoogleFonts.fraunces(
                   fontSize: 52,
                   fontWeight: FontWeight.w500,
-                  color: Y4.ink,
+                  color: Y4.palette.ink,
                   letterSpacing: -1.0,
                   height: 1.0,
                   fontFeatures: const [FontFeature.tabularFigures()],
@@ -442,7 +442,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
             style: GoogleFonts.outfit(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -451,10 +451,10 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Y4.primary.withValues(alpha: 0.12),
+                color: Y4.palette.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(99),
                 border: Border.all(
-                  color: Y4.primary.withValues(alpha: 0.3),
+                  color: Y4.palette.primary.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -472,7 +472,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
-                      color: Y4.primaryDeep,
+                      color: Y4.palette.primaryDeep,
                     ),
                   ),
                 ],
@@ -501,26 +501,26 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
     if (avgAzkaar == 0) {
       comparison = AppLocalizations.of(context)?.firstTrackedWeek ??
           'Your first tracked week — keep going!';
-      comparisonColor = Y4.inkSoft;
+      comparisonColor = Y4.palette.inkSoft;
       comparisonIcon = Icons.auto_awesome_rounded;
     } else if (equal) {
       comparison = AppLocalizations.of(context)?.rightOnSevenDayPace ??
           'Right on your 7-day pace';
-      comparisonColor = Y4.honeyDeep;
+      comparisonColor = Y4.palette.honeyDeep;
       comparisonIcon = Icons.horizontal_rule_rounded;
     } else if (above) {
       final pct = azkaarDelta!.abs();
       comparison =
           AppLocalizations.of(context)?.aboveSevenDayAvg(pct) ??
               '$pct% above your 7-day average';
-      comparisonColor = Y4.primaryDeep;
+      comparisonColor = Y4.palette.primaryDeep;
       comparisonIcon = Icons.trending_up_rounded;
     } else {
       final pct = azkaarDelta!.abs();
       comparison =
           AppLocalizations.of(context)?.belowSevenDayAvg(pct) ??
               '$pct% below your 7-day average';
-      comparisonColor = Y4.amberY;
+      comparisonColor = Y4.palette.amberY;
       comparisonIcon = Icons.trending_down_rounded;
     }
 
@@ -540,7 +540,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
               fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.4,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
             ),
           ),
           const SizedBox(height: 10),
@@ -558,7 +558,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                       style: GoogleFonts.fraunces(
                         fontSize: 42,
                         fontWeight: FontWeight.w500,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                         height: 1.0,
                         letterSpacing: -0.6,
                         fontFeatures: const [FontFeature.tabularFigures()],
@@ -576,7 +576,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                         style: GoogleFonts.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                         ),
                       ),
                     ),
@@ -628,7 +628,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                           style: GoogleFonts.fraunces(
                             fontSize: 42,
                             fontWeight: FontWeight.w500,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             height: 1.0,
                             letterSpacing: -0.6,
                             fontFeatures: const [FontFeature.tabularFigures()],
@@ -642,7 +642,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                             style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Y4.inkSoft,
+                              color: Y4.palette.inkSoft,
                             ),
                           ),
                         ),
@@ -667,7 +667,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ],
@@ -701,7 +701,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                   '7-day avg: ${avgAzkaar.toStringAsFixed(0)} azkaar/day',
               style: GoogleFonts.outfit(
                 fontSize: 12,
-                color: Y4.muted,
+                color: Y4.palette.muted,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -737,7 +737,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.4,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                 ),
               ),
               Text(
@@ -745,7 +745,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: Y4.muted,
+                  color: Y4.palette.muted,
                 ),
               ),
             ],
@@ -775,8 +775,8 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                             ? FontWeight.w800
                             : FontWeight.w600,
                         color: i == _days.length - 1
-                            ? Y4.honeyDeep
-                            : Y4.muted,
+                            ? Y4.palette.honeyDeep
+                            : Y4.palette.muted,
                       ),
                     ),
                   ),
@@ -804,7 +804,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 style: GoogleFonts.outfit(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: isToday ? Y4.honeyDeep : Y4.inkSoft,
+                  color: isToday ? Y4.palette.honeyDeep : Y4.palette.inkSoft,
                 ),
               ),
             ),
@@ -822,11 +822,11 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                       : LinearGradient(
                           colors: isToday
                               ? const [Y4.honey, Y4.honeyDeep]
-                              : [Y4.butter, Y4.honey],
+                              : [Y4.palette.butter, Y4.palette.honey],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
-                  color: isEmpty ? Y4.track : null,
+                  color: isEmpty ? Y4.palette.track : null,
                   borderRadius: BorderRadius.circular(6),
                 ),
               );
@@ -868,7 +868,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
               style: GoogleFonts.outfit(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
-                color: Y4.honeyDeep,
+                color: Y4.palette.honeyDeep,
               ),
             ),
             const SizedBox(width: 6),

@@ -194,7 +194,7 @@ Future<void> showValidationRewardPopup(
     barrierDismissible: true,
     barrierLabel: 'validation_reward',
     // Warm brown-tinted barrier — sits softer against the honey card
-    barrierColor: Y4.ink.withValues(alpha: 0.55),
+    barrierColor: Y4.palette.ink.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 420),
     transitionBuilder: (ctx, anim, _, child) {
       final curved = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
@@ -274,17 +274,17 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                   ),
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(
-                    color: Y4.honeyDeep.withValues(alpha: 0.30),
+                    color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Y4.honeyDeep.withValues(alpha: 0.30),
+                      color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                       blurRadius: 40,
                       spreadRadius: 2,
                     ),
                     BoxShadow(
-                      color: Y4.honey.withValues(alpha: 0.30),
+                      color: Y4.palette.honey.withValues(alpha: 0.30),
                       blurRadius: 20,
                     ),
                   ],
@@ -302,10 +302,10 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                         gradient: const RadialGradient(
                           colors: [Y4.honey, Y4.honeyDeep],
                         ),
-                        border: Border.all(color: Y4.honeyDeep, width: 2),
+                        border: Border.all(color: Y4.palette.honeyDeep, width: 2),
                         boxShadow: [
                           BoxShadow(
-                            color: Y4.honeyDeep.withValues(alpha: 0.40),
+                            color: Y4.palette.honeyDeep.withValues(alpha: 0.40),
                             blurRadius: 24,
                           ),
                         ],
@@ -329,7 +329,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                         style: Y4.display(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                           letterSpacing: -0.3,
                           height: 1.0,
                         ),
@@ -346,7 +346,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                       textAlign: TextAlign.center,
                       style: GoogleFonts.outfit(
                         fontSize: 13,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                         height: 1.5,
                       ),
                     ),
@@ -362,7 +362,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                         border: Border.all(color: Y4.border),
                         boxShadow: [
                           BoxShadow(
-                            color: Y4.ink.withValues(alpha: 0.04),
+                            color: Y4.palette.ink.withValues(alpha: 0.04),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -377,14 +377,14 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                           _RewardRow(
                             '⚡ ${AppLocalizations.of(context)?.validationSeedsLabel ?? 'Validation Seeds'}',
                             '+${widget.pointsEarned} Seeds',
-                            Y4.honeyDeep,
+                            Y4.palette.honeyDeep,
                           ),
                           if (widget.bonusPoints > 0) ...[
                             const SizedBox(height: 10),
                             _RewardRow(
                               '🔥 ${AppLocalizations.of(context)?.streakBonusLabel ?? 'Streak Bonus'}',
                               '+${widget.bonusPoints} Seeds',
-                              Y4.honeyDeep,
+                              Y4.palette.honeyDeep,
                             ),
                             const SizedBox(height: 10),
                             const Divider(color: Y4.border, height: 1),
@@ -392,7 +392,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                             _RewardRow(
                               '✨ ${AppLocalizations.of(context)?.totalEarnedLabel ?? 'Total Earned'}',
                               '+$total Seeds',
-                              Y4.ink,
+                              Y4.palette.ink,
                               big: true,
                             ),
                           ],
@@ -411,7 +411,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                           widget.onContinue?.call();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Y4.honeyDeep,
+                          backgroundColor: Y4.palette.honeyDeep,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -455,7 +455,7 @@ class _RewardRow extends StatelessWidget {
         style: GoogleFonts.outfit(
           fontSize: big ? 14 : 13,
           fontWeight: big ? FontWeight.w800 : FontWeight.w500,
-          color: big ? Y4.ink : Y4.inkSoft,
+          color: big ? Y4.palette.ink : Y4.palette.inkSoft,
         ),
       ),
       Text(
@@ -1093,17 +1093,17 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
               borderRadius: BorderRadius.circular(32),
               boxShadow: [
                 BoxShadow(
-                  color: Y4.honeyDeep.withValues(alpha: 0.35),
+                  color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
                   blurRadius: 60,
                   spreadRadius: 4,
                 ),
                 BoxShadow(
-                  color: Y4.honey.withValues(alpha: 0.25),
+                  color: Y4.palette.honey.withValues(alpha: 0.25),
                   blurRadius: 30,
                 ),
               ],
               border: Border.all(
-                color: Y4.honeyDeep.withValues(alpha: 0.30),
+                color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                 width: 1.5,
               ),
             ),
@@ -1182,15 +1182,15 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                   width: 34,
                                   height: 34,
                                   decoration: BoxDecoration(
-                                    color: Y4.ink.withValues(alpha: 0.08),
+                                    color: Y4.palette.ink.withValues(alpha: 0.08),
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: Y4.ink.withValues(alpha: 0.12),
+                                      color: Y4.palette.ink.withValues(alpha: 0.12),
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.close_rounded,
-                                    color: Y4.inkSoft,
+                                    color: Y4.palette.inkSoft,
                                     size: 17,
                                   ),
                                 ),
@@ -1301,7 +1301,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                       style: GoogleFonts.rajdhani(
                                         fontSize: 28,
                                         fontWeight: FontWeight.w900,
-                                        color: Y4.ink,
+                                        color: Y4.palette.ink,
                                         letterSpacing: 2.5,
                                         height: 1.1,
                                       ),
@@ -1341,7 +1341,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                   height: 1.55,
                                 ),
                               ),
@@ -1359,7 +1359,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                   border: Border.all(color: Y4.border),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Y4.ink.withValues(alpha: 0.04),
+                                      color: Y4.palette.ink.withValues(alpha: 0.04),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -1440,7 +1440,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w800,
-                                                                color: Y4.ink,
+                                                                color: Y4.palette.ink,
                                                               ),
                                                         ),
                                                         const SizedBox(
@@ -1452,7 +1452,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                                                               GoogleFonts.outfit(
                                                                 fontSize: 12,
                                                                 color:
-                                                                    Y4.inkSoft,
+                                                                    Y4.palette.inkSoft,
                                                                 height: 1.4,
                                                               ),
                                                         ),
@@ -1561,7 +1561,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                               child: Text(
                                 'Maybe later',
                                 style: GoogleFonts.outfit(
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                 ),

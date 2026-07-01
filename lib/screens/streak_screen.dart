@@ -3,10 +3,12 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../services/streak_service.dart';
+import '../services/settings_service.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
@@ -92,11 +94,12 @@ class _StreakScreenState extends State<StreakScreen>
 
   Future<void> _load() async {
     final snap = await StreakService.instance.loadSnapshot();
-    if (mounted)
+    if (mounted) {
       setState(() {
         _snap = snap;
         _loading = false;
       });
+    }
   }
 
   @override
@@ -109,6 +112,7 @@ class _StreakScreenState extends State<StreakScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context);
     final best = [
       _snap.login,
@@ -155,7 +159,7 @@ class _StreakScreenState extends State<StreakScreen>
                           style: GoogleFonts.rajdhani(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -170,7 +174,7 @@ class _StreakScreenState extends State<StreakScreen>
                       _loading
                           ? NoorInlineLoader(
                             height: double.infinity,
-                            color: Y4.honeyDeep,
+                            color: Y4.palette.honeyDeep,
                             label: l?.streakLoading ?? 'Loading streaks…',
                           )
                           : SingleChildScrollView(
@@ -255,7 +259,7 @@ class _AuraPainter extends CustomPainter {
     final p1 =
         Paint()
           ..shader = RadialGradient(
-            colors: [Y4.honey.withValues(alpha: 0.20), Colors.transparent],
+            colors: [Y4.palette.honey.withValues(alpha: 0.20), Colors.transparent],
           ).createShader(
             Rect.fromCircle(
               center: Offset(cx, size.height * 0.25),
@@ -270,7 +274,7 @@ class _AuraPainter extends CustomPainter {
     final p2 =
         Paint()
           ..shader = RadialGradient(
-            colors: [Y4.amberY.withValues(alpha: 0.10), Colors.transparent],
+            colors: [Y4.palette.amberY.withValues(alpha: 0.10), Colors.transparent],
           ).createShader(
             Rect.fromCircle(
               center: Offset(cx + ox, size.height * 0.32 + oy),
@@ -298,6 +302,7 @@ class _HeroFlame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final label = milestone != null
         ? _localMilestoneLabel(context, milestone!.label)
         : (AppLocalizations.of(context)?.levelLegend ?? 'Legend');
@@ -314,7 +319,7 @@ class _HeroFlame extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Y4.honey.withValues(alpha: pulse.value * 0.35),
+                      color: Y4.palette.honey.withValues(alpha: pulse.value * 0.35),
                       blurRadius: 50,
                       spreadRadius: 12,
                     ),
@@ -334,7 +339,7 @@ class _HeroFlame extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Y4.honeyDeep.withValues(alpha: 0.40),
+                            color: Y4.palette.honeyDeep.withValues(alpha: 0.40),
                             blurRadius: 30,
                             spreadRadius: 4,
                           ),
@@ -381,7 +386,7 @@ class _HeroFlame extends StatelessWidget {
                         'Current best streak'),
                 style: GoogleFonts.outfit(
                   fontSize: 14,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -420,7 +425,7 @@ class _HeroFlame extends StatelessWidget {
                   style: GoogleFonts.rajdhani(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ],
@@ -466,9 +471,9 @@ class _FlameCard extends StatelessWidget {
   Color get _color {
     switch (type) {
       case StreakType.login:
-        return Y4.amberY;
+        return Y4.palette.amberY;
       case StreakType.dhikr:
-        return Y4.primary;
+        return Y4.palette.primary;
       case StreakType.quran:
         return const Color(0xFF5856D6);
     }
@@ -476,6 +481,7 @@ class _FlameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: pulse,
       builder:
@@ -509,7 +515,7 @@ class _FlameCard extends StatelessWidget {
                   style: GoogleFonts.rajdhani(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
-                    color: streak > 0 ? _color : Y4.muted,
+                    color: streak > 0 ? _color : Y4.palette.muted,
                     height: 1.0,
                   ),
                 ),
@@ -517,7 +523,7 @@ class _FlameCard extends StatelessWidget {
                   'day${streak == 1 ? '' : 's'}',
                   style: GoogleFonts.outfit(
                     fontSize: 10,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -546,7 +552,7 @@ class _FlameCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
                     fontSize: 10,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
@@ -566,6 +572,7 @@ class _SevenDayCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context);
     final today = DateTime.now();
     final days = List.generate(
@@ -588,7 +595,7 @@ class _SevenDayCalendar extends StatelessWidget {
             style: GoogleFonts.rajdhani(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               letterSpacing: 1.2,
             ),
           ),
@@ -618,7 +625,7 @@ class _SevenDayCalendar extends StatelessWidget {
                           })(),
                           style: GoogleFonts.outfit(
                             fontSize: 10,
-                            color: Y4.muted,
+                            color: Y4.palette.muted,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -627,7 +634,7 @@ class _SevenDayCalendar extends StatelessWidget {
                           '${day.day}',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
-                            color: isToday ? Y4.honeyDeep : Y4.inkSoft,
+                            color: isToday ? Y4.palette.honeyDeep : Y4.palette.inkSoft,
                             fontWeight:
                                 isToday ? FontWeight.w800 : FontWeight.w400,
                           ),
@@ -664,7 +671,7 @@ class _SevenDayCalendar extends StatelessWidget {
                               _localStreakTypeLabel(context, t),
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
-                                color: Y4.inkSoft,
+                                color: Y4.palette.inkSoft,
                               ),
                             ),
                           ],
@@ -681,9 +688,9 @@ class _SevenDayCalendar extends StatelessWidget {
   Color _dotColor(StreakType t) {
     switch (t) {
       case StreakType.login:
-        return Y4.amberY;
+        return Y4.palette.amberY;
       case StreakType.dhikr:
-        return Y4.primary;
+        return Y4.palette.primary;
       case StreakType.quran:
         return const Color(0xFF5856D6);
     }
@@ -704,9 +711,9 @@ class _DotRow extends StatelessWidget {
   Color _col(StreakType t) {
     switch (t) {
       case StreakType.login:
-        return Y4.amberY;
+        return Y4.palette.amberY;
       case StreakType.dhikr:
-        return Y4.primary;
+        return Y4.palette.primary;
       case StreakType.quran:
         return const Color(0xFF5856D6);
     }
@@ -724,7 +731,7 @@ class _DotRow extends StatelessWidget {
               height: 10,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: on ? _col(t) : Y4.track,
+                color: on ? _col(t) : Y4.palette.track,
                 boxShadow:
                     on
                         ? [
@@ -754,6 +761,7 @@ class _MilestoneProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final start = lastM?.days ?? 0;
     final end = milestone.days;
     final pct = ((current - start) / (end - start)).clamp(0.0, 1.0);
@@ -775,7 +783,7 @@ class _MilestoneProgress extends StatelessWidget {
                 style: GoogleFonts.rajdhani(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -787,7 +795,7 @@ class _MilestoneProgress extends StatelessWidget {
                 style: GoogleFonts.rajdhani(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: Y4.honeyDeep,
+                  color: Y4.palette.honeyDeep,
                 ),
               ),
             ],
@@ -801,7 +809,7 @@ class _MilestoneProgress extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                   ),
                 ),
               ),
@@ -809,7 +817,7 @@ class _MilestoneProgress extends StatelessWidget {
                 AppLocalizations.of(context)
                         ?.currentOverDays(current, milestone.days) ??
                     '$current / ${milestone.days} days',
-                style: GoogleFonts.outfit(fontSize: 12, color: Y4.inkSoft),
+                style: GoogleFonts.outfit(fontSize: 12, color: Y4.palette.inkSoft),
               ),
             ],
           ),
@@ -824,7 +832,7 @@ class _MilestoneProgress extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: v,
                     minHeight: 12,
-                    backgroundColor: Y4.track,
+                    backgroundColor: Y4.palette.track,
                     valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep),
                   ),
                 ),
@@ -836,7 +844,7 @@ class _MilestoneProgress extends StatelessWidget {
                 '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go, keep it up!',
             style: GoogleFonts.outfit(
               fontSize: 12,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -853,6 +861,7 @@ class _MilestoneList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -868,7 +877,7 @@ class _MilestoneList extends StatelessWidget {
             style: GoogleFonts.rajdhani(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               letterSpacing: 1.2,
             ),
           ),
@@ -884,18 +893,18 @@ class _MilestoneList extends StatelessWidget {
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: done ? Y4.honey.withValues(alpha: 0.20) : Y4.track,
+                      color: done ? Y4.palette.honey.withValues(alpha: 0.20) : Y4.palette.track,
                       border: Border.all(
                         color:
                             done
-                                ? Y4.honeyDeep.withValues(alpha: 0.6)
+                                ? Y4.palette.honeyDeep.withValues(alpha: 0.6)
                                 : Y4.border,
                       ),
                       boxShadow:
                           done
                               ? [
                                 BoxShadow(
-                                  color: Y4.honey.withValues(alpha: 0.25),
+                                  color: Y4.palette.honey.withValues(alpha: 0.25),
                                   blurRadius: 10,
                                 ),
                               ]
@@ -918,14 +927,14 @@ class _MilestoneList extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: done ? Y4.ink : Y4.muted,
+                            color: done ? Y4.palette.ink : Y4.palette.muted,
                           ),
                         ),
                         Text(
                           '${m.days} day streak',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
-                            color: Y4.inkSoft,
+                            color: Y4.palette.inkSoft,
                           ),
                         ),
                       ],
@@ -937,7 +946,7 @@ class _MilestoneList extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: done ? Y4.honey.withValues(alpha: 0.15) : Y4.track,
+                      color: done ? Y4.palette.honey.withValues(alpha: 0.15) : Y4.palette.track,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -947,7 +956,7 @@ class _MilestoneList extends StatelessWidget {
                       style: GoogleFonts.rajdhani(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: done ? Y4.honeyDeep : Y4.muted,
+                        color: done ? Y4.palette.honeyDeep : Y4.palette.muted,
                         letterSpacing: 0.5,
                       ),
                     ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -974,8 +975,9 @@ class _TafsirScreenState extends State<TafsirScreen> {
   bool _isHeading(String line, {bool isUrdu = false}) {
     final t = line.trim();
     if (t.length > 120 || t.length < 4) return false;
-    if (t.startsWith('(') || t.startsWith('"') || t.startsWith('`'))
+    if (t.startsWith('(') || t.startsWith('"') || t.startsWith('`')) {
       return false;
+    }
     if (isUrdu) {
       if (t.endsWith('۔') || t.endsWith('،') || t.endsWith('؟')) return false;
     } else {
@@ -983,8 +985,9 @@ class _TafsirScreenState extends State<TafsirScreen> {
       final firstLetter = t.codeUnitAt(0);
       if (firstLetter < 65 ||
           (firstLetter > 90 && firstLetter < 97) ||
-          firstLetter > 122)
+          firstLetter > 122) {
         return false;
+      }
       if (t[0] != t[0].toUpperCase()) return false;
       // Headings don't end with . or , (but can end with : or nothing)
       if (t.endsWith('.') || t.endsWith(',') || t.endsWith(')')) return false;
@@ -1307,6 +1310,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
   // ── Build ─────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final bg = _darkMode ? const Color(0xFF000000) : _kBg;
     final cardBg = _darkMode ? const Color(0xFF1C1C1E) : _kWhite;
     final txt = _darkMode ? Colors.white : _kText;
@@ -1860,6 +1864,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final bg = _dark ? const Color(0xFF1C1C1E) : _kWhite;
     final lbl = _dark ? Colors.white : _kText;
     final sub = _dark ? const Color(0xFF8E8E93) : _kSub;

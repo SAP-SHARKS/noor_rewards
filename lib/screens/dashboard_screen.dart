@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -137,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // Community project
   Map<String, dynamic>? _project;
 
-  bool _navVisible = true;
+  final bool _navVisible = true;
 
   // Nav Keys for nested routing
   final List<GlobalKey<NavigatorState>> _navKeys = [
@@ -521,6 +519,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Root subscribe — any admin theme_mode change or M3 colour edit will
+    // rebuild the whole dashboard tree so palette/AppConfig-derived values
+    // (Y4.palette.*, _C.bg, _C.text …) update on every screen.
+    context.watch<SettingsService>();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -1277,7 +1279,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -1394,7 +1396,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 width: 38,
                                 height: 38,
                                 decoration: BoxDecoration(
-                                  color: Y4.honey,
+                                  color: Y4.palette.honey,
                                   borderRadius: BorderRadius.circular(12),
                                   image:
                                       widget.avatarUrl != null
@@ -1422,7 +1424,7 @@ class _HomeTabState extends State<_HomeTab> {
                                             style: GoogleFonts.outfit(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w800,
-                                              color: Y4.ink,
+                                              color: Y4.palette.ink,
                                             ),
                                           ),
                                         )
@@ -1437,7 +1439,7 @@ class _HomeTabState extends State<_HomeTab> {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Y4.ink,
+                                    color: Y4.palette.ink,
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
                                       color: Y4.bg,
@@ -1449,7 +1451,7 @@ class _HomeTabState extends State<_HomeTab> {
                                     style: GoogleFonts.rajdhani(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w800,
-                                      color: Y4.honey,
+                                      color: Y4.palette.honey,
                                       letterSpacing: 0.3,
                                     ),
                                   ),
@@ -1520,7 +1522,7 @@ class _HomeTabState extends State<_HomeTab> {
                           "Today's plots",
                       style: Y4.display(
                         fontSize: 20,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                         height: 1.0,
                         fontStyle: FontStyle.italic,
                       ),
@@ -1595,7 +1597,7 @@ class _HomeTabState extends State<_HomeTab> {
                                     style: GoogleFonts.rajdhani(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w700,
-                                      color: Y4.ink,
+                                      color: Y4.palette.ink,
                                       letterSpacing: 0.8,
                                       height: 1.0,
                                     ),
@@ -1608,7 +1610,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 style: GoogleFonts.rajdhani(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
-                                  color: Y4.honeyDeep,
+                                  color: Y4.palette.honeyDeep,
                                   letterSpacing: 0.8,
                                   height: 1.1,
                                 ),
@@ -1622,7 +1624,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                               ),
                             ],
@@ -1634,10 +1636,10 @@ class _HomeTabState extends State<_HomeTab> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: Y4.honey.withValues(alpha: 0.20),
+                            color: Y4.palette.honey.withValues(alpha: 0.20),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: Y4.honey.withValues(alpha: 0.5),
+                              color: Y4.palette.honey.withValues(alpha: 0.5),
                             ),
                           ),
                           child: Text(
@@ -1648,7 +1650,7 @@ class _HomeTabState extends State<_HomeTab> {
                             style: GoogleFonts.rajdhani(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
-                              color: Y4.honeyDeep,
+                              color: Y4.palette.honeyDeep,
                             ),
                           ),
                         ),
@@ -1711,7 +1713,7 @@ class _HomeTabState extends State<_HomeTab> {
                           constraints: const BoxConstraints(minHeight: 80),
                           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           decoration: BoxDecoration(
-                            color: Y4.cream,
+                            color: Y4.palette.cream,
                             borderRadius: BorderRadius.circular(22),
                             border: Border.all(color: Y4.border),
                           ),
@@ -1721,7 +1723,7 @@ class _HomeTabState extends State<_HomeTab> {
                               if (context.watch<SettingsService>().config.adBannerIconUrl.isNotEmpty)
                                 CachedNetworkImage(imageUrl: context.watch<SettingsService>().config.adBannerIconUrl, height: 32)
                               else
-                                Icon(Icons.ad_units_rounded, color: Y4.muted, size: 24),
+                                Icon(Icons.ad_units_rounded, color: Y4.palette.muted, size: 24),
                               const SizedBox(height: 6),
                               Text(
                                 context.watch<SettingsService>().config.adBannerText,
@@ -1729,7 +1731,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 style: GoogleFonts.outfit(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                               ),
                               if (context.watch<SettingsService>().config.adBannerSubtitle.isNotEmpty)
@@ -1741,7 +1743,7 @@ class _HomeTabState extends State<_HomeTab> {
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w400,
-                                      color: Y4.muted,
+                                      color: Y4.palette.muted,
                                     ),
                                   ),
                                 ),
@@ -1952,7 +1954,7 @@ class _InviteSheetState extends State<_InviteSheet>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Y4.cream, Y4.bg, Y4.bg],
+                colors: [Y4.palette.cream, Y4.bg, Y4.bg],
               ),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(30),
@@ -1966,7 +1968,7 @@ class _InviteSheetState extends State<_InviteSheet>
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Y4.muted,
+                    color: Y4.palette.muted,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1987,10 +1989,10 @@ class _InviteSheetState extends State<_InviteSheet>
                             width: 46,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: Y4.honey,
+                              color: Y4.palette.honey,
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: Y4.honeyDeep.withValues(alpha: 0.6),
+                                color: Y4.palette.honeyDeep.withValues(alpha: 0.6),
                               ),
                             ),
                             child: Center(child: NoorIcon.handshake(size: 24)),
@@ -2005,7 +2007,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                 style: Y4.display(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
-                                  color: Y4.ink,
+                                  color: Y4.palette.ink,
                                   letterSpacing: -0.3,
                                   height: 1.1,
                                 ),
@@ -2015,7 +2017,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                     'You both earn 500 Sabiq Seeds!',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                               ),
                             ],
@@ -2041,11 +2043,11 @@ class _InviteSheetState extends State<_InviteSheet>
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Y4.honeyDeep.withValues(alpha: 0.6),
+                                  color: Y4.palette.honeyDeep.withValues(alpha: 0.6),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.15),
+                                    color: Y4.palette.honeyDeep.withValues(alpha: 0.15),
                                     blurRadius: 16,
                                     offset: const Offset(0, 4),
                                   ),
@@ -2065,7 +2067,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                   Container(
                                     height: 40,
                                     width: 1,
-                                    color: Y4.honeyDeep.withValues(alpha: 0.25),
+                                    color: Y4.palette.honeyDeep.withValues(alpha: 0.25),
                                   ),
                                   _RewardPill(
                                     icon: NoorIcon.people(size: 20),
@@ -2089,7 +2091,7 @@ class _InviteSheetState extends State<_InviteSheet>
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -2105,7 +2107,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           border: Border.all(color: Y4.border),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.ink.withValues(alpha: 0.04),
+                              color: Y4.palette.ink.withValues(alpha: 0.04),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -2120,7 +2122,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 8,
-                                  color: Y4.ink,
+                                  color: Y4.palette.ink,
                                 ),
                               ),
                             ),
@@ -2135,11 +2137,11 @@ class _InviteSheetState extends State<_InviteSheet>
                                 decoration: BoxDecoration(
                                   color:
                                       _codeCopied
-                                          ? Y4.honeyDeep
-                                          : Y4.honey.withValues(alpha: 0.30),
+                                          ? Y4.palette.honeyDeep
+                                          : Y4.palette.honey.withValues(alpha: 0.30),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.5),
+                                    color: Y4.palette.honeyDeep.withValues(alpha: 0.5),
                                   ),
                                 ),
                                 child: Row(
@@ -2153,7 +2155,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                       color:
                                           _codeCopied
                                               ? Colors.white
-                                              : Y4.honeyDeep,
+                                              : Y4.palette.honeyDeep,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
@@ -2170,7 +2172,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                         color:
                                             _codeCopied
                                                 ? Colors.white
-                                                : Y4.honeyDeep,
+                                                : Y4.palette.honeyDeep,
                                       ),
                                     ),
                                   ],
@@ -2207,7 +2209,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                 _shareLink,
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -2221,11 +2223,11 @@ class _InviteSheetState extends State<_InviteSheet>
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: _linkCopied ? Y4.honeyDeep : Y4.cream,
+                                  color: _linkCopied ? Y4.palette.honeyDeep : Y4.palette.cream,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color:
-                                        _linkCopied ? Y4.honeyDeep : Y4.border,
+                                        _linkCopied ? Y4.palette.honeyDeep : Y4.border,
                                   ),
                                 ),
                                 child: Text(
@@ -2242,7 +2244,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                     color:
                                         _linkCopied
                                             ? Colors.white
-                                            : Y4.honeyDeep,
+                                            : Y4.palette.honeyDeep,
                                   ),
                                 ),
                               ),
@@ -2259,7 +2261,7 @@ class _InviteSheetState extends State<_InviteSheet>
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -2332,7 +2334,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Y4.honeyDeep.withValues(
+                                      color: Y4.palette.honeyDeep.withValues(
                                         alpha: 0.30,
                                       ),
                                       blurRadius: 12,
@@ -2373,7 +2375,7 @@ class _InviteSheetState extends State<_InviteSheet>
                               'Have an invite code?',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
-                                color: Y4.inkSoft,
+                                color: Y4.palette.inkSoft,
                               ),
                             ),
                           ),
@@ -2393,7 +2395,7 @@ class _InviteSheetState extends State<_InviteSheet>
                               style: GoogleFonts.outfit(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.ink,
+                                color: Y4.palette.ink,
                                 letterSpacing: 2,
                               ),
                               decoration: InputDecoration(
@@ -2402,7 +2404,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                         'Enter code…',
                                 hintStyle: GoogleFonts.outfit(
                                   fontSize: 15,
-                                  color: Y4.muted,
+                                  color: Y4.palette.muted,
                                 ),
                                 filled: true,
                                 fillColor: Y4.surface,
@@ -2442,14 +2444,14 @@ class _InviteSheetState extends State<_InviteSheet>
                                 vertical: 16,
                               ),
                               decoration: BoxDecoration(
-                                color: _loading ? Y4.muted : Y4.honeyDeep,
+                                color: _loading ? Y4.palette.muted : Y4.palette.honeyDeep,
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow:
                                     _loading
                                         ? []
                                         : [
                                           BoxShadow(
-                                            color: Y4.honeyDeep.withValues(
+                                            color: Y4.palette.honeyDeep.withValues(
                                               alpha: 0.30,
                                             ),
                                             blurRadius: 10,
@@ -2527,10 +2529,10 @@ class _InviteSheetState extends State<_InviteSheet>
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Y4.primary.withValues(alpha: 0.15),
+                            color: Y4.palette.primary.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: Y4.primary.withValues(alpha: 0.4),
+                              color: Y4.palette.primary.withValues(alpha: 0.4),
                             ),
                           ),
                           child: Row(
@@ -2545,7 +2547,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                 child: Text(
                                   _success!,
                                   style: GoogleFonts.outfit(
-                                    color: Y4.primaryDeep,
+                                    color: Y4.palette.primaryDeep,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -2583,9 +2585,9 @@ class _RewardPill extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Y4.honey,
+            color: Y4.palette.honey,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.6)),
+            border: Border.all(color: Y4.palette.honeyDeep.withValues(alpha: 0.6)),
           ),
           child: Center(child: icon),
         ),
@@ -2595,7 +2597,7 @@ class _RewardPill extends StatelessWidget {
           style: GoogleFonts.outfit(
             fontSize: 16,
             fontWeight: FontWeight.w900,
-            color: Y4.ink,
+            color: Y4.palette.ink,
           ),
         ),
         Text(
@@ -2603,7 +2605,7 @@ class _RewardPill extends StatelessWidget {
           style: GoogleFonts.outfit(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: Y4.inkSoft,
+            color: Y4.palette.inkSoft,
           ),
         ),
       ],
@@ -3577,12 +3579,12 @@ class _MyDonationsSection extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorWidget:
                         (_, __, ___) => Container(
-                          color: Y4.cream,
+                          color: Y4.palette.cream,
                           child: Center(
                             child: Icon(
                               Icons.volunteer_activism_rounded,
                               size: 44,
-                              color: Y4.honeyDeep,
+                              color: Y4.palette.honeyDeep,
                             ),
                           ),
                         ),
@@ -3592,12 +3594,12 @@ class _MyDonationsSection extends StatelessWidget {
                 banner = Container(
                   width: double.infinity,
                   height: 160,
-                  color: Y4.cream,
+                  color: Y4.palette.cream,
                   child: Center(
                     child: Icon(
                       Icons.volunteer_activism_rounded,
                       size: 44,
-                      color: Y4.honeyDeep,
+                      color: Y4.palette.honeyDeep,
                     ),
                   ),
                 );
@@ -3618,7 +3620,7 @@ class _MyDonationsSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Y4.ink.withValues(alpha: 0.05),
+                      color: Y4.palette.ink.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -3648,7 +3650,7 @@ class _MyDonationsSection extends StatelessWidget {
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.honeyDeep,
+                                color: Y4.palette.honeyDeep,
                                 letterSpacing: 1.6,
                               ),
                             ),
@@ -3658,7 +3660,7 @@ class _MyDonationsSection extends StatelessWidget {
                               (d['title'] ?? '').toString(),
                               style: Y4.display(
                                 fontSize: 20,
-                                color: Y4.ink,
+                                color: Y4.palette.ink,
                                 fontWeight: FontWeight.w400,
                                 height: 1.15,
                               ),
@@ -3677,7 +3679,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   '${fmt(current)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
                                   style: Y4.display(
                                     fontSize: 22,
-                                    color: Y4.honeyDeep,
+                                    color: Y4.palette.honeyDeep,
                                     fontWeight: FontWeight.w600,
                                     height: 1.0,
                                   ),
@@ -3688,7 +3690,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: Y4.inkSoft,
+                                    color: Y4.palette.inkSoft,
                                   ),
                                 ),
                                 const Spacer(),
@@ -3702,7 +3704,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w800,
-                                    color: Y4.ink,
+                                    color: Y4.palette.ink,
                                   ),
                                 ),
                               ],
@@ -3721,10 +3723,10 @@ class _MyDonationsSection extends StatelessWidget {
                               child: Container(
                                 height: 14,
                                 decoration: BoxDecoration(
-                                  color: Y4.honey.withValues(alpha: 0.38),
+                                  color: Y4.palette.honey.withValues(alpha: 0.38),
                                   borderRadius: BorderRadius.circular(999),
                                   border: Border.all(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.65),
+                                    color: Y4.palette.honeyDeep.withValues(alpha: 0.65),
                                     width: 1.5,
                                   ),
                                 ),
@@ -3751,7 +3753,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
-                                    color: Y4.ink,
+                                    color: Y4.palette.ink,
                                   ),
                                 ),
                                 const SabiqCoin(size: 22),
@@ -3761,14 +3763,14 @@ class _MyDonationsSection extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
-                                    color: Y4.ink,
+                                    color: Y4.palette.ink,
                                   ),
                                 ),
                                 const Spacer(),
                                 Icon(
                                   Icons.people_alt_rounded,
                                   size: 13,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -3778,7 +3780,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
-                                    color: Y4.ink,
+                                    color: Y4.palette.ink,
                                   ),
                                 ),
                               ],
@@ -3791,7 +3793,7 @@ class _MyDonationsSection extends StatelessWidget {
                                 style: GoogleFonts.outfit(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
-                                  color: Y4.honeyDeep,
+                                  color: Y4.palette.honeyDeep,
                                 ),
                               ),
                             ],
@@ -3831,7 +3833,7 @@ class _MyDonationsSection extends StatelessWidget {
                                   vertical: 11,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Y4.honey,
+                                  color: Y4.palette.honey,
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Center(
@@ -3844,7 +3846,7 @@ class _MyDonationsSection extends StatelessWidget {
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w800,
-                                      color: Y4.ink,
+                                      color: Y4.palette.ink,
                                       letterSpacing: 0.2,
                                     ),
                                   ),
@@ -3899,7 +3901,7 @@ class _Y4DonateChip extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                   ),
                 ),
               ],
@@ -4850,8 +4852,9 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
   }
 
   Future<void> _processDonation() async {
-    if (_selectedAmount <= 0 || _selectedAmount > widget.availablePoints)
+    if (_selectedAmount <= 0 || _selectedAmount > widget.availablePoints) {
       return;
+    }
 
     setState(() {
       _donating = true;
@@ -5492,7 +5495,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                   boxShadow: selected
                       ? [
                           BoxShadow(
-                            color: Y4.primaryDeep.withValues(alpha: 0.30),
+                            color: Y4.palette.primaryDeep.withValues(alpha: 0.30),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -5589,7 +5592,7 @@ class _RankingSheetState extends State<_RankingSheet> {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.35),
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -5609,7 +5612,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                   style: GoogleFonts.outfit(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                   ),
                 ),
                 Text(
@@ -5618,7 +5621,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                       : 'No activity yet — earn Seeds to appear',
                   style: GoogleFonts.outfit(
                     fontSize: 12,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                   ),
                 ),
               ],
@@ -6004,7 +6007,7 @@ class _PodiumSlot extends StatelessWidget {
               style: GoogleFonts.outfit(
                 fontSize: rankFontSize - 4,
                 fontWeight: FontWeight.w900,
-                color: Y4.ink,
+                color: Y4.palette.ink,
                 height: 1.0,
               ),
             ),
@@ -6074,7 +6077,7 @@ class _PodiumSlot extends StatelessWidget {
                           nm,
                           fontSize: 12,
                           weight: FontWeight.w800,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                         ),
                       ),
                     ),
@@ -6334,6 +6337,9 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
 
   @override
   Widget build(BuildContext context) {
+    // Subscribe so live theme_mode changes (or any admin colour edit)
+    // trigger a rebuild — the podium reads Y4.palette reactively.
+    context.watch<SettingsService>();
     // Force LTR for the whole leaderboard so RTL locales (Urdu/Arabic)
     // don't mirror the podium (2nd-1st-3rd) or flip stat rows so the
     // S coin and other icons land on the wrong side.
@@ -6555,7 +6561,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                           height: 1.0,
                         ),
                       ),
@@ -6698,7 +6704,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
+                  colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
                 ),
               ),
               child: Stack(
@@ -6708,19 +6714,19 @@ class _ProfileTabState extends State<_ProfileTab> {
                   Positioned(
                     top: -40,
                     right: -40,
-                    child: _ProfileArc(180, Y4.honey.withValues(alpha: 0.18)),
+                    child: _ProfileArc(180, Y4.palette.honey.withValues(alpha: 0.18)),
                   ),
                   Positioned(
                     bottom: -20,
                     left: -30,
-                    child: _ProfileArc(130, Y4.primary.withValues(alpha: 0.08)),
+                    child: _ProfileArc(130, Y4.palette.primary.withValues(alpha: 0.08)),
                   ),
                   Positioned(
                     top: 40,
                     right: 40,
                     child: _ProfileArc(
                       70,
-                      Y4.honeyDeep.withValues(alpha: 0.10),
+                      Y4.palette.honeyDeep.withValues(alpha: 0.10),
                     ),
                   ),
                   Positioned(
@@ -6728,7 +6734,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                     left: 60,
                     child: _ProfileArc(
                       50,
-                      Y4.primaryDeep.withValues(alpha: 0.06),
+                      Y4.palette.primaryDeep.withValues(alpha: 0.06),
                     ),
                   ),
 
@@ -6771,7 +6777,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Y4.honeyDeep.withValues(alpha: 0.35),
+                                      color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
                                       blurRadius: 10,
                                       offset: const Offset(0, 3),
                                     ),
@@ -6817,7 +6823,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                   border: Border.all(color: Y4.border),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Y4.ink.withValues(alpha: 0.06),
+                                      color: Y4.palette.ink.withValues(alpha: 0.06),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -7309,12 +7315,13 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
       setState(() => _drag = t.clamp(0.0, maxDrag));
       await Future.delayed(const Duration(milliseconds: 9));
     }
-    if (mounted)
+    if (mounted) {
       setState(() {
         _drag = 0;
         _resetting = false;
         _particles.clear();
       });
+    }
   }
 
   void _complete(double maxDrag) {
@@ -7454,7 +7461,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Y4.butter.withValues(alpha: 0.55),
+                      color: Y4.palette.butter.withValues(alpha: 0.55),
                       width: 1.2,
                     ),
                     boxShadow: [
@@ -7464,7 +7471,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         offset: const Offset(0, 6),
                       ),
                       BoxShadow(
-                        color: Y4.honey.withValues(
+                        color: Y4.palette.honey.withValues(
                           alpha: 0.22 + 0.18 * pulse,
                         ),
                         blurRadius: 16 + 6 * pulse,
@@ -7493,7 +7500,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.honey.withValues(
+                              color: Y4.palette.honey.withValues(
                                 alpha: 0.55 + 0.25 * pulse,
                               ),
                               blurRadius: 8,
@@ -7505,7 +7512,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                           style: GoogleFonts.outfit(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             height: 1.0,
                           ),
                         ),
@@ -7518,7 +7525,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         style: GoogleFonts.outfit(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
-                          color: Y4.butter,
+                          color: Y4.palette.butter,
                           letterSpacing: 0.2,
                         ),
                       ),
@@ -7526,7 +7533,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                       Container(
                         width: 1,
                         height: 14,
-                        color: Y4.butter.withValues(alpha: 0.35),
+                        color: Y4.palette.butter.withValues(alpha: 0.35),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -7535,7 +7542,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         style: GoogleFonts.outfit(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
-                          color: Y4.butter.withValues(alpha: 0.88),
+                          color: Y4.palette.butter.withValues(alpha: 0.88),
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -7546,7 +7553,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                         child: Icon(
                           Icons.keyboard_arrow_down_rounded,
                           size: 18,
-                          color: Y4.butter,
+                          color: Y4.palette.butter,
                         ),
                       ),
                     ],
@@ -8159,7 +8166,7 @@ class _Y4PlantPainter extends CustomPainter {
     canvas.drawPath(
       potPath,
       Paint()
-        ..color = Y4.soil
+        ..color = Y4.palette.soil
         ..style = PaintingStyle.fill,
     );
 
@@ -8184,7 +8191,7 @@ class _Y4PlantPainter extends CustomPainter {
     canvas.drawPath(
       stem,
       Paint()
-        ..color = Y4.primary
+        ..color = Y4.palette.primary
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2 * scale
         ..strokeCap = StrokeCap.round,
@@ -8193,11 +8200,11 @@ class _Y4PlantPainter extends CustomPainter {
     // Leaves (drawn progressively as grow increases)
     Paint sageFill =
         Paint()
-          ..color = Y4.primary
+          ..color = Y4.palette.primary
           ..style = PaintingStyle.fill;
     Paint sageDeepFill =
         Paint()
-          ..color = Y4.primaryDeep
+          ..color = Y4.palette.primaryDeep
           ..style = PaintingStyle.fill;
 
     if (leaves >= 1) {
@@ -8264,7 +8271,7 @@ class _Y4PlantPainter extends CustomPainter {
         p(32, 20),
         5 * scale,
         Paint()
-          ..color = Y4.honey
+          ..color = Y4.palette.honey
           ..style = PaintingStyle.fill,
       );
     }
@@ -8305,7 +8312,7 @@ class _Y4StreakPlantPainter extends CustomPainter {
     Offset p(double x, double y) => Offset(x * sx, y * sy);
 
     // Soil base rect x=4 y=22 w=16 h=5 rx=1
-    final soilColor = done ? Y4.soil : Y4.track;
+    final soilColor = done ? Y4.palette.soil : Y4.palette.track;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(p(4, 22).dx, p(4, 22).dy, 16 * sx, 5 * sy),
@@ -8330,7 +8337,7 @@ class _Y4StreakPlantPainter extends CustomPainter {
       canvas.drawPath(
         stem,
         Paint()
-          ..color = Y4.primary
+          ..color = Y4.palette.primary
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.5 * sx,
       );
@@ -8355,7 +8362,7 @@ class _Y4StreakPlantPainter extends CustomPainter {
       canvas.drawPath(
         l1,
         Paint()
-          ..color = Y4.primary
+          ..color = Y4.palette.primary
           ..style = PaintingStyle.fill,
       );
 
@@ -8379,14 +8386,14 @@ class _Y4StreakPlantPainter extends CustomPainter {
       canvas.drawPath(
         l2,
         Paint()
-          ..color = Y4.primaryDeep
+          ..color = Y4.palette.primaryDeep
           ..style = PaintingStyle.fill,
       );
     } else if (today) {
       // Dashed honey-deep stem M12 22 L12 18
       final dash =
           Paint()
-            ..color = Y4.honeyDeep
+            ..color = Y4.palette.honeyDeep
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1.5 * sx
             ..strokeCap = StrokeCap.round;
@@ -8430,13 +8437,13 @@ class _Y4SunPainter extends CustomPainter {
 
     final core =
         Paint()
-          ..color = Y4.honey
+          ..color = Y4.palette.honey
           ..style = PaintingStyle.fill;
     canvas.drawCircle(c, coreR, core);
 
     final ray =
         Paint()
-          ..color = Y4.honey.withValues(alpha: 0.85)
+          ..color = Y4.palette.honey.withValues(alpha: 0.85)
           ..style = PaintingStyle.stroke
           ..strokeWidth = s.width * (2 / 44)
           ..strokeCap = StrokeCap.round;
@@ -8483,7 +8490,7 @@ class _Y4SunArcPainter extends CustomPainter {
     // Track
     final track =
         Paint()
-          ..color = Y4.track
+          ..color = Y4.palette.track
           ..style = PaintingStyle.stroke
           ..strokeWidth = 8
           ..strokeCap = StrokeCap.round;
@@ -8498,7 +8505,7 @@ class _Y4SunArcPainter extends CustomPainter {
     // Filled portion
     final fill =
         Paint()
-          ..color = Y4.honeyDeep
+          ..color = Y4.palette.honeyDeep
           ..style = PaintingStyle.stroke
           ..strokeWidth = 8
           ..strokeCap = StrokeCap.round;
@@ -8516,14 +8523,14 @@ class _Y4SunArcPainter extends CustomPainter {
     final sunCy = center.dy - math.sin(pct * math.pi) * radius;
     final sunPaint =
         Paint()
-          ..color = Y4.honey
+          ..color = Y4.palette.honey
           ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset(sunCx, sunCy), 6, sunPaint);
     canvas.drawCircle(
       Offset(sunCx, sunCy),
       6,
       Paint()
-        ..color = Y4.honeyDeep
+        ..color = Y4.palette.honeyDeep
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -8598,7 +8605,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
         gradient: LinearGradient(
           begin: const Alignment(-0.3, -1.0),
           end: const Alignment(0.5, 1.0),
-          colors: [Y4.cream, Y4.honey.withValues(alpha: 0.85)],
+          colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.85)],
         ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Y4.border),
@@ -8631,7 +8638,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: Y4.inkSoft,
+                            color: Y4.palette.inkSoft,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -8661,7 +8668,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                                   style: Y4.display(
                                     fontSize: 52,
                                     fontWeight: FontWeight.w400,
-                                    color: Y4.honeyDeep,
+                                    color: Y4.palette.honeyDeep,
                                     letterSpacing: -0.02 * 52,
                                     height: 0.95,
                                   ),
@@ -8689,7 +8696,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Y4.honey.withValues(alpha: 0.13),
+                        Y4.palette.honey.withValues(alpha: 0.13),
                       ],
                       stops: const [0.5, 1.0],
                     ),
@@ -8760,7 +8767,7 @@ class _Y4StreakCard extends StatelessWidget {
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                           letterSpacing: 1.3,
                         ),
                       ),
@@ -8783,7 +8790,7 @@ class _Y4StreakCard extends StatelessWidget {
                             style: Y4.display(
                               fontSize: 16,
                               fontStyle: FontStyle.italic,
-                              color: Y4.honeyDeep,
+                              color: Y4.palette.honeyDeep,
                               height: 1.0,
                             ),
                           ),
@@ -8816,7 +8823,7 @@ class _Y4StreakCard extends StatelessWidget {
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: Y4.muted,
+                          color: Y4.palette.muted,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -8902,7 +8909,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: Y4.track,
+                  color: Y4.palette.track,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Row(
@@ -8936,7 +8943,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: on ? Y4.ink : Colors.transparent,
+                              color: on ? Y4.palette.ink : Colors.transparent,
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
@@ -8944,7 +8951,7 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
-                                color: on ? Colors.white : Y4.inkSoft,
+                                color: on ? Colors.white : Y4.palette.inkSoft,
                               ),
                             ),
                           ),
@@ -8989,22 +8996,22 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
                             _tab == 'Today'
                                 ? (AppLocalizations.of(
                                       context,
-                                    )?.todayTab?.toLowerCase() ??
+                                    )?.todayTab.toLowerCase() ??
                                     'today')
                                 : _tab == 'Week'
                                 ? (AppLocalizations.of(
                                       context,
-                                    )?.weekTab?.toLowerCase() ??
+                                    )?.weekTab.toLowerCase() ??
                                     'week')
                                 : (AppLocalizations.of(
                                       context,
-                                    )?.monthTab?.toLowerCase() ??
+                                    )?.monthTab.toLowerCase() ??
                                     'month'),
                           ) ??
                           'of ${fmt(goal)} ${_tab.toLowerCase()} goal',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

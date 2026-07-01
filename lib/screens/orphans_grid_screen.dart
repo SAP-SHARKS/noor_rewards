@@ -58,13 +58,13 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
       appBar: AppBar(
         backgroundColor: Y4.bg,
         elevation: 0,
-        foregroundColor: Y4.ink,
+        foregroundColor: Y4.palette.ink,
         title: Text(
           l?.sponsorAnOrphan ?? 'Sponsor an Orphan',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w800,
             fontSize: 18,
-            color: Y4.ink,
+            color: Y4.palette.ink,
           ),
         ),
         centerTitle: false,
@@ -72,7 +72,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: Y4.honeyDeep))
           : RefreshIndicator(
-              color: Y4.honeyDeep,
+              color: Y4.palette.honeyDeep,
               onRefresh: _load,
               child: _orphans.isEmpty ? _emptyState() : _grid(),
             ),
@@ -85,7 +85,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
       padding: const EdgeInsets.all(24),
       children: [
         const SizedBox(height: 80),
-        Icon(Icons.favorite_rounded, size: 56, color: Y4.muted),
+        Icon(Icons.favorite_rounded, size: 56, color: Y4.palette.muted),
         const SizedBox(height: 16),
         Text(
           l?.noOrphansListed ?? 'No orphans listed yet',
@@ -93,7 +93,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
           style: GoogleFonts.outfit(
             fontSize: 17,
             fontWeight: FontWeight.w700,
-            color: Y4.ink,
+            color: Y4.palette.ink,
           ),
         ),
         const SizedBox(height: 6),
@@ -103,7 +103,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 13.5,
-            color: Y4.inkSoft,
+            color: Y4.palette.inkSoft,
             height: 1.4,
           ),
         ),
@@ -143,9 +143,9 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         decoration: BoxDecoration(
-          color: Y4.cream,
+          color: Y4.palette.cream,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Y4.honey.withValues(alpha: 0.4)),
+          border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.4)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +156,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
               style: GoogleFonts.amiri(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: Y4.ink,
+                color: Y4.palette.ink,
                 height: 1.5,
               ),
             ),
@@ -167,7 +167,7 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
               style: GoogleFonts.outfit(
                 fontSize: 12.5,
                 fontStyle: FontStyle.italic,
-                color: Y4.inkSoft,
+                color: Y4.palette.inkSoft,
               ),
             ),
           ],
@@ -215,7 +215,7 @@ class OrphanCard extends StatelessWidget {
           border: Border.all(color: Y4.border),
           boxShadow: [
             BoxShadow(
-              color: Y4.ink.withValues(alpha: 0.06),
+              color: Y4.palette.ink.withValues(alpha: 0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -243,7 +243,7 @@ class OrphanCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.ink.withValues(alpha: 0.15),
+                              color: Y4.palette.ink.withValues(alpha: 0.15),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),
@@ -254,7 +254,7 @@ class OrphanCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            color: Y4.honeyDeep,
+                            color: Y4.palette.honeyDeep,
                             letterSpacing: 0.2,
                           ),
                         ),
@@ -280,7 +280,7 @@ class OrphanCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             height: 1.1,
                           ),
                           maxLines: 1,
@@ -292,7 +292,7 @@ class OrphanCard extends StatelessWidget {
                             orphan.displayLocation!,
                             style: GoogleFonts.outfit(
                               fontSize: 11,
-                              color: Y4.inkSoft,
+                              color: Y4.palette.inkSoft,
                               fontWeight: FontWeight.w500,
                               height: 1.15,
                             ),
@@ -306,7 +306,7 @@ class OrphanCard extends StatelessWidget {
                             orphan.story!,
                             style: GoogleFonts.outfit(
                               fontSize: 11,
-                              color: Y4.inkSoft,
+                              color: Y4.palette.inkSoft,
                               fontStyle: FontStyle.italic,
                               height: 1.25,
                             ),
@@ -324,7 +324,7 @@ class OrphanCard extends StatelessWidget {
                           child: LinearProgressIndicator(
                             value: progress,
                             minHeight: 4,
-                            backgroundColor: Y4.track,
+                            backgroundColor: Y4.palette.track,
                             valueColor:
                                 const AlwaysStoppedAnimation(Y4.honeyDeep),
                           ),
@@ -342,7 +342,7 @@ class OrphanCard extends StatelessWidget {
                                       style: GoogleFonts.outfit(
                                         fontSize: 10.5,
                                         fontWeight: FontWeight.w700,
-                                        color: Y4.ink,
+                                        color: Y4.palette.ink,
                                         height: 1.1,
                                       ),
                                       maxLines: 1,
@@ -364,7 +364,7 @@ class OrphanCard extends StatelessWidget {
                               style: GoogleFonts.outfit(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.primary,
+                                color: Y4.palette.primary,
                                 height: 1.1,
                               ),
                             ),
@@ -373,7 +373,7 @@ class OrphanCard extends StatelessWidget {
                               Icon(
                                 Icons.favorite_rounded,
                                 size: 10,
-                                color: Y4.primary,
+                                color: Y4.palette.primary,
                               ),
                             ],
                           ],
@@ -393,7 +393,7 @@ class OrphanCard extends StatelessWidget {
   Widget _photo(BuildContext context) {
     if (orphan.photoUrl == null || orphan.photoUrl!.isEmpty) {
       return Container(
-        color: Y4.butter,
+        color: Y4.palette.butter,
         alignment: Alignment.center,
         child: Text(
           (() {
@@ -403,7 +403,7 @@ class OrphanCard extends StatelessWidget {
           style: GoogleFonts.fraunces(
             fontSize: 42,
             fontWeight: FontWeight.w500,
-            color: Y4.honeyDeep,
+            color: Y4.palette.honeyDeep,
           ),
         ),
       );
@@ -411,9 +411,9 @@ class OrphanCard extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: orphan.photoUrl!,
       fit: BoxFit.cover,
-      placeholder: (_, __) => Container(color: Y4.butter),
+      placeholder: (_, __) => Container(color: Y4.palette.butter),
       errorWidget: (_, __, ___) => Container(
-        color: Y4.butter,
+        color: Y4.palette.butter,
         alignment: Alignment.center,
         child: const Icon(Icons.person_rounded, color: Y4.honeyDeep, size: 36),
       ),

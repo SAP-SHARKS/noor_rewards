@@ -20,9 +20,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/app_localizations.dart';
+import '../services/settings_service.dart';
 import '../services/stats_service.dart';
 import '../theme/y4_theme.dart';
 
@@ -169,6 +171,9 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
 
   @override
   Widget build(BuildContext context) {
+    // Subscribe to SettingsService so a live theme_mode change (or any
+    // admin colour edit) triggers a rebuild — Y4.palette reads reactively.
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context);
     final liveLabel = l?.peopleReadingNow ?? 'reading right now';
     final readersTodayLabel = l?.readToday ?? 'read today';
@@ -229,7 +234,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                           style: GoogleFonts.fraunces(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             letterSpacing: -0.5,
                             height: 1,
                           ),
@@ -242,7 +247,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                         height: 1.0,
                       ),
                       maxLines: 1,
@@ -252,7 +257,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                       const SizedBox(height: 4),
                       _FooterStat(
                         icon: Icons.menu_book_rounded,
-                        iconColor: Y4.honeyDeep,
+                        iconColor: Y4.palette.honeyDeep,
                         value: _formatNumber(_global.todayReaders),
                         label: readersTodayLabel,
                       ),
@@ -294,7 +299,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                         '—',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                         ),
                       )
                     else
@@ -438,7 +443,7 @@ class _PopularSurahRow extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: Y4.ink,
+              color: Y4.palette.ink,
               height: 1.0,
             ),
           ),
@@ -452,7 +457,7 @@ class _PopularSurahRow extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: Y4.ink,
+              color: Y4.palette.ink,
             ),
           ),
         ),
@@ -462,7 +467,7 @@ class _PopularSurahRow extends StatelessWidget {
           style: GoogleFonts.outfit(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: Y4.inkSoft,
+            color: Y4.palette.inkSoft,
           ),
         ),
       ],
@@ -497,7 +502,7 @@ class _FooterStat extends StatelessWidget {
           style: GoogleFonts.outfit(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: Y4.ink,
+            color: Y4.palette.ink,
           ),
         ),
         const SizedBox(width: 3),
@@ -511,7 +516,7 @@ class _FooterStat extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 10,
               fontWeight: FontWeight.w500,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
             ),
           ),
         ),
