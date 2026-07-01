@@ -173,30 +173,31 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
     final liveLabel = l?.peopleReadingNow ?? 'reading right now';
     final readersTodayLabel = l?.readToday ?? 'read today';
 
-    // Fresher palette — cool mint-sage on the right contrasts the honey
-    // brand colour on the left of the card.
+    // Palette-driven — swaps when the admin picks a new theme mode.
+    final pal = Y4.palette;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFFFFF8E6), // soft cream-honey
-            Color(0xFFEDF8EE), // pale mint
+            pal.background,
+            pal.accentMint.withValues(alpha: 0.15),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF8FCFA0).withValues(alpha: 0.55), width: 1.2),
+        border: Border.all(
+          color: pal.accentMint.withValues(alpha: 0.55),
+          width: 1.2,
+        ),
         boxShadow: [
-          // Mint halo
           BoxShadow(
-            color: const Color(0xFF8FCFA0).withValues(alpha: 0.28),
+            color: pal.accentMint.withValues(alpha: 0.28),
             blurRadius: 16,
           ),
-          // Subtle green drop
           BoxShadow(
-            color: const Color(0xFF3F8C5E).withValues(alpha: 0.12),
+            color: pal.accentOlive.withValues(alpha: 0.12),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -280,7 +281,7 @@ class _QuranEngagementStripState extends State<QuranEngagementStrip>
                       style: GoogleFonts.rajdhani(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
-                        color: const Color(0xFF3F8C5E),
+                        color: Y4.palette.accentOlive,
                         letterSpacing: 0.8,
                         height: 1.0,
                       ),
@@ -393,7 +394,7 @@ class _DottedDivider extends StatelessWidget {
           height: 3,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFF8FCFA0).withValues(alpha: 0.55),
+            color: Y4.palette.accentMint.withValues(alpha: 0.55),
           ),
         ),
       ),
@@ -423,10 +424,13 @@ class _PopularSurahRow extends StatelessWidget {
           width: 15,
           height: 15,
           alignment: Alignment.center,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [Color(0xFFE2F5DE), Color(0xFF8FCFA0)],
+              colors: [
+                Y4.palette.accentMint.withValues(alpha: 0.30),
+                Y4.palette.accentMint,
+              ],
             ),
           ),
           child: Text(

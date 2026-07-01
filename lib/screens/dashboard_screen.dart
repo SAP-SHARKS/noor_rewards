@@ -6448,6 +6448,8 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     final p1 = top3.isNotEmpty ? top3[0] as Map<String, dynamic> : null;
     final p2 = top3.length > 1 ? top3[1] as Map<String, dynamic> : null;
     final p3 = top3.length > 2 ? top3[2] as Map<String, dynamic> : null;
+    // Palette-driven podium — swaps entirely when admin picks a new mode.
+    final pal = Y4.palette;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -6456,8 +6458,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
             rank: 2,
             entry: p2,
             currentUserId: widget.currentUserId,
-            // Soft lavender — calm, cool
-            gradient: const [Color(0xFFEFE7FF), Color(0xFFB7A6F4)],
+            gradient: [pal.accentSilver.withValues(alpha: 0.25), pal.accentSilver],
             avatarSize: 52,
             pillarHeight: 50,
           ),
@@ -6467,8 +6468,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
             rank: 1,
             entry: p1,
             currentUserId: widget.currentUserId,
-            // Sunny honey — warmest, most prominent
-            gradient: const [Color(0xFFFFEFB0), Color(0xFFF7B65A)],
+            gradient: [pal.accentGold.withValues(alpha: 0.30), pal.accentGold],
             avatarSize: 64,
             pillarHeight: 56,
           ),
@@ -6478,8 +6478,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
             rank: 3,
             entry: p3,
             currentUserId: widget.currentUserId,
-            // Fresh mint — grounded green
-            gradient: const [Color(0xFFE2F5DE), Color(0xFF8FCFA0)],
+            gradient: [pal.accentBronze.withValues(alpha: 0.25), pal.accentBronze],
             avatarSize: 48,
             pillarHeight: 50,
           ),
@@ -6685,7 +6684,6 @@ class _ProfileTabState extends State<_ProfileTab> {
   Widget build(BuildContext context) {
     final level = widget.level;
     final levelTitle = widget.levelTitle;
-    final streak = widget.streak;
     final statusBarH = MediaQuery.of(context).padding.top;
 
     return SafeArea(
@@ -6851,85 +6849,6 @@ class _ProfileTabState extends State<_ProfileTab> {
                   children: [
                     // ── Leaderboard — tabs / podium / avatars (single source)
                     _LeaderboardView(currentUserId: widget.currentUserId),
-                    const SizedBox(height: 14),
-
-                    // Streak card — warm beige with amber/teal accents
-                    GestureDetector(
-                      onTap:
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const LevelScreen(),
-                            ),
-                          ),
-                      child: Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: _C.border),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.04),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 52,
-                              height: 52,
-                              decoration: BoxDecoration(
-                                color: _C.amber.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: _C.amber.withValues(alpha: 0.3),
-                                ),
-                              ),
-                              child: Center(child: NoorIcon.fire(size: 26)),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    streak > 0
-                                        ? (AppLocalizations.of(context)
-                                                ?.dayStreakCount(streak) ??
-                                            '$streak Day Streak 🔥')
-                                        : (AppLocalizations.of(context)
-                                                ?.startStreakToday ??
-                                            'Start your streak today!'),
-                                    style: GoogleFonts.rajdhani(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w800,
-                                      color: streak > 0 ? _C.amber : _C.sub,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)?.navJourney ??
-                                        'Tap to view your Journey',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12,
-                                      color: _C.sub,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 15,
-                              color: streak > 0 ? _C.amber : _C.sub,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

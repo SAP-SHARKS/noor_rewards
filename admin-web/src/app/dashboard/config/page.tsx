@@ -47,6 +47,26 @@ export default function RawConfigPage() {
     setSaving(null);
   }
 
+  // Boolean rows save instantly on toggle (no Save button needed).
+  async function handleToggle(key: string, newValue: "true" | "false") {
+    setEditing((prev) => ({ ...prev, [key]: newValue }));
+    setSaving(key);
+    await updateConfigKey(key, newValue, emailRef.current);
+    setRows((prev) =>
+      prev.map((r) =>
+        r.key === key
+          ? {
+              ...r,
+              value: newValue,
+              updated_at: new Date().toISOString(),
+              updated_by: emailRef.current,
+            }
+          : r,
+      ),
+    );
+    setSaving(null);
+  }
+
   const filtered = search
     ? rows.filter(
         (r) =>
@@ -92,6 +112,11 @@ export default function RawConfigPage() {
             <div className="space-y-2">
               {items.map((row) => {
                 const changed = editing[row.key] !== row.value;
+                // Boolean values render as a toggle switch (auto-saves on
+                // flip). Anything else keeps the text input + Save button.
+                const isBool =
+                  row.value === "true" || row.value === "false";
+                const enabled = editing[row.key] === "true";
                 return (
                   <div
                     key={row.key}
@@ -116,24 +141,47 @@ export default function RawConfigPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={editing[row.key] ?? ""}
-                          onChange={(e) =>
-                            setEditing((prev) => ({
-                              ...prev,
-                              [row.key]: e.target.value,
-                            }))
-                          }
-                          className="w-48 px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
-                        />
-                        <button
-                          onClick={() => handleSave(row.key)}
-                          disabled={!changed || saving === row.key}
-                          className="px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 disabled:opacity-30 transition cursor-pointer"
-                        >
-                          {saving === row.key ? "..." : "Save"}
-                        </button>
+                        {isBool ? (
+                          <button
+                            onClick={() =>
+                              handleToggle(
+                                row.key,
+                                enabled ? "false" : "true",
+                              )
+                            }
+                            disabled={saving === row.key}
+                            className={`relative w-[52px] h-[28px] rounded-full transition-colors cursor-pointer disabled:opacity-50 ${
+                              enabled ? "bg-teal-500" : "bg-slate-200"
+                            }`}
+                          >
+                            <span
+                              className={`absolute top-[2px] left-[2px] w-6 h-6 bg-white rounded-full shadow transition-transform ${
+                                enabled ? "translate-x-6" : "translate-x-0"
+                              }`}
+                            />
+                          </button>
+                        ) : (
+                          <>
+                            <input
+                              type="text"
+                              value={editing[row.key] ?? ""}
+                              onChange={(e) =>
+                                setEditing((prev) => ({
+                                  ...prev,
+                                  [row.key]: e.target.value,
+                                }))
+                              }
+                              className="w-48 px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            />
+                            <button
+                              onClick={() => handleSave(row.key)}
+                              disabled={!changed || saving === row.key}
+                              className="px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-900 disabled:opacity-30 transition cursor-pointer"
+                            >
+                              {saving === row.key ? "..." : "Save"}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

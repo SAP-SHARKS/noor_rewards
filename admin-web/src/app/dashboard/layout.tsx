@@ -51,7 +51,7 @@ const NAV_ITEMS: { href: string; label: string; icon: string; tone: Tone }[] = [
   { href: "/dashboard",            label: "Overview",          icon: "overview",   tone: "teal" },
   { href: "/dashboard/economy",    label: "Economy",           icon: "economy",    tone: "amber" },
   { href: "/dashboard/donor-pool", label: "Donor Pool",        icon: "donor_pool", tone: "emerald" },
-  { href: "/dashboard/theme",      label: "Theme & Colors",    icon: "theme",      tone: "violet" },
+  { href: "/dashboard/theme",      label: "Theme & Branding",  icon: "theme",      tone: "violet" },
   { href: "/dashboard/projects",   label: "Projects",          icon: "projects",   tone: "sky" },
   { href: "/dashboard/orphans",    label: "Orphans",           icon: "orphans",    tone: "rose" },
   { href: "/dashboard/users",      label: "Users",             icon: "users",      tone: "indigo" },
