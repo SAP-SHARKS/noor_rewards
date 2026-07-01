@@ -36,7 +36,7 @@ class _NotificationsSheet extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Y4.cream, Y4.bg, Y4.bg],
+                colors: [Y4.palette.cream, Y4.bg, Y4.bg],
               ),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(28),
@@ -50,7 +50,7 @@ class _NotificationsSheet extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Y4.muted,
+                    color: Y4.palette.muted,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -70,7 +70,7 @@ class _NotificationsSheet extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Y4.honeyDeep.withValues(alpha: 0.70),
+                            color: Y4.palette.honeyDeep.withValues(alpha: 0.70),
                           ),
                         ),
                         child: const Icon(
@@ -90,7 +90,7 @@ class _NotificationsSheet extends StatelessWidget {
                               style: Y4.display(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w500,
-                                color: Y4.ink,
+                                color: Y4.palette.ink,
                                 letterSpacing: -0.3,
                                 height: 1.0,
                               ),
@@ -103,7 +103,7 @@ class _NotificationsSheet extends StatelessWidget {
                                   'Stay on top of rewards & milestones',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
-                                color: Y4.inkSoft,
+                                color: Y4.palette.inkSoft,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -148,7 +148,7 @@ class _NotificationsSheet extends StatelessWidget {
                                                         )?.markAllAsRead ??
                                                         'Mark all as read',
                                                     style: GoogleFonts.outfit(
-                                                      color: Y4.ink,
+                                                      color: Y4.palette.ink,
                                                       fontSize: 13,
                                                     ),
                                                   ),
@@ -172,7 +172,7 @@ class _NotificationsSheet extends StatelessWidget {
                                                         )?.clearAll ??
                                                         'Clear all',
                                                     style: GoogleFonts.outfit(
-                                                      color: Y4.ink,
+                                                      color: Y4.palette.ink,
                                                       fontSize: 13,
                                                     ),
                                                   ),
@@ -220,7 +220,7 @@ class _NotificationsSheet extends StatelessWidget {
                                     ? Icons.notifications_active_rounded
                                     : Icons.notifications_off_rounded,
                                 size: 18,
-                                color: on ? Y4.honeyDeep : Y4.muted,
+                                color: on ? Y4.palette.honeyDeep : Y4.palette.muted,
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -240,7 +240,7 @@ class _NotificationsSheet extends StatelessWidget {
                                       style: GoogleFonts.outfit(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
-                                        color: Y4.ink,
+                                        color: Y4.palette.ink,
                                       ),
                                     ),
                                     Text(
@@ -255,7 +255,7 @@ class _NotificationsSheet extends StatelessWidget {
                                               'Inbox keeps existing items but no new ones will arrive.'),
                                       style: GoogleFonts.outfit(
                                         fontSize: 11,
-                                        color: Y4.inkSoft,
+                                        color: Y4.palette.inkSoft,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -266,10 +266,10 @@ class _NotificationsSheet extends StatelessWidget {
                                 value: on,
                                 onChanged:
                                     NotificationCenter.instance.setEnabled,
-                                activeThumbColor: Y4.honey,
-                                activeTrackColor: Y4.honeyDeep,
+                                activeThumbColor: Y4.palette.honey,
+                                activeTrackColor: Y4.palette.honeyDeep,
                                 inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: Y4.track,
+                                inactiveTrackColor: Y4.palette.track,
                               ),
                             ],
                           ),
@@ -333,7 +333,7 @@ class _EmptyState extends StatelessWidget {
                 gradient: const LinearGradient(colors: [Y4.butter, Y4.honey]),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Y4.honeyDeep.withValues(alpha: 0.4),
+                  color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
                   width: 2,
                 ),
               ),
@@ -349,7 +349,7 @@ class _EmptyState extends StatelessWidget {
               style: Y4.display(
                 fontSize: 22,
                 fontWeight: FontWeight.w500,
-                color: Y4.ink,
+                color: Y4.palette.ink,
                 letterSpacing: -0.3,
               ),
             ),
@@ -360,7 +360,7 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
                 fontSize: 12,
-                color: Y4.inkSoft,
+                color: Y4.palette.inkSoft,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
@@ -387,17 +387,17 @@ class _NotificationTile extends StatelessWidget {
   Color get _accent {
     switch (n.kind) {
       case NoorNotifKind.reward:
-        return Y4.honeyDeep;
+        return Y4.palette.honeyDeep;
       case NoorNotifKind.streak:
-        return Y4.honeyDeep;
+        return Y4.palette.honeyDeep;
       case NoorNotifKind.badge:
-        return Y4.amberY;
+        return Y4.palette.amberY;
       case NoorNotifKind.donation:
-        return Y4.primary;
+        return Y4.palette.primary;
       case NoorNotifKind.validation:
-        return Y4.primaryDeep;
+        return Y4.palette.primaryDeep;
       case NoorNotifKind.system:
-        return Y4.inkSoft;
+        return Y4.palette.inkSoft;
     }
   }
 
@@ -427,7 +427,7 @@ class _NotificationTile extends StatelessWidget {
     }
     if (rawBody.contains('badge.')) {
       final badge = RegExp(r'"([^"]+)"').firstMatch(rawBody)?.group(1) ?? '';
-      return AppLocalizations.of(context)?.badgeEarnedDesc(badge) ?? 'You have earned the "' + badge + '" badge.';
+      return AppLocalizations.of(context)?.badgeEarnedDesc(badge) ?? 'You have earned the "$badge" badge.';
     }
     if (rawBody.contains('streak')) {
       final parts = RegExp(r'(\d+)-day (.*?) streak · \+(\d+)').firstMatch(rawBody);
@@ -495,7 +495,7 @@ class _NotificationTile extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Y4.butter, _accent.withValues(alpha: 0.80)],
+                    colors: [Y4.palette.butter, _accent.withValues(alpha: 0.80)],
                   ),
                   shape: BoxShape.circle,
                   border: Border.all(color: _accent.withValues(alpha: 0.80)),
@@ -524,7 +524,7 @@ class _NotificationTile extends StatelessWidget {
                               fontSize: 14,
                               fontWeight:
                                   n.read ? FontWeight.w600 : FontWeight.w800,
-                              color: Y4.ink,
+                              color: Y4.palette.ink,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -548,7 +548,7 @@ class _NotificationTile extends StatelessWidget {
                       textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(n.body) ? TextDirection.rtl : TextDirection.ltr,
                       style: GoogleFonts.outfit(
                         fontSize: 12,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                         fontWeight: FontWeight.w500,
                         height: 1.35,
                       ),
@@ -560,7 +560,7 @@ class _NotificationTile extends StatelessWidget {
                       _relTime(context, n.createdAt),
                       style: GoogleFonts.outfit(
                         fontSize: 10,
-                        color: Y4.muted,
+                        color: Y4.palette.muted,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -588,13 +588,16 @@ class _NotificationTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final delta = DateTime.now().difference(t);
     if (delta.inSeconds < 45) return l10n?.justNow ?? 'Just now';
-    if (delta.inMinutes < 60)
+    if (delta.inMinutes < 60) {
       return l10n?.mAgo(delta.inMinutes.toString()) ??
           '${delta.inMinutes}m ago';
-    if (delta.inHours < 24)
+    }
+    if (delta.inHours < 24) {
       return l10n?.hAgo(delta.inHours.toString()) ?? '${delta.inHours}h ago';
-    if (delta.inDays < 7)
+    }
+    if (delta.inDays < 7) {
       return l10n?.dAgo(delta.inDays.toString()) ?? '${delta.inDays}d ago';
+    }
     return '${t.day}/${t.month}/${t.year}';
   }
 }

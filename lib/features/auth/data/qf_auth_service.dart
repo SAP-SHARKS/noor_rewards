@@ -225,16 +225,18 @@ class QfAuthService {
     );
     if (response.status == 200) {
       final data = response.data;
-      if (data?['access_token'] != null)
+      if (data?['access_token'] != null) {
         await _secureStorage.write(
           key: _accessTokenKey,
           value: data['access_token'],
         );
-      if (data?['refresh_token'] != null)
+      }
+      if (data?['refresh_token'] != null) {
         await _secureStorage.write(
           key: _refreshTokenKey,
           value: data['refresh_token'],
         );
+      }
     } else {
       throw Exception('Token refresh failed: ${response.data}');
     }
@@ -275,13 +277,15 @@ class QfAuthService {
       final qfAccessToken = data?['access_token'] as String?;
       final qfRefreshToken = data?['refresh_token'] as String?;
 
-      if (qfAccessToken != null)
+      if (qfAccessToken != null) {
         await _secureStorage.write(key: _accessTokenKey, value: qfAccessToken);
-      if (qfRefreshToken != null)
+      }
+      if (qfRefreshToken != null) {
         await _secureStorage.write(
           key: _refreshTokenKey,
           value: qfRefreshToken,
         );
+      }
 
       // ── Session decision ─────────────────────────────────────────────────
       // Get the QF sub FIRST so we can verify identity before touching the
@@ -566,8 +570,9 @@ class QfAuthService {
         // Authoritative name only — from QF directly or completed-setup DB row
         final authoritativeName =
             name.isNotEmpty ? name : (dbSetupDone ? displayName : '');
-        if (authoritativeName.isNotEmpty)
+        if (authoritativeName.isNotEmpty) {
           row['display_name'] = authoritativeName;
+        }
 
         if (row.length > 1) {
           await _supabase

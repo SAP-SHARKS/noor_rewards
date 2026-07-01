@@ -540,8 +540,9 @@ class XpService {
           .eq('is_active', true)
           .order('end_date');
 
-      if (uid == null)
+      if (uid == null) {
         return List<Map<String, dynamic>>.from(challenges as List);
+      }
 
       final progress = await _sb
           .from('user_challenge_progress')

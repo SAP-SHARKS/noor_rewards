@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:convert';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../l10n/app_localizations.dart';
@@ -19,11 +20,9 @@ import '../services/settings_service.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/noor_offline.dart';
-import '../widgets/dhikr_exit_celebration.dart';
 import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
 import '../services/translation_service.dart';
-import 'akhirah_balance_screen.dart';
 import 'quran_screen.dart';
 
 // Returns a localized azkar-category title for the given category id.
@@ -1347,10 +1346,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
       // (Treasures of Jannah, Slaves Freed, etc.) can be derived
       // from the actual phrases recited.
       StatsService.instance.recordDhikrPhrase(dhikrId, count: target);
-      if (_setsCompleted == 0)
+      if (_setsCompleted == 0) {
         await XpService.instance.awardBadge('first_dhikr');
-      if (_setsCompleted + 1 >= 7)
+      }
+      if (_setsCompleted + 1 >= 7) {
         await XpService.instance.awardBadge('night_warrior');
+      }
 
       final isDailyGoal = await XpService.instance.claimDailyDhikrGoal();
       if (isDailyGoal && mounted) {
@@ -1696,7 +1697,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor,
                                     ),
                                   ),
-                                  activeColor: Colors.white,
+                                  activeThumbColor: Colors.white,
                                   activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.darkMode,
                                   onChanged: (val) {
@@ -1717,7 +1718,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor,
                                     ),
                                   ),
-                                  activeColor: Colors.white,
+                                  activeThumbColor: Colors.white,
                                   activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.showTranslation,
                                   onChanged: (val) {
@@ -1743,7 +1744,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor,
                                     ),
                                   ),
-                                  activeColor: Colors.white,
+                                  activeThumbColor: Colors.white,
                                   activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.showTransliteration,
                                   onChanged: (val) {
@@ -1779,7 +1780,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor.withValues(alpha: 0.55),
                                     ),
                                   ),
-                                  activeColor: Colors.white,
+                                  activeThumbColor: Colors.white,
                                   activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.showIllustration,
                                   onChanged: (val) {
@@ -1809,7 +1810,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       color: txtColor.withValues(alpha: 0.55),
                                     ),
                                   ),
-                                  activeColor: Colors.white,
+                                  activeThumbColor: Colors.white,
                                   activeTrackColor: const Color(0xFFFFC83D),
                                   value: _settings.freeIllustration,
                                   onChanged: _settings.showIllustration
@@ -2128,6 +2129,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   @override
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     if (_loading) {
       return Scaffold(
         backgroundColor: const Color(0xFFFFF4D2),
@@ -2288,7 +2290,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                       ? Colors.white.withValues(alpha: 0.7)
                                       : const Color(0xFF766B47),
                             ),
-                          ), // Y4.inkSoft on butter
+                          ), // Y4.palette.inkSoft on butter
                           const SizedBox(height: 8),
                           Text(
                             bannerTitle,
@@ -2298,7 +2300,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                               color:
                                   isDark
                                       ? Colors.white
-                                      : const Color(0xFF2A2410), // Y4.ink
+                                      : const Color(0xFF2A2410), // Y4.palette.ink
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -3135,10 +3137,11 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     _hideTimer?.cancel();
     if (_showToolbar) {
       _hideTimer = Timer(const Duration(seconds: 4), () {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _showToolbar = false;
           });
+        }
       });
     }
   }
@@ -3549,6 +3552,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = widget.settings.darkMode;
 
     // Safe index — clamp to valid range
@@ -3615,7 +3619,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_rounded,
-              color: isDark ? Colors.white.withValues(alpha: 0.90) : Y4.ink,
+              color: isDark ? Colors.white.withValues(alpha: 0.90) : Y4.palette.ink,
               size: 20,
             ),
             onPressed: () => Navigator.pop(context),
@@ -3659,7 +3663,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Y4.ink,
+                      color: isDark ? Colors.white : Y4.palette.ink,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -3689,7 +3693,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             letterSpacing: 0.3,
                           ),
                         ),
@@ -3703,12 +3707,12 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.20)
-                              : Y4.ink.withValues(alpha: 0.10),
+                              : Y4.palette.ink.withValues(alpha: 0.10),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.35)
-                                : Y4.ink.withValues(alpha: 0.20),
+                                : Y4.palette.ink.withValues(alpha: 0.20),
                             width: 0.5,
                           ),
                         ),
@@ -3717,7 +3721,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w700,
-                            color: isDark ? Colors.white : Y4.ink,
+                            color: isDark ? Colors.white : Y4.palette.ink,
                             letterSpacing: 0.3,
                           ),
                         ),
@@ -3803,7 +3807,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                             BoxShadow(
                               color: (isAudioActive
                                       ? Colors.black
-                                      : Y4.honeyDeep)
+                                      : Y4.palette.honeyDeep)
                                   .withValues(alpha: 0.35),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
@@ -4371,7 +4375,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     final barBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFC83D);
     final btnBg = isDark ? Colors.white.withValues(alpha: 0.18) : const Color(0xFF2A2410);
     final speedBg = isDark ? const Color(0xFF2A2410) : Colors.white;
-    final speedFg = isDark ? Colors.white : Y4.ink;
+    final speedFg = isDark ? Colors.white : Y4.palette.ink;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -4472,7 +4476,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           const SizedBox(width: 6),
           // ── Loop pill (loops the current track until tapped again) ─────
           Material(
-            color: _loopOne ? Y4.honeyDeep : speedBg,
+            color: _loopOne ? Y4.palette.honeyDeep : speedBg,
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
@@ -4518,7 +4522,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
           color: isDark ? const Color(0xFFFFC83D) : Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Y4.ink, size: 22),
+        child: Icon(icon, color: Y4.palette.ink, size: 22),
       ),
     );
   }
@@ -5444,12 +5448,15 @@ Widget _buildRichHadithText(
   );
 
   final allMatches = <({int start, int end, String type})>[];
-  for (final m in quantRx.allMatches(text))
+  for (final m in quantRx.allMatches(text)) {
     allMatches.add((start: m.start, end: m.end, type: 'quant'));
-  for (final m in protectRx.allMatches(text))
+  }
+  for (final m in protectRx.allMatches(text)) {
     allMatches.add((start: m.start, end: m.end, type: 'protect'));
-  for (final m in weightRx.allMatches(text))
+  }
+  for (final m in weightRx.allMatches(text)) {
     allMatches.add((start: m.start, end: m.end, type: 'weight'));
+  }
   allMatches.sort((a, b) => a.start.compareTo(b.start));
 
   // Remove overlaps — keep earlier (higher-priority) match
@@ -5464,8 +5471,9 @@ Widget _buildRichHadithText(
   int pos = 0;
 
   for (final m in filtered) {
-    if (m.start > pos)
+    if (m.start > pos) {
       spans.add(TextSpan(text: text.substring(pos, m.start), style: base));
+    }
     final seg = text.substring(m.start, m.end);
 
     switch (m.type) {
@@ -5537,8 +5545,9 @@ Widget _buildRichHadithText(
     pos = m.end;
   }
 
-  if (pos < text.length)
+  if (pos < text.length) {
     spans.add(TextSpan(text: text.substring(pos), style: base));
+  }
 
   return RichText(text: TextSpan(style: base, children: spans));
 }
@@ -5557,6 +5566,7 @@ class _RewardCounters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     // Hadith-based rewards per tap:
     // - Hasanaat: 10 per good deed (Sahih Muslim 131)
     // - Sins removed: 1 per dhikr rep (SubhanAllahi wa bihamdihi — Bukhari 6405)
@@ -5690,6 +5700,7 @@ class _AzkarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = settings.darkMode;
     // Card body color: every category uses the Y4 honey wash so the screen
     // reads as ONE warm surface end-to-end — matches the AppBar gradient
@@ -5780,7 +5791,7 @@ class _AzkarCard extends StatelessWidget {
     // we drop both the reward AND the hadith-full text if either is
     // the disclaimer, so the header conditional further down also
     // sees them as empty and the whole "Benefit" block disappears.
-    bool _isPlaceholderBenefit(String s) {
+    bool isPlaceholderBenefit(String s) {
       if (s.trim().isEmpty) return true;
       final patterns = [
         // direct disclaimer phrasing
@@ -5797,11 +5808,11 @@ class _AzkarCard extends StatelessWidget {
       }
       return false;
     }
-    if (_isPlaceholderBenefit(cleanReward)) {
+    if (isPlaceholderBenefit(cleanReward)) {
       cleanReward = '';
     }
     String cleanHadithFull = azkar.hadithFull;
-    if (_isPlaceholderBenefit(cleanHadithFull)) {
+    if (isPlaceholderBenefit(cleanHadithFull)) {
       cleanHadithFull = '';
     }
 
@@ -6573,8 +6584,9 @@ String _pickIllustration(String rawId) {
       id.contains('salawat')) {
     return 'salawat';
   }
-  if (id == 'evening_lwa_23' || id.contains('kalimat_taammat'))
+  if (id == 'evening_lwa_23' || id.contains('kalimat_taammat')) {
     return 'invincible';
+  }
   if (id == 'morning_lwa_23' ||
       id == 'astaghfirullah' ||
       id == 'istighfar_extended' ||
@@ -7193,7 +7205,7 @@ Widget _buildIllustration({
         highlightPhrase: 'suffice him',
         subtitle: 'Sahih al-Bukhari 4008',
         completedSubtitle: 'Protected by the closing verses of Al-Baqarah',
-        accentColor: const Color(0xFF7A8C3A), // Y4.primary sage
+        accentColor: const Color(0xFF7A8C3A), // Y4.palette.primary sage
       ),
     ),
     'benefit_text_24' => w(
@@ -7212,7 +7224,7 @@ Widget _buildIllustration({
         highlightPhrase: 'every creature',
         subtitle: 'Sunan At-Tirmidhi 3392',
         completedSubtitle: 'Sheltered by the Knower of the Unseen',
-        accentColor: const Color(0xFF4D5C20), // Y4.primaryDeep — deeper sage
+        accentColor: const Color(0xFF4D5C20), // Y4.palette.primaryDeep — deeper sage
       ),
     ),
     // ── Duas before Sleep — text-based benefit illustrations ──────────────
@@ -8855,58 +8867,81 @@ String _pickTagline(String id) {
   if (qt != null) return qt;
 
   // ── Specific numeric IDs first (most precise) ──
-  if (id == 'morning_32' || id == 'evening_31')
+  if (id == 'morning_32' || id == 'evening_31') {
     return 'Sins forgiven, even if like the foam of the sea';
-  if (id == 'morning_31' || id == 'evening_30')
+  }
+  if (id == 'morning_31' || id == 'evening_30') {
     return '10 freed · 100 hasanat · 100 sins erased · Shaytan repelled';
-  if (id == 'morning_33' || id == 'evening_32')
+  }
+  if (id == 'morning_33' || id == 'evening_32') {
     return '10 blessings descend from Allah upon you';
+  }
   if (id == 'morning_30') return 'Ask Allah to bless and beautify your day';
-  if (id == 'morning_29' || id == 'evening_29')
+  if (id == 'morning_29' || id == 'evening_29') {
     return 'Allah is sufficient for you in every affair';
-  if (id == 'morning_28' || id == 'evening_28')
+  }
+  if (id == 'morning_28' || id == 'evening_28') {
     return "Wellbeing of body, hearing & sight, granted";
-  if (id == 'morning_27' || id == 'evening_27')
+  }
+  if (id == 'morning_27' || id == 'evening_27') {
     return 'Allah will free him from the Fire who reads this 4 times';
+  }
   if (id == 'morning_26') return 'Guaranteed Jannah, if you die this day';
   if (id == 'evening_26') return 'Guaranteed Jannah, if you die this night';
-  if (id == 'morning_25' || id == 'evening_25')
+  if (id == 'morning_25' || id == 'evening_25') {
     return 'Your life entrusted to the Ever-Living';
-  if (id == 'morning_24' || id == 'evening_24')
+  }
+  if (id == 'morning_24' || id == 'evening_24') {
     return 'All evil in His creation repelled from you';
-  if (id == 'morning_23' || id == 'evening_23')
+  }
+  if (id == 'morning_23' || id == 'evening_23') {
     return 'Nothing shall harm you, by perfect words';
-  if (id == 'morning_22' || id == 'evening_22')
+  }
+  if (id == 'morning_22' || id == 'evening_22') {
     return 'Shield yourself from minor and major shirk, morning & evening';
-  if (id == 'morning_21' || id == 'evening_21')
+  }
+  if (id == 'morning_21' || id == 'evening_21') {
     return 'Complete protection in the name of Allah';
-  if (id == 'morning_20' || id == 'evening_20')
+  }
+  if (id == 'morning_20' || id == 'evening_20') {
     return 'Weightier than all voluntary prayers, from dawn till dusk';
-  if (id == 'morning_18' || id == 'evening_18')
+  }
+  if (id == 'morning_18' || id == 'evening_18') {
     return 'Recite morning & evening, earn the pleasure & blessing of Allah on the Day of Judgment';
-  if (id == 'morning_17' || id == 'evening_17')
+  }
+  if (id == 'morning_17' || id == 'evening_17') {
     return 'Your reward awaits directly with Allah when you meet Him';
-  if (id == 'morning_15' || id == 'evening_15')
+  }
+  if (id == 'morning_15' || id == 'evening_15') {
     return 'Recite morning & evening to fulfill your obligation of gratitude to Allah';
-  if (id == 'morning_14' || id == 'evening_14')
+  }
+  if (id == 'morning_14' || id == 'evening_14') {
     return 'The Prophet taught this dua for morning and evening, do not miss it';
-  if (id == 'morning_12')
+  }
+  if (id == 'morning_12') {
     return 'Declare Allah\'s dominion at the start of your morning, all kingdom belongs to Him';
-  if (id == 'evening_12')
+  }
+  if (id == 'evening_12') {
     return 'As evening falls, the entire kingdom belongs to Allah alone';
-  if (id == 'evening_13')
+  }
+  if (id == 'evening_13') {
     return 'End your evening upon the pure fitrah, as the Prophet (ﷺ) taught';
-  if (id == 'morning_2' || id == 'evening_2')
+  }
+  if (id == 'morning_2' || id == 'evening_2') {
     return 'Satan will not enter the home of one who recites this';
+  }
   if (id == 'morning_4' ||
       id == 'morning_5' ||
       id == 'evening_4' ||
-      id == 'evening_5')
+      id == 'evening_5') {
     return '';
-  if (id == 'morning_6' || id == 'evening_6')
+  }
+  if (id == 'morning_6' || id == 'evening_6') {
     return 'Reading last 2 verses of al-Baqarah will suffice you';
-  if (id == 'morning_8' || id == 'evening_8')
+  }
+  if (id == 'morning_8' || id == 'evening_8') {
     return 'Every dua in this verse - Allah said: I have done so';
+  }
 
   // ── Illustration-key based fallback ──
   final ill = _pickIllustration(id);
@@ -9120,6 +9155,7 @@ class _DuaSceneState extends State<_DuaScene> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _growCtrl,
@@ -9718,6 +9754,7 @@ class _GratitudeTreeState extends State<_GratitudeTree>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final p = widget.progress;
 
@@ -10012,6 +10049,7 @@ class _NoorTreeState extends State<_NoorTree> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _swayCtrl,
@@ -10891,6 +10929,7 @@ class _ProtectionShieldState extends State<_ProtectionShield>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -11501,6 +11540,7 @@ class _ThreeQulsState extends State<_ThreeQuls> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -12001,6 +12041,7 @@ class _GatesOfJannahState extends State<_GatesOfJannah>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -12602,6 +12643,7 @@ class _BreakingChainsState extends State<_BreakingChains>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -13036,6 +13078,7 @@ class _AfiyahGuardState extends State<_AfiyahGuard>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -13410,6 +13453,7 @@ class _SixWardsState extends State<_SixWards> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -13879,6 +13923,7 @@ class _RepellingLightState extends State<_RepellingLight>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -14399,6 +14444,7 @@ class _BlinkingEyesState extends State<_BlinkingEyes>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -14705,10 +14751,11 @@ class _BlinkingEyesPainter extends CustomPainter {
         center.dx + r * math.cos(a),
         center.dy + r * math.sin(a),
       );
-      if (i == 0)
+      if (i == 0) {
         path.moveTo(pt.dx, pt.dy);
-      else
+      } else {
         path.lineTo(pt.dx, pt.dy);
+      }
     }
     path.close();
     canvas.drawPath(path, Paint()..color = color);
@@ -14861,6 +14908,7 @@ class _CradledHeartState extends State<_CradledHeart>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -15346,6 +15394,7 @@ class _OverflowingVesselState extends State<_OverflowingVessel>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -15890,6 +15939,7 @@ class _RisingDawnState extends State<_RisingDawn>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -16450,6 +16500,7 @@ class _PraiseRipplesState extends State<_PraiseRipples>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -16789,6 +16840,7 @@ class _FiveBlessingsState extends State<_FiveBlessings>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -17338,6 +17390,7 @@ class _GlowingPathState extends State<_GlowingPath>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -17944,6 +17997,7 @@ class _FreedomFlameState extends State<_FreedomFlame>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -18504,6 +18558,7 @@ class _CycleOfReturnState extends State<_CycleOfReturn>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -18890,6 +18945,7 @@ class _ThreeVesselsState extends State<_ThreeVessels>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([_pulseCtrl, _growCtrl, _glowCtrl]),
@@ -19145,6 +19201,7 @@ class _SevenPillarsState extends State<_SevenPillars>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([
@@ -19399,6 +19456,7 @@ class _NoorDoorState extends State<_NoorDoor> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -19889,6 +19947,7 @@ class _GuidingHandState extends State<_GuidingHand>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -20459,6 +20518,7 @@ class _InvincibleNameState extends State<_InvincibleName>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -21148,6 +21208,7 @@ class _OceanOfForgivenessState extends State<_OceanOfForgiveness>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -21583,6 +21644,7 @@ class _UnparalleledScalesState extends State<_UnparalleledScales>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -21663,6 +21725,7 @@ class _ScalesBigCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final clamped = value.clamp(0, maxValue);
     return SizedBox(
       width: 180,
@@ -21696,7 +21759,7 @@ class _ScalesBigCounter extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                   ),
                 ),
               ],
@@ -21729,7 +21792,7 @@ class _UnparalleledScalesPainter extends CustomPainter {
     required this.isComplete,
     this.pointsToday = 0,
     this.punchScale = 1.0,
-    this.shockPhase = 1.0,
+    this.shockPhase = 0.0,
     this.rainPhase = 0.0,
   });
 
@@ -22232,6 +22295,7 @@ class _SunriseGloryState extends State<_SunriseGlory>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -22753,6 +22817,7 @@ svg{width:100%;height:100%;display:block;overflow:visible;}
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final ctrl = _ctrl;
     if (ctrl == null) {
       return SizedBox.expand(
@@ -22885,6 +22950,7 @@ class _QuranicTextIllustrationState extends State<_QuranicTextIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final text = _kQuranicTextLines[widget.position] ??
         'Pause. Remember Allah.';
     final variant = (widget.position - 1) % _kQuranicTextVariantCount;
@@ -23284,6 +23350,7 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Illustration banner must always read as a distinct surface from the
     // surrounding page — otherwise the text floats on the cream body with
@@ -23636,6 +23703,7 @@ class _TenSalawatState extends State<_TenSalawat>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -23976,6 +24044,7 @@ class _DoorsOfMercyState extends State<_DoorsOfMercy>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -24325,6 +24394,7 @@ class _HeavyScalesState extends State<_HeavyScales>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -24919,6 +24989,7 @@ class _CosmicWeightState extends State<_CosmicWeight>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -25255,6 +25326,7 @@ class _BaqarahShieldState extends State<_BaqarahShield>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([
@@ -25585,6 +25657,7 @@ class _BaqarahCloseState extends State<_BaqarahClose>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([
@@ -25911,6 +25984,7 @@ class _NightPeaceState extends State<_NightPeace>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -26387,6 +26461,7 @@ class _EveningSovereigntyState extends State<_EveningSovereignty>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -26688,6 +26763,7 @@ class _DuaHandsState extends State<_DuaHands> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([
@@ -26988,6 +27064,7 @@ class _AlFalaqShieldState extends State<_AlFalaqShield>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([
@@ -27318,6 +27395,7 @@ class _BaqarahBurdenState extends State<_BaqarahBurden>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([
@@ -27714,6 +27792,7 @@ class _QuranCompleteState extends State<_QuranComplete>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -28048,6 +28127,7 @@ class _DawnDuskState extends State<_DawnDusk> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([
         _pulseCtrl,
@@ -28388,6 +28468,7 @@ class _ToolbarBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Material(
       color: filled ? color.withValues(alpha: 0.14) : Colors.transparent,
       borderRadius: BorderRadius.circular(14),
@@ -28422,6 +28503,7 @@ class _AzkarProgressLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return SizedBox(
       height: 10,
       child: CustomPaint(
@@ -28454,9 +28536,9 @@ class _ProgressLinePainter extends CustomPainter {
   });
 
   // Y4 honey theme — one color family for the whole bar.
-  static const _doneColor    = Color(0xFFD89A1E); // Y4.honeyDeep
-  static const _currentColor = Color(0xFFFFC83D); // Y4.honey (brighter)
-  static const _pendingColor = Color(0xFFF4E5B0); // Y4.track (soft honey)
+  static const _doneColor    = Color(0xFFD89A1E); // Y4.palette.honeyDeep
+  static const _currentColor = Color(0xFFFFC83D); // Y4.palette.honey (brighter)
+  static const _pendingColor = Color(0xFFF4E5B0); // Y4.palette.track (soft honey)
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -28559,12 +28641,13 @@ class _FirstTimeHintBubbleState extends State<_FirstTimeHintBubble>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final bg = widget.isDark
-        ? const Color(0xFF2A2410) // warm dark = Y4.ink
-        : Y4.cream;
-    final textColor = widget.isDark ? Y4.cream : Y4.ink;
-    final borderColor = Y4.honey;
-    final sageAccent = Y4.primary;
+        ? const Color(0xFF2A2410) // warm dark = Y4.palette.ink
+        : Y4.palette.cream;
+    final textColor = widget.isDark ? Y4.palette.cream : Y4.palette.ink;
+    final borderColor = Y4.palette.honey;
+    final sageAccent = Y4.palette.primary;
 
     return FadeTransition(
       opacity: CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut),
@@ -28592,13 +28675,13 @@ class _FirstTimeHintBubbleState extends State<_FirstTimeHintBubble>
                     border: Border.all(color: borderColor, width: 1.4),
                     boxShadow: [
                       BoxShadow(
-                        color: Y4.honeyDeep.withValues(alpha: 0.22),
+                        color: Y4.palette.honeyDeep.withValues(alpha: 0.22),
                         blurRadius: 20,
                         spreadRadius: 1,
                         offset: const Offset(0, 2),
                       ),
                       BoxShadow(
-                        color: Y4.ink.withValues(
+                        color: Y4.palette.ink.withValues(
                           alpha: widget.isDark ? 0.45 : 0.10,
                         ),
                         blurRadius: 12,
@@ -28715,6 +28798,7 @@ class _DhikrCounterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
     final teal = const Color(0xFFFFC83D);
     final green = const Color(0xFFFFC83D);
@@ -28887,6 +28971,7 @@ class _PinnedIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final key = animationKeyOverride ?? _pickIllustration(azkar.id);
     if (key == 'none') return const SizedBox.shrink();
     return SizedBox(
@@ -29008,6 +29093,7 @@ class _RewardSecuredToastState extends State<_RewardSecuredToast>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final media = MediaQuery.of(context);
     return Positioned(
       top: media.padding.top + 14,
@@ -29041,7 +29127,7 @@ class _RewardSecuredToastState extends State<_RewardSecuredToast>
                           borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.honeyDeep.withValues(alpha: 0.38),
+                              color: Y4.palette.honeyDeep.withValues(alpha: 0.38),
                               blurRadius: 16,
                               offset: const Offset(0, 6),
                             ),
@@ -29141,6 +29227,7 @@ class _AutoTranslatedTextState extends State<_AutoTranslatedText> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Text(
       _display,
       maxLines: 2,
@@ -29181,6 +29268,7 @@ class _DhikrSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final fg = isDark
         ? Colors.white.withValues(alpha: 0.78)
         : const Color(0xFF7A5200); // honey-deep text on cream

@@ -23,6 +23,7 @@ import '../widgets/sabiq_coin.dart';
 import '../widgets/orphans_strip.dart';
 import '../models/orphan.dart';
 import 'orphan_detail_screen.dart';
+import 'package:provider/provider.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
@@ -306,12 +307,12 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     colors: [Color(0xFFFEF9D0), Color(0xFFF5DC90)],
                   ),
                   border: Border.all(
-                    color: Y4.honeyDeep.withValues(alpha: 0.30),
+                    color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Y4.honeyDeep.withValues(alpha: 0.18),
+                      color: Y4.palette.honeyDeep.withValues(alpha: 0.18),
                       blurRadius: 18,
                       offset: const Offset(0, 6),
                     ),
@@ -327,7 +328,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         fontSize: 10,
                         letterSpacing: 1.8,
                         fontWeight: FontWeight.w800,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -336,7 +337,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       style: Y4.display(
                         fontSize: 44,
                         fontWeight: FontWeight.w800,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                         height: 1,
                       ),
                     ),
@@ -348,7 +349,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       style: Y4.display(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -392,7 +393,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.70),
         border: Border.all(
-          color: Y4.honeyDeep.withValues(alpha: 0.25),
+          color: Y4.palette.honeyDeep.withValues(alpha: 0.25),
         ),
         borderRadius: BorderRadius.circular(14),
       ),
@@ -410,7 +411,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   style: Y4.display(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                     height: 1,
                   ),
                 ),
@@ -420,7 +421,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                   ),
                 ),
               ],
@@ -495,7 +496,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.85),
         border: Border.all(
-          color: Y4.honeyDeep.withValues(alpha: 0.22),
+          color: Y4.palette.honeyDeep.withValues(alpha: 0.22),
         ),
         borderRadius: BorderRadius.circular(18),
       ),
@@ -528,7 +529,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       style: Y4.display(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                         fontStyle: FontStyle.italic,
                         height: 1.45,
                       ),
@@ -657,7 +658,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               final list = (rows as List)
                   .map((r) => (r['total_sec'] as num?)?.toInt() ?? 0)
                   .toList();
-              while (list.length < 7) list.insert(0, 0);
+              while (list.length < 7) {
+                list.insert(0, 0);
+              }
               return list.length > 7 ? list.sublist(list.length - 7) : list;
             })
             .catchError((_) => List<int>.filled(7, 0)),
@@ -870,6 +873,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Subscribe so live theme_mode changes rebuild the streak pill,
+    // reminder card, and everything else reading Y4.palette.
+    context.watch<SettingsService>();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -927,7 +933,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
+          colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
         ),
       ),
       child: SafeArea(
@@ -938,17 +944,17 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             Positioned(
               top: -40,
               right: -40,
-              child: _Arc(160, Y4.honey.withValues(alpha: 0.18)),
+              child: _Arc(160, Y4.palette.honey.withValues(alpha: 0.18)),
             ),
             Positioned(
               bottom: -20,
               left: -30,
-              child: _Arc(120, Y4.primary.withValues(alpha: 0.08)),
+              child: _Arc(120, Y4.palette.primary.withValues(alpha: 0.08)),
             ),
             Positioned(
               top: 30,
               right: 30,
-              child: _Arc(60, Y4.honeyDeep.withValues(alpha: 0.10)),
+              child: _Arc(60, Y4.palette.honeyDeep.withValues(alpha: 0.10)),
             ),
 
             Padding(
@@ -983,7 +989,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                               style: Y4.display(
                                 fontSize: 23,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.ink,
+                                color: Y4.palette.ink,
                                 height: 1.1,
                               ),
                             ),
@@ -997,7 +1003,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: Y4.inkSoft,
+                                color: Y4.palette.inkSoft,
                               ),
                             ),
                           ],
@@ -1057,11 +1063,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         horizontal: 18,
                       ),
                       decoration: BoxDecoration(
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: Y4.honeyDeep.withValues(alpha: 0.30),
+                            color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                             blurRadius: 14,
                             offset: const Offset(0, 4),
                           ),
@@ -1759,7 +1765,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Y4.honey.withValues(alpha: 0.15),
+                  color: Y4.palette.honey.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -1855,7 +1861,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   delta: '',
                   icon: Icons.star_rounded,
                   iconWidget: const SabiqCoin(size: 18),
-                  color: Y4.honeyDeep,
+                  color: Y4.palette.honeyDeep,
                 ),
               ),
             ],
@@ -1869,9 +1875,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
-                color: Y4.honey.withValues(alpha: 0.12),
+                color: Y4.palette.honey.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Y4.honey.withValues(alpha: 0.25)),
+                border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.25)),
               ),
               child: Row(
                 children: [
@@ -1884,7 +1890,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                       ),
                     ),
                   ),
@@ -2024,13 +2030,13 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
+        colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
       ),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Y4.honey.withValues(alpha: 0.35)),
+      border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.35)),
       boxShadow: [
         BoxShadow(
-          color: Y4.honey.withValues(alpha: 0.2),
+          color: Y4.palette.honey.withValues(alpha: 0.2),
           blurRadius: 20,
           offset: const Offset(0, 6),
         ),
@@ -2049,7 +2055,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               style: GoogleFonts.outfit(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: Y4.ink,
+                color: Y4.palette.ink,
               ),
             ),
           ],
@@ -2064,11 +2070,11 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                 const SabiqCoin(size: 16),
               ),
             ),
-            Container(height: 44, width: 1, color: Y4.honey.withValues(alpha: 0.4)),
+            Container(height: 44, width: 1, color: Y4.palette.honey.withValues(alpha: 0.4)),
             Expanded(
               child: _DarkStat('Level', '$_level', NoorIcon.medal(size: 16)),
             ),
-            Container(height: 44, width: 1, color: Y4.honey.withValues(alpha: 0.4)),
+            Container(height: 44, width: 1, color: Y4.palette.honey.withValues(alpha: 0.4)),
             Expanded(
               child: _DarkStat(
                 AppLocalizations.of(context)?.title ?? 'Title',
@@ -2083,9 +2089,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: Y4.honey.withValues(alpha: 0.15),
+            color: Y4.palette.honey.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Y4.honey.withValues(alpha: 0.3)),
+            border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.3)),
           ),
           child: Center(
             child: Text(
@@ -2094,7 +2100,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Y4.inkSoft,
+                color: Y4.palette.inkSoft,
               ),
             ),
           ),
@@ -2433,10 +2439,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 }),
                 child: Ink(
                   decoration: BoxDecoration(
-                    color: Y4.honey.withValues(alpha: 0.16),
+                    color: Y4.palette.honey.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: Y4.honeyDeep.withValues(alpha: 0.35),
+                      color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
                     ),
                   ),
                   child: Padding(
@@ -2454,7 +2460,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: Y4.honeyDeep,
+                            color: Y4.palette.honeyDeep,
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -2463,7 +2469,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                               ? Icons.keyboard_arrow_up_rounded
                               : Icons.keyboard_arrow_down_rounded,
                           size: 18,
-                          color: Y4.honeyDeep,
+                          color: Y4.palette.honeyDeep,
                         ),
                       ],
                     ),
@@ -2533,9 +2539,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
           decoration: BoxDecoration(
-            color: Y4.honey.withValues(alpha: 0.22),
+            color: Y4.palette.honey.withValues(alpha: 0.22),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
+            border: Border.all(color: Y4.palette.honeyDeep.withValues(alpha: 0.4)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -2547,7 +2553,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                 style: GoogleFonts.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: Y4.honeyDeep,
+                  color: Y4.palette.honeyDeep,
                 ),
               ),
             ],
@@ -2559,14 +2565,14 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
 
   Widget _donorInitial(String initial) {
     return Container(
-      color: Y4.honey.withValues(alpha: 0.25),
+      color: Y4.palette.honey.withValues(alpha: 0.25),
       alignment: Alignment.center,
       child: Text(
         initial,
         style: GoogleFonts.outfit(
           fontSize: 15,
           fontWeight: FontWeight.w800,
-          color: Y4.honeyDeep,
+          color: Y4.palette.honeyDeep,
         ),
       ),
     );
@@ -2644,10 +2650,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     vertical: 10,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: sel ? Y4.honeyDeep : _C.bg,
+                                    color: sel ? Y4.palette.honeyDeep : _C.bg,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: sel ? Y4.honeyDeep : _C.border,
+                                      color: sel ? Y4.palette.honeyDeep : _C.border,
                                     ),
                                   ),
                                   child: Row(
@@ -2682,7 +2688,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: Y4.honeyDeep.withValues(alpha: 0.30),
+                                color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -2692,7 +2698,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
-                              foregroundColor: Y4.ink,
+                              foregroundColor: Y4.palette.ink,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
@@ -2726,7 +2732,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                              backgroundColor: Y4.honeyDeep,
+                                              backgroundColor: Y4.palette.honeyDeep,
                                               behavior:
                                                   SnackBarBehavior.floating,
                                               shape: RoundedRectangleBorder(
@@ -2757,7 +2763,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                     style: GoogleFonts.outfit(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w800,
-                                      color: Y4.ink,
+                                      color: Y4.palette.ink,
                                     ),
                                   )
                                 : Row(
@@ -2771,7 +2777,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                         style: GoogleFonts.outfit(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w800,
-                                          color: Y4.ink,
+                                          color: Y4.palette.ink,
                                         ),
                                       ),
                                     ],
@@ -2795,7 +2801,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
         // editorial weight without a full hero section.
         backgroundColor: Y4.bg,
         surfaceTintColor: Y4.bg,
-        foregroundColor: Y4.ink,
+        foregroundColor: Y4.palette.ink,
         toolbarHeight: 72,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -2805,7 +2811,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
               'EVERY RECITATION',
               style: GoogleFonts.outfit(
                 fontWeight: FontWeight.w700,
-                color: Y4.honeyDeep,
+                color: Y4.palette.honeyDeep,
                 fontSize: 10,
                 letterSpacing: 1.8,
               ),
@@ -2820,7 +2826,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   .replaceFirst('Every Recitation Can\n', ''),
               style: Y4.display(
                 fontWeight: FontWeight.w600,
-                color: Y4.ink,
+                color: Y4.palette.ink,
                 fontSize: 20,
                 height: 1.05,
                 letterSpacing: -0.3,
@@ -2942,7 +2948,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           borderRadius: BorderRadius.circular(22),
           child: Container(
             height: 260,
-            decoration: BoxDecoration(color: Y4.butter),
+            decoration: BoxDecoration(color: Y4.palette.butter),
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -2950,10 +2956,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   CachedNetworkImage(imageUrl: o.photoUrl!, fit: BoxFit.cover)
                 else
                   Container(
-                    color: Y4.butter,
+                    color: Y4.palette.butter,
                     alignment: Alignment.center,
                     child: Icon(Icons.person_rounded,
-                        size: 80, color: Y4.honeyDeep.withValues(alpha: 0.5)),
+                        size: 80, color: Y4.palette.honeyDeep.withValues(alpha: 0.5)),
                   ),
                 // Bottom gradient for legible text overlay
                 const DecoratedBox(
@@ -2982,7 +2988,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         letterSpacing: 0.3,
                       ),
                     ),
@@ -3024,7 +3030,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 9),
                         decoration: BoxDecoration(
-                          color: Y4.honey,
+                          color: Y4.palette.honey,
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
@@ -3036,7 +3042,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                           ),
                         ),
                       ),
@@ -3065,7 +3071,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           borderRadius: BorderRadius.circular(22),
           child: Container(
             height: 260,
-            decoration: BoxDecoration(color: Y4.butter),
+            decoration: BoxDecoration(color: Y4.palette.butter),
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -3096,7 +3102,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         letterSpacing: 0.3,
                       ),
                     ),
@@ -3184,7 +3190,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     subtitle,
                     style: GoogleFonts.outfit(
                       fontSize: 12.5,
-                      color: Y4.inkSoft,
+                      color: Y4.palette.inkSoft,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -3203,7 +3209,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ),
@@ -3232,12 +3238,12 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           ),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: Y4.honey.withValues(alpha: 0.45),
+            color: Y4.palette.honey.withValues(alpha: 0.45),
             width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Y4.honeyDeep.withValues(alpha: 0.14),
+              color: Y4.palette.honeyDeep.withValues(alpha: 0.14),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -3261,7 +3267,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Y4.honeyDeep.withValues(alpha: 0.30),
+                        color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                         blurRadius: 10,
                         offset: const Offset(0, 3),
                       ),
@@ -3281,7 +3287,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         style: Y4.display(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                           height: 1,
                         ),
                       ),
@@ -3293,7 +3299,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                         ),
                       ),
                     ],
@@ -3317,7 +3323,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       "You haven't given yet. Pick someone above to begin your journey of impact.",
                   style: GoogleFonts.outfit(
                     fontSize: 13,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                     height: 1.45,
                   ),
                 ),
@@ -3378,7 +3384,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Y4.honey.withValues(alpha: 0.35)),
+        border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.35)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -3390,7 +3396,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
             style: Y4.display(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Y4.honeyDeep,
+              color: Y4.palette.honeyDeep,
               height: 1,
             ),
           ),
@@ -3402,7 +3408,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
             style: GoogleFonts.outfit(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               letterSpacing: 0.3,
             ),
           ),
@@ -3515,7 +3521,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: done ? _C.gold : Y4.honeyDeep,
+                                  color: done ? _C.gold : Y4.palette.honeyDeep,
                                 ),
                               ),
                             ),
@@ -3527,9 +3533,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                           child: LinearProgressIndicator(
                             value: pct,
                             minHeight: 9,
-                            backgroundColor: Y4.honey.withValues(alpha: 0.15),
+                            backgroundColor: Y4.palette.honey.withValues(alpha: 0.15),
                             valueColor: AlwaysStoppedAnimation(
-                              done ? _C.gold : Y4.honey,
+                              done ? _C.gold : Y4.palette.honey,
                             ),
                           ),
                         ),
@@ -3545,10 +3551,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                   vertical: 5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Y4.honey.withValues(alpha: 0.22),
+                                  color: Y4.palette.honey.withValues(alpha: 0.22),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.45),
+                                    color: Y4.palette.honeyDeep.withValues(alpha: 0.45),
                                   ),
                                 ),
                                 child: Row(
@@ -3567,7 +3573,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                         style: GoogleFonts.outfit(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w800,
-                                          color: Y4.ink,
+                                          color: Y4.palette.ink,
                                         ),
                                       ),
                                     ),
@@ -3596,7 +3602,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Y4.honeyDeep.withValues(alpha: 0.30),
+                                    color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   ),
@@ -3606,7 +3612,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
-                                  foregroundColor: Y4.ink,
+                                  foregroundColor: Y4.palette.ink,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 13,
                                   ),
@@ -3626,7 +3632,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: Y4.ink,
+                                    color: Y4.palette.ink,
                                   ),
                                 ),
                               ),
@@ -3692,7 +3698,7 @@ class _HeroBadge extends StatelessWidget {
   final Widget icon;
   final String label;
   // [bg] paints the pill surface; [fg] colors the border so each badge
-  // stays visually distinct. Text is always rendered in [Y4.ink] for
+  // stays visually distinct. Text is always rendered in [Y4.palette.ink] for
   // strong contrast against the honey hero gradient.
   final Color bg, fg;
   const _HeroBadge(this.icon, this.label, this.bg, this.fg);
@@ -3714,7 +3720,7 @@ class _HeroBadge extends StatelessWidget {
           style: GoogleFonts.outfit(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: Y4.ink,
+            color: Y4.palette.ink,
           ),
         ),
       ],
@@ -3892,7 +3898,7 @@ class _DarkStat extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: Y4.ink,
+              color: Y4.palette.ink,
             ),
           )
           : Text(
@@ -3900,12 +3906,12 @@ class _DarkStat extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: Y4.ink,
+              color: Y4.palette.ink,
             ),
           ),
       Text(
         label,
-        style: GoogleFonts.outfit(fontSize: 10, color: Y4.inkSoft),
+        style: GoogleFonts.outfit(fontSize: 10, color: Y4.palette.inkSoft),
         textAlign: TextAlign.center,
       ),
     ],
@@ -3974,7 +3980,7 @@ class _MonthStat extends StatelessWidget {
             label,
             style: GoogleFonts.outfit(
               fontSize: 11,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -4156,13 +4162,13 @@ class _ImpactProjectCoverState extends State<_ImpactProjectCover> {
     width: s,
     height: s,
     decoration: BoxDecoration(
-      color: Y4.honey.withValues(alpha: 0.12),
+      color: Y4.palette.honey.withValues(alpha: 0.12),
       borderRadius: r,
     ),
     child: Icon(
       Icons.volunteer_activism_rounded,
       size: 24,
-      color: Y4.honeyDeep,
+      color: Y4.palette.honeyDeep,
     ),
   );
 }

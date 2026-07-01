@@ -15,7 +15,6 @@ import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
 import '../widgets/project_media_carousel.dart';
-import '../widgets/noor_offline.dart';
 import '../widgets/sabiq_coin.dart';
 
 AppConfig get _pdcfg => SettingsService.instance.config;
@@ -340,7 +339,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Y4.amberY,
+        backgroundColor: Y4.palette.amberY,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -455,7 +454,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                                   overflow: TextOverflow.ellipsis,
                                   style: Y4.display(
                                     fontSize: 26,
-                                    color: Y4.honeyDeep,
+                                    color: Y4.palette.honeyDeep,
                                     fontWeight: FontWeight.w600,
                                     height: 1.0,
                                   ),
@@ -510,7 +509,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                         borderRadius: BorderRadius.circular(999),
                         child: Container(
                           height: 12,
-                          color: Y4.honey.withValues(alpha: 0.18),
+                          color: Y4.palette.honey.withValues(alpha: 0.18),
                           child: FractionallySizedBox(
                             alignment: Alignment.centerLeft,
                             widthFactor: pct,
@@ -569,9 +568,9 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: Y4.amberY.withValues(alpha: 0.05),
+                    color: Y4.palette.amberY.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Y4.amberY.withValues(alpha: 0.3)),
+                    border: Border.all(color: Y4.palette.amberY.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -589,7 +588,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                         style: GoogleFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: Y4.amberY,
+                          color: Y4.palette.amberY,
                         ),
                       ),
                     ],
@@ -677,7 +676,7 @@ class _DonateBar extends StatelessWidget {
                       ),
                     ],
                   ),
-                  backgroundColor: Y4.amberY,
+                  backgroundColor: Y4.palette.amberY,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -719,7 +718,7 @@ class _DonateBar extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: canDonate ? Y4.honey : Colors.grey.shade200,
+            color: canDonate ? Y4.palette.honey : Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -729,7 +728,7 @@ class _DonateBar extends StatelessWidget {
                 isCompleted
                     ? Icons.check_circle_rounded
                     : Icons.workspace_premium_rounded,
-                color: canDonate ? Y4.ink : Colors.grey.shade400,
+                color: canDonate ? Y4.palette.ink : Colors.grey.shade400,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -745,7 +744,7 @@ class _DonateBar extends StatelessWidget {
                 style: GoogleFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: canDonate ? Y4.ink : Colors.grey.shade500,
+                  color: canDonate ? Y4.palette.ink : Colors.grey.shade500,
                 ),
               ),
             ],
@@ -1007,7 +1006,7 @@ class _DonateSheetState extends State<_DonateSheet> {
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                              const Color(0xFFC9921A),
+                                              Color(0xFFC9921A),
                                             ),
                                       ),
                                     )
@@ -1098,7 +1097,7 @@ class _AboutText extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ),
@@ -1175,7 +1174,7 @@ class _DonorsSectionState extends State<_DonorsSection> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
             decoration: BoxDecoration(
-              color: Y4.cream,
+              color: Y4.palette.cream,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: _PD.border),
             ),
@@ -1235,7 +1234,7 @@ class _DonorsSectionState extends State<_DonorsSection> {
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ),
@@ -1310,9 +1309,9 @@ class _DonorRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: Y4.honey.withValues(alpha: 0.22),
+              color: Y4.palette.honey.withValues(alpha: 0.22),
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: Y4.honeyDeep.withValues(alpha: 0.4)),
+              border: Border.all(color: Y4.palette.honeyDeep.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1324,7 +1323,7 @@ class _DonorRow extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ],
@@ -1343,14 +1342,14 @@ class _AvatarFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Y4.cream,
+      color: Y4.palette.cream,
       alignment: Alignment.center,
       child: Text(
         initial,
         style: GoogleFonts.outfit(
           fontSize: 14,
           fontWeight: FontWeight.w800,
-          color: Y4.honeyDeep,
+          color: Y4.palette.honeyDeep,
         ),
       ),
     );
@@ -1387,9 +1386,9 @@ class _Pill extends StatelessWidget {
   final Color textColor;
   const _Pill({
     required this.text,
-    this.icon,
     required this.color,
     required this.textColor,
+    this.icon,
   });
 
   @override

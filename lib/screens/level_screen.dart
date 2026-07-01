@@ -3,6 +3,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -297,6 +298,7 @@ class _LevelScreenState extends State<LevelScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: _kBg,
@@ -325,15 +327,15 @@ class _LevelScreenState extends State<LevelScreen>
           style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: Y4.ink,
+            color: Y4.palette.ink,
           ),
         ),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabs,
-          labelColor: Y4.honeyDeep,
-          unselectedLabelColor: Y4.inkSoft,
-          indicatorColor: Y4.honeyDeep,
+          labelColor: Y4.palette.honeyDeep,
+          unselectedLabelColor: Y4.palette.inkSoft,
+          indicatorColor: Y4.palette.honeyDeep,
           indicatorSize: TabBarIndicatorSize.label,
           isScrollable: true,
           tabAlignment: TabAlignment.center,
@@ -351,7 +353,7 @@ class _LevelScreenState extends State<LevelScreen>
       ),
       body:
           _loading
-              ? Center(child: NoorInlineLoader(color: Y4.honeyDeep))
+              ? Center(child: NoorInlineLoader(color: Y4.palette.honeyDeep))
               : _loadError != null
               ? Center(
                 child: Padding(
@@ -362,7 +364,7 @@ class _LevelScreenState extends State<LevelScreen>
                       Icon(
                         Icons.cloud_off_rounded,
                         size: 48,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -372,7 +374,7 @@ class _LevelScreenState extends State<LevelScreen>
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -382,7 +384,7 @@ class _LevelScreenState extends State<LevelScreen>
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: 13,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -493,6 +495,7 @@ class _ProgressTabState extends State<_ProgressTab> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final info = widget.levelInfo;
     final color = info != null ? _tierColor(info.title) : _kPurple;
@@ -515,7 +518,7 @@ class _ProgressTabState extends State<_ProgressTab> {
                 colors: [
                   color.withValues(alpha: 0.92),
                   color.withValues(alpha: 0.65),
-                  Y4.primaryDeep,
+                  Y4.palette.primaryDeep,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -1132,6 +1135,7 @@ class _TierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final levelNum =
         int.tryParse(tier.range.split('–').first.replaceAll('+', '')) ?? 1;
@@ -1274,13 +1278,13 @@ Color _badgeColor(String emoji) {
     case '🎯':
       return const Color(0xFFEC4899);
     case '⚡':
-      return Y4.butter;
+      return Y4.palette.butter;
     case '🌱':
       return const Color(0xFF4CAF50);
     case '👑':
       return const Color(0xFFFF6B6B);
     default:
-      return Y4.honeyDeep;
+      return Y4.palette.honeyDeep;
   }
 }
 
@@ -1290,6 +1294,7 @@ class _BadgesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final earned = badges.where((b) => b.earned).toList();
     final locked = badges.where((b) => !b.earned).toList();
@@ -1350,7 +1355,7 @@ class _BadgesTab extends StatelessWidget {
                   style: GoogleFonts.rajdhani(
                     fontSize: 30,
                     fontWeight: FontWeight.w900,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -1362,7 +1367,7 @@ class _BadgesTab extends StatelessWidget {
                   ),
                   style: GoogleFonts.outfit(
                     fontSize: 13,
-                    color: Y4.inkSoft,
+                    color: Y4.palette.inkSoft,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1371,7 +1376,7 @@ class _BadgesTab extends StatelessWidget {
                 Container(
                   height: 8,
                   decoration: BoxDecoration(
-                    color: Y4.ink.withValues(alpha: 0.1),
+                    color: Y4.palette.ink.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TweenAnimationBuilder<double>(
@@ -1384,7 +1389,7 @@ class _BadgesTab extends StatelessWidget {
                           widthFactor: v,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Y4.ink,
+                              color: Y4.palette.ink,
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
@@ -1399,7 +1404,7 @@ class _BadgesTab extends StatelessWidget {
                       l.percentComplete((pct * 100).round().toString()),
                       style: GoogleFonts.outfit(
                         fontSize: 11,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -1407,7 +1412,7 @@ class _BadgesTab extends StatelessWidget {
                       l.toUnlock((badges.length - earned.length).toString()),
                       style: GoogleFonts.outfit(
                         fontSize: 11,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1452,10 +1457,10 @@ class _BadgesTab extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: Y4.butter.withValues(alpha: 0.15),
+                      color: Y4.palette.butter.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: Y4.butter.withValues(alpha: 0.4),
+                        color: Y4.palette.butter.withValues(alpha: 0.4),
                       ),
                     ),
                     child: Text(
@@ -1557,15 +1562,16 @@ class _BadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final accent = _badgeColor(badge.emoji);
     return Container(
       decoration: BoxDecoration(
-        color: earned ? Y4.cream : const Color(0xFFF2F2F7),
+        color: earned ? Y4.palette.cream : const Color(0xFFF2F2F7),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color:
               earned
-                  ? Y4.honeyDeep.withValues(alpha: 0.3)
+                  ? Y4.palette.honeyDeep.withValues(alpha: 0.3)
                   : const Color(0xFFE5E5EA),
           width: earned ? 1.5 : 1.0,
         ),
@@ -1573,7 +1579,7 @@ class _BadgeCard extends StatelessWidget {
             earned
                 ? [
                   BoxShadow(
-                    color: Y4.honeyDeep.withValues(alpha: 0.15),
+                    color: Y4.palette.honeyDeep.withValues(alpha: 0.15),
                     blurRadius: 20,
                     offset: const Offset(0, 6),
                   ),
@@ -1599,12 +1605,12 @@ class _BadgeCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 color:
                     earned
-                        ? Y4.honey.withValues(alpha: 0.2)
+                        ? Y4.palette.honey.withValues(alpha: 0.2)
                         : Colors.grey.withValues(alpha: 0.08),
                 border:
                     earned
                         ? Border.all(
-                          color: Y4.honeyDeep.withValues(alpha: 0.4),
+                          color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
                           width: 2,
                         )
                         : null,
@@ -1635,7 +1641,7 @@ class _BadgeCard extends StatelessWidget {
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                color: earned ? Y4.ink : const Color(0xFF8E8E93),
+                color: earned ? Y4.palette.ink : const Color(0xFF8E8E93),
                 height: 1.3,
               ),
               textAlign: TextAlign.center,
@@ -1649,13 +1655,13 @@ class _BadgeCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color:
                     earned
-                        ? Y4.honey.withValues(alpha: 0.2)
+                        ? Y4.palette.honey.withValues(alpha: 0.2)
                         : Colors.grey.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
                 border:
                     earned
                         ? Border.all(
-                          color: Y4.honeyDeep.withValues(alpha: 0.35),
+                          color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
                         )
                         : null,
               ),
@@ -1666,7 +1672,7 @@ class _BadgeCard extends StatelessWidget {
                 style: GoogleFonts.rajdhani(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: earned ? Y4.honeyDeep : const Color(0xFF8E8E93),
+                  color: earned ? Y4.palette.honeyDeep : const Color(0xFF8E8E93),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -1688,6 +1694,7 @@ class _ChallengesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final weekly = challenges.where((c) => c['type'] == 'weekly').toList();
     final seasonal = challenges.where((c) => c['type'] == 'seasonal').toList();
@@ -1774,6 +1781,7 @@ class _SectionHeader extends StatelessWidget {
 class _RamadanBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
@@ -1786,7 +1794,7 @@ class _RamadanBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Y4.primary.withValues(alpha: 0.4),
+            color: Y4.palette.primary.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 6),
           ),
@@ -1853,6 +1861,7 @@ class _ChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final title = challenge['title'] as String? ?? '';
     final description = challenge['description'] as String? ?? '';
@@ -2112,6 +2121,7 @@ class _ActivityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final type = row['activity_type'] as String? ?? 'other';
     final pts = (row['points_earned'] as num?)?.toInt() ?? 0;
     final tsRaw = row['created_at'] as String? ?? '';
@@ -2276,11 +2286,12 @@ class _StreaksTabState extends State<_StreaksTab>
 
   Future<void> _load() async {
     final snap = await StreakService.instance.loadSnapshot();
-    if (mounted)
+    if (mounted) {
       setState(() {
         _snap = snap;
         _loading = false;
       });
+    }
   }
 
   @override
@@ -2293,6 +2304,7 @@ class _StreaksTabState extends State<_StreaksTab>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final best = [
       _snap.login,
@@ -2320,7 +2332,7 @@ class _StreaksTabState extends State<_StreaksTab>
             Center(
               child: NoorInlineLoader(
                 height: 120,
-                color: Y4.honeyDeep,
+                color: Y4.palette.honeyDeep,
                 label: l.loadingStreaks,
               ),
             )
@@ -2398,7 +2410,7 @@ class _StreakAuraPainter extends CustomPainter {
     final p1 =
         Paint()
           ..shader = RadialGradient(
-            colors: [Y4.honey.withValues(alpha: 0.30), Colors.transparent],
+            colors: [Y4.palette.honey.withValues(alpha: 0.30), Colors.transparent],
           ).createShader(
             Rect.fromCircle(
               center: Offset(cx, size.height * 0.25),
@@ -2410,7 +2422,7 @@ class _StreakAuraPainter extends CustomPainter {
     final p2 =
         Paint()
           ..shader = RadialGradient(
-            colors: [Y4.butter.withValues(alpha: 0.25), Colors.transparent],
+            colors: [Y4.palette.butter.withValues(alpha: 0.25), Colors.transparent],
           ).createShader(
             Rect.fromCircle(
               center: Offset(
@@ -2445,6 +2457,7 @@ class _StreakHeroFlame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     return AnimatedBuilder(
       animation: Listenable.merge([flameScale, pulse]),
@@ -2458,7 +2471,7 @@ class _StreakHeroFlame extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Y4.honeyDeep.withValues(alpha: pulse.value * 0.4),
+                      color: Y4.palette.honeyDeep.withValues(alpha: pulse.value * 0.4),
                       blurRadius: 50,
                       spreadRadius: 10,
                     ),
@@ -2478,7 +2491,7 @@ class _StreakHeroFlame extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Y4.honeyDeep.withValues(alpha: 0.5),
+                            color: Y4.palette.honeyDeep.withValues(alpha: 0.5),
                             blurRadius: 28,
                             spreadRadius: 4,
                           ),
@@ -2522,7 +2535,7 @@ class _StreakHeroFlame extends StatelessWidget {
                     : l.currentBestStreak,
                 style: GoogleFonts.outfit(
                   fontSize: 13,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -2573,8 +2586,8 @@ class _StreakFlameCard extends StatelessWidget {
   });
 
   Color get _color => switch (type) {
-    StreakType.login => Y4.honeyDeep,
-    StreakType.dhikr => Y4.primary,
+    StreakType.login => Y4.palette.honeyDeep,
+    StreakType.dhikr => Y4.palette.primary,
     StreakType.quran => const Color(
       0xFF6B5BA8,
     ), // muted plum that fits honey/sage
@@ -2603,7 +2616,7 @@ class _StreakFlameCard extends StatelessWidget {
                     ]
                     : [
                       BoxShadow(
-                        color: Y4.ink.withValues(alpha: 0.04),
+                        color: Y4.palette.ink.withValues(alpha: 0.04),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -2619,7 +2632,7 @@ class _StreakFlameCard extends StatelessWidget {
                 style: GoogleFonts.rajdhani(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
-                  color: streak > 0 ? _color : Y4.muted,
+                  color: streak > 0 ? _color : Y4.palette.muted,
                   height: 1.0,
                 ),
               ),
@@ -2628,7 +2641,7 @@ class _StreakFlameCard extends StatelessWidget {
                     'day${streak == 1 ? '' : 's'}',
                 style: GoogleFonts.outfit(
                   fontSize: 10,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -2654,7 +2667,7 @@ class _StreakFlameCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
                   fontSize: 9,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   fontWeight: FontWeight.w600,
                 ),
                 maxLines: 1,
@@ -2673,6 +2686,7 @@ class _StreakCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final today = DateTime.now();
     final days = List.generate(
@@ -2687,7 +2701,7 @@ class _StreakCalendar extends StatelessWidget {
         border: Border.all(color: Y4.border),
         boxShadow: [
           BoxShadow(
-            color: Y4.ink.withValues(alpha: 0.04),
+            color: Y4.palette.ink.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -2701,7 +2715,7 @@ class _StreakCalendar extends StatelessWidget {
             style: GoogleFonts.rajdhani(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               letterSpacing: 1.2,
             ),
           ),
@@ -2731,7 +2745,7 @@ class _StreakCalendar extends StatelessWidget {
                           })(),
                           style: GoogleFonts.outfit(
                             fontSize: 9,
-                            color: Y4.inkSoft,
+                            color: Y4.palette.inkSoft,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -2740,7 +2754,7 @@ class _StreakCalendar extends StatelessWidget {
                           '${day.day}',
                           style: GoogleFonts.outfit(
                             fontSize: 10,
-                            color: isToday ? Y4.ink : Y4.inkSoft,
+                            color: isToday ? Y4.palette.ink : Y4.palette.inkSoft,
                             fontWeight:
                                 isToday ? FontWeight.w800 : FontWeight.w500,
                           ),
@@ -2756,8 +2770,8 @@ class _StreakCalendar extends StatelessWidget {
                                     d.year == day.year,
                               );
                           final col = switch (t) {
-                            StreakType.login => Y4.honeyDeep,
-                            StreakType.dhikr => Y4.primary,
+                            StreakType.login => Y4.palette.honeyDeep,
+                            StreakType.dhikr => Y4.palette.primary,
                             StreakType.quran => const Color(0xFF6B5BA8),
                           };
                           return Padding(
@@ -2768,12 +2782,12 @@ class _StreakCalendar extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color:
-                                    on ? col : Y4.ink.withValues(alpha: 0.10),
+                                    on ? col : Y4.palette.ink.withValues(alpha: 0.10),
                                 border:
                                     on
                                         ? null
                                         : Border.all(
-                                          color: Y4.ink.withValues(alpha: 0.15),
+                                          color: Y4.palette.ink.withValues(alpha: 0.15),
                                           width: 0.5,
                                         ),
                                 boxShadow:
@@ -2800,8 +2814,8 @@ class _StreakCalendar extends StatelessWidget {
             children:
                 StreakType.values.map((t) {
                   final col = switch (t) {
-                    StreakType.login => Y4.honeyDeep,
-                    StreakType.dhikr => Y4.primary,
+                    StreakType.login => Y4.palette.honeyDeep,
+                    StreakType.dhikr => Y4.palette.primary,
                     StreakType.quran => const Color(0xFF6B5BA8),
                   };
                   return Padding(
@@ -2822,7 +2836,7 @@ class _StreakCalendar extends StatelessWidget {
                           _localStreakTypeLabel(context, t),
                           style: GoogleFonts.outfit(
                             fontSize: 10,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -2850,6 +2864,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     final start = lastM?.days ?? 0;
     final pct = ((current - start) / (milestone.days - start)).clamp(0.0, 1.0);
@@ -2861,7 +2876,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
         border: Border.all(color: Y4.border),
         boxShadow: [
           BoxShadow(
-            color: Y4.ink.withValues(alpha: 0.04),
+            color: Y4.palette.ink.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -2877,7 +2892,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
                 style: GoogleFonts.rajdhani(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -2887,7 +2902,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
                 style: GoogleFonts.rajdhani(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: Y4.honeyDeep,
+                  color: Y4.palette.honeyDeep,
                 ),
               ),
             ],
@@ -2901,13 +2916,13 @@ class _StreakMilestoneProgress extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                   ),
                 ),
               ),
               Text(
                 '$current / ${milestone.days} days',
-                style: GoogleFonts.outfit(fontSize: 11, color: Y4.inkSoft),
+                style: GoogleFonts.outfit(fontSize: 11, color: Y4.palette.inkSoft),
               ),
             ],
           ),
@@ -2922,7 +2937,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: v,
                     minHeight: 10,
-                    backgroundColor: Y4.track,
+                    backgroundColor: Y4.palette.track,
                     valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep),
                   ),
                 ),
@@ -2932,7 +2947,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
             '${milestone.days - current} more day${milestone.days - current == 1 ? '' : 's'} to go!',
             style: GoogleFonts.outfit(
               fontSize: 11,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -2949,6 +2964,7 @@ class _StreakMilestoneList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
@@ -2958,7 +2974,7 @@ class _StreakMilestoneList extends StatelessWidget {
         border: Border.all(color: Y4.border),
         boxShadow: [
           BoxShadow(
-            color: Y4.ink.withValues(alpha: 0.04),
+            color: Y4.palette.ink.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -2972,7 +2988,7 @@ class _StreakMilestoneList extends StatelessWidget {
             style: GoogleFonts.rajdhani(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               letterSpacing: 1.2,
             ),
           ),
@@ -2990,19 +3006,19 @@ class _StreakMilestoneList extends StatelessWidget {
                       shape: BoxShape.circle,
                       color:
                           done
-                              ? Y4.honeyDeep.withValues(alpha: 0.18)
-                              : Y4.track,
+                              ? Y4.palette.honeyDeep.withValues(alpha: 0.18)
+                              : Y4.palette.track,
                       border: Border.all(
                         color:
                             done
-                                ? Y4.honeyDeep.withValues(alpha: 0.7)
+                                ? Y4.palette.honeyDeep.withValues(alpha: 0.7)
                                 : Y4.border,
                       ),
                       boxShadow:
                           done
                               ? [
                                 BoxShadow(
-                                  color: Y4.honeyDeep.withValues(alpha: 0.20),
+                                  color: Y4.palette.honeyDeep.withValues(alpha: 0.20),
                                   blurRadius: 10,
                                 ),
                               ]
@@ -3025,14 +3041,14 @@ class _StreakMilestoneList extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: done ? Y4.ink : Y4.muted,
+                            color: done ? Y4.palette.ink : Y4.palette.muted,
                           ),
                         ),
                         Text(
                           '${m.days} day streak',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
-                            color: Y4.muted,
+                            color: Y4.palette.muted,
                           ),
                         ),
                       ],
@@ -3044,7 +3060,7 @@ class _StreakMilestoneList extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: done ? Y4.honey.withValues(alpha: 0.20) : Y4.track,
+                      color: done ? Y4.palette.honey.withValues(alpha: 0.20) : Y4.palette.track,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -3052,7 +3068,7 @@ class _StreakMilestoneList extends StatelessWidget {
                       style: GoogleFonts.rajdhani(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: done ? Y4.honeyDeep : Y4.muted,
+                        color: done ? Y4.palette.honeyDeep : Y4.palette.muted,
                         letterSpacing: 0.4,
                       ),
                     ),

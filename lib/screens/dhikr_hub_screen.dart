@@ -13,6 +13,7 @@
 // the honey-deep accent), so categories no longer rely on per-tile images.
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -410,6 +411,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
   // ── build ────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     if (_hiddenIds == null) {
       return Scaffold(
         backgroundColor: _kBg,
@@ -450,7 +452,7 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
             style: Y4.display(
               fontSize: 22,
               fontWeight: FontWeight.w500,
-              color: Y4.ink,
+              color: Y4.palette.ink,
               letterSpacing: -0.3,
             ),
           ),
@@ -569,6 +571,7 @@ class _Eyebrow extends StatelessWidget {
   const _Eyebrow({required this.text});
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Text(
       text,
       style: GoogleFonts.outfit(
@@ -591,6 +594,7 @@ class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.first, required this.accent});
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Text.rich(
       TextSpan(
         children: [
@@ -599,7 +603,7 @@ class _SectionHeader extends StatelessWidget {
             style: Y4.display(
               fontSize: 21,
               fontWeight: FontWeight.w500,
-              color: Y4.ink,
+              color: Y4.palette.ink,
               height: 1.0,
               letterSpacing: 0,
             ),
@@ -641,6 +645,7 @@ class _EditorialHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final isMorning = kind == _HeroKind.morning;
     final colors = isMorning
         ? const [Color(0xFFF4C84E), Color(0xFFE89B3C)]
@@ -817,6 +822,7 @@ class _CategoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Material(
       color: Colors.white,
       borderRadius: BorderRadius.circular(18),
@@ -831,7 +837,7 @@ class _CategoryRow extends StatelessWidget {
             border: Border.all(color: _kRowBorder),
             boxShadow: [
               BoxShadow(
-                color: Y4.honeyDeep.withValues(alpha: 0.08),
+                color: Y4.palette.honeyDeep.withValues(alpha: 0.08),
                 blurRadius: 14,
                 spreadRadius: -6,
                 offset: const Offset(0, 4),
@@ -864,7 +870,7 @@ class _CategoryRow extends StatelessWidget {
                         style: GoogleFonts.fraunces(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                           height: 1.15,
                           letterSpacing: -0.1,
                         ),

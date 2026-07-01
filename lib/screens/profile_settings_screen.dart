@@ -299,7 +299,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   _photoOption(
                     Icons.photo_library_rounded,
                     l.chooseFromLibrary,
-                    Y4.primaryDeep,
+                    Y4.palette.primaryDeep,
                     () => _pickAndUploadPhoto(ImageSource.gallery),
                   ),
                   if (_avatarUrl != null) ...[
@@ -440,6 +440,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: _pBg,
@@ -530,7 +531,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           child: Text(
             l.save,
             style: GoogleFonts.outfit(
-              color: Y4.honeyDeep,
+              color: Y4.palette.honeyDeep,
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
@@ -541,7 +542,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       background: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Y4.cream, Y4.honey.withValues(alpha: 0.30), Y4.bg],
+            colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -563,7 +564,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         style: Y4.display(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
-                          color: Y4.ink,
+                          color: Y4.palette.ink,
                           letterSpacing: -0.3,
                           height: 1.0,
                         ),
@@ -575,7 +576,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         _email,
                         style: GoogleFonts.outfit(
                           fontSize: 12,
-                          color: Y4.inkSoft,
+                          color: Y4.palette.inkSoft,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -583,9 +584,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          _badgePill('LV $_level', Y4.primaryDeep),
+                          _badgePill('LV $_level', Y4.palette.primaryDeep),
                           const SizedBox(width: 6),
-                          _badgePill(_levelTitle, Y4.honeyDeep),
+                          _badgePill(_levelTitle, Y4.palette.honeyDeep),
                         ],
                       ),
                     ],
@@ -626,7 +627,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Y4.honeyDeep.withValues(alpha: 0.4),
+                color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -667,7 +668,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      const Color(0xFFC9921A),
+                      Color(0xFFC9921A),
                     ),
                   ),
                 ),
@@ -725,7 +726,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Y4.honeyDeep.withValues(alpha: 0.4),
+                color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -766,7 +767,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      const Color(0xFFC9921A),
+                      Color(0xFFC9921A),
                     ),
                   ),
                 ),
@@ -990,10 +991,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: Y4.honey.withValues(alpha: 0.15),
+            color: Y4.palette.honey.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(11),
           ),
-          child: Icon(icon, color: Y4.honeyDeep, size: 18),
+          child: Icon(icon, color: Y4.palette.honeyDeep, size: 18),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -1017,7 +1018,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   fontWeight: FontWeight.w600,
                   color: _pText,
                 ),
-                cursorColor: Y4.honeyDeep,
+                cursorColor: Y4.palette.honeyDeep,
                 decoration: InputDecoration(
                   hintText: hint,
                   hintStyle: GoogleFonts.outfit(
@@ -1046,7 +1047,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Y4.honey.withValues(alpha: 0.18),
+              color: Y4.palette.honey.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -1063,7 +1064,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: Y4.honeyDeep,
+                    color: Y4.palette.honeyDeep,
                   ),
                 ),
               ],
@@ -1127,7 +1128,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: Y4.honey.withValues(alpha: 0.15),
+                color: Y4.palette.honey.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(11),
               ),
               child: const Icon(
@@ -1218,7 +1219,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextField(
                       autofocus: true,
-                      cursorColor: Y4.honeyDeep,
+                      cursorColor: Y4.palette.honeyDeep,
                       style: GoogleFonts.outfit(
                         fontSize: 14,
                         color: _pText,
@@ -1486,7 +1487,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Y4.honeyDeep.withValues(alpha: 0.4),
+                          color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
                         ),
                       ),
                       child: Icon(
@@ -1494,7 +1495,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             ? Icons.notifications_active_rounded
                             : Icons.notifications_off_rounded,
                         size: 20,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -1507,7 +1508,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
-                              color: Y4.ink,
+                              color: Y4.palette.ink,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -1515,7 +1516,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             on ? l.notifOnDesc : l.notifOffDesc,
                             style: GoogleFonts.outfit(
                               fontSize: 12,
-                              color: Y4.inkSoft,
+                              color: Y4.palette.inkSoft,
                               fontWeight: FontWeight.w500,
                               height: 1.3,
                             ),
@@ -1526,10 +1527,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     Switch(
                       value: on,
                       onChanged: NotificationCenter.instance.setEnabled,
-                      activeThumbColor: Y4.honey,
-                      activeTrackColor: Y4.honeyDeep,
+                      activeThumbColor: Y4.palette.honey,
+                      activeTrackColor: Y4.palette.honeyDeep,
                       inactiveThumbColor: Colors.white,
-                      inactiveTrackColor: Y4.track,
+                      inactiveTrackColor: Y4.palette.track,
                     ),
                   ],
                 ),
@@ -1551,7 +1552,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Y4.ink,
+                      color: Y4.palette.ink,
                     ),
                   ),
                 ),
@@ -1568,7 +1569,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                                 ),
                                 margin: const EdgeInsets.only(right: 8),
                                 decoration: BoxDecoration(
-                                  color: Y4.honeyDeep,
+                                  color: Y4.palette.honeyDeep,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
@@ -1604,7 +1605,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                   ),
                 ),
               ),
@@ -1617,7 +1618,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
                 style: GoogleFonts.outfit(
                   fontSize: 13,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                   fontWeight: FontWeight.w600,
                 ),
                 alignment: Alignment.centerRight,
@@ -1837,7 +1838,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     color: Y4.bg,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: Y4.honey.withValues(alpha: 0.5),
+                      color: Y4.palette.honey.withValues(alpha: 0.5),
                     ),
                   ),
                   child: TextField(
@@ -1850,7 +1851,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       fontWeight: FontWeight.w800,
                       color: _pText,
                     ),
-                    cursorColor: Y4.honeyDeep,
+                    cursorColor: Y4.palette.honeyDeep,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                     ),
@@ -2269,6 +2270,7 @@ class _BottomSheetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),

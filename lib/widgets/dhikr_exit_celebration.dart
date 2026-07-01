@@ -29,7 +29,7 @@ Future<void> showDhikrExitCelebration(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'dhikr_exit_celebration',
-    barrierColor: Y4.ink.withValues(alpha: 0.55),
+    barrierColor: Y4.palette.ink.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 380),
     transitionBuilder: (ctx, anim, _, child) {
       final curve = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
@@ -135,7 +135,7 @@ class _DhikrExitCelebrationBodyState extends State<_DhikrExitCelebrationBody>
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: Y4.ink.withValues(alpha: 0.25),
+                          color: Y4.palette.ink.withValues(alpha: 0.25),
                           blurRadius: 50,
                           offset: const Offset(0, 20),
                         ),
@@ -154,11 +154,11 @@ class _DhikrExitCelebrationBodyState extends State<_DhikrExitCelebrationBody>
                       style: GoogleFonts.amiri(
                         fontSize: 38,
                         fontWeight: FontWeight.w700,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                         height: 1.2,
                         shadows: [
                           Shadow(
-                            color: Y4.honeyDeep.withValues(alpha: 0.18),
+                            color: Y4.palette.honeyDeep.withValues(alpha: 0.18),
                             offset: const Offset(0, 2),
                             blurRadius: 6,
                           ),
@@ -173,7 +173,7 @@ class _DhikrExitCelebrationBodyState extends State<_DhikrExitCelebrationBody>
                         fontSize: 22,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         letterSpacing: -0.3,
                         height: 1.1,
                       ),
@@ -198,7 +198,7 @@ class _DhikrExitCelebrationBodyState extends State<_DhikrExitCelebrationBody>
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: Y4.honeyDeep.withValues(alpha: 0.35),
+                              color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
                               blurRadius: 14,
                               offset: const Offset(0, 6),
                             ),
@@ -291,11 +291,11 @@ class _HeroEmblem extends StatelessWidget {
             style: GoogleFonts.amiri(
               fontSize: 34,
               fontWeight: FontWeight.w700,
-              color: Y4.ink,
+              color: Y4.palette.ink,
               height: 1.0,
               shadows: [
                 Shadow(
-                  color: Y4.honey.withValues(alpha: 0.6),
+                  color: Y4.palette.honey.withValues(alpha: 0.6),
                   blurRadius: 8,
                 ),
               ],
@@ -320,14 +320,14 @@ class _TasbihPainter extends CustomPainter {
     canvas.drawCircle(
       c,
       r,
-      Paint()..color = Y4.butter.withValues(alpha: 0.55 + 0.10 * pulse),
+      Paint()..color = Y4.palette.butter.withValues(alpha: 0.55 + 0.10 * pulse),
     );
 
     // Inner cream disc — the surface the beads sit on.
     canvas.drawCircle(
       c,
       r * 0.82,
-      Paint()..color = Y4.cream.withValues(alpha: 0.9),
+      Paint()..color = Y4.palette.cream.withValues(alpha: 0.9),
     );
 
     // Thread guide — faint ring that visually connects the beads.
@@ -336,7 +336,7 @@ class _TasbihPainter extends CustomPainter {
       c,
       beadRingR,
       Paint()
-        ..color = Y4.honeyDeep.withValues(alpha: 0.18)
+        ..color = Y4.palette.honeyDeep.withValues(alpha: 0.18)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2,
     );
@@ -345,10 +345,10 @@ class _TasbihPainter extends CustomPainter {
     // the ring; the bead at the top is the "imam bead" (slightly larger,
     // a touch darker) — the traditional marker on a tasbih.
     const beadCount = 33;
-    final beadPaint = Paint()..color = Y4.honey;
-    final imamPaint = Paint()..color = Y4.honeyDeep;
+    final beadPaint = Paint()..color = Y4.palette.honey;
+    final imamPaint = Paint()..color = Y4.palette.honeyDeep;
     final beadEdgePaint = Paint()
-      ..color = Y4.honeyDeep.withValues(alpha: 0.55)
+      ..color = Y4.palette.honeyDeep.withValues(alpha: 0.55)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.6;
 
@@ -369,7 +369,7 @@ class _TasbihPainter extends CustomPainter {
     canvas.drawCircle(
       c,
       r * 0.42,
-      Paint()..color = Y4.honey.withValues(alpha: 0.18 + 0.10 * pulse),
+      Paint()..color = Y4.palette.honey.withValues(alpha: 0.18 + 0.10 * pulse),
     );
   }
 
@@ -397,11 +397,11 @@ class _StatsRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: Y4.honeyDeep,
+        color: Y4.palette.honeyDeep,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.28),
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.28),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
@@ -492,7 +492,7 @@ class _StatsRow extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.4,
-                      color: Y4.butter,
+                      color: Y4.palette.butter,
                     ),
                   ),
                 ],

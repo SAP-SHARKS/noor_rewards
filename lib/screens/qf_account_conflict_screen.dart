@@ -345,10 +345,11 @@ class _GeoBgPainter extends CustomPainter {
           final a = (i * math.pi / 8) - math.pi / 2;
           final r = i.isEven ? 26.0 : 11.0;
           final p = Offset(x + r * math.cos(a), y + r * math.sin(a));
-          if (i == 0)
+          if (i == 0) {
             path.moveTo(p.dx, p.dy);
-          else
+          } else {
             path.lineTo(p.dx, p.dy);
+          }
         }
         path.close();
         canvas.drawPath(path, paint);

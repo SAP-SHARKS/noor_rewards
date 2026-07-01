@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/settings_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 
@@ -147,6 +149,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Scaffold(
       body: Stack(
         children: [
@@ -255,6 +258,7 @@ class _PageSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -409,6 +413,7 @@ class _PageDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(total, (i) {
@@ -449,6 +454,7 @@ class _NextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -595,6 +601,7 @@ class _DualBenefitIllustrationState extends State<_DualBenefitIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([_orbit, _pulse]),
       builder: (_, __) {
@@ -733,6 +740,7 @@ class _OrbBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -784,6 +792,7 @@ class _MiniCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Container(
       width: 108,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -873,6 +882,7 @@ class _MoonIllustrationState extends State<_MoonIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([_twinkleCtrl, _shootAnim]),
       builder: (_, __) {
@@ -984,6 +994,7 @@ class _StarDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Container(
       width: size,
       height: size,
@@ -1084,6 +1095,7 @@ class _TasbihIllustrationState extends State<_TasbihIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([_loopCtrl, _pulse]),
       builder: (_, __) {
@@ -1270,6 +1282,7 @@ class _QuranIllustrationState extends State<_QuranIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([_openAnim, _glow, _lines]),
       builder: (_, __) {
@@ -1540,6 +1553,7 @@ class _SadaqahIllustrationState extends State<_SadaqahIllustration>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return AnimatedBuilder(
       animation: Listenable.merge([_coinCtrl, _heart, _ray]),
       builder: (_, __) {

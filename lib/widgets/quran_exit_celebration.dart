@@ -31,7 +31,7 @@ Future<void> showQuranExitCelebration(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'quran_exit_celebration',
-    barrierColor: Y4.ink.withValues(alpha: 0.55),
+    barrierColor: Y4.palette.ink.withValues(alpha: 0.55),
     transitionDuration: const Duration(milliseconds: 380),
     transitionBuilder: (ctx, anim, _, child) {
       final curve = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
@@ -142,7 +142,7 @@ class _QuranExitCelebrationBodyState extends State<_QuranExitCelebrationBody>
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: Y4.ink.withValues(alpha: 0.25),
+                          color: Y4.palette.ink.withValues(alpha: 0.25),
                           blurRadius: 50,
                           offset: const Offset(0, 20),
                         ),
@@ -161,11 +161,11 @@ class _QuranExitCelebrationBodyState extends State<_QuranExitCelebrationBody>
                           style: GoogleFonts.amiri(
                             fontSize: 34,
                             fontWeight: FontWeight.w700,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             height: 1.2,
                             shadows: [
                               Shadow(
-                                color: Y4.honeyDeep.withValues(alpha: 0.18),
+                                color: Y4.palette.honeyDeep.withValues(alpha: 0.18),
                                 offset: const Offset(0, 2),
                                 blurRadius: 6,
                               ),
@@ -180,7 +180,7 @@ class _QuranExitCelebrationBodyState extends State<_QuranExitCelebrationBody>
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
                             fontStyle: FontStyle.italic,
-                            color: Y4.honeyDeep,
+                            color: Y4.palette.honeyDeep,
                             letterSpacing: -0.3,
                             height: 1.1,
                           ),
@@ -206,7 +206,7 @@ class _QuranExitCelebrationBodyState extends State<_QuranExitCelebrationBody>
                               boxShadow: [
                                 BoxShadow(
                                   color:
-                                      Y4.honeyDeep.withValues(alpha: 0.35),
+                                      Y4.palette.honeyDeep.withValues(alpha: 0.35),
                                   blurRadius: 14,
                                   offset: const Offset(0, 6),
                                 ),
@@ -307,8 +307,8 @@ class _BookPainter extends CustomPainter {
     final haloPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          Y4.honey.withValues(alpha: 0.32 + 0.10 * pulse),
-          Y4.honey.withValues(alpha: 0),
+          Y4.palette.honey.withValues(alpha: 0.32 + 0.10 * pulse),
+          Y4.palette.honey.withValues(alpha: 0),
         ],
         stops: const [0.0, 1.0],
       ).createShader(Rect.fromCircle(center: c, radius: r));
@@ -329,7 +329,7 @@ class _BookPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.4
-        ..color = Y4.honeyDeep.withValues(alpha: 0.35),
+        ..color = Y4.palette.honeyDeep.withValues(alpha: 0.35),
     );
 
     // ── Crescent ornament above the book ────────────────────────────────────
@@ -342,7 +342,7 @@ class _BookPainter extends CustomPainter {
     canvas.drawCircle(
       crescentCenter,
       crescentR,
-      Paint()..color = Y4.honeyDeep,
+      Paint()..color = Y4.palette.honeyDeep,
     );
     canvas.drawCircle(
       Offset(crescentCenter.dx + crescentR * 0.45, crescentCenter.dy - crescentR * 0.10),
@@ -394,7 +394,7 @@ class _BookPainter extends CustomPainter {
 
     // Subtle drop shadow under each page.
     final shadow = Paint()
-      ..color = Y4.honeyDeep.withValues(alpha: 0.22)
+      ..color = Y4.palette.honeyDeep.withValues(alpha: 0.22)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
     canvas.save();
     canvas.translate(0, 3);
@@ -422,7 +422,7 @@ class _BookPainter extends CustomPainter {
     final edge = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4
-      ..color = Y4.honeyDeep.withValues(alpha: 0.85);
+      ..color = Y4.palette.honeyDeep.withValues(alpha: 0.85);
     canvas.drawPath(leftPath, edge);
     canvas.drawPath(rightPath, edge);
 
@@ -431,7 +431,7 @@ class _BookPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6
       ..strokeCap = StrokeCap.round
-      ..color = Y4.honeyDeep.withValues(alpha: 0.55);
+      ..color = Y4.palette.honeyDeep.withValues(alpha: 0.55);
     for (int i = 0; i < 3; i++) {
       final y = pageTopY + r * 0.18 + i * (r * 0.16);
 
@@ -490,8 +490,8 @@ class _BookPainter extends CustomPainter {
     final beamGlow = Paint()
       ..shader = RadialGradient(
         colors: [
-          Y4.honey.withValues(alpha: 0.65 + 0.18 * pulse),
-          Y4.honey.withValues(alpha: 0),
+          Y4.palette.honey.withValues(alpha: 0.65 + 0.18 * pulse),
+          Y4.palette.honey.withValues(alpha: 0),
         ],
       ).createShader(Rect.fromCircle(
         center: beamCenter,
@@ -521,12 +521,12 @@ class _BookPainter extends CustomPainter {
     star.close();
     canvas.drawPath(
       star,
-      Paint()..color = Y4.honeyDeep.withValues(alpha: 0.92),
+      Paint()..color = Y4.palette.honeyDeep.withValues(alpha: 0.92),
     );
 
     // ── Twinkles around the halo (pulsing) ──────────────────────────────────
     final twinklePaint = Paint()
-      ..color = Y4.honey.withValues(alpha: 0.85 - 0.2 * pulse);
+      ..color = Y4.palette.honey.withValues(alpha: 0.85 - 0.2 * pulse);
     final twinklePositions = <Offset>[
       Offset(c.dx - r * 0.78, c.dy - r * 0.20),
       Offset(c.dx + r * 0.80, c.dy - r * 0.08),
@@ -614,11 +614,11 @@ class _QuranStatsRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Y4.honeyDeep,
+        color: Y4.palette.honeyDeep,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.28),
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.28),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),

@@ -2,12 +2,14 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/orphan.dart';
 import '../services/donation_service.dart';
+import '../services/settings_service.dart';
 import '../theme/y4_theme.dart';
 import '../utils/name_localizer.dart';
 import '../widgets/sabiq_coin.dart';
@@ -67,6 +69,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Scaffold(
       backgroundColor: Y4.bg,
       body: Stack(
@@ -108,7 +111,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       stretch: true,
       expandedHeight: 320,
       backgroundColor: Y4.bg,
-      foregroundColor: Y4.ink,
+      foregroundColor: Y4.palette.ink,
       iconTheme: const IconThemeData(color: Y4.ink),
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
@@ -118,19 +121,19 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                 ? CachedNetworkImage(
                     imageUrl: _orphan.photoUrl!,
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(color: Y4.butter),
+                    placeholder: (_, __) => Container(color: Y4.palette.butter),
                     errorWidget: (_, __, ___) => Container(
-                      color: Y4.butter,
+                      color: Y4.palette.butter,
                       alignment: Alignment.center,
                       child: Icon(
                         Icons.person_rounded,
                         size: 80,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                       ),
                     ),
                   )
                 : Container(
-                    color: Y4.butter,
+                    color: Y4.palette.butter,
                     alignment: Alignment.center,
                     child: Text(
                       (() {
@@ -139,7 +142,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                       })(),
                       style: GoogleFonts.fraunces(
                         fontSize: 120,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                       ),
                     ),
                   ),
@@ -180,7 +183,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             style: GoogleFonts.fraunces(
               fontSize: 32,
               fontWeight: FontWeight.w500,
-              color: Y4.ink,
+              color: Y4.palette.ink,
               height: 1.05,
             ),
           ),
@@ -206,9 +209,9 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         decoration: BoxDecoration(
-          color: Y4.cream,
+          color: Y4.palette.cream,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Y4.honey.withValues(alpha: 0.5)),
+          border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.5)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +224,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Y4.ink,
+                    color: Y4.palette.ink,
                   ),
                 ),
                 Text(
@@ -231,7 +234,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                   style: GoogleFonts.outfit(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
-                    color: Y4.primary,
+                    color: Y4.palette.primary,
                   ),
                 ),
               ],
@@ -242,7 +245,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 6,
-                backgroundColor: Y4.track,
+                backgroundColor: Y4.palette.track,
                 valueColor: const AlwaysStoppedAnimation(Y4.honeyDeep),
               ),
             ),
@@ -253,7 +256,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                 style: GoogleFonts.outfit(
                   fontSize: 11.5,
                   fontStyle: FontStyle.italic,
-                  color: Y4.inkSoft,
+                  color: Y4.palette.inkSoft,
                 ),
               ),
             ],
@@ -302,7 +305,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Y4.inkSoft,
+                color: Y4.palette.inkSoft,
               ),
             ),
           ),
@@ -311,7 +314,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               value,
               style: GoogleFonts.outfit(
                 fontSize: 13.5,
-                color: Y4.ink,
+                color: Y4.palette.ink,
                 height: 1.4,
               ),
             ),
@@ -352,7 +355,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
         text,
         style: GoogleFonts.outfit(
           fontSize: 14,
-          color: Y4.ink,
+          color: Y4.palette.ink,
           height: 1.55,
         ),
       ),
@@ -378,7 +381,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               style: GoogleFonts.amiri(
                 fontSize: 16.5,
                 fontWeight: FontWeight.w700,
-                color: Y4.ink,
+                color: Y4.palette.ink,
                 height: 1.6,
               ),
             ),
@@ -388,7 +391,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 fontStyle: FontStyle.italic,
-                color: Y4.inkSoft,
+                color: Y4.palette.inkSoft,
               ),
             ),
           ],
@@ -411,7 +414,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                   children: [
                     CircleAvatar(
                       radius: 16,
-                      backgroundColor: Y4.butter,
+                      backgroundColor: Y4.palette.butter,
                       backgroundImage: s.avatarUrl != null && s.avatarUrl!.isNotEmpty
                           ? CachedNetworkImageProvider(s.avatarUrl!)
                           : null,
@@ -426,7 +429,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                               style: GoogleFonts.outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.honeyDeep,
+                                color: Y4.palette.honeyDeep,
                               ),
                             )
                           : null,
@@ -440,7 +443,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                             localizeName(context, s.displayName),
                             style: GoogleFonts.outfit(
                               fontSize: 13.5,
-                              color: Y4.ink,
+                              color: Y4.palette.ink,
                               fontWeight: FontWeight.w600,
                             ),
                             maxLines: 1,
@@ -450,7 +453,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                             _timeAgo(s.donatedAt),
                             style: GoogleFonts.outfit(
                               fontSize: 11,
-                              color: Y4.inkSoft,
+                              color: Y4.palette.inkSoft,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -465,7 +468,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Y4.primary,
+                            color: Y4.palette.primary,
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -505,7 +508,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             style: GoogleFonts.outfit(
               fontSize: 13,
               fontWeight: FontWeight.w800,
-              color: Y4.inkSoft,
+              color: Y4.palette.inkSoft,
               letterSpacing: 0.5,
             ),
           ),
@@ -531,7 +534,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: Y4.butter,
+          color: Y4.palette.butter,
           borderRadius: BorderRadius.circular(99),
         ),
         child: Text(
@@ -539,7 +542,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
           style: GoogleFonts.outfit(
             fontSize: 11.5,
             fontWeight: FontWeight.w700,
-            color: Y4.honeyDeep,
+            color: Y4.palette.honeyDeep,
             letterSpacing: 0.2,
           ),
         ),
@@ -557,7 +560,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
           color: Y4.bg,
           boxShadow: [
             BoxShadow(
-              color: Y4.ink.withValues(alpha: 0.10),
+              color: Y4.palette.ink.withValues(alpha: 0.10),
               blurRadius: 16,
               offset: const Offset(0, -4),
             ),
@@ -575,7 +578,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                         'Your balance',
                     style: GoogleFonts.outfit(
                       fontSize: 11,
-                      color: Y4.inkSoft,
+                      color: Y4.palette.inkSoft,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -584,7 +587,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Y4.ink,
+                      color: Y4.palette.ink,
                     ),
                   ),
                 ],
@@ -593,9 +596,9 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             ElevatedButton(
               onPressed: hasEnough ? _openSponsorSheet : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Y4.honeyDeep,
+                backgroundColor: Y4.palette.honeyDeep,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: Y4.muted,
+                disabledBackgroundColor: Y4.palette.muted,
                 padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -640,7 +643,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               behavior: SnackBarBehavior.floating,
-              backgroundColor: Y4.amberY,
+              backgroundColor: Y4.palette.amberY,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -724,6 +727,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final canSubmit = _amount >= widget.orphan.minSponsorship &&
         _amount <= widget.availablePoints &&
         !_submitting;
@@ -744,7 +748,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             child: Container(
               width: 40, height: 4,
               decoration: BoxDecoration(
-                color: Y4.muted,
+                color: Y4.palette.muted,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -755,13 +759,13 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             style: GoogleFonts.fraunces(
               fontSize: 22,
               fontWeight: FontWeight.w500,
-              color: Y4.ink,
+              color: Y4.palette.ink,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'Choose how many Seeds to give. Minimum ${widget.orphan.minSponsorship}.',
-            style: GoogleFonts.outfit(fontSize: 13, color: Y4.inkSoft),
+            style: GoogleFonts.outfit(fontSize: 13, color: Y4.palette.inkSoft),
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -775,13 +779,13 @@ class _SponsorSheetState extends State<_SponsorSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: disabled
-                        ? Y4.track.withValues(alpha: 0.4)
+                        ? Y4.palette.track.withValues(alpha: 0.4)
                         : selected
-                            ? Y4.honey
-                            : Y4.cream,
+                            ? Y4.palette.honey
+                            : Y4.palette.cream,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: selected ? Y4.honeyDeep : Y4.border,
+                      color: selected ? Y4.palette.honeyDeep : Y4.border,
                       width: selected ? 1.5 : 1,
                     ),
                   ),
@@ -797,7 +801,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
                         '$p',
                         style: GoogleFonts.outfit(
                           fontWeight: FontWeight.w700,
-                          color: disabled ? Y4.muted : Y4.ink,
+                          color: disabled ? Y4.palette.muted : Y4.palette.ink,
                         ),
                       ),
                     ],
@@ -813,7 +817,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)?.customLabel ?? 'Custom',
               suffixText: AppLocalizations.of(context)?.seedsSuffix ?? 'Seeds',
-              filled: true, fillColor: Y4.cream,
+              filled: true, fillColor: Y4.palette.cream,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: Y4.border),
@@ -828,7 +832,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
               const SizedBox(width: 5),
               Text(
                 'Your balance: ${widget.availablePoints} Seeds',
-                style: GoogleFonts.outfit(fontSize: 12, color: Y4.inkSoft),
+                style: GoogleFonts.outfit(fontSize: 12, color: Y4.palette.inkSoft),
               ),
             ],
           ),
@@ -838,9 +842,9 @@ class _SponsorSheetState extends State<_SponsorSheet> {
             child: ElevatedButton(
               onPressed: canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Y4.honeyDeep,
+                backgroundColor: Y4.palette.honeyDeep,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: Y4.muted,
+                disabledBackgroundColor: Y4.palette.muted,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),

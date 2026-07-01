@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -719,9 +720,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
     if (_cache.get('pref_translation') == null && mounted) {
       final lang = Localizations.localeOf(context).languageCode;
-      if (lang == 'ur')
+      if (lang == 'ur') {
         _translationEdition = 'ur.jalandhry';
-      else if (lang == 'fr')
+      } else if (lang == 'fr')
         _translationEdition = 'fr.hamidullah';
       else if (lang == 'tr')
         _translationEdition = 'tr.diyanet';
@@ -1023,18 +1024,20 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         }
         _fetchWordByWord(surah, ayah);
       } else {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _loading = false;
             _arabic = 'Could not load ayah. Please retry.';
           });
+        }
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _loading = false;
           _arabic = 'No connection. Cached data may be available.';
         });
+      }
     }
   }
 
@@ -1222,11 +1225,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
 
   // ── Fetch word-by-word data ───────────────────────────────────────────────────
   Future<void> _fetchWordByWord(int surah, int ayah) async {
-    if (_wordByWord)
+    if (_wordByWord) {
       setState(() {
         _wbwLoading = true;
         _wbwWords = [];
       });
+    }
 
     final lang = _wbwLang();
 
@@ -1241,11 +1245,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             (cachedWbw['words'] as List)
                 .map((w) => Map<String, dynamic>.from(w as Map))
                 .toList();
-        if (mounted)
+        if (mounted) {
           setState(() {
             _wbwWords = words;
             _wbwLoading = false;
           });
+        }
         // Trigger bulk prefetch in background if not done for this surah+lang
         final prefetchKey = '$surah:$lang';
         if (_wbwPrefetchedKey != prefetchKey) _prefetchSurahWbw(surah);
@@ -1294,11 +1299,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           'words': words,
           'ts': DateTime.now().toIso8601String(),
         });
-        if (mounted)
+        if (mounted) {
           setState(() {
             _wbwWords = words;
             _wbwLoading = false;
           });
+        }
       } else {
         if (mounted) setState(() => _wbwLoading = false);
       }
@@ -1575,7 +1581,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Y4.track,
+                          color: Y4.palette.track,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -1587,7 +1593,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           style: GoogleFonts.outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                           ),
                         ),
                       ),
@@ -1596,7 +1602,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            color: Y4.cream,
+                            color: Y4.palette.cream,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: Y4.border),
                           ),
@@ -1605,14 +1611,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 (val) => setStateSheet(() => searchQuery = val),
                             style: GoogleFonts.outfit(
                               fontSize: 15,
-                              color: Y4.ink,
+                              color: Y4.palette.ink,
                             ),
                             decoration: InputDecoration(
                               hintText:
                                   AppLocalizations.of(context)?.searchSurahHint ??
                                       'Search Surah...',
                               hintStyle: GoogleFonts.outfit(
-                                color: Y4.inkSoft,
+                                color: Y4.palette.inkSoft,
                               ),
                               border: InputBorder.none,
                               icon: const Icon(
@@ -1653,8 +1659,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                   shape: BoxShape.circle,
                                   color:
                                       isCurrent
-                                          ? Y4.primary
-                                          : Y4.cream,
+                                          ? Y4.palette.primary
+                                          : Y4.palette.cream,
                                 ),
                                 child: Center(
                                   child: Text(
@@ -1662,7 +1668,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     style: GoogleFonts.outfit(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
-                                      color: isCurrent ? Colors.white : Y4.primary,
+                                      color: isCurrent ? Colors.white : Y4.palette.primary,
                                     ),
                                   ),
                                 ),
@@ -1674,14 +1680,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       isCurrent
                                           ? FontWeight.w700
                                           : FontWeight.w500,
-                                  color: isCurrent ? Y4.primary : Y4.ink,
+                                  color: isCurrent ? Y4.palette.primary : Y4.palette.ink,
                                 ),
                               ),
                               subtitle: Text(
                                 '${_surahLengths[n]} ayahs',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
-                                  color: Y4.inkSoft,
+                                  color: Y4.palette.inkSoft,
                                 ),
                               ),
                               trailing:
@@ -1808,16 +1814,18 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   bool _isHeading(String line, {bool isUrdu = false}) {
     final t = line.trim();
     if (t.length > 120 || t.length < 4) return false;
-    if (t.startsWith('(') || t.startsWith('"') || t.startsWith('`'))
+    if (t.startsWith('(') || t.startsWith('"') || t.startsWith('`')) {
       return false;
+    }
     if (isUrdu) {
       if (t.endsWith('۔') || t.endsWith('،') || t.endsWith('؟')) return false;
     } else {
       final firstLetter = t.codeUnitAt(0);
       if (firstLetter < 65 ||
           (firstLetter > 90 && firstLetter < 97) ||
-          firstLetter > 122)
+          firstLetter > 122) {
         return false;
+      }
       if (t[0] != t[0].toUpperCase()) return false;
       if (t.endsWith('.') || t.endsWith(',') || t.endsWith(')')) return false;
     }
@@ -2188,11 +2196,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final cacheKey = 'qtafsir_${_surah}_${_ayah}_${def.id}';
     final cached = _cache.get(cacheKey) as String?;
     if (cached != null) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _tafsirText = cached;
           _tafsirLoading = false;
         });
+      }
       if (onDone != null) onDone();
       return;
     }
@@ -2231,24 +2240,27 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         );
         final text = (match?['text'] as String?) ?? '';
 
-        if (mounted)
+        if (mounted) {
           setState(() {
             _tafsirText = text;
             _tafsirLoading = false;
           });
+        }
       } else {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _tafsirText = '';
             _tafsirLoading = false;
           });
+        }
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _tafsirText = '';
           _tafsirLoading = false;
         });
+      }
     }
     if (onDone != null) onDone();
   }
@@ -3929,7 +3941,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  const Color(0xFFFFC83D),
+                                  Color(0xFFFFC83D),
                                 ),
                               ),
                             ),
@@ -3995,6 +4007,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   // ── build() ────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     // Full mushaf mode takes over the entire screen.
     if (_fullPageMode) {
       return PopScope(
@@ -4324,8 +4337,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                             _showAudioPlayer =
                                                 !_showAudioPlayer,
                                       );
-                                      if (_showAudioPlayer && !_isPlaying)
+                                      if (_showAudioPlayer && !_isPlaying) {
                                         _togglePlay();
+                                      }
                                     },
                                   ),
                                 ],
@@ -4360,10 +4374,11 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                     _controlsHideTimer = Timer(
                                       const Duration(seconds: 4),
                                       () {
-                                        if (mounted)
+                                        if (mounted) {
                                           setState(
                                             () => _showMushafControls = false,
                                           );
+                                        }
                                       },
                                     );
                                   },
@@ -4932,7 +4947,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            const Color(0xFFFFC83D),
+                            Color(0xFFFFC83D),
                           ),
                         ),
                       )
@@ -4980,7 +4995,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            const Color(0xFFFFC83D),
+                            Color(0xFFFFC83D),
                           ),
                         ),
                       )
@@ -5158,10 +5173,12 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           _loadPageForScroll(pageNum);
         }
         // Pre-load neighbors
-        if (!_loadedPages.containsKey(pageNum + 1))
+        if (!_loadedPages.containsKey(pageNum + 1)) {
           _loadPageForScroll(pageNum + 1);
-        if (pageNum > 1 && !_loadedPages.containsKey(pageNum - 1))
+        }
+        if (pageNum > 1 && !_loadedPages.containsKey(pageNum - 1)) {
           _loadPageForScroll(pageNum - 1);
+        }
 
         final ayahs = _loadedPages[pageNum];
 
@@ -6731,6 +6748,7 @@ class _PillButtonState extends State<_PillButton>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final inactBg = widget.darkMode ? Colors.white10 : Colors.grey.shade100;
     final inactBorder = widget.darkMode ? Colors.white24 : Colors.grey.shade300;
     final inactFg = widget.darkMode ? Colors.white54 : Colors.grey.shade600;
@@ -6844,6 +6862,7 @@ class _WbwWordChipState extends State<_WbwWordChip>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     final highlightBg = widget.accentColor.withValues(alpha: 0.10);
     final goldClr = widget.accentColor;
 

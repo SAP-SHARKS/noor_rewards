@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/quran_engagement_strip.dart';
@@ -630,7 +631,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 150),
                                   color: sel
-                                      ? Y4.honey.withValues(alpha: 0.10)
+                                      ? Y4.palette.honey.withValues(alpha: 0.10)
                                       : Colors.transparent,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
@@ -643,8 +644,8 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                         height: 40,
                                         decoration: BoxDecoration(
                                           color: sel
-                                              ? Y4.honeyDeep
-                                              : Y4.honey.withValues(alpha: 0.25),
+                                              ? Y4.palette.honeyDeep
+                                              : Y4.palette.honey.withValues(alpha: 0.25),
                                           borderRadius: BorderRadius.circular(
                                             12,
                                           ),
@@ -657,7 +658,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                               fontWeight: FontWeight.w800,
                                               color: sel
                                                   ? Colors.white
-                                                  : Y4.honeyDeep,
+                                                  : Y4.palette.honeyDeep,
                                             ),
                                           ),
                                         ),
@@ -691,7 +692,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                                       if (sel)
                                         Icon(
                                           Icons.check_circle_rounded,
-                                          color: Y4.honeyDeep,
+                                          color: Y4.palette.honeyDeep,
                                           size: 22,
                                         ),
                                     ],
@@ -791,17 +792,17 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 120),
                                 decoration: BoxDecoration(
-                                  color: sel ? Y4.honeyDeep : _kWhite,
+                                  color: sel ? Y4.palette.honeyDeep : _kWhite,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                     color: sel
-                                        ? Y4.honeyDeep
+                                        ? Y4.palette.honeyDeep
                                         : Colors.grey.shade200,
                                   ),
                                   boxShadow: sel
                                       ? [
                                           BoxShadow(
-                                            color: Y4.honeyDeep
+                                            color: Y4.palette.honeyDeep
                                                 .withValues(alpha: 0.30),
                                             blurRadius: 8,
                                           ),
@@ -837,7 +838,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
         isFavourites
             ? AppLocalizations.of(context)?.favourites ?? 'Favourites'
             : AppLocalizations.of(context)?.bookmarks ?? 'Bookmarks';
-    final color = isFavourites ? Y4.honeyDeep : Y4.primary;
+    final color = isFavourites ? Y4.palette.honeyDeep : Y4.palette.primary;
     final icon = isFavourites ? Icons.favorite_rounded : Icons.bookmark_rounded;
 
     showModalBottomSheet(
@@ -1024,6 +1025,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Scaffold(
       backgroundColor: _kBg,
       body:
@@ -1088,15 +1090,15 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Y4.cream,
-                              Y4.honey.withValues(alpha: 0.40),
+                              Y4.palette.cream,
+                              Y4.palette.honey.withValues(alpha: 0.40),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: Y4.honey.withValues(alpha: 0.35),
+                            color: Y4.palette.honey.withValues(alpha: 0.35),
                           ),
                         ),
                         child: Text(
@@ -1104,7 +1106,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                           style: GoogleFonts.fraunces(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
-                            color: Y4.honeyDeep,
+                            color: Y4.palette.honeyDeep,
                             letterSpacing: -0.5,
                             height: 1.1,
                           ),
@@ -1170,7 +1172,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                 // Surah selector row
                 _PickerRow(
                   icon: Icons.menu_book_rounded,
-                  iconColor: Y4.honeyDeep,
+                  iconColor: Y4.palette.honeyDeep,
                   label: AppLocalizations.of(context)?.surahPickerLabel ?? 'Surah',
                   value: _localSurahName(_selSurah),
                   subtitle: AppLocalizations.of(context)
@@ -1183,7 +1185,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                 // Ayah selector row
                 _PickerRow(
                   icon: Icons.format_list_numbered_rounded,
-                  iconColor: Y4.honeyDeep,
+                  iconColor: Y4.palette.honeyDeep,
                   label:
                       AppLocalizations.of(context)?.startFromVerse ??
                           'Start from Verse',
@@ -1211,7 +1213,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
-                          color: Y4.honeyDeep.withValues(alpha: 0.35),
+                          color: Y4.palette.honeyDeep.withValues(alpha: 0.35),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -1238,7 +1240,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                               style: GoogleFonts.outfit(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: Y4.ink,
+                                color: Y4.palette.ink,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -1264,7 +1266,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _LibraryCard(
                         icon: Icons.favorite_rounded,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         label:
                             AppLocalizations.of(context)?.favourites ??
                             'Favourites',
@@ -1276,7 +1278,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _LibraryCard(
                         icon: Icons.bookmark_rounded,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         label:
                             AppLocalizations.of(context)?.bookmarks ??
                             'Bookmarks',
@@ -1294,7 +1296,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _QuickTile(
                         icon: Icons.shuffle_rounded,
-                        color: Y4.honeyDeep,
+                        color: Y4.palette.honeyDeep,
                         label:
                             AppLocalizations.of(context)?.randomVerse ??
                             'Random Verse',
@@ -1315,7 +1317,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _QuickTile(
                         icon: Icons.water_drop_rounded,
-                        color: Y4.honey,
+                        color: Y4.palette.honey,
                         label: _localSurahName(1),
                         onTap: () => _startReading(surah: 1, ayah: 1),
                       ),
@@ -1324,7 +1326,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     Expanded(
                       child: _QuickTile(
                         icon: Icons.nights_stay_rounded,
-                        color: Y4.primary,
+                        color: Y4.palette.primary,
                         label: _localSurahName(18),
                         subtitle:
                             AppLocalizations.of(context)?.sunnahFriday ??
@@ -1379,21 +1381,22 @@ class _UserStatsPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Y4.honey.withValues(alpha: 0.55), width: 1.2),
+        border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.55), width: 1.2),
         boxShadow: [
           // Soft warm halo
           BoxShadow(
-            color: Y4.honey.withValues(alpha: 0.32),
+            color: Y4.palette.honey.withValues(alpha: 0.32),
             blurRadius: 14,
           ),
           // Subtle honey drop
           BoxShadow(
-            color: Y4.honeyDeep.withValues(alpha: 0.18),
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.18),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1435,6 +1438,7 @@ class _StatCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
@@ -1447,7 +1451,7 @@ class _StatCell extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 14,
               fontWeight: FontWeight.w800,
-              color: Y4.ink,
+              color: Y4.palette.ink,
             ),
           ),
         ],
@@ -1459,10 +1463,11 @@ class _StatCell extends StatelessWidget {
 class _PillDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return Container(
       width: 1,
       height: 20,
-      color: Y4.honey.withValues(alpha: 0.35),
+      color: Y4.palette.honey.withValues(alpha: 0.35),
     );
   }
 }
@@ -1499,6 +1504,7 @@ class _ContinueCardState extends State<_ContinueCard> {
   bool _pressed = false;
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
@@ -1521,7 +1527,7 @@ class _ContinueCardState extends State<_ContinueCard> {
             borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: Y4.honeyDeep.withValues(alpha: 0.30),
+                color: Y4.palette.honeyDeep.withValues(alpha: 0.30),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -1542,7 +1548,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Y4.ink.withValues(alpha: 0.06),
+                      color: Y4.palette.ink.withValues(alpha: 0.06),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -1566,7 +1572,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                       style: GoogleFonts.outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: Y4.ink,
+                        color: Y4.palette.ink,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1574,7 +1580,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                       'Surah ${widget.surah}  •  Verse ${widget.ayah}  •  ${AppLocalizations.of(context)?.continueReading ?? 'Continue reading'}',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
-                        color: Y4.inkSoft,
+                        color: Y4.palette.inkSoft,
                       ),
                     ),
                   ],
@@ -1586,7 +1592,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Y4.honeyDeep,
+                  color: Y4.palette.honeyDeep,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -1639,6 +1645,7 @@ class _PickerRowState extends State<_PickerRow> {
   bool _pressed = false;
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
@@ -1668,7 +1675,7 @@ class _PickerRowState extends State<_PickerRow> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Y4.butter, widget.iconColor.withValues(alpha: 0.30)],
+                  colors: [Y4.palette.butter, widget.iconColor.withValues(alpha: 0.30)],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
@@ -1737,6 +1744,7 @@ class _LibraryCardState extends State<_LibraryCard> {
   bool _pressed = false;
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
@@ -1770,7 +1778,7 @@ class _LibraryCardState extends State<_LibraryCard> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Y4.butter, widget.color.withValues(alpha: 0.30)],
+                    colors: [Y4.palette.butter, widget.color.withValues(alpha: 0.30)],
                   ),
                   shape: BoxShape.circle,
                   border: Border.all(
@@ -1822,6 +1830,7 @@ class _QuickTileState extends State<_QuickTile> {
   bool _pressed = false;
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsService>();
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
