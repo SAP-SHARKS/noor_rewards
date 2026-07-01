@@ -1040,11 +1040,14 @@ class _QuranHubScreenState extends State<QuranHubScreen>
   }
 
   Widget _buildBody() {
+    final showStrip = _qhcfg.showQuranEngagement;
     return CustomScrollView(
       slivers: [
         // ── Sticky header ─ honey wash hero ────────────────────────────────
+        // expandedHeight shrinks when the engagement strip is hidden so the
+        // body content (Resume Reading) rides up instead of leaving a gap.
         SliverAppBar(
-          expandedHeight: 192,
+          expandedHeight: showStrip ? 192 : 110,
           pinned: true,
           toolbarHeight: 44,
           backgroundColor: _kBg,
@@ -1115,13 +1118,16 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                           readSeconds: _userReadSec,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      // Narrower than the page width so it reads as a
-                      // distinct centered card.
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 28),
-                        child: QuranEngagementStrip(),
-                      ),
+                      // Engagement strip — admin toggle. Hides the whole
+                      // "reading right now / frequently read" card when
+                      // app_config.show_quran_engagement = false.
+                      if (SettingsService.instance.config.showQuranEngagement) ...[
+                        const SizedBox(height: 6),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 28),
+                          child: QuranEngagementStrip(),
+                        ),
+                      ],
                     ],
                   ),
                 ),

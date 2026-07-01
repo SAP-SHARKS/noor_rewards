@@ -17,15 +17,31 @@ import { supabase } from "@/lib/supabase";
 // ── Constants ───────────────────────────────────────────────────────────────
 
 const NOTIFICATION_TYPES = [
+  // ── Server-driven (FCM) ────────────────────────────────────────────
   "streak_at_risk",
   "nightly_checkin",
   "community_momentum",
   "resume_reading",
-  "morning_azkaar",
-  "evening_azkaar",
   "level_up",
   "monthly_quran",
   "monthly_milestone",
+  "validate_seeds",
+  "habit_gap_quran",
+  "habit_gap_dhikr",
+  "featured_dua",
+  "project_funded",
+  "akhirah_milestone",
+  "streak_milestone",
+  "disengagement_pause",
+  // ── Locally-scheduled (Flutter AlarmManager) — variants live in the
+  // same table so the rotation logic + admin test-send still work, but
+  // the production firings happen on-device, not via these Edge Functions.
+  "morning_azkaar",
+  "evening_azkaar",
+  "sleep_azkar",
+  "surah_kahf_friday",
+  "salawat_friday",
+  "daily_astaghfir",
 ] as const;
 type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
@@ -34,11 +50,23 @@ const TYPE_LABEL: Record<NotificationType, string> = {
   nightly_checkin: "Nightly Check-in",
   community_momentum: "Community Momentum",
   resume_reading: "Resume Reading",
-  morning_azkaar: "Morning Azkaar",
-  evening_azkaar: "Evening Azkaar",
   level_up: "Level Up",
   monthly_quran: "Monthly Quran",
   monthly_milestone: "Monthly Milestone",
+  validate_seeds: "Validate Seeds (Donate)",
+  habit_gap_quran: "Habit Gap — Read Quran",
+  habit_gap_dhikr: "Habit Gap — Do Dhikr",
+  featured_dua: "Featured Du'a",
+  project_funded: "Project Funded",
+  akhirah_milestone: "Akhirah Milestone",
+  streak_milestone: "Streak Milestone",
+  disengagement_pause: "Disengagement Pause",
+  morning_azkaar: "Morning Azkar (local)",
+  evening_azkaar: "Evening Azkar (local)",
+  sleep_azkar: "Sleep Azkar (local)",
+  surah_kahf_friday: "Surah Al-Kahf — Friday (local)",
+  salawat_friday: "Friday Salawat (local)",
+  daily_astaghfir: "Daily Astaghfir (local)",
 };
 
 const TYPE_DESCRIPTION: Record<NotificationType, string> = {
@@ -46,11 +74,23 @@ const TYPE_DESCRIPTION: Record<NotificationType, string> = {
   nightly_checkin: "Late-evening reminder to validate the day's Seeds before midnight.",
   community_momentum: "Live count of believers currently reading the Quran.",
   resume_reading: "Bookmark nudge — pick up where the user left off in the mushaf.",
-  morning_azkaar: "Morning remembrance reminder (no placeholders).",
-  evening_azkaar: "Evening remembrance reminder (no placeholders).",
   level_up: "Almost-there nudge when the user is close to the next level.",
   monthly_quran: "Start-of-month invitation to set a Quran intention.",
   monthly_milestone: "End-of-month recap of ayahs read and dhikr completed.",
+  validate_seeds: "Daily ~18:00 nudge to donate accumulated Sabiq Seeds to a Cause.",
+  habit_gap_quran: "Sent to users who do dhikr but haven't opened the Quran in 7 days.",
+  habit_gap_dhikr: "Sent to users who read Quran but haven't done dhikr in 7 days.",
+  featured_dua: "Daily ~13:00 — rotates a random azkar from the library; body is its hadith/benefit text.",
+  project_funded: "Fires when a community project completes — notifies every donor with the project name.",
+  akhirah_milestone: "Celebrates crossing Seeds thresholds (1k, 5k, 10k, 25k, 50k, 100k, 250k, 500k, 1M). Once per threshold per user.",
+  streak_milestone: "Celebrates hitting day 3 / 7 / 14 / 30 / 60 / 100 on any of the 3 streaks (login / dhikr / quran).",
+  disengagement_pause: "Goodbye push sent when a user has ignored ≥7 pushes over 14 inactive days. Pauses their reminders until they return.",
+  morning_azkaar: "Morning remembrance (08:00 local) — scheduled on-device by Flutter AlarmManager.",
+  evening_azkaar: "Evening remembrance (15:30 local, Asr window) — scheduled on-device.",
+  sleep_azkar: "Bedtime adhkar (21:00 local) — scheduled on-device.",
+  surah_kahf_friday: "Friday Surah Al-Kahf reminder (07:00 + 16:00 Fri local) — scheduled on-device.",
+  salawat_friday: "Friday Salawat upon the Prophet ﷺ (12:00 Fri local) — scheduled on-device.",
+  daily_astaghfir: "Daily istighfar reminder (11:00 local) — scheduled on-device.",
 };
 
 const PLACEHOLDERS: Record<NotificationType, string[]> = {
@@ -58,11 +98,23 @@ const PLACEHOLDERS: Record<NotificationType, string[]> = {
   nightly_checkin: ["seeds"],
   community_momentum: ["count"],
   resume_reading: ["surahName", "ayah"],
-  morning_azkaar: [],
-  evening_azkaar: [],
   level_up: ["ptsNeeded", "nextLevel", "nextTitle"],
   monthly_quran: ["monthName", "verses", "hasanat"],
   monthly_milestone: ["monthName", "ayahs", "dhikrSets"],
+  validate_seeds: [],
+  habit_gap_quran: [],
+  habit_gap_dhikr: [],
+  featured_dua: [],
+  project_funded: ["projectName"],
+  akhirah_milestone: ["milestone"],
+  streak_milestone: ["streak", "streakType"],
+  disengagement_pause: [],
+  morning_azkaar: [],
+  evening_azkaar: [],
+  sleep_azkar: [],
+  surah_kahf_friday: [],
+  salawat_friday: [],
+  daily_astaghfir: [],
 };
 
 const DUMMY_VARS: Record<NotificationType, Record<string, string | number>> = {
@@ -70,11 +122,23 @@ const DUMMY_VARS: Record<NotificationType, Record<string, string | number>> = {
   nightly_checkin: { seeds: 50 },
   community_momentum: { count: 1234 },
   resume_reading: { surahName: "Al-Baqarah", ayah: 23 },
-  morning_azkaar: {},
-  evening_azkaar: {},
   level_up: { ptsNeeded: 150, nextLevel: 5, nextTitle: "Champion" },
   monthly_quran: { monthName: "November", verses: 234, hasanat: "15K" },
   monthly_milestone: { monthName: "November", ayahs: 234, dhikrSets: 45 },
+  validate_seeds: {},
+  habit_gap_quran: {},
+  habit_gap_dhikr: {},
+  featured_dua: {},
+  project_funded: { projectName: "Water Well — Yemen" },
+  akhirah_milestone: { milestone: "10,000" },
+  streak_milestone: { streak: 30, streakType: "dhikr" },
+  disengagement_pause: {},
+  morning_azkaar: {},
+  evening_azkaar: {},
+  sleep_azkar: {},
+  surah_kahf_friday: {},
+  salawat_friday: {},
+  daily_astaghfir: {},
 };
 
 const LOCALES = ["en", "ar", "ur", "fr", "id", "ms", "ru", "tr"] as const;
@@ -246,17 +310,12 @@ export default function NotificationsPage() {
 
   // Group variants by notification_type for the list rendering.
   const grouped = useMemo(() => {
-    const map: Record<NotificationType, Variant[]> = {
-      streak_at_risk: [],
-      nightly_checkin: [],
-      community_momentum: [],
-      resume_reading: [],
-      morning_azkaar: [],
-      evening_azkaar: [],
-      level_up: [],
-      monthly_quran: [],
-      monthly_milestone: [],
-    };
+    // Build the empty map programmatically from NOTIFICATION_TYPES so adding
+    // a new type only requires editing the constant arrays above — no need
+    // to remember to update this initializer too.
+    const map = Object.fromEntries(
+      NOTIFICATION_TYPES.map((t) => [t, [] as Variant[]]),
+    ) as Record<NotificationType, Variant[]>;
     for (const v of variants) {
       if (!NOTIFICATION_TYPES.includes(v.notification_type)) continue;
       if (localeFilter !== "all" && v.locale !== localeFilter) continue;

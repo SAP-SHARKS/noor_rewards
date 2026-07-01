@@ -281,85 +281,264 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     } catch (_) {/* best-effort */}
   }
 
-  // Styled reminder card — same visual language as akhirah_balance_screen
-  // ("A REMINDER" eyebrow + sparkle icon + warm honey gradient).
-  Widget _reminderCard() {
+  // ── Big static level-ring hub (Variant 4 mockup) ─────────────────────
+  // Decorative gold ring with N/S/E/W tick marks and a tip dot. Inside:
+  // LEVEL eyebrow + big level number + italic rank + "+N today" pill.
+  Widget _levelHub() {
+    return SizedBox(
+      width: 260,
+      height: 260,
+      child: Stack(
+        children: [
+          CustomPaint(
+            size: const Size(260, 260),
+            painter: const _LevelRingPainter(),
+          ),
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.all(50),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFFEF9D0), Color(0xFFF5DC90)],
+                  ),
+                  border: Border.all(
+                    color: Y4.honeyDeep.withValues(alpha: 0.30),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Y4.honeyDeep.withValues(alpha: 0.18),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'LEVEL',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        letterSpacing: 1.8,
+                        fontWeight: FontWeight.w800,
+                        color: Y4.honeyDeep,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '$_level',
+                      style: Y4.display(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w800,
+                        color: Y4.ink,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _localizedTitle(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Y4.display(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Y4.honeyDeep,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2D8A4E).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '+${_todayPoints > 0 ? _todayPoints : 0} today',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF2D8A4E),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Stat pill — icon left, value + label stacked right (Variant 4 grid).
+  Widget _statPill({
+    required Widget icon,
+    required String value,
+    required String label,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        color: Colors.white.withValues(alpha: 0.70),
+        border: Border.all(
+          color: Y4.honeyDeep.withValues(alpha: 0.25),
+        ),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          SizedBox(width: 26, height: 26, child: icon),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  style: Y4.display(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Y4.ink,
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Y4.inkSoft,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Streak pill (top-right of hero) — palette-driven flame gradient.
+  Widget _streakPill() {
+    final pal = Y4.palette;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFFCEC), Color(0xFFFFF6D6)],
+          colors: [pal.accentStreak, pal.accentStreakDeep],
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Y4.primary.withValues(alpha: 0.45),
-          width: 1.2,
-        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Y4.primary.withValues(alpha: 0.16),
-            blurRadius: 14,
-            offset: const Offset(0, 5),
+            color: pal.accentStreakDeep.withValues(alpha: 0.30),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Y4.primary, Y4.primaryDeep],
+          const Text('🔥', style: TextStyle(fontSize: 14)),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$_bestStreak',
+                style: Y4.display(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  height: 1,
+                ),
               ),
-              borderRadius: BorderRadius.circular(11),
-              boxShadow: [
-                BoxShadow(
-                  color: Y4.primaryDeep.withValues(alpha: 0.30),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
+              Text(
+                'BEST STREAK',
+                style: GoogleFonts.outfit(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.85),
                 ),
-              ],
-            ),
-            child: const Icon(
-              Icons.auto_awesome_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context)?.aReminderLabel ?? 'A REMINDER',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: Y4.primaryDeep,
-                    letterSpacing: 1.6,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  _reminder,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Y4.ink,
-                    height: 1.45,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  // Styled reminder card — same visual language as akhirah_balance_screen
+  // ("A REMINDER" eyebrow + sparkle icon + warm honey gradient).
+  Widget _reminderCard() {
+    // Variant 4 styling — white card with a 4px olive-green left accent
+    // bar. The accent is its own child (NOT a non-uniform Border, which
+    // can't combine with borderRadius and would silently break the card).
+    final olive = Y4.palette.accentOlive;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.85),
+        border: Border.all(
+          color: Y4.honeyDeep.withValues(alpha: 0.22),
+        ),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 4px olive accent bar — full-height left strip.
+            Container(width: 4, color: olive),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)?.aReminderLabel ??
+                          'A REMINDER',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: olive,
+                        letterSpacing: 1.6,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _reminder,
+                      style: Y4.display(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: Y4.ink,
+                        fontStyle: FontStyle.italic,
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -777,164 +956,88 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top bar
+                  // ── Top bar (Variant 4): title + level subtitle on left,
+                  // streak pill on right. ─────────────────────────────────
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (!widget.isTab)
-                        IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: Y4.ink,
-                            size: 20,
-                          ),
-                          onPressed: () => Navigator.pop(context),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 32),
-                        ),
-                      if (!widget.isTab) const Spacer(),
-                      if (widget.isTab)
-                        Text(
-                          AppLocalizations.of(context)?.akhirahBalance ??
-                              'Akhirah Balance',
-                          style: GoogleFonts.outfit(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Y4.ink,
-                          ),
-                        ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Y4.honeyDeep,
-                            width: 1.2,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.workspace_premium_rounded,
-                              color: Y4.honeyDeep,
-                              size: 14,
+                        Padding(
+                          padding: const EdgeInsets.only(right: 6, top: 2),
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Y4.ink,
+                              size: 20,
                             ),
-                            const SizedBox(width: 5),
+                          ),
+                        ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              AppLocalizations.of(context)
-                                      ?.levelTitleFormat(_level, _localizedTitle()) ??
+                              AppLocalizations.of(context)?.akhirahBalance ??
+                                  'Akhirah Balance',
+                              style: Y4.display(
+                                fontSize: 23,
+                                fontWeight: FontWeight.w700,
+                                color: Y4.ink,
+                                height: 1.1,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              AppLocalizations.of(context)?.levelTitleFormat(
+                                    _level,
+                                    _localizedTitle(),
+                                  ) ??
                                   'Lvl $_level · ${_localizedTitle()}',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                color: Y4.ink,
+                                fontWeight: FontWeight.w500,
+                                color: Y4.inkSoft,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Label
-                  Text(
-                    AppLocalizations.of(context)?.akhirahBalanceUpper ??
-                        'AKHIRAH BALANCE',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Y4.inkSoft,
-                      letterSpacing: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-
-                  // "+N today" pill on its own line (replaces the Priceless
-                  // heading + "Beyond what the world can hold" subtitle).
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Y4.primaryDeep.withValues(alpha: 0.6),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.trending_up_rounded,
-                              color: Y4.primaryDeep,
-                              size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '+${_todayPoints > 0 ? _todayPoints : 0} today',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                color: Y4.ink,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 22),
-
-                  // Today / this week badges
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 8,
-                    children: [
-                      _HeroBadge(
-                        NoorIcon.sunrise(size: 14),
-                        AppLocalizations.of(context)
-                                ?.plusDeedsTodayBadge(_fmt(_todayPoints)) ??
-                            '+${_fmt(_todayPoints)} deeds today',
-                        Colors.white.withValues(alpha: 0.78),
-                        Y4.primaryDeep,
-                      ),
-                      _HeroBadge(
-                        NoorIcon.calendar(size: 14),
-                        AppLocalizations.of(context)
-                                ?.plusSeedsThisWeek(_fmt(_weekPoints)) ??
-                            '+${_fmt(_weekPoints)} this week',
-                        Colors.white.withValues(alpha: 0.78),
-                        Y4.honeyDeep,
-                      ),
-                      if (_bestStreak > 0)
-                        _HeroBadge(
-                          NoorIcon.fire(size: 14),
-                          AppLocalizations.of(context)
-                                  ?.bestDayStreakBadge(_bestStreak) ??
-                              'Best: $_bestStreak day streak',
-                          Colors.white.withValues(alpha: 0.78),
-                          const Color(0xFFB45309),
-                        ),
+                      if (_bestStreak > 0) _streakPill(),
                     ],
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Rotating Akhirah/Jannah/good-deeds reminder — same
-                  // visual language as the akhirah_balance reflection card.
+                  // ── Big level ring hub ─────────────────────────────────
+                  Center(child: _levelHub()),
+
+                  const SizedBox(height: 18),
+
+                  // ── 2-pill grid: today + this week ─────────────────────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _statPill(
+                          icon: NoorIcon.sunrise(size: 22),
+                          value: '+${_fmt(_todayPoints)}',
+                          label: 'DEEDS TODAY',
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _statPill(
+                          icon: NoorIcon.calendar(size: 22),
+                          value: '+${_fmt(_weekPoints)}',
+                          label: 'THIS WEEK',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Rotating Akhirah/Jannah/good-deeds reminder.
                   _reminderCard(),
 
                   const SizedBox(height: 18),
@@ -2688,20 +2791,44 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     return Scaffold(
       backgroundColor: _C.bg,
       appBar: AppBar(
-        // Honey-wash app bar to match the rest of the app's theme (was
-        // Y4.honeyDeep — too dark and saturated against the cream bg).
+        // Elevated header — small eyebrow line + big serif title. Adds
+        // editorial weight without a full hero section.
         backgroundColor: Y4.bg,
         surfaceTintColor: Y4.bg,
         foregroundColor: Y4.ink,
-        title: Text(
-          AppLocalizations.of(context)?.everyRecitationCanChangeLife ??
-              'Every Recitation Can\nChange a Life',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.w800,
-            color: Y4.ink,
-            fontSize: 14,
-          ),
-          maxLines: 2,
+        toolbarHeight: 72,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'EVERY RECITATION',
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.w700,
+                color: Y4.honeyDeep,
+                fontSize: 10,
+                letterSpacing: 1.8,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              // Strip the "Every Recitation Can\n" prefix if the localized
+              // string still bundles it, so only the second line is shown
+              // below the eyebrow (which already carries the first line).
+              (AppLocalizations.of(context)?.everyRecitationCanChangeLife ??
+                      'Every Recitation Can\nChange a Life')
+                  .replaceFirst('Every Recitation Can\n', ''),
+              style: Y4.display(
+                fontWeight: FontWeight.w600,
+                color: Y4.ink,
+                fontSize: 20,
+                height: 1.05,
+                letterSpacing: -0.3,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
         elevation: 0,
         iconTheme: const IconThemeData(color: Y4.ink),
@@ -2714,16 +2841,20 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
   }
 
   // ── Cause page composition ────────────────────────────────────────────────
-  // Hero (1 featured) → "Sponsor an Orphan" section → "Active Campaigns"
-  // section → "Your Giving" footer. Each section owns its own header.
+  // "Your Giving" header → Hero (1 featured) → "Sponsor an Orphan"
+  // section → "Active Campaigns" section. Each section owns its own header.
   Widget _buildCausePage() {
     final rows = <Widget>[];
 
-    // 1. Hero — first orphan if any, else first non-completed project.
+    // 1. Your Giving — personal summary card sits at the top.
+    rows.add(_yourGivingFooter());
+    rows.add(_thinDivider());
+
+    // 2. Hero — first orphan if any, else first non-completed project.
     final hero = _pickHero();
     if (hero != null) rows.add(hero);
 
-    // 2. Sponsor an Orphan
+    // 3. Sponsor an Orphan
     if (_orphans.isNotEmpty) {
       rows.add(_sectionHeader(
         title: AppLocalizations.of(context)?.sponsorAnOrphan ??
@@ -2767,9 +2898,6 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       }
       rows.add(_thinDivider());
     }
-
-    // 4. Your Giving footer
-    rows.add(_yourGivingFooter());
 
     return ListView.builder(
       padding: EdgeInsets.only(bottom: widget.isTab ? 100 : 0),
@@ -3085,85 +3213,145 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     );
   }
 
-  // ── "Your Giving" footer ─────────────────────────────────────────────────
+  // ── "Your Giving" card ────────────────────────────────────────────────
+  // Portfolio-style card with a warm honey→mint gradient, a coin badge in
+  // the header, and each stat rendered as its own icon-pill instead of
+  // number columns joined by dividers.
   Widget _yourGivingFooter() {
     final hasGiving = _myTotalSeedsLifetime > 0;
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Y4.cream, Y4.butter],
+            colors: [Color(0xFFFFF8E6), Color(0xFFEDF8EE)],
           ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Y4.honey.withValues(alpha: 0.4)),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Y4.honey.withValues(alpha: 0.45),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Y4.honeyDeep.withValues(alpha: 0.14),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header row: coin badge + title + optional "+today" pill
             Row(
               children: [
-                const Text('💝', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 8),
-                Text(
-                  AppLocalizations.of(context)?.yourGiving ?? 'Your Giving',
-                  style: GoogleFonts.outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: Y4.ink,
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Y4.honey, Y4.honeyDeep],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Y4.honeyDeep.withValues(alpha: 0.30),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Center(child: SabiqCoin(size: 22)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.yourGiving ??
+                            'Your Giving',
+                        style: Y4.display(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: Y4.ink,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        hasGiving
+                            ? 'Your lifetime impact'
+                            : 'Start your impact journey',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Y4.inkSoft,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             if (!hasGiving)
-              Text(
-                AppLocalizations.of(context)?.havenNotGivenYet ??
-                    "You haven't given yet. Pick someone above to begin your journey of impact.",
-                style: GoogleFonts.outfit(
-                  fontSize: 13,
-                  color: Y4.inkSoft,
-                  height: 1.4,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.60),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)?.havenNotGivenYet ??
+                      "You haven't given yet. Pick someone above to begin your journey of impact.",
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    color: Y4.inkSoft,
+                    height: 1.45,
+                  ),
                 ),
               )
             else
               Row(
                 children: [
                   Expanded(
-                    child: _statTile(
-                      _fmt(_myTotalSeedsLifetime),
-                      AppLocalizations.of(context)?.seedsDonatedLabel ??
+                    child: _givingStatPill(
+                      icon: const SabiqCoin(size: 20),
+                      value: _fmt(_myTotalSeedsLifetime),
+                      label: AppLocalizations.of(context)?.seedsDonatedLabel ??
                           'Seeds donated',
-                      // localized via key
                     ),
                   ),
-                  Container(
-                    width: 1,
-                    height: 36,
-                    color: Y4.honey.withValues(alpha: 0.5),
-                  ),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: _statTile(
-                      '$_myOrphansSponsoredCount',
-                      AppLocalizations.of(context)?.orphanCount(
+                    child: _givingStatPill(
+                      icon: NoorIcon.heart(size: 20),
+                      value: '$_myOrphansSponsoredCount',
+                      label: AppLocalizations.of(context)?.orphanCount(
                             _myOrphansSponsoredCount,
                           ) ??
-                          (_myOrphansSponsoredCount == 1 ? 'Orphan' : 'Orphans'),
+                          (_myOrphansSponsoredCount == 1
+                              ? 'Orphan'
+                              : 'Orphans'),
                     ),
                   ),
-                  Container(
-                    width: 1,
-                    height: 36,
-                    color: Y4.honey.withValues(alpha: 0.5),
-                  ),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: _statTile(
-                      '$_myProjectsSupportedCount',
-                      AppLocalizations.of(context)?.projectCount(
+                    child: _givingStatPill(
+                      icon: NoorIcon.globe(size: 20),
+                      value: '$_myProjectsSupportedCount',
+                      label: AppLocalizations.of(context)?.projectCount(
                             _myProjectsSupportedCount,
                           ) ??
                           (_myProjectsSupportedCount == 1
@@ -3179,29 +3367,47 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     );
   }
 
-  Widget _statTile(String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.fraunces(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-            color: Y4.honeyDeep,
-            height: 1.0,
+  // Individual stat pill — icon on top, big serif value, small label under.
+  Widget _givingStatPill({
+    required Widget icon,
+    required String value,
+    required String label,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.75),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Y4.honey.withValues(alpha: 0.35)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(width: 24, height: 24, child: Center(child: icon)),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: Y4.display(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Y4.honeyDeep,
+              height: 1,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.outfit(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: Y4.inkSoft,
-            letterSpacing: 0.2,
+          const SizedBox(height: 3),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: Y4.inkSoft,
+              letterSpacing: 0.3,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -3443,6 +3649,43 @@ class _Arc extends StatelessWidget {
     height: size,
     decoration: BoxDecoration(color: color, shape: BoxShape.circle),
   );
+}
+
+// Decorative gold ring with N/S/E/W tick marks + a small tip dot.
+// Static — no progress fill. Used as the backdrop for the level hub.
+class _LevelRingPainter extends CustomPainter {
+  const _LevelRingPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = math.min(size.width, size.height) / 2 - 8;
+
+    final ring = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFF5D090), Color(0xFFB87818)],
+      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r))
+      ..strokeWidth = 14
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(Offset(cx, cy), r, ring);
+
+    final ticks = Paint()
+      ..color = const Color(0xFFC89438).withValues(alpha: 0.45)
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+    for (var i = 0; i < 4; i++) {
+      final a = i * math.pi / 2 - math.pi / 2;
+      final inner = Offset(cx + r * math.cos(a) * 0.94, cy + r * math.sin(a) * 0.94);
+      final outer = Offset(cx + r * math.cos(a) * 1.08, cy + r * math.sin(a) * 1.08);
+      canvas.drawLine(inner, outer, ticks);
+    }
+
+  }
+
+  @override
+  bool shouldRepaint(_LevelRingPainter old) => false;
 }
 
 class _HeroBadge extends StatelessWidget {

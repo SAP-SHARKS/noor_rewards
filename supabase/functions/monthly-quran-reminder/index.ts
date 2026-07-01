@@ -4,6 +4,7 @@ import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
 import { filterPausedUsers } from '../_shared/disengagement.ts';
+import { dailyPushCapReached } from '../_shared/daily_cap.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -140,6 +141,7 @@ serve(async (_req: Request) => {
     const monthName = now.toLocaleString('en-US', { month: 'long' });
 
     for (const uid of finalUsers) {
+      if (await dailyPushCapReached(supabase, uid)) continue;
       const stats = userStats.get(uid)!;
       const hasanatStr = formatNumber(stats.hasanat);
 

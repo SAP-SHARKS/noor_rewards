@@ -10,9 +10,11 @@
 //
 // Owned reminder types:
 //   • morning_azkaar      every day at 08:00 local
-//   • evening_azkaar      every day at 17:00 local
+//   • daily_astaghfir     every day at 11:00 local
+//   • evening_azkaar      every day at 15:30 local (Asr window)
 //   • sleep_azkar         every day at 21:00 local
 //   • surah_kahf_friday   every Friday at 07:00 and 16:00 local
+//   • salawat_friday      every Friday at 12:00 local
 //
 // Server-side FCM crons for these 4 types were retired in favour of this
 // scheduler — see migration `20260629_020_drop_local_scheduled_crons.sql`.
@@ -47,11 +49,13 @@ class LocalReminderScheduler {
   bool _initialized = false;
 
   // ── IDs ────────────────────────────────────────────────────────────────────
-  static const _idMorning = 9001;
-  static const _idEvening = 9002;
-  static const _idSleep   = 9003;
-  static const _idKahfAm  = 9004;
-  static const _idKahfPm  = 9005;
+  static const _idMorning   = 9001;
+  static const _idEvening   = 9002;
+  static const _idSleep     = 9003;
+  static const _idKahfAm    = 9004;
+  static const _idKahfPm    = 9005;
+  static const _idAstaghfir = 9006;
+  static const _idSalawat   = 9007;
 
   Future<void> init() async {
     if (_initialized) return;
@@ -90,7 +94,10 @@ class LocalReminderScheduler {
       await _scheduleDaily(_idMorning,  8,  0, 'morning',
         title: 'Morning Azkar',
         body: 'Start your day under Allah\'s protection — recite the morning adhkar.');
-      await _scheduleDaily(_idEvening, 17, 0, 'evening',
+      await _scheduleDaily(_idAstaghfir, 11, 0, 'dhikr',
+        title: 'A moment for istighfar',
+        body: '"Astaghfirullah" polishes the heart and opens doors of provision. Pause for one minute.');
+      await _scheduleDaily(_idEvening, 15, 30, 'evening',
         title: 'Evening Azkar',
         body: 'Protect yourself for the night — recite the evening adhkar.');
       await _scheduleDaily(_idSleep,   21, 0, 'dhikr',
@@ -99,6 +106,9 @@ class LocalReminderScheduler {
       await _scheduleWeekly(_idKahfAm, DateTime.friday,  7, 0, 'quran',
         title: 'It\'s Friday — read Surah Al-Kahf',
         body: 'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.');
+      await _scheduleWeekly(_idSalawat, DateTime.friday, 12, 0, 'dhikr',
+        title: 'Salawat on Friday',
+        body: 'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.');
       await _scheduleWeekly(_idKahfPm, DateTime.friday, 16, 0, 'quran',
         title: 'Don\'t miss Surah Al-Kahf today',
         body: 'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.');
@@ -111,7 +121,11 @@ class LocalReminderScheduler {
   /// notifications globally or signs out.
   Future<void> cancelAll() async {
     await init();
-    for (final id in const [_idMorning, _idEvening, _idSleep, _idKahfAm, _idKahfPm]) {
+    for (final id in const [
+      _idMorning, _idEvening, _idSleep,
+      _idKahfAm, _idKahfPm,
+      _idAstaghfir, _idSalawat,
+    ]) {
       try {
         await _plugin.cancel(id: id);
       } catch (_) {}

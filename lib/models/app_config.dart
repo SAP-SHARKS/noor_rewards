@@ -34,6 +34,15 @@ class AppConfig {
   /// counter, e.g. x33). When false, those azkar always advance instantly.
   bool get dhikrDelayMultiCount => _bool('dhikr_delay_multi_count', true);
 
+  /// Admin toggle for the "live reading right now / frequently read"
+  /// engagement strip on the Quran Hub. Hides the whole card when false.
+  bool get showQuranEngagement => _bool('show_quran_engagement', true);
+
+  /// Named palette mode. One of the keys in `theme/theme_modes.dart` —
+  /// e.g. 'honey', 'mint', 'sky', 'rose', 'gray', 'black'.
+  /// Drives semantic accent tokens across the whole app.
+  String get themeMode => _str('app_theme_mode', 'honey');
+
   // ── Theme — Global ─────────────────────────────────────────────────────────
   // Y4 Honey + Sage Garden defaults. Admin can still override via app_config
   // Supabase rows; these values just become the fallback when no row exists.

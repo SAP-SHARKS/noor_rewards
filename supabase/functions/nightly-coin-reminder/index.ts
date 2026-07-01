@@ -4,6 +4,7 @@ import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
 import { filterPausedUsers } from '../_shared/disengagement.ts';
+import { dailyPushCapReached } from '../_shared/daily_cap.ts';
 
 serve(async (req: Request) => {
   try {
@@ -150,6 +151,7 @@ serve(async (req: Request) => {
     // Step 4: Send Firebase Notifications in bulk loop
     const results = [];
     for (const u of dedupedUsers) {
+      if (await dailyPushCapReached(supabase, u.userId)) continue;
       const nid = crypto.randomUUID();
       const variant = await pickVariant(
         supabase,

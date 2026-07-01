@@ -10,6 +10,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/settings_service.dart';
+import 'theme_modes.dart';
 
 /// Public palette tokens — use these everywhere instead of hardcoded colors
 /// when adopting the Y4 look.
@@ -41,6 +43,13 @@ class Y4 {
   // ── UI scaffolding ──────────────────────────────────────────────────────
   static const track = Color(0xFFF4E5B0);
   static const border = Color(0x1A2A2410); // rgba(42,36,16,0.1)
+
+  /// Active semantic accent palette — driven by the admin's
+  /// `app_theme_mode` setting (Honey / Mint / Sky / Rose / Gray / Black).
+  /// Widgets read palette-driven colours via `Y4.palette.accentGold` etc.
+  /// Falls back to the Honey palette when settings aren't ready.
+  static ThemePalette get palette =>
+      paletteForMode(SettingsService.instance.config.themeMode);
 
   /// Fraunces serif — used for display headings, hero numbers, italic accents.
   static TextStyle display({

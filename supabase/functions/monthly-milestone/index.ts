@@ -7,6 +7,7 @@ import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
 import { filterPausedUsers } from '../_shared/disengagement.ts';
+import { dailyPushCapReached } from '../_shared/daily_cap.ts';
 
 serve(async (_req: Request) => {
   try {
@@ -69,6 +70,7 @@ serve(async (_req: Request) => {
 
     for (const stat of lastMonthStats) {
       if (sentSet.has(stat.user_id)) continue;
+      if (await dailyPushCapReached(supabase, stat.user_id)) continue;
       const entry = tokenMap.get(stat.user_id);
       if (!entry) continue;
       if (stat.ayahs_read === 0 && stat.dhikr_sets === 0) continue;

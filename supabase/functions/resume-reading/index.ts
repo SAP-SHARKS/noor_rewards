@@ -8,6 +8,7 @@ import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
 import { filterPausedUsers } from '../_shared/disengagement.ts';
+import { dailyPushCapReached } from '../_shared/daily_cap.ts';
 
 const SURAH_NAMES: Record<number, string> = {
   1:'Al-Fatiha',2:'Al-Baqarah',3:'Ali Imran',4:'An-Nisa',5:'Al-Maidah',
@@ -122,6 +123,7 @@ serve(async (_req: Request) => {
     let sent = 0;
 
     for (const u of toNotify) {
+      if (await dailyPushCapReached(supabase, u.userId)) continue;
       const surahName = SURAH_NAMES[u.surah] || `Surah ${u.surah}`;
       const nid = crypto.randomUUID();
       const variant = await pickVariant(

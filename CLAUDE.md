@@ -146,8 +146,10 @@ These fire reliably even under Doze and on OEM battery-killers
 (Xiaomi/Oppo/Vivo/Samsung) because they're queued by the OS itself,
 not delivered over the network.
 
-Currently local-scheduled: `morning_azkaar` (08:00), `evening_azkaar`
-(17:00), `sleep_azkar` (21:00), `surah_kahf_friday` (Fri 07:00 + 16:00).
+Currently local-scheduled: `morning_azkaar` (08:00),
+`daily_astaghfir` (11:00), `evening_azkaar` (15:30 — Asr window),
+`sleep_azkar` (21:00), `surah_kahf_friday` (Fri 07:00 + 16:00),
+`salawat_friday` (Fri 12:00).
 
 Requires `USE_EXACT_ALARM` + `SCHEDULE_EXACT_ALARM` in
 `AndroidManifest.xml` (already added). Re-scheduled on every app
@@ -164,9 +166,31 @@ can't compute on-device:
 - `monthly-quran-reminder`, `monthly-milestone` — monthly summaries
 - `check-disengaged-users` — pauses notifications for inactive users
 - `disengagement_pause` — the goodbye push itself
+- `validate-seeds-reminder` — donate-your-Seeds nudge (~18:00 local)
+- `habit-gap-reminder` — Quran-but-no-dhikr or dhikr-but-no-Quran
+  bridges (~14:00 local)
+- `featured-dua-reminder` — daily ~13:00 local; rotates a random
+  azkar from the library and uses its `hadith_full` as the
+  notification body so users discover new duas with motivating
+  benefit text
+- `project-funded-notifier` — daily; notifies all donors when a
+  `community_projects` row flips to `is_completed = true`
+- `akhirah-milestone-celebration` — daily; celebrates users crossing
+  total_xp thresholds (1k / 5k / 10k / 25k / 50k / 100k / 250k /
+  500k / 1M). At most one per threshold per user lifetime.
+- `streak-milestone-celebration` — daily; celebrates day 3 / 7 / 14
+  / 30 / 60 / 100 on any of the 3 streaks (login / dhikr / quran).
 
 **Rule of thumb:** if the notification fires at the same local wall-clock
 moment for every user every day, schedule it locally. If the firing
 condition is "user state X is true," push it from the server. Never
 implement a hybrid for the same notification type — duplicates are
 worse than misses.
+
+**Daily push cap.** Every server push function (except `admin-test-push`
+and `check-disengaged-users`) calls `dailyPushCapReached(supabase, userId)`
+from `supabase/functions/_shared/daily_cap.ts` and skips when the user
+already has `MAX_PUSHES_PER_DAY` (currently **3**) FCM rows in
+`notification_log` for the current UTC day. Local notifications do NOT
+count — they aren't logged. When adding a new server push function, the
+cap check is mandatory.
