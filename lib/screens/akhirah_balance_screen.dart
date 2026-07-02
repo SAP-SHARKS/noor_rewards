@@ -220,7 +220,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
         : history.map((d) => d.azkaar).reduce((a, b) => a + b) / history.length;
 
     return Scaffold(
-      backgroundColor: Y4.bg,
+      backgroundColor: Y4.palette.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -527,9 +527,9 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -587,7 +587,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 Container(
                   width: 1,
                   height: 44,
-                  color: Y4.border,
+                  color: Y4.palette.border,
                   margin: const EdgeInsets.symmetric(horizontal: 14),
                 ),
                 Expanded(
@@ -721,9 +721,9 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

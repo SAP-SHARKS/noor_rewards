@@ -1215,7 +1215,7 @@ class _HomeTabState extends State<_HomeTab> {
 
     return Container(
       // Honey-wash background replaces _HomeBgPainter pattern
-      color: Y4.bg,
+      color: Y4.palette.background,
       child: SafeArea(
         child: Stack(
           children: [
@@ -1327,8 +1327,8 @@ class _HomeTabState extends State<_HomeTab> {
                             height: 38,
                             margin: const EdgeInsetsDirectional.only(end: 8),
                             decoration: BoxDecoration(
-                              color: Y4.surface,
-                              border: Border.all(color: Y4.border),
+                              color: Y4.palette.surface,
+                              border: Border.all(color: Y4.palette.border),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child:
@@ -1442,7 +1442,7 @@ class _HomeTabState extends State<_HomeTab> {
                                     color: Y4.palette.ink,
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
-                                      color: Y4.bg,
+                                      color: Y4.palette.background,
                                       width: 1.5,
                                     ),
                                   ),
@@ -1715,7 +1715,7 @@ class _HomeTabState extends State<_HomeTab> {
                           decoration: BoxDecoration(
                             color: Y4.palette.cream,
                             borderRadius: BorderRadius.circular(22),
-                            border: Border.all(color: Y4.border),
+                            border: Border.all(color: Y4.palette.border),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -1954,7 +1954,7 @@ class _InviteSheetState extends State<_InviteSheet>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Y4.palette.cream, Y4.bg, Y4.bg],
+                colors: [Y4.palette.cream, Y4.palette.background, Y4.palette.background],
               ),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(30),
@@ -2102,9 +2102,9 @@ class _InviteSheetState extends State<_InviteSheet>
                           vertical: 18,
                         ),
                         decoration: BoxDecoration(
-                          color: Y4.surface,
+                          color: Y4.palette.surface,
                           borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: Y4.border),
+                          border: Border.all(color: Y4.palette.border),
                           boxShadow: [
                             BoxShadow(
                               color: Y4.palette.ink.withValues(alpha: 0.04),
@@ -2192,9 +2192,9 @@ class _InviteSheetState extends State<_InviteSheet>
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: Y4.surface,
+                          color: Y4.palette.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Y4.border),
+                          border: Border.all(color: Y4.palette.border),
                         ),
                         child: Row(
                           children: [
@@ -2227,7 +2227,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color:
-                                        _linkCopied ? Y4.palette.honeyDeep : Y4.border,
+                                        _linkCopied ? Y4.palette.honeyDeep : Y4.palette.border,
                                   ),
                                 ),
                                 child: Text(
@@ -2407,7 +2407,7 @@ class _InviteSheetState extends State<_InviteSheet>
                                   color: Y4.palette.muted,
                                 ),
                                 filled: true,
-                                fillColor: Y4.surface,
+                                fillColor: Y4.palette.surface,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
                                   borderSide: const BorderSide(
@@ -2673,7 +2673,7 @@ class _StreakBannerState extends State<_StreakBanner>
             (_, __) => Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Y4.palette.surface,
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
                   BoxShadow(
@@ -3035,7 +3035,7 @@ class _ProgressCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -3616,7 +3616,7 @@ class _MyDonationsSection extends StatelessWidget {
                 width: donations.length == 1 ? constraints.maxWidth : 320,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Y4.palette.surface,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
@@ -3884,7 +3884,7 @@ class _Y4DonateChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.transparent,
             border: Border.all(
-              color: Y4.border,
+              color: Y4.palette.border,
               width: 1.5,
             ),
             borderRadius: BorderRadius.circular(999),
@@ -4498,7 +4498,7 @@ class _ImpactTabState extends State<_ImpactTab> {
                         width: 66,
                         height: 66,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Y4.palette.surface,
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: Center(child: _buildProjIcon(p, 56)),
@@ -4900,7 +4900,7 @@ class _DonateSheetContentState extends State<_DonateSheetContent> {
       margin: EdgeInsets.only(bottom: bottomInset),
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 34),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(32),
       ),
       child: SafeArea(
@@ -5347,9 +5347,9 @@ class _RankingSheetState extends State<_RankingSheet> {
       expand: false,
       builder:
           (ctx, scrollCtrl) => Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+            decoration: BoxDecoration(
+              color: Y4.palette.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             ),
             child: Column(
               children: [
@@ -5549,7 +5549,7 @@ class _RankingSheetState extends State<_RankingSheet> {
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Y4.palette.surface,
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(color: const Color(0xFFF0F0F5)),
                 boxShadow: [
@@ -6056,7 +6056,7 @@ class _PodiumSlot extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Y4.palette.surface,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
@@ -6347,7 +6347,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
       textDirection: TextDirection.ltr,
       child: Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: _C.border),
         boxShadow: [
@@ -6396,7 +6396,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
             const SizedBox(height: 14),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Y4.palette.surface,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: const Color(0xFFF0F0F5)),
               ),
@@ -6704,7 +6704,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
+                  colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.palette.background],
                 ),
               ),
               child: Stack(
@@ -6818,9 +6818,9 @@ class _ProfileTabState extends State<_ProfileTab> {
                                 width: 38,
                                 height: 38,
                                 decoration: BoxDecoration(
-                                  color: Y4.surface,
+                                  color: Y4.palette.surface,
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Y4.border),
+                                  border: Border.all(color: Y4.palette.border),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Y4.palette.ink.withValues(alpha: 0.06),
@@ -6926,12 +6926,15 @@ class _BottomNav extends StatelessWidget {
         ),
     ];
     final bottomPad = MediaQuery.of(context).padding.bottom;
+    final pal = Y4.palette;
     return Container(
       height: 72 + bottomPad,
       padding: EdgeInsets.only(bottom: bottomPad),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        color: pal.surface,
+        border: Border(
+          top: BorderSide(color: pal.border),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -7454,8 +7457,8 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(12, 8, 14, 8),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4A9B8E), Color(0xFF1F4F3D)],
+                    gradient: LinearGradient(
+                      colors: [Y4.palette.accentSeal, Y4.palette.accentSealDeep],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -7466,7 +7469,7 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF1F4F3D).withValues(alpha: 0.32),
+                        color: Y4.palette.accentSealDeep.withValues(alpha: 0.32),
                         blurRadius: 14,
                         offset: const Offset(0, 6),
                       ),
@@ -7614,23 +7617,22 @@ class _SwipeValidateButtonState extends State<_SwipeValidateButton>
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             colors: [
-                              Color(0xFF53A99B), // light emerald
-                              Color(0xFF4A9B8E), // emerald — kept light so the
-                              // right end stays as bright as the left
+                              Y4.palette.accentSeal,
+                              Y4.palette.accentSealDeep,
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(radius),
                           border: Border.all(
-                            color: const Color(0xFF2E6B62).withValues(alpha: 0.45),
+                            color: Y4.palette.accentSealDeep.withValues(alpha: 0.45),
                             width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF1F4F3D).withValues(alpha: 0.30),
+                              color: Y4.palette.accentSealDeep.withValues(alpha: 0.30),
                               blurRadius: 20,
                               offset: const Offset(0, 6),
                             ),
@@ -8608,7 +8610,7 @@ class _Y4HeroCardState extends State<_Y4HeroCard>
           colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.85)],
         ),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       // Clip children to the outer rounded shape directly. The previous
       // inner ClipRRect was inset by the 20 px padding but still used a
@@ -8747,9 +8749,9 @@ class _Y4StreakCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Y4.surface,
+          color: Y4.palette.surface,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: Y4.border),
+          border: Border.all(color: Y4.palette.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -8887,9 +8889,9 @@ class _Y4ProgressCardState extends State<_Y4ProgressCard> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

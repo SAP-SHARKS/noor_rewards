@@ -1553,7 +1553,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Y4.bg,
+      backgroundColor: Y4.palette.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -1604,7 +1604,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                           decoration: BoxDecoration(
                             color: Y4.palette.cream,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Y4.border),
+                            border: Border.all(color: Y4.palette.border),
                           ),
                           child: TextField(
                             onChanged:
@@ -6001,7 +6001,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     Container(
                       padding: const EdgeInsets.fromLTRB(4, 2, 12, 2),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Y4.palette.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: honeyGold.withValues(alpha: 0.40),

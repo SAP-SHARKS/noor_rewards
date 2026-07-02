@@ -263,7 +263,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Y4.palette.surface,
               borderRadius: BorderRadius.circular(24),
             ),
             child: SafeArea(
@@ -502,8 +502,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   SliverAppBar _buildAppBar(AppLocalizations l) => SliverAppBar(
     pinned: true,
     expandedHeight: 180,
-    backgroundColor: Y4.bg,
-    surfaceTintColor: Y4.bg,
+    backgroundColor: Y4.palette.background,
+    surfaceTintColor: Y4.palette.background,
     leading: IconButton(
       icon: const Icon(
         Icons.arrow_back_ios_new_rounded,
@@ -542,7 +542,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       background: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
+            colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.palette.background],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -874,7 +874,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   Widget _buildAvatarCard(AppLocalizations l) => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Y4.palette.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -945,7 +945,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // ── Info Card ─────────────────────────────────────────────────────────────
   Widget _buildInfoCard(AppLocalizations l) => Container(
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Y4.palette.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -1236,7 +1236,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           color: Color(0xFFB0A898),
                         ),
                         filled: true,
-                        fillColor: Y4.bg,
+                        fillColor: Y4.palette.background,
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                         ),
@@ -1455,7 +1455,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // so it sits naturally between account info and help/support.
   Widget _buildNotificationsCard(AppLocalizations l) => Container(
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Y4.palette.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -1659,7 +1659,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     final ss = context.watch<SettingsService>();
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -1794,7 +1794,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Y4.palette.surface,
             borderRadius: BorderRadius.circular(28),
           ),
           child: SafeArea(
@@ -1835,7 +1835,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Y4.bg,
+                    color: Y4.palette.background,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: Y4.palette.honey.withValues(alpha: 0.5),
@@ -1938,7 +1938,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // ── Support Card ──────────────────────────────────────────────────────────
   Widget _buildSupportCard(AppLocalizations l) => Container(
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Y4.palette.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -2052,7 +2052,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFFFECEC)),
         boxShadow: [
@@ -2275,7 +2275,7 @@ class _BottomSheetCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(28),
       ),
       child: SafeArea(

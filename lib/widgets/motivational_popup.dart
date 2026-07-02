@@ -357,9 +357,9 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                     const SizedBox(height: 24),
                     Container(
                       decoration: BoxDecoration(
-                        color: Y4.surface,
+                        color: Y4.palette.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Y4.border),
+                        border: Border.all(color: Y4.palette.border),
                         boxShadow: [
                           BoxShadow(
                             color: Y4.palette.ink.withValues(alpha: 0.04),
@@ -1354,9 +1354,9 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                               opacity: _contentFade,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Y4.surface,
+                                  color: Y4.palette.surface,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Y4.border),
+                                  border: Border.all(color: Y4.palette.border),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Y4.palette.ink.withValues(alpha: 0.04),

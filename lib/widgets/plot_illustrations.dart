@@ -14,15 +14,27 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/y4_theme.dart';
 
 enum PlotIcon { quran, dhikr, achievements, invite }
 
-/// Unified pale-cream card gradients from the mockup. Tiles alternate
-/// between the two so the "Today's plots" grid reads as one calm surface.
-const List<Color> kPlotGradientA = [Color(0xFFFEF7D8), Color(0xFFFAECB8)];
-const List<Color> kPlotGradientB = [Color(0xFFFBEDB8), Color(0xFFF5DFA0)];
+/// Card gradients for the "Today's plots" grid. Derived from the active
+/// theme palette so the tiles pick up the current mode instead of the
+/// baked honey cream. A/B alternate so the grid reads as two subtly
+/// different pastel surfaces.
+List<Color> get kPlotGradientA => [
+      Y4.palette.butter,
+      Y4.palette.honey.withValues(alpha: 0.35),
+    ];
+List<Color> get kPlotGradientB => [
+      Y4.palette.honey.withValues(alpha: 0.30),
+      Y4.palette.honeyDeep.withValues(alpha: 0.35),
+    ];
 
-/// Renders the 3D illustration for [kind].
+/// Renders the 3D illustration for [kind]. The SVG art is baked in honey/
+/// gold tones — at build time we HSL-shift every hex colour in the SVG so
+/// the artwork retints to the active palette hue (Sky/Mint/Rose/etc.)
+/// while keeping its own shading, highlights, and shadows intact.
 class PlotIllustration extends StatelessWidget {
   final PlotIcon kind;
   final double width;
@@ -37,11 +49,43 @@ class PlotIllustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.string(
-      _svg[kind]!,
+      _themedSvg(_svg[kind]!, Y4.palette.honey),
       width: width,
       height: height,
       fit: BoxFit.contain,
     );
+  }
+
+  /// Substitutes every hex colour in [svg] with a hue-shifted version
+  /// where the hue is rotated to match [target]. Honey hues (~40°) stay
+  /// as-is when target is honey; other modes shift to their brand hue.
+  static String _themedSvg(String svg, Color target) {
+    final targetHsv = HSVColor.fromColor(target);
+    // Delta from the artwork's canonical honey hue (~40°) to the target.
+    // If target IS honey, delta == 0 so the SVG is unchanged.
+    const artHue = 40.0;
+    final delta = _wrapHue(targetHsv.hue - artHue);
+    if (delta.abs() < 0.5) return svg;
+    return svg.replaceAllMapped(
+      RegExp(r'#([0-9a-fA-F]{6})'),
+      (m) {
+        final rgb = int.parse(m.group(1)!, radix: 16);
+        final color = Color(0xFF000000 | rgb);
+        final hsv = HSVColor.fromColor(color);
+        // Only shift saturated pixels — leaves near-white/near-black alone
+        // so shadows and highlights stay neutral.
+        if (hsv.saturation < 0.05) return m.group(0)!;
+        final shifted = hsv.withHue(_wrapHue(hsv.hue + delta)).toColor();
+        final hex = shifted.toARGB32() & 0xFFFFFF;
+        return '#${hex.toRadixString(16).padLeft(6, '0')}';
+      },
+    );
+  }
+
+  static double _wrapHue(double h) {
+    var v = h % 360;
+    if (v < 0) v += 360;
+    return v;
   }
 }
 

@@ -73,6 +73,14 @@ class ThemePalette {
   final Color onPrimary;
   /// Foreground on surface
   final Color onSurface;
+  /// Soft divider / card border colour (semi-transparent onSurface)
+  final Color border;
+  /// "Seal" gradient — Seeds-pending pill + Seal-the-Day slider track.
+  /// Honey mode keeps its original emerald so the default theme is
+  /// pixel-for-pixel unchanged.
+  final Color accentSeal;
+  /// Deep variant of accentSeal for gradient end / shadow tint.
+  final Color accentSealDeep;
 
   const ThemePalette({
     required this.honey,
@@ -104,6 +112,9 @@ class ThemePalette {
     required this.background,
     required this.onPrimary,
     required this.onSurface,
+    required this.border,
+    required this.accentSeal,
+    required this.accentSealDeep,
   });
 }
 
@@ -141,6 +152,9 @@ const kThemeModes = <String, ThemePalette>{
     background:       Color(0xFFFFF4D2),
     onPrimary:        Color(0xFFFFFFFF),
     onSurface:        Color(0xFF2A2410),
+    border:           Color(0x1A2A2410),
+    accentSeal:       Color(0xFF4A9B8E),
+    accentSealDeep:   Color(0xFF1F4F3D),
   ),
 
   // ── Mint — cool green throughout ──────────────────────────────────────
@@ -174,6 +188,9 @@ const kThemeModes = <String, ThemePalette>{
     background:       Color(0xFFEAF7EF),
     onPrimary:        Color(0xFFFFFFFF),
     onSurface:        Color(0xFF0F3D28),
+    border:           Color(0x1A0F3D28),
+    accentSeal:       Color(0xFF4E9F7A),
+    accentSealDeep:   Color(0xFF1E5A3E),
   ),
 
   // ── Sky — cool blue palette ───────────────────────────────────────────
@@ -207,6 +224,9 @@ const kThemeModes = <String, ThemePalette>{
     background:       Color(0xFFE8F3FB),
     onPrimary:        Color(0xFFFFFFFF),
     onSurface:        Color(0xFF103A5C),
+    border:           Color(0x1A103A5C),
+    accentSeal:       Color(0xFF2E7CB8),
+    accentSealDeep:   Color(0xFF1A4E7A),
   ),
 
   // ── Rose — warm pink / coral ──────────────────────────────────────────
@@ -240,6 +260,9 @@ const kThemeModes = <String, ThemePalette>{
     background:       Color(0xFFFBEEEE),
     onPrimary:        Color(0xFFFFFFFF),
     onSurface:        Color(0xFF4C1E28),
+    border:           Color(0x1A4C1E28),
+    accentSeal:       Color(0xFFC87A94),
+    accentSealDeep:   Color(0xFF7A2E4A),
   ),
 
   // ── Gray — editorial neutral ──────────────────────────────────────────
@@ -273,6 +296,9 @@ const kThemeModes = <String, ThemePalette>{
     background:       Color(0xFFF5F5F5),
     onPrimary:        Color(0xFFFFFFFF),
     onSurface:        Color(0xFF1F1F1F),
+    border:           Color(0x1A1F1F1F),
+    accentSeal:       Color(0xFF7A7A7A),
+    accentSealDeep:   Color(0xFF2E2E2E),
   ),
 
   // ── Black — dark mode ─────────────────────────────────────────────────
@@ -306,6 +332,9 @@ const kThemeModes = <String, ThemePalette>{
     background:       Color(0xFF0F0F12),
     onPrimary:        Color(0xFF0F0F12),
     onSurface:        Color(0xFFF0F0F0),
+    border:           Color(0x1AF0F0F0),
+    accentSeal:       Color(0xFF4A9B8E),
+    accentSealDeep:   Color(0xFF1F4F3D),
   ),
 };
 

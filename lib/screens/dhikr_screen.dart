@@ -3564,7 +3564,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
     // adapt to the painted scene above it.
     final appBarColor = isDark
         ? _illustrationTopColor(widget.azkars[safeIndex].id, isDark)
-        : Y4.bg;
+        : Y4.palette.background;
 
     return PopScope(
       child: Scaffold(
@@ -3597,7 +3597,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               // illustration. Previously only Morning/Evening got this and
               // every other category fell through to a cream→white sweep,
               // which left a visible white seam.
-              final List<Color> gradColors = [Y4.bg, Y4.bg, Y4.bg];
+              final List<Color> gradColors = [Y4.palette.background, Y4.palette.background, Y4.palette.background];
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -4540,7 +4540,7 @@ typedef _AyahInfo = ({int start, int count, bool bismillahIsAyah});
 /// Every category lives on the Y4 honey wash so the area below the
 /// illustration reads as one continuous warm surface (previously this was
 /// Morning/Evening only and every other category fell through to white).
-Color _scaffoldBgForCategory(String cat) => Y4.bg;
+Color _scaffoldBgForCategory(String cat) => Y4.palette.background;
 
 /// True when the DB `azkar_items.title` value is a recognizable dua/surah
 /// NAME (e.g. "Surah Al-Mulk", "Ayatul Kursi", "Dua Qunoot") rather than a
@@ -5707,7 +5707,7 @@ class _AzkarCard extends StatelessWidget {
     // and the scaffold background. Previously only Morning/Evening got this
     // and the rest fell through to white, which painted a stark slab over
     // the honey scaffold.
-    final kCardBg = isDark ? const Color(0xFF1E1E1E) : Y4.bg;
+    final kCardBg = isDark ? const Color(0xFF1E1E1E) : Y4.palette.background;
     final kText =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
@@ -6122,7 +6122,7 @@ class _AzkarCard extends StatelessWidget {
               final List<Color> sectionGrad =
                   isDark
                       ? [const Color(0xFF1A1A1A), const Color(0xFF1E1E1E)]
-                      : [Y4.bg, Y4.bg];
+                      : [Y4.palette.background, Y4.palette.background];
               final textColor =
                   isDark ? Colors.white.withValues(alpha: 0.85) : kText;
               final subColor =
@@ -6614,7 +6614,7 @@ Color _illustrationTopColor(String azkarId, bool isDark) {
   // Other categories: white to match their white Scaffold + body card.
   final isAkhirah =
       azkarId.startsWith('morning_') || azkarId.startsWith('evening_');
-  return isAkhirah ? Y4.bg : Colors.white;
+  return isAkhirah ? Y4.palette.background : Colors.white;
 }
 
 // =============================================================================
@@ -21665,7 +21665,7 @@ class _UnparalleledScalesState extends State<_UnparalleledScales>
         return SizedBox(
           height: 290,
           child: Container(
-            color: Colors.white,
+            color: Y4.palette.surface,
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -23356,7 +23356,7 @@ class _BenefitTextIllustrationState extends State<_BenefitTextIllustration>
     // surrounding page — otherwise the text floats on the cream body with
     // no visual frame and stops feeling like an "illustration zone." Use
     // pure white in light mode (clear contrast against the Akhirah cream
-    // Y4.bg body) plus a soft bottom shadow further down to lift it off
+    // Y4.palette.background body) plus a soft bottom shadow further down to lift it off
     // the page like a deliberate card.
     final bg =
         isDark ? SettingsService.instance.config.dashText : Colors.white;
