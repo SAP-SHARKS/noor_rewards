@@ -36,7 +36,7 @@ class _NotificationsSheet extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Y4.palette.cream, Y4.bg, Y4.bg],
+                colors: [Y4.palette.cream, Y4.palette.background, Y4.palette.background],
               ),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(28),
@@ -123,7 +123,7 @@ class _NotificationsSheet extends StatelessWidget {
                                         Icons.more_horiz_rounded,
                                         color: Y4.inkSoft,
                                       ),
-                                      color: Y4.surface,
+                                      color: Y4.palette.surface,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(14),
                                         side: const BorderSide(
@@ -209,9 +209,9 @@ class _NotificationsSheet extends StatelessWidget {
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: Y4.surface,
+                            color: Y4.palette.surface,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: Y4.border),
+                            border: Border.all(color: Y4.palette.border),
                           ),
                           child: Row(
                             children: [
@@ -467,10 +467,10 @@ class _NotificationTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
           decoration: BoxDecoration(
-            color: Y4.surface,
+            color: Y4.palette.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: n.read ? Y4.border : _accent.withValues(alpha: 0.35),
+              color: n.read ? Y4.palette.border : _accent.withValues(alpha: 0.35),
               width: n.read ? 1 : 1.5,
             ),
             boxShadow:

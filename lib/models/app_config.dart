@@ -3,6 +3,7 @@
 // Defaults match the seeded Supabase values; safe to call before first fetch.
 
 import 'package:flutter/material.dart';
+import '../theme/theme_modes.dart';
 
 class AppConfig {
   final Map<String, String> _raw;
@@ -43,53 +44,36 @@ class AppConfig {
   /// Drives semantic accent tokens across the whole app.
   String get themeMode => _str('app_theme_mode', 'honey');
 
-  // ── Theme — Global ─────────────────────────────────────────────────────────
-  // Y4 Honey + Sage Garden defaults. Admin can still override via app_config
-  // Supabase rows; these values just become the fallback when no row exists.
-  Color get primaryColor =>
-      _color('primary_color', const Color(0xFF7A8C3A)); // Y4 sage
-  Color get secondaryColor =>
-      _color('secondary_color', const Color(0xFFD89A1E)); // Y4 honeyDeep
-  Color get donationColor =>
-      _color('donation_color', const Color(0xFFFFC83D)); // Y4 honey
+  /// The active palette derived from [themeMode]. All theme colours below
+  /// fall back to this palette when their explicit `<key>_color` row is
+  /// absent — so just setting `app_theme_mode` recolours every screen.
+  ThemePalette get _p => paletteForMode(themeMode);
+
+  // ── Theme — Global (fall back to mode palette) ────────────────────────────
+  Color get primaryColor => _color('primary_color', _p.primary);
+  Color get secondaryColor => _color('secondary_color', _p.secondary);
+  Color get donationColor => _color('donation_color', _p.honey);
 
   // ── Theme — Dashboard ─────────────────────────────────────────────────────
-  Color get dashBg =>
-      _color('dash_bg', const Color(0xFFFFF4D2)); // Y4 honey wash
-  Color get dashText => _color('dash_text', const Color(0xFF2A2410)); // Y4 ink
-  Color get dashTeal => _color(
-    'dash_teal',
-    const Color(0xFFD89A1E),
-  ); // Y4 honeyDeep (replaces teal)
+  Color get dashBg => _color('dash_bg', _p.background);
+  Color get dashText => _color('dash_text', _p.onSurface);
+  Color get dashTeal => _color('dash_teal', _p.honeyDeep);
 
   // ── Theme — Azkar/Dhikr ───────────────────────────────────────────────────
-  // Re-tuned to honey/sage gradients while preserving morning/evening contrast.
-  Color get azkarAccent =>
-      _color('azkar_accent', const Color(0xFFD89A1E)); // honeyDeep
-  Color get azkarMorningGrad1 =>
-      _color('azkar_morning_grad1', const Color(0xFFFFFAE3)); // cream
-  Color get azkarMorningGrad2 =>
-      _color('azkar_morning_grad2', const Color(0xFFFFC83D)); // honey
-  Color get azkarEveningGrad1 => _color(
-    'azkar_evening_grad1',
-    const Color(0xFF4D5C20),
-  ); // primaryDeep sage
-  Color get azkarEveningGrad2 =>
-      _color('azkar_evening_grad2', const Color(0xFF7A8C3A)); // sage
-  Color get azkarBottomGrad1 =>
-      _color('azkar_bottom_grad1', const Color(0xFF4D5C20));
-  Color get azkarBottomGrad2 =>
-      _color('azkar_bottom_grad2', const Color(0xFF2A2410));
-  Color get azkarHighlight =>
-      _color('azkar_highlight', const Color(0xFFD89A1E));
+  Color get azkarAccent => _color('azkar_accent', _p.honeyDeep);
+  Color get azkarMorningGrad1 => _color('azkar_morning_grad1', _p.cream);
+  Color get azkarMorningGrad2 => _color('azkar_morning_grad2', _p.honey);
+  Color get azkarEveningGrad1 => _color('azkar_evening_grad1', _p.primaryDeep);
+  Color get azkarEveningGrad2 => _color('azkar_evening_grad2', _p.primary);
+  Color get azkarBottomGrad1 => _color('azkar_bottom_grad1', _p.primaryDeep);
+  Color get azkarBottomGrad2 => _color('azkar_bottom_grad2', _p.ink);
+  Color get azkarHighlight => _color('azkar_highlight', _p.honeyDeep);
 
   // ── Theme — Quran ─────────────────────────────────────────────────────────
-  Color get quranBg => _color('quran_bg', const Color(0xFFFFFAE3)); // Y4 cream
-  Color get quranAccent =>
-      _color('quran_accent', const Color(0xFFD89A1E)); // honeyDeep
-  Color get quranGold => _color('quran_gold', const Color(0xFFFFC83D)); // honey
-  Color get quranTextColor =>
-      _color('quran_text', const Color(0xFF2A2410)); // ink
+  Color get quranBg => _color('quran_bg', _p.cream);
+  Color get quranAccent => _color('quran_accent', _p.honeyDeep);
+  Color get quranGold => _color('quran_gold', _p.honey);
+  Color get quranTextColor => _color('quran_text', _p.onSurface);
 
   // ── Feature Flags ──────────────────────────────────────────────────────────
   bool get featureLeaderboard => _bool('feature_leaderboard', true);

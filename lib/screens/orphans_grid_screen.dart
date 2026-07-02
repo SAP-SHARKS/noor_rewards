@@ -54,9 +54,9 @@ class _OrphansGridScreenState extends State<OrphansGridScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: Y4.bg,
+      backgroundColor: Y4.palette.background,
       appBar: AppBar(
-        backgroundColor: Y4.bg,
+        backgroundColor: Y4.palette.background,
         elevation: 0,
         foregroundColor: Y4.palette.ink,
         title: Text(
@@ -210,9 +210,9 @@ class OrphanCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Y4.surface,
+          color: Y4.palette.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Y4.border),
+          border: Border.all(color: Y4.palette.border),
           boxShadow: [
             BoxShadow(
               color: Y4.palette.ink.withValues(alpha: 0.06),

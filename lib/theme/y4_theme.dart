@@ -56,14 +56,16 @@ class Y4 {
     double fontSize = 18,
     FontWeight fontWeight = FontWeight.w400,
     FontStyle fontStyle = FontStyle.normal,
-    Color color = ink,
+    Color? color,
     double letterSpacing = -0.01,
     double height = 1.0,
   }) => GoogleFonts.fraunces(
     fontSize: fontSize,
     fontWeight: fontWeight,
     fontStyle: fontStyle,
-    color: color,
+    // Fall back to the active palette's ink so Black mode gets a light
+    // colour without every caller having to pass one explicitly.
+    color: color ?? palette.onSurface,
     letterSpacing: letterSpacing,
     height: height,
   );

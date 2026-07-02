@@ -71,7 +71,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
   Widget build(BuildContext context) {
     context.watch<SettingsService>();
     return Scaffold(
-      backgroundColor: Y4.bg,
+      backgroundColor: Y4.palette.background,
       body: Stack(
         children: [
           CustomScrollView(
@@ -110,7 +110,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       pinned: true,
       stretch: true,
       expandedHeight: 320,
-      backgroundColor: Y4.bg,
+      backgroundColor: Y4.palette.background,
       foregroundColor: Y4.palette.ink,
       iconTheme: const IconThemeData(color: Y4.ink),
       flexibleSpace: FlexibleSpaceBar(
@@ -368,9 +368,9 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Y4.surface,
+          color: Y4.palette.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Y4.border),
+          border: Border.all(color: Y4.palette.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,9 +517,9 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Y4.surface,
+              color: Y4.palette.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Y4.border),
+              border: Border.all(color: Y4.palette.border),
             ),
             child: child,
           ),
@@ -557,7 +557,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
         decoration: BoxDecoration(
-          color: Y4.bg,
+          color: Y4.palette.background,
           boxShadow: [
             BoxShadow(
               color: Y4.palette.ink.withValues(alpha: 0.10),
@@ -785,7 +785,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
                             : Y4.palette.cream,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: selected ? Y4.palette.honeyDeep : Y4.border,
+                      color: selected ? Y4.palette.honeyDeep : Y4.palette.border,
                       width: selected ? 1.5 : 1,
                     ),
                   ),

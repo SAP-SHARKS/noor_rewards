@@ -303,8 +303,8 @@ class _LevelScreenState extends State<LevelScreen>
     return Scaffold(
       backgroundColor: _kBg,
       appBar: AppBar(
-        backgroundColor: Y4.bg,
-        surfaceTintColor: Y4.bg,
+        backgroundColor: Y4.palette.background,
+        surfaceTintColor: Y4.palette.background,
         elevation: 0,
         automaticallyImplyLeading: false,
         // LevelScreen is used BOTH as a standalone pushed route AND as the
@@ -2315,7 +2315,7 @@ class _StreaksTabState extends State<_StreaksTab>
     final lastM = lastMilestone(best);
 
     return Container(
-      color: Y4.bg, // honey wash, matches dashboard
+      color: Y4.palette.background, // honey wash, matches dashboard
       child: Stack(
         children: [
           // Animated aura background — softened for light theme
@@ -2600,10 +2600,10 @@ class _StreakFlameCard extends StatelessWidget {
         (_, __) => Container(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
           decoration: BoxDecoration(
-            color: Y4.surface,
+            color: Y4.palette.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: streak > 0 ? _color.withValues(alpha: 0.5) : Y4.border,
+              color: streak > 0 ? _color.withValues(alpha: 0.5) : Y4.palette.border,
             ),
             boxShadow:
                 streak > 0
@@ -2696,9 +2696,9 @@ class _StreakCalendar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
         boxShadow: [
           BoxShadow(
             color: Y4.palette.ink.withValues(alpha: 0.04),
@@ -2871,9 +2871,9 @@ class _StreakMilestoneProgress extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
         boxShadow: [
           BoxShadow(
             color: Y4.palette.ink.withValues(alpha: 0.04),
@@ -2969,9 +2969,9 @@ class _StreakMilestoneList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
         boxShadow: [
           BoxShadow(
             color: Y4.palette.ink.withValues(alpha: 0.04),
@@ -3012,7 +3012,7 @@ class _StreakMilestoneList extends StatelessWidget {
                         color:
                             done
                                 ? Y4.palette.honeyDeep.withValues(alpha: 0.7)
-                                : Y4.border,
+                                : Y4.palette.border,
                       ),
                       boxShadow:
                           done

@@ -436,8 +436,8 @@ class _DhikrHubScreenState extends State<DhikrHubScreen> {
       child: Scaffold(
         backgroundColor: _kBg,
         appBar: AppBar(
-          backgroundColor: Y4.bg,
-          surfaceTintColor: Y4.bg,
+          backgroundColor: Y4.palette.background,
+          surfaceTintColor: Y4.palette.background,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(
@@ -832,7 +832,7 @@ class _CategoryRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         child: Ink(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Y4.palette.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: _kRowBorder),
             boxShadow: [

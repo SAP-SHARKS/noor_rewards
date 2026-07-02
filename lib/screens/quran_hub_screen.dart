@@ -1385,7 +1385,7 @@ class _UserStatsPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.55), width: 1.2),
         boxShadow: [
@@ -1544,7 +1544,7 @@ class _ContinueCardState extends State<_ContinueCard> {
                   width: 52,
                   height: 52,
                 decoration: BoxDecoration(
-                  color: Y4.surface,
+                  color: Y4.palette.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(

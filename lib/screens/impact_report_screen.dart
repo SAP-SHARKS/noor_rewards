@@ -494,7 +494,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     final olive = Y4.palette.accentOlive;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.85),
+        color: Y4.palette.surface.withValues(alpha: 0.85),
         border: Border.all(
           color: Y4.palette.honeyDeep.withValues(alpha: 0.22),
         ),
@@ -933,7 +933,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
+          colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.palette.background],
         ),
       ),
       child: SafeArea(
@@ -1194,9 +1194,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: Y4.palette.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
@@ -2030,7 +2030,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.bg],
+        colors: [Y4.palette.cream, Y4.palette.honey.withValues(alpha: 0.30), Y4.palette.background],
       ),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(color: Y4.palette.honey.withValues(alpha: 0.35)),
@@ -2393,9 +2393,9 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2600,7 +2600,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                     right: 24,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Y4.palette.surface,
                     borderRadius: BorderRadius.circular(28),
                   ),
                   child: Column(
@@ -2799,8 +2799,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       appBar: AppBar(
         // Elevated header — small eyebrow line + big serif title. Adds
         // editorial weight without a full hero section.
-        backgroundColor: Y4.bg,
-        surfaceTintColor: Y4.bg,
+        backgroundColor: Y4.palette.background,
+        surfaceTintColor: Y4.palette.background,
         foregroundColor: Y4.palette.ink,
         toolbarHeight: 72,
         title: Column(
@@ -2878,7 +2878,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
       ));
       rows.add(
         Container(
-          color: Colors.white,
+          color: Y4.palette.surface,
           padding: const EdgeInsets.only(bottom: 16),
           child: OrphansStrip(
             orphans: _orphans,
@@ -2931,7 +2931,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
 
   Widget _heroOrphan(Orphan o) {
     return Container(
-      color: Colors.white,
+      color: Y4.palette.surface,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: GestureDetector(
         onTap: () async {
@@ -3063,7 +3063,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     final pct = (cur / tgt).clamp(0.0, 1.0);
     final dpUrl = (p['dp_url'] as String?) ?? '';
     return Container(
-      color: Colors.white,
+      color: Y4.palette.surface,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: GestureDetector(
         onTap: () => _showDonateSheet(p),
@@ -3166,7 +3166,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     VoidCallback? onAction,
   }) {
     return Container(
-      color: Colors.white,
+      color: Y4.palette.surface,
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -3226,15 +3226,18 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
   Widget _yourGivingFooter() {
     final hasGiving = _myTotalSeedsLifetime > 0;
     return Container(
-      color: Colors.white,
+      color: Y4.palette.surface,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       child: Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF8E6), Color(0xFFEDF8EE)],
+            colors: [
+              Y4.palette.cream,
+              Y4.palette.accentMint.withValues(alpha: 0.20),
+            ],
           ),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
@@ -3260,8 +3263,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Y4.honey, Y4.honeyDeep],
+                    gradient: LinearGradient(
+                      colors: [Y4.palette.honey, Y4.palette.honeyDeep],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),

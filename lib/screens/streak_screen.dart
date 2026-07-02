@@ -123,7 +123,7 @@ class _StreakScreenState extends State<StreakScreen>
     final lastM = lastMilestone(best);
 
     return Scaffold(
-      backgroundColor: Y4.bg,
+      backgroundColor: Y4.palette.background,
       body: Stack(
         children: [
           // ── Subtle honey aura (light version) ─────────────────────────────
@@ -488,10 +488,10 @@ class _FlameCard extends StatelessWidget {
           (_, __) => Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             decoration: BoxDecoration(
-              color: Y4.surface,
+              color: Y4.palette.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: streak > 0 ? _color.withValues(alpha: 0.35) : Y4.border,
+                color: streak > 0 ? _color.withValues(alpha: 0.35) : Y4.palette.border,
               ),
               boxShadow:
                   streak > 0
@@ -583,9 +583,9 @@ class _SevenDayCalendar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -769,9 +769,9 @@ class _MilestoneProgress extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -865,9 +865,9 @@ class _MilestoneList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Y4.surface,
+        color: Y4.palette.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Y4.border),
+        border: Border.all(color: Y4.palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -898,7 +898,7 @@ class _MilestoneList extends StatelessWidget {
                         color:
                             done
                                 ? Y4.palette.honeyDeep.withValues(alpha: 0.6)
-                                : Y4.border,
+                                : Y4.palette.border,
                       ),
                       boxShadow:
                           done
