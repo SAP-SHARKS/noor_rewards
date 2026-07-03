@@ -5874,5 +5874,46 @@
   "liveNotificationService_tickerIdle": "Keep reading and doing Dhikr!",
   "liveNotificationService_channelDesc": "Live today's Quran and Dhikr progress",
   "liveNotificationService_seedsToday": "Your Seeds Today ✨",
-  "liveNotificationService_summary": "Tap to open Sabiq"
+  "liveNotificationService_summary": "Tap to open Sabiq",
+  "quranApiService_notConnected": "Not connected to Quran.com",
+  "quranApiService_notSignedIn": "Not signed in to Noor",
+  "quranApiService_syncFailedPush": "Sync failed, {n} bookmark(s) could not be pushed to Quran.com (check token / endpoint).",
+  "@quranApiService_syncFailedPush": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "quranApiService_alreadyInSync": "Bookmarks already in sync",
+  "quranApiService_syncedBookmarks": "Synced {total} bookmarks ({up} up, {down} down)",
+  "@quranApiService_syncedBookmarks": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "up": {
+        "type": "String"
+      },
+      "down": {
+        "type": "String"
+      }
+    }
+  },
+  "quranApiService_syncFailedPartial": ", {n} failed",
+  "@quranApiService_syncFailedPartial": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "quranApiService_syncFailedGeneric": "Sync failed: {error}",
+  "@quranApiService_syncFailedGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

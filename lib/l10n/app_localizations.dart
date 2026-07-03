@@ -14862,6 +14862,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to open Sabiq'**
   String get liveNotificationService_summary;
+
+  /// No description provided for @quranApiService_notConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected to Quran.com'**
+  String get quranApiService_notConnected;
+
+  /// No description provided for @quranApiService_notSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in to Noor'**
+  String get quranApiService_notSignedIn;
+
+  /// No description provided for @quranApiService_syncFailedPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed, {n} bookmark(s) could not be pushed to Quran.com (check token / endpoint).'**
+  String quranApiService_syncFailedPush(String n);
+
+  /// No description provided for @quranApiService_alreadyInSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks already in sync'**
+  String get quranApiService_alreadyInSync;
+
+  /// No description provided for @quranApiService_syncedBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced {total} bookmarks ({up} up, {down} down)'**
+  String quranApiService_syncedBookmarks(String total, String up, String down);
+
+  /// No description provided for @quranApiService_syncFailedPartial.
+  ///
+  /// In en, this message translates to:
+  /// **', {n} failed'**
+  String quranApiService_syncFailedPartial(String n);
+
+  /// No description provided for @quranApiService_syncFailedGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed: {error}'**
+  String quranApiService_syncFailedGeneric(String error);
 }
 
 class _AppLocalizationsDelegate

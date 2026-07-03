@@ -9392,4 +9392,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get liveNotificationService_summary => 'Tap to open Sabiq';
+
+  @override
+  String get quranApiService_notConnected => 'Not connected to Quran.com';
+
+  @override
+  String get quranApiService_notSignedIn => 'Not signed in to Noor';
+
+  @override
+  String quranApiService_syncFailedPush(String n) {
+    return 'Sync failed, $n bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+  }
+
+  @override
+  String get quranApiService_alreadyInSync => 'Bookmarks already in sync';
+
+  @override
+  String quranApiService_syncedBookmarks(String total, String up, String down) {
+    return 'Synced $total bookmarks ($up up, $down down)';
+  }
+
+  @override
+  String quranApiService_syncFailedPartial(String n) {
+    return ', $n failed';
+  }
+
+  @override
+  String quranApiService_syncFailedGeneric(String error) {
+    return 'Sync failed: $error';
+  }
 }

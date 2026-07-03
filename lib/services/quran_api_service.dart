@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'locale_service.dart';
 import '../core/env/env.dart';
 import '../features/auth/data/qf_auth_service.dart';
 import 'quran_api_config.dart';
@@ -366,13 +367,21 @@ class QuranApiService {
   // Safe to call from anywhere — e.g. right after the user completes QF
   // sign-in. Skips silently if either side is not authenticated.
   Future<SyncResult> syncBookmarks() async {
+    final l = LocaleService.instance.l;
     if (!await isUserLoggedIn()) {
-      return SyncResult(success: false, message: 'Not connected to Quran.com');
+      return SyncResult(
+        success: false,
+        message: l?.quranApiService_notConnected ??
+            'Not connected to Quran.com',
+      );
     }
     final sb = Supabase.instance.client;
     final uid = sb.auth.currentUser?.id;
     if (uid == null) {
-      return SyncResult(success: false, message: 'Not signed in to Noor');
+      return SyncResult(
+        success: false,
+        message: l?.quranApiService_notSignedIn ?? 'Not signed in to Noor',
+      );
     }
 
     int uploaded = 0;
@@ -436,13 +445,22 @@ class QuranApiService {
       final total = uploaded + downloaded;
       String message;
       if (failed > 0 && total == 0) {
-        message =
+        message = l?.quranApiService_syncFailedPush(failed.toString()) ??
             'Sync failed, $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
       } else if (total == 0 && failed == 0) {
-        message = 'Bookmarks already in sync';
+        message =
+            l?.quranApiService_alreadyInSync ?? 'Bookmarks already in sync';
       } else {
-        message = 'Synced $total bookmarks ($uploaded up, $downloaded down)';
-        if (failed > 0) message += ', $failed failed';
+        message = l?.quranApiService_syncedBookmarks(
+              total.toString(),
+              uploaded.toString(),
+              downloaded.toString(),
+            ) ??
+            'Synced $total bookmarks ($uploaded up, $downloaded down)';
+        if (failed > 0) {
+          message += l?.quranApiService_syncFailedPartial(failed.toString()) ??
+              ', $failed failed';
+        }
       }
       return SyncResult(
         success: failed == 0,
@@ -451,7 +469,11 @@ class QuranApiService {
         message: message,
       );
     } catch (e) {
-      return SyncResult(success: false, message: 'Sync failed: $e');
+      return SyncResult(
+        success: false,
+        message: l?.quranApiService_syncFailedGeneric(e.toString()) ??
+            'Sync failed: $e',
+      );
     }
   }
 
