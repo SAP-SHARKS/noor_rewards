@@ -85,6 +85,17 @@ const _skipRanges = <String, List<List<int>>>{
   'lib/screens/tafsir_screen.dart': [
     [287, 437],  // _tafsirEditions
   ],
+  // `_kEssentials` + `_kOthers` const category lists. Each `_Cat(id,
+  // title)` record carries the English `title` as an explicit fallback;
+  // the actual rendering uses `_localTitle(fallback, id)` at line 199
+  // which switches on `id` and returns the correct l10n string. Per
+  // the file's header comment ("English `title` is kept as a fallback
+  // when a locale doesn't have a string for the id"), these literals
+  // are load-bearing fallbacks — the wrap already happens at the
+  // switch site, not here.
+  'lib/screens/dhikr_hub_screen.dart': [
+    [52, 93],
+  ],
 };
 
 // Named-argument names that typically render as user-facing UI.
