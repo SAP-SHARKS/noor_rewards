@@ -5800,5 +5800,13 @@
         "type": "Object"
       }
     }
+  },
+  "xpService_badgeEarnedBody": "You've earned the \"{name}\" badge.",
+  "@xpService_badgeEarnedBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

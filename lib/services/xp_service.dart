@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'settings_service.dart';
 import 'notification_center.dart';
+import 'locale_service.dart';
 
 // ── Point Rewards (unified — coins ARE the points) ────────────────────────────
 class PointReward {
@@ -32,7 +33,9 @@ class LevelInfo {
     required this.unlocks,
   });
 
-  String get displayTitle => '$title • Level $level';
+  String get displayTitle =>
+      LocaleService.instance.l?.xpService_level_226f81(title, level.toString()) ??
+          '$title • Level $level';
 
   double progress(int currentPts) {
     if (nextPts <= ptsRequired) return 1.0;
@@ -232,10 +235,14 @@ class XpService {
       if (isNew) {
         // ── In-app notification: new badge unlocked. Tap goes to Journey
         // tab where the user can see all their badges.
+        final l = LocaleService.instance.l;
+        final humanized = _humanize(badgeId);
         NotificationCenter.instance.add(
           kind: NoorNotifKind.badge,
-          title: 'New badge unlocked 🏆',
-          body: 'You\'ve earned the "${_humanize(badgeId)}" badge.',
+          title: l?.xpService_newBadgeUnlocked_2c8d0e ??
+              'New badge unlocked 🏆',
+          body: l?.xpService_badgeEarnedBody(humanized) ??
+              'You\'ve earned the "$humanized" badge.',
           route: '/journey',
           data: {'badge_id': badgeId},
         );
@@ -280,10 +287,14 @@ class XpService {
 
       await earnPoints(PointReward.dailyLogin);
       // ── In-app notification: daily-login reward earned
+      final l = LocaleService.instance.l;
       NotificationCenter.instance.add(
         kind: NoorNotifKind.reward,
-        title: 'Daily login bonus',
-        body: '+${PointReward.dailyLogin} Seeds · welcome back!',
+        title: l?.xpService_dailyLoginBonus_d011fa ?? 'Daily login bonus',
+        body: l?.xpService_seedsWelcomeBack_47888a(
+              PointReward.dailyLogin.toString(),
+            ) ??
+            '+${PointReward.dailyLogin} Seeds · welcome back!',
         route: '/journey',
       );
       return true;
@@ -349,12 +360,18 @@ class XpService {
         });
       }
 
+      final l = LocaleService.instance.l;
       NotificationCenter.instance.add(
         kind: NoorNotifKind.validation,
-        title: 'Day sealed 🌙',
+        title: l?.xpService_daySealed_037a56 ?? 'Day sealed 🌙',
         body: firstSealToday
-            ? '+$flushed Sabiq Seeds confirmed! ($bonus bonus for sealing)'
-            : '+$flushed Sabiq Seeds confirmed!',
+            ? (l?.xpService_sabiqSeedsConfirmedBonus_702902(
+                    flushed.toString(),
+                    bonus.toString(),
+                  ) ??
+                '+$flushed Sabiq Seeds confirmed! ($bonus bonus for sealing)')
+            : (l?.xpService_sabiqSeedsConfirmed_34969c(flushed.toString()) ??
+                '+$flushed Sabiq Seeds confirmed!'),
         route: '/home',
       );
       return true;

@@ -9272,4 +9272,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String donationService_youDonatedSeeds(String amount) {
     return 'You donated $amount Seeds · jazak Allah khair.';
   }
+
+  @override
+  String streakService_60a570_60a570(Object arg1, Object localLabel) {
+    return '$arg1 $localLabel';
+  }
+
+  @override
+  String xpService_badgeEarnedBody(String name) {
+    return 'You\'ve earned the \"$name\" badge.';
+  }
 }

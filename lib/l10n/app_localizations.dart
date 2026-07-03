@@ -14682,6 +14682,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You donated {amount} Seeds · jazak Allah khair.'**
   String donationService_youDonatedSeeds(String amount);
+
+  /// No description provided for @streakService_60a570_60a570.
+  ///
+  /// In en, this message translates to:
+  /// **'{arg1} {localLabel}'**
+  String streakService_60a570_60a570(Object arg1, Object localLabel);
+
+  /// No description provided for @xpService_badgeEarnedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve earned the \"{name}\" badge.'**
+  String xpService_badgeEarnedBody(String name);
 }
 
 class _AppLocalizationsDelegate
