@@ -1164,7 +1164,7 @@ class _HomeTabState extends State<_HomeTab> {
       '_type': 'orphan',
       '_orphan': o,
       'id': o.id,
-      'title': 'Sponsor $name, ${o.age}',
+      'title': AppLocalizations.of(context)?.dashboardScreen_sponsor_d48549(name, o.age.toString()) ?? 'Sponsor $name, ${o.age}',
       'sponsor': o.partnerOrg ?? 'Sponsored Orphan',
       'category': 'Orphan',
       'location': o.displayLocation ?? '',
@@ -1893,7 +1893,8 @@ class _InviteSheetState extends State<_InviteSheet>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Message copied, share or paste in WhatsApp!',
+            AppLocalizations.of(context)?.dashboardScreen_messageCopiedShareOr_7b977e ??
+                'Message copied, share or paste in WhatsApp!',
             style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
           ),
           backgroundColor: const Color(0xFF25D366),
@@ -1920,17 +1921,19 @@ class _InviteSheetState extends State<_InviteSheet>
         'apply_referral',
         params: {'inviter_code': code},
       );
-      setState(() => _success = '500 Sabiq Seeds rewarded to you both!');
+      final l = AppLocalizations.of(context);
+      setState(() => _success = l?.dashboardScreen_sabiqSeedsRewardedTo_c209d6 ?? '500 Sabiq Seeds rewarded to you both!');
     } catch (e) {
       final s = e.toString();
+      final l = AppLocalizations.of(context);
       if (s.contains('Already referred')) {
-        setState(() => _error = 'You have already used a referral code.');
+        setState(() => _error = l?.dashboardScreen_youHaveAlreadyUsed_f7c387 ?? 'You have already used a referral code.');
       } else if (s.contains('Invalid referral code')) {
-        setState(() => _error = 'Invalid referral code.');
+        setState(() => _error = l?.dashboardScreen_invalidReferralCode_59fb25 ?? 'Invalid referral code.');
       } else if (s.contains('Cannot refer yourself')) {
-        setState(() => _error = 'You cannot use your own code.');
+        setState(() => _error = l?.dashboardScreen_youCannotUseYour_b7dbfe ?? 'You cannot use your own code.');
       } else {
-        setState(() => _error = 'An error occurred. Please try again.');
+        setState(() => _error = l?.dashboardScreen_anErrorOccurredPlease_8ee486 ?? 'An error occurred. Please try again.');
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -4761,7 +4764,7 @@ class _ProjectCard extends StatelessWidget {
                     child: Center(
                       child: Text(
                         availablePoints > 0
-                            ? '🤲  View Campaign & Donate'
+                            ? (AppLocalizations.of(context)?.dashboardScreen_viewCampaignDonate_450be4 ?? '🤲  View Campaign & Donate')
                             : 'View Campaign',
                         style: GoogleFonts.outfit(
                           fontSize: 14,
@@ -5625,7 +5628,7 @@ class _RankingSheetState extends State<_RankingSheet> {
                 ),
                 Text(
                   _myRank > 0
-                      ? '$_myPoints $unit • ${_windowSubtitle(ctx)}'
+                      ? (AppLocalizations.of(ctx)?.dashboardScreen_d13a42_d13a42(_myPoints.toString(), unit, _windowSubtitle(ctx)) ?? '$_myPoints $unit • ${_windowSubtitle(ctx)}')
                       : 'No activity yet — earn Seeds to appear',
                   style: GoogleFonts.outfit(
                     fontSize: 12,
@@ -5654,7 +5657,8 @@ class _RankingSheetState extends State<_RankingSheet> {
           NoorIcon.sparkles(size: 42),
           const SizedBox(height: 12),
           Text(
-            'Be the first on the board',
+            AppLocalizations.of(ctx)?.dashboardScreen_beTheFirstOn_63de17 ??
+                'Be the first on the board',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
               fontSize: 16,
@@ -5664,7 +5668,8 @@ class _RankingSheetState extends State<_RankingSheet> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Read an ayah or dhikr to claim the top spot',
+            AppLocalizations.of(ctx)?.dashboardScreen_readAnAyahOr_9c7ab7 ??
+                'Read an ayah or dhikr to claim the top spot',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
           ),
@@ -6439,7 +6444,8 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
           NoorIcon.sparkles(size: 38),
           const SizedBox(height: 10),
           Text(
-            'Be the first on the board',
+            AppLocalizations.of(ctx)?.dashboardScreen_beTheFirstOn_63de17 ??
+                'Be the first on the board',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
               fontSize: 14,
@@ -6449,7 +6455,8 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Read an ayah or dhikr to claim the top spot',
+            AppLocalizations.of(ctx)?.dashboardScreen_readAnAyahOr_9c7ab7 ??
+                'Read an ayah or dhikr to claim the top spot',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
           ),
@@ -6803,7 +6810,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                                     const SizedBox(width: 6),
                                     Flexible(
                                       child: Text(
-                                        'Lvl $level · ${_localizeLevel(context, levelTitle)}',
+                                        AppLocalizations.of(context)?.dashboardScreen_lvl_ac180d(level.toString(), _localizeLevel(context, levelTitle)) ?? 'Lvl $level · ${_localizeLevel(context, levelTitle)}',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(
