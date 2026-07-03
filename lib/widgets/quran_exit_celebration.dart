@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/app_localizations.dart';
 import '../theme/y4_theme.dart';
 import 'sabiq_coin.dart';
 
@@ -113,9 +114,12 @@ class _QuranExitCelebrationBodyState extends State<_QuranExitCelebrationBody>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final hasPoints = widget.pointsEarned > 0;
     final headlineArabic = hasPoints ? 'بارك الله فيك' : 'الحمد لله';
-    final subhead = hasPoints ? 'Beautiful recitation.' : 'Every moment counts.';
+    final subhead = hasPoints
+        ? (l?.quranExitCelebration_beautifulRecitation_9d2655 ?? 'Beautiful recitation.')
+        : (l?.quranExitCelebration_everyMomentCounts_fddb4c ?? 'Every moment counts.');
 
     return Material(
       color: Colors.transparent,

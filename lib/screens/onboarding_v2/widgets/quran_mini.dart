@@ -6,6 +6,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../widgets/sabiq_coin.dart';
@@ -123,7 +124,7 @@ class _QuranMiniState extends State<QuranMini>
                   ),
                   SizedBox(height: w * 0.05),
                   Text(
-                    'In the name of Allah, the Most Gracious, the Most Merciful.',
+                    AppLocalizations.of(context)?.quranMini_inTheNameOf_46925d ?? 'In the name of Allah, the Most Gracious, the Most Merciful.',
                     style: OnbTok.sans(
                       fontSize: w * 0.04,
                       color: OnbTok.brownSoft,
@@ -132,7 +133,7 @@ class _QuranMiniState extends State<QuranMini>
                   ),
                   SizedBox(height: w * 0.03),
                   Text(
-                    'All praise belongs to Allah, Lord of all the worlds.',
+                    AppLocalizations.of(context)?.quranMini_allPraiseBelongsTo_2d51df ?? 'All praise belongs to Allah, Lord of all the worlds.',
                     style: OnbTok.sans(
                       fontSize: w * 0.04,
                       color: OnbTok.brownSoft,

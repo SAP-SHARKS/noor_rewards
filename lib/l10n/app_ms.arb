@@ -5915,5 +5915,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "authScreen_dontHaveAnAccountSignUp": "Don't have an account? Sign Up"
 }

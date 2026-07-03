@@ -241,8 +241,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                     child: Text(
                       _isSignUp
-                          ? 'Already have an account? Sign In'
-                          : 'Don\'t have an account? Sign Up',
+                          ? (AppLocalizations.of(context)?.authScreen_alreadyHaveAnAccount_07e598 ?? 'Already have an account? Sign In')
+                          : (AppLocalizations.of(context)?.authScreen_dontHaveAnAccountSignUp ?? 'Don\'t have an account? Sign Up'),
                       style: GoogleFonts.outfit(
                         color: const Color(0xFF6C63FF), // Purple accent color
                         fontSize: 15,

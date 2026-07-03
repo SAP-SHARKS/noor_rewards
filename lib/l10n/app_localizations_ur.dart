@@ -9441,4 +9441,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String quranApiService_syncFailedGeneric(String error) {
     return 'Sync failed: $error';
   }
+
+  @override
+  String get authScreen_dontHaveAnAccountSignUp =>
+      'Don\'t have an account? Sign Up';
 }

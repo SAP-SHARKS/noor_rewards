@@ -332,7 +332,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
             ? p['story'] as String
             : (localizedDesc.isNotEmpty
                 ? localizedDesc
-                : 'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...');
+                : (AppLocalizations.of(context)?.projectDetailScreen_donateToProvideUrgent_246035 ??
+                    'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...'));
     final current = (p['current_points'] as num?)?.toInt() ?? 0;
     final target = (p['target_points'] as num?)?.toInt() ?? 1;
     final pct = (current / target).clamp(0.0, 1.0);
@@ -455,7 +456,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
-                                  '${_fmtN(current)} Seeds',
+                                  AppLocalizations.of(context)?.projectDetailScreen_seeds_47387f(_fmtN(current)) ?? '${_fmtN(current)} Seeds',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: Y4.display(
@@ -491,7 +492,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                             const SabiqCoin(size: 24),
                             const SizedBox(width: 5),
                             Text(
-                              '${_fmtN(target)} Seeds',
+                              AppLocalizations.of(context)?.projectDetailScreen_seeds_801ec7(_fmtN(target)) ?? '${_fmtN(target)} Seeds',
                               style: GoogleFonts.outfit(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
@@ -1138,15 +1139,29 @@ class _DonorsSectionState extends State<_DonorsSection> {
     return '$n';
   }
 
-  String _timeAgo(DateTime d) {
+  String _timeAgo(BuildContext ctx, DateTime d) {
+    final l = AppLocalizations.of(ctx);
     final diff = DateTime.now().difference(d);
     if (diff.inSeconds < 60) return 'just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inMinutes < 60) {
+      return l?.projectDetailScreen_ago_71107c(diff.inMinutes.toString()) ??
+          '${diff.inMinutes}m ago';
+    }
+    if (diff.inHours < 24) {
+      return l?.projectDetailScreen_ago_c25b44(diff.inHours.toString()) ??
+          '${diff.inHours}h ago';
+    }
     if (diff.inDays < 7) return '${diff.inDays}d ago';
-    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
-    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()}mo ago';
-    return '${(diff.inDays / 365).floor()}y ago';
+    if (diff.inDays < 30) {
+      final w = (diff.inDays / 7).floor();
+      return l?.projectDetailScreen_ago_e160e3(w.toString()) ?? '${w}w ago';
+    }
+    if (diff.inDays < 365) {
+      final mo = (diff.inDays / 30).floor();
+      return l?.projectDetailScreen_moAgo_325a71(mo.toString()) ?? '${mo}mo ago';
+    }
+    final y = (diff.inDays / 365).floor();
+    return l?.projectDetailScreen_ago_65f0ec(y.toString()) ?? '${y}y ago';
   }
 
   @override
@@ -1214,7 +1229,7 @@ class _DonorsSectionState extends State<_DonorsSection> {
                     ),
                   _DonorRow(
                     donor: visible[i],
-                    timeAgo: _timeAgo(visible[i].donatedAt),
+                    timeAgo: _timeAgo(context, visible[i].donatedAt),
                   ),
                 ],
               ],

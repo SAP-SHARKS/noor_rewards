@@ -14904,6 +14904,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync failed: {error}'**
   String quranApiService_syncFailedGeneric(String error);
+
+  /// No description provided for @authScreen_dontHaveAnAccountSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Sign Up'**
+  String get authScreen_dontHaveAnAccountSignUp;
 }
 
 class _AppLocalizationsDelegate

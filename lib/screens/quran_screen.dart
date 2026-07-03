@@ -1692,7 +1692,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 ),
                               ),
                               subtitle: Text(
-                                '${_surahLengths[n]} ayahs',
+                                AppLocalizations.of(context)?.quranScreen_ayahs_c98642(_surahLengths[n].toString()) ?? '${_surahLengths[n]} ayahs',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
                                   color: Y4.palette.inkSoft,
@@ -2376,7 +2376,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  'Tafsir · $_surahName $_surah:$_ayah',
+                                  AppLocalizations.of(context)?.quranScreen_tafsir_391c0d(_surahName, _surah.toString(), _ayah.toString()) ?? 'Tafsir · $_surahName $_surah:$_ayah',
                                   style: GoogleFonts.outfit(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w800,
@@ -2938,7 +2938,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                                   ),
                                                 ),
                                                 Text(
-                                                  '${_arabicFontSize.toInt()} pt',
+                                                  AppLocalizations.of(context)?.quranScreen_pt_9e58e8(_arabicFontSize.toInt().toString()) ?? '${_arabicFontSize.toInt()} pt',
                                                   style: GoogleFonts.outfit(
                                                     fontSize: 11,
                                                     color: const Color(
@@ -4263,7 +4263,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                         ),
                                       ),
                                       Text(
-                                        '$_ayah / ${_surahLengths[_surah]}',
+                                        AppLocalizations.of(context)?.quranScreen_dcacc4_dcacc4(_ayah.toString(), _surahLengths[_surah].toString()) ?? '$_ayah / ${_surahLengths[_surah]}',
                                         style: GoogleFonts.outfit(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
@@ -4692,7 +4692,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                               Row(
                                 children: [
                                   Text(
-                                    '$_ayahsToday ayahs read',
+                                    AppLocalizations.of(context)?.quranScreen_ayahsRead_862866(_ayahsToday.toString()) ?? '$_ayahsToday ayahs read',
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       color: sub,

@@ -402,7 +402,9 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                                 // surface the result to the user (counts +
                                 // any error). Capped at a few seconds so a
                                 // slow network doesn't block onboarding.
-                                String syncMessage = 'Connected to Quran.com';
+                                String syncMessage =
+                                    AppLocalizations.of(context)?.startJourneyScreen_connectedToQuranCom_c0c631 ??
+                                        'Connected to Quran.com';
                                 try {
                                   final sync = await QuranApiService.instance
                                       .syncBookmarks()
@@ -411,8 +413,10 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                                       );
                                   syncMessage = sync.message;
                                 } catch (e) {
+                                  if (!context.mounted) return;
                                   syncMessage =
-                                      'Connected to Quran.com (bookmark sync deferred)';
+                                      AppLocalizations.of(context)?.startJourneyScreen_connectedToQuranCom_0ac4de ??
+                                          'Connected to Quran.com (bookmark sync deferred)';
                                 }
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
