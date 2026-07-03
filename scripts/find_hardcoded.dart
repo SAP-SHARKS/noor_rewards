@@ -53,6 +53,19 @@ const _skipRanges = <String, List<List<int>>>{
     // on `.arb` — see db-content-i18n.md.
     [9000, 30000],
   ],
+  // Quran translation / script / reciter / tafsir metadata lists.
+  // Each entry is a record of (id, native-language name, translator or
+  // reciter proper noun, ...). The `name` field is already localised
+  // *within its own language* ("English, Sahih Intl.", "اردو, جالندھری",
+  // "Türkçe, Diyanet"), and the `author` field is a person's or
+  // organisation's proper noun. Translating them further doesn't produce
+  // a meaningful string. Belongs on `translation_editions` /
+  // `reciters` / `tafsir_editions` DB tables long-term (see
+  // db-content-i18n.md), or treated as immutable metadata.
+  'lib/screens/quran_screen.dart': [
+    [68, 222],   // _translations + _kQuranScripts + _reciters
+    [346, 492],  // _qTafsirEditions
+  ],
 };
 
 // Named-argument names that typically render as user-facing UI.

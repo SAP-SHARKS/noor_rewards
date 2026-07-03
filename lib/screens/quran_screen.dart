@@ -1033,7 +1033,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         if (mounted) {
           setState(() {
             _loading = false;
-            _arabic = 'Could not load ayah. Please retry.';
+            _arabic = AppLocalizations.of(context)?.quranScreen_couldNotLoadAyah_62f120 ??
+                'Could not load ayah. Please retry.';
           });
         }
       }
@@ -1041,7 +1042,8 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       if (mounted) {
         setState(() {
           _loading = false;
-          _arabic = 'No connection. Cached data may be available.';
+          _arabic = AppLocalizations.of(context)?.quranScreen_noConnectionCachedData_e5a215 ??
+              'No connection. Cached data may be available.';
         });
       }
     }
@@ -1755,9 +1757,21 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         // Either side rejected the delete — restore the UI and warn the
         // user so the icon stays consistent with what's actually stored.
         if (mounted) setState(() => _bookmarks.add(key));
-        if (mounted) _showSnack('Could not remove bookmark, please retry');
+        if (mounted) {
+          _showSnack(
+            AppLocalizations.of(context)?.quranScreen_couldNotRemoveBookmark_699a82 ??
+                'Could not remove bookmark, please retry',
+          );
+        }
       } else if (mounted) {
-        _showSnack('Removed bookmark $_surahName $_surah:$_ayah');
+        _showSnack(
+          AppLocalizations.of(context)?.quranScreen_removedBookmark_d7a16a(
+                _surahName,
+                _surah.toString(),
+                _ayah.toString(),
+              ) ??
+              'Removed bookmark $_surahName $_surah:$_ayah',
+        );
       }
     } else {
       // ── Add ─────────────────────────────────────────────────────────────
@@ -1784,9 +1798,21 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       }
       if (!qfOk || !sbOk) {
         if (mounted) setState(() => _bookmarks.remove(key));
-        if (mounted) _showSnack('Could not save bookmark, please retry');
+        if (mounted) {
+          _showSnack(
+            AppLocalizations.of(context)?.quranScreen_couldNotSaveBookmark_976448 ??
+                'Could not save bookmark, please retry',
+          );
+        }
       } else if (mounted) {
-        _showSnack('Bookmarked $_surahName $_surah:$_ayah');
+        _showSnack(
+          AppLocalizations.of(context)?.quranScreen_bookmarked_2c6203(
+                _surahName,
+                _surah.toString(),
+                _ayah.toString(),
+              ) ??
+              'Bookmarked $_surahName $_surah:$_ayah',
+        );
       }
     }
   }
@@ -2653,9 +2679,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     }
     _showSnack(
       adding
-          ? '♥️ Added to Favourites'
-          : AppLocalizations.of(context)?.removedFromFavourites ??
-              'Removed from Favourites',
+          ? (AppLocalizations.of(context)?.quranScreen_addedToFavourites_b3cce0 ??
+              '♥️ Added to Favourites')
+          : (AppLocalizations.of(context)?.removedFromFavourites ??
+              'Removed from Favourites'),
     );
   }
 
