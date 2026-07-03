@@ -5679,5 +5679,56 @@
         "type": "String"
       }
     }
+  },
+  "impactReportScreen_totalHasanatFromQuran": "Total hasanat from Quran: {n}",
+  "@impactReportScreen_totalHasanatFromQuran": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "impactReportScreen_totalTreesPlanted": "Total trees planted: {n}",
+  "@impactReportScreen_totalTreesPlanted": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "impactReportScreen_totalTreasures": "Total treasures: {n}",
+  "@impactReportScreen_totalTreasures": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "impactReportScreen_multipliedByGates": "Multiplied by 8 gates → {n} openings",
+  "@impactReportScreen_multipliedByGates": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "impactReportScreen_bonusHasanaat": "Bonus hasanaat: {n}",
+  "@impactReportScreen_bonusHasanaat": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "impactReportScreen_totalDonatedSeeds": "Total donated: {n} {seeds}",
+  "@impactReportScreen_totalDonatedSeeds": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "seeds": {
+        "type": "String"
+      }
+    }
   }
 }

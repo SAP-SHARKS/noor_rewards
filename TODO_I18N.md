@@ -218,61 +218,61 @@ Use `l?.<key> ?? "literal"` for null-safety in Widget code (with `final l = AppL
 - [ ] L1436 \[longform\] `impactReportScreen_ayahs_6a500c`
   - literal: `"${_fmt(_lifetimeAyahs)} ayahs"`
   - replace with: `l?.impactReportScreen_ayahs_6a500c(_fmt(_lifetimeAyahs)) ?? "${_fmt(_lifetimeAyahs)} ayahs"`
-- [ ] L1462 \[longform\] `impactReportScreen_planted_90ec47`
+- [ ] L1465 \[longform\] `impactReportScreen_planted_90ec47`
   - literal: `"${_fmt(_treesPlanted)} planted"`
   - replace with: `l?.impactReportScreen_planted_90ec47(_fmt(_treesPlanted)) ?? "${_fmt(_treesPlanted)} planted"`
-- [ ] L1490 \[longform\] `impactReportScreen_cycles_f6649b`
+- [ ] L1496 \[longform\] `impactReportScreen_cycles_f6649b`
   - literal: `"${_fmt(_sinsWiped)} cycles"`
   - replace with: `l?.impactReportScreen_cycles_f6649b(_fmt(_sinsWiped)) ?? "${_fmt(_sinsWiped)} cycles"`
-- [ ] L1521 \[longform\] `impactReportScreen_built_d62c2d`
+- [ ] L1527 \[longform\] `impactReportScreen_built_d62c2d`
   - literal: `"${_fmt(_palacesBuilt)} built"`
   - replace with: `l?.impactReportScreen_built_d62c2d(_fmt(_palacesBuilt)) ?? "${_fmt(_palacesBuilt)} built"`
-- [ ] L1551 \[longform\] `impactReportScreen_earned_abd189`
+- [ ] L1557 \[longform\] `impactReportScreen_earned_abd189`
   - literal: `"${_fmt(_treasures)} earned"`
   - replace with: `l?.impactReportScreen_earned_abd189(_fmt(_treasures)) ?? "${_fmt(_treasures)} earned"`
-- [ ] L1576 \[longform\] `impactReportScreen_equivalent_cb7bb5`
+- [ ] L1585 \[longform\] `impactReportScreen_equivalent_cb7bb5`
   - literal: `"${_fmt(_slavesFreed)} equivalent"`
   - replace with: `l?.impactReportScreen_equivalent_cb7bb5(_fmt(_slavesFreed)) ?? "${_fmt(_slavesFreed)} equivalent"`
-- [ ] L1608 \[longform\] `impactReportScreen_opened_1bf8da`
+- [ ] L1617 \[longform\] `impactReportScreen_opened_1bf8da`
   - literal: `"${_fmt(_gatesOpened)} opened"`
   - replace with: `l?.impactReportScreen_opened_1bf8da(_fmt(_gatesOpened)) ?? "${_fmt(_gatesOpened)} opened"`
-- [ ] L1633 \[longform\] `impactReportScreen_received_a526e3`
+- [ ] L1645 \[longform\] `impactReportScreen_received_a526e3`
   - literal: `"${_fmt(_blessingsReceived)} received"`
   - replace with: `l?.impactReportScreen_received_a526e3(_fmt(_blessingsReceived)) ?? "${_fmt(_blessingsReceived)} received"`
-- [ ] L1665 \[longform\] `impactReportScreen_invocations_d80c33`
+- [ ] L1677 \[longform\] `impactReportScreen_invocations_d80c33`
   - literal: `"${_fmt(_protectionInvocations)} invocations"`
   - replace with: `l?.impactReportScreen_invocations_d80c33(_fmt(_protectionInvocations)) ?? "${_fmt(_protectionInvocations)} invocations"`
-- [ ] L1701 \[longform\] `impactReportScreen_equivalent_d7e6f6`
+- [ ] L1713 \[longform\] `impactReportScreen_equivalent_d7e6f6`
   - literal: `"${_fmt(_quranCompletionsViaIkhlas)} equivalent"`
   - replace with: `l?.impactReportScreen_equivalent_d7e6f6(_fmt(_quranCompletionsViaIkhlas)) ?? "${_fmt(_quranCompletionsViaIkhlas)} equivalent"`
-- [ ] L1733 \[longform\] `impactReportScreen_recitations_3cb9ec`
+- [ ] L1745 \[longform\] `impactReportScreen_recitations_3cb9ec`
   - literal: `"${_fmt(_shoppingDuaCount)} recitations"`
   - replace with: `l?.impactReportScreen_recitations_3cb9ec(_fmt(_shoppingDuaCount)) ?? "${_fmt(_shoppingDuaCount)} recitations"`
-- [ ] L1914 \[value\] `impactReportScreen_564740_564740`
+- [ ] L1934 \[value\] `impactReportScreen_564740_564740`
   - literal: `"$_monthActiveDays"`
   - replace with: `l?.impactReportScreen_564740_564740(_monthActiveDays) ?? "$_monthActiveDays"`
-- [ ] L2051 \[text\] `impactReportScreen_3dc421_3dc421`
+- [ ] L2071 \[text\] `impactReportScreen_3dc421_3dc421`
   - literal: `"${hours}h "`
   - replace with: `l?.impactReportScreen_3dc421_3dc421(hours) ?? "${hours}h "`
-- [ ] L2059 \[text\] `impactReportScreen_08990a_08990a`
+- [ ] L2079 \[text\] `impactReportScreen_08990a_08990a`
   - literal: `"${mins}m"`
   - replace with: `l?.impactReportScreen_08990a_08990a(mins) ?? "${mins}m"`
-- [ ] L2537 \[longform\] `impactReportScreen_viewAllDonors_e72932`
+- [ ] L2557 \[longform\] `impactReportScreen_viewAllDonors_e72932`
   - literal: `"View all ${donors.length} donors"`
   - replace with: `l?.impactReportScreen_viewAllDonors_e72932(donors.length) ?? "View all ${donors.length} donors"`
-- [ ] L3091 \[longform\] `impactReportScreen_meet_82797d`
+- [ ] L3111 \[longform\] `impactReportScreen_meet_82797d`
   - literal: `"Meet ${localizeName(context, o.firstName)}, ${o.age}"`
   - replace with: `l?.impactReportScreen_meet_82797d(localizeName(context, o.firstName), o.age) ?? "Meet ${localizeName(context, o.firstName)}, ${o.age}"`
-- [ ] L3123 \[longform\] `impactReportScreen_sponsor_a47417`
+- [ ] L3143 \[longform\] `impactReportScreen_sponsor_a47417`
   - literal: `"Sponsor ${localizeName(context, o.firstName)} →"`
   - replace with: `l?.impactReportScreen_sponsor_a47417(localizeName(context, o.firstName)) ?? "Sponsor ${localizeName(context, o.firstName)} →"`
-- [ ] L3228 \[longform\] `impactReportScreen_funded_add009`
+- [ ] L3248 \[longform\] `impactReportScreen_funded_add009`
   - literal: `"${(pct * 100).round()}% funded"`
   - replace with: `l?.impactReportScreen_funded_add009((pct * 100).round()) ?? "${(pct * 100).round()}% funded"`
-- [ ] L3434 \[value\] `impactReportScreen_bd3721_bd3721`
+- [ ] L3454 \[value\] `impactReportScreen_bd3721_bd3721`
   - literal: `"$_myOrphansSponsoredCount"`
   - replace with: `l?.impactReportScreen_bd3721_bd3721(_myOrphansSponsoredCount) ?? "$_myOrphansSponsoredCount"`
-- [ ] L3447 \[value\] `impactReportScreen_b3d969_b3d969`
+- [ ] L3467 \[value\] `impactReportScreen_b3d969_b3d969`
   - literal: `"$_myProjectsSupportedCount"`
   - replace with: `l?.impactReportScreen_b3d969_b3d969(_myProjectsSupportedCount) ?? "$_myProjectsSupportedCount"`
 

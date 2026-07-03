@@ -1437,17 +1437,20 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_hasanatFromQuran ?? 'Hasanat from Quran',
-            value: _hasanatFromQuran,
-            color: const Color(0xFF1F7A6B),
-            hadith: '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten. I do not say that Alif-Lam-Mim is one letter — rather Alif is a letter, Lam is a letter, and Mim is a letter." (Tirmidhi 2910)',
-            breakdown: 'Every single letter of the Quran you recite is rewarded with 10 hasanat. The whole Mushaf holds ~330,733 letters across 6,236 ayahs, so the app uses a conservative $_kAvgLettersPerAyah-letter-per-ayah average to count this honestly.\n\n'
-                'Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
-                'Letters (≈): ${_fmt(_lifetimeAyahs * _kAvgLettersPerAyah)}\n'
-                'Multiplier: ×10\n'
-                'Total hasanat from Quran: ${_fmt(_hasanatFromQuran)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_hasanatFromQuran ?? 'Hasanat from Quran',
+              value: _hasanatFromQuran,
+              color: const Color(0xFF1F7A6B),
+              hadith: '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten. I do not say that Alif-Lam-Mim is one letter — rather Alif is a letter, Lam is a letter, and Mim is a letter." (Tirmidhi 2910)',
+              breakdown: 'Every single letter of the Quran you recite is rewarded with 10 hasanat. The whole Mushaf holds ~330,733 letters across 6,236 ayahs, so the app uses a conservative $_kAvgLettersPerAyah-letter-per-ayah average to count this honestly.\n\n' +
+                  'Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n' +
+                  'Letters (≈): ${_fmt(_lifetimeAyahs * _kAvgLettersPerAyah)}\n' +
+                  'Multiplier: ×10\n' +
+                  (l?.impactReportScreen_totalHasanatFromQuran(_fmt(_hasanatFromQuran)) ?? 'Total hasanat from Quran: ${_fmt(_hasanatFromQuran)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.tree(size: 24),
@@ -1463,19 +1466,22 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_treesInJannah ?? 'Trees in Jannah',
-            value: _treesPlanted,
-            color: const Color(0xFF2D7A45),
-            hadith: '"SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar, each one plants a tree for you in Jannah.", Tirmidhi 3464',
-            breakdown: 'One tree is planted for every recitation of these four phrases (including post-prayer tasbih, bedtime tasbih, morning/evening tasbih, and tawaf):\n\n'
-                '• SubhanAllah (all sources): ${_fmt((_phraseCounts['subhanallah'] ?? 0) + (_phraseCounts['post_prayer_subhanallah'] ?? 0) + (_phraseCounts['sleeping_tasbih_1'] ?? 0))}\n'
-                '• Alhamdulillah (all sources): ${_fmt((_phraseCounts['alhamdulillah'] ?? 0) + (_phraseCounts['post_prayer_alhamdulillah'] ?? 0) + (_phraseCounts['sleeping_tasbih_2'] ?? 0))}\n'
-                '• Allahu Akbar (all sources): ${_fmt((_phraseCounts['allahu_akbar'] ?? 0) + (_phraseCounts['post_prayer_allahu_akbar'] ?? 0) + (_phraseCounts['sleeping_tasbih_3'] ?? 0))}\n'
-                '• La ilaha illallah: ${_fmt(_phraseCounts['la_ilaha_illallah'] ?? 0)}\n'
-                '• Morning/evening tasbih (×2) & Tawaf: ${_fmt((_phraseCounts['morning_20'] ?? 0) + (_phraseCounts['evening_20'] ?? 0) + (_phraseCounts['hajj_tawaf'] ?? 0))}\n\n'
-                'Total trees planted: ${_fmt(_treesPlanted)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_treesInJannah ?? 'Trees in Jannah',
+              value: _treesPlanted,
+              color: const Color(0xFF2D7A45),
+              hadith: '"SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar, each one plants a tree for you in Jannah.", Tirmidhi 3464',
+              breakdown: 'One tree is planted for every recitation of these four phrases (including post-prayer tasbih, bedtime tasbih, morning/evening tasbih, and tawaf):\n\n' +
+                  '• SubhanAllah (all sources): ${_fmt((_phraseCounts['subhanallah'] ?? 0) + (_phraseCounts['post_prayer_subhanallah'] ?? 0) + (_phraseCounts['sleeping_tasbih_1'] ?? 0))}\n' +
+                  '• Alhamdulillah (all sources): ${_fmt((_phraseCounts['alhamdulillah'] ?? 0) + (_phraseCounts['post_prayer_alhamdulillah'] ?? 0) + (_phraseCounts['sleeping_tasbih_2'] ?? 0))}\n' +
+                  '• Allahu Akbar (all sources): ${_fmt((_phraseCounts['allahu_akbar'] ?? 0) + (_phraseCounts['post_prayer_allahu_akbar'] ?? 0) + (_phraseCounts['sleeping_tasbih_3'] ?? 0))}\n' +
+                  '• La ilaha illallah: ${_fmt(_phraseCounts['la_ilaha_illallah'] ?? 0)}\n' +
+                  '• Morning/evening tasbih (×2) & Tawaf: ${_fmt((_phraseCounts['morning_20'] ?? 0) + (_phraseCounts['evening_20'] ?? 0) + (_phraseCounts['hajj_tawaf'] ?? 0))}\n\n' +
+                  (l?.impactReportScreen_totalTreesPlanted(_fmt(_treesPlanted)) ?? 'Total trees planted: ${_fmt(_treesPlanted)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.drop(size: 24),
@@ -1552,16 +1558,19 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_treasuresOfJannah ?? 'Treasures of Jannah',
-            value: _treasures,
-            color: const Color(0xFF9B59B6),
-            hadith: '"La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah.", Bukhari 4205, Muslim 2704',
-            breakdown: 'Each recitation of "La hawla wa la quwwata illa billah" earns one treasure.\n\n'
-                '"La hawla" (standalone): ${_fmt(_phraseCounts['la_hawla'] ?? 0)}\n'
-                '"Tawakkaltu... wa la hawla": ${_fmt(_phraseCounts['iman_tawakkul'] ?? 0)}\n'
-                'Total treasures: ${_fmt(_treasures)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_treasuresOfJannah ?? 'Treasures of Jannah',
+              value: _treasures,
+              color: const Color(0xFF9B59B6),
+              hadith: '"La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah.", Bukhari 4205, Muslim 2704',
+              breakdown: 'Each recitation of "La hawla wa la quwwata illa billah" earns one treasure.\n\n' +
+                  '"La hawla" (standalone): ${_fmt(_phraseCounts['la_hawla'] ?? 0)}\n' +
+                  '"Tawakkaltu... wa la hawla": ${_fmt(_phraseCounts['iman_tawakkul'] ?? 0)}\n' +
+                  (l?.impactReportScreen_totalTreasures(_fmt(_treasures)) ?? 'Total treasures: ${_fmt(_treasures)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.chains(size: 24),
@@ -1609,15 +1618,18 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_gatesOfParadiseOpened ?? 'Gates of Paradise Opened',
-            value: _gatesOpened,
-            color: const Color(0xFFD4A017),
-            hadith: '"None of you performs wudu and completes it perfectly, then says: Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh, except that all eight gates of Paradise will be opened for him, and he may enter from whichever one he wishes.", Sahih Muslim 234',
-            breakdown: 'Each post-wudu shahadah opens all 8 gates of Paradise.\n\n'
-                'Post-wudu shahadah recited: ${_fmt(_wuduShahadaCount)}\n'
-                'Multiplied by 8 gates → ${_fmt(_gatesOpened)} openings',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_gatesOfParadiseOpened ?? 'Gates of Paradise Opened',
+              value: _gatesOpened,
+              color: const Color(0xFFD4A017),
+              hadith: '"None of you performs wudu and completes it perfectly, then says: Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh, except that all eight gates of Paradise will be opened for him, and he may enter from whichever one he wishes.", Sahih Muslim 234',
+              breakdown: 'Each post-wudu shahadah opens all 8 gates of Paradise.\n\n' +
+                  'Post-wudu shahadah recited: ${_fmt(_wuduShahadaCount)}\n' +
+                  (l?.impactReportScreen_multipliedByGates(_fmt(_gatesOpened)) ?? 'Multiplied by 8 gates → ${_fmt(_gatesOpened)} openings'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.heart(size: 24),
@@ -1734,15 +1746,18 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             positive: true,
             isFirst: false,
             isLast: false,
-            onTap: () => _showHoldingDetail(
-              title: AppLocalizations.of(context)?.impactReportScreen_bonusMillionHasanaat ?? 'Bonus Million Hasanaat',
-              value: _millionHasanaat,
-              color: const Color(0xFFB8860B),
-              hadith: '"Whoever enters the marketplace and says: La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa ala kulli shay\'in Qadir, Allah will write for him a million good deeds, erase a million of his bad deeds, and raise him a million levels.", Ibn Majah 2235',
-              breakdown: 'Each recitation of the marketplace du\'a writes 1,000,000 good deeds.\n\n'
-                  'Times recited: ${_fmt(_shoppingDuaCount)}\n'
-                  'Bonus hasanaat: ${_fmt(_millionHasanaat)}',
-            ),
+            onTap: () {
+              final l = AppLocalizations.of(context);
+              _showHoldingDetail(
+                title: l?.impactReportScreen_bonusMillionHasanaat ?? 'Bonus Million Hasanaat',
+                value: _millionHasanaat,
+                color: const Color(0xFFB8860B),
+                hadith: '"Whoever enters the marketplace and says: La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa ala kulli shay\'in Qadir, Allah will write for him a million good deeds, erase a million of his bad deeds, and raise him a million levels.", Ibn Majah 2235',
+                breakdown: 'Each recitation of the marketplace du\'a writes 1,000,000 good deeds.\n\n' +
+                    'Times recited: ${_fmt(_shoppingDuaCount)}\n' +
+                    (l?.impactReportScreen_bonusHasanaat(_fmt(_millionHasanaat)) ?? 'Bonus hasanaat: ${_fmt(_millionHasanaat)}'),
+              );
+            },
           ),
         _HoldingRow(
           icon: NoorIcon.hands(size: 24),
@@ -1756,13 +1771,18 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: true,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_sadaqahGiven ?? 'Sadaqah Given',
-            value: _totalDonated,
-            color: const Color(0xFFE67E22),
-            hadith: '"Sadaqah does not decrease wealth.", Muslim 2588',
-            breakdown: 'Seeds you donated to community projects in the app.\n\nTotal donated: ${_fmt(_totalDonated)} ${AppLocalizations.of(context)?.seedsUnit ?? 'Seeds'}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            final seedsUnit = l?.seedsUnit ?? 'Seeds';
+            _showHoldingDetail(
+              title: l?.impactReportScreen_sadaqahGiven ?? 'Sadaqah Given',
+              value: _totalDonated,
+              color: const Color(0xFFE67E22),
+              hadith: '"Sadaqah does not decrease wealth.", Muslim 2588',
+              breakdown: 'Seeds you donated to community projects in the app.\n\n' +
+                  (l?.impactReportScreen_totalDonatedSeeds(_fmt(_totalDonated), seedsUnit) ?? 'Total donated: ${_fmt(_totalDonated)} $seedsUnit'),
+            );
+          },
         ),
       ];
     // Sort highest-value holdings first so the user sees their biggest

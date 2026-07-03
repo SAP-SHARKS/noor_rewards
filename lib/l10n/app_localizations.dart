@@ -14592,6 +14592,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+{arg1} '**
   String sealCoinAnimation_e16fa4_e16fa4(String arg1);
+
+  /// No description provided for @impactReportScreen_totalHasanatFromQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Total hasanat from Quran: {n}'**
+  String impactReportScreen_totalHasanatFromQuran(String n);
+
+  /// No description provided for @impactReportScreen_totalTreesPlanted.
+  ///
+  /// In en, this message translates to:
+  /// **'Total trees planted: {n}'**
+  String impactReportScreen_totalTreesPlanted(String n);
+
+  /// No description provided for @impactReportScreen_totalTreasures.
+  ///
+  /// In en, this message translates to:
+  /// **'Total treasures: {n}'**
+  String impactReportScreen_totalTreasures(String n);
+
+  /// No description provided for @impactReportScreen_multipliedByGates.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiplied by 8 gates → {n} openings'**
+  String impactReportScreen_multipliedByGates(String n);
+
+  /// No description provided for @impactReportScreen_bonusHasanaat.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus hasanaat: {n}'**
+  String impactReportScreen_bonusHasanaat(String n);
+
+  /// No description provided for @impactReportScreen_totalDonatedSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Total donated: {n} {seeds}'**
+  String impactReportScreen_totalDonatedSeeds(String n, String seeds);
 }
 
 class _AppLocalizationsDelegate

@@ -9236,4 +9236,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String sealCoinAnimation_e16fa4_e16fa4(String arg1) {
     return '+$arg1 ';
   }
+
+  @override
+  String impactReportScreen_totalHasanatFromQuran(String n) {
+    return 'Total hasanat from Quran: $n';
+  }
+
+  @override
+  String impactReportScreen_totalTreesPlanted(String n) {
+    return 'Total trees planted: $n';
+  }
+
+  @override
+  String impactReportScreen_totalTreasures(String n) {
+    return 'Total treasures: $n';
+  }
+
+  @override
+  String impactReportScreen_multipliedByGates(String n) {
+    return 'Multiplied by 8 gates → $n openings';
+  }
+
+  @override
+  String impactReportScreen_bonusHasanaat(String n) {
+    return 'Bonus hasanaat: $n';
+  }
+
+  @override
+  String impactReportScreen_totalDonatedSeeds(String n, String seeds) {
+    return 'Total donated: $n $seeds';
+  }
 }
