@@ -45,9 +45,15 @@ Or normalize into `azkar_item_translations (item_id, locale, field, value)`.
 
 ---
 
-## 2. Dhikr illustration switch block (`dhikr_screen.dart:6702–8474`)
+## 2. Dhikr illustration content (`dhikr_screen.dart:6702–8474`, `8480–8996`, `9000+`)
 
-**~190 hardcoded editorial strings** embedded in a Dart `switch (ill)` statement — `benefitText`, `subtitle`, `completedSubtitle` for each of 60+ illustrations. Example:
+Three adjacent blocks in `dhikr_screen.dart` totalling **~600 hardcoded editorial strings**:
+
+- **6702–8474** — benefit-illustration switch block (~190 strings): `benefitText`, `subtitle`, `completedSubtitle` for each illustration.
+- **8480–8996** — `_pickTagline` function (~320 strings): a const `<Map<String,String>>` + `if (id == 'X') return 'tagline'` cascade mapping azkar IDs to English taglines.
+- **9000+** — illustration widgets from `_DuaScene` to end-of-file (~70 strings): editorial dua/verse translations embedded as `text:` props inside CustomPainter subclasses (`_kQuranicTextLines`, `_segments` record lists, direct string args to painter helpers).
+
+All three need `azkar_illustrations` (or a broader `azkar_content`) DB table with per-locale text columns. Example row-per-illustration schema:
 
 ```dart
 'benefit_morning_1' => w(

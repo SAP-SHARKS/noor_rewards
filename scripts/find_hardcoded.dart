@@ -35,11 +35,24 @@ const _skipFiles = {
 // Line ranges to skip because the content belongs in the database, not
 // the .arb files. These are Phase-4 items (see db-content-i18n.txt).
 const _skipRanges = <String, List<List<int>>>{
-  // dhikr_screen.dart: benefit-illustration switch block. Every case has
-  // hardcoded English `benefitText` / `subtitle` / `completedSubtitle`
-  // (~190 strings). Move to `azkar_illustrations` DB rows instead of
-  // exploding the .arb with editorial content.
-  'lib/screens/dhikr_screen.dart': [[6702, 8474]],
+  // dhikr_screen.dart: two Phase-4 DB-content blocks.
+  //   1. Benefit-illustration switch block (6702–8474): every case has
+  //      hardcoded English `benefitText` / `subtitle` / `completedSubtitle`
+  //      (~190 strings). Move to `azkar_illustrations` DB rows.
+  //   2. `_pickTagline` function (8480–8996): const `quranicTaglines` map
+  //      + a long if-cascade of `return 'tagline';` — ~320 azkar-ID→English
+  //      taglines. Belongs on `azkar_items.tagline_<locale>` columns.
+  'lib/screens/dhikr_screen.dart': [
+    [6702, 8474],
+    [8480, 8996],
+    // Illustration widgets — CustomPainter subclasses starting at
+    // `_DuaScene` (line 9031) through end-of-file. Every hardcoded
+    // English literal in this region is editorial content displayed
+    // by a painter (dua/verse translations, benefit callouts).
+    // Belongs on `azkar_illustrations.text_<locale>` DB columns, NOT
+    // on `.arb` — see db-content-i18n.md.
+    [9000, 30000],
+  ],
 };
 
 // Named-argument names that typically render as user-facing UI.

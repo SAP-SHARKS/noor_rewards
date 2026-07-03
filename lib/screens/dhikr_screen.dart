@@ -827,7 +827,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Default: $recommendedCount',
+                  AppLocalizations.of(context)?.dhikrScreen_default_8bd36b(recommendedCount.toString()) ??
+                      'Default: $recommendedCount',
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     color:
@@ -1804,7 +1805,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    'Pin the illustration at the top while the Arabic text scrolls beneath it',
+                                    AppLocalizations.of(context)?.dhikrScreen_pinTheIllustrationAt_5ec641 ??
+                                        'Pin the illustration at the top while the Arabic text scrolls beneath it',
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       color: txtColor.withValues(alpha: 0.55),
