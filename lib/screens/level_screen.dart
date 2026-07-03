@@ -948,22 +948,22 @@ class _ProgressTabState extends State<_ProgressTab> {
                   _XpRow(
                     NoorIcon.beads(size: 20),
                     'SubhanAllah x33',
-                    '+${PointReward.dhikr} Seeds',
+                    l.levelScreen_seeds_fff97b(PointReward.dhikr.toString()),
                   ),
                   _XpRow(
                     NoorIcon.beads(size: 20),
-                    'La ilaha illallah x100',
-                    '+${PointReward.dhikr} Seeds',
+                    l.levelScreen_laIlahaIllallah_e8c26b,
+                    l.levelScreen_seeds_fff97b(PointReward.dhikr.toString()),
                   ),
                   _XpRow(
                     NoorIcon.sunrise(size: 20),
                     l.dailyLogin,
-                    '+${PointReward.dailyLogin} Seeds',
+                    l.levelScreen_seeds_59c6a1(PointReward.dailyLogin.toString()),
                   ),
                   _XpRow(
                     NoorIcon.sparkles(size: 20),
                     l.validateAndSupport,
-                    '+${PointReward.validate} Seeds',
+                    l.levelScreen_seeds_a20530(PointReward.validate.toString()),
                   ),
                 ],
                 GestureDetector(
@@ -1667,8 +1667,8 @@ class _BadgeCard extends StatelessWidget {
               ),
               child: Text(
                 earned
-                    ? '+${badge.ptsReward} Seeds ✓'
-                    : '+${badge.ptsReward} Seeds',
+                    ? (AppLocalizations.of(context)?.levelScreen_seeds_a49180(badge.ptsReward.toString()) ?? '+${badge.ptsReward} Seeds ✓')
+                    : (AppLocalizations.of(context)?.levelScreen_seeds_a22be5(badge.ptsReward.toString()) ?? '+${badge.ptsReward} Seeds'),
                 style: GoogleFonts.rajdhani(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -1968,7 +1968,7 @@ class _ChallengeCard extends StatelessWidget {
               if (coinReward > 0) _RewardChip('+$coinReward Seeds', _kGold),
               if (multiplier > 1.0)
                 _RewardChip(
-                  '${multiplier.toStringAsFixed(0)}× Seeds Boost',
+                  AppLocalizations.of(context)?.levelScreen_seedsBoost_464454(multiplier.toStringAsFixed(0)) ?? '${multiplier.toStringAsFixed(0)}× Seeds Boost',
                   Colors.orange,
                 ),
               if (endDate.isNotEmpty)
@@ -2132,10 +2132,9 @@ class _ActivityRow extends StatelessWidget {
       ts = DateTime.parse(tsRaw).toLocal();
     } catch (_) {}
 
-    final timeStr =
-        ts != null
-            ? '${_pad(ts.hour)}:${_pad(ts.minute)}  ${ts.day}/${ts.month}/${ts.year}'
-            : '';
+    final timeStr = ts != null
+        ? (AppLocalizations.of(context)?.levelScreen_cf765f_cf765f(_pad(ts.hour), _pad(ts.minute), ts.day.toString(), ts.month.toString(), ts.year.toString()) ?? '${_pad(ts.hour)}:${_pad(ts.minute)}  ${ts.day}/${ts.month}/${ts.year}')
+        : '';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
