@@ -59,7 +59,10 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Unexpected error during Google Sign In'),
+            content: Text(
+              AppLocalizations.of(context)?.startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5 ??
+                  'Unexpected error during Google Sign In',
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );

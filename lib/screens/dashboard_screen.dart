@@ -1820,10 +1820,14 @@ class _InviteSheetState extends State<_InviteSheet>
   String get _shareLink =>
       'https://sabiq-rewards.vercel.app/join?ref=${widget.referralCode}';
 
-  String get _shareMessage =>
-      'Join me on Sabiq Rewards, earn Seeds for daily Quran, Dhikr & good deeds!\n\n'
-      'Use my code *${widget.referralCode}* and we both get 500 Sabiq Seeds!\n\n'
-      '$_shareLink';
+  String _shareMessage(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx);
+    final greeting = l?.dashboardScreen_joinMeOnSabiq_755fb5 ??
+        'Join me on Sabiq Rewards, earn Seeds for daily Quran, Dhikr & good deeds!\n\n';
+    final code = l?.dashboardScreen_useMyCodeAnd_7d13b3(widget.referralCode) ??
+        'Use my code *${widget.referralCode}* and we both get 500 Sabiq Seeds!\n\n';
+    return '$greeting$code$_shareLink';
+  }
 
   @override
   void initState() {
@@ -1870,11 +1874,11 @@ class _InviteSheetState extends State<_InviteSheet>
 
   void _shareGeneral() {
     // ignore: deprecated_member_use
-    Share.share(_shareMessage, subject: 'Join Sabiq Rewards');
+    Share.share(_shareMessage(context), subject: 'Join Sabiq Rewards');
   }
 
   void _shareWhatsApp() async {
-    final encoded = Uri.encodeComponent(_shareMessage);
+    final encoded = Uri.encodeComponent(_shareMessage(context));
     // whatsapp:// deep link — opens WhatsApp directly if installed
     final waUri = Uri.parse('whatsapp://send?text=$encoded');
     try {
@@ -1882,10 +1886,10 @@ class _InviteSheetState extends State<_InviteSheet>
       await Share.shareUri(waUri);
     } catch (_) {
       // WhatsApp not installed or shareUri failed — fallback: copy + system share
-      await Clipboard.setData(ClipboardData(text: _shareMessage));
+      await Clipboard.setData(ClipboardData(text: _shareMessage(context)));
       if (!mounted) return;
       // ignore: deprecated_member_use
-      Share.share(_shareMessage, subject: 'Join Sabiq Rewards');
+      Share.share(_shareMessage(context), subject: 'Join Sabiq Rewards');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

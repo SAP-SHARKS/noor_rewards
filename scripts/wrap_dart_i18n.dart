@@ -101,7 +101,12 @@ List<String> _extractInterpExpressions(String literal) {
 }
 
 bool _literalIsMultiline(String literal) {
-  return literal.contains(r'\n') || literal.contains('\n');
+  // Only reject if the literal contains an ACTUAL newline character —
+  // which would mean the source uses a triple-quoted / adjacent-string
+  // form we can't safely find with a per-line regex. An `\n` ESCAPE
+  // sequence in a normal single-line source literal is fine to wrap:
+  // the replacement preserves the exact bytes.
+  return literal.contains('\n');
 }
 
 /// Locate the exact quoted form of `literal` on `line`. Returns null if
@@ -453,12 +458,18 @@ Future<void> main(List<String> args) async {
         if (unsafe) {
           totalSkipped++;
           skippedReasons.update('R2_interpolation_complex', (v) => v + 1, ifAbsent: () => 1);
+          if (args.contains('--debug-r2')) {
+            stderr.writeln('R2c $path:${hit.line} "${hit.literal}"');
+          }
           continue;
         }
       }
       if (_literalIsMultiline(hit.literal)) {
         totalSkipped++;
         skippedReasons.update('R3_multiline', (v) => v + 1, ifAbsent: () => 1);
+        if (args.contains('--debug-r3')) {
+          stderr.writeln('R3 $path:${hit.line} "${hit.literal}"');
+        }
         continue;
       }
       final lineIdx = hit.line - 1;
@@ -477,11 +488,17 @@ Future<void> main(List<String> args) async {
       if (_inUnsafeContext(line, loc.start)) {
         totalSkipped++;
         skippedReasons.update('R5_const_or_case', (v) => v + 1, ifAbsent: () => 1);
+        if (args.contains('--debug-r5')) {
+          stderr.writeln('R5c $path:${hit.line} ${line.trim()}');
+        }
         continue;
       }
       if (_insidePendingConstCollection(lines, lineIdx)) {
         totalSkipped++;
         skippedReasons.update('R5_const_collection', (v) => v + 1, ifAbsent: () => 1);
+        if (args.contains('--debug-r5')) {
+          stderr.writeln('R5p $path:${hit.line} ${line.trim()}');
+        }
         continue;
       }
       final host = _detectHostPattern(lines, lineIdx, loc.start);

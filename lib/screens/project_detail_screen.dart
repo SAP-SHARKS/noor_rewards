@@ -171,35 +171,41 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
   }
 
   // ── Share helpers ─────────────────────────────────────────────────────────
-  String get _shareText {
+  String _shareText(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx);
     final p = widget.project;
     final title = p['title'] as String? ?? '';
     final sponsor = p['sponsor'] as String? ?? '';
-    final current = (p['current_points'] as num?)?.toInt() ?? 0;
-    final target = (p['target_points'] as num?)?.toInt() ?? 1;
-    final pct = ((current / target) * 100).toStringAsFixed(0);
-    return '🤲 Support "$title"\n\n'
-        'Organised by $sponsor\n\n'
-        'Funded so far, every Seed counts!\n\n'
-        'Open Sabiq Rewards app to donate your Seeds and earn reward.\n'
+    // Header line kept hardcoded — has embedded double quotes around `$title`
+    // which the codemod couldn't flag; a translator can localise via a
+    // future manual key add if needed.
+    final header = '🤲 Support "$title"\n\n';
+    final org = l?.projectDetailScreen_organisedBy_8b317a(sponsor) ??
+        'Organised by $sponsor\n\n';
+    final funded = l?.projectDetailScreen_fundedSoFarEvery_dab3fd ??
+        'Funded so far, every Seed counts!\n\n';
+    final cta = l?.projectDetailScreen_openSabiqRewardsApp_cdda14 ??
+        'Open Sabiq Rewards app to donate your Seeds and earn reward.\n';
+    final tags = l?.projectDetailScreen_sabiqrewardsSadaqahIslamicCharity_663ba5 ??
         '#SabiqRewards #Sadaqah #IslamicCharity';
+    return '$header$org$funded$cta$tags';
   }
 
   Future<void> _shareGeneric() async {
     HapticFeedback.lightImpact();
-    await SharePlus.instance.share(ShareParams(text: _shareText));
+    await SharePlus.instance.share(ShareParams(text: _shareText(context)));
   }
 
   Future<void> _shareWhatsApp() async {
     HapticFeedback.mediumImpact();
-    final encoded = Uri.encodeComponent(_shareText);
+    final encoded = Uri.encodeComponent(_shareText(context));
     // wa.me deep-link works on Android & iOS (opens WhatsApp directly)
     final uri = Uri.parse('whatsapp://send?text=$encoded');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       // Fallback: generic share if WhatsApp not installed
-      await SharePlus.instance.share(ShareParams(text: _shareText));
+      await SharePlus.instance.share(ShareParams(text: _shareText(context)));
     }
   }
 
