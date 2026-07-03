@@ -2388,15 +2388,29 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           ? '${(n / 1000).toStringAsFixed(1)}k'
           : '$n';
 
-  String _timeAgo(DateTime d) {
+  String _timeAgo(BuildContext ctx, DateTime d) {
+    final l = AppLocalizations.of(ctx);
     final diff = DateTime.now().difference(d);
     if (diff.inSeconds < 60) return 'just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inMinutes < 60) {
+      return l?.impactReportScreen_ago_71107c(diff.inMinutes.toString()) ??
+          '${diff.inMinutes}m ago';
+    }
+    if (diff.inHours < 24) {
+      return l?.impactReportScreen_ago_c25b44(diff.inHours.toString()) ??
+          '${diff.inHours}h ago';
+    }
     if (diff.inDays < 7) return '${diff.inDays}d ago';
-    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
-    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()}mo ago';
-    return '${(diff.inDays / 365).floor()}y ago';
+    if (diff.inDays < 30) {
+      final w = (diff.inDays / 7).floor();
+      return l?.impactReportScreen_ago_e160e3(w.toString()) ?? '${w}w ago';
+    }
+    if (diff.inDays < 365) {
+      final mo = (diff.inDays / 30).floor();
+      return l?.impactReportScreen_moAgo_325a71(mo.toString()) ?? '${mo}mo ago';
+    }
+    final y = (diff.inDays / 365).floor();
+    return l?.impactReportScreen_ago_65f0ec(y.toString()) ?? '${y}y ago';
   }
 
   // Recent-donors card shown inside each project: "X contributors" header
@@ -2529,7 +2543,7 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
     final initial = localName.trim().isEmpty
         ? '?'
         : localName.trim().substring(0, 1).toUpperCase();
-    final subtitle = _timeAgo(d.lastDonatedAt);
+    final subtitle = _timeAgo(context, d.lastDonatedAt);
     return Row(
       children: [
         ClipOval(
@@ -2791,7 +2805,11 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                                             context,
                                           ).showSnackBar(
                                             SnackBar(
-                                              content: Text('Failed: $e'),
+                                              content: Text(
+                                                AppLocalizations.of(context)
+                                                        ?.impactReportScreen_failed_190558(e.toString()) ??
+                                                    'Failed: $e',
+                                              ),
                                               backgroundColor: _C.rose,
                                             ),
                                           );
@@ -3181,7 +3199,10 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '${(pct * 100).round()}% funded',
+                        AppLocalizations.of(context)?.impactReportScreen_funded_add009(
+                              (pct * 100).round().toString(),
+                            ) ??
+                            '${(pct * 100).round()}% funded',
                         style: GoogleFonts.outfit(
                           fontSize: 11.5,
                           color: Colors.white.withValues(alpha: 0.92),
@@ -3338,8 +3359,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                       const SizedBox(height: 2),
                       Text(
                         hasGiving
-                            ? 'Your lifetime impact'
-                            : 'Start your impact journey',
+                            ? (AppLocalizations.of(context)?.impactReportScreen_yourLifetimeImpact_8bfdcd ?? 'Your lifetime impact')
+                            : (AppLocalizations.of(context)?.impactReportScreen_startYourImpactJourney_1ae8c4 ?? 'Start your impact journey'),
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
