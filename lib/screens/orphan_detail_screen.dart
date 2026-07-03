@@ -190,7 +190,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
           const SizedBox(height: 6),
           Row(
             children: [
-              _chip('${_orphan.age} years'),
+              _chip(AppLocalizations.of(context)?.orphanDetailScreen_years_debb46(_orphan.age.toString()) ?? '${_orphan.age} years'),
               if (_orphan.gender != null && _orphan.gender!.isNotEmpty)
                 _chip(_orphan.gender == 'female' ? 'Girl' : 'Boy'),
               if (_orphan.displayLocation != null)
@@ -220,7 +220,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${_orphan.currentSeeds} of ${_orphan.targetSeeds} Seeds',
+                  AppLocalizations.of(context)?.orphanDetailScreen_ofSeeds_2a29fc(_orphan.currentSeeds.toString(), _orphan.targetSeeds.toString()) ?? '${_orphan.currentSeeds} of ${_orphan.targetSeeds} Seeds',
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -252,7 +252,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             if (_orphan.partnerOrg != null && _orphan.partnerOrg!.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                'Through ${_orphan.partnerOrg!}',
+                AppLocalizations.of(context)?.orphanDetailScreen_through_2cdb72(_orphan.partnerOrg!) ?? 'Through ${_orphan.partnerOrg!}',
                 style: GoogleFonts.outfit(
                   fontSize: 11.5,
                   fontStyle: FontStyle.italic,
@@ -387,7 +387,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              '"And they give food, despite their love for it, to the needy, the orphan, and the captive.", Qur’an 76:8',
+              (AppLocalizations.of(context)?.orphanDetailScreen_andTheyGiveFood_7ddcff ?? '"And they give food, despite their love for it, to the needy, the orphan, and the captive."') + ', Qur’an 76:8',
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 fontStyle: FontStyle.italic,
@@ -450,7 +450,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            _timeAgo(s.donatedAt),
+                            _timeAgo(context, s.donatedAt),
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               color: Y4.palette.inkSoft,
@@ -486,15 +486,27 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
-  String _timeAgo(DateTime d) {
+  String _timeAgo(BuildContext ctx, DateTime d) {
+    final l = AppLocalizations.of(ctx);
     final diff = DateTime.now().difference(d);
     if (diff.inSeconds < 60) return 'just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inMinutes < 60) {
+      return l?.orphanDetailScreen_ago_71107c(diff.inMinutes.toString()) ?? '${diff.inMinutes}m ago';
+    }
+    if (diff.inHours < 24) {
+      return l?.orphanDetailScreen_ago_c25b44(diff.inHours.toString()) ?? '${diff.inHours}h ago';
+    }
     if (diff.inDays < 7) return '${diff.inDays}d ago';
-    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
-    if (diff.inDays < 365) return '${(diff.inDays / 30).floor()}mo ago';
-    return '${(diff.inDays / 365).floor()}y ago';
+    if (diff.inDays < 30) {
+      final w = (diff.inDays / 7).floor();
+      return l?.orphanDetailScreen_ago_e160e3(w.toString()) ?? '${w}w ago';
+    }
+    if (diff.inDays < 365) {
+      final mo = (diff.inDays / 30).floor();
+      return l?.orphanDetailScreen_moAgo_325a71(mo.toString()) ?? '${mo}mo ago';
+    }
+    final y = (diff.inDays / 365).floor();
+    return l?.orphanDetailScreen_ago_65f0ec(y.toString()) ?? '${y}y ago';
   }
 
   Widget _section(String title, Widget child) {
@@ -583,7 +595,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                     ),
                   ),
                   Text(
-                    '$_availablePoints Seeds',
+                    AppLocalizations.of(context)?.orphanDetailScreen_seeds_30d8dc(_availablePoints.toString()) ?? '$_availablePoints Seeds',
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
@@ -655,7 +667,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'JazakAllah Khayran! $amount Seeds sponsored.',
+                      AppLocalizations.of(context)?.orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec(amount.toString()) ?? 'JazakAllah Khayran! $amount Seeds sponsored.',
                       style: GoogleFonts.outfit(
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -755,7 +767,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Sponsor ${localizeName(context, widget.orphan.firstName)}',
+            AppLocalizations.of(context)?.orphanDetailScreen_sponsor_b34bcf(localizeName(context, widget.orphan.firstName)) ?? 'Sponsor ${localizeName(context, widget.orphan.firstName)}',
             style: GoogleFonts.fraunces(
               fontSize: 22,
               fontWeight: FontWeight.w500,
@@ -764,7 +776,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Choose how many Seeds to give. Minimum ${widget.orphan.minSponsorship}.',
+            AppLocalizations.of(context)?.orphanDetailScreen_chooseHowManySeeds_b69aa2(widget.orphan.minSponsorship.toString()) ?? 'Choose how many Seeds to give. Minimum ${widget.orphan.minSponsorship}.',
             style: GoogleFonts.outfit(fontSize: 13, color: Y4.palette.inkSoft),
           ),
           const SizedBox(height: 16),
@@ -831,7 +843,7 @@ class _SponsorSheetState extends State<_SponsorSheet> {
               const SabiqCoin(size: 14),
               const SizedBox(width: 5),
               Text(
-                'Your balance: ${widget.availablePoints} Seeds',
+                AppLocalizations.of(context)?.orphanDetailScreen_yourBalanceSeeds_f8045b(widget.availablePoints.toString()) ?? 'Your balance: ${widget.availablePoints} Seeds',
                 style: GoogleFonts.outfit(fontSize: 12, color: Y4.palette.inkSoft),
               ),
             ],
