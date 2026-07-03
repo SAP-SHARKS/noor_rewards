@@ -14784,6 +14784,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.'**
   String get localReminderScheduler_kahfPmBody;
+
+  /// No description provided for @liveNotificationService_validateChannelDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders to seal your pending Seeds before midnight.'**
+  String get liveNotificationService_validateChannelDesc;
+
+  /// No description provided for @liveNotificationService_validateTicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal your Seeds before midnight'**
+  String get liveNotificationService_validateTicker;
+
+  /// No description provided for @liveNotificationService_validateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal your Seeds before midnight!'**
+  String get liveNotificationService_validateTitle;
+
+  /// No description provided for @liveNotificationService_validateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {n} pending Seeds. Tap Seal the Day before midnight or they expire.'**
+  String liveNotificationService_validateBody(String n);
+
+  /// No description provided for @liveNotificationService_ayatRead.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} Ayat Read today 📖'**
+  String liveNotificationService_ayatRead(String n);
+
+  /// No description provided for @liveNotificationService_readQuranTime.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} Read Quran today ⏱️'**
+  String liveNotificationService_readQuranTime(String time);
+
+  /// No description provided for @liveNotificationService_nothingRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing Read from Quran today 📖'**
+  String get liveNotificationService_nothingRead;
+
+  /// No description provided for @liveNotificationService_dhikrCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} Dhikr completed today 📿'**
+  String liveNotificationService_dhikrCompleted(String n);
+
+  /// No description provided for @liveNotificationService_tickerBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'{ayah} ayat · {dhikr} dhikr today'**
+  String liveNotificationService_tickerBusy(String ayah, String dhikr);
+
+  /// No description provided for @liveNotificationService_tickerIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep reading and doing Dhikr!'**
+  String get liveNotificationService_tickerIdle;
+
+  /// No description provided for @liveNotificationService_channelDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Live today\'s Quran and Dhikr progress'**
+  String get liveNotificationService_channelDesc;
+
+  /// No description provided for @liveNotificationService_seedsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Seeds Today ✨'**
+  String get liveNotificationService_seedsToday;
+
+  /// No description provided for @liveNotificationService_summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open Sabiq'**
+  String get liveNotificationService_summary;
 }
 
 class _AppLocalizationsDelegate

@@ -9365,4 +9365,59 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get localReminderScheduler_kahfPmBody =>
       'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.';
+
+  @override
+  String get liveNotificationService_validateChannelDesc =>
+      'Reminders to seal your pending Seeds before midnight.';
+
+  @override
+  String get liveNotificationService_validateTicker =>
+      'Seal your Seeds before midnight';
+
+  @override
+  String get liveNotificationService_validateTitle =>
+      'Seal your Seeds before midnight!';
+
+  @override
+  String liveNotificationService_validateBody(String n) {
+    return 'You have $n pending Seeds. Tap Seal the Day before midnight or they expire.';
+  }
+
+  @override
+  String liveNotificationService_ayatRead(String n) {
+    return '$n Ayat Read today 📖';
+  }
+
+  @override
+  String liveNotificationService_readQuranTime(String time) {
+    return '$time Read Quran today ⏱️';
+  }
+
+  @override
+  String get liveNotificationService_nothingRead =>
+      'Nothing Read from Quran today 📖';
+
+  @override
+  String liveNotificationService_dhikrCompleted(String n) {
+    return '$n Dhikr completed today 📿';
+  }
+
+  @override
+  String liveNotificationService_tickerBusy(String ayah, String dhikr) {
+    return '$ayah ayat · $dhikr dhikr today';
+  }
+
+  @override
+  String get liveNotificationService_tickerIdle =>
+      'Keep reading and doing Dhikr!';
+
+  @override
+  String get liveNotificationService_channelDesc =>
+      'Live today\'s Quran and Dhikr progress';
+
+  @override
+  String get liveNotificationService_seedsToday => 'Your Seeds Today ✨';
+
+  @override
+  String get liveNotificationService_summary => 'Tap to open Sabiq';
 }

@@ -5823,5 +5823,56 @@
   "localReminderScheduler_salawatTitle": "Salawat on Friday",
   "localReminderScheduler_salawatBody": "Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.",
   "localReminderScheduler_kahfPmTitle": "Don't miss Surah Al-Kahf today",
-  "localReminderScheduler_kahfPmBody": "A few hours to Maghrib — finish Surah Al-Kahf if you haven't yet."
+  "localReminderScheduler_kahfPmBody": "A few hours to Maghrib — finish Surah Al-Kahf if you haven't yet.",
+  "liveNotificationService_validateChannelDesc": "Reminders to seal your pending Seeds before midnight.",
+  "liveNotificationService_validateTicker": "Seal your Seeds before midnight",
+  "liveNotificationService_validateTitle": "Seal your Seeds before midnight!",
+  "liveNotificationService_validateBody": "You have {n} pending Seeds. Tap Seal the Day before midnight or they expire.",
+  "@liveNotificationService_validateBody": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "liveNotificationService_ayatRead": "{n} Ayat Read today 📖",
+  "@liveNotificationService_ayatRead": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "liveNotificationService_readQuranTime": "{time} Read Quran today ⏱️",
+  "@liveNotificationService_readQuranTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "liveNotificationService_nothingRead": "Nothing Read from Quran today 📖",
+  "liveNotificationService_dhikrCompleted": "{n} Dhikr completed today 📿",
+  "@liveNotificationService_dhikrCompleted": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "liveNotificationService_tickerBusy": "{ayah} ayat · {dhikr} dhikr today",
+  "@liveNotificationService_tickerBusy": {
+    "placeholders": {
+      "ayah": {
+        "type": "String"
+      },
+      "dhikr": {
+        "type": "String"
+      }
+    }
+  },
+  "liveNotificationService_tickerIdle": "Keep reading and doing Dhikr!",
+  "liveNotificationService_channelDesc": "Live today's Quran and Dhikr progress",
+  "liveNotificationService_seedsToday": "Your Seeds Today ✨",
+  "liveNotificationService_summary": "Tap to open Sabiq"
 }

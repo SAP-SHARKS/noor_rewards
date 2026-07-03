@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'locale_service.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 class NoorLiveNotificationService {
@@ -199,14 +200,16 @@ class NoorLiveNotificationService {
     );
     if (when.isAfter(midnight)) return;
 
+    final l = LocaleService.instance.l;
     final androidDetails = AndroidNotificationDetails(
       _validateChannelId,
       _validateChannelName,
-      channelDescription:
+      channelDescription: l?.liveNotificationService_validateChannelDesc ??
           'Reminders to seal your pending Seeds before midnight.',
       importance: Importance.high,
       priority: Priority.high,
-      ticker: 'Seal your Seeds before midnight',
+      ticker: l?.liveNotificationService_validateTicker ??
+          'Seal your Seeds before midnight',
       color: const Color(0xFFFFC83D),
     );
     const iosDetails = DarwinNotificationDetails(
@@ -218,8 +221,11 @@ class NoorLiveNotificationService {
     try {
       await _plugin.zonedSchedule(
         id: _validateNotifId,
-        title: 'Seal your Seeds before midnight!',
-        body:
+        title: l?.liveNotificationService_validateTitle ??
+            'Seal your Seeds before midnight!',
+        body: l?.liveNotificationService_validateBody(
+              pendingSeeds.toString(),
+            ) ??
             'You have $pendingSeeds pending Seeds. Tap Seal the Day before midnight or they expire.',
         scheduledDate: when,
         notificationDetails:
@@ -254,33 +260,51 @@ class NoorLiveNotificationService {
   Future<void> _refresh() async {
     if (kIsWeb) return;
 
+    final l = LocaleService.instance.l;
     final lines = <String>[];
 
     // Quran lines
     if (_ayahCount > 0) {
-      lines.add('$_ayahCount Ayat Read today 📖');
+      lines.add(
+        l?.liveNotificationService_ayatRead(_ayahCount.toString()) ??
+            '$_ayahCount Ayat Read today 📖',
+      );
     }
     if (_quranTimeSec >= 60) {
-      lines.add('${_formatTime(_quranTimeSec)} Read Quran today ⏱️');
+      lines.add(
+        l?.liveNotificationService_readQuranTime(_formatTime(_quranTimeSec)) ??
+            '${_formatTime(_quranTimeSec)} Read Quran today ⏱️',
+      );
     }
     if (_ayahCount == 0 && _quranTimeSec < 60) {
-      lines.add('Nothing Read from Quran today 📖');
+      lines.add(
+        l?.liveNotificationService_nothingRead ??
+            'Nothing Read from Quran today 📖',
+      );
     }
 
     // Dhikr line
     if (_dhikrCount > 0) {
-      lines.add('$_dhikrCount Dhikr completed today 📿');
+      lines.add(
+        l?.liveNotificationService_dhikrCompleted(_dhikrCount.toString()) ??
+            '$_dhikrCount Dhikr completed today 📿',
+      );
     }
 
-    final ticker =
-        _ayahCount > 0
-            ? '$_ayahCount ayat · $_dhikrCount dhikr today'
-            : 'Keep reading and doing Dhikr!';
+    final ticker = _ayahCount > 0
+        ? (l?.liveNotificationService_tickerBusy(
+              _ayahCount.toString(),
+              _dhikrCount.toString(),
+            ) ??
+            '$_ayahCount ayat · $_dhikrCount dhikr today')
+        : (l?.liveNotificationService_tickerIdle ??
+            'Keep reading and doing Dhikr!');
 
     final androidDetails = AndroidNotificationDetails(
       _channelId,
       _channelName,
-      channelDescription: "Live today's Quran and Dhikr progress",
+      channelDescription: l?.liveNotificationService_channelDesc ??
+          "Live today's Quran and Dhikr progress",
       importance: Importance.low,
       priority: Priority.low,
       ongoing: true,
@@ -289,8 +313,9 @@ class NoorLiveNotificationService {
       ticker: ticker,
       styleInformation: BigTextStyleInformation(
         lines.join('\n'),
-        contentTitle: 'Your Seeds Today ✨',
-        summaryText: 'Tap to open Sabiq',
+        contentTitle: l?.liveNotificationService_seedsToday ??
+            'Your Seeds Today ✨',
+        summaryText: l?.liveNotificationService_summary ?? 'Tap to open Sabiq',
       ),
       color: const Color(0xFF6B4EBB),
     );
@@ -310,7 +335,7 @@ class NoorLiveNotificationService {
 
     await _plugin.show(
       id: _notifId,
-      title: 'Your Seeds Today ✨',
+      title: l?.liveNotificationService_seedsToday ?? 'Your Seeds Today ✨',
       body: lines.join('  •  '),
       notificationDetails: NotificationDetails(
         android: androidDetails,
