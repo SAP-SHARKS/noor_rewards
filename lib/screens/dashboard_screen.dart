@@ -2037,9 +2037,13 @@ class _InviteSheetState extends State<_InviteSheet>
                             (_, __) => Container(
                               padding: const EdgeInsets.all(18),
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Y4.butter, Y4.honey, Y4.butter],
-                                  stops: [0.0, 0.5, 1.0],
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Y4.palette.butter,
+                                    Y4.palette.honey,
+                                    Y4.palette.butter,
+                                  ],
+                                  stops: const [0.0, 0.5, 1.0],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(

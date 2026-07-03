@@ -509,13 +509,19 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
   static const _kThemeAccents = [
     (Color(0xFF2BAE99), 'Teal', '🌊'),
     (Color(0xFF6C63FF), 'Indigo', '🔮'),
-    (Color(0xFFE67E22), 'Amber', '🔥'),
+    (Color(0xFFD89A1E), 'Amber', '🔥'),
     (Color(0xFFE91E63), 'Rose', '🌸'),
     (Color(0xFF2196F3), 'Blue', '💧'),
     (Color(0xFFFFC83D), 'Honey', '🍯'),
   ];
-  Color get _accent =>
-      _kThemeAccents[_themeIdx.clamp(0, _kThemeAccents.length - 1)].$1;
+  Color get _accent {
+    // "Honey" entry (index 5) is the default — return the active app
+    // palette's honey so the reader accent follows the global theme mode
+    // (Rose/Sky/Mint/etc.) instead of the baked #FFC83D.
+    final idx = _themeIdx.clamp(0, _kThemeAccents.length - 1);
+    if (idx == 5) return Y4.palette.honey;
+    return _kThemeAccents[idx].$1;
+  }
 
   // ─────────────────────────────────────────────────────────────────────────────
   @override
@@ -2468,7 +2474,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                         child: Padding(
                                           padding: const EdgeInsets.all(32),
                                           child: CircularProgressIndicator(
-                                            color: const Color(0xFFFFC83D),
+                                            color: Y4.palette.honey,
                                             strokeWidth: 2,
                                           ),
                                         ),
@@ -3919,7 +3925,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 ? Colors.white12
                                 : Colors.grey.shade200)
                             : _isPlaying
-                            ? const Color(0xFFD89A1E) // honeyWarm (active playing)
+                            ? Y4.palette.honeyDeep // honeyWarm (active playing)
                             : _accent,
                     boxShadow:
                         hasAudio
@@ -4329,7 +4335,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                                 )?.listen ??
                                                 'Listen'),
                                     active: _showAudioPlayer,
-                                    activeColor: const Color(0xFFE67E22),
+                                    activeColor: Y4.palette.honeyDeep,
                                     darkMode: _darkMode,
                                     onTap: () {
                                       setState(
@@ -4350,7 +4356,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                       AppLocalizations.of(context)?.mushaf ??
                                       'Mushaf',
                                   active: false,
-                                  activeColor: const Color(0xFFFFC83D),
+                                  activeColor: Y4.palette.honey,
                                   darkMode: _darkMode,
                                   onTap: () async {
                                     final page =
@@ -4453,7 +4459,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          'Word data unavailable. Check your connection.',
+                                          AppLocalizations.of(context)?.quranScreen_wordDataUnavailableCheck ?? 'Word data unavailable. Check your connection.',
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.outfit(
                                             fontSize: 13,
@@ -5195,7 +5201,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFFFFC83D),
+                        Y4.palette.honey,
                       ),
                     ),
                   ),
@@ -5764,7 +5770,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: _darkMode ? const Color(0xFFFFC83D) : const Color(0xFFFFC83D),
+          color: _darkMode ? Y4.palette.honey : Y4.palette.honey,
           borderRadius: BorderRadius.circular(12),
         ),
         // Ensures the Bismillah never overflows the screen horizontally on big font sizes
@@ -5820,10 +5826,10 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     final pad = MediaQuery.of(context).padding;
     final isDark = _darkMode;
 
-    // Honey/brown palette — Y4 theme-aware
-    const honeyBrown = Color(0xFFFFC83D); // honey-gold (dark bg)
-    const honeyWarm = Color(0xFFFFC83D); // honeyDeep amber (light pill)
-    const honeyGold = Color(0xFFFFC83D); // bright honey-gold (glow/accent)
+    // Palette-driven so mushaf pills follow the active theme mode.
+    final honeyBrown = Y4.palette.honey;
+    final honeyWarm = Y4.palette.honey;
+    final honeyGold = Y4.palette.honey;
 
     final barBg = isDark ? honeyBrown : honeyWarm;
     final barBgDarker = isDark ? honeyBrown : honeyWarm;

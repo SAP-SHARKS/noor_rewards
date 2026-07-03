@@ -287,7 +287,7 @@ class _MiniQuranCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'In the name of Allah, the Most Gracious…',
+            AppLocalizations.of(context)?.phase1Screens_inTheNameOf ?? 'In the name of Allah, the Most Gracious…',
             style: OnbTok.sans(fontSize: 6, color: OnbTok.brownSoft),
           ),
         ],

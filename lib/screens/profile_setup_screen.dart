@@ -285,7 +285,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
           const SizedBox(height: 36),
           _InputField(
             ctrl: _nameCtrl,
-            hint: 'Ahmad, Fatima, Yusuf…',
+            hint: AppLocalizations.of(context)?.profileSetupScreen_ahmadFatimaYusuf ?? 'Ahmad, Fatima, Yusuf…',
             icon: Icons.person_outline_rounded,
             accent: const Color(0xFF00C875),
             onSubmit: _next,
@@ -332,7 +332,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
           const SizedBox(height: 36),
           _InputField(
             ctrl: _countryCtrl,
-            hint: 'Pakistan, Egypt, Malaysia…',
+            hint: AppLocalizations.of(context)?.profileSetupScreen_pakistanEgyptMalaysia ?? 'Pakistan, Egypt, Malaysia…',
             icon: Icons.public_rounded,
             accent: const Color(0xFFFFAA00),
             onSubmit: _next,

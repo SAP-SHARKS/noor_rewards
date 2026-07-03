@@ -2898,7 +2898,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '+${milestone.ptsBonus} Seeds',
+                l?.levelScreen_seeds_990893((milestone.ptsBonus).toString()) ?? '+${milestone.ptsBonus} Seeds',
                 style: GoogleFonts.rajdhani(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -2921,7 +2921,7 @@ class _StreakMilestoneProgress extends StatelessWidget {
                 ),
               ),
               Text(
-                '$current / ${milestone.days} days',
+                l?.levelScreen_days_100e10((current).toString(), (milestone.days).toString()) ?? '$current / ${milestone.days} days',
                 style: GoogleFonts.outfit(fontSize: 11, color: Y4.palette.inkSoft),
               ),
             ],
@@ -3045,7 +3045,7 @@ class _StreakMilestoneList extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${m.days} day streak',
+                          l?.levelScreen_dayStreak_df2abf((m.days).toString()) ?? '${m.days} day streak',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             color: Y4.palette.muted,

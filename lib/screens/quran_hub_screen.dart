@@ -1034,7 +1034,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                 child: NoorInlineLoader(
                   height: double.infinity,
                   color: _kTeal,
-                  label: 'Loading Quran…',
+                  label: AppLocalizations.of(context)?.quranHubScreen_loadingQuran ?? 'Loading Quran…',
                 ),
               )
               : FadeTransition(opacity: _fadeAnim, child: _buildBody()),
@@ -1205,8 +1205,8 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                     width: double.infinity,
                     height: 58,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Y4.butter, Y4.honey],
+                      gradient: LinearGradient(
+                        colors: [Y4.palette.butter, Y4.palette.honey],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ),
@@ -1224,9 +1224,9 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.auto_stories_rounded,
-                            color: Y4.ink,
+                            color: Y4.palette.ink,
                             size: 22,
                           ),
                           const SizedBox(width: 12),
@@ -1518,9 +1518,9 @@ class _ContinueCardState extends State<_ContinueCard> {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            // Light honey gradient — matches dashboard hero
-            gradient: const LinearGradient(
-              colors: [Y4.butter, Y4.honey],
+            // Palette-driven honey gradient — follows the active mode.
+            gradient: LinearGradient(
+              colors: [Y4.palette.butter, Y4.palette.honey],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),

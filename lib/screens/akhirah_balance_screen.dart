@@ -57,50 +57,92 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
   List<_DayRow> _days = const [];
 
   late AnimationController _intro;
-  // Reflection picked once per screen build so it stays stable while the
-  // user reads, but varies between visits. Defaults to a fixed line until
+  // Reflection index picked once per screen build so it stays stable while
+  // the user reads, but varies between visits. Defaults to 0 until
   // _loadReflection() picks a fresh one (which also persists the chosen
   // index so the next visit is guaranteed to be different).
-  String _reflection = _kReflectionPool[0];
+  //
+  // Storage is the INDEX (not the string) so we can rebuild the localised
+  // line via `_reflectionPool(context)[_reflectionIdx]` on every rebuild —
+  // this lets a locale switch immediately re-translate the reminder without
+  // having to re-run _loadReflection.
+  int _reflectionIdx = 0;
   static const String _kPrefKeyLastReflectionIdx = 'akhirah_last_reflection_idx';
 
+  // Length of the reflection pool. Kept as a compile-time const so the
+  // async loader can call `rand.nextInt(_kReflectionCount)` before any
+  // BuildContext is available. MUST match the number of entries returned
+  // by `_reflectionPool` below.
+  static const int _kReflectionCount = 24;
+
   // Dhikr-focused motivational nudges shown after the session reward.
-  // Mix of three flavours:
-  //   • Hadith-anchored: cite a specific phrase the user just recited,
-  //     so the reward feels concrete and traceable.
-  //   • Quranic: short ayat about remembrance.
-  //   • Habit-coaching: pure motivation, no scripture, focused on
-  //     consistency and the long-term scale-of-the-soul payoff.
+  // Mix of three flavours (order preserved from the original const pool):
+  //   • Hadith-anchored (indices 0–8): cite a specific phrase the user
+  //     just recited, so the reward feels concrete and traceable.
+  //   • Quranic (indices 9–11): short ayat about remembrance.
+  //   • Habit-coaching (indices 12–23): pure motivation, no scripture,
+  //     focused on consistency and the long-term scale-of-the-soul payoff.
   // Each <= ~20 words so it fits in a single card without truncation.
-  static const List<String> _kReflectionPool = [
-    // — Hadith-anchored —
-    '“Subhanallahi wa bi-hamdihi” — said 100 times a day wipes sins, even like the foam of the sea. (Bukhari)',
-    'Say La ilaha illallah 100 times — equals freeing 10 slaves and 100 hasanat. (Bukhari)',
-    'Light on the tongue, heavy on the scales: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)',
-    'The dhikr of Allah is heavier on the scales than gold of equal weight. Keep going.',
-    '“Your tongue should stay moist with the remembrance of Allah.” — Is it still moist?',
-    'Astaghfirullah — the Prophet ✍ said it 100 times a day, and he had no sin. How many have you?',
-    'When you remember Allah quietly, He remembers you in an assembly far greater.',
-    'Recite Ayat al-Kursi after every salah — nothing keeps you from Jannah but death.',
-    'One Alhamdulillah fills the scale. One Subhanallah fills what is between heaven and earth.',
-    // — Quranic —
-    '“The remembrance of Allah is greater than everything else.” — Surah Al-Ankabut 29:45',
-    '“Remember Me — I will remember you.” — Surah Al-Baqarah 2:152. Will you?',
-    '“In the remembrance of Allah, hearts find rest.” — Surah Ar-Ra’d 13:28',
-    // — Habit-coaching / pure motivation —
-    'Five minutes of dhikr now shapes the next 24 hours of your heart.',
-    'A streak isn’t about today — it’s about who you become in 30 days.',
-    'Small drops fill an ocean. Your daily dhikr is filling something far bigger.',
-    'No one sees the dhikr in your heart — but every angel writing your record does.',
-    'The biggest wins are built from the smallest daily habits. Don’t break the chain.',
-    'You came back today. That’s already worship. Stay one more minute?',
-    'Tomorrow’s peace is built on today’s remembrance. Plant one more seed.',
-    'Are you done? Allah’s door is always open — even after you’ve closed it.',
-    'Dhikr is the language of the heart. Has yours spoken to its Lord today?',
-    'Every Subhanallah is a sadaqah. How many will you give before sleep?',
-    'A heart that forgets dhikr begins to rust. A heart that remembers stays alight.',
-    'Have you fortified yourself with the morning and evening adhkar today?',
-  ];
+  //
+  // Rebuilt as a runtime list (not `static const`) so every entry can be
+  // localised via AppLocalizations — .arb keys carry the English text as a
+  // placeholder until translators backfill.
+  List<String> _reflectionPool(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx);
+    return [
+      // — Hadith-anchored —
+      l?.akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2 ??
+          '“Subhanallahi wa bi-hamdihi” — said 100 times a day wipes sins, even like the foam of the sea. (Bukhari)',
+      l?.akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f ??
+          'Say La ilaha illallah 100 times — equals freeing 10 slaves and 100 hasanat. (Bukhari)',
+      l?.akhirahBalanceScreen_lightOnTheTongue_ea6114 ??
+          'Light on the tongue, heavy on the scales: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)',
+      l?.akhirahBalanceScreen_theDhikrOfAllah_a23f17 ??
+          'The dhikr of Allah is heavier on the scales than gold of equal weight. Keep going.',
+      l?.akhirahBalanceScreen_yourTongueShouldStay_34816c ??
+          '“Your tongue should stay moist with the remembrance of Allah.” — Is it still moist?',
+      l?.akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff ??
+          'Astaghfirullah — the Prophet ✍ said it 100 times a day, and he had no sin. How many have you?',
+      l?.akhirahBalanceScreen_whenYouRememberAllah_60f406 ??
+          'When you remember Allah quietly, He remembers you in an assembly far greater.',
+      l?.akhirahBalanceScreen_reciteAyatAlKursi_d0751f ??
+          'Recite Ayat al-Kursi after every salah — nothing keeps you from Jannah but death.',
+      l?.akhirahBalanceScreen_oneAlhamdulillahFillsThe_4794bb ??
+          'One Alhamdulillah fills the scale. One Subhanallah fills what is between heaven and earth.',
+      // — Quranic —
+      l?.akhirahBalanceScreen_theRemembranceOfAllah_c99fe8 ??
+          '“The remembrance of Allah is greater than everything else.” — Surah Al-Ankabut 29:45',
+      l?.akhirahBalanceScreen_rememberMeWillRemember_1aca04 ??
+          '“Remember Me — I will remember you.” — Surah Al-Baqarah 2:152. Will you?',
+      l?.akhirahBalanceScreen_inTheRemembranceOf_20b541 ??
+          '“In the remembrance of Allah, hearts find rest.” — Surah Ar-Ra’d 13:28',
+      // — Habit-coaching / pure motivation —
+      l?.akhirahBalanceScreen_fiveMinutesOfDhikr_e12766 ??
+          'Five minutes of dhikr now shapes the next 24 hours of your heart.',
+      l?.akhirahBalanceScreen_streakIsnAboutToday_9157d8 ??
+          'A streak isn’t about today — it’s about who you become in 30 days.',
+      l?.akhirahBalanceScreen_smallDropsFillAn_1accce ??
+          'Small drops fill an ocean. Your daily dhikr is filling something far bigger.',
+      l?.akhirahBalanceScreen_noOneSeesThe_0182c7 ??
+          'No one sees the dhikr in your heart — but every angel writing your record does.',
+      l?.akhirahBalanceScreen_theBiggestWinsAre_1b8fb6 ??
+          'The biggest wins are built from the smallest daily habits. Don’t break the chain.',
+      l?.akhirahBalanceScreen_youCameBackToday_a020b1 ??
+          'You came back today. That’s already worship. Stay one more minute?',
+      l?.akhirahBalanceScreen_tomorrowPeaceIsBuilt_a72bd8 ??
+          'Tomorrow’s peace is built on today’s remembrance. Plant one more seed.',
+      l?.akhirahBalanceScreen_areYouDoneAllah_06ca1d ??
+          'Are you done? Allah’s door is always open — even after you’ve closed it.',
+      l?.akhirahBalanceScreen_dhikrIsTheLanguage_b1b983 ??
+          'Dhikr is the language of the heart. Has yours spoken to its Lord today?',
+      l?.akhirahBalanceScreen_everySubhanallahIsSadaqah_16b797 ??
+          'Every Subhanallah is a sadaqah. How many will you give before sleep?',
+      l?.akhirahBalanceScreen_heartThatForgetsDhikr_3a6173 ??
+          'A heart that forgets dhikr begins to rust. A heart that remembers stays alight.',
+      l?.akhirahBalanceScreen_haveYouFortifiedYourself_17ccac ??
+          'Have you fortified yourself with the morning and evening adhkar today?',
+    ];
+  }
 
   // Pick a fresh reflection that differs from whatever was shown last
   // time the user landed here. We avoid microsecondsSinceEpoch (it can
@@ -117,9 +159,9 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
     final rand = math.Random();
     int idx;
     do {
-      idx = rand.nextInt(_kReflectionPool.length);
-    } while (idx == lastIdx && _kReflectionPool.length > 1);
-    if (mounted) setState(() => _reflection = _kReflectionPool[idx]);
+      idx = rand.nextInt(_kReflectionCount);
+    } while (idx == lastIdx && _kReflectionCount > 1);
+    if (mounted) setState(() => _reflectionIdx = idx);
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_kPrefKeyLastReflectionIdx, idx);
@@ -339,7 +381,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  _reflection,
+                  _reflectionPool(context)[_reflectionIdx],
                   style: GoogleFonts.outfit(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,

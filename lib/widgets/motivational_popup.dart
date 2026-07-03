@@ -1049,7 +1049,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
     final benefitRows = [
       (
         icon: NoorIcon.greenBook(size: 26),
-        title: 'Read 5 Quran Pages',
+        title: AppLocalizations.of(context)?.motivationalPopup_readQuranPages ?? 'Read 5 Quran Pages',
         desc: 'Complete now → earn +50 Seeds bonus',
         onTap: () {
           Navigator.maybePop(context);
@@ -1058,7 +1058,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       ),
       (
         icon: NoorIcon.beads(size: 26),
-        title: 'Complete a Dhikr Set',
+        title: AppLocalizations.of(context)?.motivationalPopup_completeDhikrSet ?? 'Complete a Dhikr Set',
         desc: 'Finish your Azkaar → earn +30 Seeds bonus',
         onTap: () {
           Navigator.maybePop(context);
@@ -1067,7 +1067,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       ),
       (
         icon: NoorIcon.handshake(size: 26),
-        title: 'Invite a Friend',
+        title: AppLocalizations.of(context)?.motivationalPopup_inviteFriend ?? 'Invite a Friend',
         desc: 'Share Sabiq with someone → earn +100 Seeds',
         onTap: () {
           Navigator.maybePop(context);

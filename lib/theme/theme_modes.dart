@@ -231,9 +231,9 @@ const kThemeModes = <String, ThemePalette>{
 
   // ── Rose — warm pink / coral ──────────────────────────────────────────
   'rose': ThemePalette(
-    honey:            Color(0xFFE5A088),
-    honeyDeep:        Color(0xFFC87A94),
-    butter:           Color(0xFFF8D8DC),
+    honey:            Color(0xFFE86B95),
+    honeyDeep:        Color(0xFFB94070),
+    butter:           Color(0xFFF6C8D8),
     cream:            Color(0xFFFDF6F6),
     primaryDeep:      Color(0xFF7A2E4A),
     ink:              Color(0xFF4C1E28),

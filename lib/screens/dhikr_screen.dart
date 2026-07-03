@@ -2148,29 +2148,27 @@ class _DhikrScreenState extends State<DhikrScreen> {
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
 
     // UI Constants — Y4 honey wash banner (matches dashboard hero feel)
-    final bannerBg =
-        isDark ? const Color(0xFF3D4A1A) : const Color(0xFFFFE89A); // butter
-    final bannerBtn =
-        isDark
-            ? const Color(0xFFFFC83D)
-            : const Color(0xFFFFC83D); // honey-deep
-    final bannerTxt = isDark ? const Color(0xFF2A2410) : Colors.white;
+    final bannerBg = isDark ? const Color(0xFF3D4A1A) : Y4.palette.butter;
+    final bannerBtn = Y4.palette.honey;
+    final bannerTxt = isDark ? Y4.palette.ink : Colors.white;
 
     final chipInactiveBg =
         isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEEEEEE);
     final chipInactiveTxt = isDark ? Colors.white70 : const Color(0xFF4A4A4A);
 
-    // Category color map — each category gets a distinct accent
+    // Category color map — each category gets a distinct accent.
+    // Honey-toned entries fall through to the current theme's `honey` token
+    // so a Rose/Mint/Sky/Gray/Black theme repaints these list icons too.
     Color catColor(String catId) => switch (catId) {
       'all' => const Color(0xFF6366F1), // indigo
       'favorites' => const Color(0xFFEF4444), // red
-      'general' => const Color(0xFFFFC83D), // emerald
+      'general' => Y4.palette.honey,
       'morning' => const Color(0xFFF59E0B), // amber
       'evening' => const Color(0xFF6366F1), // indigo
       'sleeping' => const Color(0xFF8B5CF6), // violet
       'waking_up' => const Color(0xFFF97316), // orange
       'post_prayer' => const Color(0xFF0EA5E9), // sky blue
-      'salawat' => const Color(0xFFFFC83D), // emerald
+      'salawat' => Y4.palette.honey,
       'istighfar' => const Color(0xFF8B5CF6), // violet
       'tahajjud' => const Color(0xFF3B82F6), // blue
       'sunnah' => const Color(0xFF14B8A6), // teal
@@ -2180,8 +2178,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       'clothes' => const Color(0xFF14B8A6), // teal
       'wudu' => const Color(0xFF0EA5E9), // sky blue
       'food_drink' => const Color(0xFFF97316), // orange
-      'home' => const Color(0xFFFFC83D), // emerald
-      _ => const Color(0xFFFFC83D), // default teal
+      'home' => Y4.palette.honey,
+      _ => Y4.palette.honey,
     };
 
     // Banner Text Setup
@@ -3798,7 +3796,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                           gradient: LinearGradient(
                             colors: isAudioActive
                                 ? const [Color(0xFF3A3A3A), Color(0xFF111111)]
-                                : const [Y4.honey, Y4.honeyDeep],
+                                : [Y4.palette.honey, Y4.palette.honeyDeep],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -4188,8 +4186,8 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(
                                               colors: [
-                                                const Color(0xFFFFC83D),
-                                                const Color(0xFFFFC83D),
+                                                Y4.palette.honey,
+                                                Y4.palette.honey,
                                               ],
                                             ),
                                             borderRadius: BorderRadius.circular(
@@ -5711,7 +5709,7 @@ class _AzkarCard extends StatelessWidget {
     final kText =
         isDark ? Colors.white : SettingsService.instance.config.dashText;
     final kSub = isDark ? Colors.grey.shade400 : const Color(0xFF8E8E93);
-    final kPrimary = const Color(0xFFFFC83D);
+    final kPrimary = Y4.palette.honey;
 
     String rawRef =
         azkar.reference
@@ -13294,7 +13292,7 @@ class _AfiyahGuardState extends State<_AfiyahGuard>
                       Opacity(
                         opacity: ((reveal - 0.82) / 0.22).clamp(0.0, 1.0),
                         child: Text(
-                          'Guard me from all six sides',
+                          AppLocalizations.of(context)?.dhikrScreen_guardMeFromAll ?? 'Guard me from all six sides',
                           style: GoogleFonts.outfit(
                             fontSize: 10,
                             color: teal.withValues(alpha: 0.60),
@@ -21683,7 +21681,7 @@ class _UnparalleledScalesState extends State<_UnparalleledScales>
                     icon: Icons.water_drop_outlined,
                     value: sinsRemoved,
                     maxValue: 100,
-                    label: 'Sins Washed Away',
+                    label: AppLocalizations.of(context)?.dhikrScreen_sinsWashedAway ?? 'Sins Washed Away',
                     prefix: '-',
                     color: const Color(0xFF2BAE99),
                   ),
@@ -21692,7 +21690,7 @@ class _UnparalleledScalesState extends State<_UnparalleledScales>
                     icon: Icons.diversity_1_rounded,
                     value: slavesFreed,
                     maxValue: 10,
-                    label: 'Slaves Freed',
+                    label: AppLocalizations.of(context)?.dhikrScreen_slavesFreed ?? 'Slaves Freed',
                     prefix: '',
                     color: const Color(0xFF9B59B6),
                   ),
@@ -28710,7 +28708,7 @@ class _FirstTimeHintBubbleState extends State<_FirstTimeHintBubble>
                       const SizedBox(width: 10),
                       Flexible(
                         child: Text(
-                          'Complete to watch your garden bloom above',
+                          AppLocalizations.of(context)?.dhikrScreen_completeToWatchYour ?? 'Complete to watch your garden bloom above',
                           textAlign: TextAlign.start,
                           style: GoogleFonts.outfit(
                             fontSize: 13,
@@ -29143,7 +29141,7 @@ class _RewardSecuredToastState extends State<_RewardSecuredToast>
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'MashaAllah! Reward Secured',
+                              AppLocalizations.of(context)?.dhikrScreen_mashaallahRewardSecured ?? 'MashaAllah! Reward Secured',
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,

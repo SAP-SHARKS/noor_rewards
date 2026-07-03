@@ -482,7 +482,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           const SizedBox(height: 16),
                           Center(
                             child: Text(
-                              'Sabiq Rewards • v1.0',
+                              l?.profileSettingsScreen_sabiqRewards ?? 'Sabiq Rewards • v1.0',
                               style: GoogleFonts.outfit(
                                 fontSize: 11,
                                 color: const Color(0xFFB0A898),

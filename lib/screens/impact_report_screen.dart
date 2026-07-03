@@ -231,36 +231,77 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
   // (persisted via SharedPreferences). Mirrors the pattern used in
   // akhirah_balance_screen.dart but with hereafter-themed content.
   static const String _kPrefKeyLastReminderIdx = 'impact_last_reminder_idx';
-  static const List<String> _kReminderPool = [
-    // — Quranic —
-    '“Whoever does an atom\'s weight of good will see it.” — Surah Az-Zalzalah 99:7',
-    '“The home of the Hereafter — that is the eternal life, if only they knew.” — Surah Al-Ankabut 29:64',
-    '“Race towards forgiveness from your Lord and a Garden as wide as the heavens and the earth.” — Surah Al-Hadid 57:21',
-    '“And what is the life of this world except amusement of delusion?” — Surah Ali Imran 3:185',
-    '“Indeed, with hardship comes ease.” — Surah Ash-Sharh 94:6',
-    // — Hadith-anchored —
-    '“A single good deed in Ramadan equals 70 in any other month.” Stack while the door is open.',
-    'The Prophet ✍ said: charity does not decrease wealth — it grows it. (Muslim)',
-    '“Smiling at your brother is sadaqah.” You can earn even when your pockets are empty. (Tirmidhi)',
-    '“The most beloved deeds to Allah are the most consistent, even if small.” (Bukhari)',
-    '“In Jannah is what no eye has seen, no ear has heard, and no heart has imagined.” (Bukhari)',
-    'Two rakats at Fajr are better than the world and everything in it. (Muslim)',
-    'Every step toward salah erases a sin and raises a rank. (Muslim)',
-    // — Coaching / motivation —
-    'Every seed you donate plants a tree in someone else\'s Jannah — and in yours.',
-    'You can\'t take wealth with you. Only the deeds it bought.',
-    'The angels record nothing too small. One Subhanallah may outweigh a mountain.',
-    'Today\'s sadaqah is tomorrow\'s shade on the day there is no shade.',
-    'A heart that gives is a heart Allah keeps full. Don\'t close it.',
-    'Death isn\'t the end — it\'s the receipt. What did you send ahead?',
-    'Imagine your scale on Yawm al-Qiyamah. What weight are you adding today?',
-    'The world is borrowed. The Akhirah is owned. Invest accordingly.',
-    'You bury the body — but not the deeds. Send them ahead while you can.',
-    'A righteous child who prays for you, a charity that flows, or knowledge that benefits — three eternal investments. (Muslim)',
-    'You will meet Allah with your record. Make sure today\'s page is one you want Him to read.',
-    'No deed is too small for the One who counts atoms.',
-  ];
-  String _reminder = _kReminderPool[0];
+  // Length of the reminder pool. Kept as a compile-time const so the async
+  // loader can call `rand.nextInt(_kReminderCount)` before any BuildContext
+  // is available. MUST match the number of entries returned by
+  // `_reminderPool` below.
+  static const int _kReminderCount = 24;
+
+  // Rebuilt as a runtime list (not `static const`) so every entry can be
+  // localised via AppLocalizations — .arb keys carry the English text as a
+  // placeholder until translators backfill. Order preserved from the
+  // original const pool (5 Quranic → 7 Hadith-anchored → 12 coaching).
+  List<String> _reminderPool(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx);
+    return [
+      // — Quranic —
+      l?.impactReportScreen_whoeverDoesAnAtom_9013b0 ??
+          '“Whoever does an atom\'s weight of good will see it.” — Surah Az-Zalzalah 99:7',
+      l?.impactReportScreen_theHomeOfThe_4602d2 ??
+          '“The home of the Hereafter — that is the eternal life, if only they knew.” — Surah Al-Ankabut 29:64',
+      l?.impactReportScreen_raceTowardsForgivenessFrom_94d614 ??
+          '“Race towards forgiveness from your Lord and a Garden as wide as the heavens and the earth.” — Surah Al-Hadid 57:21',
+      l?.impactReportScreen_andWhatIsThe_7eec52 ??
+          '“And what is the life of this world except amusement of delusion?” — Surah Ali Imran 3:185',
+      l?.impactReportScreen_indeedWithHardshipComes_ea97fa ??
+          '“Indeed, with hardship comes ease.” — Surah Ash-Sharh 94:6',
+      // — Hadith-anchored —
+      l?.impactReportScreen_singleGoodDeedIn_c126b4 ??
+          '“A single good deed in Ramadan equals 70 in any other month.” Stack while the door is open.',
+      l?.impactReportScreen_theProphetSaidCharity_c154f4 ??
+          'The Prophet ✍ said: charity does not decrease wealth — it grows it. (Muslim)',
+      l?.impactReportScreen_smilingAtYourBrother_8f55e4 ??
+          '“Smiling at your brother is sadaqah.” You can earn even when your pockets are empty. (Tirmidhi)',
+      l?.impactReportScreen_theMostBelovedDeeds_f11906 ??
+          '“The most beloved deeds to Allah are the most consistent, even if small.” (Bukhari)',
+      l?.impactReportScreen_inJannahIsWhat_ff6d55 ??
+          '“In Jannah is what no eye has seen, no ear has heard, and no heart has imagined.” (Bukhari)',
+      l?.impactReportScreen_twoRakatsAtFajr_c8b238 ??
+          'Two rakats at Fajr are better than the world and everything in it. (Muslim)',
+      l?.impactReportScreen_everyStepTowardSalah_62962f ??
+          'Every step toward salah erases a sin and raises a rank. (Muslim)',
+      // — Coaching / motivation —
+      l?.impactReportScreen_everySeedYouDonate_618d1f ??
+          'Every seed you donate plants a tree in someone else\'s Jannah — and in yours.',
+      l?.impactReportScreen_takeWealthWithYou_784e85 ??
+          'You can\'t take wealth with you. Only the deeds it bought.',
+      l?.impactReportScreen_theAngelsRecordNothing_e03c03 ??
+          'The angels record nothing too small. One Subhanallah may outweigh a mountain.',
+      l?.impactReportScreen_sadaqahIsTomorrow_794857 ??
+          'Today\'s sadaqah is tomorrow\'s shade on the day there is no shade.',
+      l?.impactReportScreen_heartThatGivesIs_4b6000 ??
+          'A heart that gives is a heart Allah keeps full. Don\'t close it.',
+      l?.impactReportScreen_theReceiptWhatDid_d1c41b ??
+          'Death isn\'t the end — it\'s the receipt. What did you send ahead?',
+      l?.impactReportScreen_imagineYourScaleOn_094d07 ??
+          'Imagine your scale on Yawm al-Qiyamah. What weight are you adding today?',
+      l?.impactReportScreen_theWorldIsBorrowed_2eeb50 ??
+          'The world is borrowed. The Akhirah is owned. Invest accordingly.',
+      l?.impactReportScreen_youBuryTheBody_bb5233 ??
+          'You bury the body — but not the deeds. Send them ahead while you can.',
+      l?.impactReportScreen_righteousChildWhoPrays_7bcef4 ??
+          'A righteous child who prays for you, a charity that flows, or knowledge that benefits — three eternal investments. (Muslim)',
+      l?.impactReportScreen_youWillMeetAllah_c19524 ??
+          'You will meet Allah with your record. Make sure today\'s page is one you want Him to read.',
+      l?.impactReportScreen_noDeedIsToo_c04d50 ??
+          'No deed is too small for the One who counts atoms.',
+    ];
+  }
+  // Storage is the INDEX (not the string) so we can rebuild the localised
+  // line via `_reminderPool(context)[_reminderIdx]` on every rebuild — this
+  // lets a locale switch immediately re-translate without re-running
+  // _loadReminder.
+  int _reminderIdx = 0;
 
   // Pick a random reminder different from the last shown one. Persist the
   // chosen index so the next launch can avoid repeating it.
@@ -273,9 +314,9 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     final rand = math.Random();
     int idx;
     do {
-      idx = rand.nextInt(_kReminderPool.length);
-    } while (idx == lastIdx && _kReminderPool.length > 1);
-    if (mounted) setState(() => _reminder = _kReminderPool[idx]);
+      idx = rand.nextInt(_kReminderCount);
+    } while (idx == lastIdx && _kReminderCount > 1);
+    if (mounted) setState(() => _reminderIdx = idx);
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_kPrefKeyLastReminderIdx, idx);
@@ -525,7 +566,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      _reminder,
+                      _reminderPool(context)[_reminderIdx],
                       style: Y4.display(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600,
@@ -1027,7 +1068,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         child: _statPill(
                           icon: NoorIcon.sunrise(size: 22),
                           value: '+${_fmt(_todayPoints)}',
-                          label: 'DEEDS TODAY',
+                          label: AppLocalizations.of(context)?.impactReportScreen_deedsTODAY ?? 'DEEDS TODAY',
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -1035,7 +1076,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         child: _statPill(
                           icon: NoorIcon.calendar(size: 22),
                           value: '+${_fmt(_weekPoints)}',
-                          label: 'THIS WEEK',
+                          label: AppLocalizations.of(context)?.impactReportScreen_thisWEEK ?? 'THIS WEEK',
                         ),
                       ),
                     ],
@@ -1361,7 +1402,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: true,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Hasanaat Earned',
+            title: AppLocalizations.of(context)?.impactReportScreen_hasanaatEarned ?? 'Hasanaat Earned',
             value: _hasanaat,
             color: _C.gold,
             hadith: '"Whoever does a good deed shall have ten times the like thereof." (Sahih Muslim 131)\n'
@@ -1393,7 +1434,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Hasanat from Quran',
+            title: AppLocalizations.of(context)?.impactReportScreen_hasanatFromQuran ?? 'Hasanat from Quran',
             value: _hasanatFromQuran,
             color: const Color(0xFF1F7A6B),
             hadith: '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten. I do not say that Alif-Lam-Mim is one letter — rather Alif is a letter, Lam is a letter, and Mim is a letter." (Tirmidhi 2910)',
@@ -1419,7 +1460,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Trees in Jannah',
+            title: AppLocalizations.of(context)?.impactReportScreen_treesInJannah ?? 'Trees in Jannah',
             value: _treesPlanted,
             color: const Color(0xFF2D7A45),
             hadith: '"SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar, each one plants a tree for you in Jannah.", Tirmidhi 3464',
@@ -1447,7 +1488,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Sins Forgiven',
+            title: AppLocalizations.of(context)?.impactReportScreen_sinsForgiven ?? 'Sins Forgiven',
             value: _sinsWiped,
             color: _C.teal,
             hadith: '"Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea.", Bukhari 6405',
@@ -1474,7 +1515,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Palaces Built',
+            title: AppLocalizations.of(context)?.impactReportScreen_palacesBuilt ?? 'Palaces Built',
             value: _palacesBuilt,
             color: const Color(0xFF4A90E2),
             hadith: '"Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah.", Musnad Ahmad',
@@ -1501,7 +1542,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Treasures of Jannah',
+            title: AppLocalizations.of(context)?.impactReportScreen_treasuresOfJannah ?? 'Treasures of Jannah',
             value: _treasures,
             color: const Color(0xFF9B59B6),
             hadith: '"La hawla wa la quwwata illa billah is a treasure from the treasures of Jannah.", Bukhari 4205, Muslim 2704',
@@ -1526,7 +1567,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Slaves Freed',
+            title: AppLocalizations.of(context)?.impactReportScreen_slavesFreed ?? 'Slaves Freed',
             value: _slavesFreed,
             color: _C.purple,
             hadith: '"Whoever says La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay\'in qadir 10 times, it is as if he freed 4 slaves from the children of Ismail.", Bukhari 6403',
@@ -1555,7 +1596,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Gates of Paradise Opened',
+            title: AppLocalizations.of(context)?.impactReportScreen_gatesOfParadiseOpened ?? 'Gates of Paradise Opened',
             value: _gatesOpened,
             color: const Color(0xFFD4A017),
             hadith: '"None of you performs wudu and completes it perfectly, then says: Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh, except that all eight gates of Paradise will be opened for him, and he may enter from whichever one he wishes.", Sahih Muslim 234',
@@ -1580,7 +1621,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Blessings from Allah',
+            title: AppLocalizations.of(context)?.impactReportScreen_blessingsFromAllah ?? 'Blessings from Allah',
             value: _blessingsReceived,
             color: const Color(0xFFE91E63),
             hadith: '"Whoever sends one blessing upon me, Allah sends ten blessings upon him.", Sahih Muslim 408',
@@ -1609,7 +1650,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Times Protected',
+            title: AppLocalizations.of(context)?.impactReportScreen_timesProtected ?? 'Times Protected',
             value: _protectionInvocations,
             color: const Color(0xFF455A64),
             hadith: '"Whoever recites Ayat al-Kursi before sleeping, a guardian from Allah will protect him and Shaytan will not come near him until morning.", Bukhari 2311\n\n'
@@ -1642,7 +1683,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: false,
           onTap: () => _showHoldingDetail(
-            title: 'Quran Completions',
+            title: AppLocalizations.of(context)?.impactReportScreen_quranCompletions ?? 'Quran Completions',
             value: _quranCompletionsViaIkhlas,
             color: const Color(0xFF2E7D32),
             hadith: '"Reciting Qul Huwa Allahu Ahad (Surah Al-Ikhlas) three times equals reciting the entire Quran.", Sahih Bukhari 5017',
@@ -1671,7 +1712,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             isFirst: false,
             isLast: false,
             onTap: () => _showHoldingDetail(
-              title: 'Bonus Million Hasanaat',
+              title: AppLocalizations.of(context)?.impactReportScreen_bonusMillionHasanaat ?? 'Bonus Million Hasanaat',
               value: _millionHasanaat,
               color: const Color(0xFFB8860B),
               hadith: '"Whoever enters the marketplace and says: La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa ala kulli shay\'in Qadir, Allah will write for him a million good deeds, erase a million of his bad deeds, and raise him a million levels.", Ibn Majah 2235',
@@ -1693,7 +1734,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           isFirst: false,
           isLast: true,
           onTap: () => _showHoldingDetail(
-            title: 'Sadaqah Given',
+            title: AppLocalizations.of(context)?.impactReportScreen_sadaqahGiven ?? 'Sadaqah Given',
             value: _totalDonated,
             color: const Color(0xFFE67E22),
             hadith: '"Sadaqah does not decrease wealth.", Muslim 2588',
@@ -3597,8 +3638,8 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
                             width: double.infinity,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Y4.butter, Y4.honey],
+                                gradient: LinearGradient(
+                                  colors: [Y4.palette.butter, Y4.palette.honey],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                 ),
