@@ -78,6 +78,13 @@ const _skipRanges = <String, List<List<int>>>{
     [68, 222],   // _translations + _kQuranScripts + _reciters
     [346, 492],  // _qTafsirEditions
   ],
+  // Same metadata pattern as quran_screen — `_tafsirEditions` list
+  // of records with tafsir edition names ("Al-Jalalayn (EN)",
+  // "Ibn Kathir (EN)"). Names are canonical Islamic scholarship
+  // titles; belongs on `tafsir_editions` DB table.
+  'lib/screens/tafsir_screen.dart': [
+    [287, 437],  // _tafsirEditions
+  ],
 };
 
 // Named-argument names that typically render as user-facing UI.

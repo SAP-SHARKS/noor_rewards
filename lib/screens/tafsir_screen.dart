@@ -922,7 +922,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                         ),
                       ),
                       subtitle: Text(
-                        '${_tSurahLengths[s]} verses',
+                        AppLocalizations.of(context)?.tafsirScreen_verses_fed624(_tSurahLengths[s].toString()) ?? '${_tSurahLengths[s]} verses',
                         style: GoogleFonts.outfit(fontSize: 12, color: _kSub),
                       ),
                       onTap: () {
@@ -1367,7 +1367,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                   ),
                   const Spacer(),
                   Text(
-                    'Ayah $_ayah of $_surahLen',
+                    AppLocalizations.of(context)?.tafsirScreen_ayahOf_63c42b(_ayah.toString(), _surahLen.toString()) ?? 'Ayah $_ayah of $_surahLen',
                     style: GoogleFonts.outfit(fontSize: 12, color: sub),
                   ),
                   const SizedBox(width: 6),
@@ -1510,7 +1510,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '$_surahName $_ayah/$_surahLen',
+                                AppLocalizations.of(context)?.tafsirScreen_4815bb_4815bb(_surahName, _ayah.toString(), _surahLen.toString()) ?? '$_surahName $_ayah/$_surahLen',
                                 style: GoogleFonts.outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
