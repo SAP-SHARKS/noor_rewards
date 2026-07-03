@@ -886,7 +886,7 @@ class _QuranHubScreenState extends State<QuranHubScreen>
                             ),
                             const Spacer(),
                             Text(
-                              '${list.length} saved',
+                              AppLocalizations.of(context)?.quranHubScreen_saved_9c28a3(list.length.toString()) ?? '${list.length} saved',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: _kSub,
@@ -1798,7 +1798,7 @@ class _LibraryCardState extends State<_LibraryCard> {
               ),
               const SizedBox(height: 2),
               Text(
-                '${widget.count} saved',
+                AppLocalizations.of(context)?.quranHubScreen_saved_edce53(widget.count.toString()) ?? '${widget.count} saved',
                 style: GoogleFonts.outfit(fontSize: 11, color: _kSub),
               ),
             ],
