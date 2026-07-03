@@ -14634,6 +14634,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load your dashboard. Please try again.'**
   String get dashboardScreen_dashboardLoadFailed;
+
+  /// No description provided for @zikrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Zikr'**
+  String get zikrLabel;
+
+  /// No description provided for @quranLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran'**
+  String get quranLabel;
+
+  /// No description provided for @streakService_dayStreakBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day {type} streak · +{bonus} bonus Seeds unlocked'**
+  String streakService_dayStreakBody(String days, String type, String bonus);
+
+  /// No description provided for @streakService_milestoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{emoji} {label}'**
+  String streakService_milestoneTitle(String emoji, String label);
 }
 
 class _AppLocalizationsDelegate

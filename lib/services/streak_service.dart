@@ -4,12 +4,18 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'notification_center.dart';
+import 'locale_service.dart';
 
 // ── Streak type enum ──────────────────────────────────────────────────────────
 enum StreakType { login, dhikr, quran }
 
 extension StreakTypeX on StreakType {
   String get key => name; // 'login' | 'dhikr' | 'quran'
+
+  /// English fallback used when `LocaleService` hasn't resolved yet
+  /// (during app boot, before the first `MaterialApp` build) or when
+  /// the caller genuinely wants an untranslated identity string.
+  /// UI paths should prefer [localizedLabel].
   String get label {
     switch (this) {
       case StreakType.login:
@@ -18,6 +24,23 @@ extension StreakTypeX on StreakType {
         return 'Zikr';
       case StreakType.quran:
         return 'Quran';
+    }
+  }
+
+  /// Locale-aware label. Reads from [LocaleService] so services /
+  /// notification handlers (which don't own a `BuildContext`) still
+  /// produce the correct localised string. Falls back to [label] when
+  /// AppLocalizations isn't available yet.
+  String get localizedLabel {
+    final l = LocaleService.instance.l;
+    if (l == null) return label;
+    switch (this) {
+      case StreakType.login:
+        return l.dailyLogin;
+      case StreakType.dhikr:
+        return l.zikrLabel;
+      case StreakType.quran:
+        return l.quranLabel;
     }
   }
 
@@ -114,6 +137,9 @@ class StreakMilestone {
   });
 }
 
+// English `label` on each entry is the fallback used when
+// [LocaleService] hasn't resolved yet. UI paths route through
+// [localizedMilestoneLabel] below.
 const kStreakMilestones = <StreakMilestone>[
   StreakMilestone(days: 3, label: 'Warming Up', emoji: '🌱', ptsBonus: 15),
   StreakMilestone(days: 7, label: 'One Week', emoji: '🔥', ptsBonus: 30),
@@ -127,6 +153,31 @@ const kStreakMilestones = <StreakMilestone>[
     ptsBonus: 400,
   ),
 ];
+
+/// Locale-aware milestone label. Uses [LocaleService] so callers without
+/// a `BuildContext` (services, background notification handlers) can
+/// still produce the correct localised string. Falls back to the const
+/// English label when AppLocalizations hasn't resolved yet.
+String localizedMilestoneLabel(StreakMilestone m) {
+  final l = LocaleService.instance.l;
+  if (l == null) return m.label;
+  switch (m.days) {
+    case 3:
+      return l.streakService_warmingUp_b1687b;
+    case 7:
+      return l.streakService_oneWeek_4f98dc;
+    case 14:
+      return l.streakService_twoWeeks_9a2d93;
+    case 30:
+      return l.streakService_oneMonth_35eb01;
+    case 60:
+      return l.streakService_twoMonths_84d275;
+    case 100:
+      return l.streakService_theCenturion_f1de7f;
+    default:
+      return m.label;
+  }
+}
 
 /// Returns the next milestone the user hasn't passed yet.
 StreakMilestone? nextMilestone(int streak) {
@@ -179,12 +230,24 @@ class StreakService {
               const StreakMilestone(days: 0, label: '', emoji: '', ptsBonus: 0),
     );
     if (reachedMilestone.days > 0) {
+      final l = LocaleService.instance.l;
+      final localLabel = localizedMilestoneLabel(reachedMilestone);
+      final title = l?.streakService_milestoneTitle(
+            reachedMilestone.emoji,
+            localLabel,
+          ) ??
+          '${reachedMilestone.emoji} $localLabel';
+      final body = l?.streakService_dayStreakBody(
+            reachedMilestone.days.toString(),
+            type.localizedLabel,
+            reachedMilestone.ptsBonus.toString(),
+          ) ??
+          '${reachedMilestone.days}-day ${type.localizedLabel} streak · '
+              '+${reachedMilestone.ptsBonus} bonus Seeds unlocked';
       NotificationCenter.instance.add(
         kind: NoorNotifKind.streak,
-        title: '${reachedMilestone.emoji} ${reachedMilestone.label}',
-        body:
-            '${reachedMilestone.days}-day ${type.label} streak · '
-            '+${reachedMilestone.ptsBonus} bonus Seeds unlocked',
+        title: title,
+        body: body,
         route: '/journey',
         data: {'streak_type': type.key, 'days': reachedMilestone.days},
       );

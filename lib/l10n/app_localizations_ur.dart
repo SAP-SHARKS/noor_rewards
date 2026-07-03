@@ -9258,4 +9258,20 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get dashboardScreen_dashboardLoadFailed =>
       'Couldn\'t load your dashboard. Please try again.';
+
+  @override
+  String get zikrLabel => 'Zikr';
+
+  @override
+  String get quranLabel => 'Quran';
+
+  @override
+  String streakService_dayStreakBody(String days, String type, String bonus) {
+    return '$days-day $type streak · +$bonus bonus Seeds unlocked';
+  }
+
+  @override
+  String streakService_milestoneTitle(String emoji, String label) {
+    return '$emoji $label';
+  }
 }

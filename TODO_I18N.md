@@ -618,36 +618,33 @@ Use `l?.<key> ?? "literal"` for null-safety in Widget code (with `final l = AppL
   - literal: `"Sync failed: $e"`
   - replace with: `l?.quranApiService_syncFailed_ae7629(e) ?? "Sync failed: $e"`
 
-## lib/services/streak_service.dart (10 hits)
+## lib/services/streak_service.dart (9 hits)
 
-- [ ] L118 \[label\] `streakService_warmingUp_b1687b`
+- [ ] L144 \[label\] `streakService_warmingUp_b1687b`
   - literal: `"Warming Up"`
   - replace with: `l?.streakService_warmingUp_b1687b ?? "Warming Up"`
-- [ ] L119 \[label\] `streakService_oneWeek_4f98dc`
+- [ ] L145 \[label\] `streakService_oneWeek_4f98dc`
   - literal: `"One Week"`
   - replace with: `l?.streakService_oneWeek_4f98dc ?? "One Week"`
-- [ ] L120 \[label\] `streakService_twoWeeks_9a2d93`
+- [ ] L146 \[label\] `streakService_twoWeeks_9a2d93`
   - literal: `"Two Weeks"`
   - replace with: `l?.streakService_twoWeeks_9a2d93 ?? "Two Weeks"`
-- [ ] L121 \[label\] `streakService_oneMonth_35eb01`
+- [ ] L147 \[label\] `streakService_oneMonth_35eb01`
   - literal: `"One Month"`
   - replace with: `l?.streakService_oneMonth_35eb01 ?? "One Month"`
-- [ ] L122 \[label\] `streakService_twoMonths_84d275`
+- [ ] L148 \[label\] `streakService_twoMonths_84d275`
   - literal: `"Two Months"`
   - replace with: `l?.streakService_twoMonths_84d275 ?? "Two Months"`
-- [ ] L125 \[label\] `streakService_theCenturion_f1de7f`
+- [ ] L151 \[label\] `streakService_theCenturion_f1de7f`
   - literal: `"The Centurion"`
   - replace with: `l?.streakService_theCenturion_f1de7f ?? "The Centurion"`
-- [ ] L184 \[title\] `streakService_1fc043_1fc043`
-  - literal: `"${reachedMilestone.emoji} ${reachedMilestone.label}"`
-  - replace with: `l?.streakService_1fc043_1fc043(reachedMilestone.emoji, reachedMilestone.label) ?? "${reachedMilestone.emoji} ${reachedMilestone.label}"`
-- [ ] L184 \[longform\] `streakService_1fc043_1fc043`
-  - literal: `"${reachedMilestone.emoji} ${reachedMilestone.label}"`
-  - replace with: `l?.streakService_1fc043_1fc043(reachedMilestone.emoji, reachedMilestone.label) ?? "${reachedMilestone.emoji} ${reachedMilestone.label}"`
-- [ ] L186 \[longform\] `streakService_dayStreak_9ee8a3`
-  - literal: `"${reachedMilestone.days}-day ${type.label} streak · "`
-  - replace with: `l?.streakService_dayStreak_9ee8a3(reachedMilestone.days, type.label) ?? "${reachedMilestone.days}-day ${type.label} streak · "`
-- [ ] L187 \[longform\] `streakService_bonusSeedsUnlocked_bcdda5`
+- [ ] L239 \[longform\] `streakService_60a570`
+  - literal: `"${reachedMilestone.emoji} $localLabel"`
+  - replace with: `l?.streakService_60a570(reachedMilestone.emoji, localLabel) ?? "${reachedMilestone.emoji} $localLabel"`
+- [ ] L245 \[longform\] `streakService_dayStreak_b49b65`
+  - literal: `"${reachedMilestone.days}-day ${type.localizedLabel} streak · "`
+  - replace with: `l?.streakService_dayStreak_b49b65(reachedMilestone.days, type.localizedLabel) ?? "${reachedMilestone.days}-day ${type.localizedLabel} streak · "`
+- [ ] L246 \[longform\] `streakService_bonusSeedsUnlocked_bcdda5`
   - literal: `"+${reachedMilestone.ptsBonus} bonus Seeds unlocked"`
   - replace with: `l?.streakService_bonusSeedsUnlocked_bcdda5(reachedMilestone.ptsBonus) ?? "+${reachedMilestone.ptsBonus} bonus Seeds unlocked"`
 

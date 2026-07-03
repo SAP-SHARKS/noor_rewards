@@ -22,6 +22,7 @@ import 'screens/welcome_gate_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/flower_splash_screen.dart';
 import 'services/settings_service.dart';
+import 'services/locale_service.dart';
 import 'services/live_notification_service.dart';
 import 'services/quran_api_config.dart'; // Quran Foundation credentials
 import 'services/quran_api_service.dart';
@@ -183,6 +184,11 @@ class MyApp extends StatelessWidget {
       // Caps the textScaler so that device accessibility font-size settings
       // cannot break gamified fixed-height layouts and cause global overflow.
       builder: (context, child) {
+        // Mirror the resolved AppLocalizations into LocaleService so
+        // context-free callers (services, notification handlers, model
+        // toString overrides) can emit localised strings without a
+        // BuildContext. Cheap identity-diffed no-op when unchanged.
+        LocaleService.instance.update(AppLocalizations.of(context));
         final mq = MediaQuery.of(context);
         return MediaQuery(
           data: mq.copyWith(

@@ -5731,5 +5731,54 @@
       }
     }
   },
-  "dashboardScreen_dashboardLoadFailed": "Couldn't load your dashboard. Please try again."
+  "dashboardScreen_dashboardLoadFailed": "Couldn't load your dashboard. Please try again.",
+  "zikrLabel": "Zikr",
+  "quranLabel": "Quran",
+  "streakService_dayStreakBody": "{days}-day {type} streak · +{bonus} bonus Seeds unlocked",
+  "@streakService_dayStreakBody": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "bonus": {
+        "type": "String"
+      }
+    }
+  },
+  "streakService_milestoneTitle": "{emoji} {label}",
+  "@streakService_milestoneTitle": {
+    "placeholders": {
+      "emoji": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "streakService_60a570": "{arg1} {localLabel}",
+  "@streakService_60a570": {
+    "placeholders": {
+      "arg1": {
+        "type": "Object"
+      },
+      "localLabel": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakService_dayStreak_b49b65": "{arg1}-day {arg2} streak · ",
+  "@streakService_dayStreak_b49b65": {
+    "placeholders": {
+      "arg1": {
+        "type": "Object"
+      },
+      "arg2": {
+        "type": "Object"
+      }
+    }
+  }
 }
