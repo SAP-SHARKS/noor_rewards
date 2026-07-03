@@ -140,24 +140,83 @@ final _longformRegex = RegExp(
 );
 
 // Suppress if line contains any of these — not user-facing.
-final _suppressLine = RegExp(
-  r'''(debugPrint\(|(?<![a-zA-Z])print\(|throw\s|Exception\(|assert\(|Error\(|
-      \.log\(|\.getString\(|\.setString\(|\.rpc\(|\.from\(|
-      \.contains\(|\.startsWith\(|\.endsWith\(|\.indexOf\(|\.matchAsPrefix\(|
-      \.hasMatch\(|\.firstMatch\(|\.allMatches\(|
-      GoogleFonts\.|fontFamily\s*:|
-      SharedPreferences|Supabase\.|Uri\.parse|Uri\(|http\.|https\.|
-      updateKey\(|_\.setString|Hive\.|Box<|
-      RegExp\(|r['"]|Pattern\(|
-      Icons?\.|IconData\(|MaterialSymbols\.|
-      Colors?\.|Color\(|Color\.|LinearGradient|Gradient|
-      Duration\(|TextStyle\(|EdgeInsets|BorderRadius|
-      case\s+['"]|MapEntry\(|kDebug|assets/|package:|part\s+of|
-      _kAdminEmails|debugLog|logger\.|log\.|debugFmt|
-      _analytics\.|analytics\.|trackEvent|TrackingService|
-      \.emit\(|EventBus)''',
-  multiLine: false,
-);
+//
+// Alternatives kept as a `List` and joined at build time so the regex
+// source contains NO stray whitespace or newlines. Prior implementation
+// used a `r'''…'''` raw triple-quoted string with per-line indentation,
+// which baked the newlines and 6-space indents into the pattern —
+// meaning only the alternatives on the *first* line of the source ever
+// matched. Anything below the first line silently failed to fire,
+// including `.contains`, `.replaceAll`, `case '…'` etc.
+const _suppressAlternatives = <String>[
+  r'debugPrint\(',
+  r'(?<![a-zA-Z])print\(',
+  r'throw\s',
+  r'Exception\(',
+  r'assert\(',
+  r'Error\(',
+  r'\.log\(',
+  r'\.getString\(',
+  r'\.setString\(',
+  r'\.rpc\(',
+  r'\.from\(',
+  r'\.contains\(',
+  r'\.startsWith\(',
+  r'\.endsWith\(',
+  r'\.indexOf\(',
+  r'\.matchAsPrefix\(',
+  r'\.hasMatch\(',
+  r'\.firstMatch\(',
+  r'\.allMatches\(',
+  r'\.replaceAll\(',
+  r'\.replaceFirst\(',
+  r'\.split\(',
+  r'GoogleFonts\.',
+  r'fontFamily\s*:',
+  r'SharedPreferences',
+  r'Supabase\.',
+  r'Uri\.parse',
+  r'Uri\(',
+  r'http\.',
+  r'https\.',
+  r'updateKey\(',
+  r'_\.setString',
+  r'Hive\.',
+  r'Box<',
+  r'RegExp\(',
+  "r['\"]",
+  r'Pattern\(',
+  r'Icons?\.',
+  r'IconData\(',
+  r'MaterialSymbols\.',
+  r'Colors?\.',
+  r'Color\(',
+  r'Color\.',
+  r'LinearGradient',
+  r'Gradient',
+  r'Duration\(',
+  r'TextStyle\(',
+  r'EdgeInsets',
+  r'BorderRadius',
+  "case\\s+['\"]",
+  r'MapEntry\(',
+  r'kDebug',
+  r'assets/',
+  r'package:',
+  r'part\s+of',
+  r'_kAdminEmails',
+  r'debugLog',
+  r'logger\.',
+  r'log\.',
+  r'debugFmt',
+  r'_analytics\.',
+  r'analytics\.',
+  r'trackEvent',
+  r'TrackingService',
+  r'\.emit\(',
+  r'EventBus',
+];
+final _suppressLine = RegExp('(${_suppressAlternatives.join('|')})');
 
 // Suppress if the value looks like an ID / URL / asset / hex.
 bool _isNonUiValue(String v) {
@@ -243,6 +302,52 @@ class _CommentState {
   bool inRawTripleQuote = false;
 }
 
+// True if the literal on `lines[i]` is the RHS of a `l?.key ?? …`
+// fallback expression whose LHS (the localization getter + `??`) was
+// split across earlier lines by dartfmt.
+//
+// Strategy: walk back up to 6 previous non-empty source lines,
+// accumulating text, and stop at a statement boundary (`;` at end of
+// stripped line). Then check the accumulated text for:
+//   1. an `??` token, AND
+//   2. before that `??`, a localization getter — one of
+//      `AppLocalizations.of(…)?.` / `l?.` / `l!.` / `l10n?.` /
+//      `l10n!.` / `l10n.` / `.of(ctx)?.` / `.of(anyName)?.`
+bool _isFallbackLiteral(List<String> lines, int i) {
+  final buf = <String>[];
+  for (var k = 1; k <= 6; k++) {
+    final idx = i - k;
+    if (idx < 0) break;
+    final l = lines[idx].trimRight();
+    final t = l.trim();
+    if (t.isEmpty) continue;
+    // Structural stop BEFORE we accept this line — a lone `{` or `}` or
+    // a signature ending `) {` means we've crossed a block boundary and
+    // are now looking at code from a different scope.
+    if (t == '{' || t == '}' || t.endsWith(') {')) break;
+    // Prepend so the joined text reads top-to-bottom the way it does in
+    // the source, keeping the getter before the `??`.
+    buf.insert(0, l);
+    // Statement-boundary stop AFTER accepting: a `;` at end of the just-
+    // accepted line means the previous statement closed; anything above
+    // it can't be part of the current `l?.key ?? …` expression.
+    if (t.endsWith(';')) break;
+  }
+  final joined = buf.join(' ');
+  final qq = joined.lastIndexOf('??');
+  if (qq < 0) return false;
+  final before = joined.substring(0, qq);
+  // Any of the recognised localisation getter shapes before the `??`.
+  final getterRe = RegExp(
+    r'AppLocalizations\.of\('
+    r"|\.of\([_a-zA-Z][_a-zA-Z0-9]*\)\??\.[_a-zA-Z]"
+    r'|\bl\??\!?\.[_a-zA-Z]'
+    r'|\bl10n\??\!?\.[_a-zA-Z]'
+    r'|LocaleService\.instance\.l\??\.[_a-zA-Z]',
+  );
+  return getterRe.hasMatch(before);
+}
+
 // True if any of the previous [look] non-empty lines opens a suppressed
 // context (debugPrint, throw, Exception, etc.) that hasn't been closed.
 bool _inMultilineSuppressed(List<String> lines, int i, int look) {
@@ -324,29 +429,22 @@ void _scanFile(File f, IOSink out, Map<String, int> perFile) {
         line.contains('l10n!.') ||
         RegExp(r'\bl\??\!?\.').hasMatch(line)) continue;
     // Skip fallback literals in `l?.key ?? "..."` patterns — the
-    // localization getter IS wired up on the previous line, this is just
-    // a safe fallback for the null case. Look 1-2 lines back for a
-    // localization getter followed by `??`.
-    var isFallback = false;
-    for (var k = 1; k <= 2; k++) {
-      final idx = i - k;
-      if (idx < 0) break;
-      final prev = lines[idx].trimRight();
-      if (prev.endsWith('??') &&
-          (prev.contains('l?.') ||
-              prev.contains('l!.') ||
-              prev.contains('l10n?.') ||
-              prev.contains('l10n!.') ||
-              prev.contains('.of(context)') ||
-              prev.contains('l10n.'))) {
-        isFallback = true;
-        break;
-      }
-    }
-    if (isFallback) continue;
-    // Also skip if the same line has `l?.key ?? "..."` or `l10n?.key ?? "..."` inline
-    if (RegExp(r'''(\b(?:l|l10n)\??\.[a-zA-Z_][a-zA-Z0-9_]*|of\(context\)\??\.[a-zA-Z_][a-zA-Z0-9_]*)\s*\?\?''')
-        .hasMatch(line)) continue;
+    // localization getter IS wired up on the previous line(s), this is
+    // just a safe fallback for the null case.
+    //
+    // Dartfmt frequently splits the getter across 2-4 lines, especially
+    // when the key has ICU-style args:
+    //   AppLocalizations.of(context)?.someLongKey_hash(
+    //         arg1,
+    //         arg2,
+    //       ) ??
+    //       'fallback string',
+    // Prior implementation only looked back 2 lines and required both
+    // `??` AND the getter on the SAME previous line — missing the shape
+    // above. The new implementation accumulates up to 6 previous non-
+    // empty lines (stopping at a statement boundary `;` at line-end)
+    // and checks the joined text for the `getter … ??` pattern.
+    if (_isFallbackLiteral(lines, i)) continue;
 
     // Pattern A: Text('...')
     for (final m in _uiCallRegex.allMatches(line)) {
