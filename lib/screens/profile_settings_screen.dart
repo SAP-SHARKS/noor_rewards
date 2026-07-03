@@ -152,7 +152,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     final name = _nameCtrl.text.trim();
     final country = _countryCtrl.text.trim();
     if (name.isEmpty) {
-      _showSnack('Name cannot be empty', isError: true);
+      _showSnack(
+        AppLocalizations.of(context)?.profileSettingsScreen_nameCannotBeEmpty_c737ab ?? 'Name cannot be empty',
+        isError: true,
+      );
       return;
     }
 
@@ -1378,17 +1381,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     switch (_provider) {
       case 'google':
         icon = Icons.g_mobiledata_rounded;
-        sub = 'Signed in with Google';
+        sub = l.profileSettingsScreen_signedInWithGoogle_17e053;
         color = const Color(0xFF4285F4);
         break;
       case 'quran_com':
         icon = Icons.menu_book_rounded;
-        sub = 'Signed in with Quran.com';
+        sub = l.profileSettingsScreen_signedInWithQuran_2e1ffc;
         color = const Color(0xFF00C875);
         break;
       default:
         icon = Icons.email_outlined;
-        sub = 'Signed in with Email';
+        sub = l.profileSettingsScreen_signedInWithEmail_dd881f;
         color = const Color(0xFFFFAA00);
     }
     return Padding(
@@ -1675,7 +1678,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _goalRow(
             icon: Icons.wb_sunny_rounded,
             label: AppLocalizations.of(context)?.dailyGoal ?? 'Daily Goal',
-            value: '${ss.dayGoal} Seeds',
+            value: AppLocalizations.of(context)?.profileSettingsScreen_seeds_53d666(ss.dayGoal.toString()) ?? '${ss.dayGoal} Seeds',
             color: const Color(0xFF00897B),
             isFirst: true,
             onTap: () => _showGoalEditor(
@@ -1689,7 +1692,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _goalRow(
             icon: Icons.date_range_rounded,
             label: AppLocalizations.of(context)?.weeklyGoal ?? 'Weekly Goal',
-            value: '${ss.weekGoal} Seeds',
+            value: AppLocalizations.of(context)?.profileSettingsScreen_seeds_59ba7c(ss.weekGoal.toString()) ?? '${ss.weekGoal} Seeds',
             color: const Color(0xFF5C6BC0),
             onTap: () => _showGoalEditor(
               title: AppLocalizations.of(context)?.weeklyGoal ?? 'Weekly Goal',
@@ -1702,7 +1705,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           _goalRow(
             icon: Icons.calendar_month_rounded,
             label: AppLocalizations.of(context)?.monthlyGoal ?? 'Monthly Goal',
-            value: '${ss.monthGoal} Seeds',
+            value: AppLocalizations.of(context)?.profileSettingsScreen_seeds_2bc978(ss.monthGoal.toString()) ?? '${ss.monthGoal} Seeds',
             color: const Color(0xFFE91E8C),
             isLast: true,
             onTap: () => _showGoalEditor(
@@ -1953,7 +1956,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         _supportRow(
           Icons.help_outline_rounded,
           l.helpCenter,
-          'Guides, FAQs and how-tos',
+          l.profileSettingsScreen_guidesFAQsAndHow_b990d6,
           const Color(0xFF3B82F6),
           isFirst: true,
           onTap: () => _showHelpSheet(),
@@ -1962,7 +1965,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         _supportRow(
           Icons.bug_report_outlined,
           l.reportABug,
-          'Something not working? Tell us',
+          l.profileSettingsScreen_somethingNotWorkingTell_07f659,
           const Color(0xFFEF4444),
           onTap: () => _showReportSheet(),
         ),
