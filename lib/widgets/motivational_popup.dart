@@ -30,118 +30,134 @@ class _Card {
   });
 }
 
-const _kCards = [
-  // ── Quran CTA ─────────────────────────────────────────────────────────────
-  _Card(
-    arabic: 'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
-    quote:
-        'Verily, with hardship comes ease.\nEvery trial is a door to something greater.',
-    source: 'Quran • Al-Inshirah 94:6',
-    gradient: [Color(0xFF0D4F5E), Color(0xFF0D9488), Color(0xFF14B8A6)],
-    cta: _CtaType.quran,
-  ),
-  _Card(
-    arabic: 'وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ',
-    quote: 'Whoever puts their trust in Allah ,\nHe is sufficient for them.',
-    source: 'Quran • At-Talaq 65:3',
-    gradient: [Color(0xFF1A1060), Color(0xFF4C35A0), Color(0xFF7C5CBF)],
-    cta: _CtaType.quran,
-  ),
-  _Card(
-    arabic: 'وَلَذِكْرُ اللَّهِ أَكْبَرُ',
-    quote:
-        'The remembrance of Allah is the greatest.\nLet your heart find rest in His name.',
-    source: 'Quran • Al-Ankabut 29:45',
-    gradient: [Color(0xFF0A3D2E), Color(0xFF0D7A55), Color(0xFF22C55E)],
-    cta: _CtaType.dhikr,
-  ),
-  _Card(
-    arabic: 'فَاذْكُرُونِي أَذْكُرْكُمْ',
-    quote:
-        'Remember Me, I will remember you.\nYour Dhikr rises to the heavens.',
-    source: 'Quran • Al-Baqarah 2:152',
-    gradient: [Color(0xFF3D1A0A), Color(0xFFB45309), Color(0xFFF59E0B)],
-    cta: _CtaType.dhikr,
-  ),
-  _Card(
-    arabic: 'وَإِن تَعُدُّوا نِعْمَةَ اللَّهِ لَا تُحْصُوهَا',
-    quote:
-        'If you count the blessings of Allah,\nyou could never enumerate them.',
-    source: 'Quran • An-Nahl 16:18',
-    gradient: [Color(0xFF1A0A3D), Color(0xFF7C3AED), Color(0xFFEC4899)],
-    cta: _CtaType.quran,
-  ),
+// Card list built at call time so every `quote` / `source` field can be
+// localised via AppLocalizations. Non-string fields (arabic Quranic text,
+// gradient colors, cta enum) stay invariant. Order matters — callers pick
+// a random index, so any reordering shifts which card fires per launch.
+//
+// Some entries have no pre-registered .arb key yet — for those the field
+// is a bare English literal and the detector will keep flagging them
+// until a future batch adds the key. The runtime-method scaffolding is
+// in place so filling those keys later is a mechanical edit.
+List<_Card> _cardsFor(BuildContext ctx) {
+  final l = AppLocalizations.of(ctx);
+  return [
+    // ── Quran CTA ─────────────────────────────────────────────────────────────
+    _Card(
+      arabic: 'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
+      quote: l?.motivationalPopup_verilyWithHardshipComes_f23637 ??
+          'Verily, with hardship comes ease.\nEvery trial is a door to something greater.',
+      source: l?.motivationalPopup_quranAlInshirah_d81f8a ?? 'Quran • Al-Inshirah 94:6',
+      gradient: const [Color(0xFF0D4F5E), Color(0xFF0D9488), Color(0xFF14B8A6)],
+      cta: _CtaType.quran,
+    ),
+    _Card(
+      arabic: 'وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ',
+      quote: 'Whoever puts their trust in Allah ,\nHe is sufficient for them.',
+      source: 'Quran • At-Talaq 65:3',
+      gradient: const [Color(0xFF1A1060), Color(0xFF4C35A0), Color(0xFF7C5CBF)],
+      cta: _CtaType.quran,
+    ),
+    _Card(
+      arabic: 'وَلَذِكْرُ اللَّهِ أَكْبَرُ',
+      quote:
+          'The remembrance of Allah is the greatest.\nLet your heart find rest in His name.',
+      source: l?.motivationalPopup_quranAlAnkabut_8e938e ?? 'Quran • Al-Ankabut 29:45',
+      gradient: const [Color(0xFF0A3D2E), Color(0xFF0D7A55), Color(0xFF22C55E)],
+      cta: _CtaType.dhikr,
+    ),
+    _Card(
+      arabic: 'فَاذْكُرُونِي أَذْكُرْكُمْ',
+      quote:
+          'Remember Me, I will remember you.\nYour Dhikr rises to the heavens.',
+      source: l?.motivationalPopup_quranAlBaqarah_8bb10e ?? 'Quran • Al-Baqarah 2:152',
+      gradient: const [Color(0xFF3D1A0A), Color(0xFFB45309), Color(0xFFF59E0B)],
+      cta: _CtaType.dhikr,
+    ),
+    _Card(
+      arabic: 'وَإِن تَعُدُّوا نِعْمَةَ اللَّهِ لَا تُحْصُوهَا',
+      quote:
+          'If you count the blessings of Allah,\nyou could never enumerate them.',
+      source: l?.motivationalPopup_quranAnNahl_74d608 ?? 'Quran • An-Nahl 16:18',
+      gradient: const [Color(0xFF1A0A3D), Color(0xFF7C3AED), Color(0xFFEC4899)],
+      cta: _CtaType.quran,
+    ),
 
-  // ── Share CTA ─────────────────────────────────────────────────────────────
-  _Card(
-    arabic: '',
-    quote:
-        'Make your time precious.\nShare goodness with a friend today ,\nevery good deed shared is a sadaqah.',
-    source:
-        'The Prophet ﷺ said: "Guide others to good, and you get its reward."',
-    gradient: [Color(0xFF0F1E3A), Color(0xFF1D4ED8), Color(0xFF60A5FA)],
-    cta: _CtaType.share,
-  ),
-  _Card(
-    arabic: '',
-    quote:
-        'One message can change a life.\nInvite a friend to walk the path of noor.',
-    source: 'Hadith: "The best of people are those most beneficial to others."',
-    gradient: [Color(0xFF1A0814), Color(0xFFBE185D), Color(0xFFF472B6)],
-    cta: _CtaType.share,
-  ),
-  _Card(
-    arabic: 'مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ',
-    quote:
-        'Whoever guides someone to goodness\nwill have the same reward as the one who does it.',
-    source: 'Sahih Muslim',
-    gradient: [Color(0xFF0A2A1A), Color(0xFF059669), Color(0xFF34D399)],
-    cta: _CtaType.share,
-  ),
+    // ── Share CTA ─────────────────────────────────────────────────────────────
+    _Card(
+      arabic: '',
+      quote: l?.motivationalPopup_makeYourTimePrecious_049aae ??
+          'Make your time precious.\nShare goodness with a friend today ,\nevery good deed shared is a sadaqah.',
+      source: l?.motivationalPopup_guideOthersToGood_6105c4 ??
+          'The Prophet ﷺ said: "Guide others to good, and you get its reward."',
+      gradient: const [Color(0xFF0F1E3A), Color(0xFF1D4ED8), Color(0xFF60A5FA)],
+      cta: _CtaType.share,
+    ),
+    _Card(
+      arabic: '',
+      quote:
+          'One message can change a life.\nInvite a friend to walk the path of noor.',
+      source: l?.motivationalPopup_theBestOfPeople_1f6906 ??
+          'Hadith: "The best of people are those most beneficial to others."',
+      gradient: const [Color(0xFF1A0814), Color(0xFFBE185D), Color(0xFFF472B6)],
+      cta: _CtaType.share,
+    ),
+    _Card(
+      arabic: 'مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ',
+      quote:
+          'Whoever guides someone to goodness\nwill have the same reward as the one who does it.',
+      source: 'Sahih Muslim',
+      gradient: const [Color(0xFF0A2A1A), Color(0xFF059669), Color(0xFF34D399)],
+      cta: _CtaType.share,
+    ),
 
-  // ── Dhikr CTA ────────────────────────────────────────────────────────────
-  _Card(
-    arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
-    quote: 'Verily, in the remembrance of Allah\ndo hearts find rest.',
-    source: "Quran • Ar-Ra'd 13:28",
-    gradient: [Color(0xFF1A1000), Color(0xFFCA8A04), Color(0xFFFBBF24)],
-    cta: _CtaType.dhikr,
-  ),
-  _Card(
-    arabic: '',
-    quote:
-        'Your akhirah is being built\none moment of dhikr at a time.\nDon\'t let this moment pass.',
-    source: 'Remind yourself, time is the most precious sadaqah.',
-    gradient: [Color(0xFF0D1A2E), Color(0xFF0369A1), Color(0xFF38BDF8)],
-    cta: _CtaType.dhikr,
-  ),
-  _Card(
-    arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
-    quote:
-        'SubhanAllah wa bihamdih.\nA single tasbih plants a tree\nin your paradise.',
-    source: 'Sahih Al-Bukhari',
-    gradient: [Color(0xFF0A1F0A), Color(0xFF15803D), Color(0xFF86EFAC)],
-    cta: _CtaType.dhikr,
-  ),
+    // ── Dhikr CTA ────────────────────────────────────────────────────────────
+    _Card(
+      arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
+      quote: l?.motivationalPopup_verilyInTheRemembrance_16476d ??
+          'Verily, in the remembrance of Allah\ndo hearts find rest.',
+      source: "Quran • Ar-Ra'd 13:28",
+      gradient: const [Color(0xFF1A1000), Color(0xFFCA8A04), Color(0xFFFBBF24)],
+      cta: _CtaType.dhikr,
+    ),
+    _Card(
+      arabic: '',
+      quote:
+          'Your akhirah is being built\none moment of dhikr at a time.\nDon\'t let this moment pass.',
+      source: l?.motivationalPopup_remindYourselfTimeIs_38ae33 ??
+          'Remind yourself, time is the most precious sadaqah.',
+      gradient: const [Color(0xFF0D1A2E), Color(0xFF0369A1), Color(0xFF38BDF8)],
+      cta: _CtaType.dhikr,
+    ),
+    _Card(
+      arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
+      quote:
+          'SubhanAllah wa bihamdih.\nA single tasbih plants a tree\nin your paradise.',
+      source: 'Sahih Al-Bukhari',
+      gradient: const [Color(0xFF0A1F0A), Color(0xFF15803D), Color(0xFF86EFAC)],
+      cta: _CtaType.dhikr,
+    ),
 
-  // ── Boost CTA ────────────────────────────────────────────────────────────
-  _Card(
-    arabic: 'وَاعْلَمُوا أَنَّمَا أَمْوَالُكُمْ وَأَوْلَادُكُمْ فِتْنَةٌ',
-    quote:
-        'Your time is your most\nprecious asset. Invest it wisely\nin what endures forever.',
-    source: 'Quran • Al-Anfal 8:28',
-    gradient: [Color(0xFF1A0D00), Color(0xFFB45309), Color(0xFFFFAA00)],
-    cta: _CtaType.boost,
-  ),
-  _Card(
-    arabic: '',
-    quote:
-        'Every minute in worship\nis a seed planted in Jannah.\nHow many have you planted today?',
-    source: 'The Prophet ﷺ said: "Take advantage of five before five."',
-    gradient: [Color(0xFF071A0F), Color(0xFF065F46), Color(0xFF34D399)],
-    cta: _CtaType.boost,
-  ),
-];
+    // ── Boost CTA ────────────────────────────────────────────────────────────
+    _Card(
+      arabic: 'وَاعْلَمُوا أَنَّمَا أَمْوَالُكُمْ وَأَوْلَادُكُمْ فِتْنَةٌ',
+      quote: l?.motivationalPopup_yourTimeIsYour_be6731 ??
+          'Your time is your most\nprecious asset. Invest it wisely\nin what endures forever.',
+      source: l?.motivationalPopup_quranAlAnfal_b10486 ?? 'Quran • Al-Anfal 8:28',
+      gradient: const [Color(0xFF1A0D00), Color(0xFFB45309), Color(0xFFFFAA00)],
+      cta: _CtaType.boost,
+    ),
+    _Card(
+      arabic: '',
+      quote:
+          'Every minute in worship\nis a seed planted in Jannah.\nHow many have you planted today?',
+      source: l?.motivationalPopup_takeAdvantageOfFive_e573fd ??
+          'The Prophet ﷺ said: "Take advantage of five before five."',
+      gradient: const [Color(0xFF071A0F), Color(0xFF065F46), Color(0xFF34D399)],
+      cta: _CtaType.boost,
+    ),
+  ];
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public helper — random motivational popup (Quran / Dhikr / Share / Boost)
@@ -154,7 +170,8 @@ Future<void> showMotivationalPopup(
   required VoidCallback onDoNotDisturb,
   VoidCallback? onGoBoost,
 }) {
-  final card = _kCards[math.Random().nextInt(_kCards.length)];
+  final cards = _cardsFor(context);
+  final card = cards[math.Random().nextInt(cards.length)];
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -376,14 +393,14 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                         children: [
                           _RewardRow(
                             '⚡ ${AppLocalizations.of(context)?.validationSeedsLabel ?? 'Validation Seeds'}',
-                            '+${widget.pointsEarned} Seeds',
+                            AppLocalizations.of(context)?.motivationalPopup_seeds_3a9c69(widget.pointsEarned.toString()) ?? '+${widget.pointsEarned} Seeds',
                             Y4.palette.honeyDeep,
                           ),
                           if (widget.bonusPoints > 0) ...[
                             const SizedBox(height: 10),
                             _RewardRow(
                               '🔥 ${AppLocalizations.of(context)?.streakBonusLabel ?? 'Streak Bonus'}',
-                              '+${widget.bonusPoints} Seeds',
+                              AppLocalizations.of(context)?.motivationalPopup_seeds_b14996(widget.bonusPoints.toString()) ?? '+${widget.bonusPoints} Seeds',
                               Y4.palette.honeyDeep,
                             ),
                             const SizedBox(height: 10),
@@ -1050,7 +1067,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: NoorIcon.greenBook(size: 26),
         title: AppLocalizations.of(context)?.motivationalPopup_readQuranPages ?? 'Read 5 Quran Pages',
-        desc: 'Complete now → earn +50 Seeds bonus',
+        desc: AppLocalizations.of(context)?.motivationalPopup_completeNowEarnSeeds_16ea6e ?? 'Complete now → earn +50 Seeds bonus',
         onTap: () {
           Navigator.maybePop(context);
           widget.onGoQuran();
@@ -1059,7 +1076,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: NoorIcon.beads(size: 26),
         title: AppLocalizations.of(context)?.motivationalPopup_completeDhikrSet ?? 'Complete a Dhikr Set',
-        desc: 'Finish your Azkaar → earn +30 Seeds bonus',
+        desc: AppLocalizations.of(context)?.motivationalPopup_finishYourAzkaarEarn_e264fa ?? 'Finish your Azkaar → earn +30 Seeds bonus',
         onTap: () {
           Navigator.maybePop(context);
           widget.onGoDhikr();
@@ -1068,7 +1085,7 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
       (
         icon: NoorIcon.handshake(size: 26),
         title: AppLocalizations.of(context)?.motivationalPopup_inviteFriend ?? 'Invite a Friend',
-        desc: 'Share Sabiq with someone → earn +100 Seeds',
+        desc: AppLocalizations.of(context)?.motivationalPopup_shareSabiqWithSomeone_c60dcc ?? 'Share Sabiq with someone → earn +100 Seeds',
         onTap: () {
           Navigator.maybePop(context);
           widget.onGoInvite?.call();
