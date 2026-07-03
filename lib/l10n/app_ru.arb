@@ -5780,5 +5780,25 @@
         "type": "Object"
       }
     }
+  },
+  "donationService_donationReceivedTitle": "Donation received 💝",
+  "donationService_youDonatedSeeds": "You donated {amount} Seeds · jazak Allah khair.",
+  "@donationService_youDonatedSeeds": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "streakService_60a570_60a570": "{arg1} {localLabel}",
+  "@streakService_60a570_60a570": {
+    "placeholders": {
+      "arg1": {
+        "type": "Object"
+      },
+      "localLabel": {
+        "type": "Object"
+      }
+    }
   }
 }

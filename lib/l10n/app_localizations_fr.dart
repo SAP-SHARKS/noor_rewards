@@ -9286,4 +9286,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String streakService_milestoneTitle(String emoji, String label) {
     return '$emoji $label';
   }
+
+  @override
+  String streakService_60a570(Object arg1, Object localLabel) {
+    return '$arg1 $localLabel';
+  }
+
+  @override
+  String streakService_dayStreak_b49b65(Object arg1, Object arg2) {
+    return '$arg1-day $arg2 streak · ';
+  }
+
+  @override
+  String get donationService_donationReceivedTitle => 'Donation received 💝';
+
+  @override
+  String donationService_youDonatedSeeds(String amount) {
+    return 'You donated $amount Seeds · jazak Allah khair.';
+  }
 }

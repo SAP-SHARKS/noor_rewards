@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../models/orphan.dart';
 import 'notification_center.dart';
+import 'locale_service.dart';
 
 /// A single donation made by a user to a community project, including the
 /// donor's display name and avatar — surfaced on the Project Detail page's
@@ -86,8 +87,12 @@ class DonationService {
   /// Donates [amount] to a community [projectId].
   /// Returns null if successful, otherwise an error string.
   Future<String?> donate(String projectId, int amount) async {
+    final l = LocaleService.instance.l;
     final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return "You must be logged in to donate.";
+    if (uid == null) {
+      return l?.donationService_youMustBeLogged_6813cf ??
+          "You must be logged in to donate.";
+    }
 
     try {
       final success = await _sb.rpc(
@@ -104,20 +109,24 @@ class DonationService {
         // tab where the user's giving impact is summarised.
         NotificationCenter.instance.add(
           kind: NoorNotifKind.donation,
-          title: 'Donation received 💝',
-          body: 'You donated $amount Seeds · jazak Allah khair.',
+          title: l?.donationService_donationReceivedTitle ??
+              'Donation received 💝',
+          body: l?.donationService_youDonatedSeeds(amount.toString()) ??
+              'You donated $amount Seeds · jazak Allah khair.',
           route: '/akhirah',
           data: {'project_id': projectId, 'amount': amount},
         );
         return null; // Null means success
       } else {
-        return "Donation could not be processed at this time.";
+        return l?.donationService_donationCouldNotBe_074195 ??
+            "Donation could not be processed at this time.";
       }
     } catch (e) {
       if (e is PostgrestException) {
         return e.message;
       }
-      return "An unexpected network error occurred.";
+      return l?.donationService_anUnexpectedNetworkError_914b7a ??
+          "An unexpected network error occurred.";
     }
   }
 
@@ -486,8 +495,12 @@ class DonationService {
   /// Sponsors an orphan with [amount] Seeds. Returns null on success or an
   /// error string for the UI to display.
   Future<String?> sponsorOrphan(String orphanId, int amount) async {
+    final l = LocaleService.instance.l;
     final uid = _sb.auth.currentUser?.id;
-    if (uid == null) return 'You must be logged in to sponsor.';
+    if (uid == null) {
+      return l?.donationService_youMustBeLogged_edc4b5 ??
+          'You must be logged in to sponsor.';
+    }
     try {
       final ok = await _sb.rpc(
         'sponsor_orphan',
@@ -500,17 +513,23 @@ class DonationService {
       if (ok == true) {
         NotificationCenter.instance.add(
           kind: NoorNotifKind.donation,
-          title: 'Sponsorship received 💝',
-          body: 'You sponsored $amount Seeds · jazak Allah khair.',
+          title: l?.donationService_sponsorshipReceived_671201 ??
+              'Sponsorship received 💝',
+          body: l?.donationService_youSponsoredSeedsJazak_7711e1(
+                amount.toString(),
+              ) ??
+              'You sponsored $amount Seeds · jazak Allah khair.',
           route: '/akhirah',
           data: {'orphan_id': orphanId, 'amount': amount},
         );
         return null;
       }
-      return 'Sponsorship could not be processed at this time.';
+      return l?.donationService_sponsorshipCouldNotBe_55003e ??
+          'Sponsorship could not be processed at this time.';
     } catch (e) {
       if (e is PostgrestException) return e.message;
-      return 'An unexpected network error occurred.';
+      return l?.donationService_anUnexpectedNetworkError_914b7a ??
+          'An unexpected network error occurred.';
     }
   }
 

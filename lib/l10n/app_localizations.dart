@@ -14658,6 +14658,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{emoji} {label}'**
   String streakService_milestoneTitle(String emoji, String label);
+
+  /// No description provided for @streakService_60a570.
+  ///
+  /// In en, this message translates to:
+  /// **'{arg1} {localLabel}'**
+  String streakService_60a570(Object arg1, Object localLabel);
+
+  /// No description provided for @streakService_dayStreak_b49b65.
+  ///
+  /// In en, this message translates to:
+  /// **'{arg1}-day {arg2} streak · '**
+  String streakService_dayStreak_b49b65(Object arg1, Object arg2);
+
+  /// No description provided for @donationService_donationReceivedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation received 💝'**
+  String get donationService_donationReceivedTitle;
+
+  /// No description provided for @donationService_youDonatedSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'You donated {amount} Seeds · jazak Allah khair.'**
+  String donationService_youDonatedSeeds(String amount);
 }
 
 class _AppLocalizationsDelegate
