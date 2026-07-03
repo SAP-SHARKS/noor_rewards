@@ -1401,21 +1401,25 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: true,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_hasanaatEarned ?? 'Hasanaat Earned',
-            value: _hasanaat,
-            color: _C.gold,
-            hadith: '"Whoever does a good deed shall have ten times the like thereof." (Sahih Muslim 131)\n'
-                '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten." (Tirmidhi 2910)',
-            breakdown: 'Two hadith grow this number side by side:\n\n'
-                'From dhikr — every recitation is one good deed × 10:\n'
-                '  Dhikr recited (lifetime): ${_fmt(_lifetimeDhikr)}\n'
-                '  → Hasanat: ${_fmt(_hasanatFromDhikr)}\n\n'
-                'From Quran — every letter recited × 10 (≈ $_kAvgLettersPerAyah letters per ayah):\n'
-                '  Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n'
-                '  → Hasanat: ${_fmt(_hasanatFromQuran)}\n\n'
-                'Total hasanaat: ${_fmt(_hasanaat)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_hasanaatEarned ?? 'Hasanaat Earned',
+              value: _hasanaat,
+              color: _C.gold,
+              hadith: (l?.impactReportScreen_whoeverDoesGoodDeed_89c2bf ?? '"Whoever does a good deed shall have ten times the like thereof." (Sahih Muslim 131)') +
+                  '\n' +
+                  (l?.impactReportScreen_whoeverReadsLetterFrom_36d74f ?? '"Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten." (Tirmidhi 2910)'),
+              breakdown: (l?.impactReportScreen_twoHadithGrowThis_c8d4a2 ?? 'Two hadith grow this number side by side:\n\n') +
+                  'From dhikr — every recitation is one good deed × 10:\n' +
+                  (l?.impactReportScreen_dhikrRecitedLifetime_669e2a(_fmt(_lifetimeDhikr)) ?? '  Dhikr recited (lifetime): ${_fmt(_lifetimeDhikr)}\n') +
+                  (l?.impactReportScreen_hasanat_64c7b6(_fmt(_hasanatFromDhikr)) ?? '  → Hasanat: ${_fmt(_hasanatFromDhikr)}\n\n') +
+                  'From Quran — every letter recited × 10 (≈ $_kAvgLettersPerAyah letters per ayah):\n' +
+                  (l?.impactReportScreen_ayahsReadLifetime_75eef6(_fmt(_lifetimeAyahs)) ?? '  Ayahs read (lifetime): ${_fmt(_lifetimeAyahs)}\n') +
+                  (l?.impactReportScreen_hasanat_e68a30(_fmt(_hasanatFromQuran)) ?? '  → Hasanat: ${_fmt(_hasanatFromQuran)}\n\n') +
+                  (l?.impactReportScreen_totalHasanaat_c43112(_fmt(_hasanaat)) ?? 'Total hasanaat: ${_fmt(_hasanaat)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.book(size: 24),
@@ -1487,18 +1491,22 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_sinsForgiven ?? 'Sins Forgiven',
-            value: _sinsWiped,
-            color: _C.teal,
-            hadith: '"Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea.", Bukhari 6405',
-            breakdown: 'Each set of 100 recitations of "SubhanAllahi wa bihamdihi" counts as one cycle of forgiveness.\n\n'
-                'Standalone: ${_fmt(_phraseCounts['subhanallahi_wabihamdih'] ?? 0)}\n'
-                'In morning azkar (item 32): ${_fmt(_phraseCounts['morning_32'] ?? 0)}\n'
-                'In evening azkar (item 31): ${_fmt(_phraseCounts['evening_31'] ?? 0)}\n'
-                'Total recitations: ${_fmt(_forgivenessPhraseCount)}\n'
-                'Divided by 100 → forgiveness cycles: ${_fmt(_sinsWiped)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_sinsForgiven ?? 'Sins Forgiven',
+              value: _sinsWiped,
+              color: _C.teal,
+              hadith: (l?.impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459 ?? '"Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea."') +
+                  ', Bukhari 6405',
+              breakdown: 'Each set of 100 recitations of "${l?.impactReportScreen_subhanallahiWaBihamdihi_992976 ?? 'SubhanAllahi wa bihamdihi'}" counts as one cycle of forgiveness.\n\n' +
+                  'Standalone: ${_fmt(_phraseCounts['subhanallahi_wabihamdih'] ?? 0)}\n' +
+                  'In morning azkar (item 32): ${_fmt(_phraseCounts['morning_32'] ?? 0)}\n' +
+                  'In evening azkar (item 31): ${_fmt(_phraseCounts['evening_31'] ?? 0)}\n' +
+                  (l?.impactReportScreen_totalRecitations_5ed733(_fmt(_forgivenessPhraseCount)) ?? 'Total recitations: ${_fmt(_forgivenessPhraseCount)}\n') +
+                  (l?.impactReportScreen_dividedByForgivenessCycles_4e175d(_fmt(_sinsWiped)) ?? 'Divided by 100 → forgiveness cycles: ${_fmt(_sinsWiped)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.mosque(size: 24),
@@ -1566,19 +1574,22 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_slavesFreed ?? 'Slaves Freed',
-            value: _slavesFreed,
-            color: _C.purple,
-            hadith: '"Whoever says La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay\'in qadir 10 times, it is as if he freed 4 slaves from the children of Ismail.", Bukhari 6403',
-            breakdown: 'Every 10 recitations of "La ilaha illallahu wahdahu la sharika lahu..." equals freeing 4 slaves.\n\n'
-                'Post-prayer: ${_fmt(_phraseCounts['post_prayer_la_ilaha'] ?? 0)}\n'
-                'Upon waking: ${_fmt(_phraseCounts['waking_up_2'] ?? 0)}\n'
-                'Morning azkar (item 31): ${_fmt(_phraseCounts['morning_31'] ?? 0)}\n'
-                'Evening azkar (item 30): ${_fmt(_phraseCounts['evening_30'] ?? 0)}\n'
-                'Total recitations: ${_fmt(_slavesPhraseCount)}\n'
-                'Sets of 10 → ${_fmt(_slavesPhraseCount ~/ 10)} sets × 4 slaves = ${_fmt(_slavesFreed)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_slavesFreed ?? 'Slaves Freed',
+              value: _slavesFreed,
+              color: _C.purple,
+              hadith: '"Whoever says La ilaha illallahu wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay\'in qadir 10 times, it is as if he freed 4 slaves from the children of Ismail.", Bukhari 6403',
+              breakdown: 'Every 10 recitations of "${l?.impactReportScreen_laIlahaIllallahuWahdahu_895dde ?? 'La ilaha illallahu wahdahu la sharika lahu...'}" equals freeing 4 slaves.\n\n' +
+                  'Post-prayer: ${_fmt(_phraseCounts['post_prayer_la_ilaha'] ?? 0)}\n' +
+                  'Upon waking: ${_fmt(_phraseCounts['waking_up_2'] ?? 0)}\n' +
+                  'Morning azkar (item 31): ${_fmt(_phraseCounts['morning_31'] ?? 0)}\n' +
+                  'Evening azkar (item 30): ${_fmt(_phraseCounts['evening_30'] ?? 0)}\n' +
+                  (l?.impactReportScreen_totalRecitations_262e54(_fmt(_slavesPhraseCount)) ?? 'Total recitations: ${_fmt(_slavesPhraseCount)}\n') +
+                  (l?.impactReportScreen_setsOfSetsSlaves_b43b31(_fmt(_slavesPhraseCount ~/ 10), _fmt(_slavesFreed)) ?? 'Sets of 10 → ${_fmt(_slavesPhraseCount ~/ 10)} sets × 4 slaves = ${_fmt(_slavesFreed)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.kaaba(size: 24),
