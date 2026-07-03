@@ -14628,6 +14628,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total donated: {n} {seeds}'**
   String impactReportScreen_totalDonatedSeeds(String n, String seeds);
+
+  /// No description provided for @dashboardScreen_dashboardLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your dashboard. Please try again.'**
+  String get dashboardScreen_dashboardLoadFailed;
 }
 
 class _AppLocalizationsDelegate

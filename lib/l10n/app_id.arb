@@ -5730,5 +5730,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dashboardScreen_dashboardLoadFailed": "Couldn't load your dashboard. Please try again."
 }

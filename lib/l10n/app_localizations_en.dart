@@ -9253,4 +9253,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String impactReportScreen_totalDonatedSeeds(String n, String seeds) {
     return 'Total donated: $n $seeds';
   }
+
+  @override
+  String get dashboardScreen_dashboardLoadFailed =>
+      'Couldn\'t load your dashboard. Please try again.';
 }

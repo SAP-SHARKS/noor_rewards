@@ -410,9 +410,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _avatarUrl = profile['avatar_url'] as String?;
       } else {
         _noorPoints = 0;
+        debugPrint('Profile returned zero rows for $uid');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Profile returned zero rows for $uid')),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)?.dashboardScreen_dashboardLoadFailed ??
+                    "Couldn't load your dashboard. Please try again.",
+              ),
+            ),
           );
         }
       }
@@ -442,12 +448,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
       } catch (_) {}
     } catch (e) {
+      debugPrint('Dashboard Load Error: $e');
       _levelTitle = 'Root error: $e';
       _noorPoints ??= 0;
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Dashboard Load Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.dashboardScreen_dashboardLoadFailed ??
+                  "Couldn't load your dashboard. Please try again.",
+            ),
+          ),
+        );
       }
     }
     if (mounted) {
