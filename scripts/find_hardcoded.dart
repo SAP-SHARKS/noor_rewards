@@ -43,6 +43,11 @@ const _skipRanges = <String, List<List<int>>>{
   //      + a long if-cascade of `return 'tagline';` — ~320 azkar-ID→English
   //      taglines. Belongs on `azkar_items.tagline_<locale>` columns.
   'lib/screens/dhikr_screen.dart': [
+    // `_kQuranScripts` metadata list (font/script names — "Uthmani",
+    // "Indo pak"). Same pattern as quran_screen.dart's translation
+    // metadata — the `name` field is a native-language canonical
+    // script name, not translatable UI chrome.
+    [88, 105],
     [6702, 8474],
     [8480, 8996],
     // Illustration widgets — CustomPainter subclasses starting at
@@ -52,6 +57,13 @@ const _skipRanges = <String, List<List<int>>>{
     // Belongs on `azkar_illustrations.text_<locale>` DB columns, NOT
     // on `.arb` — see db-content-i18n.md.
     [9000, 30000],
+    // `_wellKnownAzkarName` function + its `_localizeWellKnownAzkarName`
+    // Map lookup (4832-4963). Returns Islamic proper-noun transliterations
+    // — "Ayatul Kursi", "Salawat Ibrahimiyya (Durood)", "Al-Baqarah 285
+    // (Amana ar-Rasool)". These belong on `azkar_items.display_name_<locale>`
+    // DB columns; adding them to `.arb` would fragment content by scholar
+    // spelling rather than by locale.
+    [4832, 4963],
   ],
   // Quran translation / script / reciter / tafsir metadata lists.
   // Each entry is a record of (id, native-language name, translator or
