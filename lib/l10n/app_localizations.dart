@@ -14694,6 +14694,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve earned the \"{name}\" badge.'**
   String xpService_badgeEarnedBody(String name);
+
+  /// No description provided for @localReminderScheduler_channelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Sabiq Rewards Notifications'**
+  String get localReminderScheduler_channelName;
+
+  /// No description provided for @localReminderScheduler_morningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Azkar'**
+  String get localReminderScheduler_morningTitle;
+
+  /// No description provided for @localReminderScheduler_morningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your day under Allah\'s protection — recite the morning adhkar.'**
+  String get localReminderScheduler_morningBody;
+
+  /// No description provided for @localReminderScheduler_astaghfirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A moment for istighfar'**
+  String get localReminderScheduler_astaghfirTitle;
+
+  /// No description provided for @localReminderScheduler_astaghfirBody.
+  ///
+  /// In en, this message translates to:
+  /// **'\"Astaghfirullah\" polishes the heart and opens doors of provision. Pause for one minute.'**
+  String get localReminderScheduler_astaghfirBody;
+
+  /// No description provided for @localReminderScheduler_eveningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Azkar'**
+  String get localReminderScheduler_eveningTitle;
+
+  /// No description provided for @localReminderScheduler_eveningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect yourself for the night — recite the evening adhkar.'**
+  String get localReminderScheduler_eveningBody;
+
+  /// No description provided for @localReminderScheduler_sleepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to wind down'**
+  String get localReminderScheduler_sleepTitle;
+
+  /// No description provided for @localReminderScheduler_sleepBody.
+  ///
+  /// In en, this message translates to:
+  /// **'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.'**
+  String get localReminderScheduler_sleepBody;
+
+  /// No description provided for @localReminderScheduler_kahfAmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s Friday — read Surah Al-Kahf'**
+  String get localReminderScheduler_kahfAmTitle;
+
+  /// No description provided for @localReminderScheduler_kahfBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.'**
+  String get localReminderScheduler_kahfBody;
+
+  /// No description provided for @localReminderScheduler_salawatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Salawat on Friday'**
+  String get localReminderScheduler_salawatTitle;
+
+  /// No description provided for @localReminderScheduler_salawatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.'**
+  String get localReminderScheduler_salawatBody;
+
+  /// No description provided for @localReminderScheduler_kahfPmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t miss Surah Al-Kahf today'**
+  String get localReminderScheduler_kahfPmTitle;
+
+  /// No description provided for @localReminderScheduler_kahfPmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.'**
+  String get localReminderScheduler_kahfPmBody;
 }
 
 class _AppLocalizationsDelegate

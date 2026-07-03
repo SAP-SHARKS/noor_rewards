@@ -33,6 +33,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
+import 'locale_service.dart';
 
 class LocalReminderScheduler {
   LocalReminderScheduler._();
@@ -90,28 +91,36 @@ class LocalReminderScheduler {
   /// timezone or toggles a reminder preference.
   Future<void> scheduleAll() async {
     await init();
+    final l = LocaleService.instance.l;
     try {
       await _scheduleDaily(_idMorning,  8,  0, 'morning',
-        title: 'Morning Azkar',
-        body: 'Start your day under Allah\'s protection — recite the morning adhkar.');
+        title: l?.localReminderScheduler_morningTitle ?? 'Morning Azkar',
+        body: l?.localReminderScheduler_morningBody ??
+            'Start your day under Allah\'s protection — recite the morning adhkar.');
       await _scheduleDaily(_idAstaghfir, 11, 0, 'dhikr',
-        title: 'A moment for istighfar',
-        body: '"Astaghfirullah" polishes the heart and opens doors of provision. Pause for one minute.');
+        title: l?.localReminderScheduler_astaghfirTitle ?? 'A moment for istighfar',
+        body: l?.localReminderScheduler_astaghfirBody ??
+            '"Astaghfirullah" polishes the heart and opens doors of provision. Pause for one minute.');
       await _scheduleDaily(_idEvening, 15, 30, 'evening',
-        title: 'Evening Azkar',
-        body: 'Protect yourself for the night — recite the evening adhkar.');
+        title: l?.localReminderScheduler_eveningTitle ?? 'Evening Azkar',
+        body: l?.localReminderScheduler_eveningBody ??
+            'Protect yourself for the night — recite the evening adhkar.');
       await _scheduleDaily(_idSleep,   21, 0, 'dhikr',
-        title: 'Time to wind down',
-        body: 'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.');
+        title: l?.localReminderScheduler_sleepTitle ?? 'Time to wind down',
+        body: l?.localReminderScheduler_sleepBody ??
+            'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.');
       await _scheduleWeekly(_idKahfAm, DateTime.friday,  7, 0, 'quran',
-        title: 'It\'s Friday — read Surah Al-Kahf',
-        body: 'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.');
+        title: l?.localReminderScheduler_kahfAmTitle ?? 'It\'s Friday — read Surah Al-Kahf',
+        body: l?.localReminderScheduler_kahfBody ??
+            'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.');
       await _scheduleWeekly(_idSalawat, DateTime.friday, 12, 0, 'dhikr',
-        title: 'Salawat on Friday',
-        body: 'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.');
+        title: l?.localReminderScheduler_salawatTitle ?? 'Salawat on Friday',
+        body: l?.localReminderScheduler_salawatBody ??
+            'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.');
       await _scheduleWeekly(_idKahfPm, DateTime.friday, 16, 0, 'quran',
-        title: 'Don\'t miss Surah Al-Kahf today',
-        body: 'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.');
+        title: l?.localReminderScheduler_kahfPmTitle ?? 'Don\'t miss Surah Al-Kahf today',
+        body: l?.localReminderScheduler_kahfPmBody ??
+            'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.');
     } catch (e) {
       debugPrint('[LocalReminderScheduler] scheduleAll failed: $e');
     }

@@ -9282,4 +9282,59 @@ class AppLocalizationsAr extends AppLocalizations {
   String xpService_badgeEarnedBody(String name) {
     return 'You\'ve earned the \"$name\" badge.';
   }
+
+  @override
+  String get localReminderScheduler_channelName =>
+      'Sabiq Rewards Notifications';
+
+  @override
+  String get localReminderScheduler_morningTitle => 'Morning Azkar';
+
+  @override
+  String get localReminderScheduler_morningBody =>
+      'Start your day under Allah\'s protection — recite the morning adhkar.';
+
+  @override
+  String get localReminderScheduler_astaghfirTitle => 'A moment for istighfar';
+
+  @override
+  String get localReminderScheduler_astaghfirBody =>
+      '\"Astaghfirullah\" polishes the heart and opens doors of provision. Pause for one minute.';
+
+  @override
+  String get localReminderScheduler_eveningTitle => 'Evening Azkar';
+
+  @override
+  String get localReminderScheduler_eveningBody =>
+      'Protect yourself for the night — recite the evening adhkar.';
+
+  @override
+  String get localReminderScheduler_sleepTitle => 'Time to wind down';
+
+  @override
+  String get localReminderScheduler_sleepBody =>
+      'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.';
+
+  @override
+  String get localReminderScheduler_kahfAmTitle =>
+      'It\'s Friday — read Surah Al-Kahf';
+
+  @override
+  String get localReminderScheduler_kahfBody =>
+      'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.';
+
+  @override
+  String get localReminderScheduler_salawatTitle => 'Salawat on Friday';
+
+  @override
+  String get localReminderScheduler_salawatBody =>
+      'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.';
+
+  @override
+  String get localReminderScheduler_kahfPmTitle =>
+      'Don\'t miss Surah Al-Kahf today';
+
+  @override
+  String get localReminderScheduler_kahfPmBody =>
+      'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.';
 }
