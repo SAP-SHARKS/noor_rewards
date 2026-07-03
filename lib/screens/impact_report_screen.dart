@@ -1522,18 +1522,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_palacesBuilt ?? 'Palaces Built',
-            value: _palacesBuilt,
-            color: const Color(0xFF4A90E2),
-            hadith: '"Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah.", Musnad Ahmad',
-            breakdown: 'Each 10 recitations of Surah Al-Ikhlas earns one palace.\n\n'
-                'Before sleep (Ikhlas ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n'
-                'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n'
-                'Evening Ikhlas: ${_fmt(_phraseCounts['evening_9'] ?? 0)}\n'
-                'Total Ikhlas recitations: ${_fmt(_ikhlasCount)}\n'
-                'Divided by 10 → palaces: ${_fmt(_palacesBuilt)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_palacesBuilt ?? 'Palaces Built',
+              value: _palacesBuilt,
+              color: const Color(0xFF4A90E2),
+              hadith: '"Whoever reads Surah Ikhlas 10 times, Allah builds a palace for him in Jannah.", Musnad Ahmad',
+              breakdown: 'Each 10 recitations of Surah Al-Ikhlas earns one palace.\n\n' +
+                  'Before sleep (Ikhlas ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n' +
+                  'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n' +
+                  'Evening Ikhlas: ${_fmt(_phraseCounts['evening_9'] ?? 0)}\n' +
+                  'Total Ikhlas recitations: ${_fmt(_ikhlasCount)}\n' +
+                  (l?.impactReportScreen_dividedByPalaces_6f066c(_fmt(_palacesBuilt)) ?? 'Divided by 10 → palaces: ${_fmt(_palacesBuilt)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.diamond(size: 24),
@@ -1631,19 +1634,22 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_blessingsFromAllah ?? 'Blessings from Allah',
-            value: _blessingsReceived,
-            color: const Color(0xFFE91E63),
-            hadith: '"Whoever sends one blessing upon me, Allah sends ten blessings upon him.", Sahih Muslim 408',
-            breakdown: 'For every salawat (durood) you send upon the Prophet ﷺ, Allah returns ten upon you.\n\n'
-                'Salawat Ibrahimiyya: ${_fmt(_phraseCounts['salawat_ibrahimiyya'] ?? 0)}\n'
-                'Short salawat: ${_fmt(_phraseCounts['salawat_simple'] ?? 0)}\n'
-                'Friday salawat: ${_fmt(_phraseCounts['salawat_friday'] ?? 0)}\n'
-                'Evening durood (item 32): ${_fmt(_phraseCounts['evening_32'] ?? 0)}\n'
-                'Total salawat sent: ${_fmt(_salawatCount)}\n'
-                'Multiplied by 10 → ${_fmt(_blessingsReceived)} blessings received',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_blessingsFromAllah ?? 'Blessings from Allah',
+              value: _blessingsReceived,
+              color: const Color(0xFFE91E63),
+              hadith: '"Whoever sends one blessing upon me, Allah sends ten blessings upon him.", Sahih Muslim 408',
+              breakdown: 'For every salawat (durood) you send upon the Prophet ﷺ, Allah returns ten upon you.\n\n' +
+                  'Salawat Ibrahimiyya: ${_fmt(_phraseCounts['salawat_ibrahimiyya'] ?? 0)}\n' +
+                  'Short salawat: ${_fmt(_phraseCounts['salawat_simple'] ?? 0)}\n' +
+                  'Friday salawat: ${_fmt(_phraseCounts['salawat_friday'] ?? 0)}\n' +
+                  'Evening durood (item 32): ${_fmt(_phraseCounts['evening_32'] ?? 0)}\n' +
+                  (l?.impactReportScreen_totalSalawatSent_cfe45e(_fmt(_salawatCount)) ?? 'Total salawat sent: ${_fmt(_salawatCount)}\n') +
+                  (l?.impactReportScreen_multipliedByBlessingsReceived_52810f(_fmt(_blessingsReceived)) ?? 'Multiplied by 10 → ${_fmt(_blessingsReceived)} blessings received'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.shield(size: 24),
@@ -1660,23 +1666,26 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_timesProtected ?? 'Times Protected',
-            value: _protectionInvocations,
-            color: const Color(0xFF455A64),
-            hadith: '"Whoever recites Ayat al-Kursi before sleeping, a guardian from Allah will protect him and Shaytan will not come near him until morning.", Bukhari 2311\n\n'
-                '"Whoever says A\'udhu bi-kalimatillahit-tammati min sharri ma khalaq three times when arriving at a place, nothing will harm him until he leaves.", Muslim 2708\n\n'
-                '"Recite Qul Huwa Allahu Ahad and the Mu\'awwidhatayn three times morning and evening, they will suffice you against everything.", Abu Dawud 5082',
-            breakdown: 'Each protection-invoking azkar adds one to your shield.\n\n'
-                'Ayat al-Kursi before sleep: ${_fmt(_phraseCounts['sleeping_ayat_kursi'] ?? 0)}\n'
-                'Ayat al-Kursi after prayer: ${_fmt(_phraseCounts['post_prayer_ayat_kursi'] ?? 0)}\n'
-                'Home protection (A\'udhu bi-kalimat): ${_fmt(_phraseCounts['home_protection'] ?? 0)}\n'
-                'Mu\'awwidhatayn (Falaq + Nas): ${_fmt(_phraseCounts['iman_falaq_nas'] ?? 0)}\n'
-                'Morning/Evening "Protect from harm" (21): ${_fmt((_phraseCounts['morning_21'] ?? 0) + (_phraseCounts['evening_21'] ?? 0))}\n'
-                'Morning/Evening "Protection from evil" (23): ${_fmt((_phraseCounts['morning_23'] ?? 0) + (_phraseCounts['evening_23'] ?? 0))}\n'
-                'Morning/Evening "Good health & protection" (28): ${_fmt((_phraseCounts['morning_28'] ?? 0) + (_phraseCounts['evening_28'] ?? 0))}\n\n'
-                'Total invocations: ${_fmt(_protectionInvocations)}',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_timesProtected ?? 'Times Protected',
+              value: _protectionInvocations,
+              color: const Color(0xFF455A64),
+              hadith: '"Whoever recites Ayat al-Kursi before sleeping, a guardian from Allah will protect him and Shaytan will not come near him until morning.", Bukhari 2311\n\n'
+                  '"Whoever says A\'udhu bi-kalimatillahit-tammati min sharri ma khalaq three times when arriving at a place, nothing will harm him until he leaves.", Muslim 2708\n\n'
+                  '"Recite Qul Huwa Allahu Ahad and the Mu\'awwidhatayn three times morning and evening, they will suffice you against everything.", Abu Dawud 5082',
+              breakdown: 'Each protection-invoking azkar adds one to your shield.\n\n' +
+                  'Ayat al-Kursi before sleep: ${_fmt(_phraseCounts['sleeping_ayat_kursi'] ?? 0)}\n' +
+                  'Ayat al-Kursi after prayer: ${_fmt(_phraseCounts['post_prayer_ayat_kursi'] ?? 0)}\n' +
+                  'Home protection (A\'udhu bi-kalimat): ${_fmt(_phraseCounts['home_protection'] ?? 0)}\n' +
+                  'Mu\'awwidhatayn (Falaq + Nas): ${_fmt(_phraseCounts['iman_falaq_nas'] ?? 0)}\n' +
+                  'Morning/Evening "Protect from harm" (21): ${_fmt((_phraseCounts['morning_21'] ?? 0) + (_phraseCounts['evening_21'] ?? 0))}\n' +
+                  'Morning/Evening "${l?.impactReportScreen_protectionFromEvil_37b53a ?? 'Protection from evil'}" (23): ${_fmt((_phraseCounts['morning_23'] ?? 0) + (_phraseCounts['evening_23'] ?? 0))}\n' +
+                  'Morning/Evening "${l?.impactReportScreen_goodHealthProtection_058808 ?? 'Good health & protection'}" (28): ${_fmt((_phraseCounts['morning_28'] ?? 0) + (_phraseCounts['evening_28'] ?? 0))}\n\n' +
+                  (l?.impactReportScreen_totalInvocations_1fd02b(_fmt(_protectionInvocations)) ?? 'Total invocations: ${_fmt(_protectionInvocations)}'),
+            );
+          },
         ),
         _HoldingRow(
           icon: NoorIcon.greenBook(size: 24),
@@ -1693,18 +1702,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
           positive: true,
           isFirst: false,
           isLast: false,
-          onTap: () => _showHoldingDetail(
-            title: AppLocalizations.of(context)?.impactReportScreen_quranCompletions ?? 'Quran Completions',
-            value: _quranCompletionsViaIkhlas,
-            color: const Color(0xFF2E7D32),
-            hadith: '"Reciting Qul Huwa Allahu Ahad (Surah Al-Ikhlas) three times equals reciting the entire Quran.", Sahih Bukhari 5017',
-            breakdown: 'Every three Ikhlas recitations equal one complete recitation of the Qur\'an.\n\n'
-                'Before sleep (item recites ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n'
-                'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n'
-                'Evening Ikhlas: ${_fmt(_phraseCounts['evening_9'] ?? 0)}\n'
-                'Total Ikhlas recitations: ${_fmt(_ikhlasCount)}\n'
-                'Divided by 3 → ${_fmt(_quranCompletionsViaIkhlas)} Quran completions',
-          ),
+          onTap: () {
+            final l = AppLocalizations.of(context);
+            _showHoldingDetail(
+              title: l?.impactReportScreen_quranCompletions ?? 'Quran Completions',
+              value: _quranCompletionsViaIkhlas,
+              color: const Color(0xFF2E7D32),
+              hadith: '"Reciting Qul Huwa Allahu Ahad (Surah Al-Ikhlas) three times equals reciting the entire Quran.", Sahih Bukhari 5017',
+              breakdown: 'Every three Ikhlas recitations equal one complete recitation of the Qur\'an.\n\n' +
+                  'Before sleep (item recites ×3): ${_fmt(_phraseCounts['sleeping_ikhlas'] ?? 0)}\n' +
+                  'Morning Ikhlas: ${_fmt(_phraseCounts['morning_9'] ?? 0)}\n' +
+                  'Evening Ikhlas: ${_fmt(_phraseCounts['evening_9'] ?? 0)}\n' +
+                  'Total Ikhlas recitations: ${_fmt(_ikhlasCount)}\n' +
+                  (l?.impactReportScreen_dividedByQuranCompletions_b9a013(_fmt(_quranCompletionsViaIkhlas)) ?? 'Divided by 3 → ${_fmt(_quranCompletionsViaIkhlas)} Quran completions'),
+            );
+          },
         ),
         if (_shoppingDuaCount > 0)
           _HoldingRow(
