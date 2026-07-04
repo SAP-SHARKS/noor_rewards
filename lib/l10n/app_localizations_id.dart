@@ -808,7 +808,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get audioNotLoaded => 'URL audio belum dimuat. Silakan tunggu...';
 
   @override
-  String playbackError(String detail) {
+  String playbackError(String message) {
     return 'Kesalahan pemutaran: $message';
   }
 
@@ -9479,8 +9479,8 @@ class AppLocalizationsId extends AppLocalizations {
       'Belum punya akun? Mendaftar';
 
   @override
-  String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+  String get dhikrExitCelebration_keepItUp => 'Lanjutkan kerja baikmu!';
 
   @override
-  String get unknownError => 'Unknown error';
+  String get unknownError => 'Kesalahan tidak diketahui';
 }

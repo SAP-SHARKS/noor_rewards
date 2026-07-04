@@ -807,8 +807,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get audioNotLoaded => 'Audio URL not loaded yet. Please wait...';
 
   @override
-  String playbackError(String detail) {
-    return 'Playback error: $detail';
+  String playbackError(String message) {
+    return 'Playback error: $message';
   }
 
   @override

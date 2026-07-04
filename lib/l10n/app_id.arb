@@ -2455,8 +2455,8 @@
   "quranApiService_syncFailedPartial": ", {n} gagal",
   "quranApiService_syncFailedGeneric": "Sinkronisasi gagal: {error}",
   "authScreen_dontHaveAnAccountSignUp": "Belum punya akun? Mendaftar",
-  "dhikrExitCelebration_keepItUp": "Keep it up!",
-  "unknownError": "Unknown error",
+  "dhikrExitCelebration_keepItUp": "Lanjutkan kerja baikmu!",
+  "unknownError": "Kesalahan tidak diketahui",
   "@readNTimes": {
     "placeholders": {
       "count": {

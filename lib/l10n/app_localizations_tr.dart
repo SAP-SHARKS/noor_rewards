@@ -805,7 +805,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get audioNotLoaded => 'Ses henüz yüklenmedi. Lütfen bekleyin...';
 
   @override
-  String playbackError(String detail) {
+  String playbackError(String message) {
     return 'Oynatma hatası: $message';
   }
 
@@ -5589,7 +5589,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get quranScreen_mohammadMarmadukePickthall =>
-      'Mohammad Marmaduke Pickthall';
+      'Muhammed Marmaduke Pickthall';
 
   @override
   String get quranScreen_englishTheMessage => 'İngilizce, Mesaj';
@@ -5758,7 +5758,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String quranScreen_sabiqSeedsEarnedToday(String _pointsToday) {
-    return '+$_pointsToday Sabiq Seeds earned today!';
+    return '+$_pointsToday Sabiq Seeds bugün kazanıldı!';
   }
 
   @override
@@ -9408,5 +9408,5 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dhikrExitCelebration_keepItUp => 'Aynen böyle devam!';
 
   @override
-  String get unknownError => 'Unknown error';
+  String get unknownError => 'Bilinmeyen hata';
 }

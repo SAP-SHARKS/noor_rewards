@@ -808,7 +808,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get audioNotLoaded => 'URL audio non chargée. Veuillez patienter...';
 
   @override
-  String playbackError(String detail) {
+  String playbackError(String message) {
     return 'Erreur de lecture : $message';
   }
 
@@ -3589,8 +3589,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dhikrScreen_paradiseSoughtTheFire => 'Paradis recherché — le Feu';
 
   @override
-  String get dhikrScreen_cryToTheOne =>
-      'Cry to the One who hears, sees, and knows';
+  String get dhikrScreen_cryToTheOne => 'Crie à Celui qui entend, voit et sait';
 
   @override
   String get dhikrScreen_nameOnTheCorner => 'le nom au coin de la Kaaba';
@@ -9501,8 +9500,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vous n\'avez pas de compte ? S\'inscrire';
 
   @override
-  String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+  String get dhikrExitCelebration_keepItUp => 'Continuez comme ça!';
 
   @override
-  String get unknownError => 'Unknown error';
+  String get unknownError => 'Erreur inconnue';
 }

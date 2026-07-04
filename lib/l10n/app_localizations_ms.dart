@@ -806,7 +806,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get audioNotLoaded => 'URL audio belum dimuatkan. Sila tunggu...';
 
   @override
-  String playbackError(String detail) {
+  String playbackError(String message) {
     return 'Ralat main balik: $message';
   }
 
@@ -9485,5 +9485,5 @@ class AppLocalizationsMs extends AppLocalizations {
   String get dhikrExitCelebration_keepItUp => 'Teruskan!';
 
   @override
-  String get unknownError => 'Unknown error';
+  String get unknownError => 'Ralat tidak diketahui';
 }

@@ -809,7 +809,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Аудио ещё не загружено. Пожалуйста, подождите...';
 
   @override
-  String playbackError(String detail) {
+  String playbackError(String message) {
     return 'Ошибка воспроизведения: $message';
   }
 
@@ -9440,8 +9440,8 @@ class AppLocalizationsRu extends AppLocalizations {
       'У вас нет учетной записи? Зарегистрироваться';
 
   @override
-  String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+  String get dhikrExitCelebration_keepItUp => 'Так держать!';
 
   @override
-  String get unknownError => 'Unknown error';
+  String get unknownError => 'Неизвестная ошибка';
 }

@@ -5892,11 +5892,5 @@
   },
   "authScreen_dontHaveAnAccountSignUp": "Don't have an account? Sign Up",
   "dhikrExitCelebration_keepItUp": "Keep it up!",
-  "unknownError": "Unknown error",
-  "playbackError": "Playback error: {detail}",
-  "@playbackError": {
-    "placeholders": {
-      "detail": { "type": "String" }
-    }
-  }
+  "unknownError": "Unknown error"
 }

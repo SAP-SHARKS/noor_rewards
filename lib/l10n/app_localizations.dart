@@ -1589,8 +1589,8 @@ abstract class AppLocalizations {
   /// No description provided for @playbackError.
   ///
   /// In en, this message translates to:
-  /// **'Playback error: {detail}'**
-  String playbackError(String detail);
+  /// **'Playback error: {message}'**
+  String playbackError(String message);
 
   /// No description provided for @audioUnavailable.
   ///
