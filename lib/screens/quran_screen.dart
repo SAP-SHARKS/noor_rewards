@@ -724,18 +724,28 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     // Note: _fullScreenMode is intentionally NOT persisted — it's a
     // distraction-free reading session toggle, not a setting.
 
-    if (_cache.get('pref_translation') == null && mounted) {
+    // Translation-edition selection.
+    //
+    // Priority:
+    //   1. If the user has manually picked a translation from the reader
+    //      settings sheet (pref_translation_manual == true), always
+    //      restore that pick.
+    //   2. Otherwise, auto-select an edition that matches the app locale
+    //      every launch — so a user who installs in English and later
+    //      switches the app to Urdu will get Urdu ayah translations
+    //      without having to open settings.
+    //
+    // Malay falls back to Indonesian (mutually intelligible, and no
+    // ms.* edition exists in the pool). Arabic and Russian fall back to
+    // en.sahih since no ar.* / ru.* editions ship.
+    final manualPick =
+        _cache.get('pref_translation_manual', defaultValue: false) as bool;
+    if (manualPick && _cache.get('pref_translation') != null) {
+      _translationEdition = _cache.get('pref_translation') as String;
+    } else if (mounted) {
       final lang = Localizations.localeOf(context).languageCode;
-      if (lang == 'ur') {
-        _translationEdition = 'ur.jalandhry';
-      } else if (lang == 'fr')
-        _translationEdition = 'fr.hamidullah';
-      else if (lang == 'tr')
-        _translationEdition = 'tr.diyanet';
-      else if (lang == 'id')
-        _translationEdition = 'id.indonesian';
-      else
-        _translationEdition = 'en.sahih';
+      _translationEdition = _editionForLocale(lang);
+      _cache.put('pref_translation', _translationEdition);
     } else {
       _translationEdition =
           _cache.get('pref_translation', defaultValue: 'en.sahih') as String;
@@ -1682,13 +1692,16 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                 ),
                               ),
                               title: Text(
-                                _surahNames[n - 1],
-                                style: GoogleFonts.outfit(
-                                  fontWeight:
-                                      isCurrent
-                                          ? FontWeight.w700
-                                          : FontWeight.w500,
-                                  color: isCurrent ? Y4.palette.primary : Y4.palette.ink,
+                                _localSurahName(context, n),
+                                style: _localeAwareSurahStyle(
+                                  context,
+                                  GoogleFonts.outfit(
+                                    fontWeight:
+                                        isCurrent
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                    color: isCurrent ? Y4.palette.primary : Y4.palette.ink,
+                                  ),
                                 ),
                               ),
                               subtitle: Text(
@@ -3615,6 +3628,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                               _cache.put(
                                                 'pref_translation',
                                                 newEdition,
+                                              );
+                                              // User made an explicit pick — stop
+                                              // auto-migrating the edition on
+                                              // locale switches so we respect
+                                              // their choice.
+                                              _cache.put(
+                                                'pref_translation_manual',
+                                                true,
                                               );
                                               for (
                                                 int a = 1;
@@ -6504,6 +6525,26 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return 1;
   }
 } // end _QuranScreenState
+
+// Default `_translationEdition` when the user has not manually picked one.
+// The pool intentionally covers the app's shipping locales; any locale
+// without a native edition (ar, ru) falls back to Sahih International EN.
+// Malay uses the Indonesian edition (mutually intelligible).
+String _editionForLocale(String lang) {
+  switch (lang) {
+    case 'ur':
+      return 'ur.jalandhry';
+    case 'fr':
+      return 'fr.hamidullah';
+    case 'tr':
+      return 'tr.diyanet';
+    case 'id':
+    case 'ms':
+      return 'id.indonesian';
+    default:
+      return 'en.sahih';
+  }
+}
 
 // ── Locale-aware surah name helpers ──────────────────────────────────────────
 // The English transliterations ("Al-Fatiha", "Al-Baqarah", …) are the shipped
