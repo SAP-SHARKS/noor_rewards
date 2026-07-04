@@ -14922,6 +14922,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown error'**
   String get unknownError;
+
+  /// No description provided for @celebrationStatSeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'SEEDS'**
+  String get celebrationStatSeeds;
+
+  /// No description provided for @celebrationStatSeedsEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'SEEDS EARNED'**
+  String get celebrationStatSeedsEarned;
+
+  /// No description provided for @celebrationStatAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'AYAHS'**
+  String get celebrationStatAyahs;
+
+  /// No description provided for @celebrationStatTime.
+  ///
+  /// In en, this message translates to:
+  /// **'TIME'**
+  String get celebrationStatTime;
+
+  /// No description provided for @celebrationStatStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'STREAK'**
+  String get celebrationStatStreak;
+
+  /// No description provided for @celebrationStreakStartToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Start today'**
+  String get celebrationStreakStartToday;
+
+  /// No description provided for @celebrationDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String celebrationDaysCount(int count);
 }
 
 class _AppLocalizationsDelegate

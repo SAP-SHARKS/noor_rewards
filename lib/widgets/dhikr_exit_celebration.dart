@@ -420,7 +420,7 @@ class _StatsRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'SEEDS EARNED',
+                  AppLocalizations.of(context)?.celebrationStatSeedsEarned ?? 'SEEDS EARNED',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -491,7 +491,7 @@ class _StatsRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'STREAK',
+                    AppLocalizations.of(context)?.celebrationStatStreak ?? 'STREAK',
                     style: GoogleFonts.outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
@@ -504,8 +504,8 @@ class _StatsRow extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 hasStreak
-                    ? '$streakDays ${streakDays == 1 ? "day" : "days"}'
-                    : 'Start today',
+                    ? (AppLocalizations.of(context)?.celebrationDaysCount(streakDays) ?? '$streakDays ${streakDays == 1 ? "day" : "days"}')
+                    : (AppLocalizations.of(context)?.celebrationStreakStartToday ?? 'Start today'),
                 style: GoogleFonts.fraunces(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,

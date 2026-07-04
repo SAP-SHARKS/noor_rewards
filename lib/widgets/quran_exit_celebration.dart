@@ -615,6 +615,7 @@ class _QuranStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
@@ -636,7 +637,7 @@ class _QuranStatsRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _label('SEEDS'),
+                _label(l?.celebrationStatSeeds ?? 'SEEDS'),
                 const SizedBox(height: 4),
                 AnimatedBuilder(
                   animation: pointsAnim,
@@ -666,7 +667,7 @@ class _QuranStatsRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _label('AYAHS'),
+                _label(l?.celebrationStatAyahs ?? 'AYAHS'),
                 const SizedBox(height: 4),
                 _value(ayahsRead.toString()),
               ],
@@ -687,7 +688,7 @@ class _QuranStatsRow extends StatelessWidget {
                       size: 14,
                     ),
                     const SizedBox(width: 4),
-                    _label('TIME'),
+                    _label(l?.celebrationStatTime ?? 'TIME'),
                   ],
                 ),
                 const SizedBox(height: 4),

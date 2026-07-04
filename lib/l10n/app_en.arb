@@ -5892,5 +5892,17 @@
   },
   "authScreen_dontHaveAnAccountSignUp": "Don't have an account? Sign Up",
   "dhikrExitCelebration_keepItUp": "Keep it up!",
-  "unknownError": "Unknown error"
+  "unknownError": "Unknown error",
+  "celebrationStatSeeds": "SEEDS",
+  "celebrationStatSeedsEarned": "SEEDS EARNED",
+  "celebrationStatAyahs": "AYAHS",
+  "celebrationStatTime": "TIME",
+  "celebrationStatStreak": "STREAK",
+  "celebrationStreakStartToday": "Start today",
+  "celebrationDaysCount": "{count, plural, =1{1 day} other{{count} days}}",
+  "@celebrationDaysCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
 }

@@ -9444,4 +9444,33 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get unknownError => 'Неизвестная ошибка';
+
+  @override
+  String get celebrationStatSeeds => 'SEEDS';
+
+  @override
+  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+
+  @override
+  String get celebrationStatAyahs => 'AYAHS';
+
+  @override
+  String get celebrationStatTime => 'TIME';
+
+  @override
+  String get celebrationStatStreak => 'STREAK';
+
+  @override
+  String get celebrationStreakStartToday => 'Start today';
+
+  @override
+  String celebrationDaysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
 }
