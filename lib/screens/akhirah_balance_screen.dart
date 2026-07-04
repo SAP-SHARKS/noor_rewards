@@ -87,6 +87,28 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
   // Rebuilt as a runtime list (not `static const`) so every entry can be
   // localised via AppLocalizations — .arb keys carry the English text as a
   // placeholder until translators backfill.
+  // MT returned inconsistent quote pairs across locales — Urdu doubles
+  // curly single quotes (’’…‘‘, which render as `\\ … ''`), Arabic has
+  // one row with escaped doubles that decode to `""…""`, French/Malay
+  // mix guillemets («…») with straight `"…"`. Users see mismatched
+  // glyphs and read them as “backslash on one side, inverted comma on
+  // the other”. Stripping decorative double/guillemet marks at display
+  // time keeps the reflection quote-neutral without touching 200 .arb
+  // rows. The em-dash before the citation still marks the source.
+  // We leave single-quote apostrophes alone so contractions ("don't",
+  // "l'écume") stay intact.
+  static final _kQuoteStrip = RegExp(
+    '[“”„‟«»"]',
+  );
+  String _cleanReflection(String s) {
+    return s
+        .replaceAll('’’', '')
+        .replaceAll('‘‘', '')
+        .replaceAll(_kQuoteStrip, '')
+        .replaceAll(RegExp(r'\s{2,}'), ' ')
+        .trim();
+  }
+
   List<String> _reflectionPool(BuildContext ctx) {
     final l = AppLocalizations.of(ctx);
     return [
@@ -388,7 +410,7 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  _reflectionPool(context)[_reflectionIdx],
+                  _cleanReflection(_reflectionPool(context)[_reflectionIdx]),
                   // Cap at 5 lines with ellipsis so an unusually long
                   // translation can't push the card off screen. Most
                   // reflection strings fit in 2-3 lines even in the
