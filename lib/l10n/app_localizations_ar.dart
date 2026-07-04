@@ -8001,12 +8001,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_dividedByQuranCompletions_b9a013(String arg1) {
-    return 'Divided by 3 → $arg1 Quran completions';
+    return 'مقسمة على 3 → $arg1 ختمات القرآن';
   }
 
   @override
   String impactReportScreen_recitations_3cb9ec(String arg1) {
-    return '$arg1 recitations';
+    return '$arg1 تلاوات';
   }
 
   @override
@@ -8016,56 +8016,55 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_3dc421_3dc421(String arg1) {
-    return '${arg1}h ';
+    return '${arg1}h';
   }
 
   @override
   String impactReportScreen_08990a_08990a(String arg1) {
-    return '${arg1}m';
+    return '$arg1م';
   }
 
   @override
   String impactReportScreen_ago_71107c(String arg1) {
-    return '${arg1}m ago';
+    return '$arg1م مضت';
   }
 
   @override
   String impactReportScreen_moAgo_325a71(String arg1) {
-    return '${arg1}mo ago';
+    return '$arg1 منذ شهر';
   }
 
   @override
   String impactReportScreen_viewAllDonors_e72932(String arg1) {
-    return 'View all $arg1 donors';
+    return 'عرض جميع الجهات المانحة $arg1';
   }
 
   @override
   String impactReportScreen_failed_190558(String e) {
-    return 'Failed: $e';
+    return 'فشل: $e';
   }
 
   @override
   String impactReportScreen_meet_82797d(String arg1, String arg2) {
-    return 'Meet $arg1, $arg2';
+    return 'تعرف على $arg1، $arg2';
   }
 
   @override
   String impactReportScreen_sponsor_a47417(String arg1) {
-    return 'Sponsor $arg1 →';
+    return 'الراعي $arg1 →';
   }
 
   @override
   String impactReportScreen_funded_add009(String arg1) {
-    return '$arg1% funded';
+    return '$arg1% ممولة';
   }
 
   @override
-  String get impactReportScreen_yourLifetimeImpact_8bfdcd =>
-      'Your lifetime impact';
+  String get impactReportScreen_yourLifetimeImpact_8bfdcd => 'تأثير حياتك';
 
   @override
   String get impactReportScreen_startYourImpactJourney_1ae8c4 =>
-      'Start your impact journey';
+      'ابدأ رحلة التأثير الخاصة بك';
 
   @override
   String impactReportScreen_bd3721_bd3721(String _myOrphansSponsoredCount) {
@@ -8078,31 +8077,31 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get levelScreen_customProfileThemes_cec15c => 'Custom profile themes';
+  String get levelScreen_customProfileThemes_cec15c =>
+      'موضوعات الملف الشخصي المخصصة';
 
   @override
-  String get levelScreen_exclusiveVotingRights_684759 =>
-      'Exclusive voting rights';
+  String get levelScreen_exclusiveVotingRights_684759 => 'حقوق التصويت الحصرية';
 
   @override
-  String get levelScreen_hallOfFameListing_eb6ad1 => 'Hall of Fame listing';
+  String get levelScreen_hallOfFameListing_eb6ad1 => 'قائمة قاعة المشاهير';
 
   @override
   String levelScreen_seeds_fff97b(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 البذور';
   }
 
   @override
-  String get levelScreen_laIlahaIllallah_e8c26b => 'La ilaha illallah x100';
+  String get levelScreen_laIlahaIllallah_e8c26b => 'لا إله إلا الله x100';
 
   @override
   String levelScreen_unlocks_6f2513(String arg1) {
-    return 'Unlocks: $arg1';
+    return 'يفتح: $arg1';
   }
 
   @override
   String levelScreen_seedsBoost_464454(String arg1) {
-    return '$arg1× Seeds Boost';
+    return '$arg1× تعزيز البذور';
   }
 
   @override
@@ -8113,47 +8112,45 @@ class AppLocalizationsAr extends AppLocalizations {
     String arg4,
     String arg5,
   ) {
-    return '$arg1:$arg2  $arg3/$arg4/$arg5';
+    return '$arg1:$arg2 $arg3/$arg4/$arg5';
   }
 
   @override
   String levelScreen_nextDays_212b86(String arg1, String arg2) {
-    return 'Next: $arg1 ($arg2 days)';
+    return 'التالي: $arg1 ($arg2 أيام)';
   }
 
   @override
   String levelScreen_days_100e10(String current, String arg1) {
-    return '$current / $arg1 days';
+    return '$current / $arg1 أيام';
   }
 
   @override
   String levelScreen_dayStreak_df2abf(String arg1) {
-    return '$arg1 day streak';
+    return '$arg1 خط يوم';
   }
 
   @override
-  String get phase1Screens_quranReadingNimage_5ebac0 => 'Quran reading\\nimage';
+  String get phase1Screens_quranReadingNimage_5ebac0 => 'قراءة القرآن\\nصورة';
 
   @override
-  String get phase1Screens_orphansNimage_24d12a => 'Orphans\\nimage';
+  String get phase1Screens_orphansNimage_24d12a => 'الصورة اليتيمة\\n';
 
   @override
   String onboardingComponents_355c50_355c50(String first) {
-    return '$first ';
+    return '$first';
   }
 
   @override
   String onboardingComponents_b236c9_b236c9(String trailing) {
-    return ' $trailing';
+    return '$trailing';
   }
 
   @override
-  String get quranMini_inTheNameOf_46925d =>
-      'In the name of Allah, the Most Gracious, the Most Merciful.';
+  String get quranMini_inTheNameOf_46925d => 'بسم الله الرحمن الرحيم.';
 
   @override
-  String get quranMini_allPraiseBelongsTo_2d51df =>
-      'All praise belongs to Allah, Lord of all the worlds.';
+  String get quranMini_allPraiseBelongsTo_2d51df => 'والحمد لله رب العالمين.';
 
   @override
   String orphansGridScreen_36cd3b_36cd3b(String arg1, String arg2) {
@@ -8162,117 +8159,117 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String orphanDetailScreen_years_debb46(String arg1) {
-    return '$arg1 years';
+    return '$arg1 سنة';
   }
 
   @override
   String orphanDetailScreen_ofSeeds_2a29fc(String arg1, String arg2) {
-    return '$arg1 of $arg2 Seeds';
+    return '$arg1 من $arg2 البذور';
   }
 
   @override
   String orphanDetailScreen_through_2cdb72(String arg1) {
-    return 'Through $arg1';
+    return 'من خلال $arg1';
   }
 
   @override
   String get orphanDetailScreen_andTheyGiveFood_7ddcff =>
-      'And they give food, despite their love for it, to the needy, the orphan, and the captive.';
+      'ويطعمون الطعام على حبهم له مسكينا ويتيما وأسيرا.';
 
   @override
   String orphanDetailScreen_ago_71107c(String arg1) {
-    return '${arg1}m ago';
+    return '$arg1م مضت';
   }
 
   @override
   String orphanDetailScreen_moAgo_325a71(String arg1) {
-    return '${arg1}mo ago';
+    return '$arg1 منذ شهر';
   }
 
   @override
   String orphanDetailScreen_seeds_30d8dc(String _availablePoints) {
-    return '$_availablePoints Seeds';
+    return '$_availablePoints بذور';
   }
 
   @override
   String orphanDetailScreen_sponsor_b34bcf(String arg1) {
-    return 'Sponsor $arg1';
+    return 'الراعي $arg1';
   }
 
   @override
   String orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec(
     String amount,
   ) {
-    return 'JazakAllah Khayran! $amount Seeds sponsored.';
+    return 'جزاك الله خيران! $amount البذور برعاية.';
   }
 
   @override
   String orphanDetailScreen_chooseHowManySeeds_b69aa2(String arg1) {
-    return 'Choose how many Seeds to give. Minimum $arg1.';
+    return 'اختر عدد البذور التي تريد تقديمها. الحد الأدنى $arg1.';
   }
 
   @override
   String orphanDetailScreen_yourBalanceSeeds_f8045b(String arg1) {
-    return 'Your balance: $arg1 Seeds';
+    return 'رصيدك: $arg1 بذور';
   }
 
   @override
   String get profileSettingsScreen_nameCannotBeEmpty_c737ab =>
-      'Name cannot be empty';
+      'لا يمكن أن يكون الاسم فارغًا';
 
   @override
   String get profileSettingsScreen_bosniaAndHerzegovina_a428ef =>
-      'Bosnia and Herzegovina';
+      'البوسنة والهرسك';
 
   @override
   String get profileSettingsScreen_centralAfricanRepublic_0fde6c =>
-      'Central African Republic';
+      'جمهورية أفريقيا الوسطى';
 
   @override
   String get profileSettingsScreen_unitedArabEmirates_d8e2d8 =>
-      'United Arab Emirates';
+      'الإمارات العربية المتحدة';
 
   @override
   String get profileSettingsScreen_signedInWithGoogle_17e053 =>
-      'Signed in with Google';
+      'تم تسجيل الدخول باستخدام جوجل';
 
   @override
   String get profileSettingsScreen_signedInWithQuran_2e1ffc =>
-      'Signed in with Quran.com';
+      'تم التسجيل في موقع القرآن الكريم';
 
   @override
   String get profileSettingsScreen_signedInWithEmail_dd881f =>
-      'Signed in with Email';
+      'تم تسجيل الدخول باستخدام البريد الإلكتروني';
 
   @override
   String profileSettingsScreen_seeds_53d666(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 بذور';
   }
 
   @override
   String get profileSettingsScreen_guidesFAQsAndHow_b990d6 =>
-      'Guides, FAQs and how-tos';
+      'الأدلة والأسئلة الشائعة والكيفية';
 
   @override
   String get profileSettingsScreen_somethingNotWorkingTell_07f659 =>
-      'Something not working? Tell us';
+      'شيء لا يعمل؟ أخبرنا';
 
   @override
   String projectDetailScreen_organisedBy_8b317a(String sponsor) {
-    return 'Organised by $sponsor\\n\\n';
+    return 'تم التنظيم بواسطة $sponsor\\n\\n';
   }
 
   @override
   String get projectDetailScreen_fundedSoFarEvery_dab3fd =>
-      'Funded so far, every Seed counts!\\n\\n';
+      'تم تمويل كل بذرة حتى الآن!\\n\\n';
 
   @override
   String get projectDetailScreen_openSabiqRewardsApp_cdda14 =>
-      'Open Sabiq Rewards app to donate your Seeds and earn reward.\\n';
+      'افتح تطبيق Sabiq Rewards للتبرع ببذورك والحصول على المكافأة.\\n';
 
   @override
   String get projectDetailScreen_sabiqrewardsSadaqahIslamicCharity_663ba5 =>
-      '#SabiqRewards #Sadaqah #IslamicCharity';
+      '#مكافآت سابق #صدقة #الجمعية الخيرية الإسلامية';
 
   @override
   String projectDetailScreen_4c2b09_4c2b09(
@@ -8285,11 +8282,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get projectDetailScreen_donateToProvideUrgent_246035 =>
-      'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...';
+      'تبرع لتقديم مساعدات عاجلة ومنقذة للحياة للفلسطينيين الذين يعانون من نقص حاد في الغذاء والمياه والإمدادات الطبية...';
 
   @override
   String projectDetailScreen_seeds_47387f(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 بذور';
   }
 
   @override
@@ -8299,127 +8296,125 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String projectDetailScreen_ago_71107c(String arg1) {
-    return '${arg1}m ago';
+    return '$arg1م مضت';
   }
 
   @override
   String projectDetailScreen_moAgo_325a71(String arg1) {
-    return '${arg1}mo ago';
+    return '$arg1 منذ شهر';
   }
 
   @override
   String projectDetailScreen_viewAll_3d2c48(String arg1) {
-    return 'View all $arg1 →';
+    return 'عرض الكل $arg1 →';
   }
 
   @override
   String quranHubScreen_saved_9c28a3(String arg1) {
-    return '$arg1 saved';
+    return 'تم حفظ $arg1';
   }
 
   @override
   String get quranHubScreen_tapTheHeartBookmark_c62da1 =>
-      'Tap the heart/bookmark icon while reading to save verses.';
+      'اضغط على أيقونة القلب/الإشارة المرجعية أثناء القراءة لحفظ الآيات.';
 
   @override
   String quranHubScreen_surahVerse_2c65ec(String s, String a) {
-    return 'Surah $s  •  Verse $a';
+    return 'سورة __ص0__ • الآية __ص1__';
   }
 
   @override
   String quranHubScreen_verses_f97238(String arg1) {
-    return '$arg1 verses';
+    return '$arg1 الآيات';
   }
 
   @override
   String quranHubScreen_of_0420fc(String arg1) {
-    return 'of $arg1';
+    return 'من $arg1';
   }
 
   @override
-  String get quranScreen_englishSahihIntl_da5e9e => 'English, Sahih Intl.';
+  String get quranScreen_englishSahihIntl_da5e9e => 'الإنجليزية، صحيح الدولي.';
 
   @override
-  String get quranScreen_saheehInternational_fd1d5c => 'Saheeh International';
+  String get quranScreen_saheehInternational_fd1d5c => 'صحيح الدولية';
 
   @override
-  String get quranScreen_englishPickthall_a0d265 => 'English, Pickthall';
+  String get quranScreen_englishPickthall_a0d265 => 'الإنجليزية، بيكثال';
 
   @override
   String get quranScreen_mohammadMarmadukePickthall_554557 =>
-      'Mohammad Marmaduke Pickthall';
+      'محمد مارمادوك بيكثال';
 
   @override
-  String get quranScreen_englishTheMessage_24a984 => 'English, The Message';
+  String get quranScreen_englishTheMessage_24a984 => 'الإنجليزية، الرسالة';
 
   @override
-  String get quranScreen_englishMuhsinKhan_a5402b => 'English, Muhsin Khan';
+  String get quranScreen_englishMuhsinKhan_a5402b => 'الإنجليزية، محسن خان';
 
   @override
-  String get quranScreen_muhsinKhanHilali_471c43 => 'Muhsin Khan & Hilali';
+  String get quranScreen_muhsinKhanHilali_471c43 => 'محسن خان وهلالي';
 
   @override
-  String get quranScreen_fatehMuhammadJalandhry_262387 =>
-      'Fateh Muhammad Jalandhry';
+  String get quranScreen_fatehMuhammadJalandhry_262387 => 'فاتح محمد جلندري';
 
   @override
-  String get quranScreen_imamAhmadRazaKhan_225277 => 'Imam Ahmad Raza Khan';
+  String get quranScreen_imamAhmadRazaKhan_225277 => 'الإمام أحمد رضا خان';
 
   @override
   String get quranScreen_maulanaSayyidAbulAla_75d35f =>
-      'Maulana Sayyid Abul Ala Maududi';
+      'مولانا السيد أبو العلاء المودودي';
 
   @override
-  String get quranScreen_franAisHamidullah_2ca2c2 => 'Français, Hamidullah';
+  String get quranScreen_franAisHamidullah_2ca2c2 => 'فرانسيس، حميد الله';
 
   @override
-  String get quranScreen_rkDiyanet_431130 => 'Türkçe, Diyanet';
+  String get quranScreen_rkDiyanet_431130 => 'التركية، ديانت';
 
   @override
-  String get quranScreen_rkLeymanAte_7aa8e1 => 'Türkçe, Süleyman Ateş';
+  String get quranScreen_rkLeymanAte_7aa8e1 => 'تركسي، سليمان اتيش';
 
   @override
-  String get quranScreen_bahasaIndonesian_2a26f0 => 'Bahasa, Indonesian';
+  String get quranScreen_bahasaIndonesian_2a26f0 => 'البهاسا، الإندونيسية';
 
   @override
   String get quranScreen_ministryOfReligiousAffairs_e30db8 =>
-      'Ministry of Religious Affairs';
+      'وزارة الشؤون الدينية';
 
   @override
-  String get quranScreen_muhiuddinKhan_df9bfe => 'বাংলা, Muhiuddin Khan';
+  String get quranScreen_muhiuddinKhan_df9bfe => 'تمام، محي الدين خان';
 
   @override
-  String get quranScreen_deutschAbuRida_9acffd => 'Deutsch, Abu Rida';
+  String get quranScreen_deutschAbuRida_9acffd => 'دويتش، أبو ريدة';
 
   @override
-  String get quranScreen_abuRidaMuhammadIbn_3a40b3 =>
-      'Abu Rida Muhammad ibn Ahmad';
+  String get quranScreen_abuRidaMuhammadIbn_3a40b3 => 'أبو رضا محمد بن أحمد';
 
   @override
-  String get quranScreen_espaOlAsad_1c1933 => 'Español, Asad';
+  String get quranScreen_espaOlAsad_1c1933 => 'اسبانيول، اسد';
 
   @override
-  String get quranScreen_uthmaniMadinah_e1f10e => 'Uthmani (Madinah)';
+  String get quranScreen_uthmaniMadinah_e1f10e => 'العثماني (المدينة المنورة)';
 
   @override
-  String get quranScreen_alJalalaynEN_af0584 => 'Al-Jalalayn (EN)';
+  String get quranScreen_alJalalaynEN_af0584 => 'الجلالين (EN)';
 
   @override
   String get quranScreen_couldNotLoadAyah_62f120 =>
-      'Could not load ayah. Please retry.';
+      'تعذر تحميل الآية. يرجى إعادة المحاولة.';
 
   @override
   String get quranScreen_noConnectionCachedData_e5a215 =>
-      'No connection. Cached data may be available.';
+      'لا يوجد اتصال. قد تكون البيانات المخزنة مؤقتًا متاحة.';
 
   @override
   String quranScreen_ayahs_c98642(String arg1) {
-    return '$arg1 ayahs';
+    return '$arg1 الآيات';
   }
 
   @override
   String get quranScreen_couldNotRemoveBookmark_699a82 =>
-      'Could not remove bookmark, please retry';
+      'تعذرت إزالة الإشارة المرجعية، يرجى إعادة المحاولة';
 
   @override
   String quranScreen_removedBookmark_d7a16a(
@@ -8427,12 +8422,12 @@ class AppLocalizationsAr extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Removed bookmark $_surahName $_surah:$_ayah';
+    return 'تمت إزالة الإشارة المرجعية $_surahName $_surah:$_ayah';
   }
 
   @override
   String get quranScreen_couldNotSaveBookmark_976448 =>
-      'Could not save bookmark, please retry';
+      'تعذر حفظ الإشارة المرجعية، يرجى إعادة المحاولة';
 
   @override
   String quranScreen_bookmarked_2c6203(
@@ -8440,11 +8435,11 @@ class AppLocalizationsAr extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Bookmarked $_surahName $_surah:$_ayah';
+    return 'تم وضع إشارة مرجعية $_surahName $_surah:$_ayah';
   }
 
   @override
-  String get quranScreen_trimmedContains_039f31 => ') && !trimmed.contains(';
+  String get quranScreen_trimmedContains_039f31 => ') && !مشذّب.يحتوي على(';
 
   @override
   String quranScreen_tafsir_391c0d(
@@ -8452,69 +8447,68 @@ class AppLocalizationsAr extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Tafsir · $_surahName $_surah:$_ayah';
+    return 'التفسير · $_surahName $_surah:$_ayah';
   }
 
   @override
-  String get quranScreen_addedToFavourites_b3cce0 => '♥️ Added to Favourites';
+  String get quranScreen_addedToFavourites_b3cce0 => '♥ تم الإضافة إلى المفضلة';
 
   @override
   String get quranScreen_comfortableNightTimeReading_da3df2 =>
-      'Comfortable night-time reading';
+      'قراءة مريحة ليلا';
 
   @override
   String quranScreen_pt_9e58e8(String arg1) {
-    return '$arg1 pt';
+    return '$arg1 نقطة';
   }
 
   @override
   String quranScreen_003843_003843(String arg1, String arg2) {
-    return '$arg1  $arg2';
+    return '$arg1 $arg2';
   }
 
   @override
   String get quranScreen_displayMeaningBelowEach_a26f31 =>
-      'Display meaning below each verse';
+      'عرض المعنى تحت كل آية';
 
   @override
-  String get quranScreen_showTransliteration_e04abd => 'Show Transliteration';
+  String get quranScreen_showTransliteration_e04abd => 'إظهار الترجمة الصوتية';
 
   @override
   String get quranScreen_romanisedPronunciationUnderEach_2c0136 =>
-      'Romanised pronunciation under each word';
+      'النطق بالحروف اللاتينية تحت كل كلمة';
 
   @override
   String get quranScreen_progressBarAyahCount_3cd24d =>
-      'Progress bar & ayah count card';
+      'شريط التقدم وبطاقة عدد الآيات';
 
   @override
   String get quranScreen_moveToNextVerse_ea29fd =>
-      'Move to next verse when audio ends';
+      'الانتقال إلى الآية التالية عندما ينتهي الصوت';
 
   @override
-  String get quranScreen_repeatCurrentVerse_552669 => 'Repeat Current Verse';
+  String get quranScreen_repeatCurrentVerse_552669 => 'كرر الآية الحالية';
 
   @override
-  String get quranScreen_notificationsALERTS_fbea75 => 'NOTIFICATIONS & ALERTS';
+  String get quranScreen_notificationsALERTS_fbea75 => 'الإخطارات والتنبيهات';
 
   @override
-  String get quranScreen_milestoneSoundAlerts_03cdc3 =>
-      'Milestone Sound Alerts';
+  String get quranScreen_milestoneSoundAlerts_03cdc3 => 'تنبيهات صوتية مهمة';
 
   @override
   String get quranScreen_chimeWhenYouReach_dd60c0 =>
-      'Chime when you reach 10, 25, 50 ayahs';
+      'رنين عندما تصل إلى 10، 25، 50 آية';
 
   @override
   String get quranScreen_showEachArabicWord_64532d =>
-      'Show each Arabic word with its English meaning';
+      'إظهار كل كلمة عربية بمعناها الإنجليزي';
 
   @override
-  String get quranScreen_translationLanguage_d8c9b3 => 'Translation Language';
+  String get quranScreen_translationLanguage_d8c9b3 => 'لغة الترجمة';
 
   @override
   String quranScreen_translationsAvailable_55c648(String arg1) {
-    return '$arg1 translations available';
+    return '$arg1 الترجمات المتاحة';
   }
 
   @override
@@ -8524,7 +8518,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_sabiqSeedsEarnedToday_13ddb3(String _pointsToday) {
-    return '+$_pointsToday Sabiq Seeds earned today!';
+    return '+$_pointsToday بذور سابق التي حصلت عليها اليوم!';
   }
 
   @override
@@ -8534,12 +8528,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_6d1f9d_6d1f9d(String arg1) {
-    return '$arg1 ';
+    return '$arg1';
   }
 
   @override
   String quranScreen_ayahsRead_862866(String _ayahsToday) {
-    return '$_ayahsToday ayahs read';
+    return '$_ayahsToday آيات مقروءة';
   }
 
   @override
@@ -8549,60 +8543,60 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_6e8ac8_6e8ac8(String text) {
-    return '$text ';
+    return '$text';
   }
 
   @override
   String quranScreen_pageJuz_6ac28a(String _currentPage, String arg1) {
-    return 'Page $_currentPage  ·  Juz $arg1';
+    return 'الصفحة $_currentPage · الجزء $arg1';
   }
 
   @override
   String get startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5 =>
-      'Unexpected error during Google Sign In';
+      'حدث خطأ غير متوقع أثناء تسجيل الدخول إلى Google';
 
   @override
   String get startJourneyScreen_connectedToQuranCom_c0c631 =>
-      'Connected to Quran.com';
+      'متصل بموقع القرآن الكريم';
 
   @override
   String streakScreen_nextDays_212b86(String arg1, String arg2) {
-    return 'Next: $arg1 ($arg2 days)';
+    return 'التالي: $arg1 ($arg2 أيام)';
   }
 
   @override
   String streakScreen_seeds_990893(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 البذور';
   }
 
   @override
   String streakScreen_days_100e10(String current, String arg1) {
-    return '$current / $arg1 days';
+    return '$current / $arg1 أيام';
   }
 
   @override
   String streakScreen_dayStreak_df2abf(String arg1) {
-    return '$arg1 day streak';
+    return '$arg1 خط يوم';
   }
 
   @override
   String get tafsirHubScreen_earnSeedsForEvery_ffb3d5 =>
-      'Earn Seeds for every 10 min of Tafsir listening';
+      'اربح بذورًا مقابل كل 10 دقائق من استماع التفسير';
 
   @override
-  String get tafsirScreen_alJalalaynEN_af0584 => 'Al-Jalalayn (EN)';
+  String get tafsirScreen_alJalalaynEN_af0584 => 'الجلالين (EN)';
 
   @override
   String tafsirScreen_verses_fed624(String arg1) {
-    return '$arg1 verses';
+    return '$arg1 الآيات';
   }
 
   @override
-  String get tafsirScreen_trimmedContains_039f31 => ') && !trimmed.contains(';
+  String get tafsirScreen_trimmedContains_039f31 => ') && !مشذّب.يحتوي على(';
 
   @override
   String tafsirScreen_ayahOf_63c42b(String _ayah, String _surahLen) {
-    return 'Ayah $_ayah of $_surahLen';
+    return 'آية $_ayah من $_surahLen';
   }
 
   @override
@@ -8616,67 +8610,67 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tafsirScreen_tafsirNotAvailableFor_0fce81 =>
-      'Tafsir not available for this ayah.';
+      'التفسير غير متوفر لهذه الآية.';
 
   @override
   String get donationService_youMustBeLogged_6813cf =>
-      'You must be logged in to donate.';
+      'يجب عليك تسجيل الدخول للتبرع.';
 
   @override
   String get donationService_donationCouldNotBe_074195 =>
-      'Donation could not be processed at this time.';
+      'لا يمكن معالجة التبرع في هذا الوقت.';
 
   @override
   String get donationService_anUnexpectedNetworkError_914b7a =>
-      'An unexpected network error occurred.';
+      'حدث خطأ غير متوقع في الشبكة.';
 
   @override
   String get donationService_sponsorshipReceived_671201 =>
-      'Sponsorship received 💝';
+      'تم الحصول على الرعاية 💝';
 
   @override
   String donationService_youSponsoredSeedsJazak_7711e1(String amount) {
-    return 'You sponsored $amount Seeds · jazak Allah khair.';
+    return 'لقد قمت برعاية $amount بذور · جزاك الله خيرا.';
   }
 
   @override
   String get donationService_sponsorshipCouldNotBe_55003e =>
-      'Sponsorship could not be processed at this time.';
+      'لا يمكن معالجة الرعاية في هذا الوقت.';
 
   @override
   String get liveNotificationService_remindersToSealYour_782a67 =>
-      'Reminders to seal your pending Seeds before midnight.';
+      'تذكيرات لإغلاق بذورك المعلقة قبل منتصف الليل.';
 
   @override
   String get liveNotificationService_sealYourSeedsBefore_62a726 =>
-      'Seal your Seeds before midnight';
+      'ختم البذور الخاصة بك قبل منتصف الليل';
 
   @override
   String liveNotificationService_youHavePendingSeeds_dd762f(
     String pendingSeeds,
   ) {
-    return 'You have $pendingSeeds pending Seeds. Tap Seal the Day before midnight or they expire.';
+    return 'لديك $pendingSeeds بذور معلقة. اضغط على ختم اليوم قبل منتصف الليل أو تنتهي صلاحيته.';
   }
 
   @override
   String liveNotificationService_ayatReadToday_b5a4e8(String _ayahCount) {
-    return '$_ayahCount Ayat Read today 📖';
+    return '$_ayahCount آيات إقرأها اليوم 📖';
   }
 
   @override
   String liveNotificationService_readQuranToday_703122(String arg1) {
-    return '$arg1 Read Quran today ⏱️';
+    return '$arg1 إقرأ القرآن اليوم ⏱️';
   }
 
   @override
   String get liveNotificationService_nothingReadFromQuran_b1c2eb =>
-      'Nothing Read from Quran today 📖';
+      'لا شيء يقرأ من القرآن اليوم 📖';
 
   @override
   String liveNotificationService_dhikrCompletedToday_835583(
     String _dhikrCount,
   ) {
-    return '$_dhikrCount Dhikr completed today 📿';
+    return '$_dhikrCount تم الانتهاء من الأذكار اليوم 📿';
   }
 
   @override
@@ -8684,55 +8678,54 @@ class AppLocalizationsAr extends AppLocalizations {
     String _ayahCount,
     String _dhikrCount,
   ) {
-    return '$_ayahCount ayat · $_dhikrCount dhikr today';
+    return '$_ayahCount آيات · $_dhikrCount أذكار اليوم';
   }
 
   @override
   String get liveNotificationService_keepReadingAndDoing_cdc7b2 =>
-      'Keep reading and doing Dhikr!';
+      'استمر في القراءة والقيام بالذكر!';
 
   @override
-  String get liveNotificationService_yourSeedsToday_8649c6 =>
-      'Your Seeds Today ✨';
+  String get liveNotificationService_yourSeedsToday_8649c6 => 'بذورك اليوم ✨';
 
   @override
   String get localReminderScheduler_sabiqRewardsNotifications_96d36c =>
-      'Sabiq Rewards Notifications';
+      'إشعارات مكافآت سابق';
 
   @override
-  String get localReminderScheduler_it_0c8340 => 'It\\';
+  String get localReminderScheduler_it_0c8340 => 'هو - هي\\';
 
   @override
   String get localReminderScheduler_fridayReadSurahAl_077436 =>
-      's Friday — read Surah Al-Kahf';
+      'يوم الجمعة - قراءة سورة الكهف';
 
   @override
   String get localReminderScheduler_whoeverRecitesSurahAl_15b9a5 =>
-      'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.';
+      'من قرأ سورة الكهف في يوم الجمعة أضاء له من النور ما بين الجمعتين.';
 
   @override
-  String get localReminderScheduler_don_b4d354 => 'Don\\';
+  String get localReminderScheduler_don_b4d354 => 'اِتَّشَح\\';
 
   @override
   String get localReminderScheduler_missSurahAlKahf_634857 =>
-      't miss Surah Al-Kahf today';
+      'لا تفوت سورة الكهف اليوم';
 
   @override
   String get localReminderScheduler_fewHoursToMaghrib_d99fd2 =>
-      'A few hours to Maghrib — finish Surah Al-Kahf if you haven\\';
+      'ساعات قليلة تفصلنا عن المغرب – أكمل سورة الكهف إذا لم تكن قد وصلت';
 
   @override
   String get quranApiService_notConnectedToQuran_9f4f89 =>
-      'Not connected to Quran.com';
+      'غير متصل بموقع القرآن الكريم';
 
   @override
   String quranApiService_syncFailedBookmarkCould_3393f7(String failed) {
-    return 'Sync failed, $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+    return 'فشلت المزامنة، تعذر دفع الإشارة (الإشارات) المرجعية $failed إلى موقع Quran.com (التحقق من الرمز المميز / نقطة النهاية).';
   }
 
   @override
   String get quranApiService_bookmarksAlreadyInSync_fad9e1 =>
-      'Bookmarks already in sync';
+      'الإشارات المرجعية متزامنة بالفعل';
 
   @override
   String quranApiService_syncedBookmarksUpDown_dd2f96(
@@ -8740,31 +8733,31 @@ class AppLocalizationsAr extends AppLocalizations {
     String uploaded,
     String downloaded,
   ) {
-    return 'Synced $total bookmarks ($uploaded up, $downloaded down)';
+    return 'الإشارات المرجعية $total المتزامنة ($uploaded لأعلى، $downloaded لأسفل)';
   }
 
   @override
   String quranApiService_syncFailed_ae7629(String e) {
-    return 'Sync failed: $e';
+    return 'فشلت المزامنة: $e';
   }
 
   @override
-  String get streakService_warmingUp_b1687b => 'Warming Up';
+  String get streakService_warmingUp_b1687b => 'الاحماء';
 
   @override
-  String get streakService_oneWeek_4f98dc => 'One Week';
+  String get streakService_oneWeek_4f98dc => 'أسبوع واحد';
 
   @override
-  String get streakService_twoWeeks_9a2d93 => 'Two Weeks';
+  String get streakService_twoWeeks_9a2d93 => 'اسبوعين';
 
   @override
-  String get streakService_oneMonth_35eb01 => 'One Month';
+  String get streakService_oneMonth_35eb01 => 'شهر واحد';
 
   @override
-  String get streakService_twoMonths_84d275 => 'Two Months';
+  String get streakService_twoMonths_84d275 => 'شهرين';
 
   @override
-  String get streakService_theCenturion_f1de7f => 'The Centurion';
+  String get streakService_theCenturion_f1de7f => 'قائد المئة';
 
   @override
   String streakService_1fc043_1fc043(String arg1, String arg2) {
@@ -8773,12 +8766,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String streakService_dayStreak_9ee8a3(String arg1, String arg2) {
-    return '$arg1-day $arg2 streak · ';
+    return '$arg1-يوم $arg2 خط ·';
   }
 
   @override
   String streakService_bonusSeedsUnlocked_bcdda5(String arg1) {
-    return '+$arg1 bonus Seeds unlocked';
+    return '+$arg1 تم فتح البذور الإضافية';
   }
 
   @override
@@ -8788,201 +8781,198 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String xpService_level_226f81(String title, String level) {
-    return '$title • Level $level';
+    return '$title • المستوى $level';
   }
 
   @override
-  String get xpService_newBadgeUnlocked_2c8d0e => 'New badge unlocked 🏆';
+  String get xpService_newBadgeUnlocked_2c8d0e => 'تم فتح شارة جديدة 🏆';
 
   @override
-  String get xpService_you_79d09a => 'You\\';
+  String get xpService_you_79d09a => 'أنت\\';
 
   @override
-  String get xpService_dailyLoginBonus_d011fa => 'Daily login bonus';
+  String get xpService_dailyLoginBonus_d011fa => 'مكافأة تسجيل الدخول اليومية';
 
   @override
   String xpService_seedsWelcomeBack_47888a(String arg1) {
-    return '+$arg1 Seeds · welcome back!';
+    return '+$arg1 البذور · أهلاً بعودتك!';
   }
 
   @override
-  String get xpService_daySealed_037a56 => 'Day sealed 🌙';
+  String get xpService_daySealed_037a56 => 'اليوم مختوم 🌙';
 
   @override
   String xpService_sabiqSeedsConfirmedBonus_702902(
     String flushed,
     String bonus,
   ) {
-    return '+$flushed Sabiq Seeds confirmed! ($bonus bonus for sealing)';
+    return '+$flushed بذور سابق مؤكدة! ($bonus مكافأة للختم)';
   }
 
   @override
   String xpService_sabiqSeedsConfirmed_34969c(String flushed) {
-    return '+$flushed Sabiq Seeds confirmed!';
+    return '+$flushed بذور سابق مؤكدة!';
   }
 
   @override
-  String get dhikrExitCelebration_everyBreathCounts_45b3df =>
-      'Every breath counts.';
+  String get dhikrExitCelebration_everyBreathCounts_45b3df => 'كل نفس مهم.';
 
   @override
   String get impactAnimation_yourRewardHasBeen_e3d106 =>
-      'Your reward has been recorded.';
+      'لقد تم تسجيل مكافأتك.';
 
   @override
   String get motivationalPopup_verilyWithHardshipComes_f23637 =>
-      'Verily, with hardship comes ease.\\nEvery trial is a door to something greater.';
+      'إن مع العسر يسرا.\\nوكل فتنة باب إلى ما هو أعظم.';
 
   @override
   String get motivationalPopup_quranAlInshirah_d81f8a =>
-      'Quran • Al-Inshirah 94:6';
+      'القرآن • الانشراح 94:6';
 
   @override
   String get motivationalPopup_quranAlAnkabut_8e938e =>
-      'Quran • Al-Ankabut 29:45';
+      'القرآن • العنكبوت 29:45';
 
   @override
-  String get motivationalPopup_quranAlBaqarah_8bb10e =>
-      'Quran • Al-Baqarah 2:152';
+  String get motivationalPopup_quranAlBaqarah_8bb10e => 'القرآن • البقرة 2:152';
 
   @override
-  String get motivationalPopup_quranAnNahl_74d608 => 'Quran • An-Nahl 16:18';
+  String get motivationalPopup_quranAnNahl_74d608 => 'القرآن • النحل 16:18';
 
   @override
   String get motivationalPopup_makeYourTimePrecious_049aae =>
-      'Make your time precious.\\nShare goodness with a friend today ,\\nevery good deed shared is a sadaqah.';
+      'اجعل وقتك ثميناً.\\nشارك الخير مع صديق اليوم،\\nكل عمل صالح تشاركه صدقة.';
 
   @override
   String get motivationalPopup_guideOthersToGood_6105c4 =>
-      'Guide others to good, and you get its reward.';
+      'أرشد غيرك إلى الخير، تنال أجره.';
 
   @override
   String get motivationalPopup_theBestOfPeople_1f6906 =>
-      'The best of people are those most beneficial to others.';
+      'خير الناس من أنفعهم للآخرين.';
 
   @override
   String get motivationalPopup_verilyInTheRemembrance_16476d =>
-      'Verily, in the remembrance of Allah\\ndo hearts find rest.';
+      'ألا بذكر الله تطمئن القلوب.';
 
   @override
   String get motivationalPopup_remindYourselfTimeIs_38ae33 =>
-      'Remind yourself, time is the most precious sadaqah.';
+      'ذكّر نفسك أن الوقت هو أغلى صدقة.';
 
   @override
   String get motivationalPopup_yourTimeIsYour_be6731 =>
-      'Your time is your most\\nprecious asset. Invest it wisely\\nin what endures forever.';
+      'وقتك هو أثمن\\nأصولك. استثمرها بحكمة\\nفي ما يدوم إلى الأبد.';
 
   @override
-  String get motivationalPopup_quranAlAnfal_b10486 => 'Quran • Al-Anfal 8:28';
+  String get motivationalPopup_quranAlAnfal_b10486 => 'القرآن • الأنفال 8:28';
 
   @override
   String get motivationalPopup_takeAdvantageOfFive_e573fd =>
-      'Take advantage of five before five.';
+      'اغتنم خمسا قبل خمس.';
 
   @override
   String get motivationalPopup_youHaveBeenRewarded_9bde33 =>
-      'You have been rewarded for\\nyour consistency today!';
+      'لقد تمت مكافأتك على\\nثباتك اليوم!';
 
   @override
   String motivationalPopup_seeds_3a9c69(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 البذور';
   }
 
   @override
   String get motivationalPopup_completeNowEarnSeeds_16ea6e =>
-      'Complete now → earn +50 Seeds bonus';
+      'أكمل الآن → اربح +50 بذرة إضافية';
 
   @override
   String get motivationalPopup_finishYourAzkaarEarn_e264fa =>
-      'Finish your Azkaar → earn +30 Seeds bonus';
+      'أنهي الأذكار ← اربح +30 بذرة إضافية';
 
   @override
   String get motivationalPopup_shareSabiqWithSomeone_c60dcc =>
-      'Share Sabiq with someone → earn +100 Seeds';
+      'شارك سابق مع شخص ما ← اربح +100 بذرة';
 
   @override
   String get motivationalPopup_keepYourSpiritualMomentum_0f172c =>
-      'Keep your spiritual momentum going\\nand watch your Seeds grow ✨';
+      'حافظ على استمرار زخمك الروحي\\nوشاهد بذورك تنمو ✨';
 
   @override
-  String get noorOffline_somethingWentWrong_76fc46 => 'Something went wrong';
+  String get noorOffline_somethingWentWrong_76fc46 => 'حدث خطأ ما';
 
   @override
   String get notificationsSheet_stayOnTopOf_811366 =>
-      'Stay on top of rewards & milestones';
+      'البقاء على رأس المكافآت والمعالم';
 
   @override
   String get notificationsSheet_llBeNotifiedAbout_9e7a1b =>
-      'll be notified about rewards, streaks & milestones.';
+      'سيتم إعلامك بشأن المكافآت والخطوط والمعالم.';
 
   @override
   String get notificationsSheet_inboxKeepsExistingItems_611668 =>
-      'Inbox keeps existing items but no new ones will arrive.';
+      'يحتفظ Inbox بالعناصر الموجودة ولكن لن تصل عناصر جديدة.';
 
   @override
   String get notificationsSheet_sabiqSeedsForSealing_001312 =>
-      'Sabiq Seeds for sealing today';
+      'بذور سابق لختم اليوم';
 
   @override
   String get projectMediaCarousel_couldNotLoadVideo_deb8dd =>
-      'Could not load video';
+      'تعذر تحميل الفيديو';
 
   @override
-  String get quranExitCelebration_beautifulRecitation_9d2655 =>
-      'Beautiful recitation.';
+  String get quranExitCelebration_beautifulRecitation_9d2655 => 'تلاوة جميلة.';
 
   @override
   String get quranExitCelebration_everyMomentCounts_fddb4c =>
-      'Every moment counts.';
+      'كل لحظة لها أهميتها.';
 
   @override
   String sealCoinAnimation_e16fa4_e16fa4(String arg1) {
-    return '+$arg1 ';
+    return '+$arg1';
   }
 
   @override
   String impactReportScreen_totalHasanatFromQuran(String n) {
-    return 'Total hasanat from Quran: $n';
+    return 'مجموع الحسنات من القرآن : $n';
   }
 
   @override
   String impactReportScreen_totalTreesPlanted(String n) {
-    return 'Total trees planted: $n';
+    return 'إجمالي الأشجار المزروعة: $n';
   }
 
   @override
   String impactReportScreen_totalTreasures(String n) {
-    return 'Total treasures: $n';
+    return 'إجمالي الكنوز: $n';
   }
 
   @override
   String impactReportScreen_multipliedByGates(String n) {
-    return 'Multiplied by 8 gates → $n openings';
+    return 'مضروبة في 8 بوابات → فتحات $n';
   }
 
   @override
   String impactReportScreen_bonusHasanaat(String n) {
-    return 'Bonus hasanaat: $n';
+    return 'حسنات إضافية: $n';
   }
 
   @override
   String impactReportScreen_totalDonatedSeeds(String n, String seeds) {
-    return 'Total donated: $n $seeds';
+    return 'إجمالي التبرعات: $n $seeds';
   }
 
   @override
   String get dashboardScreen_dashboardLoadFailed =>
-      'Couldn\'t load your dashboard. Please try again.';
+      'تعذر تحميل لوحة البيانات الخاصة بك. يرجى المحاولة مرة أخرى.';
 
   @override
-  String get zikrLabel => 'Zikr';
+  String get zikrLabel => 'ذكر';
 
   @override
-  String get quranLabel => 'Quran';
+  String get quranLabel => 'القرآن';
 
   @override
   String streakService_dayStreakBody(String days, String type, String bonus) {
-    return '$days-day $type streak · +$bonus bonus Seeds unlocked';
+    return '$days-يوم $type خط · +$bonus بذور إضافية تم فتحها';
   }
 
   @override
@@ -8997,15 +8987,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String streakService_dayStreak_b49b65(Object arg1, Object arg2) {
-    return '$arg1-day $arg2 streak · ';
+    return '$arg1-يوم $arg2 خط ·';
   }
 
   @override
-  String get donationService_donationReceivedTitle => 'Donation received 💝';
+  String get donationService_donationReceivedTitle => 'تم وصول التبرع 💝';
 
   @override
   String donationService_youDonatedSeeds(String amount) {
-    return 'You donated $amount Seeds · jazak Allah khair.';
+    return 'لقد تبرعت ببذور $amount · جزاك الله خيرا.';
   }
 
   @override
@@ -9015,151 +9005,149 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String xpService_badgeEarnedBody(String name) {
-    return 'You\'ve earned the \"$name\" badge.';
+    return 'لقد حصلت على الشارة \"$name\".';
   }
 
   @override
-  String get localReminderScheduler_channelName =>
-      'Sabiq Rewards Notifications';
+  String get localReminderScheduler_channelName => 'إشعارات مكافآت سابق';
 
   @override
-  String get localReminderScheduler_morningTitle => 'Morning Azkar';
+  String get localReminderScheduler_morningTitle => 'أذكار الصباح';
 
   @override
   String get localReminderScheduler_morningBody =>
-      'Start your day under Allah\'s protection — recite the morning adhkar.';
+      'ابدأ يومك في ذمة الله بقراءة أذكار الصباح.';
 
   @override
-  String get localReminderScheduler_astaghfirTitle => 'A moment for istighfar';
+  String get localReminderScheduler_astaghfirTitle => 'لحظة للإستغفار';
 
   @override
   String get localReminderScheduler_astaghfirBody =>
-      '\"Astaghfirullah\" polishes the heart and opens doors of provision. Pause for one minute.';
+      '\"استغفار الله\" يصقل القلب ويفتح أبواب الرزق. توقف لمدة دقيقة واحدة.';
 
   @override
-  String get localReminderScheduler_eveningTitle => 'Evening Azkar';
+  String get localReminderScheduler_eveningTitle => 'أذكار المساء';
 
   @override
   String get localReminderScheduler_eveningBody =>
-      'Protect yourself for the night — recite the evening adhkar.';
+      'احفظ نفسك ليلاً بقراءة أذكار المساء.';
 
   @override
-  String get localReminderScheduler_sleepTitle => 'Time to wind down';
+  String get localReminderScheduler_sleepTitle => 'الوقت لتهدئة';
 
   @override
   String get localReminderScheduler_sleepBody =>
-      'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.';
+      'اختم يومك بأذكار النوم - آية الكرسي، والقول الثلاثة، وأدعية النوم.';
 
   @override
   String get localReminderScheduler_kahfAmTitle =>
-      'It\'s Friday — read Surah Al-Kahf';
+      'إنه يوم الجمعة - إقرأ سورة الكهف';
 
   @override
   String get localReminderScheduler_kahfBody =>
-      'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.';
+      'من قرأ سورة الكهف في يوم الجمعة أضاء له من النور ما بين الجمعتين.';
 
   @override
-  String get localReminderScheduler_salawatTitle => 'Salawat on Friday';
+  String get localReminderScheduler_salawatTitle => 'صلوات يوم الجمعة';
 
   @override
   String get localReminderScheduler_salawatBody =>
-      'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.';
+      'صلوا على النبي ﷺ اليوم أكثروا من الصلاة عليه، فإن أعمال يوم الجمعة تعرض عليه.';
 
   @override
-  String get localReminderScheduler_kahfPmTitle =>
-      'Don\'t miss Surah Al-Kahf today';
+  String get localReminderScheduler_kahfPmTitle => 'لا تفوتوا سورة الكهف اليوم';
 
   @override
   String get localReminderScheduler_kahfPmBody =>
-      'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.';
+      'ساعات قليلة تفصلنا عن المغرب – أكمل سورة الكهف إذا لم تكن قد أكملت ذلك بعد.';
 
   @override
   String get liveNotificationService_validateChannelDesc =>
-      'Reminders to seal your pending Seeds before midnight.';
+      'تذكيرات لإغلاق بذورك المعلقة قبل منتصف الليل.';
 
   @override
   String get liveNotificationService_validateTicker =>
-      'Seal your Seeds before midnight';
+      'ختم البذور الخاصة بك قبل منتصف الليل';
 
   @override
   String get liveNotificationService_validateTitle =>
-      'Seal your Seeds before midnight!';
+      'ختم البذور الخاصة بك قبل منتصف الليل!';
 
   @override
   String liveNotificationService_validateBody(String n) {
-    return 'You have $n pending Seeds. Tap Seal the Day before midnight or they expire.';
+    return 'لديك $n بذور معلقة. اضغط على ختم اليوم قبل منتصف الليل أو تنتهي صلاحيته.';
   }
 
   @override
   String liveNotificationService_ayatRead(String n) {
-    return '$n Ayat Read today 📖';
+    return '$n آيات إقرأها اليوم 📖';
   }
 
   @override
   String liveNotificationService_readQuranTime(String time) {
-    return '$time Read Quran today ⏱️';
+    return '$time إقرأ القرآن اليوم ⏱️';
   }
 
   @override
   String get liveNotificationService_nothingRead =>
-      'Nothing Read from Quran today 📖';
+      'لا شيء يقرأ من القرآن اليوم 📖';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
-    return '$n Dhikr completed today 📿';
+    return '$n تم الانتهاء من الأذكار اليوم 📿';
   }
 
   @override
   String liveNotificationService_tickerBusy(String ayah, String dhikr) {
-    return '$ayah ayat · $dhikr dhikr today';
+    return '$ayah آيات · $dhikr أذكار اليوم';
   }
 
   @override
   String get liveNotificationService_tickerIdle =>
-      'Keep reading and doing Dhikr!';
+      'استمر في القراءة والقيام بالذكر!';
 
   @override
   String get liveNotificationService_channelDesc =>
-      'Live today\'s Quran and Dhikr progress';
+      'يعيش اليوم تقدم القرآن والذكر';
 
   @override
-  String get liveNotificationService_seedsToday => 'Your Seeds Today ✨';
+  String get liveNotificationService_seedsToday => 'بذورك اليوم ✨';
 
   @override
-  String get liveNotificationService_summary => 'Tap to open Sabiq';
+  String get liveNotificationService_summary => 'انقر لفتح سابق';
 
   @override
-  String get quranApiService_notConnected => 'Not connected to Quran.com';
+  String get quranApiService_notConnected => 'غير متصل بموقع القرآن الكريم';
 
   @override
-  String get quranApiService_notSignedIn => 'Not signed in to Noor';
+  String get quranApiService_notSignedIn => 'لم يتم تسجيل الدخول إلى نور';
 
   @override
   String quranApiService_syncFailedPush(String n) {
-    return 'Sync failed, $n bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+    return 'فشلت المزامنة، تعذر دفع الإشارة (الإشارات) المرجعية $n إلى موقع Quran.com (التحقق من الرمز المميز / نقطة النهاية).';
   }
 
   @override
-  String get quranApiService_alreadyInSync => 'Bookmarks already in sync';
+  String get quranApiService_alreadyInSync =>
+      'الإشارات المرجعية متزامنة بالفعل';
 
   @override
   String quranApiService_syncedBookmarks(String total, String up, String down) {
-    return 'Synced $total bookmarks ($up up, $down down)';
+    return 'الإشارات المرجعية $total المتزامنة ($up لأعلى، $down لأسفل)';
   }
 
   @override
   String quranApiService_syncFailedPartial(String n) {
-    return ', $n failed';
+    return '، $n فشل';
   }
 
   @override
   String quranApiService_syncFailedGeneric(String error) {
-    return 'Sync failed: $error';
+    return 'فشلت المزامنة: $error';
   }
 
   @override
-  String get authScreen_dontHaveAnAccountSignUp =>
-      'Don\'t have an account? Sign Up';
+  String get authScreen_dontHaveAnAccountSignUp => 'ليس لديك حساب؟ اشتراك';
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Keep it up!';

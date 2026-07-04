@@ -9,73 +9,73 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
-  String get youSuffix => '(you)';
+  String get youSuffix => '(Anda)';
 
   @override
-  String get userFallback => 'User';
+  String get userFallback => 'Pengguna';
 
   @override
-  String get youHaveDone => 'You\'ve Done!';
+  String get youHaveDone => 'Anda sudah selesai!';
 
   @override
-  String get playAllBtn => 'Play All';
+  String get playAllBtn => 'Mainkan Semua';
 
   @override
-  String get playBtn => 'Play';
+  String get playBtn => 'Bermain';
 
   @override
-  String get readBtn => 'Read';
+  String get readBtn => 'Membaca';
 
   @override
-  String get readOnce => 'Read once';
+  String get readOnce => 'Baca sekali';
 
   @override
   String readNTimes(int count) {
-    return 'Read $count times';
+    return 'Baca $count kali';
   }
 
   @override
   String seedsEarnedToday(int count) {
-    return '+$count Sabiq Seeds earned today!';
+    return '+$count Benih Sabiq diperoleh hari ini!';
   }
 
   @override
-  String get catDailyRemembrance => 'DAILY REMEMBRANCE';
+  String get catDailyRemembrance => 'PERINGATAN SETIAP HARI';
 
   @override
-  String get catNightlyRemembrance => 'NIGHTLY REMEMBRANCE';
+  String get catNightlyRemembrance => 'PERINGATAN MALAM HARI';
 
   @override
-  String get catYourSelection => 'YOUR SELECTION';
+  String get catYourSelection => 'PILIHAN ANDA';
 
   @override
-  String get catContinuousRemembrance => 'CONTINUOUS REMEMBRANCE';
+  String get catContinuousRemembrance => 'PERINGATAN TERUS-MENERUS';
 
   @override
   String get bannerDailyRemembrance =>
-      'Daily Remembrance\nbrings peace to the soul.';
+      'Peringatan Harian\nmembawa kedamaian dalam jiwa.';
 
   @override
   String get bannerMorningAdhkar =>
-      'Morning Adhkar\nbrings peace to the soul and light to the path.';
+      'Pagi Adhkar\nmembawa kedamaian pada jiwa dan cahaya pada jalan.';
 
   @override
   String get bannerEveningAdhkar =>
-      'Evening Adhkar\nbrings tranquility and protection for the night.';
+      'Sore Adhkar\nmembawa ketenangan dan perlindungan untuk malam itu.';
 
   @override
   String get bannerYourSelection =>
-      'Your beloved words\nof remembrance to keep close to your heart.';
+      'Kata-kata kesayanganmu\nkenangan untuk tetap dekat di hatimu.';
 
   @override
   String get bannerContinuousRemembrance =>
-      'Remember Allah\nmuch, that you may be successful.';
+      'Ingatlah Allah\nbanyak, agar kamu sukses.';
 
   @override
-  String get frequentlyReadByCommunity => 'Frequently read';
+  String get frequentlyReadByCommunity => 'Sering membaca';
 
   @override
-  String get viewFullLeaderboard => 'View full leaderboard';
+  String get viewFullLeaderboard => 'Lihat papan peringkat lengkap';
 
   @override
   String get skip => 'Lewati';
@@ -97,7 +97,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get lightOfMercy => 'CAHAYA RAHMAT';
 
   @override
-  String get noorRewards => 'Sabiq Rewards';
+  String get noorRewards => 'Imbalan Sabiq';
 
   @override
   String get startYourJourney => 'Mulai Perjalananmu';
@@ -253,7 +253,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get settings => 'Pengaturan';
 
   @override
-  String get level => 'Level';
+  String get level => 'Tingkat';
 
   @override
   String get rank => 'Peringkat';
@@ -398,7 +398,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get wordByWord => 'Kata per Kata';
 
   @override
-  String get mushaf => 'Mushaf';
+  String get mushaf => 'mushaf';
 
   @override
   String get otherCategories => 'Kategori Lainnya';
@@ -413,10 +413,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get prev => 'Sebelumnya';
 
   @override
-  String get reciteMore => 'RECITE MORE.';
+  String get reciteMore => 'BACA LEBIH BANYAK.';
 
   @override
-  String get helpRealLives => 'HELP REAL LIVES.';
+  String get helpRealLives => 'BANTU KEHIDUPAN NYATA.';
 
   @override
   String get yourNoorPointsFundProjects =>
@@ -438,7 +438,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get apply => 'Terapkan';
 
   @override
-  String get plantGoodDeeds => 'PLANT GOOD DEEDS';
+  String get plantGoodDeeds => 'TANAMAN PERBUATAN BAIK';
 
   @override
   String get youDonated => 'Anda berdonasi';
@@ -796,7 +796,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get arabic => 'Arab';
 
   @override
-  String get urdu => 'Urdu';
+  String get urdu => 'bahasa Urdu';
 
   @override
   String get english => 'Inggris';
@@ -1148,7 +1148,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get set => 'set';
+  String get set => 'mengatur';
 
   @override
   String get sets => 'set';
@@ -1175,7 +1175,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get quranicDuas => 'Doa-doa dari Al-Quran';
 
   @override
-  String get istighfar => 'Istighfar';
+  String get istighfar => 'istighfar';
 
   @override
   String get dhikarAllTimes => 'Dzikir Sepanjang Waktu';
@@ -1367,7 +1367,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String myContribution(String pts) {
-    return 'My contribution: $pts pts';
+    return 'Kontribusi saya: $pts poin';
   }
 
   @override
@@ -1498,7 +1498,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get tapEditToAdd => 'Ketuk Edit untuk menambahkan foto';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'Sunting';
 
   @override
   String get displayName => 'Nama Tampilan';
@@ -1507,7 +1507,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get yourName => 'Nama Anda';
 
   @override
-  String get email => 'Email';
+  String get email => 'E-mail';
 
   @override
   String get country => 'Negara';
@@ -1679,7 +1679,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get authError => 'Kesalahan Autentikasi';
 
   @override
-  String get ok => 'OK';
+  String get ok => 'OKE';
 
   @override
   String get verified => 'Terverifikasi';
@@ -1696,68 +1696,68 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get yourGarden => 'YOUR GARDEN';
+  String get yourGarden => 'TAMAN ANDA';
 
   @override
   String get noorPointsBloomed => 'Biji bloomed';
 
   @override
-  String get growingStreakTitle => 'GROWING STREAK';
+  String get growingStreakTitle => 'TUMBUH GARIS';
 
   @override
-  String get daySingular => 'day';
+  String get daySingular => 'hari';
 
   @override
-  String get daysPlural => 'days';
+  String get daysPlural => 'hari';
 
   @override
-  String get keepGrowing => 'keep growing';
+  String get keepGrowing => 'terus berkembang';
 
   @override
-  String get progressLabel => 'Progress';
+  String get progressLabel => 'Kemajuan';
 
   @override
-  String get weekTab => 'Week';
+  String get weekTab => 'Pekan';
 
   @override
-  String get monthTab => 'Month';
+  String get monthTab => 'Bulan';
 
   @override
-  String get todayTab => 'Today';
+  String get todayTab => 'Hari ini';
 
   @override
   String ofTabGoal(String goal, String tab) {
-    return 'of $goal $tab goal';
+    return 'dari gol $goal $tab';
   }
 
   @override
-  String get todaysPlots => 'Today\'s plots';
+  String get todaysPlots => 'Plot hari ini';
 
   @override
   String setsTodayCount(String count) {
-    return 'sets today $count';
+    return 'set hari ini $count';
   }
 
   @override
-  String get earnPerFriend => 'Earn +500 per friend';
+  String get earnPerFriend => 'Hasilkan +500 per teman';
 
   @override
   String lastAchievement(String name) {
-    return 'Last: $name';
+    return 'Terakhir: $name';
   }
 
   @override
   String outOfBelievers(String count) {
-    return 'Out of $count believers';
+    return 'Dari $count orang percaya';
   }
 
   @override
   String yourRankNum(String rank) {
-    return 'Your Rank: #$rank';
+    return 'Peringkat Anda: #$rank';
   }
 
   @override
-  String get youIndicator => '(you)';
+  String get youIndicator => '(Anda)';
 
   @override
   String get greetingPrefix => 'Assalamu alaikum,';
@@ -1767,36 +1767,36 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String activeCount(String count) {
-    return '$count active';
+    return '$count aktif';
   }
 
   @override
-  String get seeDetailsForMoreProjects => 'See Details for more Projects →';
+  String get seeDetailsForMoreProjects => 'Lihat Detail untuk Proyek lainnya →';
 
   @override
-  String get notificationsSubtitle => 'Stay on top of rewards & milestones';
+  String get notificationsSubtitle => 'Pantau terus penghargaan & pencapaian';
 
   @override
-  String get markAllAsRead => 'Mark all as read';
+  String get markAllAsRead => 'Tandai semua sebagai telah dibaca';
 
   @override
-  String get clearAll => 'Clear all';
+  String get clearAll => 'Hapus semuanya';
 
   @override
-  String get notificationsOn => 'Notifications on';
+  String get notificationsOn => 'Notifikasi aktif';
 
   @override
-  String get notificationsOff => 'Notifications off';
+  String get notificationsOff => 'Notifikasi mati';
 
   @override
-  String get allCaughtUp => 'All caught up';
+  String get allCaughtUp => 'Semua tertangkap';
 
   @override
   String get whenYouEarnRewards =>
-      'When you earn rewards, hit a streak, or unlock a badge,\nit\'ll show up here.';
+      'Saat Anda mendapatkan hadiah, mencapai pukulan beruntun, atau membuka lencana,\nitu akan muncul di sini.';
 
   @override
-  String get justNow => 'Just now';
+  String get justNow => 'Baru saja';
 
   @override
   String mAgo(String delta) {
@@ -1814,23 +1814,23 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get newBadgeUnlocked => 'New badge unlocked';
+  String get newBadgeUnlocked => 'Lencana baru terbuka';
 
   @override
-  String get daySealed => 'Day sealed';
+  String get daySealed => 'Hari disegel';
 
   @override
-  String get dailyLoginBonus => 'Daily login bonus';
+  String get dailyLoginBonus => 'Bonus masuk harian';
 
   @override
-  String get oneWeek => 'One Week';
+  String get oneWeek => 'Seminggu';
 
   @override
-  String get twoWeeks => 'Two Weeks';
+  String get twoWeeks => 'Dua Minggu';
 
   @override
   String badgeEarnedDesc(String badge) {
-    return 'You\'ve earned the \"$badge\" badge.';
+    return 'Anda telah mendapatkan lencana \"$badge\".';
   }
 
   @override
@@ -1844,71 +1844,71 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get onbV2Skip => 'Skip';
+  String get onbV2Skip => 'Melewati';
 
   @override
-  String get onbV2Next => 'Next';
+  String get onbV2Next => 'Berikutnya';
 
   @override
-  String get onbV2_1_TitleA => 'Your Quran reading';
+  String get onbV2_1_TitleA => 'Bacaan Alquran Anda';
 
   @override
-  String get onbV2_1_TitleB => 'feeds the hungry.';
+  String get onbV2_1_TitleB => 'memberi makan orang yang lapar.';
 
   @override
-  String get onbV2_1_Sub => 'Real meals. Real people. Real impact.';
+  String get onbV2_1_Sub => 'Makanan sungguhan. Orang sungguhan. Dampak nyata.';
 
   @override
-  String get onbV2_1_Cta => 'How does that work?';
+  String get onbV2_1_Cta => 'Bagaimana cara kerjanya?';
 
   @override
-  String get onbV2_2_Title => 'Here\'s how.';
+  String get onbV2_2_Title => 'Begini caranya.';
 
   @override
   String get onbV2_2_Body =>
       'Read Quran or recite dhikr → earn Biji → fund real causes.';
 
   @override
-  String get onbV2_3_TitleA => 'The Quran rewards you';
+  String get onbV2_3_TitleA => 'Al-Qur\'an memberi imbalan kepada Anda';
 
   @override
-  String get onbV2_3_TitleB => 'twice.';
+  String get onbV2_3_TitleB => 'dua kali.';
 
   @override
   String get onbV2_3_Sub =>
       'Once with Allah\'s blessing. Once with Biji that feed the needy.';
 
   @override
-  String get onbV2_3_BannerLabel => 'earned today';
+  String get onbV2_3_BannerLabel => 'diperoleh hari ini';
 
   @override
-  String get onbV2_4_TitleA => 'See your worship';
+  String get onbV2_4_TitleA => 'Lihatlah ibadahmu';
 
   @override
-  String get onbV2_4_TitleB => 'come to life.';
+  String get onbV2_4_TitleB => 'menjadi hidup.';
 
   @override
   String get onbV2_4_Sub =>
-      'Recite morning and evening dhikr, and watch your reward unfold, hadith by hadith.';
+      'Bacalah dzikir pagi dan petang, dan saksikan pahalamu terungkap, hadis demi hadis.';
 
   @override
-  String get onbV2_5_TitleA => 'Your reading reaches';
+  String get onbV2_5_TitleA => 'Bacaan Anda mencapai';
 
   @override
-  String get onbV2_5_TitleB => 'here.';
+  String get onbV2_5_TitleB => 'Di Sini.';
 
   @override
   String get onbV2_5_Sub =>
-      'Every Seed you earn becomes real food, real water, real hope.';
+      'Setiap Benih yang Anda peroleh akan menjadi makanan sejati, air sejati, harapan nyata.';
 
   @override
-  String get onbV2_6_TitleA => 'But where does the';
+  String get onbV2_6_TitleA => 'Tapi di mana';
 
   @override
-  String get onbV2_6_TitleB => 'money';
+  String get onbV2_6_TitleB => 'uang';
 
   @override
-  String get onbV2_6_TitleC => 'come from?';
+  String get onbV2_6_TitleC => 'berasal?';
 
   @override
   String get onbV2_6_Sub =>
@@ -1918,109 +1918,110 @@ class AppLocalizationsId extends AppLocalizations {
   String get onbV2_6_Donor => 'Donor';
 
   @override
-  String get onbV2_6_DonorSub => 'Funds the cause';
+  String get onbV2_6_DonorSub => 'Mendanai penyebabnya';
 
   @override
-  String get onbV2_6_You => 'You';
+  String get onbV2_6_You => 'Anda';
 
   @override
-  String get onbV2_6_YouSub => 'Direct the gift';
+  String get onbV2_6_YouSub => 'Arahkan hadiahnya';
 
   @override
-  String get onbV2_6_Charity => 'Charity';
+  String get onbV2_6_Charity => 'Amal';
 
   @override
-  String get onbV2_6_CharitySub => 'Delivers aid';
+  String get onbV2_6_CharitySub => 'Memberikan bantuan';
 
   @override
-  String get onbV2_6_TrustBadge => '100% disbursed to verified partners';
+  String get onbV2_6_TrustBadge => '100% dicairkan ke mitra terverifikasi';
 
   @override
-  String get onbV2_7_TitleA => 'Every deed is';
+  String get onbV2_7_TitleA => 'Setiap perbuatan adalah';
 
   @override
-  String get onbV2_7_TitleB => 'counted.';
+  String get onbV2_7_TitleB => 'terhitung.';
 
   @override
   String get onbV2_7_Sub =>
-      'See the akhirah account you\'re building, trees, palaces, freed souls, rooted in authentic hadith.';
+      'Lihatlah kisah akhirah yang sedang Anda bangun, pepohonan, istana, jiwa-jiwa yang terbebas, yang berakar pada hadis shahih.';
 
   @override
-  String get onbV2_8_TitleA => 'Let\'s begin with your';
+  String get onbV2_8_TitleA => 'Mari kita mulai dengan Anda';
 
   @override
-  String get onbV2_8_TitleB => 'name.';
+  String get onbV2_8_TitleB => 'nama.';
 
   @override
-  String get onbV2_8_Sub => 'So Sabiq feels like yours.';
+  String get onbV2_8_Sub => 'Jadi Sabiq terasa seperti milikmu.';
 
   @override
-  String get onbV2_8_Placeholder => 'Your name';
+  String get onbV2_8_Placeholder => 'Namamu';
 
   @override
-  String get onbV2_8_Cta => 'Continue';
+  String get onbV2_8_Cta => 'Melanjutkan';
 
   @override
-  String get onbV2_9_TitleA => 'Which cause moves you';
+  String get onbV2_9_TitleA => 'Penyebab mana yang menggerakkan Anda';
 
   @override
-  String get onbV2_9_TitleB => 'most?';
+  String get onbV2_9_TitleB => 'paling?';
 
   @override
   String get onbV2_9_Sub =>
       'Your Biji support all causes, this just helps us understand what matters to our community.';
 
   @override
-  String get onbV2_9_Cta => 'Begin';
+  String get onbV2_9_Cta => 'Mulai';
 
   @override
-  String get onbV2_9_Orphans => 'Orphans';
+  String get onbV2_9_Orphans => 'anak yatim';
 
   @override
   String get onbV2_9_OrphansSub =>
-      'Feed and care for children who\'ve lost everything';
+      'Memberi makan dan merawat anak-anak yang kehilangan segalanya';
 
   @override
-  String get onbV2_9_Water => 'Water Wells';
+  String get onbV2_9_Water => 'Sumur Air';
 
   @override
-  String get onbV2_9_WaterSub => 'Clean water for villages in need';
+  String get onbV2_9_WaterSub => 'Air bersih untuk desa-desa yang membutuhkan';
 
   @override
-  String get onbV2_9_War => 'War-Impacted Areas';
+  String get onbV2_9_War => 'Daerah yang Terkena Dampak Perang';
 
   @override
-  String get onbV2_9_WarSub => 'Relief where it\'s needed most';
+  String get onbV2_9_WarSub => 'Bantuan di tempat yang paling membutuhkan';
 
   @override
-  String get onbV2_9_Disaster => 'Natural Disasters';
+  String get onbV2_9_Disaster => 'Bencana Alam';
 
   @override
-  String get onbV2_9_DisasterSub => 'Rapid response when crisis strikes';
+  String get onbV2_9_DisasterSub => 'Respon cepat ketika krisis melanda';
 
   @override
-  String get onbV2_3step_Title => 'Three simple steps.';
+  String get onbV2_3step_Title => 'Tiga langkah sederhana.';
 
   @override
-  String get onbV2_3step_Sub => 'Every verse, every dhikr becomes real aid.';
+  String get onbV2_3step_Sub =>
+      'Setiap ayat, setiap dzikir menjadi pertolongan yang nyata.';
 
   @override
-  String get onbV2_3step_S1Label => 'Step 1';
+  String get onbV2_3step_S1Label => 'Langkah 1';
 
   @override
-  String get onbV2_3step_S1Text => 'Read Quran';
+  String get onbV2_3step_S1Text => 'Baca Alquran';
 
   @override
-  String get onbV2_3step_S2Label => 'Step 2';
+  String get onbV2_3step_S2Label => 'Langkah 2';
 
   @override
   String get onbV2_3step_S2Text => 'Earn Biji';
 
   @override
-  String get onbV2_3step_S3Label => 'Step 3';
+  String get onbV2_3step_S3Label => 'Langkah 3';
 
   @override
-  String get onbV2_3step_S3Text => 'Feed Orphans';
+  String get onbV2_3step_S3Text => 'Memberi Makan Anak Yatim';
 
   @override
   String get languageLabel => 'Bahasa';
@@ -2038,7 +2039,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get startStreakToday => 'Mulai streak Anda hari ini!';
 
   @override
-  String get centurionMashaAllah => 'Centurion, Masha\'Allah!';
+  String get centurionMashaAllah => 'Perwira, Masya Allah!';
 
   @override
   String get qfConflictTitle => 'Akun Sudah Ada';
@@ -2221,7 +2222,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get copiedLabel => 'Disalin!';
 
   @override
-  String get whatsappLabel => 'WhatsApp';
+  String get whatsappLabel => 'Ada apa';
 
   @override
   String get youBothEarnSeeds => 'Kalian berdua dapat 500 Biji!';
@@ -2238,7 +2239,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get pointsGoals => 'TARGET POIN';
 
   @override
-  String get editLabel => 'Edit';
+  String get editLabel => 'Sunting';
 
   @override
   String get dailyGoal => 'Target Harian';
@@ -2346,7 +2347,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String levelTitleFormat(int level, String title) {
-    return 'Lvl $level · $title';
+    return 'Tingkat $level · $title';
   }
 
   @override
@@ -2485,7 +2486,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get arabicLanguageLabel => 'Arab';
 
   @override
-  String get urduLanguageLabel => 'Urdu';
+  String get urduLanguageLabel => 'bahasa Urdu';
 
   @override
   String get englishLanguageLabel => 'Inggris';
@@ -2494,7 +2495,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get earnPerVerseRead => 'Dapatkan +10 Biji per ayat yang dibaca';
 
   @override
-  String get surahPickerLabel => 'Surah';
+  String get surahPickerLabel => 'Surat';
 
   @override
   String versesCount(int count) {
@@ -2584,7 +2585,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get quranCompletions => 'Khatam Quran';
 
   @override
-  String get viaSurahIkhlas => 'Via Surah Al-Ikhlas ×3';
+  String get viaSurahIkhlas => 'Melalui Surat Al-Ikhlas ×3';
 
   @override
   String get bonusHasanaat => 'Bonus Hasanat';
@@ -2641,7 +2642,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get okButton => 'OK';
+  String get okButton => 'OKE';
 
   @override
   String get signUpTitle => 'Daftar';
@@ -2650,7 +2651,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get signInTitle => 'Masuk';
 
   @override
-  String get emailFieldLabel => 'Email';
+  String get emailFieldLabel => 'E-mail';
 
   @override
   String get passwordFieldLabel => 'Kata Sandi';
@@ -2853,13 +2854,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get thisWorld => 'Dunia';
 
   @override
-  String get dunyaArabic => 'Dunya';
+  String get dunyaArabic => 'dunia';
 
   @override
   String get hereafter => 'Akhirat';
 
   @override
-  String get akhirahArabic => 'Akhirah';
+  String get akhirahArabic => 'Akhirat';
 
   @override
   String get bookOfCompletePrayer => 'Kitab Doa Lengkap';
@@ -3033,38 +3034,38 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityHasanat => 'hasanat komunitas';
 
   @override
-  String get authScreen_pleaseEnterYourEmail => 'Please enter your email';
+  String get authScreen_pleaseEnterYourEmail => 'Silakan masukkan email Anda';
 
   @override
-  String get authScreen_pleaseEnterYourPassword => 'Please enter your password';
+  String get authScreen_pleaseEnterYourPassword =>
+      'Silakan masukkan kata sandi Anda';
 
   @override
   String get authScreen_passwordMustBeAt =>
-      'Password must be at least 6 characters';
+      'Kata sandi minimal harus 6 karakter';
 
   @override
-  String get authScreen_alreadyHaveAnAccount =>
-      'Already have an account? Sign In';
+  String get authScreen_alreadyHaveAnAccount => 'Sudah punya akun? Masuk';
 
   @override
-  String get authScreen_haveAnAccountSign => 't have an account? Sign Up';
+  String get authScreen_haveAnAccountSign => 'tidak punya akun? Mendaftar';
 
   @override
   String qfAuthService_qfemailconflictexceptionAlreadyHasAn(String email) {
-    return 'QfEmailConflictException: $email already has an account';
+    return 'QfEmailConflictException: $email sudah memiliki akun';
   }
 
   @override
   String get qfAuthService_openidOfflineAccessUser =>
-      'openid offline_access user bookmark collection reading_session';
+      'openid offline_akses koleksi bookmark pengguna reading_session';
 
   @override
   String qfAuthService_tokenExchangeFailed(String arg1, String arg2) {
-    return 'Token exchange failed ($arg1): $arg2';
+    return 'Penukaran token gagal ($arg1): $arg2';
   }
 
   @override
-  String get qfAuthService_errorNullResponse => 'ERROR: Null response';
+  String get qfAuthService_errorNullResponse => 'KESALAHAN: Respons tidak ada';
 
   @override
   String orphan_be2bf7(String firstName, String lastInitial) {
@@ -3073,130 +3074,132 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get akhirahBalanceScreen_subhanallahiWaBiHamdihi =>
-      '“Subhanallahi wa bi-hamdihi” — said 100 times a day wipes sins, even like the foam of the sea. (Bukhari)';
+      '“Subhanallahi wa bi-hamdihi” — diucapkan 100 kali sehari menghapus dosa, bahkan seperti buih di lautan. (Bukhari)';
 
   @override
   String get akhirahBalanceScreen_sayLaIlahaIllallah =>
-      'Say La ilaha illallah 100 times — equals freeing 10 slaves and 100 hasanat. (Bukhari)';
+      'Ucapkan La ilaha illallah 100 kali, sama dengan memerdekakan 10 budak dan 100 hasanat. (Bukhari)';
 
   @override
   String get akhirahBalanceScreen_lightOnTheTongue =>
-      'Light on the tongue, heavy on the scales: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)';
+      'Ringan di lidah, berat di timbangan: Subhanallah wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)';
 
   @override
   String get akhirahBalanceScreen_theDhikrOfAllah =>
-      'The dhikr of Allah is heavier on the scales than gold of equal weight. Keep going.';
+      'Dzikir kepada Allah lebih berat timbangannya dibandingkan emas yang beratnya sama. Terus berlanjut.';
 
   @override
   String get akhirahBalanceScreen_yourTongueShouldStay =>
-      '“Your tongue should stay moist with the remembrance of Allah.” — Is it still moist?';
+      '“Lidahmu harus tetap lembab dengan mengingat Allah.” — Apakah masih lembab?';
 
   @override
   String get akhirahBalanceScreen_astaghfirullahTheProphetSaid =>
-      'Astaghfirullah — the Prophet ✍ said it 100 times a day, and he had no sin. How many have you?';
+      'Astaghfirullah — Nabi ✍ mengucapkannya 100 kali sehari, dan dia tidak berdosa. Berapa banyak yang kamu punya?';
 
   @override
   String get akhirahBalanceScreen_whenYouRememberAllah =>
-      'When you remember Allah quietly, He remembers you in an assembly far greater.';
+      'Jika kamu mengingat Allah dengan tenang, maka Dia akan mengingatmu di majelis yang jauh lebih besar.';
 
   @override
   String get akhirahBalanceScreen_reciteAyatAlKursi =>
-      'Recite Ayat al-Kursi after every salah — nothing keeps you from Jannah but death.';
+      'Bacalah Ayat al-Kursi setelah setiap salat - tidak ada yang menghalangi Anda dari Jannah kecuali kematian.';
 
   @override
   String get akhirahBalanceScreen_oneAlhamdulillahFillsThe =>
-      'One Alhamdulillah fills the scale. One Subhanallah fills what is between heaven and earth.';
+      'Satu Alhamdulillah memenuhi timbangan. Satu Subhanallah memenuhi apa yang ada di antara langit dan bumi.';
 
   @override
   String get akhirahBalanceScreen_theRemembranceOfAllah =>
-      '“The remembrance of Allah is greater than everything else.” — Surah Al-Ankabut 29:45';
+      '“Mengingat Allah lebih utama dari segala sesuatu yang lain.” — Surah Al-Ankabut 29:45';
 
   @override
   String get akhirahBalanceScreen_rememberMeWillRemember =>
-      '“Remember Me — I will remember you.” — Surah Al-Baqarah 2:152. Will you?';
+      '“Ingatlah Aku – Aku akan mengingatmu.” — Surat Al-Baqarah 2:152. Maukah kamu?';
 
   @override
   String get akhirahBalanceScreen_inTheRemembranceOf =>
-      '“In the remembrance of Allah, hearts find rest.” — Surah Ar-Ra’d 13:28';
+      '“Dengan mengingat Allah, hati menjadi tenteram.” — Surah Ar-Ra\'d 13:28';
 
   @override
   String get akhirahBalanceScreen_fiveMinutesOfDhikr =>
-      'Five minutes of dhikr now shapes the next 24 hours of your heart.';
+      'Dzikir lima menit kini membentuk 24 jam berikutnya dalam hati Anda.';
 
   @override
   String get akhirahBalanceScreen_streakIsnAboutToday =>
-      'A streak isn’t about today — it’s about who you become in 30 days.';
+      'Sebuah pukulan bukan tentang hari ini - ini tentang menjadi siapa Anda dalam 30 hari.';
 
   @override
   String get akhirahBalanceScreen_smallDropsFillAn =>
-      'Small drops fill an ocean. Your daily dhikr is filling something far bigger.';
+      'Tetesan kecil memenuhi lautan. Dzikir harian Anda memenuhi sesuatu yang jauh lebih besar.';
 
   @override
   String get akhirahBalanceScreen_noOneSeesThe =>
-      'No one sees the dhikr in your heart — but every angel writing your record does.';
+      'Tidak ada seorang pun yang melihat dzikir di dalam hati Anda — tetapi setiap malaikat yang menulis catatan Anda melihatnya.';
 
   @override
   String get akhirahBalanceScreen_theBiggestWinsAre =>
-      'The biggest wins are built from the smallest daily habits. Don’t break the chain.';
+      'Kemenangan terbesar dibangun dari kebiasaan terkecil sehari-hari. Jangan putuskan rantainya.';
 
   @override
   String get akhirahBalanceScreen_youCameBackToday =>
-      'You came back today. That’s already worship. Stay one more minute?';
+      'Anda kembali hari ini. Itu sudah menjadi ibadah. Tinggal satu menit lagi?';
 
   @override
   String get akhirahBalanceScreen_tomorrowPeaceIsBuilt =>
-      'Tomorrow’s peace is built on today’s remembrance. Plant one more seed.';
+      'Kedamaian di masa depan dibangun berdasarkan ingatan hari ini. Tanam satu benih lagi.';
 
   @override
   String get akhirahBalanceScreen_areYouDoneAllah =>
-      'Are you done? Allah’s door is always open — even after you’ve closed it.';
+      'Apakah kamu sudah selesai? Pintu Allah selalu terbuka – bahkan setelah Anda menutupnya.';
 
   @override
   String get akhirahBalanceScreen_dhikrIsTheLanguage =>
-      'Dhikr is the language of the heart. Has yours spoken to its Lord today?';
+      'Dzikir adalah bahasa hati. Sudahkah Anda berbicara kepada Tuhannya hari ini?';
 
   @override
   String get akhirahBalanceScreen_everySubhanallahIsSadaqah =>
-      'Every Subhanallah is a sadaqah. How many will you give before sleep?';
+      'Setiap Subhanallah adalah sedekah. Berapa banyak yang akan Anda berikan sebelum tidur?';
 
   @override
   String get akhirahBalanceScreen_heartThatForgetsDhikr =>
-      'A heart that forgets dhikr begins to rust. A heart that remembers stays alight.';
+      'Hati yang lupa berdzikir mulai berkarat. Hati yang mengingat tetap menyala.';
 
   @override
   String get akhirahBalanceScreen_haveYouFortifiedYourself =>
-      'Have you fortified yourself with the morning and evening adhkar today?';
+      'Sudahkah anda membentengi diri dengan adhkar pagi dan sore hari ini?';
 
   @override
   String akhirahBalanceScreen_thisSession(String arg1) {
-    return 'This session: +$arg1';
+    return 'Sesi ini: +$arg1';
   }
 
   @override
   String akhirahBalanceScreen_seedsThisSession(String arg1) {
-    return '+$arg1 seeds this session';
+    return '+$arg1 unggulan sesi ini';
   }
 
   @override
   String akhirahBalanceScreen_dayAvgAzkaarDay(String arg1) {
-    return '7-day avg: $arg1 azkaar/day';
+    return 'Rata-rata 7 hari: $arg1 azkaar/hari';
   }
 
   @override
   String dashboardScreen_profileReturnedZeroRows(String uid) {
-    return 'Profile returned zero rows for $uid';
+    return 'Profil mengembalikan nol baris untuk $uid';
   }
 
   @override
   String dashboardScreen_dashboardLoadError(String e) {
-    return 'Dashboard Load Error: $e';
+    return 'Kesalahan Pemuatan Dasbor: $e';
   }
 
   @override
-  String get dashboardScreen_invalidReferralCode => 'Invalid referral code';
+  String get dashboardScreen_invalidReferralCode =>
+      'Kode referensi tidak valid';
 
   @override
-  String get dashboardScreen_cannotReferYourself => 'Cannot refer yourself';
+  String get dashboardScreen_cannotReferYourself =>
+      'Tidak dapat merujuk diri Anda sendiri';
 
   @override
   String dashboardScreen_sponsor(String name, String arg1) {
@@ -3204,7 +3207,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_dashboardDoesn => ': 0, // dashboard doesn';
+  String get dashboardScreen_dashboardDoesn => ': 0, // dasbor tidak';
 
   @override
   String dashboardScreen_today(
@@ -3212,7 +3215,7 @@ class AppLocalizationsId extends AppLocalizations {
     String _lastAyah,
     String _ayahsToday,
   ) {
-    return '$arg1 · $_lastAyah  · +$_ayahsToday today';
+    return '$arg1 · $_lastAyah · +$_ayahsToday hari ini';
   }
 
   @override
@@ -3222,67 +3225,67 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dashboardScreen_setsToday(String _dhikrToday) {
-    return '$_dhikrToday sets today';
+    return '$_dhikrToday ditetapkan hari ini';
   }
 
   @override
   String dashboardScreen_dayStreak(String arg1) {
-    return '$arg1-day streak';
+    return '$arg1 hari berturut-turut';
   }
 
   @override
   String dashboardScreen_last(String arg1) {
-    return 'Last: $arg1';
+    return 'Terakhir: $arg1';
   }
 
   @override
-  String get dashboardScreen_earnPerFriend => 'Earn +500 per friend';
+  String get dashboardScreen_earnPerFriend => 'Hasilkan +500 per teman';
 
   @override
   String get dashboardScreen_yourSabiqSeedsFund =>
-      'Your Sabiq Seeds fund these projects';
+      'Benih Sabiq Anda mendanai proyek ini';
 
   @override
   String dashboardScreen_active(String arg1) {
-    return '$arg1 active';
+    return '$arg1 aktif';
   }
 
   @override
   String get dashboardScreen_joinMeOnSabiq =>
-      'Join me on Sabiq Rewards, earn Seeds for daily Quran, Dhikr & good deeds!\\n\\n';
+      'Bergabunglah dengan saya di Sabiq Rewards, dapatkan Benih untuk Quran harian, Dzikir & amal baik!\\n\\n';
 
   @override
   String dashboardScreen_useMyCodeAnd(String arg1) {
-    return 'Use my code *$arg1* and we both get 500 Sabiq Seeds!\\n\\n';
+    return 'Gunakan kode saya *$arg1* dan kita berdua mendapatkan 500 Biji Sabiq!\\n\\n';
   }
 
   @override
   String get dashboardScreen_messageCopiedShareOr =>
-      'Message copied, share or paste in WhatsApp!';
+      'Pesan disalin, dibagikan, atau ditempel di WhatsApp!';
 
   @override
   String get dashboardScreen_sabiqSeedsRewardedTo =>
-      '500 Sabiq Seeds rewarded to you both!';
+      'Hadiah 500 Benih Sabiq untuk kalian berdua!';
 
   @override
   String get dashboardScreen_youHaveAlreadyUsed =>
-      'You have already used a referral code.';
+      'Anda sudah menggunakan kode referral.';
 
   @override
   String get dashboardScreen_invalidReferralCode_59fb25 =>
-      'Invalid referral code.';
+      'Kode referensi tidak valid.';
 
   @override
   String get dashboardScreen_youCannotUseYour =>
-      'You cannot use your own code.';
+      'Anda tidak dapat menggunakan kode Anda sendiri.';
 
   @override
   String get dashboardScreen_anErrorOccurredPlease =>
-      'An error occurred. Please try again.';
+      'Terjadi kesalahan. Silakan coba lagi.';
 
   @override
   String dashboardScreen_52b02c(String pts) {
-    return '$pts ';
+    return '$pts';
   }
 
   @override
@@ -3292,17 +3295,17 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dashboardScreen_seeDetailsForMore =>
-      'See Details for more Projects →';
+      'Lihat Detail untuk Proyek lainnya →';
 
   @override
-  String get dashboardScreen_yourTOTALSABIQSEEDS => 'YOUR TOTAL SABIQ SEEDS';
+  String get dashboardScreen_yourTOTALSABIQSEEDS => 'TOTAL BIJI SABIQ ANDA';
 
   @override
-  String get dashboardScreen_viewCampaignDonate => '🤲  View Campaign & Donate';
+  String get dashboardScreen_viewCampaignDonate => '🤲 Lihat Kampanye & Donasi';
 
   @override
   String dashboardScreen_yourRank(String rankText) {
-    return 'Your Rank: $rankText';
+    return 'Peringkat Anda: $rankText';
   }
 
   @override
@@ -3311,72 +3314,73 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_beTheFirstOn => 'Be the first on the board';
+  String get dashboardScreen_beTheFirstOn => 'Jadilah yang pertama di papan';
 
   @override
   String get dashboardScreen_readAnAyahOr =>
-      'Read an ayah or dhikr to claim the top spot';
+      'Bacalah sebuah ayat atau dzikir untuk mendapatkan posisi teratas';
 
   @override
   String dashboardScreen_lvl(String level, String arg1) {
-    return 'Lvl $level · $arg1';
+    return 'Tingkat $level · $arg1';
   }
 
   @override
   String dashboardScreen_sealWithin(String arg1) {
-    return 'Seal within ${arg1}h';
+    return 'Segel dalam ${arg1}h';
   }
 
   @override
-  String get dashboardScreen_jazakallahDaySealed => 'JazakAllah!  Day sealed';
+  String get dashboardScreen_jazakallahDaySealed => 'Jazakillah!  Hari disegel';
 
   @override
   String dashboardScreen_ofGoal(String arg1, String arg2) {
-    return 'of $arg1 $arg2 goal';
+    return 'dari gol $arg1 $arg2';
   }
 
   @override
-  String get dhikrHubScreen_propheticSupplications => 'Prophetic Supplications';
+  String get dhikrHubScreen_propheticSupplications => 'Doa Nabi';
 
   @override
   String get dhikrHubScreen_morningEveningRemembrance =>
-      'Morning & Evening Remembrance';
+      'Peringatan Pagi & Sore';
 
   @override
-  String get dhikrHubScreen_furtherSupplications => 'Further Supplications';
+  String get dhikrHubScreen_furtherSupplications => 'Doa Lebih Lanjut';
 
   @override
   String get dhikrHubScreen_closingRemembranceSalawat =>
-      'Closing Remembrance & Salawat';
+      'Penutupan Zikir & Shalawat';
 
   @override
-  String get dhikrHubScreen_hajjUmrahSupplications =>
-      'Hajj & Umrah Supplications';
+  String get dhikrHubScreen_hajjUmrahSupplications => 'Doa Haji & Umroh';
 
   @override
-  String get dhikrHubScreen_falseHiddenAdd => '] == false) hidden.add(r[';
+  String get dhikrHubScreen_falseHiddenAdd =>
+      '] == salah) tersembunyi.tambahkan(r[';
 
   @override
-  String get dhikrScreen_indoPak => 'Indo pak';
+  String get dhikrScreen_indoPak => 'Pak Indo';
 
   @override
   String dhikrScreen_default(String recommendedCount) {
-    return 'Default: $recommendedCount';
+    return 'Bawaan: $recommendedCount';
   }
 
   @override
-  String get dhikrScreen_duaAzkarSettings => 'Dua & Azkar Settings';
+  String get dhikrScreen_duaAzkarSettings => 'Pengaturan Dua & Azkar';
 
   @override
-  String get dhikrScreen_hideTheVisualArtwork => 'Hide the visual artwork area';
+  String get dhikrScreen_hideTheVisualArtwork =>
+      'Sembunyikan area karya seni visual';
 
   @override
   String get dhikrScreen_pinTheIllustrationAt =>
-      'Pin the illustration at the top while the Arabic text scrolls beneath it';
+      'Sematkan ilustrasi di bagian atas sementara teks Arab bergulir di bawahnya';
 
   @override
   String dhikrScreen_readTimes(String readCount) {
-    return 'Read $readCount times';
+    return 'Baca $readCount kali';
   }
 
   @override
@@ -3399,7 +3403,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dhikrScreen_salawatIbrahimiyyaDurood =>
-      'Salawat Ibrahimiyya (Durood)';
+      'Shalawat Ibrahimiyya (Durood)';
 
   @override
   String dhikrScreen_9a4c42(String bismillah, String arg1, String rest) {
@@ -3417,7 +3421,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dhikrScreen_hisnulMuslimChapter => 'Hisnul Muslim, Chapter: ';
+  String get dhikrScreen_hisnulMuslimChapter => 'Hisnul Muslim, Bab:';
 
   @override
   String dhikrScreen_3856c1(String rawRef, String bottomRef) {
@@ -3426,1438 +3430,1456 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dhikrScreen_bestOfBothWorlds =>
-      'Best of both worlds, refuge from the Fire';
+      'Yang terbaik dari kedua dunia, perlindungan dari api neraka';
 
   @override
   String get dhikrScreen_patienceAndSteadfastnessIn =>
-      'Patience and steadfastness in every trial';
+      'Kesabaran dan ketabahan dalam setiap cobaan';
 
   @override
   String get dhikrScreen_allahBurdensNoSoul =>
-      'Allah burdens no soul beyond its capacity';
+      'Allah tidak membebani suatu jiwa melebihi kemampuannya';
 
   @override
   String get dhikrScreen_keepTheHeartFirm =>
-      'Keep the heart firm upon guidance';
+      'Jagalah hati tetap teguh atas petunjuk';
 
   @override
   String get dhikrScreen_faithAnsweredWithForgiveness =>
-      'Faith answered with forgiveness from Hell';
+      'Iman dijawab dengan ampunan dari Neraka';
 
   @override
-  String get dhikrScreen_allSovereigntyInAllah => 'All sovereignty in Allah\\';
+  String get dhikrScreen_allSovereigntyInAllah =>
+      'Segala kedaulatan di tangan Allah\\';
 
   @override
   String get dhikrScreen_allahHearsEveryCall =>
-      'Allah hears every call for righteous offspring';
+      'Allah mendengar setiap seruan untuk mendapatkan keturunan yang shaleh';
 
   @override
   String get dhikrScreen_countedWithTheWitnesses =>
-      'Counted with the witnesses of truth';
+      'Dihitung dengan saksi kebenaran';
 
   @override
   String get dhikrScreen_forgivenessFirmFeetAnd =>
-      'Forgiveness, firm feet, and victory';
+      'Pengampunan, kaki kokoh, dan kemenangan';
 
   @override
-  String get dhikrScreen_theDuaOfThose => 'The dua of those who reflect';
+  String get dhikrScreen_theDuaOfThose => 'Doa orang-orang yang merenung';
 
   @override
   String get dhikrScreen_inscribedWithTheWitnesses =>
-      'Inscribed with the witnesses of revelation';
+      'Tertulis para saksi wahyu';
 
   @override
   String get dhikrScreen_theDuaAllahAccepted =>
-      'The dua Allah accepted from Adam ﷺ';
+      'Doa yang diterima Allah dari Adam ﷺ';
 
   @override
   String get dhikrScreen_spareUsTheCompany =>
-      'Spare us the company of wrongdoers';
+      'Jauhkan kami dari orang-orang yang zalim';
 
   @override
-  String get dhikrScreen_neverTrialForThe => 'Never a trial for the oppressors';
+  String get dhikrScreen_neverTrialForThe =>
+      'Tidak pernah ada cobaan bagi para penindas';
 
   @override
   String get dhikrScreen_refugeFromAskingWithout =>
-      'Refuge from asking without knowledge';
+      'Menjauh dari meminta tanpa ilmu';
 
   @override
-  String get dhikrScreen_prayerForSafetyAnd => 's prayer for safety and faith';
+  String get dhikrScreen_prayerForSafetyAnd =>
+      's doa untuk keselamatan dan iman';
 
   @override
   String get dhikrScreen_steadfastInPrayerMe =>
-      'Steadfast in prayer, me and my children';
+      'Teguhlah dalam doa, aku dan anak-anakku';
 
   @override
   String get dhikrScreen_mercyForMeMy =>
-      'Mercy for me, my parents, the believers';
+      'Rahmat bagiku, orang tuaku, orang-orang yang beriman';
 
   @override
-  String get dhikrScreen_prayerForParents => 's prayer for parents';
+  String get dhikrScreen_prayerForParents => 's doa untuk orang tua';
 
   @override
-  String get dhikrScreen_entryOfTruthExit => 'Entry of truth, exit of truth';
+  String get dhikrScreen_entryOfTruthExit =>
+      'Masuknya kebenaran, keluarnya kebenaran';
 
   @override
-  String get dhikrScreen_prayerOfTheYouth => 'Prayer of the youth of the cave';
+  String get dhikrScreen_prayerOfTheYouth => 'Doa pemuda gua';
 
   @override
-  String get dhikrScreen_askAllahForMore => 'Ask Allah for more — of knowledge';
+  String get dhikrScreen_askAllahForMore =>
+      'Mintalah lebih banyak kepada Allah — pengetahuan';
 
   @override
   String get dhikrScreen_allahAnswersAndSaves =>
-      'Allah answers and saves from every distress';
+      'Allah menjawab dan menyelamatkan dari setiap kesusahan';
 
   @override
-  String get dhikrScreen_allahIsTheBest => 'Allah is the best of inheritors';
+  String get dhikrScreen_allahIsTheBest => 'Allah adalah sebaik-baik pewaris';
 
   @override
   String get dhikrScreen_blessedLandingWhereverYou =>
-      'A blessed landing wherever you stop';
+      'Pendaratan yang diberkati di mana pun Anda berhenti';
 
   @override
   String get dhikrScreen_refugeFromTheWhispers =>
-      'Refuge from the whispers of devils';
+      'Berlindung dari bisikan setan';
 
   @override
   String get dhikrScreen_mercyFromTheBest =>
-      'Mercy from the Best of the Merciful';
+      'Rahmat dari Yang Terbaik dari Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_pardonAndMercyFrom =>
-      'Pardon and mercy from the Most Merciful';
+      'Maafkan dan rahmat dari Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_piousSpousesAndRighteous =>
-      'Pious spouses and righteous offspring';
+      'Pasangan yang shaleh dan keturunan yang shaleh';
 
   @override
-  String get dhikrScreen_prayerForThoseWho => ' prayer for those who repent';
+  String get dhikrScreen_prayerForThoseWho => 'doa bagi mereka yang bertobat';
 
   @override
   String get dhikrScreen_gratitudeForParentsRighteousness =>
-      'Gratitude for parents, righteousness in offspring';
+      'Syukur pada orang tua, kesalehan pada keturunannya';
 
   @override
-  String get dhikrScreen_pleaGiftOfIshaq => 's plea — gift of Ishaq ﷺ';
+  String get dhikrScreen_pleaGiftOfIshaq => 'permohonan — hadiah Ishaq ﷺ';
 
   @override
   String get dhikrScreen_loveForTheBelievers =>
-      'Love for the believers before us';
+      'Cinta untuk orang-orang beriman sebelum kita';
 
   @override
   String get dhikrScreen_pureTawakkulOnYou =>
-      's pure tawakkul — On You we rely';
+      's tawakkul murni — Kepada-Mu kami bersandar';
 
   @override
   String get dhikrScreen_forgivenessForEveryBelieving =>
-      'Forgiveness for every believing home';
+      'Pengampunan untuk setiap rumah tangga yang beriman';
 
   @override
-  String get dhikrScreen_tasbeehByTheWeight =>
-      'Tasbeeh by the weight of Allah\\';
+  String get dhikrScreen_tasbeehByTheWeight => 'Tasbih karena beratnya Allah\\';
 
   @override
   String get dhikrScreen_tasbeehByTheNumber =>
-      'Tasbeeh by the number of all that He made';
+      'Tasbih sesuai dengan jumlah segala yang Dia ciptakan';
 
   @override
   String get dhikrScreen_tasbeehThatFillsAll =>
-      'Tasbeeh that fills all that Allah created';
+      'Tasbih yang mengisi semua yang diciptakan Allah';
 
   @override
-  String get dhikrScreen_paradiseSoughtTheFire =>
-      'Paradise sought — the Fire\\';
+  String get dhikrScreen_paradiseSoughtTheFire => 'Surga yang dicari — Api\\';
 
   @override
   String get dhikrScreen_cryToTheOne =>
-      'Cry to the One who hears, sees, and knows';
+      'Menangislah kepada Dia yang mendengar, melihat, dan mengetahui';
 
   @override
-  String get dhikrScreen_nameOnTheCorner => 's name on the corner of the Kaaba';
+  String get dhikrScreen_nameOnTheCorner => 'nama di sudut Ka\'bah';
 
   @override
   String get dhikrScreen_theDuaBetweenYemen =>
-      'The dua between Yemen Corner and Black Stone';
+      'Doa antara Yaman Corner dan Hajar Aswad';
 
   @override
-  String get dhikrScreen_prayAtTheStation => 'Pray at the station of Ibrahim ﷺ';
+  String get dhikrScreen_prayAtTheStation => 'Sholat di maqam Ibrahim ﷺ';
 
   @override
   String get dhikrScreen_tawheedDeclaredAtopSafa =>
-      'Tawheed declared atop Safa and Marwah';
+      'Tauhid dideklarasikan di atas Safa dan Marwah';
 
   @override
   String get dhikrScreen_reaffirmTheOnenessOf =>
-      'Reaffirm the Oneness of Allah';
+      'Menegaskan kembali Keesaan Allah';
 
   @override
   String get dhikrScreen_magnifyAllahAtEvery =>
-      'Magnify Allah at every threshold of Hajj';
+      'Keagungan Allah di setiap ambang haji';
 
   @override
   String get dhikrScreen_magnifyAllahOnThe =>
-      'Magnify Allah on the day of sacrifice';
+      'Besarkanlah Allah pada hari kurban';
 
   @override
   String get dhikrScreen_knowledgeProvisionHealingSought =>
-      'Knowledge, provision, healing — sought in Makkah';
+      'Pengetahuan, rezeki, penyembuhan — dicari di Makkah';
 
   @override
   String get dhikrScreen_theDuaMostRepeated =>
-      'The dua most repeated by the Prophet ﷺ';
+      'Doa yang paling banyak diulang oleh Nabi ﷺ';
 
   @override
   String get dhikrScreen_refugeFromEveryTrial =>
-      'Refuge from every trial of life and death';
+      'Berlindung dari setiap cobaan hidup dan mati';
 
   @override
   String get dhikrScreen_refugeFromEveryWeakness =>
-      'Refuge from every weakness of body and soul';
+      'Berlindung dari segala kelemahan jiwa dan raga';
 
   @override
   String get dhikrScreen_refugeFromSevereTrial =>
-      'Refuge from severe trial and enemy\\';
+      'Berlindung dari cobaan berat dan musuh\\';
 
   @override
   String get dhikrScreen_religionSetRightWorld =>
-      'Religion set right, world and Akhirah made best';
+      'Agama diatur dengan benar, dunia dan Akhirah dijadikan yang terbaik';
 
   @override
   String get dhikrScreen_guidancePietyVirtueSelf =>
-      'Guidance, piety, virtue, self-sufficiency';
+      'Bimbingan, kesalehan, kebajikan, kemandirian';
 
   @override
   String get dhikrScreen_refugeFromWeaknessWealth =>
-      'Refuge from weakness — wealth of piety within';
+      'Berlindung dari kelemahan — kekayaan kesalehan di dalam diri';
 
   @override
   String get dhikrScreen_theGuiderOfHearts =>
-      'The Guider of hearts — turn ours to obedience';
+      'Pembimbing hati - arahkan hati kita pada ketaatan';
 
   @override
   String get dhikrScreen_turnerOfHeartsMake =>
-      'Turner of hearts — make mine firm on the deen';
+      'Pembalik hati – jadikanlah hatiku teguh pada agama';
 
   @override
-  String get dhikrScreen_wellBeingInBoth => 'Well-being in both worlds';
+  String get dhikrScreen_wellBeingInBoth => 'Kesejahteraan di kedua dunia';
 
   @override
   String get dhikrScreen_rewardsSaveFromDisgrace =>
-      'Rewards, save from disgrace and grave\\';
+      'Pahala, selamat dari aib dan kubur\\';
 
   @override
   String get dhikrScreen_mindForGoodVictory =>
-      'Mind for good, victory for good';
+      'Pikiran untuk kebaikan, kemenangan untuk kebaikan';
 
   @override
   String get dhikrScreen_refugeFromEvilOf =>
-      'Refuge from evil of every sense and limb';
+      'Berlindung dari kejahatan segala indera dan anggota tubuh';
 
   @override
   String get dhikrScreen_theForgiverWhoLoves =>
-      'The Forgiver who loves the repentant';
+      'Pemaaf yang mencintai orang yang bertobat';
 
   @override
-  String get dhikrScreen_takeMeBeforeYou => 'Take me before You take me astray';
+  String get dhikrScreen_takeMeBeforeYou =>
+      'Bawalah aku sebelum Engkau menyesatkanku';
 
   @override
   String get dhikrScreen_everyGoodAndRefuge =>
-      'Every good — and refuge from every evil';
+      'Setiap kebaikan - dan perlindungan dari setiap kejahatan';
 
   @override
   String get dhikrScreen_standingSittingLyingGuarded =>
-      'Standing, sitting, lying — guarded in Islam';
+      'Berdiri, duduk, berbaring — dilindungi dalam Islam';
 
   @override
   String get dhikrScreen_refugeFromCowardiceMiserliness =>
-      'Refuge from cowardice, miserliness, fitnah';
+      'Menjauh dari kepengecutan, kikir, fitnah';
 
   @override
   String get dhikrScreen_forgivenessForJestAnd =>
-      'Forgiveness for jest and serious, known and unknown';
+      'Pengampunan untuk lelucon dan serius, diketahui dan tidak diketahui';
 
   @override
   String get dhikrScreen_forgiveMeWithForgiveness =>
-      'Forgive me with a forgiveness from You';
+      'Ampunilah aku dengan ampunan dari-Mu';
 
   @override
   String get dhikrScreen_submissionBeliefRepentanceFull =>
-      'Submission, belief, repentance, full trust';
+      'Penyerahan, keyakinan, taubat, kepercayaan penuh';
 
   @override
   String get dhikrScreen_mercyForgivenessParadiseSaved =>
-      'Mercy, forgiveness, Paradise — saved from the Fire';
+      'Rahmat, ampunan, Surga — selamat dari api neraka';
 
   @override
   String get dhikrScreen_refugeFromEvilSeen =>
-      'Refuge from evil seen and unseen';
+      'Berlindung dari kejahatan yang terlihat dan tidak terlihat';
 
   @override
   String get dhikrScreen_provisionThatLastsTill =>
-      'Provision that lasts till life\\';
+      'Rezeki yang bertahan seumur hidup\\';
 
   @override
   String get dhikrScreen_sinsForgivenHomeSpacious =>
-      'Sins forgiven, home spacious, provision blessed';
+      'Dosa diampuni, rumah luas, rezeki diberkati';
 
   @override
   String get dhikrScreen_favorAndMercyNone =>
-      'Favor and mercy — none possesses them but You';
+      'Nikmat dan rahmat tidak ada yang memilikinya selain Engkau';
 
   @override
   String get dhikrScreen_refugeFromDrowningBurning =>
-      'Refuge from drowning, burning, sudden death';
+      'Perlindungan dari tenggelam, terbakar, kematian mendadak';
 
   @override
   String get dhikrScreen_refugeFromHypocrisyShowiness =>
-      'Refuge from hypocrisy, showiness, rebellion';
+      'Berlindung dari kemunafikan, sifat pamer, pemberontakan';
 
   @override
   String get dhikrScreen_refugeFromPovertyScarcity =>
-      'Refuge from poverty, scarcity, oppression';
+      'Perlindungan dari kemiskinan, kelangkaan, penindasan';
 
   @override
   String get dhikrScreen_refugeFromHeartThat =>
-      'Refuge from a heart that won\\';
+      'Berlindung dari hati yang menang\\';
 
   @override
   String get dhikrScreen_payMyDebtEnrich =>
-      'Pay my debt, enrich me from poverty';
+      'Bayar hutangku, kayakan aku dari kemiskinan';
 
   @override
   String get dhikrScreen_allahCalledByHis =>
-      'Allah called by His most beautiful names';
+      'Allah memanggil dengan nama-Nya yang terindah';
 
   @override
   String get dhikrScreen_theAccepterOfRepentance =>
-      'The Accepter of repentance always accepts';
+      'Penerima taubat selalu menerima';
 
   @override
-  String get dhikrScreen_anEasyReckoningOn => 'An easy reckoning on the Day';
+  String get dhikrScreen_anEasyReckoningOn =>
+      'Sebuah perhitungan yang mudah pada Hari itu';
 
   @override
   String get dhikrScreen_remembranceGratitudeAndThe =>
-      'Remembrance, gratitude, and the best worship';
+      'Zikir, syukur, dan ibadah yang terbaik';
 
   @override
   String get dhikrScreen_eternalBlissWithThe =>
-      'Eternal bliss with the Prophet ﷺ in Firdaws';
+      'Kebahagiaan abadi bersama Nabi ﷺ di Firdaus';
 
   @override
   String get dhikrScreen_forgiveSinsKnownHidden =>
-      'Forgive sins — known, hidden, intended, mistaken';
+      'Ampuni dosa - yang diketahui, tersembunyi, disengaja, salah';
 
   @override
   String get dhikrScreen_refugeFromBeingCrushed =>
-      'Refuge from being crushed by debt and enemy';
+      'Berlindung dari keterpurukan hutang dan musuh';
 
   @override
   String get dhikrScreen_askForParadiseRefuge =>
-      'Ask for Paradise, refuge from the Fire';
+      'Mintalah surga, perlindungan dari api neraka';
 
   @override
   String get dhikrScreen_forgiveGuideProvideProtect =>
-      'Forgive, guide, provide, protect';
+      'Maafkan, bimbing, berikan, lindungi';
 
   @override
   String get dhikrScreen_sensesMadeBeneficialAnd =>
-      'Senses made beneficial — and lasting';
+      'Indera menjadi bermanfaat - dan bertahan lama';
 
   @override
   String get dhikrScreen_theMostBeneficentThe =>
-      'The Most Beneficent, the Originator of all';
+      'Yang Maha Pemurah, Pemrakarsa segala sesuatu';
 
   @override
   String get dhikrScreen_allahTruthOwnerOf =>
-      'Allah — Truth, Owner of all dominion';
+      'Allah - Kebenaran, Pemilik segala kekuasaan';
 
   @override
   String get dhikrScreen_submissionWithFullSincerity =>
-      'Submission with full sincerity';
+      'Penyampaiannya dengan penuh keikhlasan';
 
   @override
   String get dhikrScreen_amongTheGuidedThe =>
-      'Among the guided, the healthy, the chosen';
+      'Di antara orang-orang yang terbimbing, ada yang sehat, ada pula yang terpilih';
 
   @override
   String get dhikrScreen_whatTheProphetAsked =>
-      'What the Prophet ﷺ asked — I ask too';
+      'Apa yang Nabi ﷺ tanyakan — saya juga bertanya';
 
   @override
   String get dhikrScreen_sayyidAlIstighfarThe =>
-      'Sayyid al-Istighfar — the master of all repentance';
+      'Sayyid al-Istighfar - penguasa segala pertobatan';
 
   @override
   String get dhikrScreen_refugeFromEveryEvil =>
-      'Refuge from every evil that comes by night';
+      'Berlindung dari setiap kejahatan yang datang pada malam hari';
 
   @override
   String get dhikrScreen_blessEverySenseEvery =>
-      'Bless every sense, every limb';
+      'Memberkati setiap indra, setiap anggota tubuh';
 
   @override
   String get dhikrScreen_smallAndGreatFirst =>
-      'Small and great, first and last, open and secret';
+      'Kecil dan besar, pertama dan terakhir, terbuka dan rahasia';
 
   @override
   String get dhikrScreen_noneWithholdsWhatYou =>
-      'None withholds what You give, none gives what You hold';
+      'Tidak ada seorang pun yang menahan apa yang Engkau berikan, tidak ada seorang pun yang memberikan apa yang Engkau miliki';
 
   @override
   String get dhikrScreen_forgiveGuideProvideElevate =>
-      'Forgive, guide, provide, elevate';
+      'Memaafkan, membimbing, memberi, meninggikan';
 
   @override
   String get dhikrScreen_increaseFavorBeKind =>
-      'Increase favor, be kind, never displeased';
+      'Tingkatkan nikmat, bersikap baik, jangan pernah merasa tidak senang';
 
   @override
   String get dhikrScreen_beautifyOurCharacterAs =>
-      'Beautify our character as You beautified our creation';
+      'Percantik karakter kami sebagaimana Engkau mempercantik ciptaan kami';
 
   @override
   String get dhikrScreen_firmInBeliefGuided =>
-      'Firm in belief — guided and guiding';
+      'Teguh dalam keyakinan — dibimbing dan membimbing';
 
   @override
   String get dhikrScreen_wisdomAndWithIt =>
-      'Wisdom — and with it, multitudes of good';
+      'Kebijaksanaan — dan bersamanya, banyak sekali kebaikan';
 
   @override
   String get dhikrScreen_nameShieldsFromEvery =>
-      's name shields from every harm';
+      'Namanya melindungi dari segala bahaya';
 
   @override
   String get dhikrScreen_mightAgainstEveryShaytan =>
-      's might against every Shaytan';
+      'kekuatannya melawan setiap Setan';
 
   @override
   String get dhikrScreen_dayBlessedFromBeginning =>
-      'A day blessed from beginning to end';
+      'Hari yang diberkati dari awal hingga akhir';
 
   @override
   String get dhikrScreen_witnessNoneDeservesWorship =>
-      'Witness — none deserves worship but You';
+      'Saksi - tidak ada yang berhak disembah kecuali Engkau';
 
   @override
   String get dhikrScreen_refugeFromHumiliatingOld =>
-      'Refuge from a humiliating old age';
+      'Berlindung dari usia tua yang memalukan';
 
   @override
   String get dhikrScreen_guidedToTheBest =>
-      'Guided to the best, saved from the worst';
+      'Dipandu menuju yang terbaik, diselamatkan dari yang terburuk';
 
   @override
   String get dhikrScreen_faithSetRightHome =>
-      'Faith set right, home wide, provision blessed';
+      'Iman ditegakkan, rumah luas, perbekalan diberkati';
 
   @override
   String get dhikrScreen_refugeFromEveryInner =>
-      'Refuge from every inner and outer disease';
+      'Berlindung dari segala penyakit lahir dan batin';
 
   @override
   String get dhikrScreen_refugeFromEveryKind =>
-      'Refuge from every kind of bad end';
+      'Berlindung dari segala jenis akhir yang buruk';
 
   @override
   String get dhikrScreen_steadfastGratefulRightlyGuided =>
-      'Steadfast, grateful, rightly-guided heart';
+      'Hati yang tabah, bersyukur, dan mendapat petunjuk yang benar';
 
   @override
   String get dhikrScreen_theLoveOfAllah =>
-      'The love of Allah, His angels, His prophets';
+      'Cinta Allah, Malaikat-Nya, Para Nabi-Nya';
 
   @override
-  String get dhikrScreen_loveOfAllahAbove => 'Love of Allah above love of self';
+  String get dhikrScreen_loveOfAllahAbove =>
+      'Cinta kepada Allah diatas cinta pada diri sendiri';
 
   @override
   String get dhikrScreen_bestDeedsLastBest =>
-      'Best deeds last — best day is meeting You';
+      'Perbuatan terbaik yang terakhir - hari terbaik adalah bertemu dengan-Mu';
 
   @override
   String get dhikrScreen_pureLifeAndPeaceful =>
-      'A pure life and a peaceful return';
+      'Kehidupan yang murni dan kepulangan yang damai';
 
   @override
   String get dhikrScreen_patientGratefulSmallIn =>
-      'Patient, grateful — small in own eyes';
+      'Sabar, bersyukur - kecil di mata sendiri';
 
   @override
   String get dhikrScreen_theBestRequestAnd =>
-      'The best request and the best reward';
+      'Permintaan terbaik dan pahala terbaik';
 
   @override
-  String get dhikrScreen_theHighestLevelOf => 'The highest level of Paradise';
+  String get dhikrScreen_theHighestLevelOf => 'Surga tingkat tertinggi';
 
   @override
-  String get dhikrScreen_firdawsTheBestOf => 'Firdaws — the best of all that\\';
+  String get dhikrScreen_firdawsTheBestOf =>
+      'Firdaws — yang terbaik dari semuanya\\';
 
   @override
   String get dhikrScreen_mentionRaisedSinsErased =>
-      'Mention raised, sins erased, heart purified';
+      'Sebutan dibangkitkan, dosa dihapus, hati disucikan';
 
   @override
   String get dhikrScreen_blessEverySenseEvery_b81b9b =>
-      'Bless every sense, every limb, every deed';
+      'Memberkati setiap indera, setiap anggota tubuh, setiap perbuatan';
 
   @override
   String get dhikrScreen_mercyPleasureParadiseSaved =>
-      'Mercy, pleasure, Paradise — saved from Fire';
+      'Rahmat, kesenangan, Surga — diselamatkan dari Api';
 
   @override
-  String get dhikrScreen_noSinUncoveredNo => 'No sin uncovered, no debt unpaid';
+  String get dhikrScreen_noSinUncoveredNo =>
+      'Tidak ada dosa yang terungkap, tidak ada hutang yang belum dibayar';
 
   @override
   String get dhikrScreen_mercyThatGuidesSets =>
-      'Mercy that guides, sets right, purifies';
+      'Rahmat yang membimbing, meluruskan, memurnikan';
 
   @override
   String get dhikrScreen_trueBeliefCertainKnowledge =>
-      'True belief, certain knowledge, Allah\\';
+      'Iman yang benar, ilmu yang pasti, Allah\\';
 
   @override
   String get dhikrScreen_withTheProphetsThe =>
-      'With the Prophets, the martyrs, the truthful';
+      'Bersama para Nabi, orang-orang yang syahid, orang-orang yang jujur';
 
   @override
   String get dhikrScreen_everyNeedEntrustedTo =>
-      'Every need entrusted to the Judge of all needs';
+      'Setiap kebutuhan dipercayakan kepada Hakim segala kebutuhan';
 
   @override
   String get dhikrScreen_bestOfWhatAllah =>
-      'Best of what Allah promised His servants';
+      'Yang terbaik dari apa yang Allah janjikan kepada hamba-Nya';
 
   @override
   String get dhikrScreen_safetyOnTheDay =>
-      'Safety on the Day, Paradise on the Eternal Day';
+      'Keselamatan di Hari Ini, Surga di Hari yang Abadi';
 
   @override
   String get dhikrScreen_glorifyTheOneOf =>
-      'Glorify the One of unmatched honor and knowledge';
+      'Memuliakan Dia yang kehormatan dan ilmunya tiada tandingannya';
 
   @override
   String get dhikrScreen_pardonPlentySecurityIn =>
-      'Pardon, plenty, security in deen and dunya';
+      'Maaf, banyak, keamanan dalam agama dan dunia';
 
   @override
   String get dhikrScreen_healthFaithEthicsSuccess =>
-      'Health, faith, ethics, success, mercy';
+      'Kesehatan, iman, etika, kesuksesan, rahmat';
 
   @override
   String get dhikrScreen_healthPurityEthicsAcceptance =>
-      'Health, purity, ethics, acceptance';
+      'Kesehatan, kemurnian, etika, penerimaan';
 
   @override
-  String get dhikrScreen_guidedSecureVictorious => 'Guided, secure, victorious';
+  String get dhikrScreen_guidedSecureVictorious => 'Dipandu, aman, menang';
 
   @override
   String get dhikrScreen_refugeFromEveryCreature =>
-      'Refuge from every creature in Allah\\';
+      'Berlindung dari segala makhluk kepada Allah\\';
 
   @override
   String get dhikrScreen_theOneWhoAnswers =>
-      'The One who answers the compelled and broken';
+      'Dzat yang menjawab yang terpaksa dan yang patah';
 
   @override
-  String get dhikrScreen_morningReachedByAllah => 'Morning reached by Allah\\';
+  String get dhikrScreen_morningReachedByAllah => 'Pagi tiba oleh Allah\\';
 
   @override
   String get dhikrScreen_refugeSoughtByMusa =>
-      'Refuge sought by Musa, Isa, Ibrahim';
+      'Perlindungan dicari oleh Musa, Isa, Ibrahim';
 
   @override
   String get dhikrScreen_allTheGoodPower =>
-      'All the good — power, mercy, blessings';
+      'Semua yang baik — kekuatan, belas kasihan, berkah';
 
   @override
   String get dhikrScreen_allPraiseAndDominion =>
-      'All praise and dominion belong to You';
+      'Segala pujian dan kekuasaan adalah milik-Mu';
 
   @override
   String get dhikrScreen_pastPardonedFutureProtected =>
-      'Past pardoned, future protected';
+      'Masa lalu diampuni, masa depan dilindungi';
 
   @override
-  String get dhikrScreen_takeMyForelockTo => 'Take my forelock to goodness';
+  String get dhikrScreen_takeMyForelockTo => 'Ambil jambulku untuk kebaikan';
 
   @override
   String get dhikrScreen_strengthForWeaknessDignity =>
-      'Strength for weakness, dignity for shame';
+      'Kekuatan menggantikan kelemahan, martabat menggantikan rasa malu';
 
   @override
   String get dhikrScreen_justiceForThoseWho =>
-      'Justice for those who block the truth';
+      'Keadilan bagi mereka yang menghalangi kebenaran';
 
   @override
   String get dhikrScreen_refugeFromEveryFatal =>
-      'Refuge from every fatal calamity';
+      'Berlindung dari setiap bencana yang mematikan';
 
   @override
   String get dhikrScreen_refugeFromEveryBad =>
-      'Refuge from every bad end and trial';
+      'Berlindung dari setiap akhir buruk dan cobaan';
 
   @override
   String get dhikrScreen_turnBackEveryEvil =>
-      'Turn back every evil intention to its source';
+      'Kembalikan setiap niat jahat pada sumbernya';
 
   @override
   String get dhikrScreen_justiceAndRefugeAgainst =>
-      'Justice and refuge against their evils';
+      'Keadilan dan perlindungan terhadap kejahatan mereka';
 
   @override
   String get dhikrScreen_forgivenessForMeMy =>
-      'Forgiveness for me, my parents, all believers';
+      'Maafkan saya, orang tua saya, semua orang yang beriman';
 
   @override
   String get dhikrScreen_purifyHeartDeedsTongue =>
-      'Purify heart, deeds, tongue, eyes';
+      'Sucikan hati, amal, lidah, mata';
 
   @override
-  String get dhikrScreen_selfContentWithAllah => 'A self content with Allah\\';
+  String get dhikrScreen_selfContentWithAllah => 'Kepuasan diri dengan Allah\\';
 
   @override
-  String get dhikrScreen_youKnowMySecret => 'You know my secret and my need';
+  String get dhikrScreen_youKnowMySecret =>
+      'Anda tahu rahasia dan kebutuhan saya';
 
   @override
   String get dhikrScreen_certaintyNothingHarmsWhat =>
-      'Certainty: nothing harms what\\';
+      'Kepastian: tidak ada yang merugikan apa\\';
 
   @override
   String get dhikrScreen_beliefLightAndLawful =>
-      'Belief, light, and lawful provision';
+      'Iman, rezeki yang ringan dan halal';
 
   @override
   String get dhikrScreen_totalLoveAndTotal =>
-      'Total love and total struggle for Allah';
+      'Cinta total dan perjuangan total untuk Allah';
 
   @override
   String get dhikrScreen_makeWhatYouWithheld =>
-      'Make what You withheld a strength in obedience';
+      'Jadikanlah apa yang Engkau sembunyikan sebagai kekuatan dalam ketaatan';
 
   @override
   String get dhikrScreen_praiseTheOwnerOf =>
-      'Praise the Owner of every beautiful name';
+      'Pujilah Pemilik setiap nama yang indah';
 
   @override
   String get dhikrScreen_allahKnowsTheHearts =>
-      'Allah knows the hearts, the heavens, and beyond';
+      'Allah mengetahui isi hati, langit, dan seterusnya';
 
   @override
-  String get dhikrScreen_hopeBuiltOnAllah => 'Hope built on Allah\\';
+  String get dhikrScreen_hopeBuiltOnAllah =>
+      'Harapan yang dibangun atas Allah\\';
 
   @override
   String get dhikrScreen_belovedToTheBelievers =>
-      'Beloved to the believers, free from the wicked';
+      'Kekasih bagi orang-orang yang beriman, terbebas dari orang-orang fasik';
 
   @override
-  String get dhikrScreen_mightPowerAndMajesty => 's might, power, and majesty';
+  String get dhikrScreen_mightPowerAndMajesty =>
+      'kekuatan, kekuasaan, dan keagungannya';
 
   @override
   String get dhikrScreen_gratefulPatientHelpfulTo =>
-      'Grateful, patient, helpful to Allah\\';
+      'Bersyukur, sabar, suka menolong Allah\\';
 
   @override
   String get dhikrScreen_withholdYourGoodFor =>
-      't withhold Your good for my evil';
+      'Aku tidak menahan kebaikan-Mu demi kejahatanku';
 
   @override
   String get dhikrScreen_settledLifeAmpleProvision =>
-      'A settled life, ample provision, righteous deeds';
+      'Kehidupan yang mapan, rezeki yang melimpah, amal shaleh';
 
   @override
   String get dhikrScreen_wealthInNeedingYou =>
-      'Wealth in needing You — never free of You';
+      'Kekayaan dalam membutuhkan Anda — tidak pernah bebas dari Anda';
 
   @override
   String get dhikrScreen_defectsCoveredFearsCalmed =>
-      'Defects covered, fears calmed, anguish lifted';
+      'Cacat tertutup, ketakutan diredakan, penderitaan terangkat';
 
   @override
   String get dhikrScreen_openTheGatesOf =>
-      'Open the gates of mercy and generosity';
+      'Bukalah gerbang belas kasihan dan kemurahan hati';
 
   @override
   String get dhikrScreen_holdUsInYour =>
-      'Hold us in Your safety — never abandon us';
+      'Peliharalah kami dalam keselamatan-Mu — jangan pernah meninggalkan kami';
 
   @override
   String get dhikrScreen_withinYourSecurityYour =>
-      'Within Your security, Your goodness';
+      'Dalam keamanan Anda, kebaikan Anda';
 
   @override
   String get dhikrScreen_everySinEveryDistress =>
-      'Every sin, every distress, every side';
+      'Setiap dosa, setiap kesusahan, setiap sisi';
 
   @override
   String get dhikrScreen_helpInDeathIn =>
-      'Help in death, in the grave, on the Bridge';
+      'Bantuan dalam kematian, di kuburan, di Jembatan';
 
   @override
   String get dhikrScreen_beautifiedLifeBlessedGifts =>
-      'Beautified life, blessed gifts, kept favors';
+      'Hidup yang diperindah, pemberian yang berkah, nikmat yang disimpan';
 
   @override
   String get dhikrScreen_firmFootingBlessedEnd =>
-      'Firm footing, blessed end, kept covenant';
+      'Pijakan yang kokoh, akhir yang diberkati, perjanjian yang ditepati';
 
   @override
   String get dhikrScreen_hopesFulfilledEnemiesRepelled =>
-      'Hopes fulfilled, enemies repelled, affairs set right';
+      'Harapan terpenuhi, musuh berhasil dihalau, segala sesuatunya beres';
 
   @override
   String get dhikrScreen_guidedToTheUpright =>
-      'Guided to the upright, protected from the self';
+      'Dibimbing kepada orang yang lurus, terlindung dari diri sendiri';
 
   @override
   String get dhikrScreen_lightAndForgivenessFrom =>
-      'Light and forgiveness from the Owner of the Throne';
+      'Cahaya dan ampunan dari Pemilik Arsy';
 
   @override
   String get dhikrScreen_forgivenessForWhatRepented =>
-      'Forgiveness for what I repented and returned to';
+      'Pengampunan atas apa yang saya sesali dan kembalikan';
 
   @override
   String get dhikrScreen_understandingThatDrawsNear =>
-      'Understanding that draws near to Allah';
+      'Pemahaman yang mendekatkan diri kepada Allah';
 
   @override
   String get dhikrScreen_soulsDwellingInThe =>
-      'Souls dwelling in the heights of piety';
+      'Jiwa-jiwa yang bersemayam di puncak kesalehan';
 
   @override
   String get dhikrScreen_crossTheBridgeOf =>
-      'Cross the bridge of desire by patience';
+      'Seberangi jembatan keinginan dengan kesabaran';
 
   @override
   String get dhikrScreen_followThePathOf =>
-      'Follow the path of sincerity and certainty';
+      'Ikutilah jalan keikhlasan dan kepastian';
 
   @override
   String get dhikrScreen_helpAgainstTheSoul =>
-      'Help against the soul and against Shaytan';
+      'Membantu melawan jiwa dan melawan Setan';
 
   @override
   String get dhikrScreen_fearHappinessVictorySecurity =>
-      'Fear, happiness, victory, security';
+      'Ketakutan, kebahagiaan, kemenangan, keamanan';
 
   @override
   String get dhikrScreen_entrustFamilyWealthChildren =>
-      'Entrust family, wealth, children — all to Allah';
+      'Percayakan keluarga, kekayaan, anak-anak — semuanya kepada Allah';
 
   @override
   String get dhikrScreen_faithGuardedFaithPreserved =>
-      'Faith guarded, faith preserved';
+      'Iman dijaga, iman dipelihara';
 
   @override
   String get dhikrScreen_wellBeingTillThe =>
-      'Well-being till the end — sealed with forgiveness';
+      'Kesejahteraan sampai akhir — disegel dengan pengampunan';
 
   @override
   String get dhikrScreen_whatProtectsMeFrom =>
-      'What protects me from this world\\';
+      'Apa yang melindungiku dari dunia ini\\';
 
   @override
-  String get dhikrScreen_mercyOnEverySoul => 'Mercy on every soul\\';
+  String get dhikrScreen_mercyOnEverySoul => 'Rahmat pada setiap jiwa\\';
 
   @override
   String get dhikrScreen_burdenUsAsThose =>
-      't burden us as those before were burdened';
+      'tidak membebani kami seperti mereka yang sebelumnya terbebani';
 
   @override
   String get dhikrScreen_mercyPardonForgivenessVictory =>
-      'Mercy, pardon, forgiveness, victory';
+      'Rahmat, pengampunan, pengampunan, kemenangan';
 
   @override
   String get dhikrScreen_keepTheHeartFirm_9c4efb =>
-      'Keep the heart firm after guidance';
+      'Jagalah hati tetap teguh setelah mendapat bimbingan';
 
   @override
-  String get dhikrScreen_allahNeverFailsHis => 'Allah never fails His promise';
+  String get dhikrScreen_allahNeverFailsHis =>
+      'Allah tidak pernah mengingkari janjinya';
 
   @override
   String get dhikrScreen_faithAnsweredWithForgiveness_3f30c4 =>
-      'Faith answered with forgiveness from Fire';
+      'Iman menjawab dengan pengampunan dari Api';
 
   @override
   String get dhikrScreen_recordUsWithThe =>
-      'Record us with the witnesses of truth';
+      'Catatlah kami dengan saksi-saksi kebenaran';
 
   @override
   String get dhikrScreen_forgivenessFirmnessAndVictory =>
-      'Forgiveness, firmness, and victory';
+      'Pengampunan, keteguhan, dan kemenangan';
 
   @override
   String get dhikrScreen_creationHasPurposeRefuge =>
-      'Creation has purpose — refuge from the Fire';
+      'Penciptaan mempunyai tujuan – perlindungan dari api';
 
   @override
-  String get dhikrScreen_refugeFromTheDisgrace =>
-      'Refuge from the disgrace of the Fire';
+  String get dhikrScreen_refugeFromTheDisgrace => 'Berlindung dari aib Neraka';
 
   @override
   String get dhikrScreen_heardBelievedAskingForgiveness =>
-      'Heard, believed, asking forgiveness';
+      'Mendengar, percaya, meminta maaf';
 
   @override
   String get dhikrScreen_sinsForgivenDeathAmong =>
-      'Sins forgiven — death among the righteous';
+      'Dosa diampuni — kematian di antara orang benar';
 
   @override
   String get dhikrScreen_promisedRewardNeverDisgraced =>
-      'Promised reward — never disgraced on Resurrection';
+      'Hadiah yang dijanjikan - tidak pernah dipermalukan pada hari Kebangkitan';
 
   @override
   String get dhikrScreen_inscribedWithTheWitnesses_e2612d =>
-      'Inscribed with the witnesses of truth';
+      'Tertulis dengan para saksi kebenaran';
 
   @override
   String get dhikrScreen_provisionAndSignsFrom =>
-      'Provision and signs from the heavens';
+      'Rezeki dan tanda-tanda dari langit';
 
   @override
-  String get dhikrScreen_duaTheDuaOf => 's dua — the dua of every repentant';
+  String get dhikrScreen_duaTheDuaOf =>
+      's doa - doa setiap orang yang bertobat';
 
   @override
   String get dhikrScreen_spareUsFromThe =>
-      'Spare us from the company of wrongdoers';
+      'Jauhkan kami dari kelompok orang-orang yang zalim';
 
   @override
   String get dhikrScreen_allahIsTheBest_4f2bf7 =>
-      'Allah is the best judge between truth and lie';
+      'Allah adalah hakim terbaik antara kebenaran dan kebohongan';
 
   @override
   String get dhikrScreen_patienceTillTheEnd =>
-      'Patience till the end, death upon submission';
+      'Kesabaran sampai akhir, kematian saat berserah diri';
 
   @override
   String get dhikrScreen_neverTrialForThe_5eb10a =>
-      'Never a trial for the disbelievers';
+      'Tidak pernah ada cobaan bagi orang-orang kafir';
 
   @override
-  String get dhikrScreen_hiddenInEveryChest => 's hidden in every chest';
+  String get dhikrScreen_hiddenInEveryChest => 'tersembunyi di setiap peti';
 
   @override
   String get dhikrScreen_prayerForPrayerAccepted =>
-      's prayer for prayer accepted';
+      's doanya agar doanya diterima';
 
   @override
   String get dhikrScreen_mercyGrantedGuidancePrepared =>
-      'Mercy granted, guidance prepared';
+      'Rahmat diberikan, bimbingan disiapkan';
 
   @override
-  String get dhikrScreen_duaBeforePharaoh => 's dua before Pharaoh';
+  String get dhikrScreen_duaBeforePharaoh => 's doa di hadapan Firaun';
 
   @override
   String get dhikrScreen_refugeFromClingingEvil =>
-      'Refuge from a clinging, evil punishment';
+      'Berlindung dari hukuman jahat yang melekat';
 
   @override
   String get dhikrScreen_piousSpousesRighteousChildren =>
-      'Pious spouses, righteous children, leadership';
+      'Pasangan yang shaleh, anak yang shaleh, kepemimpinan';
 
   @override
   String get dhikrScreen_allahIsEverThankful =>
-      'Allah is ever-thankful for every effort';
+      'Allah SWT selalu bersyukur atas segala upaya';
 
   @override
   String get dhikrScreen_mercyEncompassingEveryRepentant =>
-      'Mercy encompassing every repentant soul';
+      'Rahmat meliputi setiap jiwa yang bertobat';
 
   @override
   String get dhikrScreen_mercyOnThatDay =>
-      'Mercy on that Day — the great success';
+      'Rahmat pada hari itu – sukses besar';
 
   @override
   String get dhikrScreen_loveAndForgivenessFor =>
-      'Love and forgiveness for earlier believers';
+      'Cinta dan pengampunan bagi orang-orang beriman sebelumnya';
 
   @override
-  String get dhikrScreen_kindnessAndMercyUpon =>
-      'Kindness and mercy upon Allah\\';
+  String get dhikrScreen_kindnessAndMercyUpon => 'Kebaikan dan rahmat Allah\\';
 
   @override
   String get dhikrScreen_pureTawakkulToYou =>
-      's pure tawakkul — to You we return';
+      's tawakkal murni — kepada-Mu kami kembali';
 
   @override
   String get dhikrScreen_neverFitnahForThose =>
-      'Never a fitnah for those who disbelieve';
+      'Tidak pernah ada fitnah bagi orang kafir';
 
   @override
   String get dhikrScreen_completeTheLightForgive =>
-      'Complete the light — forgive us';
+      'Lengkapi cahayanya - maafkan kami';
 
   @override
   String get dhikrScreen_strongerThanServantThe =>
-      'Stronger than a servant — the night\\';
+      'Lebih kuat dari seorang pelayan — malam\\';
 
   @override
   String get dhikrScreen_refugeFromEveryVisible =>
-      'Refuge from every visible evil before sleep';
+      'Berlindung dari segala kejahatan yang terlihat sebelum tidur';
 
   @override
   String get dhikrScreen_refugeFromEveryWhisper =>
-      'Refuge from every whisper before sleep';
+      'Berlindung dari setiap bisikan sebelum tidur';
 
   @override
-  String get dhikrScreen_guardedByAnAngel =>
-      'Guarded by an angel until morning';
+  String get dhikrScreen_guardedByAnAngel => 'Dijaga oleh bidadari sampai pagi';
 
   @override
   String get dhikrScreen_twoVersesThatSuffice =>
-      'Two verses that suffice for the whole night';
+      'Dua ayat yang cukup untuk sepanjang malam';
 
   @override
   String get dhikrScreen_pureTawheedDeclaredBefore =>
-      'Pure tawheed declared before sleep';
+      'Tauhid murni dideklarasikan sebelum tidur';
 
   @override
   String get dhikrScreen_sleepIsSmallDeath =>
-      'Sleep is a small death — entrusted to Allah';
+      'Tidur adalah kematian kecil yang dipercayakan kepada Allah';
 
   @override
   String get dhikrScreen_whoeverDiesThatNight =>
-      'Whoever dies that night dies on fitrah';
+      'Barangsiapa meninggal pada malam itu, maka ia mati fitrah';
 
   @override
   String get dhikrScreen_guardTheSoulThat =>
-      'Guard the soul that returns, or have mercy';
+      'Jagalah jiwa yang kembali, atau kasihanilah';
 
   @override
   String get dhikrScreen_refugeFromThePunishment =>
-      'Refuge from the punishment of that Day';
+      'Berlindung dari siksa pada hari itu';
 
   @override
   String get dhikrScreen_gratitudeForShelterFood =>
-      'Gratitude for shelter, food, and care';
+      'Syukur atas tempat tinggal, makanan, dan perawatan';
 
   @override
-  String get dhikrScreen_handOverTheSoul => 'Hand over the soul before sleep';
+  String get dhikrScreen_handOverTheSoul => 'Serahkan jiwa sebelum tidur';
 
   @override
   String get dhikrScreen_refugeFromEveryEvil_6d2534 =>
-      'Refuge from every evil that grasps';
+      'Berlindung dari setiap kejahatan yang menjerat';
 
   @override
   String get dhikrScreen_joinTheHighestAssembly =>
-      'Join the highest assembly while you sleep';
+      'Bergabunglah dengan majelis tertinggi saat Anda tidur';
 
   @override
   String get dhikrScreen_gratitudeBeforeClosingThe =>
-      'Gratitude before closing the eyes';
+      'Syukur sebelum menutup mata';
 
   @override
   String get dhikrScreen_surahAsSajdahRecited =>
-      'Surah As-Sajdah recited before sleep';
+      'Surah As-Sajdah dibacakan sebelum tidur';
 
   @override
   String get dhikrScreen_refugeFromEvilBefore =>
-      'Refuge from evil before entering the toilet';
+      'Berlindung dari kejahatan sebelum memasuki toilet';
 
   @override
   String get dhikrScreen_seekForgivenessAsYou =>
-      'Seek forgiveness as you leave';
+      'Carilah pengampunan saat Anda pergi';
 
   @override
   String get dhikrScreen_bismillahEveryBiteBegins =>
-      'Bismillah — every bite begins with Allah';
+      'Bismillah - setiap gigitan dimulai dengan Allah';
 
   @override
   String get dhikrScreen_catchUpTheName =>
-      'Catch up the name — Allah at start and end';
+      'Catatlah nama - Allah di awal dan di akhir';
 
   @override
   String get dhikrScreen_threeSunnahDuasTo =>
-      'Three Sunnah duas to thank Allah after eating';
+      'Tiga doa Sunnah untuk bersyukur kepada Allah setelah makan';
 
   @override
   String get dhikrScreen_beginWithAllahThe =>
-      'Begin with Allah, the Most Merciful, before drinking';
+      'Mulailah dengan Allah Yang Maha Penyayang sebelum meminumnya';
 
   @override
   String get dhikrScreen_openTheEightDoors =>
-      'Open the eight doors of Paradise after wudu';
+      'Buka delapan pintu surga setelah wudhu';
 
   @override
-  String get dhikrScreen_openTheDoorsOf => 'Open the doors of Allah\\';
+  String get dhikrScreen_openTheDoorsOf => 'Bukalah pintu Allah\\';
 
   @override
-  String get dhikrScreen_bountyAsYouLeave => 's bounty as you leave the masjid';
+  String get dhikrScreen_bountyAsYouLeave =>
+      's karunia ketika Anda meninggalkan masjid';
 
   @override
   String get dhikrScreen_mayAllahGuideYou =>
-      'May Allah guide you and rectify your state';
+      'Semoga Allah membimbing Anda dan memperbaiki keadaan Anda';
 
   @override
   String get dhikrScreen_askAllahLordOf =>
-      'Ask Allah, Lord of the Throne, to grant healing';
+      'Mintalah kepada Allah, Penguasa Arsy, untuk memberikan kesembuhan';
 
   @override
-  String get dhikrScreen_allahIsTheOnly => 'Allah is the only One who cures';
+  String get dhikrScreen_allahIsTheOnly =>
+      'Allah satu-satunya yang menyembuhkan';
 
   @override
   String get dhikrScreen_shieldChildrenWithAllah =>
-      'Shield children with Allah\\';
+      'Lindungi anak-anak dengan Allah\\';
 
   @override
-  String get dhikrScreen_anicPrayerForOne => 'anic prayer for one\\';
+  String get dhikrScreen_anicPrayerForOne => 'doa anic untuk seseorang\\';
 
   @override
   String get dhikrScreen_twoPhrasesBelovedTo =>
-      'Two phrases beloved to the Most Merciful';
+      'Dua kalimat yang disukai Yang Maha Penyayang';
 
   @override
-  String get dhikrScreen_allahLovesToPardon => 'Allah loves to pardon — so ask';
+  String get dhikrScreen_allahLovesToPardon =>
+      'Allah suka memaafkan - jadi mintalah';
 
   @override
   String get dhikrScreen_treasureFromBeneathThe =>
-      'A treasure from beneath the Throne';
+      'Harta karun dari bawah Tahta';
 
   @override
   String get dhikrScreen_theFourPhrasesDearest =>
-      'The four phrases dearest to Allah';
+      'Empat kalimat yang paling disukai Allah';
 
   @override
   String get dhikrScreen_theDuaThatReleases =>
-      'The dua that releases from every distress';
+      'Doa yang melepaskan dari setiap kesusahan';
 
   @override
   String get dhikrScreen_protectionForHomeAnd =>
-      's protection for home and offspring';
+      's perlindungan untuk rumah dan keturunan';
 
   @override
-  String get dhikrScreen_theCompleteDhikrOf => 'The complete dhikr of Tawheed';
+  String get dhikrScreen_theCompleteDhikrOf => 'Dzikir Tauhid lengkap';
 
   @override
-  String get dhikrScreen_trialPurifiedByAllah => 'Trial purified by Allah\\';
+  String get dhikrScreen_trialPurifiedByAllah =>
+      'Cobaan yang disucikan oleh Allah\\';
 
   @override
   String get dhikrScreen_guidanceBeforeAnyChoice =>
-      's guidance before any choice';
+      's bimbingan sebelum pilihan apa pun';
 
   @override
   String get dhikrScreen_completeRuqyaSequenceFatihah =>
-      'Complete ruqya sequence — Fatihah and refuge';
+      'Urutan ruqya lengkap — Fatihah dan perlindungan';
 
   @override
   String get dhikrScreen_sinsForgivenEvenIf =>
-      'Sins forgiven, even if like the foam of the sea';
+      'Dosanya diampuni, sekalipun seperti buih di lautan';
 
   @override
   String get dhikrScreen_freedHasanatSinsErased =>
-      '10 freed · 100 hasanat · 100 sins erased · Shaytan repelled';
+      '10 dibebaskan · 100 hasanat · 100 dosa terhapus · Setan ditolak';
 
   @override
   String get dhikrScreen_blessingsDescendFromAllah =>
-      '10 blessings descend from Allah upon you';
+      '10 berkah turun dari Allah atasmu';
 
   @override
   String get dhikrScreen_askAllahToBless =>
-      'Ask Allah to bless and beautify your day';
+      'Mintalah kepada Allah untuk memberkati dan mempercantik hari Anda';
 
   @override
   String get dhikrScreen_guaranteedJannahIfYou =>
-      'Guaranteed Jannah, if you die this day';
+      'Dijamin Jannah, jika meninggal hari ini';
 
   @override
   String get dhikrScreen_guaranteedJannahIfYou_48d274 =>
-      'Guaranteed Jannah, if you die this night';
+      'Dijamin Jannah, kalau mati malam ini';
 
   @override
   String get dhikrScreen_yourLifeEntrustedTo =>
-      'Your life entrusted to the Ever-Living';
+      'Hidupmu dipercayakan kepada Yang Maha Hidup';
 
   @override
   String get dhikrScreen_allEvilInHis =>
-      'All evil in His creation repelled from you';
+      'Semua kejahatan dalam ciptaan-Nya ditolak dari Anda';
 
   @override
   String get dhikrScreen_nothingShallHarmYou =>
-      'Nothing shall harm you, by perfect words';
+      'Tidak ada yang akan merugikan Anda, dengan kata-kata yang sempurna';
 
   @override
   String get dhikrScreen_shieldYourselfFromMinor =>
-      'Shield yourself from minor and major shirk, morning & evening';
+      'Lindungi diri Anda dari kesyirikan kecil dan besar, pagi & sore';
 
   @override
   String get dhikrScreen_completeProtectionInThe =>
-      'Complete protection in the name of Allah';
+      'Perlindungan penuh atas nama Allah';
 
   @override
   String get dhikrScreen_weightierThanAllVoluntary =>
-      'Weightier than all voluntary prayers, from dawn till dusk';
+      'Lebih berat dari segala shalat sunah, dari subuh hingga maghrib';
 
   @override
   String get dhikrScreen_reciteMorningEveningEarn =>
-      'Recite morning & evening, earn the pleasure & blessing of Allah on the Day of Judgment';
+      'Bacalah pagi & sore hari, dapatkan keridhaan & berkah Allah di hari kiamat';
 
   @override
   String get dhikrScreen_yourRewardAwaitsDirectly =>
-      'Your reward awaits directly with Allah when you meet Him';
+      'Pahalamu menanti langsung di sisi Allah ketika kamu bertemu dengan-Nya';
 
   @override
   String get dhikrScreen_reciteMorningEveningTo =>
-      'Recite morning & evening to fulfill your obligation of gratitude to Allah';
+      'Bacalah pagi & sore hari untuk memenuhi kewajiban bersyukur kepada Allah';
 
   @override
   String get dhikrScreen_theProphetTaughtThis =>
-      'The Prophet taught this dua for morning and evening, do not miss it';
+      'Nabi mengajarkan doa ini untuk pagi dan sore hari, jangan sampai terlewatkan';
 
   @override
   String get dhikrScreen_dominionAtTheStart =>
-      's dominion at the start of your morning, all kingdom belongs to Him';
+      'kekuasaan-Nya di awal pagimu, seluruh kerajaan adalah milik-Nya';
 
   @override
   String get dhikrScreen_asEveningFallsThe =>
-      'As evening falls, the entire kingdom belongs to Allah alone';
+      'Saat malam tiba, seluruh kerajaan hanya milik Allah';
 
   @override
   String get dhikrScreen_endYourEveningUpon =>
-      'End your evening upon the pure fitrah, as the Prophet (ﷺ) taught';
+      'Akhiri malam Anda dengan fitrah murni, seperti yang diajarkan Nabi (ﷺ).';
 
   @override
   String get dhikrScreen_satanWillNotEnter =>
-      'Satan will not enter the home of one who recites this';
+      'Setan tidak akan memasuki rumah orang yang membaca ini';
 
   @override
   String get dhikrScreen_readingLastVersesOf =>
-      'Reading last 2 verses of al-Baqarah will suffice you';
+      'Membaca 2 ayat terakhir surat al-Baqarah saja sudah cukup';
 
   @override
   String get dhikrScreen_everyDuaInThis =>
-      'Every dua in this verse - Allah said: I have done so';
+      'Setiap doa dalam ayat ini - Allah berfirman: Aku telah melakukannya';
 
   @override
   String get dhikrScreen_guardedByAllahUntil =>
-      'Guarded by Allah until morning comes';
+      'Dijaga oleh Allah sampai pagi tiba';
 
   @override
   String get dhikrScreen_recitingEqualsReadingThe =>
-      'Reciting 3x equals reading the entire Quran, Bukhari & Muslim';
+      'Membaca 3x sama dengan membaca seluruh Al-Quran, Bukhari & Muslim';
 
   @override
   String get dhikrScreen_reciteAtDawnDusk =>
-      'Recite 3x at dawn & dusk, suffice you against all harm';
+      'Bacalah 3x saat fajar & senja, mencukupimu dari segala bahaya';
 
   @override
   String get dhikrScreen_reciteAtDawnDusk_f17fb8 =>
-      'Recite 3x at dawn & dusk, it will suffice you in all respects';
+      'Bacalah 3x saat fajar & senja, maka itu akan mencukupimu dalam segala hal';
 
   @override
   String get dhikrScreen_refugeFromTheWhisperer =>
-      'Refuge from the whisperer, in the Lord of Mankind';
+      'Berlindung dari si pembisik, pada Tuhan umat manusia';
 
   @override
   String get dhikrScreen_reciteMorningEveningYour =>
-      'Recite 3x morning & evening, your gratitude to Allah is fulfilled';
+      'Bacalah 3x pagi & sore, maka terkabullah rasa syukurmu kepada Allah';
 
   @override
   String get dhikrScreen_sufficientAgainstEveryHarm =>
-      'Sufficient against every harm recited 3 times';
+      'Cukuplah terhadap setiap mudharat yang diucapkan 3 kali';
 
   @override
   String get dhikrScreen_doorsOfAllahMercy =>
-      'Doors of Allah mercy open wide for you';
+      'Pintu rahmat Allah terbuka lebar untukmu';
 
   @override
   String get dhikrScreen_worryAndSorrowLifted =>
-      'Worry and sorrow lifted by the will of Allah';
+      'Kekhawatiran dan kesedihan terangkat atas izin Allah';
 
   @override
   String get dhikrScreen_guardedInYourDeen =>
-      'Guarded in your deen dunya and akhirah';
+      'Terjagalah agamamu di dunia dan akhirat';
 
   @override
   String get dhikrScreen_evilRepelledFromEvery =>
-      'Evil repelled from every direction';
+      'Kejahatan ditolak dari segala arah';
 
   @override
   String get dhikrScreen_heartHeldByThe =>
-      'Heart held by the Ever Living Ever Sustaining';
+      'Hati dipegang oleh Yang Maha Hidup, Yang Selalu Menopang';
 
   @override
   String get dhikrScreen_fulfilledYourObligationOf =>
-      'Fulfilled your obligation of giving thanks';
+      'Memenuhi kewajiban Anda mengucap syukur';
 
   @override
   String get dhikrScreen_recitingTheLastVerses =>
-      'Reciting the last 2 verses of Al-Baqarah at night suffices you';
+      'Cukuplah membaca 2 ayat terakhir surat Al-Baqarah di malam hari';
 
   @override
   String get dhikrScreen_gratitudeThatMultipliesYour =>
-      'Gratitude that multiplies your blessings';
+      'Syukurlah yang melipatgandakan nikmatmu';
 
   @override
-  String get dhikrScreen_startPureOnThe => 'Start pure on the fitrah of Islam';
+  String get dhikrScreen_startPureOnThe => 'Mulailah suci pada fitrah Islam';
 
   @override
   String get dhikrScreen_praiseThatRipplesThrough =>
-      'Praise that ripples through all creation';
+      'Pujian yang menyebar ke seluruh ciptaan';
 
   @override
-  String get dhikrScreen_guidedToEveryGood => 'Guided to every good this day';
+  String get dhikrScreen_guidedToEveryGood =>
+      'Dipandu untuk setiap kebaikan hari ini';
 
   @override
   String get dhikrScreen_nothingShallHarmYou_8c5c6c =>
-      'Nothing shall harm you by His name';
+      'Tidak ada sesuatu pun yang akan merugikanmu dengan nama-Nya';
 
   @override
   String get dhikrScreen_allahWillFreeHim =>
-      'Allah will free him from the Fire who reads this 4 times';
+      'Allah akan membebaskannya dari api neraka siapa yang membaca ini sebanyak 4 kali';
 
   @override
   String get dhikrScreen_guaranteedJannahIfYou_0ffafe =>
-      'Guaranteed Jannah if you die today';
+      'Dijamin Jannah jika meninggal hari ini';
 
   @override
   String get dhikrScreen_wellbeingOfBodyHearing =>
-      'Wellbeing of body hearing and sight';
+      'Kesejahteraan pendengaran dan penglihatan tubuh';
 
   @override
-  String get dhikrScreen_guidedByTheHand => 'Guided by the hand of Allah';
+  String get dhikrScreen_guidedByTheHand => 'Dibimbing oleh tangan Allah';
 
   @override
   String get dhikrScreen_wordsHeavierThanThe =>
-      'Words heavier than the heavens and earth';
+      'Kata-kata lebih berat dari langit dan bumi';
 
   @override
   String get dhikrScreen_beginYourDayIn =>
-      'Begin your day in surrender to Allah';
+      'Mulailah harimu dengan berserah diri kepada Allah';
 
   @override
   String get dhikrScreen_theyAreEnoughFor =>
-      'They are enough for you - recite before sleep';
+      'Itu sudah cukup bagi Anda - bacalah sebelum tidur';
 
   @override
   String get dhikrScreen_guardedInYourDeen_4a0b4a =>
-      'Guarded in your Deen · Dunya · Akhirah, and from all six sides';
+      'Dijaga dalam Dien Anda · Dunia · Akhirah, dan dari keenam sisi';
 
   @override
-  String get dhikrScreen_wellBeing => 'Well-being';
+  String get dhikrScreen_wellBeing => 'Kesejahteraan';
 
   @override
-  String get dhikrScreen_fulfilled => 'Fulfilled.';
+  String get dhikrScreen_fulfilled => 'Terpenuhi.';
 
   @override
   String get dhikrScreen_wellBeingInFaith =>
-      'Well-being in Faith · Family · Wealth';
+      'Kesejahteraan dalam Iman · Keluarga · Kekayaan';
 
   @override
   String get dhikrScreen_concealMyFaultsCalm =>
-      'Conceal my faults · Calm my fears';
+      'Menyembunyikan kesalahanku · Tenangkan ketakutanku';
 
   @override
-  String get dhikrScreen_guardMeFromAll => 'Guard me from all six sides';
+  String get dhikrScreen_guardMeFromAll => 'Jagalah aku dari keenam sisi';
 
   @override
-  String get dhikrScreen_protectionFromEvilEye => 'Protection from Evil Eye';
+  String get dhikrScreen_protectionFromEvilEye =>
+      'Perlindungan dari Mata Jahat';
 
   @override
   String get dhikrScreen_doNotLeaveMe =>
-      'Do not leave me to myself\\neven for the blink of an eye';
+      'Jangan tinggalkan aku sendirian\\bahkan sekejap mata pun';
 
   @override
   String dhikrScreen_35c165(String arg1) {
-    return '$arg1  ';
+    return '$arg1';
   }
 
   @override
-  String get dhikrScreen_allahWillSufficeYou => 'Allah will suffice you';
+  String get dhikrScreen_allahWillSufficeYou => 'Allah akan mencukupimu';
 
   @override
   String get dhikrScreen_againstWhateverConcernsYou =>
-      'against whatever concerns you';
+      'terhadap apa pun yang menjadi perhatian Anda';
 
   @override
-  String get dhikrScreen_sinsWashedAway => 'Sins Washed Away';
+  String get dhikrScreen_sinsWashedAway => 'Dosa Dihapuskan';
 
   @override
-  String get dhikrScreen_slavesFreed => 'Slaves Freed';
+  String get dhikrScreen_slavesFreed => 'Budak Dibebaskan';
 
   @override
   String get dhikrScreen_doNotBurdenUs =>
-      'Do not burden us beyond what we can bear, pardon us and have mercy';
+      'Jangan membebani kami melebihi apa yang bisa kami tanggung, maafkan kami dan kasihanilah';
 
   @override
   String get dhikrScreen_weHaveBelievedForgive =>
-      'We have believed — forgive our sins and protect us from the Fire';
+      'Kami beriman, ampunilah dosa-dosa kami dan peliharalah kami dari api neraka';
 
   @override
   String get dhikrScreen_ownerOfSovereigntyIn =>
-      'O Owner of Sovereignty — in Your Hand is all good, You are Most Capable';
+      'Wahai Pemilik Kedaulatan — di tanganMu segala kebaikan, Engkau Maha Mampu';
 
   @override
   String get dhikrScreen_forgiveOurSinsAnd =>
-      'Forgive our sins and excess, make us firm and grant us victory';
+      'Ampunilah dosa dan kelebihan kami, kuatkan kami dan berikan kami kemenangan';
 
   @override
   String get dhikrScreen_youCreatedNotIn =>
-      'You created not in vain — protect us from the punishment of the Fire';
+      'Engkau menciptakan tidak dengan sia-sia — lindungi kami dari siksa api neraka';
 
   @override
   String get dhikrScreen_weHaveWrongedOurselves =>
-      'We have wronged ourselves — without Your mercy we are lost';
+      'Kami telah menganiaya diri kami sendiri – tanpa belas kasihan-Mu kami tersesat';
 
   @override
   String get dhikrScreen_ourLordDoNot =>
-      'Our Lord, do not place us with the wrongdoing people';
+      'Ya Tuhan kami, jangan tempatkan kami bersama orang-orang yang zalim';
 
   @override
   String get dhikrScreen_doNotMakeUs =>
-      'Do not make us a trial for the oppressors';
+      'Jangan jadikan kami sebagai cobaan bagi para penindas';
 
   @override
   String get dhikrScreen_makeMeSteadfastIn =>
-      'Make me steadfast in prayer — and my descendants too';
+      'Jadikanlah aku tabah dalam shalat, begitu pula keturunanku';
 
   @override
   String get dhikrScreen_forgiveMeMyParents =>
-      'Forgive me, my parents, and the believers on the Day of Reckoning';
+      'Maafkan aku, orang tuaku, dan orang-orang beriman pada hari kiamat';
 
   @override
   String get dhikrScreen_bringMeInBy =>
-      'Bring me in by an entrance of truth and out by an exit of truth';
+      'Bawalah aku masuk melalui pintu masuk kebenaran dan keluar melalui jalan keluar kebenaran';
 
   @override
-  String get dhikrScreen_myLordIncreaseMe =>
-      'My Lord, increase me in knowledge';
+  String get dhikrScreen_myLordIncreaseMe => 'Ya Tuhanku, tambahlah aku ilmu';
 
   @override
   String get dhikrScreen_seekRefugeInYou =>
-      'I seek refuge in You from the whispers of devils';
+      'Aku berlindung kepada-Mu dari bisikan setan';
 
   @override
   String get dhikrScreen_weHaveBelievedForgive_e958e6 =>
-      'We have believed — forgive us, You are the Best of the Merciful';
+      'Kami telah beriman, ampunilah kami, Engkaulah Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_forgiveAndHaveMercy =>
-      'Forgive and have mercy — You are the Best of the Merciful';
+      'Maafkan dan kasihanilah - Engkaulah Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_enableMeToBe =>
-      'Enable me to be grateful for Your favour on me and my parents';
+      'Mampukan aku mensyukuri nikmat-Mu kepadaku dan orang tuaku';
 
   @override
   String get dhikrScreen_myLordHaveWronged =>
-      'My Lord, I have wronged myself — so forgive me';
+      'Tuhanku, aku telah bersalah pada diriku sendiri – jadi maafkan aku';
 
   @override
   String get dhikrScreen_myLordWillNever =>
-      'My Lord, I will never be a supporter of the criminals';
+      'Ya Tuhanku, aku tidak akan pernah menjadi pendukung para penjahat';
 
   @override
   String get dhikrScreen_myLordSaveMe =>
-      'My Lord, save me from the wrongdoing people';
+      'Ya Tuhanku, selamatkan aku dari orang-orang yang zalim';
 
   @override
   String get dhikrScreen_myLordAmIn =>
-      'My Lord, I am in need of any good You send down to me';
+      'Ya Tuhanku, aku membutuhkan kebaikan apa pun yang Engkau kirimkan kepadaku';
 
   @override
   String get dhikrScreen_myLordHelpMe =>
-      'My Lord, help me against the corrupting people';
+      'Ya Tuhanku, bantulah aku melawan orang-orang yang merusak';
 
   @override
   String get dhikrScreen_ourLordAvertFrom =>
-      'Our Lord, avert from us the punishment of Hell';
+      'Ya Tuhan kami, jauhkan dari kami siksa Neraka';
 
   @override
   String get dhikrScreen_ourLordYouEncompass =>
-      'Our Lord, You encompass all things in mercy and knowledge';
+      'Ya Tuhan kami, Engkau meliputi segala sesuatu dengan rahmat dan ilmu';
 
   @override
   String get dhikrScreen_enableMeToThank =>
-      'Enable me to thank You and make my offspring righteous';
+      'Mampukan aku bersyukur kepada-Mu dan menjadikan anak cucuku bertakwa';
 
   @override
-  String get dhikrScreen_myLordGrantMe => 'My Lord, grant me of the righteous';
+  String get dhikrScreen_myLordGrantMe =>
+      'Ya Tuhanku, berilah aku salah satu orang yang saleh';
 
   @override
   String get dhikrScreen_forgiveUsAndOur =>
-      'Forgive us and our brothers who came before us in faith';
+      'Ampunilah kami dan saudara-saudara kami yang telah beriman sebelum kami';
 
   @override
   String get dhikrScreen_uponYouWeRely =>
-      'Upon You we rely, to You we turn, and to You is the destination';
+      'KepadaMu kami bersandar, kepadaMu kami berpaling, dan kepadaMulah tujuan';
 
   @override
-  String get dhikrScreen_pauseRememberAllah => 'Pause. Remember Allah.';
+  String get dhikrScreen_pauseRememberAllah =>
+      'Berhenti sebentar. Ingatlah Allah.';
 
   @override
   String get dhikrScreen_mashaallahRewardSecured =>
-      'MashaAllah! Reward Secured';
+      'MasyaAllah! Hadiah Diamankan';
 
   @override
-  String get dhikrScreen_satanCannot => 'Satan cannot';
+  String get dhikrScreen_satanCannot => 'Setan tidak bisa';
 
   @override
-  String get dhikrScreen_enterTheHome => 'enter the home';
+  String get dhikrScreen_enterTheHome => 'memasuki rumah';
 
   @override
-  String get dhikrScreen_whoeverRecites => 'Whoever recites';
+  String get dhikrScreen_whoeverRecites => 'Siapa pun yang membaca';
 
   @override
-  String get dhikrScreen_theLastTwoVerses => 'the last two verses';
+  String get dhikrScreen_theLastTwoVerses => 'dua ayat terakhir';
 
   @override
-  String get dhikrScreen_ofSurahAlBaqarah => 'of Surah Al-Baqarah';
+  String get dhikrScreen_ofSurahAlBaqarah => 'dari Surat Al-Baqarah';
 
   @override
-  String get dhikrScreen_atNight => 'at night --';
+  String get dhikrScreen_atNight => 'pada malam hari --';
 
   @override
-  String get dhikrScreen_theyWillBe => 'they will be';
+  String get dhikrScreen_theyWillBe => 'mereka akan menjadi';
 
   @override
-  String get dhikrScreen_enoughForHim => 'enough for him';
+  String get dhikrScreen_enoughForHim => 'cukup baginya';
 
   @override
-  String get dhikrScreen_weHaveEnteredThe => 'We have entered the evening';
+  String get dhikrScreen_weHaveEnteredThe => 'Kita telah memasuki malam hari';
 
   @override
-  String get dhikrScreen_theKingdomBelongsTo => 'The Kingdom belongs to Allah';
+  String get dhikrScreen_theKingdomBelongsTo => 'Kerajaan itu milik Allah';
 
   @override
   String get dhikrScreen_noneWorthyOfWorship =>
-      'None worthy of worship but Allah alone';
+      'Tidak ada yang berhak disembah selain Allah saja';
 
   @override
   String get dhikrScreen_allPraiseHeIs =>
-      'All praise · He is All-Powerful over everything';
+      'Segala puji · Dia Maha Kuasa atas segalanya';
 
   @override
-  String get dhikrScreen_weAskForThe => 'We ask for the good of this night';
+  String get dhikrScreen_weAskForThe => 'Kami mohon kebaikan malam ini';
 
   @override
-  String get dhikrScreen_saySeekRefuge => 'Say: I seek refuge';
+  String get dhikrScreen_saySeekRefuge =>
+      'Katakanlah: Saya mencari perlindungan';
 
   @override
-  String get dhikrScreen_inTheLordOf => 'in the Lord of Mankind';
+  String get dhikrScreen_inTheLordOf => 'dalam Penguasa Umat Manusia';
 
   @override
-  String get dhikrScreen_theKingOfMankind => 'the King of Mankind';
+  String get dhikrScreen_theKingOfMankind => 'Raja Umat Manusia';
 
   @override
-  String get dhikrScreen_theGodOfMankind => 'the God of Mankind ,';
+  String get dhikrScreen_theGodOfMankind => 'Tuhan umat manusia,';
 
   @override
   String get dhikrScreen_heRetreatsWhenYou =>
-      'He retreats when you remember Allah.';
+      'Dia mundur ketika kamu mengingat Allah.';
 
   @override
   String get dhikrScreen_seekRefugeInThe =>
-      'Seek refuge in the Lord of Daybreak';
+      'Carilah perlindungan pada Penguasa Fajar';
 
   @override
-  String get dhikrScreen_sufficedInAllRespects => 'Sufficed in all respects.';
+  String get dhikrScreen_sufficedInAllRespects => 'Cukup dalam segala hal.';
 
   @override
-  String get dhikrScreen_allahDoesNotBurden => 'Allah does not burden';
+  String get dhikrScreen_allahDoesNotBurden => 'Allah tidak membebani';
 
   @override
-  String get dhikrScreen_soul => 'a soul';
+  String get dhikrScreen_soul => 'sebuah jiwa';
 
   @override
   String dhikrScreen_a5cfd1(String count) {
@@ -4865,109 +4887,110 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dhikrScreen_equalsTheWholeQuran => 'Equals the whole Quran × 3';
+  String get dhikrScreen_equalsTheWholeQuran => 'Sama dengan seluruh Quran × 3';
 
   @override
   String get dhikrScreen_completeToWatchYour =>
-      'Complete to watch your garden bloom above';
+      'Lengkap untuk menyaksikan taman Anda mekar di atas';
 
   @override
-  String get impactReportScreen_whoeverDoesAnAtom => '“Whoever does an atom\\';
+  String get impactReportScreen_whoeverDoesAnAtom =>
+      '“Siapa pun yang melakukan atom\\';
 
   @override
   String get impactReportScreen_theHomeOfThe =>
-      '“The home of the Hereafter — that is the eternal life, if only they knew.” — Surah Al-Ankabut 29:64';
+      '“Rumah akhirat, itulah kehidupan yang kekal, andai saja mereka mengetahuinya.” — Surah Al-Ankabut 29:64';
 
   @override
   String get impactReportScreen_raceTowardsForgivenessFrom =>
-      '“Race towards forgiveness from your Lord and a Garden as wide as the heavens and the earth.” — Surah Al-Hadid 57:21';
+      '“Berlombalah menuju ampunan dari Tuhanmu dan surga yang seluas langit dan bumi.” — Surah Al-Hadid 57:21';
 
   @override
   String get impactReportScreen_andWhatIsThe =>
-      '“And what is the life of this world except amusement of delusion?” — Surah Ali Imran 3:185';
+      '“Dan apakah kehidupan dunia ini selain hiburan khayalan?” — Surat Ali Imran 3:185';
 
   @override
   String get impactReportScreen_indeedWithHardshipComes =>
-      '“Indeed, with hardship comes ease.” — Surah Ash-Sharh 94:6';
+      '“Sesungguhnya bersama kesulitan ada kemudahan.” — Surah Asy-Syarh 94:6';
 
   @override
   String get impactReportScreen_singleGoodDeedIn =>
-      '“A single good deed in Ramadan equals 70 in any other month.” Stack while the door is open.';
+      '“Satu amal di bulan Ramadhan sama dengan 70 amal di bulan lainnya.” Tumpuk saat pintu terbuka.';
 
   @override
   String get impactReportScreen_theProphetSaidCharity =>
-      'The Prophet ✍ said: charity does not decrease wealth — it grows it. (Muslim)';
+      'Nabi ✍ bersabda: sedekah tidak mengurangi harta, namun menambahnya. (Muslim)';
 
   @override
   String get impactReportScreen_smilingAtYourBrother =>
-      '“Smiling at your brother is sadaqah.” You can earn even when your pockets are empty. (Tirmidhi)';
+      '“Tersenyum pada saudaramu itu sedekah.” Anda bisa mendapatkan penghasilan bahkan ketika kantong Anda kosong. (Tirmidzi)';
 
   @override
   String get impactReportScreen_theMostBelovedDeeds =>
-      '“The most beloved deeds to Allah are the most consistent, even if small.” (Bukhari)';
+      '“Amalan yang paling dicintai Allah adalah yang paling konsisten, meskipun kecil.” (Bukhari)';
 
   @override
   String get impactReportScreen_inJannahIsWhat =>
-      '“In Jannah is what no eye has seen, no ear has heard, and no heart has imagined.” (Bukhari)';
+      '“Di dalam Jannah terdapat sesuatu yang belum pernah dilihat oleh mata, belum pernah didengar oleh telinga, dan belum pernah dibayangkan oleh hati.” (Bukhari)';
 
   @override
   String get impactReportScreen_twoRakatsAtFajr =>
-      'Two rakats at Fajr are better than the world and everything in it. (Muslim)';
+      'Dua rakaat subuh lebih baik dari dunia dan seisinya. (Muslim)';
 
   @override
   String get impactReportScreen_everyStepTowardSalah =>
-      'Every step toward salah erases a sin and raises a rank. (Muslim)';
+      'Setiap langkah menuju salat menghapus dosa dan menaikkan derajat. (Muslim)';
 
   @override
   String get impactReportScreen_everySeedYouDonate =>
-      'Every seed you donate plants a tree in someone else\\';
+      'Setiap benih yang Anda sumbangkan akan menanam pohon pada orang lain\\';
 
   @override
   String get impactReportScreen_takeWealthWithYou =>
-      't take wealth with you. Only the deeds it bought.';
+      'jangan membawa kekayaan bersamamu. Hanya perbuatan yang dibelinya.';
 
   @override
   String get impactReportScreen_theAngelsRecordNothing =>
-      'The angels record nothing too small. One Subhanallah may outweigh a mountain.';
+      'Para malaikat mencatat tidak ada hal yang terlalu kecil. Satu Subhanallah mungkin lebih besar daripada gunung.';
 
   @override
-  String get impactReportScreen_sadaqahIsTomorrow => 's sadaqah is tomorrow\\';
+  String get impactReportScreen_sadaqahIsTomorrow => 'sedekah itu besok\\';
 
   @override
   String get impactReportScreen_heartThatGivesIs =>
-      'A heart that gives is a heart Allah keeps full. Don\\';
+      'Hati yang memberi adalah hati yang Allah pelihara. Mengenakan\\';
 
   @override
   String get impactReportScreen_theReceiptWhatDid =>
-      's the receipt. What did you send ahead?';
+      'itu tanda terimanya. Apa yang Anda kirimkan sebelumnya?';
 
   @override
   String get impactReportScreen_imagineYourScaleOn =>
-      'Imagine your scale on Yawm al-Qiyamah. What weight are you adding today?';
+      'Bayangkan skala Anda di Yawm al-Qiyamah. Berapa berat badan yang kamu tambahkan hari ini?';
 
   @override
   String get impactReportScreen_theWorldIsBorrowed =>
-      'The world is borrowed. The Akhirah is owned. Invest accordingly.';
+      'Dunia ini dipinjam. Akhirah dimiliki. Investasikan sesuai kebutuhan.';
 
   @override
   String get impactReportScreen_youBuryTheBody =>
-      'You bury the body — but not the deeds. Send them ahead while you can.';
+      'Anda menguburkan tubuhnya - tetapi bukan perbuatannya. Kirimkan mereka terlebih dahulu selagi Anda bisa.';
 
   @override
   String get impactReportScreen_righteousChildWhoPrays =>
-      'A righteous child who prays for you, a charity that flows, or knowledge that benefits — three eternal investments. (Muslim)';
+      'Anak shaleh yang mendoakanmu, amal yang mengalir, atau ilmu yang memberi manfaat — tiga investasi abadi. (Muslim)';
 
   @override
   String get impactReportScreen_youWillMeetAllah =>
-      'You will meet Allah with your record. Make sure today\\';
+      'Kamu akan bertemu Allah dengan catatanmu. Pastikan hari ini\\';
 
   @override
   String get impactReportScreen_noDeedIsToo =>
-      'No deed is too small for the One who counts atoms.';
+      'Tidak ada perbuatan yang terlalu kecil bagi Dia yang menghitung atom.';
 
   @override
   String impactReportScreen_lvl(String _level, String arg1) {
-    return 'Lvl $_level · $arg1';
+    return 'Tingkat $_level · $arg1';
   }
 
   @override
@@ -4976,7 +4999,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get impactReportScreen_deedsTODAY => 'DEEDS TODAY';
+  String get impactReportScreen_deedsTODAY => 'PERBUATAN HARI INI';
 
   @override
   String impactReportScreen_634027(String arg1) {
@@ -4984,204 +5007,203 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get impactReportScreen_thisWEEK => 'THIS WEEK';
+  String get impactReportScreen_thisWEEK => 'MINGGU INI';
 
   @override
-  String get impactReportScreen_hasanaatEarned => 'Hasanaat Earned';
+  String get impactReportScreen_hasanaatEarned => 'Hasanaat Diperoleh';
 
   @override
   String get impactReportScreen_whoeverDoesGoodDeed =>
-      'Whoever does a good deed shall have ten times the like thereof.';
+      'Barangsiapa yang berbuat baik, maka ia mendapat sepuluh kali lipatnya.';
 
   @override
   String get impactReportScreen_whoeverReadsLetterFrom =>
-      'Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten.';
+      'Barangsiapa membaca satu huruf dari Kitab Allah, maka ia mendapat satu hasanah, dan satu hasanah dikalikan sepuluh.';
 
   @override
   String get impactReportScreen_twoHadithGrowThis =>
-      'Two hadith grow this number side by side:\\n\\n';
+      'Dua hadis menumbuhkan angka ini secara berdampingan:\\n\\n';
 
   @override
   String impactReportScreen_dhikrRecitedLifetime(String arg1) {
-    return '  Dhikr recited (lifetime): $arg1\\n';
+    return 'Dzikir yang dibacakan (seumur hidup): $arg1\\n';
   }
 
   @override
   String impactReportScreen_hasanat(String arg1) {
-    return '  → Hasanat: $arg1\\n\\n';
+    return '→ Hasanat: $arg1\\n\\n';
   }
 
   @override
   String impactReportScreen_ayahsReadLifetime(String arg1) {
-    return '  Ayahs read (lifetime): $arg1\\n';
+    return 'Ayah dibaca (seumur hidup): $arg1\\n';
   }
 
   @override
   String impactReportScreen_hasanat_e68a30(String arg1) {
-    return '  → Hasanat: $arg1\\n\\n';
+    return '→ Hasanat: $arg1\\n\\n';
   }
 
   @override
   String impactReportScreen_totalHasanaat(String arg1) {
-    return 'Total hasanaat: $arg1';
+    return 'Jumlah hasanaat: $arg1';
   }
 
   @override
   String impactReportScreen_ayahs(String arg1) {
-    return '$arg1 ayahs';
+    return '$arg1 ayah';
   }
 
   @override
-  String get impactReportScreen_hasanatFromQuran => 'Hasanat from Quran';
+  String get impactReportScreen_hasanatFromQuran => 'Hasanat dari Alquran';
 
   @override
   String impactReportScreen_planted(String arg1) {
-    return '$arg1 planted';
+    return '$arg1 ditanam';
   }
 
   @override
-  String get impactReportScreen_treesInJannah => 'Trees in Jannah';
+  String get impactReportScreen_treesInJannah => 'Pohon di Jannah';
 
   @override
   String impactReportScreen_cycles(String arg1) {
-    return '$arg1 cycles';
+    return '$arg1 siklus';
   }
 
   @override
-  String get impactReportScreen_sinsForgiven => 'Sins Forgiven';
+  String get impactReportScreen_sinsForgiven => 'Dosa Diampuni';
 
   @override
   String get impactReportScreen_whoeverSaysSubhanAllahiWa =>
-      'Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea.';
+      'Barangsiapa mengucapkan SubhanAllahi wa bihamdihi 100 kali sehari, maka dosanya diampuni meskipun seperti buih di lautan.';
 
   @override
   String get impactReportScreen_subhanallahiWaBihamdihi =>
-      'SubhanAllahi wa bihamdihi';
+      'Subhanallah wa bihamdihi';
 
   @override
   String impactReportScreen_totalRecitations(String arg1) {
-    return 'Total recitations: $arg1\\n';
+    return 'Jumlah bacaan: $arg1\\n';
   }
 
   @override
   String impactReportScreen_dividedByForgivenessCycles(String arg1) {
-    return 'Divided by 100 → forgiveness cycles: $arg1';
+    return 'Dibagi 100 → siklus pengampunan: $arg1';
   }
 
   @override
   String impactReportScreen_built(String arg1) {
-    return '$arg1 built';
+    return '$arg1 dibangun';
   }
 
   @override
-  String get impactReportScreen_palacesBuilt => 'Palaces Built';
+  String get impactReportScreen_palacesBuilt => 'Istana Dibangun';
 
   @override
   String impactReportScreen_dividedByPalaces(String arg1) {
-    return 'Divided by 10 → palaces: $arg1';
+    return 'Dibagi 10 → istana: $arg1';
   }
 
   @override
   String impactReportScreen_earned(String arg1) {
-    return '$arg1 earned';
+    return '$arg1 diperoleh';
   }
 
   @override
-  String get impactReportScreen_treasuresOfJannah => 'Treasures of Jannah';
+  String get impactReportScreen_treasuresOfJannah => 'Harta Jannah';
 
   @override
   String impactReportScreen_equivalent(String arg1) {
-    return '$arg1 equivalent';
+    return '$arg1 setara';
   }
 
   @override
-  String get impactReportScreen_slavesFreed => 'Slaves Freed';
+  String get impactReportScreen_slavesFreed => 'Budak Dibebaskan';
 
   @override
   String get impactReportScreen_laIlahaIllallahuWahdahu =>
-      'La ilaha illallahu wahdahu la sharika lahu...';
+      'La ilaha illallahu wahdahu la syariah lahu...';
 
   @override
   String impactReportScreen_totalRecitations_262e54(String arg1) {
-    return 'Total recitations: $arg1\\n';
+    return 'Jumlah bacaan: $arg1\\n';
   }
 
   @override
   String impactReportScreen_setsOfSetsSlaves(String arg1, String arg2) {
-    return 'Sets of 10 → $arg1 sets × 4 slaves = $arg2';
+    return 'Himpunan 10 → $arg1 himpunan × 4 budak = $arg2';
   }
 
   @override
   String impactReportScreen_opened(String arg1) {
-    return '$arg1 opened';
+    return '$arg1 dibuka';
   }
 
   @override
-  String get impactReportScreen_gatesOfParadiseOpened =>
-      'Gates of Paradise Opened';
+  String get impactReportScreen_gatesOfParadiseOpened => 'Gerbang Surga Dibuka';
 
   @override
   String impactReportScreen_received(String arg1) {
-    return '$arg1 received';
+    return '$arg1 diterima';
   }
 
   @override
-  String get impactReportScreen_blessingsFromAllah => 'Blessings from Allah';
+  String get impactReportScreen_blessingsFromAllah => 'Berkah dari Allah';
 
   @override
   String impactReportScreen_totalSalawatSent(String arg1) {
-    return 'Total salawat sent: $arg1\\n';
+    return 'Total salawat yang terkirim: $arg1\\n';
   }
 
   @override
   String impactReportScreen_multipliedByBlessingsReceived(String arg1) {
-    return 'Multiplied by 10 → $arg1 blessings received';
+    return 'Dikalikan 10 → $arg1 berkah diterima';
   }
 
   @override
   String impactReportScreen_invocations(String arg1) {
-    return '$arg1 invocations';
+    return '$arg1 pemanggilan';
   }
 
   @override
-  String get impactReportScreen_timesProtected => 'Times Protected';
+  String get impactReportScreen_timesProtected => 'Waktu Dilindungi';
 
   @override
-  String get impactReportScreen_protectionFromEvil => 'Protection from evil';
+  String get impactReportScreen_protectionFromEvil =>
+      'Perlindungan dari kejahatan';
 
   @override
   String get impactReportScreen_goodHealthProtection =>
-      'Good health & protection';
+      'Kesehatan & perlindungan yang baik';
 
   @override
   String impactReportScreen_totalInvocations(String arg1) {
-    return 'Total invocations: $arg1';
+    return 'Total pemanggilan: $arg1';
   }
 
   @override
   String impactReportScreen_equivalent_d7e6f6(String arg1) {
-    return '$arg1 equivalent';
+    return '$arg1 setara';
   }
 
   @override
-  String get impactReportScreen_quranCompletions => 'Quran Completions';
+  String get impactReportScreen_quranCompletions => 'Penyempurnaan Alquran';
 
   @override
   String impactReportScreen_dividedByQuranCompletions(String arg1) {
-    return 'Divided by 3 → $arg1 Quran completions';
+    return 'Dibagi 3 → $arg1 Penyelesaian Alquran';
   }
 
   @override
   String impactReportScreen_recitations(String arg1) {
-    return '$arg1 recitations';
+    return '$arg1 bacaan';
   }
 
   @override
-  String get impactReportScreen_bonusMillionHasanaat =>
-      'Bonus Million Hasanaat';
+  String get impactReportScreen_bonusMillionHasanaat => 'Bonus Juta Hasanaat';
 
   @override
-  String get impactReportScreen_sadaqahGiven => 'Sadaqah Given';
+  String get impactReportScreen_sadaqahGiven => 'Sedekah Diberikan';
 
   @override
   String impactReportScreen_564740(String _monthActiveDays) {
@@ -5190,7 +5212,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_3dc421(String arg1) {
-    return '${arg1}h ';
+    return '${arg1}h';
   }
 
   @override
@@ -5200,42 +5222,42 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_ago(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String impactReportScreen_ago_c25b44(String arg1) {
-    return '${arg1}h ago';
+    return '${arg1}jam yang lalu';
   }
 
   @override
   String impactReportScreen_ago_e160e3(String arg1) {
-    return '${arg1}w ago';
+    return '${arg1}minggu yang lalu';
   }
 
   @override
   String impactReportScreen_moAgo(String arg1) {
-    return '${arg1}mo ago';
+    return '${arg1}bln lalu';
   }
 
   @override
   String impactReportScreen_ago_65f0ec(String arg1) {
-    return '${arg1}y ago';
+    return '$arg1 tahun yang lalu';
   }
 
   @override
   String impactReportScreen_viewAllDonors(String arg1) {
-    return 'View all $arg1 donors';
+    return 'Lihat semua donatur $arg1';
   }
 
   @override
   String impactReportScreen_failed(String e) {
-    return 'Failed: $e';
+    return 'Gagal: $e';
   }
 
   @override
   String impactReportScreen_meet(String arg1, String arg2) {
-    return 'Meet $arg1, $arg2';
+    return 'Temui $arg1, $arg2';
   }
 
   @override
@@ -5245,15 +5267,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_funded(String arg1) {
-    return '$arg1% funded';
+    return '$arg1% didanai';
   }
 
   @override
-  String get impactReportScreen_yourLifetimeImpact => 'Your lifetime impact';
+  String get impactReportScreen_yourLifetimeImpact =>
+      'Dampak seumur hidup Anda';
 
   @override
   String get impactReportScreen_startYourImpactJourney =>
-      'Start your impact journey';
+      'Mulailah perjalanan dampak Anda';
 
   @override
   String impactReportScreen_bd3721(String _myOrphansSponsoredCount) {
@@ -5266,17 +5289,17 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get levelScreen_customProfileThemes => 'Custom profile themes';
+  String get levelScreen_customProfileThemes => 'Tema profil khusus';
 
   @override
-  String get levelScreen_exclusiveVotingRights => 'Exclusive voting rights';
+  String get levelScreen_exclusiveVotingRights => 'Hak suara eksklusif';
 
   @override
-  String get levelScreen_hallOfFameListing => 'Hall of Fame listing';
+  String get levelScreen_hallOfFameListing => 'Daftar Hall of Fame';
 
   @override
   String levelScreen_seeds(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
@@ -5284,32 +5307,32 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String levelScreen_seeds_59c6a1(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String levelScreen_seeds_a20530(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String levelScreen_unlocks(String arg1) {
-    return 'Unlocks: $arg1';
+    return 'Membuka kunci: $arg1';
   }
 
   @override
   String levelScreen_seeds_a49180(String arg1) {
-    return '+$arg1 Seeds ✓';
+    return '+$arg1 Benih ✓';
   }
 
   @override
   String levelScreen_seeds_a22be5(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String levelScreen_seedsBoost(String arg1) {
-    return '$arg1× Seeds Boost';
+    return '$arg1× Peningkatan Benih';
   }
 
   @override
@@ -5320,56 +5343,55 @@ class AppLocalizationsId extends AppLocalizations {
     String arg4,
     String arg5,
   ) {
-    return '$arg1:$arg2  $arg3/$arg4/$arg5';
+    return '$arg1:$arg2 $arg3/$arg4/$arg5';
   }
 
   @override
   String levelScreen_nextDays(String arg1, String arg2) {
-    return 'Next: $arg1 ($arg2 days)';
+    return 'Berikutnya: $arg1 ($arg2 hari)';
   }
 
   @override
   String levelScreen_seeds_990893(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String levelScreen_days(String current, String arg1) {
-    return '$current / $arg1 days';
+    return '$current / $arg1 hari';
   }
 
   @override
   String levelScreen_dayStreak(String arg1) {
-    return '$arg1 day streak';
+    return '$arg1 hari berturut-turut';
   }
 
   @override
-  String get phase1Screens_inTheNameOf =>
-      'In the name of Allah, the Most Gracious…';
+  String get phase1Screens_inTheNameOf => 'Bismillah, Yang Maha Pemurah…';
 
   @override
-  String get phase1Screens_quranReadingNimage => 'Quran reading\\nimage';
+  String get phase1Screens_quranReadingNimage => 'Bacaan Alquran\\ngambar';
 
   @override
-  String get phase1Screens_orphansNimage => 'Orphans\\nimage';
+  String get phase1Screens_orphansNimage => 'Gambar anak yatim\\n';
 
   @override
   String onboardingComponents_355c50(String first) {
-    return '$first ';
+    return '$first';
   }
 
   @override
   String onboardingComponents_b236c9(String trailing) {
-    return ' $trailing';
+    return '$trailing';
   }
 
   @override
   String get quranMini_inTheNameOf =>
-      'In the name of Allah, the Most Gracious, the Most Merciful.';
+      'Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang.';
 
   @override
   String get quranMini_allPraiseBelongsTo =>
-      'All praise belongs to Allah, Lord of all the worlds.';
+      'Segala puji bagi Allah, Tuhan semesta alam.';
 
   @override
   String orphansGridScreen_36cd3b(String arg1, String arg2) {
@@ -5378,51 +5400,51 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String orphanDetailScreen_years(String arg1) {
-    return '$arg1 years';
+    return '$arg1 tahun';
   }
 
   @override
   String orphanDetailScreen_ofSeeds(String arg1, String arg2) {
-    return '$arg1 of $arg2 Seeds';
+    return '$arg1 dari $arg2 Benih';
   }
 
   @override
   String orphanDetailScreen_through(String arg1) {
-    return 'Through $arg1';
+    return 'Melalui $arg1';
   }
 
   @override
   String get orphanDetailScreen_andTheyGiveFood =>
-      'And they give food, despite their love for it, to the needy, the orphan, and the captive.';
+      'Dan mereka memberikan makanan, meskipun mereka menyukainya, kepada orang miskin, anak yatim, dan tawanan.';
 
   @override
   String orphanDetailScreen_ago(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String orphanDetailScreen_ago_c25b44(String arg1) {
-    return '${arg1}h ago';
+    return '${arg1}jam yang lalu';
   }
 
   @override
   String orphanDetailScreen_ago_e160e3(String arg1) {
-    return '${arg1}w ago';
+    return '${arg1}minggu yang lalu';
   }
 
   @override
   String orphanDetailScreen_moAgo(String arg1) {
-    return '${arg1}mo ago';
+    return '${arg1}bln lalu';
   }
 
   @override
   String orphanDetailScreen_ago_65f0ec(String arg1) {
-    return '${arg1}y ago';
+    return '$arg1 tahun yang lalu';
   }
 
   @override
   String orphanDetailScreen_seeds(String _availablePoints) {
-    return '$_availablePoints Seeds';
+    return '$_availablePoints Benih';
   }
 
   @override
@@ -5432,89 +5454,89 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String orphanDetailScreen_jazakallahKhayranSeedsSponsored(String amount) {
-    return 'JazakAllah Khayran! $amount Seeds sponsored.';
+    return 'JazakAllah Khayran! $amount Benih disponsori.';
   }
 
   @override
   String orphanDetailScreen_chooseHowManySeeds(String arg1) {
-    return 'Choose how many Seeds to give. Minimum $arg1.';
+    return 'Pilih berapa banyak Benih yang akan diberikan. Minimal $arg1.';
   }
 
   @override
   String orphanDetailScreen_yourBalanceSeeds(String arg1) {
-    return 'Your balance: $arg1 Seeds';
+    return 'Saldo Anda: $arg1 Benih';
   }
 
   @override
-  String get profileSettingsScreen_nameCannotBeEmpty => 'Name cannot be empty';
+  String get profileSettingsScreen_nameCannotBeEmpty =>
+      'Nama tidak boleh kosong';
 
   @override
-  String get profileSettingsScreen_sabiqRewards => 'Sabiq Rewards • v1.0';
+  String get profileSettingsScreen_sabiqRewards => 'Hadiah Sabiq • v1.0';
 
   @override
   String get profileSettingsScreen_bosniaAndHerzegovina =>
-      'Bosnia and Herzegovina';
+      'Bosnia dan Herzegovina';
 
   @override
   String get profileSettingsScreen_centralAfricanRepublic =>
-      'Central African Republic';
+      'Republik Afrika Tengah';
 
   @override
-  String get profileSettingsScreen_unitedArabEmirates => 'United Arab Emirates';
+  String get profileSettingsScreen_unitedArabEmirates => 'Uni Emirat Arab';
 
   @override
-  String get profileSettingsScreen_signedInWithGoogle =>
-      'Signed in with Google';
+  String get profileSettingsScreen_signedInWithGoogle => 'Masuk dengan Google';
 
   @override
   String get profileSettingsScreen_signedInWithQuran =>
-      'Signed in with Quran.com';
+      'Masuk dengan Quran.com';
 
   @override
-  String get profileSettingsScreen_signedInWithEmail => 'Signed in with Email';
+  String get profileSettingsScreen_signedInWithEmail => 'Masuk dengan Email';
 
   @override
   String profileSettingsScreen_seeds(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
   String profileSettingsScreen_seeds_59ba7c(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
   String profileSettingsScreen_seeds_2bc978(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
   String get profileSettingsScreen_guidesFAQsAndHow =>
-      'Guides, FAQs and how-tos';
+      'Panduan, FAQ, dan petunjuk';
 
   @override
   String get profileSettingsScreen_somethingNotWorkingTell =>
-      'Something not working? Tell us';
+      'Ada yang tidak berfungsi? Beritahu kami';
 
   @override
-  String get profileSetupScreen_ahmadFatimaYusuf => 'Ahmad, Fatima, Yusuf…';
+  String get profileSetupScreen_ahmadFatimaYusuf => 'Ahmad, Fathimah, Yusuf…';
 
   @override
   String get profileSetupScreen_pakistanEgyptMalaysia =>
-      'Pakistan, Egypt, Malaysia…';
+      'Pakistan, Mesir, Malaysia…';
 
   @override
   String projectDetailScreen_organisedBy(String sponsor) {
-    return 'Organised by $sponsor\\n\\n';
+    return 'Diselenggarakan oleh $sponsor\\n\\n';
   }
 
   @override
   String get projectDetailScreen_fundedSoFarEvery =>
-      'Funded so far, every Seed counts!\\n\\n';
+      'Sejauh ini telah didanai, setiap Seed sangat berarti!\\n\\n';
 
   @override
   String get projectDetailScreen_openSabiqRewardsApp =>
-      'Open Sabiq Rewards app to donate your Seeds and earn reward.\\n';
+      'Buka aplikasi Sabiq Rewards untuk mendonasikan Benih Anda dan mendapatkan hadiah.\\n';
 
   @override
   String get projectDetailScreen_sabiqrewardsSadaqahIslamicCharity =>
@@ -5527,16 +5549,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get projectDetailScreen_donateToProvideUrgent =>
-      'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...';
+      'Berdonasi untuk memberikan bantuan mendesak dan menyelamatkan jiwa bagi warga Palestina yang menghadapi kekurangan makanan, air, dan pasokan medis...';
 
   @override
   String projectDetailScreen_seeds(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
   String projectDetailScreen_seeds_801ec7(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
@@ -5546,84 +5568,84 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String projectDetailScreen_ago(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String projectDetailScreen_ago_c25b44(String arg1) {
-    return '${arg1}h ago';
+    return '${arg1}jam yang lalu';
   }
 
   @override
   String projectDetailScreen_ago_e160e3(String arg1) {
-    return '${arg1}w ago';
+    return '${arg1}minggu yang lalu';
   }
 
   @override
   String projectDetailScreen_moAgo(String arg1) {
-    return '${arg1}mo ago';
+    return '${arg1}bln lalu';
   }
 
   @override
   String projectDetailScreen_ago_65f0ec(String arg1) {
-    return '${arg1}y ago';
+    return '$arg1 tahun yang lalu';
   }
 
   @override
   String projectDetailScreen_viewAll(String arg1) {
-    return 'View all $arg1 →';
+    return 'Lihat semua $arg1 →';
   }
 
   @override
   String quranHubScreen_saved(String arg1) {
-    return '$arg1 saved';
+    return '$arg1 disimpan';
   }
 
   @override
   String get quranHubScreen_tapTheHeartBookmark =>
-      'Tap the heart/bookmark icon while reading to save verses.';
+      'Ketuk ikon hati/bookmark saat membaca untuk menyimpan ayat.';
 
   @override
   String quranHubScreen_surahVerse(String s, String a) {
-    return 'Surah $s  •  Verse $a';
+    return 'Surat $s • Ayat $a';
   }
 
   @override
-  String get quranHubScreen_loadingQuran => 'Loading Quran…';
+  String get quranHubScreen_loadingQuran => 'Memuat Alquran…';
 
   @override
   String quranHubScreen_verses(String arg1) {
-    return '$arg1 verses';
+    return '$arg1 ayat';
   }
 
   @override
   String quranHubScreen_of(String arg1) {
-    return 'of $arg1';
+    return 'dari $arg1';
   }
 
   @override
   String quranHubScreen_saved_edce53(String arg1) {
-    return '$arg1 saved';
+    return '$arg1 disimpan';
   }
 
   @override
-  String get quranScreen_englishSahihIntl => 'English, Sahih Intl.';
+  String get quranScreen_englishSahihIntl => 'Inggris, Sahih Intl.';
 
   @override
-  String get quranScreen_saheehInternational => 'Saheeh International';
+  String get quranScreen_saheehInternational => 'Shahih Internasional';
 
   @override
-  String get quranScreen_englishPickthall => 'English, Pickthall';
+  String get quranScreen_englishPickthall => 'Inggris, Pickthall';
 
   @override
   String get quranScreen_mohammadMarmadukePickthall =>
       'Mohammad Marmaduke Pickthall';
 
   @override
-  String get quranScreen_englishTheMessage => 'English, The Message';
+  String get quranScreen_englishTheMessage => 'Bahasa Inggris, Pesannya';
 
   @override
-  String get quranScreen_englishMuhsinKhan => 'English, Muhsin Khan';
+  String get quranScreen_englishMuhsinKhan => 'Inggris, Muhsin Khan';
 
   @override
   String get quranScreen_muhsinKhanHilali => 'Muhsin Khan & Hilali';
@@ -5642,52 +5664,51 @@ class AppLocalizationsId extends AppLocalizations {
   String get quranScreen_franAisHamidullah => 'Français, Hamidullah';
 
   @override
-  String get quranScreen_rkDiyanet => 'Türkçe, Diyanet';
+  String get quranScreen_rkDiyanet => 'Türkce, Diyanet';
 
   @override
   String get quranScreen_rkLeymanAte => 'Türkçe, Süleyman Ateş';
 
   @override
-  String get quranScreen_bahasaIndonesian => 'Bahasa, Indonesian';
+  String get quranScreen_bahasaIndonesian => 'Bahasa, Bahasa Indonesia';
 
   @override
-  String get quranScreen_ministryOfReligiousAffairs =>
-      'Ministry of Religious Affairs';
+  String get quranScreen_ministryOfReligiousAffairs => 'Kementerian Agama';
 
   @override
-  String get quranScreen_muhiuddinKhan => 'বাংলা, Muhiuddin Khan';
+  String get quranScreen_muhiuddinKhan => 'Misalnya, Muhiuddin Khan';
 
   @override
-  String get quranScreen_deutschAbuRida => 'Deutsch, Abu Rida';
+  String get quranScreen_deutschAbuRida => 'Jerman, Abu Ridha';
 
   @override
-  String get quranScreen_abuRidaMuhammadIbn => 'Abu Rida Muhammad ibn Ahmad';
+  String get quranScreen_abuRidaMuhammadIbn => 'Abu Ridha Muhammad bin Ahmad';
 
   @override
-  String get quranScreen_espaOlAsad => 'Español, Asad';
+  String get quranScreen_espaOlAsad => 'Spanyol, Asad';
 
   @override
-  String get quranScreen_uthmaniMadinah => 'Uthmani (Madinah)';
+  String get quranScreen_uthmaniMadinah => 'Utsmani (Madinah)';
 
   @override
-  String get quranScreen_alJalalaynEN => 'Al-Jalalayn (EN)';
+  String get quranScreen_alJalalaynEN => 'Al Jalalain (EN)';
 
   @override
   String get quranScreen_couldNotLoadAyah =>
-      'Could not load ayah. Please retry.';
+      'Tidak dapat memuat ayah. Silakan coba lagi.';
 
   @override
   String get quranScreen_noConnectionCachedData =>
-      'No connection. Cached data may be available.';
+      'Tidak ada koneksi. Data cache mungkin tersedia.';
 
   @override
   String quranScreen_ayahs(String arg1) {
-    return '$arg1 ayahs';
+    return '$arg1 ayah';
   }
 
   @override
   String get quranScreen_couldNotRemoveBookmark =>
-      'Could not remove bookmark, please retry';
+      'Tidak dapat menghapus bookmark, coba lagi';
 
   @override
   String quranScreen_removedBookmark(
@@ -5695,12 +5716,12 @@ class AppLocalizationsId extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Removed bookmark $_surahName $_surah:$_ayah';
+    return 'Menghapus penanda $_surahName $_surah:$_ayah';
   }
 
   @override
   String get quranScreen_couldNotSaveBookmark =>
-      'Could not save bookmark, please retry';
+      'Tidak dapat menyimpan bookmark, coba lagi';
 
   @override
   String quranScreen_bookmarked(
@@ -5708,11 +5729,11 @@ class AppLocalizationsId extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Bookmarked $_surahName $_surah:$_ayah';
+    return 'Ditandai $_surahName $_surah:$_ayah';
   }
 
   @override
-  String get quranScreen_trimmedContains => ') && !trimmed.contains(';
+  String get quranScreen_trimmedContains => ') && !dipangkas.berisi(';
 
   @override
   String quranScreen_tafsir(String _surahName, String _surah, String _ayah) {
@@ -5720,64 +5741,65 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get quranScreen_addedToFavourites => '♥️ Added to Favourites';
+  String get quranScreen_addedToFavourites => '♥️ Ditambahkan ke Favorit';
 
   @override
   String get quranScreen_comfortableNightTimeReading =>
-      'Comfortable night-time reading';
+      'Membaca malam hari yang nyaman';
 
   @override
   String quranScreen_pt(String arg1) {
-    return '$arg1 pt';
+    return '$arg1 poin';
   }
 
   @override
   String quranScreen_003843(String arg1, String arg2) {
-    return '$arg1  $arg2';
+    return '$arg1 $arg2';
   }
 
   @override
   String get quranScreen_displayMeaningBelowEach =>
-      'Display meaning below each verse';
+      'Tampilkan makna di bawah setiap ayat';
 
   @override
-  String get quranScreen_showTransliteration => 'Show Transliteration';
+  String get quranScreen_showTransliteration => 'Tampilkan Transliterasi';
 
   @override
   String get quranScreen_romanisedPronunciationUnderEach =>
-      'Romanised pronunciation under each word';
+      'Pengucapan romanisasi di bawah setiap kata';
 
   @override
   String get quranScreen_progressBarAyahCount =>
-      'Progress bar & ayah count card';
+      'Bilah kemajuan & kartu hitungan ayah';
 
   @override
   String get quranScreen_moveToNextVerse =>
-      'Move to next verse when audio ends';
+      'Pindah ke ayat berikutnya ketika audio berakhir';
 
   @override
-  String get quranScreen_repeatCurrentVerse => 'Repeat Current Verse';
+  String get quranScreen_repeatCurrentVerse => 'Ulangi Ayat Saat Ini';
 
   @override
-  String get quranScreen_notificationsALERTS => 'NOTIFICATIONS & ALERTS';
+  String get quranScreen_notificationsALERTS => 'PEMBERITAHUAN & PERINGATAN';
 
   @override
-  String get quranScreen_milestoneSoundAlerts => 'Milestone Sound Alerts';
+  String get quranScreen_milestoneSoundAlerts =>
+      'Peringatan Suara Tonggak Sejarah';
 
   @override
   String get quranScreen_chimeWhenYouReach =>
-      'Chime when you reach 10, 25, 50 ayahs';
+      'Berpadu saat Anda mencapai 10, 25, 50 ayah';
 
   @override
   String get quranScreen_showEachArabicWord =>
-      'Show each Arabic word with its English meaning';
+      'Tampilkan setiap kata Arab dengan makna bahasa Inggrisnya';
 
   @override
-  String get quranScreen_translationLanguage => 'Translation Language';
+  String get quranScreen_translationLanguage => 'Bahasa Terjemahan';
 
   @override
   String quranScreen_translationsAvailable(String arg1) {
-    return '$arg1 translations available';
+    return '$arg1 terjemahan tersedia';
   }
 
   @override
@@ -5787,7 +5809,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String quranScreen_sabiqSeedsEarnedToday(String _pointsToday) {
-    return '+$_pointsToday Sabiq Seeds earned today!';
+    return '+$_pointsToday Benih Sabiq diperoleh hari ini!';
   }
 
   @override
@@ -5797,16 +5819,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get quranScreen_wordDataUnavailableCheck =>
-      'Word data unavailable. Check your connection.';
+      'Data kata tidak tersedia. Periksa koneksi Anda.';
 
   @override
   String quranScreen_6d1f9d(String arg1) {
-    return '$arg1 ';
+    return '$arg1';
   }
 
   @override
   String quranScreen_ayahsRead(String _ayahsToday) {
-    return '$_ayahsToday ayahs read';
+    return '$_ayahsToday ayah dibaca';
   }
 
   @override
@@ -5816,63 +5838,63 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String quranScreen_6e8ac8(String text) {
-    return '$text ';
+    return '$text';
   }
 
   @override
   String quranScreen_pageJuz(String _currentPage, String arg1) {
-    return 'Page $_currentPage  ·  Juz $arg1';
+    return 'Halaman $_currentPage · Juz $arg1';
   }
 
   @override
   String get startJourneyScreen_unexpectedErrorDuringGoogle =>
-      'Unexpected error during Google Sign In';
+      'Kesalahan tak terduga saat Masuk dengan Google';
 
   @override
-  String get startJourneyScreen_connectedToQuranCom => 'Connected to Quran.com';
+  String get startJourneyScreen_connectedToQuranCom => 'Terhubung ke Quran.com';
 
   @override
   String get startJourneyScreen_connectedToQuranCom_0ac4de =>
-      'Connected to Quran.com (bookmark sync deferred)';
+      'Terhubung ke Quran.com (sinkronisasi bookmark ditangguhkan)';
 
   @override
   String streakScreen_nextDays(String arg1, String arg2) {
-    return 'Next: $arg1 ($arg2 days)';
+    return 'Berikutnya: $arg1 ($arg2 hari)';
   }
 
   @override
   String streakScreen_seeds(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String streakScreen_days(String current, String arg1) {
-    return '$current / $arg1 days';
+    return '$current / $arg1 hari';
   }
 
   @override
   String streakScreen_dayStreak(String arg1) {
-    return '$arg1 day streak';
+    return '$arg1 hari berturut-turut';
   }
 
   @override
   String get tafsirHubScreen_earnSeedsForEvery =>
-      'Earn Seeds for every 10 min of Tafsir listening';
+      'Hasilkan Benih untuk setiap 10 menit mendengarkan Tafsir';
 
   @override
-  String get tafsirScreen_alJalalaynEN => 'Al-Jalalayn (EN)';
+  String get tafsirScreen_alJalalaynEN => 'Al Jalalain (EN)';
 
   @override
   String tafsirScreen_verses(String arg1) {
-    return '$arg1 verses';
+    return '$arg1 ayat';
   }
 
   @override
-  String get tafsirScreen_trimmedContains => ') && !trimmed.contains(';
+  String get tafsirScreen_trimmedContains => ') && !dipangkas.berisi(';
 
   @override
   String tafsirScreen_ayahOf(String _ayah, String _surahLen) {
-    return 'Ayah $_ayah of $_surahLen';
+    return 'Ayah $_ayah dari $_surahLen';
   }
 
   @override
@@ -5886,70 +5908,70 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get tafsirScreen_tafsirNotAvailableFor =>
-      'Tafsir not available for this ayah.';
+      'Tafsir tidak tersedia untuk ayat ini.';
 
   @override
   String get donationService_youMustBeLogged =>
-      'You must be logged in to donate.';
+      'Anda harus login untuk berdonasi.';
 
   @override
   String get donationService_donationCouldNotBe =>
-      'Donation could not be processed at this time.';
+      'Donasi tidak dapat diproses saat ini.';
 
   @override
   String get donationService_anUnexpectedNetworkError =>
-      'An unexpected network error occurred.';
+      'Terjadi kesalahan jaringan yang tidak terduga.';
 
   @override
   String get donationService_youMustBeLogged_edc4b5 =>
-      'You must be logged in to sponsor.';
+      'Anda harus login untuk mensponsori.';
 
   @override
-  String get donationService_sponsorshipReceived => 'Sponsorship received 💝';
+  String get donationService_sponsorshipReceived => 'Sponsor diterima 💝';
 
   @override
   String donationService_youSponsoredSeedsJazak(String amount) {
-    return 'You sponsored $amount Seeds · jazak Allah khair.';
+    return 'Anda mensponsori $amount Benih · jazak Allah khair.';
   }
 
   @override
   String get donationService_sponsorshipCouldNotBe =>
-      'Sponsorship could not be processed at this time.';
+      'Sponsor tidak dapat diproses saat ini.';
 
   @override
   String get liveNotificationService_remindersToSealYour =>
-      'Reminders to seal your pending Seeds before midnight.';
+      'Pengingat untuk menyegel Benih Anda yang tertunda sebelum tengah malam.';
 
   @override
   String get liveNotificationService_sealYourSeedsBefore =>
-      'Seal your Seeds before midnight';
+      'Segel Benih Anda sebelum tengah malam';
 
   @override
   String get liveNotificationService_sealYourSeedsBefore_be2183 =>
-      'Seal your Seeds before midnight!';
+      'Segel Benih Anda sebelum tengah malam!';
 
   @override
   String liveNotificationService_youHavePendingSeeds(String pendingSeeds) {
-    return 'You have $pendingSeeds pending Seeds. Tap Seal the Day before midnight or they expire.';
+    return 'Anda memiliki $pendingSeeds Benih yang tertunda. Ketuk Segel Hari sebelum tengah malam atau hari tersebut akan habis masa berlakunya.';
   }
 
   @override
   String liveNotificationService_ayatReadToday(String _ayahCount) {
-    return '$_ayahCount Ayat Read today 📖';
+    return '$_ayahCount Ayat Baca hari ini 📖';
   }
 
   @override
   String liveNotificationService_readQuranToday(String arg1) {
-    return '$arg1 Read Quran today ⏱️';
+    return '$arg1 Baca Quran hari ini ⏱️';
   }
 
   @override
   String get liveNotificationService_nothingReadFromQuran =>
-      'Nothing Read from Quran today 📖';
+      'Tidak ada yang dibaca dari Quran hari ini 📖';
 
   @override
   String liveNotificationService_dhikrCompletedToday(String _dhikrCount) {
-    return '$_dhikrCount Dhikr completed today 📿';
+    return '$_dhikrCount Dzikir selesai hari ini 📿';
   }
 
   @override
@@ -5957,54 +5979,53 @@ class AppLocalizationsId extends AppLocalizations {
     String _ayahCount,
     String _dhikrCount,
   ) {
-    return '$_ayahCount ayat · $_dhikrCount dhikr today';
+    return '$_ayahCount ayat · $_dhikrCount dzikir hari ini';
   }
 
   @override
   String get liveNotificationService_keepReadingAndDoing =>
-      'Keep reading and doing Dhikr!';
+      'Teruslah membaca dan berdzikir!';
 
   @override
-  String get liveNotificationService_yourSeedsToday => 'Your Seeds Today ✨';
+  String get liveNotificationService_yourSeedsToday => 'Benih Anda Hari Ini ✨';
 
   @override
   String get localReminderScheduler_sabiqRewardsNotifications =>
-      'Sabiq Rewards Notifications';
+      'Pemberitahuan Hadiah Sabiq';
 
   @override
-  String get localReminderScheduler_it => 'It\\';
+  String get localReminderScheduler_it => 'Dia\\';
 
   @override
   String get localReminderScheduler_fridayReadSurahAl =>
-      's Friday — read Surah Al-Kahf';
+      's Jumat — membaca Surat Al-Kahfi';
 
   @override
   String get localReminderScheduler_whoeverRecitesSurahAl =>
-      'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.';
+      'Barangsiapa membaca Surat Al-Kahfi pada hari Jum\'at, maka baginya cahaya bersinar di antara dua hari Jum\'at.';
 
   @override
-  String get localReminderScheduler_don => 'Don\\';
+  String get localReminderScheduler_don => 'Mengenakan\\';
 
   @override
   String get localReminderScheduler_missSurahAlKahf =>
-      't miss Surah Al-Kahf today';
+      'Aku tidak melewatkan Surah Al-Kahfi hari ini';
 
   @override
   String get localReminderScheduler_fewHoursToMaghrib =>
-      'A few hours to Maghrib — finish Surah Al-Kahf if you haven\\';
+      'Beberapa jam menuju Maghrib — selesaikan Surah Al-Kahfi jika belum\\';
 
   @override
   String get quranApiService_notConnectedToQuran =>
-      'Not connected to Quran.com';
+      'Tidak terhubung ke Quran.com';
 
   @override
   String quranApiService_syncFailedBookmarkCould(String failed) {
-    return 'Sync failed, $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+    return 'Sinkronisasi gagal, $failed bookmark tidak dapat dikirim ke Quran.com (periksa token / titik akhir).';
   }
 
   @override
-  String get quranApiService_bookmarksAlreadyInSync =>
-      'Bookmarks already in sync';
+  String get quranApiService_bookmarksAlreadyInSync => 'Bookmark sudah sinkron';
 
   @override
   String quranApiService_syncedBookmarksUpDown(
@@ -6012,31 +6033,31 @@ class AppLocalizationsId extends AppLocalizations {
     String uploaded,
     String downloaded,
   ) {
-    return 'Synced $total bookmarks ($uploaded up, $downloaded down)';
+    return 'Bookmark $total yang disinkronkan ($uploaded naik, $downloaded turun)';
   }
 
   @override
   String quranApiService_syncFailed(String e) {
-    return 'Sync failed: $e';
+    return 'Sinkronisasi gagal: $e';
   }
 
   @override
-  String get streakService_warmingUp => 'Warming Up';
+  String get streakService_warmingUp => 'Pemanasan';
 
   @override
-  String get streakService_oneWeek => 'One Week';
+  String get streakService_oneWeek => 'Seminggu';
 
   @override
-  String get streakService_twoWeeks => 'Two Weeks';
+  String get streakService_twoWeeks => 'Dua Minggu';
 
   @override
-  String get streakService_oneMonth => 'One Month';
+  String get streakService_oneMonth => 'Satu Bulan';
 
   @override
-  String get streakService_twoMonths => 'Two Months';
+  String get streakService_twoMonths => 'Dua Bulan';
 
   @override
-  String get streakService_theCenturion => 'The Centurion';
+  String get streakService_theCenturion => 'Perwira';
 
   @override
   String streakService_1fc043(String arg1, String arg2) {
@@ -6045,12 +6066,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String streakService_dayStreak(String arg1, String arg2) {
-    return '$arg1-day $arg2 streak · ';
+    return '$arg1-hari $arg2 berturut-turut ·';
   }
 
   @override
   String streakService_bonusSeedsUnlocked(String arg1) {
-    return '+$arg1 bonus Seeds unlocked';
+    return '+$arg1 bonus Benih terbuka';
   }
 
   @override
@@ -6060,46 +6081,45 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String xpService_level(String title, String level) {
-    return '$title • Level $level';
+    return '$title • Tingkat $level';
   }
 
   @override
-  String get xpService_newBadgeUnlocked => 'New badge unlocked 🏆';
+  String get xpService_newBadgeUnlocked => 'Lencana baru terbuka 🏆';
 
   @override
-  String get xpService_you => 'You\\';
+  String get xpService_you => 'Anda\\';
 
   @override
-  String get xpService_dailyLoginBonus => 'Daily login bonus';
+  String get xpService_dailyLoginBonus => 'Bonus masuk harian';
 
   @override
   String xpService_seedsWelcomeBack(String arg1) {
-    return '+$arg1 Seeds · welcome back!';
+    return '+$arg1 Benih · selamat datang kembali!';
   }
 
   @override
-  String get xpService_daySealed => 'Day sealed 🌙';
+  String get xpService_daySealed => 'Hari tersegel 🌙';
 
   @override
   String xpService_sabiqSeedsConfirmedBonus(String flushed, String bonus) {
-    return '+$flushed Sabiq Seeds confirmed! ($bonus bonus for sealing)';
+    return '+$flushed Benih Sabiq dikonfirmasi! ($bonus bonus untuk penyegelan)';
   }
 
   @override
   String xpService_sabiqSeedsConfirmed(String flushed) {
-    return '+$flushed Sabiq Seeds confirmed!';
+    return '+$flushed Benih Sabiq dikonfirmasi!';
   }
 
   @override
-  String get dhikrExitCelebration_everyBreathCounts => 'Every breath counts.';
+  String get dhikrExitCelebration_everyBreathCounts => 'Setiap napas berarti.';
 
   @override
-  String get impactAnimation_yourRewardHasBeen =>
-      'Your reward has been recorded.';
+  String get impactAnimation_yourRewardHasBeen => 'Hadiah Anda telah dicatat.';
 
   @override
   String get motivationalPopup_verilyWithHardshipComes =>
-      'Verily, with hardship comes ease.\\nEvery trial is a door to something greater.';
+      'Sesungguhnya bersama kesulitan ada kemudahan.\\nSetiap cobaan adalah pintu menuju sesuatu yang lebih besar.';
 
   @override
   String get motivationalPopup_quranAlInshirah => 'Quran • Al-Inshirah 94:6';
@@ -6115,161 +6135,162 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get motivationalPopup_makeYourTimePrecious =>
-      'Make your time precious.\\nShare goodness with a friend today ,\\nevery good deed shared is a sadaqah.';
+      'Jadikan waktu Anda berharga.\\nBagikan kebaikan kepada teman hari ini ,\\tidak ada amal baik yang dibagikan adalah sedekah.';
 
   @override
   String get motivationalPopup_guideOthersToGood =>
-      'Guide others to good, and you get its reward.';
+      'Bimbinglah orang lain kepada kebaikan, maka kamu akan mendapat pahalanya.';
 
   @override
   String get motivationalPopup_theBestOfPeople =>
-      'The best of people are those most beneficial to others.';
+      'Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.';
 
   @override
   String get motivationalPopup_verilyInTheRemembrance =>
-      'Verily, in the remembrance of Allah\\ndo hearts find rest.';
+      'Sesungguhnya dengan mengingat Allah\\ndo hati menjadi tenteram.';
 
   @override
   String get motivationalPopup_remindYourselfTimeIs =>
-      'Remind yourself, time is the most precious sadaqah.';
+      'Ingatkan diri Anda, waktu adalah sedekah yang paling berharga.';
 
   @override
   String get motivationalPopup_yourTimeIsYour =>
-      'Your time is your most\\nprecious asset. Invest it wisely\\nin what endures forever.';
+      'Waktu Anda adalah aset Anda yang paling\\nberharga. Investasikan dengan bijak\\untuk hal yang bertahan selamanya.';
 
   @override
   String get motivationalPopup_quranAlAnfal => 'Quran • Al-Anfal 8:28';
 
   @override
   String get motivationalPopup_takeAdvantageOfFive =>
-      'Take advantage of five before five.';
+      'Manfaatkan lima sebelum lima.';
 
   @override
   String get motivationalPopup_youHaveBeenRewarded =>
-      'You have been rewarded for\\nyour consistency today!';
+      'Anda telah diberi penghargaan atas\\nkonsistensi Anda hari ini!';
 
   @override
   String motivationalPopup_seeds(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String motivationalPopup_seeds_b14996(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
-  String get motivationalPopup_readQuranPages => 'Read 5 Quran Pages';
+  String get motivationalPopup_readQuranPages => 'Baca 5 Halaman Quran';
 
   @override
   String get motivationalPopup_completeNowEarnSeeds =>
-      'Complete now → earn +50 Seeds bonus';
+      'Selesaikan sekarang → dapatkan bonus +50 Benih';
 
   @override
-  String get motivationalPopup_completeDhikrSet => 'Complete a Dhikr Set';
+  String get motivationalPopup_completeDhikrSet => 'Lengkapi Satu Set Dzikir';
 
   @override
   String get motivationalPopup_finishYourAzkaarEarn =>
-      'Finish your Azkaar → earn +30 Seeds bonus';
+      'Selesaikan Azkaar Anda → dapatkan bonus +30 Benih';
 
   @override
-  String get motivationalPopup_inviteFriend => 'Invite a Friend';
+  String get motivationalPopup_inviteFriend => 'Undang Teman';
 
   @override
   String get motivationalPopup_shareSabiqWithSomeone =>
-      'Share Sabiq with someone → earn +100 Seeds';
+      'Bagikan Sabiq dengan seseorang → dapatkan +100 Biji';
 
   @override
   String get motivationalPopup_keepYourSpiritualMomentum =>
-      'Keep your spiritual momentum going\\nand watch your Seeds grow ✨';
+      'Pertahankan momentum spiritual Anda\\dan saksikan Benih Anda bertumbuh ✨';
 
   @override
-  String get noorOffline_somethingWentWrong => 'Something went wrong';
+  String get noorOffline_somethingWentWrong => 'Ada yang tidak beres';
 
   @override
   String get notificationsSheet_stayOnTopOf =>
-      'Stay on top of rewards & milestones';
+      'Pantau terus penghargaan & pencapaian';
 
   @override
   String get notificationsSheet_llBeNotifiedAbout =>
-      'll be notified about rewards, streaks & milestones.';
+      'akan diberitahu tentang hadiah, coretan & pencapaian.';
 
   @override
   String get notificationsSheet_inboxKeepsExistingItems =>
-      'Inbox keeps existing items but no new ones will arrive.';
+      'Kotak Masuk menyimpan item yang sudah ada tetapi tidak ada item baru yang datang.';
 
   @override
   String get notificationsSheet_sabiqSeedsForSealing =>
-      'Sabiq Seeds for sealing today';
+      'Bibit Sabiq untuk penyegelan hari ini';
 
   @override
   String notificationsSheet_ago(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String notificationsSheet_ago_5d4e7f(String arg1) {
-    return '${arg1}h ago';
+    return '${arg1}jam yang lalu';
   }
 
   @override
   String notificationsSheet_ago_67b1d9(String arg1) {
-    return '${arg1}d ago';
+    return '${arg1}d yang lalu';
   }
 
   @override
-  String get projectMediaCarousel_couldNotLoadVideo => 'Could not load video';
+  String get projectMediaCarousel_couldNotLoadVideo =>
+      'Tidak dapat memuat video';
 
   @override
-  String get quranExitCelebration_beautifulRecitation =>
-      'Beautiful recitation.';
+  String get quranExitCelebration_beautifulRecitation => 'Bacaan yang indah.';
 
   @override
-  String get quranExitCelebration_everyMomentCounts => 'Every moment counts.';
+  String get quranExitCelebration_everyMomentCounts => 'Setiap momen penting.';
 
   @override
   String sealCoinAnimation_e16fa4(String arg1) {
-    return '+$arg1 ';
+    return '+$arg1';
   }
 
   @override
   String get authScreen_pleaseEnterYourEmail_d36dc6 =>
-      'Please enter your email';
+      'Silakan masukkan email Anda';
 
   @override
   String get authScreen_pleaseEnterYourPassword_0f8b9b =>
-      'Please enter your password';
+      'Silakan masukkan kata sandi Anda';
 
   @override
   String get authScreen_passwordMustBeAt_c936ae =>
-      'Password must be at least 6 characters';
+      'Kata sandi minimal harus 6 karakter';
 
   @override
   String get authScreen_alreadyHaveAnAccount_07e598 =>
-      'Already have an account? Sign In';
+      'Sudah punya akun? Masuk';
 
   @override
   String get authScreen_haveAnAccountSign_ae2883 =>
-      't have an account? Sign Up';
+      'tidak punya akun? Mendaftar';
 
   @override
   String qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c(
     String email,
   ) {
-    return 'QfEmailConflictException: $email already has an account';
+    return 'QfEmailConflictException: $email sudah memiliki akun';
   }
 
   @override
   String get qfAuthService_openidOfflineAccessUser_fc4bcc =>
-      'openid offline_access user bookmark collection reading_session';
+      'openid offline_akses koleksi bookmark pengguna reading_session';
 
   @override
   String qfAuthService_tokenExchangeFailed_89d8a0(String arg1, String arg2) {
-    return 'Token exchange failed ($arg1): $arg2';
+    return 'Penukaran token gagal ($arg1): $arg2';
   }
 
   @override
-  String get qfAuthService_errorNullResponse_bd81c7 => 'ERROR: Null response';
+  String get qfAuthService_errorNullResponse_bd81c7 =>
+      'KESALAHAN: Respons tidak ada';
 
   @override
   String orphan_be2bf7_be2bf7(String firstName, String lastInitial) {
@@ -6278,132 +6299,132 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2 =>
-      '“Subhanallahi wa bi-hamdihi” — said 100 times a day wipes sins, even like the foam of the sea. (Bukhari)';
+      '“Subhanallahi wa bi-hamdihi” — diucapkan 100 kali sehari menghapus dosa, bahkan seperti buih di lautan. (Bukhari)';
 
   @override
   String get akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f =>
-      'Say La ilaha illallah 100 times — equals freeing 10 slaves and 100 hasanat. (Bukhari)';
+      'Ucapkan La ilaha illallah 100 kali, sama dengan memerdekakan 10 budak dan 100 hasanat. (Bukhari)';
 
   @override
   String get akhirahBalanceScreen_lightOnTheTongue_ea6114 =>
-      'Light on the tongue, heavy on the scales: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)';
+      'Ringan di lidah, berat di timbangan: Subhanallah wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)';
 
   @override
   String get akhirahBalanceScreen_theDhikrOfAllah_a23f17 =>
-      'The dhikr of Allah is heavier on the scales than gold of equal weight. Keep going.';
+      'Dzikir kepada Allah lebih berat timbangannya dibandingkan emas yang beratnya sama. Terus berlanjut.';
 
   @override
   String get akhirahBalanceScreen_yourTongueShouldStay_34816c =>
-      '“Your tongue should stay moist with the remembrance of Allah.” — Is it still moist?';
+      '“Lidahmu harus tetap lembab dengan mengingat Allah.” — Apakah masih lembab?';
 
   @override
   String get akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff =>
-      'Astaghfirullah — the Prophet ✍ said it 100 times a day, and he had no sin. How many have you?';
+      'Astaghfirullah — Nabi ✍ mengucapkannya 100 kali sehari, dan dia tidak berdosa. Berapa banyak yang kamu punya?';
 
   @override
   String get akhirahBalanceScreen_whenYouRememberAllah_60f406 =>
-      'When you remember Allah quietly, He remembers you in an assembly far greater.';
+      'Jika kamu mengingat Allah dengan tenang, maka Dia akan mengingatmu di majelis yang jauh lebih besar.';
 
   @override
   String get akhirahBalanceScreen_reciteAyatAlKursi_d0751f =>
-      'Recite Ayat al-Kursi after every salah — nothing keeps you from Jannah but death.';
+      'Bacalah Ayat al-Kursi setelah setiap salat - tidak ada yang menghalangi Anda dari Jannah kecuali kematian.';
 
   @override
   String get akhirahBalanceScreen_oneAlhamdulillahFillsThe_4794bb =>
-      'One Alhamdulillah fills the scale. One Subhanallah fills what is between heaven and earth.';
+      'Satu Alhamdulillah memenuhi timbangan. Satu Subhanallah memenuhi apa yang ada di antara langit dan bumi.';
 
   @override
   String get akhirahBalanceScreen_theRemembranceOfAllah_c99fe8 =>
-      '“The remembrance of Allah is greater than everything else.” — Surah Al-Ankabut 29:45';
+      '“Mengingat Allah lebih utama dari segala sesuatu yang lain.” — Surah Al-Ankabut 29:45';
 
   @override
   String get akhirahBalanceScreen_rememberMeWillRemember_1aca04 =>
-      '“Remember Me — I will remember you.” — Surah Al-Baqarah 2:152. Will you?';
+      '“Ingatlah Aku – Aku akan mengingatmu.” — Surat Al-Baqarah 2:152. Maukah kamu?';
 
   @override
   String get akhirahBalanceScreen_inTheRemembranceOf_20b541 =>
-      '“In the remembrance of Allah, hearts find rest.” — Surah Ar-Ra’d 13:28';
+      '“Dengan mengingat Allah, hati menjadi tenteram.” — Surah Ar-Ra\'d 13:28';
 
   @override
   String get akhirahBalanceScreen_fiveMinutesOfDhikr_e12766 =>
-      'Five minutes of dhikr now shapes the next 24 hours of your heart.';
+      'Dzikir lima menit kini membentuk 24 jam berikutnya dalam hati Anda.';
 
   @override
   String get akhirahBalanceScreen_streakIsnAboutToday_9157d8 =>
-      'A streak isn’t about today — it’s about who you become in 30 days.';
+      'Sebuah pukulan bukan tentang hari ini - ini tentang menjadi siapa Anda dalam 30 hari.';
 
   @override
   String get akhirahBalanceScreen_smallDropsFillAn_1accce =>
-      'Small drops fill an ocean. Your daily dhikr is filling something far bigger.';
+      'Tetesan kecil memenuhi lautan. Dzikir harian Anda memenuhi sesuatu yang jauh lebih besar.';
 
   @override
   String get akhirahBalanceScreen_noOneSeesThe_0182c7 =>
-      'No one sees the dhikr in your heart — but every angel writing your record does.';
+      'Tidak ada seorang pun yang melihat dzikir di dalam hati Anda — tetapi setiap malaikat yang menulis catatan Anda melihatnya.';
 
   @override
   String get akhirahBalanceScreen_theBiggestWinsAre_1b8fb6 =>
-      'The biggest wins are built from the smallest daily habits. Don’t break the chain.';
+      'Kemenangan terbesar dibangun dari kebiasaan terkecil sehari-hari. Jangan putuskan rantainya.';
 
   @override
   String get akhirahBalanceScreen_youCameBackToday_a020b1 =>
-      'You came back today. That’s already worship. Stay one more minute?';
+      'Anda kembali hari ini. Itu sudah menjadi ibadah. Tinggal satu menit lagi?';
 
   @override
   String get akhirahBalanceScreen_tomorrowPeaceIsBuilt_a72bd8 =>
-      'Tomorrow’s peace is built on today’s remembrance. Plant one more seed.';
+      'Kedamaian di masa depan dibangun berdasarkan ingatan hari ini. Tanam satu benih lagi.';
 
   @override
   String get akhirahBalanceScreen_areYouDoneAllah_06ca1d =>
-      'Are you done? Allah’s door is always open — even after you’ve closed it.';
+      'Apakah kamu sudah selesai? Pintu Allah selalu terbuka – bahkan setelah Anda menutupnya.';
 
   @override
   String get akhirahBalanceScreen_dhikrIsTheLanguage_b1b983 =>
-      'Dhikr is the language of the heart. Has yours spoken to its Lord today?';
+      'Dzikir adalah bahasa hati. Sudahkah Anda berbicara kepada Tuhannya hari ini?';
 
   @override
   String get akhirahBalanceScreen_everySubhanallahIsSadaqah_16b797 =>
-      'Every Subhanallah is a sadaqah. How many will you give before sleep?';
+      'Setiap Subhanallah adalah sedekah. Berapa banyak yang akan Anda berikan sebelum tidur?';
 
   @override
   String get akhirahBalanceScreen_heartThatForgetsDhikr_3a6173 =>
-      'A heart that forgets dhikr begins to rust. A heart that remembers stays alight.';
+      'Hati yang lupa berdzikir mulai berkarat. Hati yang mengingat tetap menyala.';
 
   @override
   String get akhirahBalanceScreen_haveYouFortifiedYourself_17ccac =>
-      'Have you fortified yourself with the morning and evening adhkar today?';
+      'Sudahkah anda membentengi diri dengan adhkar pagi dan sore hari ini?';
 
   @override
   String akhirahBalanceScreen_thisSession_702ffc(String arg1) {
-    return 'This session: +$arg1';
+    return 'Sesi ini: +$arg1';
   }
 
   @override
   String akhirahBalanceScreen_seedsThisSession_cd9411(String arg1) {
-    return '+$arg1 seeds this session';
+    return '+$arg1 unggulan sesi ini';
   }
 
   @override
   String akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6(String arg1) {
-    return '7-day avg: $arg1 azkaar/day';
+    return 'Rata-rata 7 hari: $arg1 azkaar/hari';
   }
 
   @override
   String dashboardScreen_profileReturnedZeroRows_3ccedb(String uid) {
-    return 'Profile returned zero rows for $uid';
+    return 'Profil mengembalikan nol baris untuk $uid';
   }
 
   @override
   String dashboardScreen_dashboardLoadError_6168de(String e) {
-    return 'Dashboard Load Error: $e';
+    return 'Kesalahan Pemuatan Dasbor: $e';
   }
 
   @override
   String get dashboardScreen_invalidReferralCode_bb3b10 =>
-      'Invalid referral code';
+      'Kode referensi tidak valid';
 
   @override
   String get dashboardScreen_cannotReferYourself_d836b8 =>
-      'Cannot refer yourself';
+      'Tidak dapat merujuk diri Anda sendiri';
 
   @override
   String dashboardScreen_sponsor_d48549(String name, String arg1) {
@@ -6411,7 +6432,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_dashboardDoesn_b8feb4 => ': 0, // dashboard doesn';
+  String get dashboardScreen_dashboardDoesn_b8feb4 => ': 0, // dasbor tidak';
 
   @override
   String dashboardScreen_today_261fbb(
@@ -6419,7 +6440,7 @@ class AppLocalizationsId extends AppLocalizations {
     String _lastAyah,
     String _ayahsToday,
   ) {
-    return '$arg1 · $_lastAyah  · +$_ayahsToday today';
+    return '$arg1 · $_lastAyah · +$_ayahsToday hari ini';
   }
 
   @override
@@ -6429,50 +6450,50 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dashboardScreen_dayStreak_2934ca(String arg1) {
-    return '$arg1-day streak';
+    return '$arg1 hari berturut-turut';
   }
 
   @override
   String get dashboardScreen_yourSabiqSeedsFund_3e8748 =>
-      'Your Sabiq Seeds fund these projects';
+      'Benih Sabiq Anda mendanai proyek ini';
 
   @override
   String dashboardScreen_active_2d214a(String arg1) {
-    return '$arg1 active';
+    return '$arg1 aktif';
   }
 
   @override
   String get dashboardScreen_joinMeOnSabiq_755fb5 =>
-      'Join me on Sabiq Rewards, earn Seeds for daily Quran, Dhikr & good deeds!\\n\\n';
+      'Bergabunglah dengan saya di Sabiq Rewards, dapatkan Benih untuk Quran harian, Dzikir & amal baik!\\n\\n';
 
   @override
   String dashboardScreen_useMyCodeAnd_7d13b3(String arg1) {
-    return 'Use my code *$arg1* and we both get 500 Sabiq Seeds!\\n\\n';
+    return 'Gunakan kode saya *$arg1* dan kita berdua mendapatkan 500 Biji Sabiq!\\n\\n';
   }
 
   @override
   String get dashboardScreen_messageCopiedShareOr_7b977e =>
-      'Message copied, share or paste in WhatsApp!';
+      'Pesan disalin, dibagikan, atau ditempel di WhatsApp!';
 
   @override
   String get dashboardScreen_sabiqSeedsRewardedTo_c209d6 =>
-      '500 Sabiq Seeds rewarded to you both!';
+      'Hadiah 500 Benih Sabiq untuk kalian berdua!';
 
   @override
   String get dashboardScreen_youHaveAlreadyUsed_f7c387 =>
-      'You have already used a referral code.';
+      'Anda sudah menggunakan kode referral.';
 
   @override
   String get dashboardScreen_youCannotUseYour_b7dbfe =>
-      'You cannot use your own code.';
+      'Anda tidak dapat menggunakan kode Anda sendiri.';
 
   @override
   String get dashboardScreen_anErrorOccurredPlease_8ee486 =>
-      'An error occurred. Please try again.';
+      'Terjadi kesalahan. Silakan coba lagi.';
 
   @override
   String dashboardScreen_52b02c_52b02c(String pts) {
-    return '$pts ';
+    return '$pts';
   }
 
   @override
@@ -6482,19 +6503,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dashboardScreen_seeDetailsForMore_54551e =>
-      'See Details for more Projects →';
+      'Lihat Detail untuk Proyek lainnya →';
 
   @override
   String get dashboardScreen_yourTOTALSABIQSEEDS_f1d60a =>
-      'YOUR TOTAL SABIQ SEEDS';
+      'TOTAL BIJI SABIQ ANDA';
 
   @override
   String get dashboardScreen_viewCampaignDonate_450be4 =>
-      '🤲  View Campaign & Donate';
+      '🤲 Lihat Kampanye & Donasi';
 
   @override
   String dashboardScreen_yourRank_67be90(String rankText) {
-    return 'Your Rank: $rankText';
+    return 'Peringkat Anda: $rankText';
   }
 
   @override
@@ -6507,77 +6528,75 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_beTheFirstOn_63de17 => 'Be the first on the board';
+  String get dashboardScreen_beTheFirstOn_63de17 =>
+      'Jadilah yang pertama di papan';
 
   @override
   String get dashboardScreen_readAnAyahOr_9c7ab7 =>
-      'Read an ayah or dhikr to claim the top spot';
+      'Bacalah sebuah ayat atau dzikir untuk mendapatkan posisi teratas';
 
   @override
   String dashboardScreen_lvl_ac180d(String level, String arg1) {
-    return 'Lvl $level · $arg1';
+    return 'Tingkat $level · $arg1';
   }
 
   @override
   String dashboardScreen_sealWithin_381d5d(String arg1) {
-    return 'Seal within ${arg1}h';
+    return 'Segel dalam ${arg1}h';
   }
 
   @override
   String get dashboardScreen_jazakallahDaySealed_70a34b =>
-      'JazakAllah!  Day sealed';
+      'Jazakillah!  Hari disegel';
 
   @override
   String dashboardScreen_ofGoal_9660ee(String arg1, String arg2) {
-    return 'of $arg1 $arg2 goal';
+    return 'dari gol $arg1 $arg2';
   }
 
   @override
-  String get dhikrHubScreen_propheticSupplications_907064 =>
-      'Prophetic Supplications';
+  String get dhikrHubScreen_propheticSupplications_907064 => 'Doa Nabi';
 
   @override
   String get dhikrHubScreen_morningEveningRemembrance_ec6bc2 =>
-      'Morning & Evening Remembrance';
+      'Peringatan Pagi & Sore';
 
   @override
-  String get dhikrHubScreen_furtherSupplications_f72602 =>
-      'Further Supplications';
+  String get dhikrHubScreen_furtherSupplications_f72602 => 'Doa Lebih Lanjut';
 
   @override
   String get dhikrHubScreen_closingRemembranceSalawat_5204e8 =>
-      'Closing Remembrance & Salawat';
+      'Penutupan Zikir & Shalawat';
 
   @override
-  String get dhikrHubScreen_hajjUmrahSupplications_f4d1b9 =>
-      'Hajj & Umrah Supplications';
+  String get dhikrHubScreen_hajjUmrahSupplications_f4d1b9 => 'Doa Haji & Umroh';
 
   @override
   String get dhikrHubScreen_falseHiddenAdd_c45662 =>
-      '] == false) hidden.add(r[';
+      '] == salah) tersembunyi.tambahkan(r[';
 
   @override
-  String get dhikrScreen_indoPak_fd8751 => 'Indo pak';
+  String get dhikrScreen_indoPak_fd8751 => 'Pak Indo';
 
   @override
   String dhikrScreen_default_8bd36b(String recommendedCount) {
-    return 'Default: $recommendedCount';
+    return 'Bawaan: $recommendedCount';
   }
 
   @override
-  String get dhikrScreen_duaAzkarSettings_71de01 => 'Dua & Azkar Settings';
+  String get dhikrScreen_duaAzkarSettings_71de01 => 'Pengaturan Dua & Azkar';
 
   @override
   String get dhikrScreen_hideTheVisualArtwork_28b4d2 =>
-      'Hide the visual artwork area';
+      'Sembunyikan area karya seni visual';
 
   @override
   String get dhikrScreen_pinTheIllustrationAt_5ec641 =>
-      'Pin the illustration at the top while the Arabic text scrolls beneath it';
+      'Sematkan ilustrasi di bagian atas sementara teks Arab bergulir di bawahnya';
 
   @override
   String dhikrScreen_readTimes_537f51(String readCount) {
-    return 'Read $readCount times';
+    return 'Baca $readCount kali';
   }
 
   @override
@@ -6603,7 +6622,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dhikrScreen_salawatIbrahimiyyaDurood_171c60 =>
-      'Salawat Ibrahimiyya (Durood)';
+      'Shalawat Ibrahimiyya (Durood)';
 
   @override
   String dhikrScreen_9a4c42_9a4c42(String bismillah, String arg1, String rest) {
@@ -6621,8 +6640,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get dhikrScreen_hisnulMuslimChapter_8745dc =>
-      'Hisnul Muslim, Chapter: ';
+  String get dhikrScreen_hisnulMuslimChapter_8745dc => 'Hisnul Muslim, Bab:';
 
   @override
   String dhikrScreen_3856c1_3856c1(String rawRef, String bottomRef) {
@@ -6631,1416 +6649,1418 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dhikrScreen_bestOfBothWorlds_e1cc22 =>
-      'Best of both worlds, refuge from the Fire';
+      'Yang terbaik dari kedua dunia, perlindungan dari api neraka';
 
   @override
   String get dhikrScreen_patienceAndSteadfastnessIn_114391 =>
-      'Patience and steadfastness in every trial';
+      'Kesabaran dan ketabahan dalam setiap cobaan';
 
   @override
   String get dhikrScreen_allahBurdensNoSoul_c8bf72 =>
-      'Allah burdens no soul beyond its capacity';
+      'Allah tidak membebani suatu jiwa melebihi kemampuannya';
 
   @override
   String get dhikrScreen_keepTheHeartFirm_7729fe =>
-      'Keep the heart firm upon guidance';
+      'Jagalah hati tetap teguh atas petunjuk';
 
   @override
   String get dhikrScreen_faithAnsweredWithForgiveness_e8c93c =>
-      'Faith answered with forgiveness from Hell';
+      'Iman dijawab dengan ampunan dari Neraka';
 
   @override
   String get dhikrScreen_allSovereigntyInAllah_a9e0b3 =>
-      'All sovereignty in Allah\\';
+      'Segala kedaulatan di tangan Allah\\';
 
   @override
   String get dhikrScreen_allahHearsEveryCall_bf9969 =>
-      'Allah hears every call for righteous offspring';
+      'Allah mendengar setiap seruan untuk mendapatkan keturunan yang shaleh';
 
   @override
   String get dhikrScreen_countedWithTheWitnesses_99a05a =>
-      'Counted with the witnesses of truth';
+      'Dihitung dengan saksi kebenaran';
 
   @override
   String get dhikrScreen_forgivenessFirmFeetAnd_28f209 =>
-      'Forgiveness, firm feet, and victory';
+      'Pengampunan, kaki kokoh, dan kemenangan';
 
   @override
-  String get dhikrScreen_theDuaOfThose_0ee764 => 'The dua of those who reflect';
+  String get dhikrScreen_theDuaOfThose_0ee764 =>
+      'Doa orang-orang yang merenung';
 
   @override
   String get dhikrScreen_inscribedWithTheWitnesses_2257ce =>
-      'Inscribed with the witnesses of revelation';
+      'Tertulis para saksi wahyu';
 
   @override
   String get dhikrScreen_theDuaAllahAccepted_7e207c =>
-      'The dua Allah accepted from Adam ﷺ';
+      'Doa yang diterima Allah dari Adam ﷺ';
 
   @override
   String get dhikrScreen_spareUsTheCompany_c290d3 =>
-      'Spare us the company of wrongdoers';
+      'Jauhkan kami dari orang-orang yang zalim';
 
   @override
   String get dhikrScreen_neverTrialForThe_292b26 =>
-      'Never a trial for the oppressors';
+      'Tidak pernah ada cobaan bagi para penindas';
 
   @override
   String get dhikrScreen_refugeFromAskingWithout_0e04a4 =>
-      'Refuge from asking without knowledge';
+      'Menjauh dari meminta tanpa ilmu';
 
   @override
   String get dhikrScreen_prayerForSafetyAnd_5f4e34 =>
-      's prayer for safety and faith';
+      's doa untuk keselamatan dan iman';
 
   @override
   String get dhikrScreen_steadfastInPrayerMe_8ce7b5 =>
-      'Steadfast in prayer, me and my children';
+      'Teguhlah dalam doa, aku dan anak-anakku';
 
   @override
   String get dhikrScreen_mercyForMeMy_3edb52 =>
-      'Mercy for me, my parents, the believers';
+      'Rahmat bagiku, orang tuaku, orang-orang yang beriman';
 
   @override
-  String get dhikrScreen_prayerForParents_ae7e5c => 's prayer for parents';
+  String get dhikrScreen_prayerForParents_ae7e5c => 's doa untuk orang tua';
 
   @override
   String get dhikrScreen_entryOfTruthExit_88c367 =>
-      'Entry of truth, exit of truth';
+      'Masuknya kebenaran, keluarnya kebenaran';
 
   @override
-  String get dhikrScreen_prayerOfTheYouth_1bf835 =>
-      'Prayer of the youth of the cave';
+  String get dhikrScreen_prayerOfTheYouth_1bf835 => 'Doa pemuda gua';
 
   @override
   String get dhikrScreen_askAllahForMore_07c189 =>
-      'Ask Allah for more — of knowledge';
+      'Mintalah lebih banyak kepada Allah — pengetahuan';
 
   @override
   String get dhikrScreen_allahAnswersAndSaves_c337ab =>
-      'Allah answers and saves from every distress';
+      'Allah menjawab dan menyelamatkan dari setiap kesusahan';
 
   @override
   String get dhikrScreen_allahIsTheBest_1adf97 =>
-      'Allah is the best of inheritors';
+      'Allah adalah sebaik-baik pewaris';
 
   @override
   String get dhikrScreen_blessedLandingWhereverYou_273aaf =>
-      'A blessed landing wherever you stop';
+      'Pendaratan yang diberkati di mana pun Anda berhenti';
 
   @override
   String get dhikrScreen_refugeFromTheWhispers_7ff5fd =>
-      'Refuge from the whispers of devils';
+      'Berlindung dari bisikan setan';
 
   @override
   String get dhikrScreen_mercyFromTheBest_b394bb =>
-      'Mercy from the Best of the Merciful';
+      'Rahmat dari Yang Terbaik dari Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_pardonAndMercyFrom_5d9eb1 =>
-      'Pardon and mercy from the Most Merciful';
+      'Maafkan dan rahmat dari Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_piousSpousesAndRighteous_e9918c =>
-      'Pious spouses and righteous offspring';
+      'Pasangan yang shaleh dan keturunan yang shaleh';
 
   @override
   String get dhikrScreen_prayerForThoseWho_1ccfb5 =>
-      ' prayer for those who repent';
+      'doa bagi mereka yang bertobat';
 
   @override
   String get dhikrScreen_gratitudeForParentsRighteousness_966d90 =>
-      'Gratitude for parents, righteousness in offspring';
+      'Syukur pada orang tua, kesalehan pada keturunannya';
 
   @override
-  String get dhikrScreen_pleaGiftOfIshaq_5568af => 's plea — gift of Ishaq ﷺ';
+  String get dhikrScreen_pleaGiftOfIshaq_5568af =>
+      'permohonan — hadiah Ishaq ﷺ';
 
   @override
   String get dhikrScreen_loveForTheBelievers_d0cae3 =>
-      'Love for the believers before us';
+      'Cinta untuk orang-orang beriman sebelum kita';
 
   @override
   String get dhikrScreen_pureTawakkulOnYou_02bc03 =>
-      's pure tawakkul — On You we rely';
+      's tawakkul murni — Kepada-Mu kami bersandar';
 
   @override
   String get dhikrScreen_forgivenessForEveryBelieving_e256a1 =>
-      'Forgiveness for every believing home';
+      'Pengampunan untuk setiap rumah tangga yang beriman';
 
   @override
   String get dhikrScreen_tasbeehByTheWeight_27484a =>
-      'Tasbeeh by the weight of Allah\\';
+      'Tasbih karena beratnya Allah\\';
 
   @override
   String get dhikrScreen_tasbeehByTheNumber_224c3f =>
-      'Tasbeeh by the number of all that He made';
+      'Tasbih sesuai dengan jumlah segala yang Dia ciptakan';
 
   @override
   String get dhikrScreen_tasbeehThatFillsAll_4b1a52 =>
-      'Tasbeeh that fills all that Allah created';
+      'Tasbih yang mengisi semua yang diciptakan Allah';
 
   @override
   String get dhikrScreen_paradiseSoughtTheFire_5740e3 =>
-      'Paradise sought — the Fire\\';
+      'Surga yang dicari — Api\\';
 
   @override
   String get dhikrScreen_cryToTheOne_30f419 =>
-      'Cry to the One who hears, sees, and knows';
+      'Menangislah kepada Dia yang mendengar, melihat, dan mengetahui';
 
   @override
-  String get dhikrScreen_nameOnTheCorner_b6afeb =>
-      's name on the corner of the Kaaba';
+  String get dhikrScreen_nameOnTheCorner_b6afeb => 'nama di sudut Ka\'bah';
 
   @override
   String get dhikrScreen_theDuaBetweenYemen_0bea3e =>
-      'The dua between Yemen Corner and Black Stone';
+      'Doa antara Yaman Corner dan Hajar Aswad';
 
   @override
-  String get dhikrScreen_prayAtTheStation_178d24 =>
-      'Pray at the station of Ibrahim ﷺ';
+  String get dhikrScreen_prayAtTheStation_178d24 => 'Sholat di maqam Ibrahim ﷺ';
 
   @override
   String get dhikrScreen_tawheedDeclaredAtopSafa_828769 =>
-      'Tawheed declared atop Safa and Marwah';
+      'Tauhid dideklarasikan di atas Safa dan Marwah';
 
   @override
   String get dhikrScreen_reaffirmTheOnenessOf_8589ea =>
-      'Reaffirm the Oneness of Allah';
+      'Menegaskan kembali Keesaan Allah';
 
   @override
   String get dhikrScreen_magnifyAllahAtEvery_448549 =>
-      'Magnify Allah at every threshold of Hajj';
+      'Keagungan Allah di setiap ambang haji';
 
   @override
   String get dhikrScreen_magnifyAllahOnThe_0fbc83 =>
-      'Magnify Allah on the day of sacrifice';
+      'Besarkanlah Allah pada hari kurban';
 
   @override
   String get dhikrScreen_knowledgeProvisionHealingSought_9733f3 =>
-      'Knowledge, provision, healing — sought in Makkah';
+      'Pengetahuan, rezeki, penyembuhan — dicari di Makkah';
 
   @override
   String get dhikrScreen_theDuaMostRepeated_a9da8d =>
-      'The dua most repeated by the Prophet ﷺ';
+      'Doa yang paling banyak diulang oleh Nabi ﷺ';
 
   @override
   String get dhikrScreen_refugeFromEveryTrial_8ca1b1 =>
-      'Refuge from every trial of life and death';
+      'Berlindung dari setiap cobaan hidup dan mati';
 
   @override
   String get dhikrScreen_refugeFromEveryWeakness_b1a834 =>
-      'Refuge from every weakness of body and soul';
+      'Berlindung dari segala kelemahan jiwa dan raga';
 
   @override
   String get dhikrScreen_refugeFromSevereTrial_0029f0 =>
-      'Refuge from severe trial and enemy\\';
+      'Berlindung dari cobaan berat dan musuh\\';
 
   @override
   String get dhikrScreen_religionSetRightWorld_3b0102 =>
-      'Religion set right, world and Akhirah made best';
+      'Agama diatur dengan benar, dunia dan Akhirah dijadikan yang terbaik';
 
   @override
   String get dhikrScreen_guidancePietyVirtueSelf_cc439a =>
-      'Guidance, piety, virtue, self-sufficiency';
+      'Bimbingan, kesalehan, kebajikan, kemandirian';
 
   @override
   String get dhikrScreen_refugeFromWeaknessWealth_d879f5 =>
-      'Refuge from weakness — wealth of piety within';
+      'Berlindung dari kelemahan — kekayaan kesalehan di dalam diri';
 
   @override
   String get dhikrScreen_theGuiderOfHearts_1f40d9 =>
-      'The Guider of hearts — turn ours to obedience';
+      'Pembimbing hati - arahkan hati kita pada ketaatan';
 
   @override
   String get dhikrScreen_turnerOfHeartsMake_eba687 =>
-      'Turner of hearts — make mine firm on the deen';
+      'Pembalik hati – jadikanlah hatiku teguh pada agama';
 
   @override
-  String get dhikrScreen_wellBeingInBoth_442958 => 'Well-being in both worlds';
+  String get dhikrScreen_wellBeingInBoth_442958 =>
+      'Kesejahteraan di kedua dunia';
 
   @override
   String get dhikrScreen_rewardsSaveFromDisgrace_8b71bb =>
-      'Rewards, save from disgrace and grave\\';
+      'Pahala, selamat dari aib dan kubur\\';
 
   @override
   String get dhikrScreen_mindForGoodVictory_582759 =>
-      'Mind for good, victory for good';
+      'Pikiran untuk kebaikan, kemenangan untuk kebaikan';
 
   @override
   String get dhikrScreen_refugeFromEvilOf_0c8916 =>
-      'Refuge from evil of every sense and limb';
+      'Berlindung dari kejahatan segala indera dan anggota tubuh';
 
   @override
   String get dhikrScreen_theForgiverWhoLoves_e5d83f =>
-      'The Forgiver who loves the repentant';
+      'Pemaaf yang mencintai orang yang bertobat';
 
   @override
   String get dhikrScreen_takeMeBeforeYou_28ef55 =>
-      'Take me before You take me astray';
+      'Bawalah aku sebelum Engkau menyesatkanku';
 
   @override
   String get dhikrScreen_everyGoodAndRefuge_4205e2 =>
-      'Every good — and refuge from every evil';
+      'Setiap kebaikan - dan perlindungan dari setiap kejahatan';
 
   @override
   String get dhikrScreen_standingSittingLyingGuarded_254177 =>
-      'Standing, sitting, lying — guarded in Islam';
+      'Berdiri, duduk, berbaring — dilindungi dalam Islam';
 
   @override
   String get dhikrScreen_refugeFromCowardiceMiserliness_9b59bd =>
-      'Refuge from cowardice, miserliness, fitnah';
+      'Menjauh dari kepengecutan, kikir, fitnah';
 
   @override
   String get dhikrScreen_forgivenessForJestAnd_e683b5 =>
-      'Forgiveness for jest and serious, known and unknown';
+      'Pengampunan untuk lelucon dan serius, diketahui dan tidak diketahui';
 
   @override
   String get dhikrScreen_forgiveMeWithForgiveness_894a1a =>
-      'Forgive me with a forgiveness from You';
+      'Ampunilah aku dengan ampunan dari-Mu';
 
   @override
   String get dhikrScreen_submissionBeliefRepentanceFull_7338d6 =>
-      'Submission, belief, repentance, full trust';
+      'Penyerahan, keyakinan, taubat, kepercayaan penuh';
 
   @override
   String get dhikrScreen_mercyForgivenessParadiseSaved_0d9edd =>
-      'Mercy, forgiveness, Paradise — saved from the Fire';
+      'Rahmat, ampunan, Surga — selamat dari api neraka';
 
   @override
   String get dhikrScreen_refugeFromEvilSeen_140ec4 =>
-      'Refuge from evil seen and unseen';
+      'Berlindung dari kejahatan yang terlihat dan tidak terlihat';
 
   @override
   String get dhikrScreen_provisionThatLastsTill_dcef82 =>
-      'Provision that lasts till life\\';
+      'Rezeki yang bertahan seumur hidup\\';
 
   @override
   String get dhikrScreen_sinsForgivenHomeSpacious_2ac37c =>
-      'Sins forgiven, home spacious, provision blessed';
+      'Dosa diampuni, rumah luas, rezeki diberkati';
 
   @override
   String get dhikrScreen_favorAndMercyNone_f665cf =>
-      'Favor and mercy — none possesses them but You';
+      'Nikmat dan rahmat tidak ada yang memilikinya selain Engkau';
 
   @override
   String get dhikrScreen_refugeFromDrowningBurning_402b3e =>
-      'Refuge from drowning, burning, sudden death';
+      'Perlindungan dari tenggelam, terbakar, kematian mendadak';
 
   @override
   String get dhikrScreen_refugeFromHypocrisyShowiness_d863c2 =>
-      'Refuge from hypocrisy, showiness, rebellion';
+      'Berlindung dari kemunafikan, sifat pamer, pemberontakan';
 
   @override
   String get dhikrScreen_refugeFromPovertyScarcity_03ef3d =>
-      'Refuge from poverty, scarcity, oppression';
+      'Perlindungan dari kemiskinan, kelangkaan, penindasan';
 
   @override
   String get dhikrScreen_refugeFromHeartThat_21f7ab =>
-      'Refuge from a heart that won\\';
+      'Berlindung dari hati yang menang\\';
 
   @override
   String get dhikrScreen_payMyDebtEnrich_f5affc =>
-      'Pay my debt, enrich me from poverty';
+      'Bayar hutangku, kayakan aku dari kemiskinan';
 
   @override
   String get dhikrScreen_allahCalledByHis_c11af9 =>
-      'Allah called by His most beautiful names';
+      'Allah memanggil dengan nama-Nya yang terindah';
 
   @override
   String get dhikrScreen_theAccepterOfRepentance_4f2d60 =>
-      'The Accepter of repentance always accepts';
+      'Penerima taubat selalu menerima';
 
   @override
   String get dhikrScreen_anEasyReckoningOn_11b060 =>
-      'An easy reckoning on the Day';
+      'Sebuah perhitungan yang mudah pada Hari itu';
 
   @override
   String get dhikrScreen_remembranceGratitudeAndThe_d7ee7b =>
-      'Remembrance, gratitude, and the best worship';
+      'Zikir, syukur, dan ibadah yang terbaik';
 
   @override
   String get dhikrScreen_eternalBlissWithThe_dc255b =>
-      'Eternal bliss with the Prophet ﷺ in Firdaws';
+      'Kebahagiaan abadi bersama Nabi ﷺ di Firdaus';
 
   @override
   String get dhikrScreen_forgiveSinsKnownHidden_ceda62 =>
-      'Forgive sins — known, hidden, intended, mistaken';
+      'Ampuni dosa - yang diketahui, tersembunyi, disengaja, salah';
 
   @override
   String get dhikrScreen_refugeFromBeingCrushed_4ba6ac =>
-      'Refuge from being crushed by debt and enemy';
+      'Berlindung dari keterpurukan hutang dan musuh';
 
   @override
   String get dhikrScreen_askForParadiseRefuge_4bf2eb =>
-      'Ask for Paradise, refuge from the Fire';
+      'Mintalah surga, perlindungan dari api neraka';
 
   @override
   String get dhikrScreen_forgiveGuideProvideProtect_e93013 =>
-      'Forgive, guide, provide, protect';
+      'Maafkan, bimbing, berikan, lindungi';
 
   @override
   String get dhikrScreen_sensesMadeBeneficialAnd_4da09c =>
-      'Senses made beneficial — and lasting';
+      'Indera menjadi bermanfaat - dan bertahan lama';
 
   @override
   String get dhikrScreen_theMostBeneficentThe_65d7a6 =>
-      'The Most Beneficent, the Originator of all';
+      'Yang Maha Pemurah, Pemrakarsa segala sesuatu';
 
   @override
   String get dhikrScreen_allahTruthOwnerOf_d4bede =>
-      'Allah — Truth, Owner of all dominion';
+      'Allah - Kebenaran, Pemilik segala kekuasaan';
 
   @override
   String get dhikrScreen_submissionWithFullSincerity_cbd7b6 =>
-      'Submission with full sincerity';
+      'Penyampaiannya dengan penuh keikhlasan';
 
   @override
   String get dhikrScreen_amongTheGuidedThe_e4d9d0 =>
-      'Among the guided, the healthy, the chosen';
+      'Di antara orang-orang yang terbimbing, ada yang sehat, ada pula yang terpilih';
 
   @override
   String get dhikrScreen_whatTheProphetAsked_e3a810 =>
-      'What the Prophet ﷺ asked — I ask too';
+      'Apa yang Nabi ﷺ tanyakan — saya juga bertanya';
 
   @override
   String get dhikrScreen_sayyidAlIstighfarThe_51076a =>
-      'Sayyid al-Istighfar — the master of all repentance';
+      'Sayyid al-Istighfar - penguasa segala pertobatan';
 
   @override
   String get dhikrScreen_refugeFromEveryEvil_ea8dab =>
-      'Refuge from every evil that comes by night';
+      'Berlindung dari setiap kejahatan yang datang pada malam hari';
 
   @override
   String get dhikrScreen_blessEverySenseEvery_e7779d =>
-      'Bless every sense, every limb';
+      'Memberkati setiap indra, setiap anggota tubuh';
 
   @override
   String get dhikrScreen_smallAndGreatFirst_dbcc00 =>
-      'Small and great, first and last, open and secret';
+      'Kecil dan besar, pertama dan terakhir, terbuka dan rahasia';
 
   @override
   String get dhikrScreen_noneWithholdsWhatYou_c4dca7 =>
-      'None withholds what You give, none gives what You hold';
+      'Tidak ada seorang pun yang menahan apa yang Engkau berikan, tidak ada seorang pun yang memberikan apa yang Engkau miliki';
 
   @override
   String get dhikrScreen_forgiveGuideProvideElevate_55fa36 =>
-      'Forgive, guide, provide, elevate';
+      'Memaafkan, membimbing, memberi, meninggikan';
 
   @override
   String get dhikrScreen_increaseFavorBeKind_5fbc5c =>
-      'Increase favor, be kind, never displeased';
+      'Tingkatkan nikmat, bersikap baik, jangan pernah merasa tidak senang';
 
   @override
   String get dhikrScreen_beautifyOurCharacterAs_cc5d8c =>
-      'Beautify our character as You beautified our creation';
+      'Percantik karakter kami sebagaimana Engkau mempercantik ciptaan kami';
 
   @override
   String get dhikrScreen_firmInBeliefGuided_73f8af =>
-      'Firm in belief — guided and guiding';
+      'Teguh dalam keyakinan — dibimbing dan membimbing';
 
   @override
   String get dhikrScreen_wisdomAndWithIt_e8e5bd =>
-      'Wisdom — and with it, multitudes of good';
+      'Kebijaksanaan — dan bersamanya, banyak sekali kebaikan';
 
   @override
   String get dhikrScreen_nameShieldsFromEvery_59e06f =>
-      's name shields from every harm';
+      'Namanya melindungi dari segala bahaya';
 
   @override
   String get dhikrScreen_mightAgainstEveryShaytan_73b152 =>
-      's might against every Shaytan';
+      'kekuatannya melawan setiap Setan';
 
   @override
   String get dhikrScreen_dayBlessedFromBeginning_c6d87d =>
-      'A day blessed from beginning to end';
+      'Hari yang diberkati dari awal hingga akhir';
 
   @override
   String get dhikrScreen_witnessNoneDeservesWorship_385aa9 =>
-      'Witness — none deserves worship but You';
+      'Saksi - tidak ada yang berhak disembah kecuali Engkau';
 
   @override
   String get dhikrScreen_refugeFromHumiliatingOld_46a3f0 =>
-      'Refuge from a humiliating old age';
+      'Berlindung dari usia tua yang memalukan';
 
   @override
   String get dhikrScreen_guidedToTheBest_03e8d2 =>
-      'Guided to the best, saved from the worst';
+      'Dipandu menuju yang terbaik, diselamatkan dari yang terburuk';
 
   @override
   String get dhikrScreen_faithSetRightHome_08f8e1 =>
-      'Faith set right, home wide, provision blessed';
+      'Iman ditegakkan, rumah luas, perbekalan diberkati';
 
   @override
   String get dhikrScreen_refugeFromEveryInner_dc67c7 =>
-      'Refuge from every inner and outer disease';
+      'Berlindung dari segala penyakit lahir dan batin';
 
   @override
   String get dhikrScreen_refugeFromEveryKind_dfbe62 =>
-      'Refuge from every kind of bad end';
+      'Berlindung dari segala jenis akhir yang buruk';
 
   @override
   String get dhikrScreen_steadfastGratefulRightlyGuided_45b393 =>
-      'Steadfast, grateful, rightly-guided heart';
+      'Hati yang tabah, bersyukur, dan mendapat petunjuk yang benar';
 
   @override
   String get dhikrScreen_theLoveOfAllah_3bf08a =>
-      'The love of Allah, His angels, His prophets';
+      'Cinta Allah, Malaikat-Nya, Para Nabi-Nya';
 
   @override
   String get dhikrScreen_loveOfAllahAbove_4c81b3 =>
-      'Love of Allah above love of self';
+      'Cinta kepada Allah diatas cinta pada diri sendiri';
 
   @override
   String get dhikrScreen_bestDeedsLastBest_2ff65e =>
-      'Best deeds last — best day is meeting You';
+      'Perbuatan terbaik yang terakhir - hari terbaik adalah bertemu dengan-Mu';
 
   @override
   String get dhikrScreen_pureLifeAndPeaceful_a7eb0f =>
-      'A pure life and a peaceful return';
+      'Kehidupan yang murni dan kepulangan yang damai';
 
   @override
   String get dhikrScreen_patientGratefulSmallIn_059385 =>
-      'Patient, grateful — small in own eyes';
+      'Sabar, bersyukur - kecil di mata sendiri';
 
   @override
   String get dhikrScreen_theBestRequestAnd_cd3f6f =>
-      'The best request and the best reward';
+      'Permintaan terbaik dan pahala terbaik';
 
   @override
-  String get dhikrScreen_theHighestLevelOf_221efa =>
-      'The highest level of Paradise';
+  String get dhikrScreen_theHighestLevelOf_221efa => 'Surga tingkat tertinggi';
 
   @override
   String get dhikrScreen_firdawsTheBestOf_01be47 =>
-      'Firdaws — the best of all that\\';
+      'Firdaws — yang terbaik dari semuanya\\';
 
   @override
   String get dhikrScreen_mentionRaisedSinsErased_c6e2f3 =>
-      'Mention raised, sins erased, heart purified';
+      'Sebutan dibangkitkan, dosa dihapus, hati disucikan';
 
   @override
   String get dhikrScreen_mercyPleasureParadiseSaved_8b4a98 =>
-      'Mercy, pleasure, Paradise — saved from Fire';
+      'Rahmat, kesenangan, Surga — diselamatkan dari Api';
 
   @override
   String get dhikrScreen_noSinUncoveredNo_efd903 =>
-      'No sin uncovered, no debt unpaid';
+      'Tidak ada dosa yang terungkap, tidak ada hutang yang belum dibayar';
 
   @override
   String get dhikrScreen_mercyThatGuidesSets_89b7cf =>
-      'Mercy that guides, sets right, purifies';
+      'Rahmat yang membimbing, meluruskan, memurnikan';
 
   @override
   String get dhikrScreen_trueBeliefCertainKnowledge_d27506 =>
-      'True belief, certain knowledge, Allah\\';
+      'Iman yang benar, ilmu yang pasti, Allah\\';
 
   @override
   String get dhikrScreen_withTheProphetsThe_b2123f =>
-      'With the Prophets, the martyrs, the truthful';
+      'Bersama para Nabi, orang-orang yang syahid, orang-orang yang jujur';
 
   @override
   String get dhikrScreen_everyNeedEntrustedTo_8b33b6 =>
-      'Every need entrusted to the Judge of all needs';
+      'Setiap kebutuhan dipercayakan kepada Hakim segala kebutuhan';
 
   @override
   String get dhikrScreen_bestOfWhatAllah_70d237 =>
-      'Best of what Allah promised His servants';
+      'Yang terbaik dari apa yang Allah janjikan kepada hamba-Nya';
 
   @override
   String get dhikrScreen_safetyOnTheDay_89cb9f =>
-      'Safety on the Day, Paradise on the Eternal Day';
+      'Keselamatan di Hari Ini, Surga di Hari yang Abadi';
 
   @override
   String get dhikrScreen_glorifyTheOneOf_de3669 =>
-      'Glorify the One of unmatched honor and knowledge';
+      'Memuliakan Dia yang kehormatan dan ilmunya tiada tandingannya';
 
   @override
   String get dhikrScreen_pardonPlentySecurityIn_d6b56a =>
-      'Pardon, plenty, security in deen and dunya';
+      'Maaf, banyak, keamanan dalam agama dan dunia';
 
   @override
   String get dhikrScreen_healthFaithEthicsSuccess_000fef =>
-      'Health, faith, ethics, success, mercy';
+      'Kesehatan, iman, etika, kesuksesan, rahmat';
 
   @override
   String get dhikrScreen_healthPurityEthicsAcceptance_b6929c =>
-      'Health, purity, ethics, acceptance';
+      'Kesehatan, kemurnian, etika, penerimaan';
 
   @override
   String get dhikrScreen_guidedSecureVictorious_b56e05 =>
-      'Guided, secure, victorious';
+      'Dipandu, aman, menang';
 
   @override
   String get dhikrScreen_refugeFromEveryCreature_cbe2de =>
-      'Refuge from every creature in Allah\\';
+      'Berlindung dari segala makhluk kepada Allah\\';
 
   @override
   String get dhikrScreen_theOneWhoAnswers_f2e37f =>
-      'The One who answers the compelled and broken';
+      'Dzat yang menjawab yang terpaksa dan yang patah';
 
   @override
   String get dhikrScreen_morningReachedByAllah_b03f32 =>
-      'Morning reached by Allah\\';
+      'Pagi tiba oleh Allah\\';
 
   @override
   String get dhikrScreen_refugeSoughtByMusa_176ee5 =>
-      'Refuge sought by Musa, Isa, Ibrahim';
+      'Perlindungan dicari oleh Musa, Isa, Ibrahim';
 
   @override
   String get dhikrScreen_allTheGoodPower_418dc3 =>
-      'All the good — power, mercy, blessings';
+      'Semua yang baik — kekuatan, belas kasihan, berkah';
 
   @override
   String get dhikrScreen_allPraiseAndDominion_27662b =>
-      'All praise and dominion belong to You';
+      'Segala pujian dan kekuasaan adalah milik-Mu';
 
   @override
   String get dhikrScreen_pastPardonedFutureProtected_a8bfa1 =>
-      'Past pardoned, future protected';
+      'Masa lalu diampuni, masa depan dilindungi';
 
   @override
   String get dhikrScreen_takeMyForelockTo_a44b8f =>
-      'Take my forelock to goodness';
+      'Ambil jambulku untuk kebaikan';
 
   @override
   String get dhikrScreen_strengthForWeaknessDignity_dce155 =>
-      'Strength for weakness, dignity for shame';
+      'Kekuatan menggantikan kelemahan, martabat menggantikan rasa malu';
 
   @override
   String get dhikrScreen_justiceForThoseWho_4e52f3 =>
-      'Justice for those who block the truth';
+      'Keadilan bagi mereka yang menghalangi kebenaran';
 
   @override
   String get dhikrScreen_refugeFromEveryFatal_b155a7 =>
-      'Refuge from every fatal calamity';
+      'Berlindung dari setiap bencana yang mematikan';
 
   @override
   String get dhikrScreen_refugeFromEveryBad_a9e27f =>
-      'Refuge from every bad end and trial';
+      'Berlindung dari setiap akhir buruk dan cobaan';
 
   @override
   String get dhikrScreen_turnBackEveryEvil_66e6fa =>
-      'Turn back every evil intention to its source';
+      'Kembalikan setiap niat jahat pada sumbernya';
 
   @override
   String get dhikrScreen_justiceAndRefugeAgainst_e4e734 =>
-      'Justice and refuge against their evils';
+      'Keadilan dan perlindungan terhadap kejahatan mereka';
 
   @override
   String get dhikrScreen_forgivenessForMeMy_27b932 =>
-      'Forgiveness for me, my parents, all believers';
+      'Maafkan saya, orang tua saya, semua orang yang beriman';
 
   @override
   String get dhikrScreen_purifyHeartDeedsTongue_10837e =>
-      'Purify heart, deeds, tongue, eyes';
+      'Sucikan hati, amal, lidah, mata';
 
   @override
   String get dhikrScreen_selfContentWithAllah_68c73a =>
-      'A self content with Allah\\';
+      'Kepuasan diri dengan Allah\\';
 
   @override
   String get dhikrScreen_youKnowMySecret_2b63c7 =>
-      'You know my secret and my need';
+      'Anda tahu rahasia dan kebutuhan saya';
 
   @override
   String get dhikrScreen_certaintyNothingHarmsWhat_e513d7 =>
-      'Certainty: nothing harms what\\';
+      'Kepastian: tidak ada yang merugikan apa\\';
 
   @override
   String get dhikrScreen_beliefLightAndLawful_e69a59 =>
-      'Belief, light, and lawful provision';
+      'Iman, rezeki yang ringan dan halal';
 
   @override
   String get dhikrScreen_totalLoveAndTotal_3d137e =>
-      'Total love and total struggle for Allah';
+      'Cinta total dan perjuangan total untuk Allah';
 
   @override
   String get dhikrScreen_makeWhatYouWithheld_14be7d =>
-      'Make what You withheld a strength in obedience';
+      'Jadikanlah apa yang Engkau sembunyikan sebagai kekuatan dalam ketaatan';
 
   @override
   String get dhikrScreen_praiseTheOwnerOf_244f8b =>
-      'Praise the Owner of every beautiful name';
+      'Pujilah Pemilik setiap nama yang indah';
 
   @override
   String get dhikrScreen_allahKnowsTheHearts_d6010c =>
-      'Allah knows the hearts, the heavens, and beyond';
+      'Allah mengetahui isi hati, langit, dan seterusnya';
 
   @override
-  String get dhikrScreen_hopeBuiltOnAllah_217ad7 => 'Hope built on Allah\\';
+  String get dhikrScreen_hopeBuiltOnAllah_217ad7 =>
+      'Harapan yang dibangun atas Allah\\';
 
   @override
   String get dhikrScreen_belovedToTheBelievers_b1f5a3 =>
-      'Beloved to the believers, free from the wicked';
+      'Kekasih bagi orang-orang yang beriman, terbebas dari orang-orang fasik';
 
   @override
   String get dhikrScreen_mightPowerAndMajesty_91ca0a =>
-      's might, power, and majesty';
+      'kekuatan, kekuasaan, dan keagungannya';
 
   @override
   String get dhikrScreen_gratefulPatientHelpfulTo_3710c6 =>
-      'Grateful, patient, helpful to Allah\\';
+      'Bersyukur, sabar, suka menolong Allah\\';
 
   @override
   String get dhikrScreen_withholdYourGoodFor_0d39a1 =>
-      't withhold Your good for my evil';
+      'Aku tidak menahan kebaikan-Mu demi kejahatanku';
 
   @override
   String get dhikrScreen_settledLifeAmpleProvision_77b32b =>
-      'A settled life, ample provision, righteous deeds';
+      'Kehidupan yang mapan, rezeki yang melimpah, amal shaleh';
 
   @override
   String get dhikrScreen_wealthInNeedingYou_547729 =>
-      'Wealth in needing You — never free of You';
+      'Kekayaan dalam membutuhkan Anda — tidak pernah bebas dari Anda';
 
   @override
   String get dhikrScreen_defectsCoveredFearsCalmed_a85797 =>
-      'Defects covered, fears calmed, anguish lifted';
+      'Cacat tertutup, ketakutan diredakan, penderitaan terangkat';
 
   @override
   String get dhikrScreen_openTheGatesOf_402eac =>
-      'Open the gates of mercy and generosity';
+      'Bukalah gerbang belas kasihan dan kemurahan hati';
 
   @override
   String get dhikrScreen_holdUsInYour_b82607 =>
-      'Hold us in Your safety — never abandon us';
+      'Peliharalah kami dalam keselamatan-Mu — jangan pernah meninggalkan kami';
 
   @override
   String get dhikrScreen_withinYourSecurityYour_f72b6e =>
-      'Within Your security, Your goodness';
+      'Dalam keamanan Anda, kebaikan Anda';
 
   @override
   String get dhikrScreen_everySinEveryDistress_eab128 =>
-      'Every sin, every distress, every side';
+      'Setiap dosa, setiap kesusahan, setiap sisi';
 
   @override
   String get dhikrScreen_helpInDeathIn_342d0b =>
-      'Help in death, in the grave, on the Bridge';
+      'Bantuan dalam kematian, di kuburan, di Jembatan';
 
   @override
   String get dhikrScreen_beautifiedLifeBlessedGifts_7f2384 =>
-      'Beautified life, blessed gifts, kept favors';
+      'Hidup yang diperindah, pemberian yang berkah, nikmat yang disimpan';
 
   @override
   String get dhikrScreen_firmFootingBlessedEnd_c78f99 =>
-      'Firm footing, blessed end, kept covenant';
+      'Pijakan yang kokoh, akhir yang diberkati, perjanjian yang ditepati';
 
   @override
   String get dhikrScreen_hopesFulfilledEnemiesRepelled_afd008 =>
-      'Hopes fulfilled, enemies repelled, affairs set right';
+      'Harapan terpenuhi, musuh berhasil dihalau, segala sesuatunya beres';
 
   @override
   String get dhikrScreen_guidedToTheUpright_9e1527 =>
-      'Guided to the upright, protected from the self';
+      'Dibimbing kepada orang yang lurus, terlindung dari diri sendiri';
 
   @override
   String get dhikrScreen_lightAndForgivenessFrom_3923eb =>
-      'Light and forgiveness from the Owner of the Throne';
+      'Cahaya dan ampunan dari Pemilik Arsy';
 
   @override
   String get dhikrScreen_forgivenessForWhatRepented_6a44f8 =>
-      'Forgiveness for what I repented and returned to';
+      'Pengampunan atas apa yang saya sesali dan kembalikan';
 
   @override
   String get dhikrScreen_understandingThatDrawsNear_e1455e =>
-      'Understanding that draws near to Allah';
+      'Pemahaman yang mendekatkan diri kepada Allah';
 
   @override
   String get dhikrScreen_soulsDwellingInThe_1bd11b =>
-      'Souls dwelling in the heights of piety';
+      'Jiwa-jiwa yang bersemayam di puncak kesalehan';
 
   @override
   String get dhikrScreen_crossTheBridgeOf_4f4ff3 =>
-      'Cross the bridge of desire by patience';
+      'Seberangi jembatan keinginan dengan kesabaran';
 
   @override
   String get dhikrScreen_followThePathOf_934775 =>
-      'Follow the path of sincerity and certainty';
+      'Ikutilah jalan keikhlasan dan kepastian';
 
   @override
   String get dhikrScreen_helpAgainstTheSoul_44a7db =>
-      'Help against the soul and against Shaytan';
+      'Membantu melawan jiwa dan melawan Setan';
 
   @override
   String get dhikrScreen_fearHappinessVictorySecurity_9017c9 =>
-      'Fear, happiness, victory, security';
+      'Ketakutan, kebahagiaan, kemenangan, keamanan';
 
   @override
   String get dhikrScreen_entrustFamilyWealthChildren_1da596 =>
-      'Entrust family, wealth, children — all to Allah';
+      'Percayakan keluarga, kekayaan, anak-anak — semuanya kepada Allah';
 
   @override
   String get dhikrScreen_faithGuardedFaithPreserved_88eecb =>
-      'Faith guarded, faith preserved';
+      'Iman dijaga, iman dipelihara';
 
   @override
   String get dhikrScreen_wellBeingTillThe_ee180d =>
-      'Well-being till the end — sealed with forgiveness';
+      'Kesejahteraan sampai akhir — disegel dengan pengampunan';
 
   @override
   String get dhikrScreen_whatProtectsMeFrom_052090 =>
-      'What protects me from this world\\';
+      'Apa yang melindungiku dari dunia ini\\';
 
   @override
-  String get dhikrScreen_mercyOnEverySoul_a9a197 => 'Mercy on every soul\\';
+  String get dhikrScreen_mercyOnEverySoul_a9a197 => 'Rahmat pada setiap jiwa\\';
 
   @override
   String get dhikrScreen_burdenUsAsThose_78b517 =>
-      't burden us as those before were burdened';
+      'tidak membebani kami seperti mereka yang sebelumnya terbebani';
 
   @override
   String get dhikrScreen_mercyPardonForgivenessVictory_300143 =>
-      'Mercy, pardon, forgiveness, victory';
+      'Rahmat, pengampunan, pengampunan, kemenangan';
 
   @override
   String get dhikrScreen_allahNeverFailsHis_c2265a =>
-      'Allah never fails His promise';
+      'Allah tidak pernah mengingkari janjinya';
 
   @override
   String get dhikrScreen_recordUsWithThe_b93190 =>
-      'Record us with the witnesses of truth';
+      'Catatlah kami dengan saksi-saksi kebenaran';
 
   @override
   String get dhikrScreen_forgivenessFirmnessAndVictory_a8b674 =>
-      'Forgiveness, firmness, and victory';
+      'Pengampunan, keteguhan, dan kemenangan';
 
   @override
   String get dhikrScreen_creationHasPurposeRefuge_ce2eee =>
-      'Creation has purpose — refuge from the Fire';
+      'Penciptaan mempunyai tujuan – perlindungan dari api';
 
   @override
   String get dhikrScreen_refugeFromTheDisgrace_605b1b =>
-      'Refuge from the disgrace of the Fire';
+      'Berlindung dari aib Neraka';
 
   @override
   String get dhikrScreen_heardBelievedAskingForgiveness_d5387f =>
-      'Heard, believed, asking forgiveness';
+      'Mendengar, percaya, meminta maaf';
 
   @override
   String get dhikrScreen_sinsForgivenDeathAmong_bd82ed =>
-      'Sins forgiven — death among the righteous';
+      'Dosa diampuni — kematian di antara orang benar';
 
   @override
   String get dhikrScreen_promisedRewardNeverDisgraced_490396 =>
-      'Promised reward — never disgraced on Resurrection';
+      'Hadiah yang dijanjikan - tidak pernah dipermalukan pada hari Kebangkitan';
 
   @override
   String get dhikrScreen_provisionAndSignsFrom_81db14 =>
-      'Provision and signs from the heavens';
+      'Rezeki dan tanda-tanda dari langit';
 
   @override
   String get dhikrScreen_duaTheDuaOf_4b9d01 =>
-      's dua — the dua of every repentant';
+      's doa - doa setiap orang yang bertobat';
 
   @override
   String get dhikrScreen_spareUsFromThe_79732a =>
-      'Spare us from the company of wrongdoers';
+      'Jauhkan kami dari kelompok orang-orang yang zalim';
 
   @override
   String get dhikrScreen_patienceTillTheEnd_a8a4c4 =>
-      'Patience till the end, death upon submission';
+      'Kesabaran sampai akhir, kematian saat berserah diri';
 
   @override
-  String get dhikrScreen_hiddenInEveryChest_ce7671 => 's hidden in every chest';
+  String get dhikrScreen_hiddenInEveryChest_ce7671 =>
+      'tersembunyi di setiap peti';
 
   @override
   String get dhikrScreen_prayerForPrayerAccepted_e68fa6 =>
-      's prayer for prayer accepted';
+      's doanya agar doanya diterima';
 
   @override
   String get dhikrScreen_mercyGrantedGuidancePrepared_5c6f63 =>
-      'Mercy granted, guidance prepared';
+      'Rahmat diberikan, bimbingan disiapkan';
 
   @override
-  String get dhikrScreen_duaBeforePharaoh_2d90cd => 's dua before Pharaoh';
+  String get dhikrScreen_duaBeforePharaoh_2d90cd => 's doa di hadapan Firaun';
 
   @override
   String get dhikrScreen_refugeFromClingingEvil_b1e6e4 =>
-      'Refuge from a clinging, evil punishment';
+      'Berlindung dari hukuman jahat yang melekat';
 
   @override
   String get dhikrScreen_piousSpousesRighteousChildren_64225f =>
-      'Pious spouses, righteous children, leadership';
+      'Pasangan yang shaleh, anak yang shaleh, kepemimpinan';
 
   @override
   String get dhikrScreen_allahIsEverThankful_464c97 =>
-      'Allah is ever-thankful for every effort';
+      'Allah SWT selalu bersyukur atas segala upaya';
 
   @override
   String get dhikrScreen_mercyEncompassingEveryRepentant_fb0759 =>
-      'Mercy encompassing every repentant soul';
+      'Rahmat meliputi setiap jiwa yang bertobat';
 
   @override
   String get dhikrScreen_mercyOnThatDay_a1b18b =>
-      'Mercy on that Day — the great success';
+      'Rahmat pada hari itu – sukses besar';
 
   @override
   String get dhikrScreen_loveAndForgivenessFor_660a56 =>
-      'Love and forgiveness for earlier believers';
+      'Cinta dan pengampunan bagi orang-orang beriman sebelumnya';
 
   @override
   String get dhikrScreen_kindnessAndMercyUpon_1c62c8 =>
-      'Kindness and mercy upon Allah\\';
+      'Kebaikan dan rahmat Allah\\';
 
   @override
   String get dhikrScreen_pureTawakkulToYou_389089 =>
-      's pure tawakkul — to You we return';
+      's tawakkal murni — kepada-Mu kami kembali';
 
   @override
   String get dhikrScreen_neverFitnahForThose_dc1363 =>
-      'Never a fitnah for those who disbelieve';
+      'Tidak pernah ada fitnah bagi orang kafir';
 
   @override
   String get dhikrScreen_completeTheLightForgive_fd7380 =>
-      'Complete the light — forgive us';
+      'Lengkapi cahayanya - maafkan kami';
 
   @override
   String get dhikrScreen_strongerThanServantThe_4cc56e =>
-      'Stronger than a servant — the night\\';
+      'Lebih kuat dari seorang pelayan — malam\\';
 
   @override
   String get dhikrScreen_refugeFromEveryVisible_b81e69 =>
-      'Refuge from every visible evil before sleep';
+      'Berlindung dari segala kejahatan yang terlihat sebelum tidur';
 
   @override
   String get dhikrScreen_refugeFromEveryWhisper_b030ed =>
-      'Refuge from every whisper before sleep';
+      'Berlindung dari setiap bisikan sebelum tidur';
 
   @override
   String get dhikrScreen_guardedByAnAngel_65d1c1 =>
-      'Guarded by an angel until morning';
+      'Dijaga oleh bidadari sampai pagi';
 
   @override
   String get dhikrScreen_twoVersesThatSuffice_1941c5 =>
-      'Two verses that suffice for the whole night';
+      'Dua ayat yang cukup untuk sepanjang malam';
 
   @override
   String get dhikrScreen_pureTawheedDeclaredBefore_50673a =>
-      'Pure tawheed declared before sleep';
+      'Tauhid murni dideklarasikan sebelum tidur';
 
   @override
   String get dhikrScreen_sleepIsSmallDeath_b4b84d =>
-      'Sleep is a small death — entrusted to Allah';
+      'Tidur adalah kematian kecil yang dipercayakan kepada Allah';
 
   @override
   String get dhikrScreen_whoeverDiesThatNight_75dda7 =>
-      'Whoever dies that night dies on fitrah';
+      'Barangsiapa meninggal pada malam itu, maka ia mati fitrah';
 
   @override
   String get dhikrScreen_guardTheSoulThat_a0850e =>
-      'Guard the soul that returns, or have mercy';
+      'Jagalah jiwa yang kembali, atau kasihanilah';
 
   @override
   String get dhikrScreen_refugeFromThePunishment_18162a =>
-      'Refuge from the punishment of that Day';
+      'Berlindung dari siksa pada hari itu';
 
   @override
   String get dhikrScreen_gratitudeForShelterFood_1f5e94 =>
-      'Gratitude for shelter, food, and care';
+      'Syukur atas tempat tinggal, makanan, dan perawatan';
 
   @override
   String get dhikrScreen_handOverTheSoul_fda192 =>
-      'Hand over the soul before sleep';
+      'Serahkan jiwa sebelum tidur';
 
   @override
   String get dhikrScreen_joinTheHighestAssembly_68e2d3 =>
-      'Join the highest assembly while you sleep';
+      'Bergabunglah dengan majelis tertinggi saat Anda tidur';
 
   @override
   String get dhikrScreen_gratitudeBeforeClosingThe_20f3db =>
-      'Gratitude before closing the eyes';
+      'Syukur sebelum menutup mata';
 
   @override
   String get dhikrScreen_surahAsSajdahRecited_a4beaa =>
-      'Surah As-Sajdah recited before sleep';
+      'Surah As-Sajdah dibacakan sebelum tidur';
 
   @override
   String get dhikrScreen_refugeFromEvilBefore_a5d312 =>
-      'Refuge from evil before entering the toilet';
+      'Berlindung dari kejahatan sebelum memasuki toilet';
 
   @override
   String get dhikrScreen_seekForgivenessAsYou_f14da9 =>
-      'Seek forgiveness as you leave';
+      'Carilah pengampunan saat Anda pergi';
 
   @override
   String get dhikrScreen_bismillahEveryBiteBegins_8a678d =>
-      'Bismillah — every bite begins with Allah';
+      'Bismillah - setiap gigitan dimulai dengan Allah';
 
   @override
   String get dhikrScreen_catchUpTheName_e6d0d6 =>
-      'Catch up the name — Allah at start and end';
+      'Catatlah nama - Allah di awal dan di akhir';
 
   @override
   String get dhikrScreen_threeSunnahDuasTo_a56769 =>
-      'Three Sunnah duas to thank Allah after eating';
+      'Tiga doa Sunnah untuk bersyukur kepada Allah setelah makan';
 
   @override
   String get dhikrScreen_beginWithAllahThe_a64af2 =>
-      'Begin with Allah, the Most Merciful, before drinking';
+      'Mulailah dengan Allah Yang Maha Penyayang sebelum meminumnya';
 
   @override
   String get dhikrScreen_openTheEightDoors_011a50 =>
-      'Open the eight doors of Paradise after wudu';
+      'Buka delapan pintu surga setelah wudhu';
 
   @override
-  String get dhikrScreen_openTheDoorsOf_15e084 => 'Open the doors of Allah\\';
+  String get dhikrScreen_openTheDoorsOf_15e084 => 'Bukalah pintu Allah\\';
 
   @override
   String get dhikrScreen_bountyAsYouLeave_a06fc6 =>
-      's bounty as you leave the masjid';
+      's karunia ketika Anda meninggalkan masjid';
 
   @override
   String get dhikrScreen_mayAllahGuideYou_af987e =>
-      'May Allah guide you and rectify your state';
+      'Semoga Allah membimbing Anda dan memperbaiki keadaan Anda';
 
   @override
   String get dhikrScreen_askAllahLordOf_4a3eb0 =>
-      'Ask Allah, Lord of the Throne, to grant healing';
+      'Mintalah kepada Allah, Penguasa Arsy, untuk memberikan kesembuhan';
 
   @override
   String get dhikrScreen_allahIsTheOnly_9750c1 =>
-      'Allah is the only One who cures';
+      'Allah satu-satunya yang menyembuhkan';
 
   @override
   String get dhikrScreen_shieldChildrenWithAllah_858245 =>
-      'Shield children with Allah\\';
+      'Lindungi anak-anak dengan Allah\\';
 
   @override
-  String get dhikrScreen_anicPrayerForOne_e18aca => 'anic prayer for one\\';
+  String get dhikrScreen_anicPrayerForOne_e18aca =>
+      'doa anic untuk seseorang\\';
 
   @override
   String get dhikrScreen_twoPhrasesBelovedTo_5d16a7 =>
-      'Two phrases beloved to the Most Merciful';
+      'Dua kalimat yang disukai Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_allahLovesToPardon_a64d0a =>
-      'Allah loves to pardon — so ask';
+      'Allah suka memaafkan - jadi mintalah';
 
   @override
   String get dhikrScreen_treasureFromBeneathThe_87d578 =>
-      'A treasure from beneath the Throne';
+      'Harta karun dari bawah Tahta';
 
   @override
   String get dhikrScreen_theFourPhrasesDearest_680ef8 =>
-      'The four phrases dearest to Allah';
+      'Empat kalimat yang paling disukai Allah';
 
   @override
   String get dhikrScreen_theDuaThatReleases_ddc7eb =>
-      'The dua that releases from every distress';
+      'Doa yang melepaskan dari setiap kesusahan';
 
   @override
   String get dhikrScreen_protectionForHomeAnd_0c4973 =>
-      's protection for home and offspring';
+      's perlindungan untuk rumah dan keturunan';
 
   @override
-  String get dhikrScreen_theCompleteDhikrOf_31b993 =>
-      'The complete dhikr of Tawheed';
+  String get dhikrScreen_theCompleteDhikrOf_31b993 => 'Dzikir Tauhid lengkap';
 
   @override
   String get dhikrScreen_trialPurifiedByAllah_39fb26 =>
-      'Trial purified by Allah\\';
+      'Cobaan yang disucikan oleh Allah\\';
 
   @override
   String get dhikrScreen_guidanceBeforeAnyChoice_50eb02 =>
-      's guidance before any choice';
+      's bimbingan sebelum pilihan apa pun';
 
   @override
   String get dhikrScreen_completeRuqyaSequenceFatihah_5ced40 =>
-      'Complete ruqya sequence — Fatihah and refuge';
+      'Urutan ruqya lengkap — Fatihah dan perlindungan';
 
   @override
   String get dhikrScreen_sinsForgivenEvenIf_cd9a85 =>
-      'Sins forgiven, even if like the foam of the sea';
+      'Dosanya diampuni, sekalipun seperti buih di lautan';
 
   @override
   String get dhikrScreen_freedHasanatSinsErased_54ebbb =>
-      '10 freed · 100 hasanat · 100 sins erased · Shaytan repelled';
+      '10 dibebaskan · 100 hasanat · 100 dosa terhapus · Setan ditolak';
 
   @override
   String get dhikrScreen_blessingsDescendFromAllah_41e8f6 =>
-      '10 blessings descend from Allah upon you';
+      '10 berkah turun dari Allah atasmu';
 
   @override
   String get dhikrScreen_askAllahToBless_3470fe =>
-      'Ask Allah to bless and beautify your day';
+      'Mintalah kepada Allah untuk memberkati dan mempercantik hari Anda';
 
   @override
   String get dhikrScreen_guaranteedJannahIfYou_6f7054 =>
-      'Guaranteed Jannah, if you die this day';
+      'Dijamin Jannah, jika meninggal hari ini';
 
   @override
   String get dhikrScreen_yourLifeEntrustedTo_77feba =>
-      'Your life entrusted to the Ever-Living';
+      'Hidupmu dipercayakan kepada Yang Maha Hidup';
 
   @override
   String get dhikrScreen_allEvilInHis_f02365 =>
-      'All evil in His creation repelled from you';
+      'Semua kejahatan dalam ciptaan-Nya ditolak dari Anda';
 
   @override
   String get dhikrScreen_nothingShallHarmYou_cbc2fc =>
-      'Nothing shall harm you, by perfect words';
+      'Tidak ada yang akan merugikan Anda, dengan kata-kata yang sempurna';
 
   @override
   String get dhikrScreen_shieldYourselfFromMinor_2a73ed =>
-      'Shield yourself from minor and major shirk, morning & evening';
+      'Lindungi diri Anda dari kesyirikan kecil dan besar, pagi & sore';
 
   @override
   String get dhikrScreen_completeProtectionInThe_620c30 =>
-      'Complete protection in the name of Allah';
+      'Perlindungan penuh atas nama Allah';
 
   @override
   String get dhikrScreen_weightierThanAllVoluntary_7af10a =>
-      'Weightier than all voluntary prayers, from dawn till dusk';
+      'Lebih berat dari segala shalat sunah, dari subuh hingga maghrib';
 
   @override
   String get dhikrScreen_reciteMorningEveningEarn_77aa68 =>
-      'Recite morning & evening, earn the pleasure & blessing of Allah on the Day of Judgment';
+      'Bacalah pagi & sore hari, dapatkan keridhaan & berkah Allah di hari kiamat';
 
   @override
   String get dhikrScreen_yourRewardAwaitsDirectly_1827f4 =>
-      'Your reward awaits directly with Allah when you meet Him';
+      'Pahalamu menanti langsung di sisi Allah ketika kamu bertemu dengan-Nya';
 
   @override
   String get dhikrScreen_reciteMorningEveningTo_1843f8 =>
-      'Recite morning & evening to fulfill your obligation of gratitude to Allah';
+      'Bacalah pagi & sore hari untuk memenuhi kewajiban bersyukur kepada Allah';
 
   @override
   String get dhikrScreen_theProphetTaughtThis_50fab2 =>
-      'The Prophet taught this dua for morning and evening, do not miss it';
+      'Nabi mengajarkan doa ini untuk pagi dan sore hari, jangan sampai terlewatkan';
 
   @override
   String get dhikrScreen_dominionAtTheStart_690ca9 =>
-      's dominion at the start of your morning, all kingdom belongs to Him';
+      'kekuasaan-Nya di awal pagimu, seluruh kerajaan adalah milik-Nya';
 
   @override
   String get dhikrScreen_asEveningFallsThe_934b7e =>
-      'As evening falls, the entire kingdom belongs to Allah alone';
+      'Saat malam tiba, seluruh kerajaan hanya milik Allah';
 
   @override
   String get dhikrScreen_endYourEveningUpon_ada386 =>
-      'End your evening upon the pure fitrah, as the Prophet (ﷺ) taught';
+      'Akhiri malam Anda dengan fitrah murni, seperti yang diajarkan Nabi (ﷺ).';
 
   @override
   String get dhikrScreen_satanWillNotEnter_446a1c =>
-      'Satan will not enter the home of one who recites this';
+      'Setan tidak akan memasuki rumah orang yang membaca ini';
 
   @override
   String get dhikrScreen_readingLastVersesOf_99a432 =>
-      'Reading last 2 verses of al-Baqarah will suffice you';
+      'Membaca 2 ayat terakhir surat al-Baqarah saja sudah cukup';
 
   @override
   String get dhikrScreen_everyDuaInThis_f790b4 =>
-      'Every dua in this verse - Allah said: I have done so';
+      'Setiap doa dalam ayat ini - Allah berfirman: Aku telah melakukannya';
 
   @override
   String get dhikrScreen_guardedByAllahUntil_f4d276 =>
-      'Guarded by Allah until morning comes';
+      'Dijaga oleh Allah sampai pagi tiba';
 
   @override
   String get dhikrScreen_recitingEqualsReadingThe_e0a62a =>
-      'Reciting 3x equals reading the entire Quran, Bukhari & Muslim';
+      'Membaca 3x sama dengan membaca seluruh Al-Quran, Bukhari & Muslim';
 
   @override
   String get dhikrScreen_reciteAtDawnDusk_4173a8 =>
-      'Recite 3x at dawn & dusk, suffice you against all harm';
+      'Bacalah 3x saat fajar & senja, mencukupimu dari segala bahaya';
 
   @override
   String get dhikrScreen_refugeFromTheWhisperer_bdd280 =>
-      'Refuge from the whisperer, in the Lord of Mankind';
+      'Berlindung dari si pembisik, pada Tuhan umat manusia';
 
   @override
   String get dhikrScreen_reciteMorningEveningYour_c464cb =>
-      'Recite 3x morning & evening, your gratitude to Allah is fulfilled';
+      'Bacalah 3x pagi & sore, maka terkabullah rasa syukurmu kepada Allah';
 
   @override
   String get dhikrScreen_sufficientAgainstEveryHarm_0a3206 =>
-      'Sufficient against every harm recited 3 times';
+      'Cukuplah terhadap setiap mudharat yang diucapkan 3 kali';
 
   @override
   String get dhikrScreen_doorsOfAllahMercy_937263 =>
-      'Doors of Allah mercy open wide for you';
+      'Pintu rahmat Allah terbuka lebar untukmu';
 
   @override
   String get dhikrScreen_worryAndSorrowLifted_fd1f04 =>
-      'Worry and sorrow lifted by the will of Allah';
+      'Kekhawatiran dan kesedihan terangkat atas izin Allah';
 
   @override
   String get dhikrScreen_guardedInYourDeen_bb9b33 =>
-      'Guarded in your deen dunya and akhirah';
+      'Terjagalah agamamu di dunia dan akhirat';
 
   @override
   String get dhikrScreen_evilRepelledFromEvery_3f1588 =>
-      'Evil repelled from every direction';
+      'Kejahatan ditolak dari segala arah';
 
   @override
   String get dhikrScreen_heartHeldByThe_0f7007 =>
-      'Heart held by the Ever Living Ever Sustaining';
+      'Hati dipegang oleh Yang Maha Hidup, Yang Selalu Menopang';
 
   @override
   String get dhikrScreen_fulfilledYourObligationOf_44ddfc =>
-      'Fulfilled your obligation of giving thanks';
+      'Memenuhi kewajiban Anda mengucap syukur';
 
   @override
   String get dhikrScreen_recitingTheLastVerses_3d260d =>
-      'Reciting the last 2 verses of Al-Baqarah at night suffices you';
+      'Cukuplah membaca 2 ayat terakhir surat Al-Baqarah di malam hari';
 
   @override
   String get dhikrScreen_gratitudeThatMultipliesYour_24c5dd =>
-      'Gratitude that multiplies your blessings';
+      'Syukurlah yang melipatgandakan nikmatmu';
 
   @override
   String get dhikrScreen_startPureOnThe_a0198e =>
-      'Start pure on the fitrah of Islam';
+      'Mulailah suci pada fitrah Islam';
 
   @override
   String get dhikrScreen_praiseThatRipplesThrough_cef105 =>
-      'Praise that ripples through all creation';
+      'Pujian yang menyebar ke seluruh ciptaan';
 
   @override
   String get dhikrScreen_guidedToEveryGood_e5e914 =>
-      'Guided to every good this day';
+      'Dipandu untuk setiap kebaikan hari ini';
 
   @override
   String get dhikrScreen_allahWillFreeHim_20396f =>
-      'Allah will free him from the Fire who reads this 4 times';
+      'Allah akan membebaskannya dari api neraka siapa yang membaca ini sebanyak 4 kali';
 
   @override
   String get dhikrScreen_wellbeingOfBodyHearing_f9d3af =>
-      'Wellbeing of body hearing and sight';
+      'Kesejahteraan pendengaran dan penglihatan tubuh';
 
   @override
   String get dhikrScreen_guidedByTheHand_da5d5b =>
-      'Guided by the hand of Allah';
+      'Dibimbing oleh tangan Allah';
 
   @override
   String get dhikrScreen_wordsHeavierThanThe_6a9c4f =>
-      'Words heavier than the heavens and earth';
+      'Kata-kata lebih berat dari langit dan bumi';
 
   @override
   String get dhikrScreen_beginYourDayIn_530c07 =>
-      'Begin your day in surrender to Allah';
+      'Mulailah harimu dengan berserah diri kepada Allah';
 
   @override
   String get dhikrScreen_theyAreEnoughFor_14acc6 =>
-      'They are enough for you - recite before sleep';
+      'Itu sudah cukup bagi Anda - bacalah sebelum tidur';
 
   @override
-  String get dhikrScreen_wellBeing_85c1f4 => 'Well-being';
+  String get dhikrScreen_wellBeing_85c1f4 => 'Kesejahteraan';
 
   @override
-  String get dhikrScreen_fulfilled_7d487f => 'Fulfilled.';
+  String get dhikrScreen_fulfilled_7d487f => 'Terpenuhi.';
 
   @override
   String get dhikrScreen_wellBeingInFaith_e70162 =>
-      'Well-being in Faith · Family · Wealth';
+      'Kesejahteraan dalam Iman · Keluarga · Kekayaan';
 
   @override
   String get dhikrScreen_concealMyFaultsCalm_0252f3 =>
-      'Conceal my faults · Calm my fears';
+      'Menyembunyikan kesalahanku · Tenangkan ketakutanku';
 
   @override
   String get dhikrScreen_protectionFromEvilEye_3b6074 =>
-      'Protection from Evil Eye';
+      'Perlindungan dari Mata Jahat';
 
   @override
   String get dhikrScreen_doNotLeaveMe_1e2414 =>
-      'Do not leave me to myself\\neven for the blink of an eye';
+      'Jangan tinggalkan aku sendirian\\bahkan sekejap mata pun';
 
   @override
   String dhikrScreen_35c165_35c165(String arg1) {
-    return '$arg1  ';
+    return '$arg1';
   }
 
   @override
-  String get dhikrScreen_allahWillSufficeYou_f177b2 => 'Allah will suffice you';
+  String get dhikrScreen_allahWillSufficeYou_f177b2 => 'Allah akan mencukupimu';
 
   @override
   String get dhikrScreen_againstWhateverConcernsYou_176991 =>
-      'against whatever concerns you';
+      'terhadap apa pun yang menjadi perhatian Anda';
 
   @override
   String get dhikrScreen_doNotBurdenUs_4401b2 =>
-      'Do not burden us beyond what we can bear, pardon us and have mercy';
+      'Jangan membebani kami melebihi apa yang bisa kami tanggung, maafkan kami dan kasihanilah';
 
   @override
   String get dhikrScreen_weHaveBelievedForgive_d34c4a =>
-      'We have believed — forgive our sins and protect us from the Fire';
+      'Kami beriman, ampunilah dosa-dosa kami dan peliharalah kami dari api neraka';
 
   @override
   String get dhikrScreen_ownerOfSovereigntyIn_b0948c =>
-      'O Owner of Sovereignty — in Your Hand is all good, You are Most Capable';
+      'Wahai Pemilik Kedaulatan — di tanganMu segala kebaikan, Engkau Maha Mampu';
 
   @override
   String get dhikrScreen_forgiveOurSinsAnd_692ad8 =>
-      'Forgive our sins and excess, make us firm and grant us victory';
+      'Ampunilah dosa dan kelebihan kami, kuatkan kami dan berikan kami kemenangan';
 
   @override
   String get dhikrScreen_youCreatedNotIn_d24f50 =>
-      'You created not in vain — protect us from the punishment of the Fire';
+      'Engkau menciptakan tidak dengan sia-sia — lindungi kami dari siksa api neraka';
 
   @override
   String get dhikrScreen_weHaveWrongedOurselves_24ab82 =>
-      'We have wronged ourselves — without Your mercy we are lost';
+      'Kami telah menganiaya diri kami sendiri – tanpa belas kasihan-Mu kami tersesat';
 
   @override
   String get dhikrScreen_ourLordDoNot_ca9f87 =>
-      'Our Lord, do not place us with the wrongdoing people';
+      'Ya Tuhan kami, jangan tempatkan kami bersama orang-orang yang zalim';
 
   @override
   String get dhikrScreen_doNotMakeUs_d5b5d2 =>
-      'Do not make us a trial for the oppressors';
+      'Jangan jadikan kami sebagai cobaan bagi para penindas';
 
   @override
   String get dhikrScreen_makeMeSteadfastIn_cc7dfe =>
-      'Make me steadfast in prayer — and my descendants too';
+      'Jadikanlah aku tabah dalam shalat, begitu pula keturunanku';
 
   @override
   String get dhikrScreen_forgiveMeMyParents_1a319b =>
-      'Forgive me, my parents, and the believers on the Day of Reckoning';
+      'Maafkan aku, orang tuaku, dan orang-orang beriman pada hari kiamat';
 
   @override
   String get dhikrScreen_bringMeInBy_62c19a =>
-      'Bring me in by an entrance of truth and out by an exit of truth';
+      'Bawalah aku masuk melalui pintu masuk kebenaran dan keluar melalui jalan keluar kebenaran';
 
   @override
   String get dhikrScreen_myLordIncreaseMe_2fec5a =>
-      'My Lord, increase me in knowledge';
+      'Ya Tuhanku, tambahlah aku ilmu';
 
   @override
   String get dhikrScreen_seekRefugeInYou_3a2efd =>
-      'I seek refuge in You from the whispers of devils';
+      'Aku berlindung kepada-Mu dari bisikan setan';
 
   @override
   String get dhikrScreen_forgiveAndHaveMercy_58f2df =>
-      'Forgive and have mercy — You are the Best of the Merciful';
+      'Maafkan dan kasihanilah - Engkaulah Yang Maha Penyayang';
 
   @override
   String get dhikrScreen_enableMeToBe_e78eb3 =>
-      'Enable me to be grateful for Your favour on me and my parents';
+      'Mampukan aku mensyukuri nikmat-Mu kepadaku dan orang tuaku';
 
   @override
   String get dhikrScreen_myLordHaveWronged_e6421b =>
-      'My Lord, I have wronged myself — so forgive me';
+      'Tuhanku, aku telah bersalah pada diriku sendiri – jadi maafkan aku';
 
   @override
   String get dhikrScreen_myLordWillNever_d4a663 =>
-      'My Lord, I will never be a supporter of the criminals';
+      'Ya Tuhanku, aku tidak akan pernah menjadi pendukung para penjahat';
 
   @override
   String get dhikrScreen_myLordSaveMe_ea6c67 =>
-      'My Lord, save me from the wrongdoing people';
+      'Ya Tuhanku, selamatkan aku dari orang-orang yang zalim';
 
   @override
   String get dhikrScreen_myLordAmIn_0acb2a =>
-      'My Lord, I am in need of any good You send down to me';
+      'Ya Tuhanku, aku membutuhkan kebaikan apa pun yang Engkau kirimkan kepadaku';
 
   @override
   String get dhikrScreen_myLordHelpMe_80f8c7 =>
-      'My Lord, help me against the corrupting people';
+      'Ya Tuhanku, bantulah aku melawan orang-orang yang merusak';
 
   @override
   String get dhikrScreen_ourLordAvertFrom_bc7354 =>
-      'Our Lord, avert from us the punishment of Hell';
+      'Ya Tuhan kami, jauhkan dari kami siksa Neraka';
 
   @override
   String get dhikrScreen_ourLordYouEncompass_7e0f2a =>
-      'Our Lord, You encompass all things in mercy and knowledge';
+      'Ya Tuhan kami, Engkau meliputi segala sesuatu dengan rahmat dan ilmu';
 
   @override
   String get dhikrScreen_enableMeToThank_d1f4df =>
-      'Enable me to thank You and make my offspring righteous';
+      'Mampukan aku bersyukur kepada-Mu dan menjadikan anak cucuku bertakwa';
 
   @override
   String get dhikrScreen_myLordGrantMe_ef9ff1 =>
-      'My Lord, grant me of the righteous';
+      'Ya Tuhanku, berilah aku salah satu orang yang saleh';
 
   @override
   String get dhikrScreen_forgiveUsAndOur_60d1fd =>
-      'Forgive us and our brothers who came before us in faith';
+      'Ampunilah kami dan saudara-saudara kami yang telah beriman sebelum kami';
 
   @override
   String get dhikrScreen_uponYouWeRely_0c8229 =>
-      'Upon You we rely, to You we turn, and to You is the destination';
+      'KepadaMu kami bersandar, kepadaMu kami berpaling, dan kepadaMulah tujuan';
 
   @override
-  String get dhikrScreen_pauseRememberAllah_1ddb4d => 'Pause. Remember Allah.';
+  String get dhikrScreen_pauseRememberAllah_1ddb4d =>
+      'Berhenti sebentar. Ingatlah Allah.';
 
   @override
   String get dhikrScreen_mashaallahRewardSecured_f51254 =>
-      'MashaAllah! Reward Secured';
+      'MasyaAllah! Hadiah Diamankan';
 
   @override
-  String get dhikrScreen_satanCannot_1c96dd => 'Satan cannot';
+  String get dhikrScreen_satanCannot_1c96dd => 'Setan tidak bisa';
 
   @override
-  String get dhikrScreen_enterTheHome_3086d7 => 'enter the home';
+  String get dhikrScreen_enterTheHome_3086d7 => 'memasuki rumah';
 
   @override
-  String get dhikrScreen_whoeverRecites_ee68bc => 'Whoever recites';
+  String get dhikrScreen_whoeverRecites_ee68bc => 'Siapa pun yang membaca';
 
   @override
-  String get dhikrScreen_theLastTwoVerses_a865c4 => 'the last two verses';
+  String get dhikrScreen_theLastTwoVerses_a865c4 => 'dua ayat terakhir';
 
   @override
-  String get dhikrScreen_ofSurahAlBaqarah_302bf4 => 'of Surah Al-Baqarah';
+  String get dhikrScreen_ofSurahAlBaqarah_302bf4 => 'dari Surat Al-Baqarah';
 
   @override
-  String get dhikrScreen_atNight_f3945a => 'at night --';
+  String get dhikrScreen_atNight_f3945a => 'pada malam hari --';
 
   @override
-  String get dhikrScreen_theyWillBe_019495 => 'they will be';
+  String get dhikrScreen_theyWillBe_019495 => 'mereka akan menjadi';
 
   @override
-  String get dhikrScreen_enoughForHim_6e37aa => 'enough for him';
+  String get dhikrScreen_enoughForHim_6e37aa => 'cukup baginya';
 
   @override
   String get dhikrScreen_weHaveEnteredThe_f5ed3a =>
-      'We have entered the evening';
+      'Kita telah memasuki malam hari';
 
   @override
   String get dhikrScreen_theKingdomBelongsTo_2f7681 =>
-      'The Kingdom belongs to Allah';
+      'Kerajaan itu milik Allah';
 
   @override
   String get dhikrScreen_noneWorthyOfWorship_f1c87f =>
-      'None worthy of worship but Allah alone';
+      'Tidak ada yang berhak disembah selain Allah saja';
 
   @override
   String get dhikrScreen_allPraiseHeIs_c3ece6 =>
-      'All praise · He is All-Powerful over everything';
+      'Segala puji · Dia Maha Kuasa atas segalanya';
 
   @override
-  String get dhikrScreen_weAskForThe_21b846 =>
-      'We ask for the good of this night';
+  String get dhikrScreen_weAskForThe_21b846 => 'Kami mohon kebaikan malam ini';
 
   @override
-  String get dhikrScreen_saySeekRefuge_84c616 => 'Say: I seek refuge';
+  String get dhikrScreen_saySeekRefuge_84c616 =>
+      'Katakanlah: Saya mencari perlindungan';
 
   @override
-  String get dhikrScreen_inTheLordOf_39c875 => 'in the Lord of Mankind';
+  String get dhikrScreen_inTheLordOf_39c875 => 'dalam Penguasa Umat Manusia';
 
   @override
-  String get dhikrScreen_theKingOfMankind_d99354 => 'the King of Mankind';
+  String get dhikrScreen_theKingOfMankind_d99354 => 'Raja Umat Manusia';
 
   @override
-  String get dhikrScreen_theGodOfMankind_e5231c => 'the God of Mankind ,';
+  String get dhikrScreen_theGodOfMankind_e5231c => 'Tuhan umat manusia,';
 
   @override
   String get dhikrScreen_heRetreatsWhenYou_1fea37 =>
-      'He retreats when you remember Allah.';
+      'Dia mundur ketika kamu mengingat Allah.';
 
   @override
   String get dhikrScreen_seekRefugeInThe_96a762 =>
-      'Seek refuge in the Lord of Daybreak';
+      'Carilah perlindungan pada Penguasa Fajar';
 
   @override
   String get dhikrScreen_sufficedInAllRespects_57c52b =>
-      'Sufficed in all respects.';
+      'Cukup dalam segala hal.';
 
   @override
-  String get dhikrScreen_allahDoesNotBurden_63f3eb => 'Allah does not burden';
+  String get dhikrScreen_allahDoesNotBurden_63f3eb => 'Allah tidak membebani';
 
   @override
-  String get dhikrScreen_soul_b7f1ee => 'a soul';
+  String get dhikrScreen_soul_b7f1ee => 'sebuah jiwa';
 
   @override
   String dhikrScreen_a5cfd1_a5cfd1(String count) {
@@ -8049,107 +8069,107 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dhikrScreen_equalsTheWholeQuran_a2b879 =>
-      'Equals the whole Quran × 3';
+      'Sama dengan seluruh Quran × 3';
 
   @override
   String get impactReportScreen_whoeverDoesAnAtom_9013b0 =>
-      '“Whoever does an atom\\';
+      '“Siapa pun yang melakukan atom\\';
 
   @override
   String get impactReportScreen_theHomeOfThe_4602d2 =>
-      '“The home of the Hereafter — that is the eternal life, if only they knew.” — Surah Al-Ankabut 29:64';
+      '“Rumah akhirat, itulah kehidupan yang kekal, andai saja mereka mengetahuinya.” — Surah Al-Ankabut 29:64';
 
   @override
   String get impactReportScreen_raceTowardsForgivenessFrom_94d614 =>
-      '“Race towards forgiveness from your Lord and a Garden as wide as the heavens and the earth.” — Surah Al-Hadid 57:21';
+      '“Berlombalah menuju ampunan dari Tuhanmu dan surga yang seluas langit dan bumi.” — Surah Al-Hadid 57:21';
 
   @override
   String get impactReportScreen_andWhatIsThe_7eec52 =>
-      '“And what is the life of this world except amusement of delusion?” — Surah Ali Imran 3:185';
+      '“Dan apakah kehidupan dunia ini selain hiburan khayalan?” — Surat Ali Imran 3:185';
 
   @override
   String get impactReportScreen_indeedWithHardshipComes_ea97fa =>
-      '“Indeed, with hardship comes ease.” — Surah Ash-Sharh 94:6';
+      '“Sesungguhnya bersama kesulitan ada kemudahan.” — Surah Asy-Syarh 94:6';
 
   @override
   String get impactReportScreen_singleGoodDeedIn_c126b4 =>
-      '“A single good deed in Ramadan equals 70 in any other month.” Stack while the door is open.';
+      '“Satu amal di bulan Ramadhan sama dengan 70 amal di bulan lainnya.” Tumpuk saat pintu terbuka.';
 
   @override
   String get impactReportScreen_theProphetSaidCharity_c154f4 =>
-      'The Prophet ✍ said: charity does not decrease wealth — it grows it. (Muslim)';
+      'Nabi ✍ bersabda: sedekah tidak mengurangi harta, namun menambahnya. (Muslim)';
 
   @override
   String get impactReportScreen_smilingAtYourBrother_8f55e4 =>
-      '“Smiling at your brother is sadaqah.” You can earn even when your pockets are empty. (Tirmidhi)';
+      '“Tersenyum pada saudaramu itu sedekah.” Anda bisa mendapatkan penghasilan bahkan ketika kantong Anda kosong. (Tirmidzi)';
 
   @override
   String get impactReportScreen_theMostBelovedDeeds_f11906 =>
-      '“The most beloved deeds to Allah are the most consistent, even if small.” (Bukhari)';
+      '“Amalan yang paling dicintai Allah adalah yang paling konsisten, meskipun kecil.” (Bukhari)';
 
   @override
   String get impactReportScreen_inJannahIsWhat_ff6d55 =>
-      '“In Jannah is what no eye has seen, no ear has heard, and no heart has imagined.” (Bukhari)';
+      '“Di dalam Jannah terdapat sesuatu yang belum pernah dilihat oleh mata, belum pernah didengar oleh telinga, dan belum pernah dibayangkan oleh hati.” (Bukhari)';
 
   @override
   String get impactReportScreen_twoRakatsAtFajr_c8b238 =>
-      'Two rakats at Fajr are better than the world and everything in it. (Muslim)';
+      'Dua rakaat subuh lebih baik dari dunia dan seisinya. (Muslim)';
 
   @override
   String get impactReportScreen_everyStepTowardSalah_62962f =>
-      'Every step toward salah erases a sin and raises a rank. (Muslim)';
+      'Setiap langkah menuju salat menghapus dosa dan menaikkan derajat. (Muslim)';
 
   @override
   String get impactReportScreen_everySeedYouDonate_618d1f =>
-      'Every seed you donate plants a tree in someone else\\';
+      'Setiap benih yang Anda sumbangkan akan menanam pohon pada orang lain\\';
 
   @override
   String get impactReportScreen_takeWealthWithYou_784e85 =>
-      't take wealth with you. Only the deeds it bought.';
+      'jangan membawa kekayaan bersamamu. Hanya perbuatan yang dibelinya.';
 
   @override
   String get impactReportScreen_theAngelsRecordNothing_e03c03 =>
-      'The angels record nothing too small. One Subhanallah may outweigh a mountain.';
+      'Para malaikat mencatat tidak ada hal yang terlalu kecil. Satu Subhanallah mungkin lebih besar daripada gunung.';
 
   @override
   String get impactReportScreen_sadaqahIsTomorrow_794857 =>
-      's sadaqah is tomorrow\\';
+      'sedekah itu besok\\';
 
   @override
   String get impactReportScreen_heartThatGivesIs_4b6000 =>
-      'A heart that gives is a heart Allah keeps full. Don\\';
+      'Hati yang memberi adalah hati yang Allah pelihara. Mengenakan\\';
 
   @override
   String get impactReportScreen_theReceiptWhatDid_d1c41b =>
-      's the receipt. What did you send ahead?';
+      'itu tanda terimanya. Apa yang Anda kirimkan sebelumnya?';
 
   @override
   String get impactReportScreen_imagineYourScaleOn_094d07 =>
-      'Imagine your scale on Yawm al-Qiyamah. What weight are you adding today?';
+      'Bayangkan skala Anda di Yawm al-Qiyamah. Berapa berat badan yang kamu tambahkan hari ini?';
 
   @override
   String get impactReportScreen_theWorldIsBorrowed_2eeb50 =>
-      'The world is borrowed. The Akhirah is owned. Invest accordingly.';
+      'Dunia ini dipinjam. Akhirah dimiliki. Investasikan sesuai kebutuhan.';
 
   @override
   String get impactReportScreen_youBuryTheBody_bb5233 =>
-      'You bury the body — but not the deeds. Send them ahead while you can.';
+      'Anda menguburkan tubuhnya - tetapi bukan perbuatannya. Kirimkan mereka terlebih dahulu selagi Anda bisa.';
 
   @override
   String get impactReportScreen_righteousChildWhoPrays_7bcef4 =>
-      'A righteous child who prays for you, a charity that flows, or knowledge that benefits — three eternal investments. (Muslim)';
+      'Anak shaleh yang mendoakanmu, amal yang mengalir, atau ilmu yang memberi manfaat — tiga investasi abadi. (Muslim)';
 
   @override
   String get impactReportScreen_youWillMeetAllah_c19524 =>
-      'You will meet Allah with your record. Make sure today\\';
+      'Kamu akan bertemu Allah dengan catatanmu. Pastikan hari ini\\';
 
   @override
   String get impactReportScreen_noDeedIsToo_c04d50 =>
-      'No deed is too small for the One who counts atoms.';
+      'Tidak ada perbuatan yang terlalu kecil bagi Dia yang menghitung atom.';
 
   @override
   String impactReportScreen_lvl_987904(String _level, String arg1) {
-    return 'Lvl $_level · $arg1';
+    return 'Tingkat $_level · $arg1';
   }
 
   @override
@@ -8164,144 +8184,144 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get impactReportScreen_whoeverDoesGoodDeed_89c2bf =>
-      'Whoever does a good deed shall have ten times the like thereof.';
+      'Barangsiapa yang berbuat baik, maka ia mendapat sepuluh kali lipatnya.';
 
   @override
   String get impactReportScreen_whoeverReadsLetterFrom_36d74f =>
-      'Whoever reads a letter from the Book of Allah, he will have one hasanah, and a hasanah is multiplied by ten.';
+      'Barangsiapa membaca satu huruf dari Kitab Allah, maka ia mendapat satu hasanah, dan satu hasanah dikalikan sepuluh.';
 
   @override
   String get impactReportScreen_twoHadithGrowThis_c8d4a2 =>
-      'Two hadith grow this number side by side:\\n\\n';
+      'Dua hadis menumbuhkan angka ini secara berdampingan:\\n\\n';
 
   @override
   String impactReportScreen_dhikrRecitedLifetime_669e2a(String arg1) {
-    return '  Dhikr recited (lifetime): $arg1\\n';
+    return 'Dzikir yang dibacakan (seumur hidup): $arg1\\n';
   }
 
   @override
   String impactReportScreen_hasanat_64c7b6(String arg1) {
-    return '  → Hasanat: $arg1\\n\\n';
+    return '→ Hasanat: $arg1\\n\\n';
   }
 
   @override
   String impactReportScreen_ayahsReadLifetime_75eef6(String arg1) {
-    return '  Ayahs read (lifetime): $arg1\\n';
+    return 'Ayah dibaca (seumur hidup): $arg1\\n';
   }
 
   @override
   String impactReportScreen_totalHasanaat_c43112(String arg1) {
-    return 'Total hasanaat: $arg1';
+    return 'Jumlah hasanaat: $arg1';
   }
 
   @override
   String impactReportScreen_ayahs_6a500c(String arg1) {
-    return '$arg1 ayahs';
+    return '$arg1 ayah';
   }
 
   @override
   String impactReportScreen_planted_90ec47(String arg1) {
-    return '$arg1 planted';
+    return '$arg1 ditanam';
   }
 
   @override
   String impactReportScreen_cycles_f6649b(String arg1) {
-    return '$arg1 cycles';
+    return '$arg1 siklus';
   }
 
   @override
   String get impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459 =>
-      'Whoever says SubhanAllahi wa bihamdihi 100 times a day, his sins are forgiven even if they were like the foam of the sea.';
+      'Barangsiapa mengucapkan SubhanAllahi wa bihamdihi 100 kali sehari, maka dosanya diampuni meskipun seperti buih di lautan.';
 
   @override
   String get impactReportScreen_subhanallahiWaBihamdihi_992976 =>
-      'SubhanAllahi wa bihamdihi';
+      'Subhanallah wa bihamdihi';
 
   @override
   String impactReportScreen_totalRecitations_5ed733(String arg1) {
-    return 'Total recitations: $arg1\\n';
+    return 'Jumlah bacaan: $arg1\\n';
   }
 
   @override
   String impactReportScreen_dividedByForgivenessCycles_4e175d(String arg1) {
-    return 'Divided by 100 → forgiveness cycles: $arg1';
+    return 'Dibagi 100 → siklus pengampunan: $arg1';
   }
 
   @override
   String impactReportScreen_built_d62c2d(String arg1) {
-    return '$arg1 built';
+    return '$arg1 dibangun';
   }
 
   @override
   String impactReportScreen_dividedByPalaces_6f066c(String arg1) {
-    return 'Divided by 10 → palaces: $arg1';
+    return 'Dibagi 10 → istana: $arg1';
   }
 
   @override
   String impactReportScreen_earned_abd189(String arg1) {
-    return '$arg1 earned';
+    return '$arg1 diperoleh';
   }
 
   @override
   String impactReportScreen_equivalent_cb7bb5(String arg1) {
-    return '$arg1 equivalent';
+    return '$arg1 setara';
   }
 
   @override
   String get impactReportScreen_laIlahaIllallahuWahdahu_895dde =>
-      'La ilaha illallahu wahdahu la sharika lahu...';
+      'La ilaha illallahu wahdahu la syariah lahu...';
 
   @override
   String impactReportScreen_setsOfSetsSlaves_b43b31(String arg1, String arg2) {
-    return 'Sets of 10 → $arg1 sets × 4 slaves = $arg2';
+    return 'Himpunan 10 → $arg1 himpunan × 4 budak = $arg2';
   }
 
   @override
   String impactReportScreen_opened_1bf8da(String arg1) {
-    return '$arg1 opened';
+    return '$arg1 dibuka';
   }
 
   @override
   String impactReportScreen_received_a526e3(String arg1) {
-    return '$arg1 received';
+    return '$arg1 diterima';
   }
 
   @override
   String impactReportScreen_totalSalawatSent_cfe45e(String arg1) {
-    return 'Total salawat sent: $arg1\\n';
+    return 'Total salawat yang terkirim: $arg1\\n';
   }
 
   @override
   String impactReportScreen_multipliedByBlessingsReceived_52810f(String arg1) {
-    return 'Multiplied by 10 → $arg1 blessings received';
+    return 'Dikalikan 10 → $arg1 berkah diterima';
   }
 
   @override
   String impactReportScreen_invocations_d80c33(String arg1) {
-    return '$arg1 invocations';
+    return '$arg1 pemanggilan';
   }
 
   @override
   String get impactReportScreen_protectionFromEvil_37b53a =>
-      'Protection from evil';
+      'Perlindungan dari kejahatan';
 
   @override
   String get impactReportScreen_goodHealthProtection_058808 =>
-      'Good health & protection';
+      'Kesehatan & perlindungan yang baik';
 
   @override
   String impactReportScreen_totalInvocations_1fd02b(String arg1) {
-    return 'Total invocations: $arg1';
+    return 'Total pemanggilan: $arg1';
   }
 
   @override
   String impactReportScreen_dividedByQuranCompletions_b9a013(String arg1) {
-    return 'Divided by 3 → $arg1 Quran completions';
+    return 'Dibagi 3 → $arg1 Penyelesaian Alquran';
   }
 
   @override
   String impactReportScreen_recitations_3cb9ec(String arg1) {
-    return '$arg1 recitations';
+    return '$arg1 bacaan';
   }
 
   @override
@@ -8311,7 +8331,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_3dc421_3dc421(String arg1) {
-    return '${arg1}h ';
+    return '${arg1}h';
   }
 
   @override
@@ -8321,27 +8341,27 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_ago_71107c(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String impactReportScreen_moAgo_325a71(String arg1) {
-    return '${arg1}mo ago';
+    return '${arg1}bln lalu';
   }
 
   @override
   String impactReportScreen_viewAllDonors_e72932(String arg1) {
-    return 'View all $arg1 donors';
+    return 'Lihat semua donatur $arg1';
   }
 
   @override
   String impactReportScreen_failed_190558(String e) {
-    return 'Failed: $e';
+    return 'Gagal: $e';
   }
 
   @override
   String impactReportScreen_meet_82797d(String arg1, String arg2) {
-    return 'Meet $arg1, $arg2';
+    return 'Temui $arg1, $arg2';
   }
 
   @override
@@ -8351,16 +8371,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_funded_add009(String arg1) {
-    return '$arg1% funded';
+    return '$arg1% didanai';
   }
 
   @override
   String get impactReportScreen_yourLifetimeImpact_8bfdcd =>
-      'Your lifetime impact';
+      'Dampak seumur hidup Anda';
 
   @override
   String get impactReportScreen_startYourImpactJourney_1ae8c4 =>
-      'Start your impact journey';
+      'Mulailah perjalanan dampak Anda';
 
   @override
   String impactReportScreen_bd3721_bd3721(String _myOrphansSponsoredCount) {
@@ -8373,18 +8393,17 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get levelScreen_customProfileThemes_cec15c => 'Custom profile themes';
+  String get levelScreen_customProfileThemes_cec15c => 'Tema profil khusus';
 
   @override
-  String get levelScreen_exclusiveVotingRights_684759 =>
-      'Exclusive voting rights';
+  String get levelScreen_exclusiveVotingRights_684759 => 'Hak suara eksklusif';
 
   @override
-  String get levelScreen_hallOfFameListing_eb6ad1 => 'Hall of Fame listing';
+  String get levelScreen_hallOfFameListing_eb6ad1 => 'Daftar Hall of Fame';
 
   @override
   String levelScreen_seeds_fff97b(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
@@ -8392,12 +8411,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String levelScreen_unlocks_6f2513(String arg1) {
-    return 'Unlocks: $arg1';
+    return 'Membuka kunci: $arg1';
   }
 
   @override
   String levelScreen_seedsBoost_464454(String arg1) {
-    return '$arg1× Seeds Boost';
+    return '$arg1× Peningkatan Benih';
   }
 
   @override
@@ -8408,47 +8427,48 @@ class AppLocalizationsId extends AppLocalizations {
     String arg4,
     String arg5,
   ) {
-    return '$arg1:$arg2  $arg3/$arg4/$arg5';
+    return '$arg1:$arg2 $arg3/$arg4/$arg5';
   }
 
   @override
   String levelScreen_nextDays_212b86(String arg1, String arg2) {
-    return 'Next: $arg1 ($arg2 days)';
+    return 'Berikutnya: $arg1 ($arg2 hari)';
   }
 
   @override
   String levelScreen_days_100e10(String current, String arg1) {
-    return '$current / $arg1 days';
+    return '$current / $arg1 hari';
   }
 
   @override
   String levelScreen_dayStreak_df2abf(String arg1) {
-    return '$arg1 day streak';
+    return '$arg1 hari berturut-turut';
   }
 
   @override
-  String get phase1Screens_quranReadingNimage_5ebac0 => 'Quran reading\\nimage';
+  String get phase1Screens_quranReadingNimage_5ebac0 =>
+      'Bacaan Alquran\\ngambar';
 
   @override
-  String get phase1Screens_orphansNimage_24d12a => 'Orphans\\nimage';
+  String get phase1Screens_orphansNimage_24d12a => 'Gambar anak yatim\\n';
 
   @override
   String onboardingComponents_355c50_355c50(String first) {
-    return '$first ';
+    return '$first';
   }
 
   @override
   String onboardingComponents_b236c9_b236c9(String trailing) {
-    return ' $trailing';
+    return '$trailing';
   }
 
   @override
   String get quranMini_inTheNameOf_46925d =>
-      'In the name of Allah, the Most Gracious, the Most Merciful.';
+      'Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang.';
 
   @override
   String get quranMini_allPraiseBelongsTo_2d51df =>
-      'All praise belongs to Allah, Lord of all the worlds.';
+      'Segala puji bagi Allah, Tuhan semesta alam.';
 
   @override
   String orphansGridScreen_36cd3b_36cd3b(String arg1, String arg2) {
@@ -8457,36 +8477,36 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String orphanDetailScreen_years_debb46(String arg1) {
-    return '$arg1 years';
+    return '$arg1 tahun';
   }
 
   @override
   String orphanDetailScreen_ofSeeds_2a29fc(String arg1, String arg2) {
-    return '$arg1 of $arg2 Seeds';
+    return '$arg1 dari $arg2 Benih';
   }
 
   @override
   String orphanDetailScreen_through_2cdb72(String arg1) {
-    return 'Through $arg1';
+    return 'Melalui $arg1';
   }
 
   @override
   String get orphanDetailScreen_andTheyGiveFood_7ddcff =>
-      'And they give food, despite their love for it, to the needy, the orphan, and the captive.';
+      'Dan mereka memberikan makanan, meskipun mereka menyukainya, kepada orang miskin, anak yatim, dan tawanan.';
 
   @override
   String orphanDetailScreen_ago_71107c(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String orphanDetailScreen_moAgo_325a71(String arg1) {
-    return '${arg1}mo ago';
+    return '${arg1}bln lalu';
   }
 
   @override
   String orphanDetailScreen_seeds_30d8dc(String _availablePoints) {
-    return '$_availablePoints Seeds';
+    return '$_availablePoints Benih';
   }
 
   @override
@@ -8498,72 +8518,72 @@ class AppLocalizationsId extends AppLocalizations {
   String orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec(
     String amount,
   ) {
-    return 'JazakAllah Khayran! $amount Seeds sponsored.';
+    return 'JazakAllah Khayran! $amount Benih disponsori.';
   }
 
   @override
   String orphanDetailScreen_chooseHowManySeeds_b69aa2(String arg1) {
-    return 'Choose how many Seeds to give. Minimum $arg1.';
+    return 'Pilih berapa banyak Benih yang akan diberikan. Minimal $arg1.';
   }
 
   @override
   String orphanDetailScreen_yourBalanceSeeds_f8045b(String arg1) {
-    return 'Your balance: $arg1 Seeds';
+    return 'Saldo Anda: $arg1 Benih';
   }
 
   @override
   String get profileSettingsScreen_nameCannotBeEmpty_c737ab =>
-      'Name cannot be empty';
+      'Nama tidak boleh kosong';
 
   @override
   String get profileSettingsScreen_bosniaAndHerzegovina_a428ef =>
-      'Bosnia and Herzegovina';
+      'Bosnia dan Herzegovina';
 
   @override
   String get profileSettingsScreen_centralAfricanRepublic_0fde6c =>
-      'Central African Republic';
+      'Republik Afrika Tengah';
 
   @override
   String get profileSettingsScreen_unitedArabEmirates_d8e2d8 =>
-      'United Arab Emirates';
+      'Uni Emirat Arab';
 
   @override
   String get profileSettingsScreen_signedInWithGoogle_17e053 =>
-      'Signed in with Google';
+      'Masuk dengan Google';
 
   @override
   String get profileSettingsScreen_signedInWithQuran_2e1ffc =>
-      'Signed in with Quran.com';
+      'Masuk dengan Quran.com';
 
   @override
   String get profileSettingsScreen_signedInWithEmail_dd881f =>
-      'Signed in with Email';
+      'Masuk dengan Email';
 
   @override
   String profileSettingsScreen_seeds_53d666(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
   String get profileSettingsScreen_guidesFAQsAndHow_b990d6 =>
-      'Guides, FAQs and how-tos';
+      'Panduan, FAQ, dan petunjuk';
 
   @override
   String get profileSettingsScreen_somethingNotWorkingTell_07f659 =>
-      'Something not working? Tell us';
+      'Ada yang tidak berfungsi? Beritahu kami';
 
   @override
   String projectDetailScreen_organisedBy_8b317a(String sponsor) {
-    return 'Organised by $sponsor\\n\\n';
+    return 'Diselenggarakan oleh $sponsor\\n\\n';
   }
 
   @override
   String get projectDetailScreen_fundedSoFarEvery_dab3fd =>
-      'Funded so far, every Seed counts!\\n\\n';
+      'Sejauh ini telah didanai, setiap Seed sangat berarti!\\n\\n';
 
   @override
   String get projectDetailScreen_openSabiqRewardsApp_cdda14 =>
-      'Open Sabiq Rewards app to donate your Seeds and earn reward.\\n';
+      'Buka aplikasi Sabiq Rewards untuk mendonasikan Benih Anda dan mendapatkan hadiah.\\n';
 
   @override
   String get projectDetailScreen_sabiqrewardsSadaqahIslamicCharity_663ba5 =>
@@ -8580,11 +8600,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get projectDetailScreen_donateToProvideUrgent_246035 =>
-      'Donate to provide urgent, life-saving aid to Palestinians facing critical shortages of food, water, and medical supplies...';
+      'Berdonasi untuk memberikan bantuan mendesak dan menyelamatkan jiwa bagi warga Palestina yang menghadapi kekurangan makanan, air, dan pasokan medis...';
 
   @override
   String projectDetailScreen_seeds_47387f(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 Benih';
   }
 
   @override
@@ -8594,61 +8614,61 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String projectDetailScreen_ago_71107c(String arg1) {
-    return '${arg1}m ago';
+    return '${arg1}m yang lalu';
   }
 
   @override
   String projectDetailScreen_moAgo_325a71(String arg1) {
-    return '${arg1}mo ago';
+    return '${arg1}bln lalu';
   }
 
   @override
   String projectDetailScreen_viewAll_3d2c48(String arg1) {
-    return 'View all $arg1 →';
+    return 'Lihat semua $arg1 →';
   }
 
   @override
   String quranHubScreen_saved_9c28a3(String arg1) {
-    return '$arg1 saved';
+    return '$arg1 disimpan';
   }
 
   @override
   String get quranHubScreen_tapTheHeartBookmark_c62da1 =>
-      'Tap the heart/bookmark icon while reading to save verses.';
+      'Ketuk ikon hati/bookmark saat membaca untuk menyimpan ayat.';
 
   @override
   String quranHubScreen_surahVerse_2c65ec(String s, String a) {
-    return 'Surah $s  •  Verse $a';
+    return 'Surat $s • Ayat $a';
   }
 
   @override
   String quranHubScreen_verses_f97238(String arg1) {
-    return '$arg1 verses';
+    return '$arg1 ayat';
   }
 
   @override
   String quranHubScreen_of_0420fc(String arg1) {
-    return 'of $arg1';
+    return 'dari $arg1';
   }
 
   @override
-  String get quranScreen_englishSahihIntl_da5e9e => 'English, Sahih Intl.';
+  String get quranScreen_englishSahihIntl_da5e9e => 'Inggris, Sahih Intl.';
 
   @override
-  String get quranScreen_saheehInternational_fd1d5c => 'Saheeh International';
+  String get quranScreen_saheehInternational_fd1d5c => 'Shahih Internasional';
 
   @override
-  String get quranScreen_englishPickthall_a0d265 => 'English, Pickthall';
+  String get quranScreen_englishPickthall_a0d265 => 'Inggris, Pickthall';
 
   @override
   String get quranScreen_mohammadMarmadukePickthall_554557 =>
       'Mohammad Marmaduke Pickthall';
 
   @override
-  String get quranScreen_englishTheMessage_24a984 => 'English, The Message';
+  String get quranScreen_englishTheMessage_24a984 => 'Bahasa Inggris, Pesannya';
 
   @override
-  String get quranScreen_englishMuhsinKhan_a5402b => 'English, Muhsin Khan';
+  String get quranScreen_englishMuhsinKhan_a5402b => 'Inggris, Muhsin Khan';
 
   @override
   String get quranScreen_muhsinKhanHilali_471c43 => 'Muhsin Khan & Hilali';
@@ -8668,53 +8688,53 @@ class AppLocalizationsId extends AppLocalizations {
   String get quranScreen_franAisHamidullah_2ca2c2 => 'Français, Hamidullah';
 
   @override
-  String get quranScreen_rkDiyanet_431130 => 'Türkçe, Diyanet';
+  String get quranScreen_rkDiyanet_431130 => 'Türkce, Diyanet';
 
   @override
   String get quranScreen_rkLeymanAte_7aa8e1 => 'Türkçe, Süleyman Ateş';
 
   @override
-  String get quranScreen_bahasaIndonesian_2a26f0 => 'Bahasa, Indonesian';
+  String get quranScreen_bahasaIndonesian_2a26f0 => 'Bahasa, Bahasa Indonesia';
 
   @override
   String get quranScreen_ministryOfReligiousAffairs_e30db8 =>
-      'Ministry of Religious Affairs';
+      'Kementerian Agama';
 
   @override
-  String get quranScreen_muhiuddinKhan_df9bfe => 'বাংলা, Muhiuddin Khan';
+  String get quranScreen_muhiuddinKhan_df9bfe => 'Misalnya, Muhiuddin Khan';
 
   @override
-  String get quranScreen_deutschAbuRida_9acffd => 'Deutsch, Abu Rida';
+  String get quranScreen_deutschAbuRida_9acffd => 'Jerman, Abu Ridha';
 
   @override
   String get quranScreen_abuRidaMuhammadIbn_3a40b3 =>
-      'Abu Rida Muhammad ibn Ahmad';
+      'Abu Ridha Muhammad bin Ahmad';
 
   @override
-  String get quranScreen_espaOlAsad_1c1933 => 'Español, Asad';
+  String get quranScreen_espaOlAsad_1c1933 => 'Spanyol, Asad';
 
   @override
-  String get quranScreen_uthmaniMadinah_e1f10e => 'Uthmani (Madinah)';
+  String get quranScreen_uthmaniMadinah_e1f10e => 'Utsmani (Madinah)';
 
   @override
-  String get quranScreen_alJalalaynEN_af0584 => 'Al-Jalalayn (EN)';
+  String get quranScreen_alJalalaynEN_af0584 => 'Al Jalalain (EN)';
 
   @override
   String get quranScreen_couldNotLoadAyah_62f120 =>
-      'Could not load ayah. Please retry.';
+      'Tidak dapat memuat ayah. Silakan coba lagi.';
 
   @override
   String get quranScreen_noConnectionCachedData_e5a215 =>
-      'No connection. Cached data may be available.';
+      'Tidak ada koneksi. Data cache mungkin tersedia.';
 
   @override
   String quranScreen_ayahs_c98642(String arg1) {
-    return '$arg1 ayahs';
+    return '$arg1 ayah';
   }
 
   @override
   String get quranScreen_couldNotRemoveBookmark_699a82 =>
-      'Could not remove bookmark, please retry';
+      'Tidak dapat menghapus bookmark, coba lagi';
 
   @override
   String quranScreen_removedBookmark_d7a16a(
@@ -8722,12 +8742,12 @@ class AppLocalizationsId extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Removed bookmark $_surahName $_surah:$_ayah';
+    return 'Menghapus penanda $_surahName $_surah:$_ayah';
   }
 
   @override
   String get quranScreen_couldNotSaveBookmark_976448 =>
-      'Could not save bookmark, please retry';
+      'Tidak dapat menyimpan bookmark, coba lagi';
 
   @override
   String quranScreen_bookmarked_2c6203(
@@ -8735,11 +8755,11 @@ class AppLocalizationsId extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'Bookmarked $_surahName $_surah:$_ayah';
+    return 'Ditandai $_surahName $_surah:$_ayah';
   }
 
   @override
-  String get quranScreen_trimmedContains_039f31 => ') && !trimmed.contains(';
+  String get quranScreen_trimmedContains_039f31 => ') && !dipangkas.berisi(';
 
   @override
   String quranScreen_tafsir_391c0d(
@@ -8751,65 +8771,68 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get quranScreen_addedToFavourites_b3cce0 => '♥️ Added to Favourites';
+  String get quranScreen_addedToFavourites_b3cce0 =>
+      '♥️ Ditambahkan ke Favorit';
 
   @override
   String get quranScreen_comfortableNightTimeReading_da3df2 =>
-      'Comfortable night-time reading';
+      'Membaca malam hari yang nyaman';
 
   @override
   String quranScreen_pt_9e58e8(String arg1) {
-    return '$arg1 pt';
+    return '$arg1 poin';
   }
 
   @override
   String quranScreen_003843_003843(String arg1, String arg2) {
-    return '$arg1  $arg2';
+    return '$arg1 $arg2';
   }
 
   @override
   String get quranScreen_displayMeaningBelowEach_a26f31 =>
-      'Display meaning below each verse';
+      'Tampilkan makna di bawah setiap ayat';
 
   @override
-  String get quranScreen_showTransliteration_e04abd => 'Show Transliteration';
+  String get quranScreen_showTransliteration_e04abd =>
+      'Tampilkan Transliterasi';
 
   @override
   String get quranScreen_romanisedPronunciationUnderEach_2c0136 =>
-      'Romanised pronunciation under each word';
+      'Pengucapan romanisasi di bawah setiap kata';
 
   @override
   String get quranScreen_progressBarAyahCount_3cd24d =>
-      'Progress bar & ayah count card';
+      'Bilah kemajuan & kartu hitungan ayah';
 
   @override
   String get quranScreen_moveToNextVerse_ea29fd =>
-      'Move to next verse when audio ends';
+      'Pindah ke ayat berikutnya ketika audio berakhir';
 
   @override
-  String get quranScreen_repeatCurrentVerse_552669 => 'Repeat Current Verse';
+  String get quranScreen_repeatCurrentVerse_552669 => 'Ulangi Ayat Saat Ini';
 
   @override
-  String get quranScreen_notificationsALERTS_fbea75 => 'NOTIFICATIONS & ALERTS';
+  String get quranScreen_notificationsALERTS_fbea75 =>
+      'PEMBERITAHUAN & PERINGATAN';
 
   @override
   String get quranScreen_milestoneSoundAlerts_03cdc3 =>
-      'Milestone Sound Alerts';
+      'Peringatan Suara Tonggak Sejarah';
 
   @override
   String get quranScreen_chimeWhenYouReach_dd60c0 =>
-      'Chime when you reach 10, 25, 50 ayahs';
+      'Berpadu saat Anda mencapai 10, 25, 50 ayah';
 
   @override
   String get quranScreen_showEachArabicWord_64532d =>
-      'Show each Arabic word with its English meaning';
+      'Tampilkan setiap kata Arab dengan makna bahasa Inggrisnya';
 
   @override
-  String get quranScreen_translationLanguage_d8c9b3 => 'Translation Language';
+  String get quranScreen_translationLanguage_d8c9b3 => 'Bahasa Terjemahan';
 
   @override
   String quranScreen_translationsAvailable_55c648(String arg1) {
-    return '$arg1 translations available';
+    return '$arg1 terjemahan tersedia';
   }
 
   @override
@@ -8819,7 +8842,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String quranScreen_sabiqSeedsEarnedToday_13ddb3(String _pointsToday) {
-    return '+$_pointsToday Sabiq Seeds earned today!';
+    return '+$_pointsToday Benih Sabiq diperoleh hari ini!';
   }
 
   @override
@@ -8829,12 +8852,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String quranScreen_6d1f9d_6d1f9d(String arg1) {
-    return '$arg1 ';
+    return '$arg1';
   }
 
   @override
   String quranScreen_ayahsRead_862866(String _ayahsToday) {
-    return '$_ayahsToday ayahs read';
+    return '$_ayahsToday ayah dibaca';
   }
 
   @override
@@ -8844,60 +8867,60 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String quranScreen_6e8ac8_6e8ac8(String text) {
-    return '$text ';
+    return '$text';
   }
 
   @override
   String quranScreen_pageJuz_6ac28a(String _currentPage, String arg1) {
-    return 'Page $_currentPage  ·  Juz $arg1';
+    return 'Halaman $_currentPage · Juz $arg1';
   }
 
   @override
   String get startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5 =>
-      'Unexpected error during Google Sign In';
+      'Kesalahan tak terduga saat Masuk dengan Google';
 
   @override
   String get startJourneyScreen_connectedToQuranCom_c0c631 =>
-      'Connected to Quran.com';
+      'Terhubung ke Quran.com';
 
   @override
   String streakScreen_nextDays_212b86(String arg1, String arg2) {
-    return 'Next: $arg1 ($arg2 days)';
+    return 'Berikutnya: $arg1 ($arg2 hari)';
   }
 
   @override
   String streakScreen_seeds_990893(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String streakScreen_days_100e10(String current, String arg1) {
-    return '$current / $arg1 days';
+    return '$current / $arg1 hari';
   }
 
   @override
   String streakScreen_dayStreak_df2abf(String arg1) {
-    return '$arg1 day streak';
+    return '$arg1 hari berturut-turut';
   }
 
   @override
   String get tafsirHubScreen_earnSeedsForEvery_ffb3d5 =>
-      'Earn Seeds for every 10 min of Tafsir listening';
+      'Hasilkan Benih untuk setiap 10 menit mendengarkan Tafsir';
 
   @override
-  String get tafsirScreen_alJalalaynEN_af0584 => 'Al-Jalalayn (EN)';
+  String get tafsirScreen_alJalalaynEN_af0584 => 'Al Jalalain (EN)';
 
   @override
   String tafsirScreen_verses_fed624(String arg1) {
-    return '$arg1 verses';
+    return '$arg1 ayat';
   }
 
   @override
-  String get tafsirScreen_trimmedContains_039f31 => ') && !trimmed.contains(';
+  String get tafsirScreen_trimmedContains_039f31 => ') && !dipangkas.berisi(';
 
   @override
   String tafsirScreen_ayahOf_63c42b(String _ayah, String _surahLen) {
-    return 'Ayah $_ayah of $_surahLen';
+    return 'Ayah $_ayah dari $_surahLen';
   }
 
   @override
@@ -8911,67 +8934,67 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get tafsirScreen_tafsirNotAvailableFor_0fce81 =>
-      'Tafsir not available for this ayah.';
+      'Tafsir tidak tersedia untuk ayat ini.';
 
   @override
   String get donationService_youMustBeLogged_6813cf =>
-      'You must be logged in to donate.';
+      'Anda harus login untuk berdonasi.';
 
   @override
   String get donationService_donationCouldNotBe_074195 =>
-      'Donation could not be processed at this time.';
+      'Donasi tidak dapat diproses saat ini.';
 
   @override
   String get donationService_anUnexpectedNetworkError_914b7a =>
-      'An unexpected network error occurred.';
+      'Terjadi kesalahan jaringan yang tidak terduga.';
 
   @override
   String get donationService_sponsorshipReceived_671201 =>
-      'Sponsorship received 💝';
+      'Sponsor diterima 💝';
 
   @override
   String donationService_youSponsoredSeedsJazak_7711e1(String amount) {
-    return 'You sponsored $amount Seeds · jazak Allah khair.';
+    return 'Anda mensponsori $amount Benih · jazak Allah khair.';
   }
 
   @override
   String get donationService_sponsorshipCouldNotBe_55003e =>
-      'Sponsorship could not be processed at this time.';
+      'Sponsor tidak dapat diproses saat ini.';
 
   @override
   String get liveNotificationService_remindersToSealYour_782a67 =>
-      'Reminders to seal your pending Seeds before midnight.';
+      'Pengingat untuk menyegel Benih Anda yang tertunda sebelum tengah malam.';
 
   @override
   String get liveNotificationService_sealYourSeedsBefore_62a726 =>
-      'Seal your Seeds before midnight';
+      'Segel Benih Anda sebelum tengah malam';
 
   @override
   String liveNotificationService_youHavePendingSeeds_dd762f(
     String pendingSeeds,
   ) {
-    return 'You have $pendingSeeds pending Seeds. Tap Seal the Day before midnight or they expire.';
+    return 'Anda memiliki $pendingSeeds Benih yang tertunda. Ketuk Segel Hari sebelum tengah malam atau hari tersebut akan habis masa berlakunya.';
   }
 
   @override
   String liveNotificationService_ayatReadToday_b5a4e8(String _ayahCount) {
-    return '$_ayahCount Ayat Read today 📖';
+    return '$_ayahCount Ayat Baca hari ini 📖';
   }
 
   @override
   String liveNotificationService_readQuranToday_703122(String arg1) {
-    return '$arg1 Read Quran today ⏱️';
+    return '$arg1 Baca Quran hari ini ⏱️';
   }
 
   @override
   String get liveNotificationService_nothingReadFromQuran_b1c2eb =>
-      'Nothing Read from Quran today 📖';
+      'Tidak ada yang dibaca dari Quran hari ini 📖';
 
   @override
   String liveNotificationService_dhikrCompletedToday_835583(
     String _dhikrCount,
   ) {
-    return '$_dhikrCount Dhikr completed today 📿';
+    return '$_dhikrCount Dzikir selesai hari ini 📿';
   }
 
   @override
@@ -8979,55 +9002,55 @@ class AppLocalizationsId extends AppLocalizations {
     String _ayahCount,
     String _dhikrCount,
   ) {
-    return '$_ayahCount ayat · $_dhikrCount dhikr today';
+    return '$_ayahCount ayat · $_dhikrCount dzikir hari ini';
   }
 
   @override
   String get liveNotificationService_keepReadingAndDoing_cdc7b2 =>
-      'Keep reading and doing Dhikr!';
+      'Teruslah membaca dan berdzikir!';
 
   @override
   String get liveNotificationService_yourSeedsToday_8649c6 =>
-      'Your Seeds Today ✨';
+      'Benih Anda Hari Ini ✨';
 
   @override
   String get localReminderScheduler_sabiqRewardsNotifications_96d36c =>
-      'Sabiq Rewards Notifications';
+      'Pemberitahuan Hadiah Sabiq';
 
   @override
-  String get localReminderScheduler_it_0c8340 => 'It\\';
+  String get localReminderScheduler_it_0c8340 => 'Dia\\';
 
   @override
   String get localReminderScheduler_fridayReadSurahAl_077436 =>
-      's Friday — read Surah Al-Kahf';
+      's Jumat — membaca Surat Al-Kahfi';
 
   @override
   String get localReminderScheduler_whoeverRecitesSurahAl_15b9a5 =>
-      'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.';
+      'Barangsiapa membaca Surat Al-Kahfi pada hari Jum\'at, maka baginya cahaya bersinar di antara dua hari Jum\'at.';
 
   @override
-  String get localReminderScheduler_don_b4d354 => 'Don\\';
+  String get localReminderScheduler_don_b4d354 => 'Mengenakan\\';
 
   @override
   String get localReminderScheduler_missSurahAlKahf_634857 =>
-      't miss Surah Al-Kahf today';
+      'Aku tidak melewatkan Surah Al-Kahfi hari ini';
 
   @override
   String get localReminderScheduler_fewHoursToMaghrib_d99fd2 =>
-      'A few hours to Maghrib — finish Surah Al-Kahf if you haven\\';
+      'Beberapa jam menuju Maghrib — selesaikan Surah Al-Kahfi jika belum\\';
 
   @override
   String get quranApiService_notConnectedToQuran_9f4f89 =>
-      'Not connected to Quran.com';
+      'Tidak terhubung ke Quran.com';
 
   @override
   String quranApiService_syncFailedBookmarkCould_3393f7(String failed) {
-    return 'Sync failed, $failed bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+    return 'Sinkronisasi gagal, $failed bookmark tidak dapat dikirim ke Quran.com (periksa token / titik akhir).';
   }
 
   @override
   String get quranApiService_bookmarksAlreadyInSync_fad9e1 =>
-      'Bookmarks already in sync';
+      'Bookmark sudah sinkron';
 
   @override
   String quranApiService_syncedBookmarksUpDown_dd2f96(
@@ -9035,31 +9058,31 @@ class AppLocalizationsId extends AppLocalizations {
     String uploaded,
     String downloaded,
   ) {
-    return 'Synced $total bookmarks ($uploaded up, $downloaded down)';
+    return 'Bookmark $total yang disinkronkan ($uploaded naik, $downloaded turun)';
   }
 
   @override
   String quranApiService_syncFailed_ae7629(String e) {
-    return 'Sync failed: $e';
+    return 'Sinkronisasi gagal: $e';
   }
 
   @override
-  String get streakService_warmingUp_b1687b => 'Warming Up';
+  String get streakService_warmingUp_b1687b => 'Pemanasan';
 
   @override
-  String get streakService_oneWeek_4f98dc => 'One Week';
+  String get streakService_oneWeek_4f98dc => 'Seminggu';
 
   @override
-  String get streakService_twoWeeks_9a2d93 => 'Two Weeks';
+  String get streakService_twoWeeks_9a2d93 => 'Dua Minggu';
 
   @override
-  String get streakService_oneMonth_35eb01 => 'One Month';
+  String get streakService_oneMonth_35eb01 => 'Satu Bulan';
 
   @override
-  String get streakService_twoMonths_84d275 => 'Two Months';
+  String get streakService_twoMonths_84d275 => 'Dua Bulan';
 
   @override
-  String get streakService_theCenturion_f1de7f => 'The Centurion';
+  String get streakService_theCenturion_f1de7f => 'Perwira';
 
   @override
   String streakService_1fc043_1fc043(String arg1, String arg2) {
@@ -9068,12 +9091,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String streakService_dayStreak_9ee8a3(String arg1, String arg2) {
-    return '$arg1-day $arg2 streak · ';
+    return '$arg1-hari $arg2 berturut-turut ·';
   }
 
   @override
   String streakService_bonusSeedsUnlocked_bcdda5(String arg1) {
-    return '+$arg1 bonus Seeds unlocked';
+    return '+$arg1 bonus Benih terbuka';
   }
 
   @override
@@ -9083,50 +9106,50 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String xpService_level_226f81(String title, String level) {
-    return '$title • Level $level';
+    return '$title • Tingkat $level';
   }
 
   @override
-  String get xpService_newBadgeUnlocked_2c8d0e => 'New badge unlocked 🏆';
+  String get xpService_newBadgeUnlocked_2c8d0e => 'Lencana baru terbuka 🏆';
 
   @override
-  String get xpService_you_79d09a => 'You\\';
+  String get xpService_you_79d09a => 'Anda\\';
 
   @override
-  String get xpService_dailyLoginBonus_d011fa => 'Daily login bonus';
+  String get xpService_dailyLoginBonus_d011fa => 'Bonus masuk harian';
 
   @override
   String xpService_seedsWelcomeBack_47888a(String arg1) {
-    return '+$arg1 Seeds · welcome back!';
+    return '+$arg1 Benih · selamat datang kembali!';
   }
 
   @override
-  String get xpService_daySealed_037a56 => 'Day sealed 🌙';
+  String get xpService_daySealed_037a56 => 'Hari tersegel 🌙';
 
   @override
   String xpService_sabiqSeedsConfirmedBonus_702902(
     String flushed,
     String bonus,
   ) {
-    return '+$flushed Sabiq Seeds confirmed! ($bonus bonus for sealing)';
+    return '+$flushed Benih Sabiq dikonfirmasi! ($bonus bonus untuk penyegelan)';
   }
 
   @override
   String xpService_sabiqSeedsConfirmed_34969c(String flushed) {
-    return '+$flushed Sabiq Seeds confirmed!';
+    return '+$flushed Benih Sabiq dikonfirmasi!';
   }
 
   @override
   String get dhikrExitCelebration_everyBreathCounts_45b3df =>
-      'Every breath counts.';
+      'Setiap napas berarti.';
 
   @override
   String get impactAnimation_yourRewardHasBeen_e3d106 =>
-      'Your reward has been recorded.';
+      'Hadiah Anda telah dicatat.';
 
   @override
   String get motivationalPopup_verilyWithHardshipComes_f23637 =>
-      'Verily, with hardship comes ease.\\nEvery trial is a door to something greater.';
+      'Sesungguhnya bersama kesulitan ada kemudahan.\\nSetiap cobaan adalah pintu menuju sesuatu yang lebih besar.';
 
   @override
   String get motivationalPopup_quranAlInshirah_d81f8a =>
@@ -9145,114 +9168,114 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get motivationalPopup_makeYourTimePrecious_049aae =>
-      'Make your time precious.\\nShare goodness with a friend today ,\\nevery good deed shared is a sadaqah.';
+      'Jadikan waktu Anda berharga.\\nBagikan kebaikan kepada teman hari ini ,\\tidak ada amal baik yang dibagikan adalah sedekah.';
 
   @override
   String get motivationalPopup_guideOthersToGood_6105c4 =>
-      'Guide others to good, and you get its reward.';
+      'Bimbinglah orang lain kepada kebaikan, maka kamu akan mendapat pahalanya.';
 
   @override
   String get motivationalPopup_theBestOfPeople_1f6906 =>
-      'The best of people are those most beneficial to others.';
+      'Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.';
 
   @override
   String get motivationalPopup_verilyInTheRemembrance_16476d =>
-      'Verily, in the remembrance of Allah\\ndo hearts find rest.';
+      'Sesungguhnya dengan mengingat Allah\\ndo hati menjadi tenteram.';
 
   @override
   String get motivationalPopup_remindYourselfTimeIs_38ae33 =>
-      'Remind yourself, time is the most precious sadaqah.';
+      'Ingatkan diri Anda, waktu adalah sedekah yang paling berharga.';
 
   @override
   String get motivationalPopup_yourTimeIsYour_be6731 =>
-      'Your time is your most\\nprecious asset. Invest it wisely\\nin what endures forever.';
+      'Waktu Anda adalah aset Anda yang paling\\nberharga. Investasikan dengan bijak\\untuk hal yang bertahan selamanya.';
 
   @override
   String get motivationalPopup_quranAlAnfal_b10486 => 'Quran • Al-Anfal 8:28';
 
   @override
   String get motivationalPopup_takeAdvantageOfFive_e573fd =>
-      'Take advantage of five before five.';
+      'Manfaatkan lima sebelum lima.';
 
   @override
   String get motivationalPopup_youHaveBeenRewarded_9bde33 =>
-      'You have been rewarded for\\nyour consistency today!';
+      'Anda telah diberi penghargaan atas\\nkonsistensi Anda hari ini!';
 
   @override
   String motivationalPopup_seeds_3a9c69(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 Benih';
   }
 
   @override
   String get motivationalPopup_completeNowEarnSeeds_16ea6e =>
-      'Complete now → earn +50 Seeds bonus';
+      'Selesaikan sekarang → dapatkan bonus +50 Benih';
 
   @override
   String get motivationalPopup_finishYourAzkaarEarn_e264fa =>
-      'Finish your Azkaar → earn +30 Seeds bonus';
+      'Selesaikan Azkaar Anda → dapatkan bonus +30 Benih';
 
   @override
   String get motivationalPopup_shareSabiqWithSomeone_c60dcc =>
-      'Share Sabiq with someone → earn +100 Seeds';
+      'Bagikan Sabiq dengan seseorang → dapatkan +100 Biji';
 
   @override
   String get motivationalPopup_keepYourSpiritualMomentum_0f172c =>
-      'Keep your spiritual momentum going\\nand watch your Seeds grow ✨';
+      'Pertahankan momentum spiritual Anda\\dan saksikan Benih Anda bertumbuh ✨';
 
   @override
-  String get noorOffline_somethingWentWrong_76fc46 => 'Something went wrong';
+  String get noorOffline_somethingWentWrong_76fc46 => 'Ada yang tidak beres';
 
   @override
   String get notificationsSheet_stayOnTopOf_811366 =>
-      'Stay on top of rewards & milestones';
+      'Pantau terus penghargaan & pencapaian';
 
   @override
   String get notificationsSheet_llBeNotifiedAbout_9e7a1b =>
-      'll be notified about rewards, streaks & milestones.';
+      'akan diberitahu tentang hadiah, coretan & pencapaian.';
 
   @override
   String get notificationsSheet_inboxKeepsExistingItems_611668 =>
-      'Inbox keeps existing items but no new ones will arrive.';
+      'Kotak Masuk menyimpan item yang sudah ada tetapi tidak ada item baru yang datang.';
 
   @override
   String get notificationsSheet_sabiqSeedsForSealing_001312 =>
-      'Sabiq Seeds for sealing today';
+      'Bibit Sabiq untuk penyegelan hari ini';
 
   @override
   String get projectMediaCarousel_couldNotLoadVideo_deb8dd =>
-      'Could not load video';
+      'Tidak dapat memuat video';
 
   @override
   String get quranExitCelebration_beautifulRecitation_9d2655 =>
-      'Beautiful recitation.';
+      'Bacaan yang indah.';
 
   @override
   String get quranExitCelebration_everyMomentCounts_fddb4c =>
-      'Every moment counts.';
+      'Setiap momen penting.';
 
   @override
   String sealCoinAnimation_e16fa4_e16fa4(String arg1) {
-    return '+$arg1 ';
+    return '+$arg1';
   }
 
   @override
   String impactReportScreen_totalHasanatFromQuran(String n) {
-    return 'Total hasanat from Quran: $n';
+    return 'Total hasanat dari Quran: $n';
   }
 
   @override
   String impactReportScreen_totalTreesPlanted(String n) {
-    return 'Total trees planted: $n';
+    return 'Jumlah pohon yang ditanam: $n';
   }
 
   @override
   String impactReportScreen_totalTreasures(String n) {
-    return 'Total treasures: $n';
+    return 'Jumlah harta karun: $n';
   }
 
   @override
   String impactReportScreen_multipliedByGates(String n) {
-    return 'Multiplied by 8 gates → $n openings';
+    return 'Dikalikan dengan 8 gerbang → $n bukaan';
   }
 
   @override
@@ -9262,22 +9285,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String impactReportScreen_totalDonatedSeeds(String n, String seeds) {
-    return 'Total donated: $n $seeds';
+    return 'Jumlah yang disumbangkan: $n $seeds';
   }
 
   @override
   String get dashboardScreen_dashboardLoadFailed =>
-      'Couldn\'t load your dashboard. Please try again.';
+      'Tidak dapat memuat dasbor Anda. Silakan coba lagi.';
 
   @override
-  String get zikrLabel => 'Zikr';
+  String get zikrLabel => 'Zikir';
 
   @override
-  String get quranLabel => 'Quran';
+  String get quranLabel => 'Alquran';
 
   @override
   String streakService_dayStreakBody(String days, String type, String bonus) {
-    return '$days-day $type streak · +$bonus bonus Seeds unlocked';
+    return '$days-hari $type beruntun · +$bonus bonus Benih terbuka';
   }
 
   @override
@@ -9292,15 +9315,15 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String streakService_dayStreak_b49b65(Object arg1, Object arg2) {
-    return '$arg1-day $arg2 streak · ';
+    return '$arg1-hari $arg2 berturut-turut ·';
   }
 
   @override
-  String get donationService_donationReceivedTitle => 'Donation received 💝';
+  String get donationService_donationReceivedTitle => 'Donasi diterima 💝';
 
   @override
   String donationService_youDonatedSeeds(String amount) {
-    return 'You donated $amount Seeds · jazak Allah khair.';
+    return 'Anda menyumbangkan $amount Benih · jazak Allah khair.';
   }
 
   @override
@@ -9310,151 +9333,150 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String xpService_badgeEarnedBody(String name) {
-    return 'You\'ve earned the \"$name\" badge.';
+    return 'Anda telah mendapatkan lencana \"$name\".';
   }
 
   @override
-  String get localReminderScheduler_channelName =>
-      'Sabiq Rewards Notifications';
+  String get localReminderScheduler_channelName => 'Pemberitahuan Hadiah Sabiq';
 
   @override
-  String get localReminderScheduler_morningTitle => 'Morning Azkar';
+  String get localReminderScheduler_morningTitle => 'Pagi Azkar';
 
   @override
   String get localReminderScheduler_morningBody =>
-      'Start your day under Allah\'s protection — recite the morning adhkar.';
+      'Mulailah hari Anda di bawah perlindungan Allah - bacalah adzkar pagi.';
 
   @override
-  String get localReminderScheduler_astaghfirTitle => 'A moment for istighfar';
+  String get localReminderScheduler_astaghfirTitle => 'Sesaat untuk istighfar';
 
   @override
   String get localReminderScheduler_astaghfirBody =>
-      '\"Astaghfirullah\" polishes the heart and opens doors of provision. Pause for one minute.';
+      '“Astaghfirullah” memoles hati dan membuka pintu rezeki. Jeda selama satu menit.';
 
   @override
-  String get localReminderScheduler_eveningTitle => 'Evening Azkar';
+  String get localReminderScheduler_eveningTitle => 'Sore Azkar';
 
   @override
   String get localReminderScheduler_eveningBody =>
-      'Protect yourself for the night — recite the evening adhkar.';
+      'Lindungi diri Anda untuk malam ini — bacalah adzkar malam.';
 
   @override
-  String get localReminderScheduler_sleepTitle => 'Time to wind down';
+  String get localReminderScheduler_sleepTitle => 'Saatnya bersantai';
 
   @override
   String get localReminderScheduler_sleepBody =>
-      'End the day with sleep adhkar — Ayatul Kursi, the 3 Quls, and the bedtime du\'as.';
+      'Akhiri hari dengan adhkar tidur — Ayatul Kursi, 3 Quls, dan do\'a sebelum tidur.';
 
   @override
   String get localReminderScheduler_kahfAmTitle =>
-      'It\'s Friday — read Surah Al-Kahf';
+      'Ini hari Jumat — bacalah Surat Al-Kahfi';
 
   @override
   String get localReminderScheduler_kahfBody =>
-      'Whoever recites Surah Al-Kahf on Friday, light shines for them between the two Fridays.';
+      'Barangsiapa membaca Surat Al-Kahfi pada hari Jum\'at, maka baginya cahaya bersinar di antara dua hari Jum\'at.';
 
   @override
-  String get localReminderScheduler_salawatTitle => 'Salawat on Friday';
+  String get localReminderScheduler_salawatTitle => 'Sholawat di hari Jum\'at';
 
   @override
   String get localReminderScheduler_salawatBody =>
-      'Recite salawat upon the Prophet ﷺ generously today — the deeds of Friday are shown to him.';
+      'Bacalah shalawat kepada Nabi ﷺ dengan murah hati hari ini — amalan hari Jumat diperlihatkan kepadanya.';
 
   @override
   String get localReminderScheduler_kahfPmTitle =>
-      'Don\'t miss Surah Al-Kahf today';
+      'Jangan lewatkan Surat Al-Kahfi hari ini';
 
   @override
   String get localReminderScheduler_kahfPmBody =>
-      'A few hours to Maghrib — finish Surah Al-Kahf if you haven\'t yet.';
+      'Beberapa jam menuju Maghrib — selesaikan Surah Al-Kahfi jika Anda belum melakukannya.';
 
   @override
   String get liveNotificationService_validateChannelDesc =>
-      'Reminders to seal your pending Seeds before midnight.';
+      'Pengingat untuk menyegel Benih Anda yang tertunda sebelum tengah malam.';
 
   @override
   String get liveNotificationService_validateTicker =>
-      'Seal your Seeds before midnight';
+      'Segel Benih Anda sebelum tengah malam';
 
   @override
   String get liveNotificationService_validateTitle =>
-      'Seal your Seeds before midnight!';
+      'Segel Benih Anda sebelum tengah malam!';
 
   @override
   String liveNotificationService_validateBody(String n) {
-    return 'You have $n pending Seeds. Tap Seal the Day before midnight or they expire.';
+    return 'Anda memiliki $n Benih yang tertunda. Ketuk Segel Hari sebelum tengah malam atau hari tersebut akan habis masa berlakunya.';
   }
 
   @override
   String liveNotificationService_ayatRead(String n) {
-    return '$n Ayat Read today 📖';
+    return '$n Ayat Baca hari ini 📖';
   }
 
   @override
   String liveNotificationService_readQuranTime(String time) {
-    return '$time Read Quran today ⏱️';
+    return '$time Baca Quran hari ini ⏱️';
   }
 
   @override
   String get liveNotificationService_nothingRead =>
-      'Nothing Read from Quran today 📖';
+      'Tidak ada yang dibaca dari Quran hari ini 📖';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
-    return '$n Dhikr completed today 📿';
+    return '$n Dzikir selesai hari ini 📿';
   }
 
   @override
   String liveNotificationService_tickerBusy(String ayah, String dhikr) {
-    return '$ayah ayat · $dhikr dhikr today';
+    return '$ayah ayat · $dhikr dzikir hari ini';
   }
 
   @override
   String get liveNotificationService_tickerIdle =>
-      'Keep reading and doing Dhikr!';
+      'Teruslah membaca dan berdzikir!';
 
   @override
   String get liveNotificationService_channelDesc =>
-      'Live today\'s Quran and Dhikr progress';
+      'Jalani kemajuan Quran dan Dzikir hari ini';
 
   @override
-  String get liveNotificationService_seedsToday => 'Your Seeds Today ✨';
+  String get liveNotificationService_seedsToday => 'Benih Anda Hari Ini ✨';
 
   @override
-  String get liveNotificationService_summary => 'Tap to open Sabiq';
+  String get liveNotificationService_summary => 'Ketuk untuk membuka Sabiq';
 
   @override
-  String get quranApiService_notConnected => 'Not connected to Quran.com';
+  String get quranApiService_notConnected => 'Tidak terhubung ke Quran.com';
 
   @override
-  String get quranApiService_notSignedIn => 'Not signed in to Noor';
+  String get quranApiService_notSignedIn => 'Tidak masuk ke Noor';
 
   @override
   String quranApiService_syncFailedPush(String n) {
-    return 'Sync failed, $n bookmark(s) could not be pushed to Quran.com (check token / endpoint).';
+    return 'Sinkronisasi gagal, $n bookmark tidak dapat dikirim ke Quran.com (periksa token / titik akhir).';
   }
 
   @override
-  String get quranApiService_alreadyInSync => 'Bookmarks already in sync';
+  String get quranApiService_alreadyInSync => 'Bookmark sudah sinkron';
 
   @override
   String quranApiService_syncedBookmarks(String total, String up, String down) {
-    return 'Synced $total bookmarks ($up up, $down down)';
+    return 'Bookmark $total yang disinkronkan ($up naik, $down turun)';
   }
 
   @override
   String quranApiService_syncFailedPartial(String n) {
-    return ', $n failed';
+    return ', $n gagal';
   }
 
   @override
   String quranApiService_syncFailedGeneric(String error) {
-    return 'Sync failed: $error';
+    return 'Sinkronisasi gagal: $error';
   }
 
   @override
   String get authScreen_dontHaveAnAccountSignUp =>
-      'Don\'t have an account? Sign Up';
+      'Belum punya akun? Mendaftar';
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Keep it up!';

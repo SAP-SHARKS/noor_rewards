@@ -730,7 +730,7 @@
   "projectCount": "{count, plural, =1{Projet} other{Projets}}",
   "couldntLoadJourney": "Impossible de charger votre Parcours",
   "checkConnectionRetry": "Vérifiez votre connexion et réessayez.",
-  "actionsCount": "{count, plural, =1{1 action} autres{{count} actions}}",
+  "actionsCount": "{count, plural, =1{1 action} other{{count} actions}}",
   "showLessAction": "Voir moins ←",
   "hadithReference": "Référence du Hadith",
   "howYouEarnedThis": "Comment vous avez gagné cela",

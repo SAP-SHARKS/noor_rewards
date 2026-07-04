@@ -9,73 +9,73 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get youSuffix => '(you)';
+  String get youSuffix => '(ты)';
 
   @override
-  String get userFallback => 'User';
+  String get userFallback => 'Пользователь';
 
   @override
-  String get youHaveDone => 'You\'ve Done!';
+  String get youHaveDone => 'Вы сделали!';
 
   @override
-  String get playAllBtn => 'Play All';
+  String get playAllBtn => 'Воспроизвести все';
 
   @override
-  String get playBtn => 'Play';
+  String get playBtn => 'Играть';
 
   @override
-  String get readBtn => 'Read';
+  String get readBtn => 'Читать';
 
   @override
-  String get readOnce => 'Read once';
+  String get readOnce => 'Прочтите один раз';
 
   @override
   String readNTimes(int count) {
-    return 'Read $count times';
+    return 'Прочтите $count раз';
   }
 
   @override
   String seedsEarnedToday(int count) {
-    return '+$count Sabiq Seeds earned today!';
+    return '+$count Сабик Сидс заработан сегодня!';
   }
 
   @override
-  String get catDailyRemembrance => 'DAILY REMEMBRANCE';
+  String get catDailyRemembrance => 'ЕЖЕДНЕВНАЯ ПАМЯТЬ';
 
   @override
-  String get catNightlyRemembrance => 'NIGHTLY REMEMBRANCE';
+  String get catNightlyRemembrance => 'НОЧНЫЕ ВОСПОМИНАНИЯ';
 
   @override
-  String get catYourSelection => 'YOUR SELECTION';
+  String get catYourSelection => 'ВАШ ВЫБОР';
 
   @override
-  String get catContinuousRemembrance => 'CONTINUOUS REMEMBRANCE';
+  String get catContinuousRemembrance => 'НЕПРЕРЫВНАЯ ПАМЯТЬ';
 
   @override
   String get bannerDailyRemembrance =>
-      'Daily Remembrance\nbrings peace to the soul.';
+      'Ежедневное воспоминание\nприносит покой душе.';
 
   @override
   String get bannerMorningAdhkar =>
-      'Morning Adhkar\nbrings peace to the soul and light to the path.';
+      'Утренний Адкар\nприносит мир душе и свет на путь.';
 
   @override
   String get bannerEveningAdhkar =>
-      'Evening Adhkar\nbrings tranquility and protection for the night.';
+      'Вечерний Азкар\nприносит спокойствие и защиту на ночь.';
 
   @override
   String get bannerYourSelection =>
-      'Your beloved words\nof remembrance to keep close to your heart.';
+      'Твои любимые слова\nвоспоминаний, которые следует держать близко к сердцу.';
 
   @override
   String get bannerContinuousRemembrance =>
-      'Remember Allah\nmuch, that you may be successful.';
+      'Помни Аллаха\nмного, чтобы ты мог добиться успеха.';
 
   @override
-  String get frequentlyReadByCommunity => 'Frequently read';
+  String get frequentlyReadByCommunity => 'Часто читаю';
 
   @override
-  String get viewFullLeaderboard => 'View full leaderboard';
+  String get viewFullLeaderboard => 'Посмотреть полную таблицу лидеров';
 
   @override
   String get skip => 'Пропустить';
@@ -97,7 +97,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lightOfMercy => 'СВЕТ МИЛОСЕРДИЯ';
 
   @override
-  String get noorRewards => 'Sabiq Rewards';
+  String get noorRewards => 'Награды Сабика';
 
   @override
   String get startYourJourney => 'Начать путь';
@@ -412,10 +412,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get prev => 'Назад';
 
   @override
-  String get reciteMore => 'RECITE MORE.';
+  String get reciteMore => 'ЧИТАЙТЕ БОЛЬШЕ.';
 
   @override
-  String get helpRealLives => 'HELP REAL LIVES.';
+  String get helpRealLives => 'ПОМОГИТЕ РЕАЛЬНЫМ ЖИЗНЯМ.';
 
   @override
   String get yourNoorPointsFundProjects =>
@@ -437,7 +437,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get apply => 'Применить';
 
   @override
-  String get plantGoodDeeds => 'PLANT GOOD DEEDS';
+  String get plantGoodDeeds => 'ЗАВОДИТЕ ДОБРЫЕ ДЕЛА';
 
   @override
   String get youDonated => 'Вы пожертвовали';
@@ -1366,7 +1366,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String myContribution(String pts) {
-    return 'My contribution: $pts pts';
+    return 'Мой вклад: $pts баллов';
   }
 
   @override
@@ -1691,111 +1691,111 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String noorPlusPoints(String pts) {
-    return '+$pts Sabiq Seeds';
+    return '+$pts Сабик Семена';
   }
 
   @override
-  String get yourGarden => 'YOUR GARDEN';
+  String get yourGarden => 'ВАШ САД';
 
   @override
-  String get noorPointsBloomed => 'Sabiq Seeds bloomed';
+  String get noorPointsBloomed => 'Семена Сабика зацвели.';
 
   @override
-  String get growingStreakTitle => 'GROWING STREAK';
+  String get growingStreakTitle => 'СТРЕМИТЕЛЬНЫЙ РОСТ';
 
   @override
-  String get daySingular => 'day';
+  String get daySingular => 'день';
 
   @override
-  String get daysPlural => 'days';
+  String get daysPlural => 'дни';
 
   @override
-  String get keepGrowing => 'keep growing';
+  String get keepGrowing => 'продолжайте расти';
 
   @override
-  String get progressLabel => 'Progress';
+  String get progressLabel => 'Прогресс';
 
   @override
-  String get weekTab => 'Week';
+  String get weekTab => 'Неделя';
 
   @override
-  String get monthTab => 'Month';
+  String get monthTab => 'Месяц';
 
   @override
-  String get todayTab => 'Today';
+  String get todayTab => 'Сегодня';
 
   @override
   String ofTabGoal(String goal, String tab) {
-    return 'of $goal $tab goal';
+    return 'цели $goal $tab';
   }
 
   @override
-  String get todaysPlots => 'Today\'s plots';
+  String get todaysPlots => 'Сегодняшние сюжеты';
 
   @override
   String setsTodayCount(String count) {
-    return 'sets today $count';
+    return 'устанавливает сегодня $count';
   }
 
   @override
-  String get earnPerFriend => 'Earn +500 per friend';
+  String get earnPerFriend => 'Зарабатывайте +500 за друга';
 
   @override
   String lastAchievement(String name) {
-    return 'Last: $name';
+    return 'Последний: $name';
   }
 
   @override
   String outOfBelievers(String count) {
-    return 'Out of $count believers';
+    return 'Из $count верующих';
   }
 
   @override
   String yourRankNum(String rank) {
-    return 'Your Rank: #$rank';
+    return 'Ваш ранг: #$rank';
   }
 
   @override
-  String get youIndicator => '(you)';
+  String get youIndicator => '(ты)';
 
   @override
-  String get greetingPrefix => 'Assalamu alaikum,';
+  String get greetingPrefix => 'Ассаламу алейкум,';
 
   @override
-  String get fundProjectsText => 'Your Sabiq Seeds fund these projects';
+  String get fundProjectsText => 'Ваши Sabiq Seeds финансируют эти проекты';
 
   @override
   String activeCount(String count) {
-    return '$count active';
+    return '$count активен';
   }
 
   @override
-  String get seeDetailsForMoreProjects => 'See Details for more Projects →';
+  String get seeDetailsForMoreProjects => 'Подробнее о других проектах →';
 
   @override
-  String get notificationsSubtitle => 'Stay on top of rewards & milestones';
+  String get notificationsSubtitle => 'Будьте в курсе наград и этапов';
 
   @override
-  String get markAllAsRead => 'Mark all as read';
+  String get markAllAsRead => 'Отметить все как прочитанное';
 
   @override
-  String get clearAll => 'Clear all';
+  String get clearAll => 'Очистить все';
 
   @override
-  String get notificationsOn => 'Notifications on';
+  String get notificationsOn => 'Уведомления включены';
 
   @override
-  String get notificationsOff => 'Notifications off';
+  String get notificationsOff => 'Уведомления отключены';
 
   @override
-  String get allCaughtUp => 'All caught up';
+  String get allCaughtUp => 'Все догнали';
 
   @override
   String get whenYouEarnRewards =>
-      'When you earn rewards, hit a streak, or unlock a badge,\nit\'ll show up here.';
+      'Когда вы зарабатываете награды, достигаете серии результатов или открываете значок,\nоно появится здесь.';
 
   @override
-  String get justNow => 'Just now';
+  String get justNow => 'Прямо сейчас';
 
   @override
   String mAgo(String delta) {
@@ -1813,213 +1813,215 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get newBadgeUnlocked => 'New badge unlocked';
+  String get newBadgeUnlocked => 'Новый значок разблокирован';
 
   @override
-  String get daySealed => 'Day sealed';
+  String get daySealed => 'День запечатан';
 
   @override
-  String get dailyLoginBonus => 'Daily login bonus';
+  String get dailyLoginBonus => 'Ежедневный бонус за вход';
 
   @override
-  String get oneWeek => 'One Week';
+  String get oneWeek => 'Одна неделя';
 
   @override
-  String get twoWeeks => 'Two Weeks';
+  String get twoWeeks => 'Две недели';
 
   @override
   String badgeEarnedDesc(String badge) {
-    return 'You\'ve earned the \"$badge\" badge.';
+    return 'Вы заслужили значок «$badge».';
   }
 
   @override
   String pointsForSealing(String points) {
-    return '+$points Sabiq Seeds for sealing today.';
+    return '+$points Семена Сабика для запечатывания сегодня.';
   }
 
   @override
   String welcomeBack(String points) {
-    return '+$points Sabiq Seeds · welcome back!';
+    return '+$points Sabiq Seeds · с возвращением!';
   }
 
   @override
-  String get onbV2Skip => 'Skip';
+  String get onbV2Skip => 'Пропускать';
 
   @override
-  String get onbV2Next => 'Next';
+  String get onbV2Next => 'Следующий';
 
   @override
-  String get onbV2_1_TitleA => 'Your Quran reading';
+  String get onbV2_1_TitleA => 'Ваше чтение Корана';
 
   @override
-  String get onbV2_1_TitleB => 'feeds the hungry.';
+  String get onbV2_1_TitleB => 'кормит голодных.';
 
   @override
-  String get onbV2_1_Sub => 'Real meals. Real people. Real impact.';
+  String get onbV2_1_Sub =>
+      'Настоящая еда. Настоящие люди. Настоящее воздействие.';
 
   @override
-  String get onbV2_1_Cta => 'How does that work?';
+  String get onbV2_1_Cta => 'Как это работает?';
 
   @override
-  String get onbV2_2_Title => 'Here\'s how.';
+  String get onbV2_2_Title => 'Вот как.';
 
   @override
   String get onbV2_2_Body =>
-      'Read Quran or recite dhikr → earn Sabiq Seeds → fund real causes.';
+      'Читайте Коран или читайте зикр → зарабатывайте семена сабика → финансируйте реальные дела.';
 
   @override
-  String get onbV2_3_TitleA => 'The Quran rewards you';
+  String get onbV2_3_TitleA => 'Коран вознаграждает вас';
 
   @override
-  String get onbV2_3_TitleB => 'twice.';
+  String get onbV2_3_TitleB => 'дважды.';
 
   @override
   String get onbV2_3_Sub =>
-      'Once with Allah\'s blessing. Once with Seeds that feed the needy.';
+      'Однажды с благословения Аллаха. Однажды с Семенами, которые кормят нуждающихся.';
 
   @override
-  String get onbV2_3_BannerLabel => 'earned today';
+  String get onbV2_3_BannerLabel => 'заработал сегодня';
 
   @override
-  String get onbV2_4_TitleA => 'See your worship';
+  String get onbV2_4_TitleA => 'Увидеть свое поклонение';
 
   @override
-  String get onbV2_4_TitleB => 'come to life.';
+  String get onbV2_4_TitleB => 'ожить.';
 
   @override
   String get onbV2_4_Sub =>
-      'Recite morning and evening dhikr, and watch your reward unfold, hadith by hadith.';
+      'Читайте утренний и вечерний зикр и наблюдайте, как ваша награда разворачивается, хадис за хадисом.';
 
   @override
-  String get onbV2_5_TitleA => 'Your reading reaches';
+  String get onbV2_5_TitleA => 'Ваше чтение достигает';
 
   @override
-  String get onbV2_5_TitleB => 'here.';
+  String get onbV2_5_TitleB => 'здесь.';
 
   @override
   String get onbV2_5_Sub =>
-      'Every Seed you earn becomes real food, real water, real hope.';
+      'Каждое заработанное вами Семя становится настоящей пищей, настоящей водой, настоящей надеждой.';
 
   @override
-  String get onbV2_6_TitleA => 'But where does the';
+  String get onbV2_6_TitleA => 'Но откуда';
 
   @override
-  String get onbV2_6_TitleB => 'money';
+  String get onbV2_6_TitleB => 'деньги';
 
   @override
-  String get onbV2_6_TitleC => 'come from?';
+  String get onbV2_6_TitleC => 'откуда?';
 
   @override
   String get onbV2_6_Sub =>
-      'Generous donors fund the causes. Your Seeds direct where their gift goes, and grow their reward with every reader.';
+      'Щедрые доноры финансируют эти дела. Ваши семена направляют туда, куда направляется их дар, и увеличивают вознаграждение с каждым читателем.';
 
   @override
-  String get onbV2_6_Donor => 'Donor';
+  String get onbV2_6_Donor => 'Донор';
 
   @override
-  String get onbV2_6_DonorSub => 'Funds the cause';
+  String get onbV2_6_DonorSub => 'Финансирует дело';
 
   @override
-  String get onbV2_6_You => 'You';
+  String get onbV2_6_You => 'Ты';
 
   @override
-  String get onbV2_6_YouSub => 'Direct the gift';
+  String get onbV2_6_YouSub => 'Направьте подарок';
 
   @override
-  String get onbV2_6_Charity => 'Charity';
+  String get onbV2_6_Charity => 'Благотворительность';
 
   @override
-  String get onbV2_6_CharitySub => 'Delivers aid';
+  String get onbV2_6_CharitySub => 'Оказывает помощь';
 
   @override
-  String get onbV2_6_TrustBadge => '100% disbursed to verified partners';
+  String get onbV2_6_TrustBadge => '100% выплата проверенным партнерам';
 
   @override
-  String get onbV2_7_TitleA => 'Every deed is';
+  String get onbV2_7_TitleA => 'Каждый поступок';
 
   @override
-  String get onbV2_7_TitleB => 'counted.';
+  String get onbV2_7_TitleB => 'посчитал.';
 
   @override
   String get onbV2_7_Sub =>
-      'See the akhirah account you\'re building, trees, palaces, freed souls, rooted in authentic hadith.';
+      'Посмотрите отчет ахира, который вы строите, деревья, дворцы, освобожденные души, основанные на достоверных хадисах.';
 
   @override
-  String get onbV2_8_TitleA => 'Let\'s begin with your';
+  String get onbV2_8_TitleA => 'Начнем с вашего';
 
   @override
-  String get onbV2_8_TitleB => 'name.';
+  String get onbV2_8_TitleB => 'имя.';
 
   @override
-  String get onbV2_8_Sub => 'So Sabiq feels like yours.';
+  String get onbV2_8_Sub => 'Так что Сабик чувствует себя твоим.';
 
   @override
-  String get onbV2_8_Placeholder => 'Your name';
+  String get onbV2_8_Placeholder => 'Ваше имя';
 
   @override
-  String get onbV2_8_Cta => 'Continue';
+  String get onbV2_8_Cta => 'Продолжать';
 
   @override
-  String get onbV2_9_TitleA => 'Which cause moves you';
+  String get onbV2_9_TitleA => 'Какая причина движет тобой';
 
   @override
-  String get onbV2_9_TitleB => 'most?';
+  String get onbV2_9_TitleB => 'большинство?';
 
   @override
   String get onbV2_9_Sub =>
-      'Your Seeds support all causes, this just helps us understand what matters to our community.';
+      'Ваши семена поддерживают все начинания, это просто помогает нам понять, что важно для нашего сообщества.';
 
   @override
-  String get onbV2_9_Cta => 'Begin';
+  String get onbV2_9_Cta => 'Начинать';
 
   @override
-  String get onbV2_9_Orphans => 'Orphans';
+  String get onbV2_9_Orphans => 'Сироты';
 
   @override
   String get onbV2_9_OrphansSub =>
-      'Feed and care for children who\'ve lost everything';
+      'Накормите и позаботьтесь о детях, потерявших все';
 
   @override
-  String get onbV2_9_Water => 'Water Wells';
+  String get onbV2_9_Water => 'Водяные колодцы';
 
   @override
-  String get onbV2_9_WaterSub => 'Clean water for villages in need';
+  String get onbV2_9_WaterSub => 'Чистая вода для нуждающихся деревень';
 
   @override
-  String get onbV2_9_War => 'War-Impacted Areas';
+  String get onbV2_9_War => 'Районы, пострадавшие от войны';
 
   @override
-  String get onbV2_9_WarSub => 'Relief where it\'s needed most';
+  String get onbV2_9_WarSub => 'Помощь там, где она нужна больше всего';
 
   @override
-  String get onbV2_9_Disaster => 'Natural Disasters';
+  String get onbV2_9_Disaster => 'Стихийные бедствия';
 
   @override
-  String get onbV2_9_DisasterSub => 'Rapid response when crisis strikes';
+  String get onbV2_9_DisasterSub => 'Быстрое реагирование в случае кризиса';
 
   @override
-  String get onbV2_3step_Title => 'Three simple steps.';
+  String get onbV2_3step_Title => 'Три простых шага.';
 
   @override
-  String get onbV2_3step_Sub => 'Every verse, every dhikr becomes real aid.';
+  String get onbV2_3step_Sub =>
+      'Каждый стих, каждый зикр становится настоящей помощью.';
 
   @override
-  String get onbV2_3step_S1Label => 'Step 1';
+  String get onbV2_3step_S1Label => 'Шаг 1';
 
   @override
-  String get onbV2_3step_S1Text => 'Read Quran';
+  String get onbV2_3step_S1Text => 'Читайте Коран';
 
   @override
-  String get onbV2_3step_S2Label => 'Step 2';
+  String get onbV2_3step_S2Label => 'Шаг 2';
 
   @override
-  String get onbV2_3step_S2Text => 'Earn Seeds';
+  String get onbV2_3step_S2Text => 'Зарабатывайте семена';
 
   @override
-  String get onbV2_3step_S3Label => 'Step 3';
+  String get onbV2_3step_S3Label => 'Шаг 3';
 
   @override
-  String get onbV2_3step_S3Text => 'Feed Orphans';
+  String get onbV2_3step_S3Text => 'Кормить сирот';
 
   @override
   String get languageLabel => 'Язык';
@@ -2326,7 +2328,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get totalEarnedLabel => 'Всего получено';
 
   @override
-  String get alhamdulillahCta => 'Alhamdulillah! 🤲';
+  String get alhamdulillahCta => 'Альхамдулиллах! 🤲';
 
   @override
   String get openQuranCta => 'Открыть Коран';
@@ -2647,7 +2649,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get signInTitle => 'Вход';
 
   @override
-  String get emailFieldLabel => 'Email';
+  String get emailFieldLabel => 'Электронная почта';
 
   @override
   String get passwordFieldLabel => 'Пароль';
@@ -2851,13 +2853,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get thisWorld => 'Этот мир';
 
   @override
-  String get dunyaArabic => 'Dunya';
+  String get dunyaArabic => 'Дуня';
 
   @override
   String get hereafter => 'Ахира';
 
   @override
-  String get akhirahArabic => 'Akhirah';
+  String get akhirahArabic => 'Ахира';
 
   @override
   String get bookOfCompletePrayer => 'Книга полной молитвы';
@@ -3031,38 +3033,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityHasanat => 'хасанат сообщества';
 
   @override
-  String get authScreen_pleaseEnterYourEmail => 'Please enter your email';
+  String get authScreen_pleaseEnterYourEmail =>
+      'Пожалуйста, введите свой адрес электронной почты';
 
   @override
-  String get authScreen_pleaseEnterYourPassword => 'Please enter your password';
+  String get authScreen_pleaseEnterYourPassword =>
+      'Пожалуйста, введите свой пароль';
 
   @override
   String get authScreen_passwordMustBeAt =>
-      'Password must be at least 6 characters';
+      'Пароль должен быть не менее 6 символов';
 
   @override
-  String get authScreen_alreadyHaveAnAccount =>
-      'Already have an account? Sign In';
+  String get authScreen_alreadyHaveAnAccount => 'У вас уже есть аккаунт? Войти';
 
   @override
-  String get authScreen_haveAnAccountSign => 't have an account? Sign Up';
+  String get authScreen_haveAnAccountSign =>
+      'У тебя есть аккаунт? Зарегистрироваться';
 
   @override
   String qfAuthService_qfemailconflictexceptionAlreadyHasAn(String email) {
-    return 'QfEmailConflictException: $email already has an account';
+    return 'QfEmailConflictException: $email уже имеет учетную запись';
   }
 
   @override
   String get qfAuthService_openidOfflineAccessUser =>
-      'openid offline_access user bookmark collection reading_session';
+      'openid offline_access коллекция пользовательских закладок read_session';
 
   @override
   String qfAuthService_tokenExchangeFailed(String arg1, String arg2) {
-    return 'Token exchange failed ($arg1): $arg2';
+    return 'Сбой обмена токенов ($arg1): $arg2';
   }
 
   @override
-  String get qfAuthService_errorNullResponse => 'ERROR: Null response';
+  String get qfAuthService_errorNullResponse => 'ОШИБКА: Нулевой ответ';
 
   @override
   String orphan_be2bf7(String firstName, String lastInitial) {
@@ -3071,138 +3075,139 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get akhirahBalanceScreen_subhanallahiWaBiHamdihi =>
-      '“Subhanallahi wa bi-hamdihi” — said 100 times a day wipes sins, even like the foam of the sea. (Bukhari)';
+      '«Субханаллахи ва би-хамдихи» — произнесенное 100 раз в день смывает грехи, словно морская пена. (Бухари)';
 
   @override
   String get akhirahBalanceScreen_sayLaIlahaIllallah =>
-      'Say La ilaha illallah 100 times — equals freeing 10 slaves and 100 hasanat. (Bukhari)';
+      'Скажите «Ля иляха илляЛлах» 100 раз — это равносильно освобождению 10 рабов и 100 хасаната. (Бухари)';
 
   @override
   String get akhirahBalanceScreen_lightOnTheTongue =>
-      'Light on the tongue, heavy on the scales: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)';
+      'Легкое на языке, тяжелое на весах: Субханаллахи ва би-хамдихи, Субханаллахиль-азим. (Бухари 6406)';
 
   @override
   String get akhirahBalanceScreen_theDhikrOfAllah =>
-      'The dhikr of Allah is heavier on the scales than gold of equal weight. Keep going.';
+      'Зикр Аллаха тяжелее на весах, чем золото равного веса. Продолжать идти.';
 
   @override
   String get akhirahBalanceScreen_yourTongueShouldStay =>
-      '“Your tongue should stay moist with the remembrance of Allah.” — Is it still moist?';
+      '«Ваш язык должен оставаться влажным от поминания Аллаха». — Он все еще влажный?';
 
   @override
   String get akhirahBalanceScreen_astaghfirullahTheProphetSaid =>
-      'Astaghfirullah — the Prophet ✍ said it 100 times a day, and he had no sin. How many have you?';
+      'Астагфируллах — Пророк ✍ повторял это 100 раз в день, и на нем не было греха. Сколько у тебя?';
 
   @override
   String get akhirahBalanceScreen_whenYouRememberAllah =>
-      'When you remember Allah quietly, He remembers you in an assembly far greater.';
+      'Когда вы тихо вспоминаете Аллаха, Он вспоминает вас в гораздо большем собрании.';
 
   @override
   String get akhirahBalanceScreen_reciteAyatAlKursi =>
-      'Recite Ayat al-Kursi after every salah — nothing keeps you from Jannah but death.';
+      'Читай Аят аль-Курси после каждого намаза — ничто не удержит тебя от рая, кроме смерти.';
 
   @override
   String get akhirahBalanceScreen_oneAlhamdulillahFillsThe =>
-      'One Alhamdulillah fills the scale. One Subhanallah fills what is between heaven and earth.';
+      'Один Альхамдулиллах заполняет чашу весов. Одна Субханалла заполняет то, что находится между небом и землей.';
 
   @override
   String get akhirahBalanceScreen_theRemembranceOfAllah =>
-      '“The remembrance of Allah is greater than everything else.” — Surah Al-Ankabut 29:45';
+      '«Память Аллаха превыше всего остального». - Сура Аль-Анкабут 29:45';
 
   @override
   String get akhirahBalanceScreen_rememberMeWillRemember =>
-      '“Remember Me — I will remember you.” — Surah Al-Baqarah 2:152. Will you?';
+      '«Помни меня — я буду помнить тебя». - Сура Аль-Бакара 2:152. Вы будете?';
 
   @override
   String get akhirahBalanceScreen_inTheRemembranceOf =>
-      '“In the remembrance of Allah, hearts find rest.” — Surah Ar-Ra’d 13:28';
+      '«В поминании Аллаха сердца обретают покой». - Сура Ар-Раад 13:28';
 
   @override
   String get akhirahBalanceScreen_fiveMinutesOfDhikr =>
-      'Five minutes of dhikr now shapes the next 24 hours of your heart.';
+      'Пять минут зикра теперь формируют следующие 24 часа вашего сердца.';
 
   @override
   String get akhirahBalanceScreen_streakIsnAboutToday =>
-      'A streak isn’t about today — it’s about who you become in 30 days.';
+      'Успех не в сегодняшнем дне, а в том, кем вы станете через 30 дней.';
 
   @override
   String get akhirahBalanceScreen_smallDropsFillAn =>
-      'Small drops fill an ocean. Your daily dhikr is filling something far bigger.';
+      'Маленькие капли наполняют океан. Ваш ежедневный зикр наполняет нечто гораздо большее.';
 
   @override
   String get akhirahBalanceScreen_noOneSeesThe =>
-      'No one sees the dhikr in your heart — but every angel writing your record does.';
+      'Никто не видит зикр в вашем сердце, но каждый ангел, записывающий ваши записи, видит.';
 
   @override
   String get akhirahBalanceScreen_theBiggestWinsAre =>
-      'The biggest wins are built from the smallest daily habits. Don’t break the chain.';
+      'Самые большие победы складываются из самых маленьких ежедневных привычек. Не разрывайте цепочку.';
 
   @override
   String get akhirahBalanceScreen_youCameBackToday =>
-      'You came back today. That’s already worship. Stay one more minute?';
+      'Ты вернулся сегодня. Это уже поклонение. Остаться еще на минутку?';
 
   @override
   String get akhirahBalanceScreen_tomorrowPeaceIsBuilt =>
-      'Tomorrow’s peace is built on today’s remembrance. Plant one more seed.';
+      'Завтрашний мир строится на сегодняшних воспоминаниях. Посадите еще одно семечко.';
 
   @override
   String get akhirahBalanceScreen_areYouDoneAllah =>
-      'Are you done? Allah’s door is always open — even after you’ve closed it.';
+      'Вы закончили? Дверь Аллаха всегда открыта — даже после того, как вы ее закрыли.';
 
   @override
   String get akhirahBalanceScreen_dhikrIsTheLanguage =>
-      'Dhikr is the language of the heart. Has yours spoken to its Lord today?';
+      'Зикр – это язык сердца. Говорил ли твой сегодня со своим Господом?';
 
   @override
   String get akhirahBalanceScreen_everySubhanallahIsSadaqah =>
-      'Every Subhanallah is a sadaqah. How many will you give before sleep?';
+      'Каждая Субханалла – это садака. Сколько вы дадите перед сном?';
 
   @override
   String get akhirahBalanceScreen_heartThatForgetsDhikr =>
-      'A heart that forgets dhikr begins to rust. A heart that remembers stays alight.';
+      'Сердце, которое забывает о зикре, начинает ржаветь. Сердце, которое помнит, горит.';
 
   @override
   String get akhirahBalanceScreen_haveYouFortifiedYourself =>
-      'Have you fortified yourself with the morning and evening adhkar today?';
+      'Подкрепились ли вы сегодня утренним и вечерним азкаром?';
 
   @override
   String akhirahBalanceScreen_thisSession(String arg1) {
-    return 'This session: +$arg1';
+    return 'Этот сеанс: +$arg1';
   }
 
   @override
   String akhirahBalanceScreen_seedsThisSession(String arg1) {
-    return '+$arg1 seeds this session';
+    return '+$arg1 запускает эту сессию';
   }
 
   @override
   String akhirahBalanceScreen_dayAvgAzkaarDay(String arg1) {
-    return '7-day avg: $arg1 azkaar/day';
+    return 'В среднем за 7 дней: $arg1 azkaar/день';
   }
 
   @override
   String dashboardScreen_profileReturnedZeroRows(String uid) {
-    return 'Profile returned zero rows for $uid';
+    return 'Профиль вернул ноль строк для $uid';
   }
 
   @override
   String dashboardScreen_dashboardLoadError(String e) {
-    return 'Dashboard Load Error: $e';
+    return 'Ошибка загрузки панели мониторинга: $e';
   }
 
   @override
-  String get dashboardScreen_invalidReferralCode => 'Invalid referral code';
+  String get dashboardScreen_invalidReferralCode => 'Неверный реферальный код';
 
   @override
-  String get dashboardScreen_cannotReferYourself => 'Cannot refer yourself';
+  String get dashboardScreen_cannotReferYourself => 'Не могу ссылаться на себя';
 
   @override
   String dashboardScreen_sponsor(String name, String arg1) {
-    return 'Sponsor $name, $arg1';
+    return 'Спонсор $name, $arg1';
   }
 
   @override
-  String get dashboardScreen_dashboardDoesn => ': 0, // dashboard doesn';
+  String get dashboardScreen_dashboardDoesn =>
+      ': 0, // приборная панель не работает';
 
   @override
   String dashboardScreen_today(
@@ -3210,7 +3215,7 @@ class AppLocalizationsRu extends AppLocalizations {
     String _lastAyah,
     String _ayahsToday,
   ) {
-    return '$arg1 · $_lastAyah  · +$_ayahsToday today';
+    return '$arg1 · $_lastAyah · +$_ayahsToday сегодня';
   }
 
   @override
@@ -3220,67 +3225,67 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dashboardScreen_setsToday(String _dhikrToday) {
-    return '$_dhikrToday sets today';
+    return '$_dhikrToday устанавливается сегодня';
   }
 
   @override
   String dashboardScreen_dayStreak(String arg1) {
-    return '$arg1-day streak';
+    return '$arg1-дневная серия';
   }
 
   @override
   String dashboardScreen_last(String arg1) {
-    return 'Last: $arg1';
+    return 'Последний: $arg1';
   }
 
   @override
-  String get dashboardScreen_earnPerFriend => 'Earn +500 per friend';
+  String get dashboardScreen_earnPerFriend => 'Зарабатывайте +500 за друга';
 
   @override
   String get dashboardScreen_yourSabiqSeedsFund =>
-      'Your Sabiq Seeds fund these projects';
+      'Ваши Sabiq Seeds финансируют эти проекты';
 
   @override
   String dashboardScreen_active(String arg1) {
-    return '$arg1 active';
+    return '$arg1 активен';
   }
 
   @override
   String get dashboardScreen_joinMeOnSabiq =>
-      'Join me on Sabiq Rewards, earn Seeds for daily Quran, Dhikr & good deeds!\\n\\n';
+      'Присоединяйтесь ко мне в Sabiq Rewards и зарабатывайте семена для ежедневного Корана, зикра и добрых дел!\\n\\n';
 
   @override
   String dashboardScreen_useMyCodeAnd(String arg1) {
-    return 'Use my code *$arg1* and we both get 500 Sabiq Seeds!\\n\\n';
+    return 'Используйте мой код *$arg1*, и мы оба получим 500 семян Сабика!\\n\\n';
   }
 
   @override
   String get dashboardScreen_messageCopiedShareOr =>
-      'Message copied, share or paste in WhatsApp!';
+      'Скопируйте сообщение, поделитесь или вставьте в WhatsApp!';
 
   @override
   String get dashboardScreen_sabiqSeedsRewardedTo =>
-      '500 Sabiq Seeds rewarded to you both!';
+      'Вы оба получили 500 семян Сабика!';
 
   @override
   String get dashboardScreen_youHaveAlreadyUsed =>
-      'You have already used a referral code.';
+      'Вы уже использовали реферальный код.';
 
   @override
   String get dashboardScreen_invalidReferralCode_59fb25 =>
-      'Invalid referral code.';
+      'Неверный реферальный код.';
 
   @override
   String get dashboardScreen_youCannotUseYour =>
-      'You cannot use your own code.';
+      'Вы не можете использовать свой собственный код.';
 
   @override
   String get dashboardScreen_anErrorOccurredPlease =>
-      'An error occurred. Please try again.';
+      'Произошла ошибка. Пожалуйста, попробуйте еще раз.';
 
   @override
   String dashboardScreen_52b02c(String pts) {
-    return '$pts ';
+    return '$pts';
   }
 
   @override
@@ -3290,17 +3295,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get dashboardScreen_seeDetailsForMore =>
-      'See Details for more Projects →';
+      'Подробнее о других проектах →';
 
   @override
-  String get dashboardScreen_yourTOTALSABIQSEEDS => 'YOUR TOTAL SABIQ SEEDS';
+  String get dashboardScreen_yourTOTALSABIQSEEDS => 'ВАШИ СЕМЕНА САБИКА';
 
   @override
-  String get dashboardScreen_viewCampaignDonate => '🤲  View Campaign & Donate';
+  String get dashboardScreen_viewCampaignDonate =>
+      '🤲 Посмотреть кампанию и сделать пожертвование';
 
   @override
   String dashboardScreen_yourRank(String rankText) {
-    return 'Your Rank: $rankText';
+    return 'Ваш ранг: $rankText';
   }
 
   @override
@@ -3309,72 +3315,73 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_beTheFirstOn => 'Be the first on the board';
+  String get dashboardScreen_beTheFirstOn => 'Будь первым на доске';
 
   @override
   String get dashboardScreen_readAnAyahOr =>
-      'Read an ayah or dhikr to claim the top spot';
+      'Прочтите аят или зикр, чтобы занять первое место.';
 
   @override
   String dashboardScreen_lvl(String level, String arg1) {
-    return 'Lvl $level · $arg1';
+    return 'Уровень $level · $arg1';
   }
 
   @override
   String dashboardScreen_sealWithin(String arg1) {
-    return 'Seal within ${arg1}h';
+    return 'Печать в течение ${arg1}h';
   }
 
   @override
-  String get dashboardScreen_jazakallahDaySealed => 'JazakAllah!  Day sealed';
+  String get dashboardScreen_jazakallahDaySealed =>
+      'ДжазакаЛлах!  День запечатан';
 
   @override
   String dashboardScreen_ofGoal(String arg1, String arg2) {
-    return 'of $arg1 $arg2 goal';
+    return 'цели $arg1 $arg2';
   }
 
   @override
-  String get dhikrHubScreen_propheticSupplications => 'Prophetic Supplications';
+  String get dhikrHubScreen_propheticSupplications => 'Пророческие мольбы';
 
   @override
   String get dhikrHubScreen_morningEveningRemembrance =>
-      'Morning & Evening Remembrance';
+      'Утренние и вечерние воспоминания';
 
   @override
-  String get dhikrHubScreen_furtherSupplications => 'Further Supplications';
+  String get dhikrHubScreen_furtherSupplications => 'Дальнейшие мольбы';
 
   @override
   String get dhikrHubScreen_closingRemembranceSalawat =>
-      'Closing Remembrance & Salawat';
+      'Заключительное поминовение и Салават';
 
   @override
-  String get dhikrHubScreen_hajjUmrahSupplications =>
-      'Hajj & Umrah Supplications';
+  String get dhikrHubScreen_hajjUmrahSupplications => 'Молитвы о хадже и умре';
 
   @override
-  String get dhikrHubScreen_falseHiddenAdd => '] == false) hidden.add(r[';
+  String get dhikrHubScreen_falseHiddenAdd => '] == ложь) скрытый.add(r[';
 
   @override
-  String get dhikrScreen_indoPak => 'Indo pak';
+  String get dhikrScreen_indoPak => 'Индо Пак';
 
   @override
   String dhikrScreen_default(String recommendedCount) {
-    return 'Default: $recommendedCount';
+    return 'По умолчанию: $recommendedCount';
   }
 
   @override
-  String get dhikrScreen_duaAzkarSettings => 'Dua & Azkar Settings';
+  String get dhikrScreen_duaAzkarSettings => 'Настройки Дуа и Азкара';
 
   @override
-  String get dhikrScreen_hideTheVisualArtwork => 'Hide the visual artwork area';
+  String get dhikrScreen_hideTheVisualArtwork =>
+      'Скрыть область визуального оформления';
 
   @override
   String get dhikrScreen_pinTheIllustrationAt =>
-      'Pin the illustration at the top while the Arabic text scrolls beneath it';
+      'Закрепите иллюстрацию вверху, пока текст на арабском языке прокручивается под ней.';
 
   @override
   String dhikrScreen_readTimes(String readCount) {
-    return 'Read $readCount times';
+    return 'Прочтите $readCount раз';
   }
 
   @override
@@ -3383,21 +3390,21 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get dhikrScreen_alBaqarahAmanaAr => 'Al-Baqarah 285 (Amana ar-Rasool)';
+  String get dhikrScreen_alBaqarahAmanaAr => 'Аль-Бакара 285 (Амана ар-Расул)';
 
   @override
-  String get dhikrScreen_alBaqarahAlifLam => 'Al-Baqarah 1-5 (Alif Lam Mim)';
+  String get dhikrScreen_alBaqarahAlifLam => 'Аль-Бакара 1-5 (Алиф Лам Мим)';
 
   @override
-  String get dhikrScreen_alBaqarahLaIkraha => 'Al-Baqarah 256 (La Ikraha)';
+  String get dhikrScreen_alBaqarahLaIkraha => 'Аль-Бакара 256 (Ла Икраха)';
 
   @override
   String get dhikrScreen_alBaqarahAllahuWaliyy =>
-      'Al-Baqarah 257 (Allahu Waliyy)';
+      'Аль-Бакара 257 (Аллаху Валий)';
 
   @override
   String get dhikrScreen_salawatIbrahimiyyaDurood =>
-      'Salawat Ibrahimiyya (Durood)';
+      'Салават Ибрагимия (Дюруд)';
 
   @override
   String dhikrScreen_9a4c42(String bismillah, String arg1, String rest) {
@@ -3415,7 +3422,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get dhikrScreen_hisnulMuslimChapter => 'Hisnul Muslim, Chapter: ';
+  String get dhikrScreen_hisnulMuslimChapter => 'Хиснул Муслим, Глава:';
 
   @override
   String dhikrScreen_3856c1(String rawRef, String bottomRef) {
@@ -3424,403 +3431,395 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get dhikrScreen_bestOfBothWorlds =>
-      'Best of both worlds, refuge from the Fire';
+      'Лучшее из обоих миров, убежище от Огня';
 
   @override
   String get dhikrScreen_patienceAndSteadfastnessIn =>
-      'Patience and steadfastness in every trial';
+      'Терпение и стойкость в каждом испытании';
 
   @override
   String get dhikrScreen_allahBurdensNoSoul =>
-      'Allah burdens no soul beyond its capacity';
+      'Аллах не обременяет душу сверх ее возможностей';
 
   @override
   String get dhikrScreen_keepTheHeartFirm =>
-      'Keep the heart firm upon guidance';
+      'Держите сердце твердым в руководстве';
 
   @override
   String get dhikrScreen_faithAnsweredWithForgiveness =>
-      'Faith answered with forgiveness from Hell';
+      'Вера ответила прощением из ада';
 
   @override
-  String get dhikrScreen_allSovereigntyInAllah => 'All sovereignty in Allah\\';
+  String get dhikrScreen_allSovereigntyInAllah => 'Вся власть в Аллахе\\';
 
   @override
   String get dhikrScreen_allahHearsEveryCall =>
-      'Allah hears every call for righteous offspring';
+      'Аллах слышит каждый призыв к праведному потомству';
 
   @override
   String get dhikrScreen_countedWithTheWitnesses =>
-      'Counted with the witnesses of truth';
+      'Сосчитан со свидетелями истины';
 
   @override
   String get dhikrScreen_forgivenessFirmFeetAnd =>
-      'Forgiveness, firm feet, and victory';
+      'Прощение, твердые ноги и победа';
 
   @override
-  String get dhikrScreen_theDuaOfThose => 'The dua of those who reflect';
+  String get dhikrScreen_theDuaOfThose => 'Дуа тех, кто размышляет';
 
   @override
   String get dhikrScreen_inscribedWithTheWitnesses =>
-      'Inscribed with the witnesses of revelation';
+      'Написано свидетелями откровения';
 
   @override
   String get dhikrScreen_theDuaAllahAccepted =>
-      'The dua Allah accepted from Adam ﷺ';
+      'Дуа Аллаха, принятое от Адама ﷺ';
 
   @override
-  String get dhikrScreen_spareUsTheCompany =>
-      'Spare us the company of wrongdoers';
+  String get dhikrScreen_spareUsTheCompany => 'Избавь нас от компании злодеев';
 
   @override
-  String get dhikrScreen_neverTrialForThe => 'Never a trial for the oppressors';
+  String get dhikrScreen_neverTrialForThe => 'Никогда не суд для угнетателей';
 
   @override
   String get dhikrScreen_refugeFromAskingWithout =>
-      'Refuge from asking without knowledge';
+      'Бегите от вопросов без знания';
 
   @override
-  String get dhikrScreen_prayerForSafetyAnd => 's prayer for safety and faith';
+  String get dhikrScreen_prayerForSafetyAnd => 'молитва о безопасности и вере';
 
   @override
   String get dhikrScreen_steadfastInPrayerMe =>
-      'Steadfast in prayer, me and my children';
+      'Стойкие в молитве я и мои дети';
 
   @override
   String get dhikrScreen_mercyForMeMy =>
-      'Mercy for me, my parents, the believers';
+      'Помилуй меня, моих родителей, верующих';
 
   @override
-  String get dhikrScreen_prayerForParents => 's prayer for parents';
+  String get dhikrScreen_prayerForParents => 'молитва за родителей';
 
   @override
-  String get dhikrScreen_entryOfTruthExit => 'Entry of truth, exit of truth';
+  String get dhikrScreen_entryOfTruthExit => 'Вход истины, выход истины';
 
   @override
-  String get dhikrScreen_prayerOfTheYouth => 'Prayer of the youth of the cave';
+  String get dhikrScreen_prayerOfTheYouth => 'Молитва юноши пещерного';
 
   @override
-  String get dhikrScreen_askAllahForMore => 'Ask Allah for more — of knowledge';
+  String get dhikrScreen_askAllahForMore => 'Просите у Аллаха больше знаний';
 
   @override
   String get dhikrScreen_allahAnswersAndSaves =>
-      'Allah answers and saves from every distress';
+      'Аллах отвечает и спасает от всякой беды';
 
   @override
-  String get dhikrScreen_allahIsTheBest => 'Allah is the best of inheritors';
+  String get dhikrScreen_allahIsTheBest => 'Аллах лучший из наследников';
 
   @override
   String get dhikrScreen_blessedLandingWhereverYou =>
-      'A blessed landing wherever you stop';
+      'Благословенная посадка, где бы вы ни остановились';
 
   @override
-  String get dhikrScreen_refugeFromTheWhispers =>
-      'Refuge from the whispers of devils';
+  String get dhikrScreen_refugeFromTheWhispers => 'Убежище от шепота дьяволов';
 
   @override
-  String get dhikrScreen_mercyFromTheBest =>
-      'Mercy from the Best of the Merciful';
+  String get dhikrScreen_mercyFromTheBest => 'Милосердие лучших из милосердных';
 
   @override
   String get dhikrScreen_pardonAndMercyFrom =>
-      'Pardon and mercy from the Most Merciful';
+      'Прощение и милость от Милосердного';
 
   @override
   String get dhikrScreen_piousSpousesAndRighteous =>
-      'Pious spouses and righteous offspring';
+      'Благочестивые супруги и праведное потомство';
 
   @override
-  String get dhikrScreen_prayerForThoseWho => ' prayer for those who repent';
+  String get dhikrScreen_prayerForThoseWho => 'молитва за кающихся';
 
   @override
   String get dhikrScreen_gratitudeForParentsRighteousness =>
-      'Gratitude for parents, righteousness in offspring';
+      'Благодарность родителям, праведность в потомстве';
 
   @override
-  String get dhikrScreen_pleaGiftOfIshaq => 's plea — gift of Ishaq ﷺ';
+  String get dhikrScreen_pleaGiftOfIshaq => 'мольба — дар Исхака ﷺ';
 
   @override
-  String get dhikrScreen_loveForTheBelievers =>
-      'Love for the believers before us';
+  String get dhikrScreen_loveForTheBelievers => 'Любовь к верующим перед нами';
 
   @override
   String get dhikrScreen_pureTawakkulOnYou =>
-      's pure tawakkul — On You we rely';
+      's pure tawakkul — На Тебя мы полагаемся';
 
   @override
   String get dhikrScreen_forgivenessForEveryBelieving =>
-      'Forgiveness for every believing home';
+      'Прощение для каждого верующего дома';
 
   @override
-  String get dhikrScreen_tasbeehByTheWeight =>
-      'Tasbeeh by the weight of Allah\\';
+  String get dhikrScreen_tasbeehByTheWeight => 'Тасбих тяжестью Аллаха\\';
 
   @override
   String get dhikrScreen_tasbeehByTheNumber =>
-      'Tasbeeh by the number of all that He made';
+      'Тасбих по числу всего, что Он создал';
 
   @override
   String get dhikrScreen_tasbeehThatFillsAll =>
-      'Tasbeeh that fills all that Allah created';
+      'Тасбих, который наполняет все, что создал Аллах';
 
   @override
-  String get dhikrScreen_paradiseSoughtTheFire =>
-      'Paradise sought — the Fire\\';
+  String get dhikrScreen_paradiseSoughtTheFire => 'Рай искомый — Огонь\\';
 
   @override
   String get dhikrScreen_cryToTheOne =>
-      'Cry to the One who hears, sees, and knows';
+      'Взывайте к Тому, кто слышит, видит и знает';
 
   @override
-  String get dhikrScreen_nameOnTheCorner => 's name on the corner of the Kaaba';
+  String get dhikrScreen_nameOnTheCorner => 'имя на углу Каабы';
 
   @override
   String get dhikrScreen_theDuaBetweenYemen =>
-      'The dua between Yemen Corner and Black Stone';
+      'Дуа между Йеменским уголком и Черным камнем';
 
   @override
-  String get dhikrScreen_prayAtTheStation => 'Pray at the station of Ibrahim ﷺ';
+  String get dhikrScreen_prayAtTheStation => 'Молитесь на станции Ибрахима ﷺ';
 
   @override
   String get dhikrScreen_tawheedDeclaredAtopSafa =>
-      'Tawheed declared atop Safa and Marwah';
+      'Таухид провозглашен на вершинах Сафы и Марвы';
 
   @override
-  String get dhikrScreen_reaffirmTheOnenessOf =>
-      'Reaffirm the Oneness of Allah';
+  String get dhikrScreen_reaffirmTheOnenessOf => 'Подтвердите единство Аллаха';
 
   @override
   String get dhikrScreen_magnifyAllahAtEvery =>
-      'Magnify Allah at every threshold of Hajj';
+      'Возвеличивайте Аллаха на каждом пороге хаджа';
 
   @override
   String get dhikrScreen_magnifyAllahOnThe =>
-      'Magnify Allah on the day of sacrifice';
+      'Возвеличьте Аллаха в день жертвоприношения';
 
   @override
   String get dhikrScreen_knowledgeProvisionHealingSought =>
-      'Knowledge, provision, healing — sought in Makkah';
+      'Знания, обеспечение, исцеление — ищут в Мекке';
 
   @override
   String get dhikrScreen_theDuaMostRepeated =>
-      'The dua most repeated by the Prophet ﷺ';
+      'Дуа, наиболее часто повторяемое Пророком ﷺ';
 
   @override
   String get dhikrScreen_refugeFromEveryTrial =>
-      'Refuge from every trial of life and death';
+      'Убежище от каждого испытания жизни и смерти';
 
   @override
   String get dhikrScreen_refugeFromEveryWeakness =>
-      'Refuge from every weakness of body and soul';
+      'Убежище от всякой слабости тела и души';
 
   @override
   String get dhikrScreen_refugeFromSevereTrial =>
-      'Refuge from severe trial and enemy\\';
+      'Убежище от сурового испытания и врага\\';
 
   @override
   String get dhikrScreen_religionSetRightWorld =>
-      'Religion set right, world and Akhirah made best';
+      'Религия исправлена, мир и Ахира стали лучшими';
 
   @override
   String get dhikrScreen_guidancePietyVirtueSelf =>
-      'Guidance, piety, virtue, self-sufficiency';
+      'Руководство, благочестие, добродетель, самодостаточность';
 
   @override
   String get dhikrScreen_refugeFromWeaknessWealth =>
-      'Refuge from weakness — wealth of piety within';
+      'Убежище от слабости — богатство благочестия внутри';
 
   @override
   String get dhikrScreen_theGuiderOfHearts =>
-      'The Guider of hearts — turn ours to obedience';
+      'Путеводитель сердец — обрати наши к послушанию';
 
   @override
   String get dhikrScreen_turnerOfHeartsMake =>
-      'Turner of hearts — make mine firm on the deen';
+      'Тернер сердец - укрепи мою твердость на дне';
 
   @override
-  String get dhikrScreen_wellBeingInBoth => 'Well-being in both worlds';
+  String get dhikrScreen_wellBeingInBoth => 'Благополучие в обоих мирах';
 
   @override
   String get dhikrScreen_rewardsSaveFromDisgrace =>
-      'Rewards, save from disgrace and grave\\';
+      'Награды, спасающие от позора и могилы\\';
 
   @override
   String get dhikrScreen_mindForGoodVictory =>
-      'Mind for good, victory for good';
+      'Разум во благо, победа во благо';
 
   @override
   String get dhikrScreen_refugeFromEvilOf =>
-      'Refuge from evil of every sense and limb';
+      'Убежище от зла ​​всех чувств и конечностей';
 
   @override
-  String get dhikrScreen_theForgiverWhoLoves =>
-      'The Forgiver who loves the repentant';
+  String get dhikrScreen_theForgiverWhoLoves => 'Прощающий, любящий кающегося';
 
   @override
-  String get dhikrScreen_takeMeBeforeYou => 'Take me before You take me astray';
+  String get dhikrScreen_takeMeBeforeYou =>
+      'Возьми меня, прежде чем ты сбиваешь меня с пути';
 
   @override
   String get dhikrScreen_everyGoodAndRefuge =>
-      'Every good — and refuge from every evil';
+      'Всякое добро — и убежище от всякого зла';
 
   @override
   String get dhikrScreen_standingSittingLyingGuarded =>
-      'Standing, sitting, lying — guarded in Islam';
+      'Стоять, сидеть, лежать – охраняется в Исламе';
 
   @override
   String get dhikrScreen_refugeFromCowardiceMiserliness =>
-      'Refuge from cowardice, miserliness, fitnah';
+      'Убежище от трусости, скупости, фитны';
 
   @override
   String get dhikrScreen_forgivenessForJestAnd =>
-      'Forgiveness for jest and serious, known and unknown';
+      'Прощение за шуточное и серьёзное, известное и неизвестное.';
 
   @override
   String get dhikrScreen_forgiveMeWithForgiveness =>
-      'Forgive me with a forgiveness from You';
+      'Прости меня с прощением от Тебя';
 
   @override
   String get dhikrScreen_submissionBeliefRepentanceFull =>
-      'Submission, belief, repentance, full trust';
+      'Подчинение, вера, покаяние, полное доверие';
 
   @override
   String get dhikrScreen_mercyForgivenessParadiseSaved =>
-      'Mercy, forgiveness, Paradise — saved from the Fire';
+      'Милосердие, прощение, Рай — спасённые от Огня';
 
   @override
   String get dhikrScreen_refugeFromEvilSeen =>
-      'Refuge from evil seen and unseen';
+      'Убежище от зла ​​видимого и невидимого';
 
   @override
   String get dhikrScreen_provisionThatLastsTill =>
-      'Provision that lasts till life\\';
+      'Обеспечение, которое длится всю жизнь\\';
 
   @override
   String get dhikrScreen_sinsForgivenHomeSpacious =>
-      'Sins forgiven, home spacious, provision blessed';
+      'Грехи прощены, дом просторный, пропитание благословлено.';
 
   @override
   String get dhikrScreen_favorAndMercyNone =>
-      'Favor and mercy — none possesses them but You';
+      'Благосклонность и милость – никто не обладает ими, кроме Тебя';
 
   @override
   String get dhikrScreen_refugeFromDrowningBurning =>
-      'Refuge from drowning, burning, sudden death';
+      'Спасение от утопления, горения, внезапной смерти';
 
   @override
   String get dhikrScreen_refugeFromHypocrisyShowiness =>
-      'Refuge from hypocrisy, showiness, rebellion';
+      'Бегство от лицемерия, показухи, бунта';
 
   @override
   String get dhikrScreen_refugeFromPovertyScarcity =>
-      'Refuge from poverty, scarcity, oppression';
+      'Спасение от бедности, дефицита, угнетения';
 
   @override
   String get dhikrScreen_refugeFromHeartThat =>
-      'Refuge from a heart that won\\';
+      'Убежище от сердца, которое победило\\';
 
   @override
   String get dhikrScreen_payMyDebtEnrich =>
-      'Pay my debt, enrich me from poverty';
+      'Оплати мой долг, обогати меня от бедности';
 
   @override
   String get dhikrScreen_allahCalledByHis =>
-      'Allah called by His most beautiful names';
+      'Аллах назвал Своими самыми прекрасными именами';
 
   @override
   String get dhikrScreen_theAccepterOfRepentance =>
-      'The Accepter of repentance always accepts';
+      'Принимающий покаяние всегда принимает';
 
   @override
-  String get dhikrScreen_anEasyReckoningOn => 'An easy reckoning on the Day';
+  String get dhikrScreen_anEasyReckoningOn => 'Легкий расчет Дня';
 
   @override
   String get dhikrScreen_remembranceGratitudeAndThe =>
-      'Remembrance, gratitude, and the best worship';
+      'Память, благодарность и лучшее поклонение';
 
   @override
   String get dhikrScreen_eternalBlissWithThe =>
-      'Eternal bliss with the Prophet ﷺ in Firdaws';
+      'Вечное блаженство с Пророком ﷺ в Фирдавсе';
 
   @override
   String get dhikrScreen_forgiveSinsKnownHidden =>
-      'Forgive sins — known, hidden, intended, mistaken';
+      'Прощайте грехи — известные, скрытые, намеренные, ошибочные.';
 
   @override
   String get dhikrScreen_refugeFromBeingCrushed =>
-      'Refuge from being crushed by debt and enemy';
+      'Убежище от раздавленности долгом и врагом';
 
   @override
-  String get dhikrScreen_askForParadiseRefuge =>
-      'Ask for Paradise, refuge from the Fire';
+  String get dhikrScreen_askForParadiseRefuge => 'Просите Рая, убежища от Огня';
 
   @override
   String get dhikrScreen_forgiveGuideProvideProtect =>
-      'Forgive, guide, provide, protect';
+      'Простить, направить, обеспечить, защитить';
 
   @override
   String get dhikrScreen_sensesMadeBeneficialAnd =>
-      'Senses made beneficial — and lasting';
+      'Чувства стали полезными и долговечными';
 
   @override
   String get dhikrScreen_theMostBeneficentThe =>
-      'The Most Beneficent, the Originator of all';
+      'Самый Благодетельный, Создатель всего';
 
   @override
   String get dhikrScreen_allahTruthOwnerOf =>
-      'Allah — Truth, Owner of all dominion';
+      'Аллах — Истина, Владелец всей власти';
 
   @override
   String get dhikrScreen_submissionWithFullSincerity =>
-      'Submission with full sincerity';
+      'Представление с полной искренностью';
 
   @override
   String get dhikrScreen_amongTheGuidedThe =>
-      'Among the guided, the healthy, the chosen';
+      'Среди ведомых, здоровых, избранных';
 
   @override
   String get dhikrScreen_whatTheProphetAsked =>
-      'What the Prophet ﷺ asked — I ask too';
+      'То, что просил Пророк ﷺ — я тоже спрашиваю';
 
   @override
   String get dhikrScreen_sayyidAlIstighfarThe =>
-      'Sayyid al-Istighfar — the master of all repentance';
+      'Сайид аль-Истигфар — мастер всякого покаяния';
 
   @override
   String get dhikrScreen_refugeFromEveryEvil =>
-      'Refuge from every evil that comes by night';
+      'Убежище от всякого зла, которое приходит ночью';
 
   @override
   String get dhikrScreen_blessEverySenseEvery =>
-      'Bless every sense, every limb';
+      'Благослови каждое чувство, каждую конечность';
 
   @override
   String get dhikrScreen_smallAndGreatFirst =>
-      'Small and great, first and last, open and secret';
+      'Маленькое и великое, первое и последнее, открытое и тайное.';
 
   @override
   String get dhikrScreen_noneWithholdsWhatYou =>
-      'None withholds what You give, none gives what You hold';
+      'Никто не удерживает то, что Ты даешь, никто не дает то, что Ты держишь';
 
   @override
   String get dhikrScreen_forgiveGuideProvideElevate =>
-      'Forgive, guide, provide, elevate';
+      'Прощать, направлять, обеспечивать, возвышать';
 
   @override
   String get dhikrScreen_increaseFavorBeKind =>
-      'Increase favor, be kind, never displeased';
+      'Увеличивайте благосклонность, будьте добры, никогда не будьте недовольны';
 
   @override
   String get dhikrScreen_beautifyOurCharacterAs =>
-      'Beautify our character as You beautified our creation';
+      'Укрась наш характер, как Ты украсил наше творение.';
 
   @override
   String get dhikrScreen_firmInBeliefGuided =>
-      'Firm in belief — guided and guiding';
+      'Твердый в вере — ведомый и направляющий';
 
   @override
   String get dhikrScreen_wisdomAndWithIt =>
-      'Wisdom — and with it, multitudes of good';
+      'Мудрость, а вместе с ней и множество добрых дел';
 
   @override
   String get dhikrScreen_nameShieldsFromEvery =>

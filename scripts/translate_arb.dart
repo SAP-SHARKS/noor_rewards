@@ -145,6 +145,15 @@ Future<int> _processLocale(String loc, Map<String, dynamic> en) async {
   for (final k in untranslated) {
     if (done >= _limit) break;
     final ev = en[k] as String;
+    // Skip ICU plural / select strings — they contain keywords like
+    // `plural`, `select`, `other`, `one`, `few` that Google Translate
+    // will happily translate ("other" → "autres" / "otros" / "andere"),
+    // breaking the compile-time syntax check. Left as EN so Flutter's
+    // ICU parser stays happy; a human translator can do these later.
+    if (ev.contains(', plural,') || ev.contains(', select,')) {
+      done++;
+      continue;
+    }
     final translated = await _translatePreservingIcu(client, ev, loc);
     if (translated == null) {
       failed++;
