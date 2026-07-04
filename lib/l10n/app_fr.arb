@@ -1019,7 +1019,7 @@
   "dhikrScreen_tasbeehByTheNumber": "Tasbeeh par le nombre de tout ce qu'Il a fait",
   "dhikrScreen_tasbeehThatFillsAll": "Tasbeeh qui remplit tout ce qu'Allah a créé",
   "dhikrScreen_paradiseSoughtTheFire": "Paradis recherché — le Feu",
-  "dhikrScreen_cryToTheOne": "Cry to the One who hears, sees, and knows",
+  "dhikrScreen_cryToTheOne": "Crie à Celui qui entend, voit et sait",
   "dhikrScreen_nameOnTheCorner": "le nom au coin de la Kaaba",
   "dhikrScreen_theDuaBetweenYemen": "Le dua entre Yemen Corner et Black Stone",
   "dhikrScreen_prayAtTheStation": "Priez à la gare d'Ibrahim ﷺ",
@@ -2455,6 +2455,8 @@
   "quranApiService_syncFailedPartial": ", {n} a échoué",
   "quranApiService_syncFailedGeneric": "Échec de la synchronisation : {error}",
   "authScreen_dontHaveAnAccountSignUp": "Vous n'avez pas de compte ? S'inscrire",
+  "dhikrExitCelebration_keepItUp": "Continuez comme ça!",
+  "unknownError": "Erreur inconnue",
   "@readNTimes": {
     "placeholders": {
       "count": {
@@ -5916,6 +5918,5 @@
         "type": "String"
       }
     }
-  },
-  "dhikrExitCelebration_keepItUp": "Keep it up!"
+  }
 }

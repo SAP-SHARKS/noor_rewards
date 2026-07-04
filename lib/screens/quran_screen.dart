@@ -2577,7 +2577,9 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     } on PlayerException catch (e) {
       if (mounted) {
         setState(() => _audioLoading = false);
-        _showSnack('Playback error: ${e.message ?? "Unknown error"}');
+        final l = AppLocalizations.of(context);
+        final detail = e.message ?? (l?.unknownError ?? 'Unknown error');
+        _showSnack(l?.playbackError(detail) ?? 'Playback error: $detail');
       }
     } catch (_) {
       if (mounted) {

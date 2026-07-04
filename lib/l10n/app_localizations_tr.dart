@@ -805,7 +805,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get audioNotLoaded => 'Ses henüz yüklenmedi. Lütfen bekleyin...';
 
   @override
-  String playbackError(String message) {
+  String playbackError(String detail) {
     return 'Oynatma hatası: $message';
   }
 
@@ -9406,4 +9406,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Aynen böyle devam!';
+
+  @override
+  String get unknownError => 'Unknown error';
 }

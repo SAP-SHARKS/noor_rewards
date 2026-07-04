@@ -806,7 +806,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'آڈیو ابھی لوڈ نہیں ہوا۔ براہ کرم انتظار کریں...';
 
   @override
-  String playbackError(String message) {
+  String playbackError(String detail) {
     return 'چلانے میں خرابی: $message';
   }
 
@@ -9343,4 +9343,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+
+  @override
+  String get unknownError => 'Unknown error';
 }

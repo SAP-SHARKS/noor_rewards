@@ -808,7 +808,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get audioNotLoaded => 'URL audio non chargée. Veuillez patienter...';
 
   @override
-  String playbackError(String message) {
+  String playbackError(String detail) {
     return 'Erreur de lecture : $message';
   }
 
@@ -9502,4 +9502,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+
+  @override
+  String get unknownError => 'Unknown error';
 }

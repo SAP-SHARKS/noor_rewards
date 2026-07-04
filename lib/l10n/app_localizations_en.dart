@@ -807,8 +807,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get audioNotLoaded => 'Audio URL not loaded yet. Please wait...';
 
   @override
-  String playbackError(String message) {
-    return 'Playback error: $message';
+  String playbackError(String detail) {
+    return 'Playback error: $detail';
   }
 
   @override
@@ -9447,4 +9447,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+
+  @override
+  String get unknownError => 'Unknown error';
 }

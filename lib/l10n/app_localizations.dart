@@ -1589,8 +1589,8 @@ abstract class AppLocalizations {
   /// No description provided for @playbackError.
   ///
   /// In en, this message translates to:
-  /// **'Playback error: {message}'**
-  String playbackError(String message);
+  /// **'Playback error: {detail}'**
+  String playbackError(String detail);
 
   /// No description provided for @audioUnavailable.
   ///
@@ -14916,6 +14916,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keep it up!'**
   String get dhikrExitCelebration_keepItUp;
+
+  /// No description provided for @unknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error'**
+  String get unknownError;
 }
 
 class _AppLocalizationsDelegate

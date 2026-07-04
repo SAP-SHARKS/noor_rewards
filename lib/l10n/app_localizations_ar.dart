@@ -798,7 +798,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get audioNotLoaded => 'لم يتم تحميل الصوت بعد. يرجى الانتظار...';
 
   @override
-  String playbackError(String message) {
+  String playbackError(String detail) {
     return 'خطأ في التشغيل: $message';
   }
 
@@ -9151,4 +9151,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+
+  @override
+  String get unknownError => 'Unknown error';
 }
