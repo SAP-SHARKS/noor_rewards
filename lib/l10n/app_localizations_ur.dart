@@ -9348,22 +9348,22 @@ class AppLocalizationsUr extends AppLocalizations {
   String get unknownError => 'نامعلوم خرابی۔';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'بیج';
 
   @override
   String get celebrationStatSeedsEarned => 'SEEDS EARNED';
 
   @override
-  String get celebrationStatAyahs => 'AYAHS';
+  String get celebrationStatAyahs => 'آیاحس';
 
   @override
   String get celebrationStatTime => 'TIME';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'سٹریک';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'آج ہی شروع کریں۔';
 
   @override
   String celebrationDaysCount(int count) {

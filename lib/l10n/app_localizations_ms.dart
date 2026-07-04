@@ -9488,22 +9488,22 @@ class AppLocalizationsMs extends AppLocalizations {
   String get unknownError => 'Ralat tidak diketahui';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'BIJI BENIH';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'BENIH DIPEROLEHI';
 
   @override
   String get celebrationStatAyahs => 'AYAHS';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'MASA';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'STREK';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'Mulakan hari ini';
 
   @override
   String celebrationDaysCount(int count) {

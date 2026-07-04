@@ -9506,22 +9506,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unknownError => 'Erreur inconnue';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'GRAINES';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'GRAINES GAGNÉES';
 
   @override
   String get celebrationStatAyahs => 'AYAHS';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'TEMPS';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'TRAÎNÉE';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'Commencez aujourd\'hui';
 
   @override
   String celebrationDaysCount(int count) {

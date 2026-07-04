@@ -9485,22 +9485,22 @@ class AppLocalizationsId extends AppLocalizations {
   String get unknownError => 'Kesalahan tidak diketahui';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'BENIH';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'BENIH DIPEROLEH';
 
   @override
-  String get celebrationStatAyahs => 'AYAHS';
+  String get celebrationStatAyahs => 'AYAH';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'WAKTU';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'GARIS';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'Mulai hari ini';
 
   @override
   String celebrationDaysCount(int count) {

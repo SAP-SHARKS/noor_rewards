@@ -9446,22 +9446,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unknownError => 'Неизвестная ошибка';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'СЕМЕНА';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'ЗАРАБОТАНЫ СЕМЕНА';
 
   @override
-  String get celebrationStatAyahs => 'AYAHS';
+  String get celebrationStatAyahs => 'АЯХС';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'ВРЕМЯ';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'СТРИК';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'Начни сегодня';
 
   @override
   String celebrationDaysCount(int count) {

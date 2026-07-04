@@ -9411,22 +9411,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unknownError => 'Bilinmeyen hata';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'TOHUMLAR';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'KAZANILAN TOHUMLAR';
 
   @override
-  String get celebrationStatAyahs => 'AYAHS';
+  String get celebrationStatAyahs => 'AYAHLAR';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'ZAMAN';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'RÜZGÂR GİBİ GEÇMEK';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'Bugün başla';
 
   @override
   String celebrationDaysCount(int count) {

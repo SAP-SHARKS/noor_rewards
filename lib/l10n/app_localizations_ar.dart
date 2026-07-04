@@ -9156,22 +9156,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unknownError => 'خطأ غير معروف';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'بذور';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'البذور المكتسبة';
 
   @override
-  String get celebrationStatAyahs => 'AYAHS';
+  String get celebrationStatAyahs => 'آيات';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'وقت';
 
   @override
-  String get celebrationStatStreak => 'STREAK';
+  String get celebrationStatStreak => 'أثَر';
 
   @override
-  String get celebrationStreakStartToday => 'Start today';
+  String get celebrationStreakStartToday => 'ابدأ اليوم';
 
   @override
   String celebrationDaysCount(int count) {
