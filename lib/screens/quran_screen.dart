@@ -4257,11 +4257,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        _surahName,
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: txt,
+                                        _localSurahName(context, _surah),
+                                        style: _localeAwareSurahStyle(
+                                          context,
+                                          GoogleFonts.outfit(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: txt,
+                                          ),
                                         ),
                                       ),
                                       Text(
@@ -5927,11 +5930,14 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
                 child: Column(
                   children: [
                     Text(
-                      _surahName,
-                      style: GoogleFonts.outfit(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                      _localSurahName(context, _surah),
+                      style: _localeAwareSurahStyle(
+                        context,
+                        GoogleFonts.outfit(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 1),
@@ -6498,6 +6504,32 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
     return 1;
   }
 } // end _QuranScreenState
+
+// ── Locale-aware surah name helpers ──────────────────────────────────────────
+// The English transliterations ("Al-Fatiha", "Al-Baqarah", …) are the shipped
+// baseline. For Arabic and Urdu readers we return the Arabic-script form
+// which reads correctly in both languages (Urdu uses the Perso-Arabic script
+// for canonical Islamic names). Other locales get the transliteration.
+String _localSurahName(BuildContext context, int surahNumber) {
+  final idx = surahNumber - 1;
+  if (idx < 0 || idx >= _surahNames.length) return '';
+  final lang = Localizations.localeOf(context).languageCode;
+  if (lang == 'ar' || lang == 'ur') {
+    return _surahNamesArabic[idx];
+  }
+  return _surahNames[idx];
+}
+
+// Latin-serif fonts (Outfit, Fraunces, etc.) render Arabic script as
+// disconnected garbled letters. Wrap the surah-name style with Noto Naskh
+// Arabic when the active locale needs Arabic glyphs.
+TextStyle _localeAwareSurahStyle(BuildContext context, TextStyle base) {
+  final lang = Localizations.localeOf(context).languageCode;
+  if (lang == 'ar' || lang == 'ur') {
+    return GoogleFonts.notoNaskhArabic(textStyle: base);
+  }
+  return base;
+}
 
 // ── All 114 surah names ───────────────────────────────────────────────────────
 const _surahNames = [
