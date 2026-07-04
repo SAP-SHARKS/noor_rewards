@@ -14910,6 +14910,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Don\'t have an account? Sign Up'**
   String get authScreen_dontHaveAnAccountSignUp;
+
+  /// No description provided for @dhikrExitCelebration_keepItUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it up!'**
+  String get dhikrExitCelebration_keepItUp;
 }
 
 class _AppLocalizationsDelegate

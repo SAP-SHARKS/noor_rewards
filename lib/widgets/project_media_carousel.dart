@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
+import '../l10n/app_localizations.dart';
 import '../services/donation_service.dart';
 
 class ProjectMediaCarousel extends StatefulWidget {
@@ -443,7 +444,8 @@ class _VideoSlideState extends State<_VideoSlide> {
       if (mounted) {
         setState(() {
           _initializing = false;
-          _error = 'Could not load video';
+          _error = AppLocalizations.of(context)?.projectMediaCarousel_couldNotLoadVideo_deb8dd ??
+              'Could not load video';
         });
       }
     }

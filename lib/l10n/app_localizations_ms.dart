@@ -9453,4 +9453,7 @@ class AppLocalizationsMs extends AppLocalizations {
   @override
   String get authScreen_dontHaveAnAccountSignUp =>
       'Don\'t have an account? Sign Up';
+
+  @override
+  String get dhikrExitCelebration_keepItUp => 'Keep it up!';
 }

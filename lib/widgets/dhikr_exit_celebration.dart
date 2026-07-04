@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/app_localizations.dart';
 import '../theme/y4_theme.dart';
 import 'sabiq_coin.dart';
 
@@ -104,7 +105,10 @@ class _DhikrExitCelebrationBodyState extends State<_DhikrExitCelebrationBody>
 
     // Headline rendered in elegant Arabic calligraphy.
     final headlineArabic = hasPoints ? 'ما شاء الله' : 'الحمد لله';
-    final subhead = hasPoints ? 'Keep it up!' : 'Every breath counts.';
+    final l = AppLocalizations.of(context);
+    final subhead = hasPoints
+        ? (l?.dhikrExitCelebration_keepItUp ?? 'Keep it up!')
+        : (l?.dhikrExitCelebration_everyBreathCounts_45b3df ?? 'Every breath counts.');
 
     return Material(
       color: Colors.transparent,

@@ -5916,5 +5916,6 @@
       }
     }
   },
-  "authScreen_dontHaveAnAccountSignUp": "Don't have an account? Sign Up"
+  "authScreen_dontHaveAnAccountSignUp": "Don't have an account? Sign Up",
+  "dhikrExitCelebration_keepItUp": "Keep it up!"
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../l10n/app_localizations.dart';
 
 /// A full-screen overlay widget that plays a success Lottie animation for
 /// [displayDuration] seconds, then fades out and disappears.
@@ -180,10 +181,11 @@ class _ImpactAnimationState extends State<ImpactAnimation>
                   const SizedBox(height: 8),
 
                   // Subtitle — Gold accent text
-                  const Text(
-                    'Your reward has been recorded.',
+                  Text(
+                    AppLocalizations.of(context)?.impactAnimation_yourRewardHasBeen_e3d106 ??
+                        'Your reward has been recorded.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Color(0xFF9A7B3A), // Gold
                       height: 1.4,

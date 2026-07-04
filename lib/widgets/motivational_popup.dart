@@ -1354,7 +1354,8 @@ class _NoorBoostPopupBodyState extends State<_NoorBoostPopupBody>
                             FadeTransition(
                               opacity: _contentFade,
                               child: Text(
-                                'Keep your spiritual momentum going\nand watch your Seeds grow ✨',
+                                AppLocalizations.of(context)?.motivationalPopup_keepYourSpiritualMomentum_0f172c ??
+                                    'Keep your spiritual momentum going\nand watch your Seeds grow ✨',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
