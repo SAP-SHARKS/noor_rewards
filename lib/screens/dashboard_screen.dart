@@ -3678,14 +3678,23 @@ class _MyDonationsSection extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 6),
-                            // Title (Fraunces serif, italic accent in honey)
+                            // Title (Fraunces serif, italic accent in honey).
+                            // Route through `proj_l10n.projectTitle` so
+                            // non-English locales pick up `title_<lang>`
+                            // — otherwise projects like "Food Packs -
+                            // Palestine" stay in English on Urdu/Arabic
+                            // dashboards even after the DB has the
+                            // translated columns filled.
                             Text(
-                              (d['title'] ?? '').toString(),
-                              style: Y4.display(
-                                fontSize: 20,
-                                color: Y4.palette.ink,
-                                fontWeight: FontWeight.w400,
-                                height: 1.15,
+                              proj_l10n.projectTitle(context, d),
+                              style: proj_l10n.localeAwareStyle(
+                                context,
+                                Y4.display(
+                                  fontSize: 20,
+                                  color: Y4.palette.ink,
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.15,
+                                ),
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

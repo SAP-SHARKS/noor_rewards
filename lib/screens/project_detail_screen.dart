@@ -174,7 +174,10 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
   String _shareText(BuildContext ctx) {
     final l = AppLocalizations.of(ctx);
     final p = widget.project;
-    final title = p['title'] as String? ?? '';
+    // Use the locale-aware title so the WhatsApp share message picks up
+    // `title_<lang>` for non-English readers instead of the canonical
+    // English title.
+    final title = proj_l10n.projectTitle(ctx, p);
     final sponsor = p['sponsor'] as String? ?? '';
     // Header line kept hardcoded — has embedded double quotes around `$title`
     // which the codemod couldn't flag; a translator can localise via a
