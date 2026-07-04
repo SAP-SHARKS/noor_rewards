@@ -402,21 +402,38 @@ class _NotificationTile extends StatelessWidget {
   }
 
   String _localizeTitle(BuildContext context, String rawTitle) {
+    final l = AppLocalizations.of(context);
     if (rawTitle.startsWith('New badge unlocked')) {
-      return '${AppLocalizations.of(context)?.newBadgeUnlocked ?? "New badge unlocked"} 🏆';
+      return '${l?.newBadgeUnlocked ?? "New badge unlocked"} 🏆';
     }
     if (rawTitle.startsWith('Day sealed')) {
-      return '${AppLocalizations.of(context)?.daySealed ?? "Day sealed"} 🌙';
+      return '${l?.daySealed ?? "Day sealed"} 🌙';
     }
     if (rawTitle.startsWith('Daily login')) {
-      return AppLocalizations.of(context)?.dailyLoginBonus ?? 'Daily login bonus';
+      return l?.dailyLoginBonus ?? 'Daily login bonus';
     }
-    if (rawTitle.contains('One Week')) return rawTitle.replaceFirst('One Week', AppLocalizations.of(context)?.oneWeek ?? 'One Week');
-    if (rawTitle.contains('Two Weeks')) return rawTitle.replaceFirst('Two Weeks', AppLocalizations.of(context)?.twoWeeks ?? 'Two Weeks');
+    // Client-side pending-Seeds evening reminder (dashboard_screen.dart:340).
+    // Hive-persisted items store whatever locale was active when the reminder
+    // fired; re-localise at render so a user who switched locale AFTER the
+    // reminder was created still sees the notification in their current
+    // language.
+    if (rawTitle.startsWith('Seeds expiring at midnight')) {
+      return l?.seedsExpiringNotificationTitle ?? 'Seeds expiring at midnight!';
+    }
+    if (rawTitle.contains('One Week')) return rawTitle.replaceFirst('One Week', l?.oneWeek ?? 'One Week');
+    if (rawTitle.contains('Two Weeks')) return rawTitle.replaceFirst('Two Weeks', l?.twoWeeks ?? 'Two Weeks');
     return rawTitle;
   }
 
   String _localizeBody(BuildContext context, String rawBody) {
+    final l = AppLocalizations.of(context);
+    // Pending-Seeds evening reminder body — same treatment as the title
+    // above. Extract the pending count from the raw string and re-render.
+    if (rawBody.startsWith('You have') && rawBody.contains('Seeds pending')) {
+      final match = RegExp(r'You have (\d+) Seeds').firstMatch(rawBody);
+      final pending = int.tryParse(match?.group(1) ?? '') ?? 0;
+      return l?.seedsExpiringNotificationBody(pending) ?? rawBody;
+    }
     if (rawBody.contains('Sabiq Seeds for sealing today')) {
       final pts = RegExp(r'\+(\d+)').firstMatch(rawBody)?.group(1) ?? '20';
       return AppLocalizations.of(context)?.pointsForSealing(pts) ?? '+$pts Sabiq Seeds for sealing today.';

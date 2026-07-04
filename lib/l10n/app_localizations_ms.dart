@@ -3745,7 +3745,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get dhikrScreen_remembranceGratitudeAndThe =>
-      'Remembrance, gratitude, and the best worship';
+      'Zikir, syukur, dan sebaik-baik ibadah';
 
   @override
   String get dhikrScreen_eternalBlissWithThe =>
@@ -9482,5 +9482,5 @@ class AppLocalizationsMs extends AppLocalizations {
   String get authScreen_dontHaveAnAccountSignUp => 'Tiada akaun? Daftar';
 
   @override
-  String get dhikrExitCelebration_keepItUp => 'Keep it up!';
+  String get dhikrExitCelebration_keepItUp => 'Teruskan!';
 }

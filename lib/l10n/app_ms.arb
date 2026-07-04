@@ -1062,7 +1062,7 @@
   "dhikrScreen_allahCalledByHis": "Allah memanggil dengan nama-nama-Nya yang paling indah",
   "dhikrScreen_theAccepterOfRepentance": "Penerima taubat sentiasa menerima",
   "dhikrScreen_anEasyReckoningOn": "Hisab yang mudah pada hari itu",
-  "dhikrScreen_remembranceGratitudeAndThe": "Remembrance, gratitude, and the best worship",
+  "dhikrScreen_remembranceGratitudeAndThe": "Zikir, syukur, dan sebaik-baik ibadah",
   "dhikrScreen_eternalBlissWithThe": "Kebahagiaan abadi bersama Nabi ﷺ di Firdaus",
   "dhikrScreen_forgiveSinsKnownHidden": "Ampuni dosa - diketahui, tersembunyi, sengaja, tersilap",
   "dhikrScreen_refugeFromBeingCrushed": "Berlindung daripada dihimpit hutang dan musuh",
@@ -2455,6 +2455,7 @@
   "quranApiService_syncFailedPartial": ", {n} gagal",
   "quranApiService_syncFailedGeneric": "Penyegerakan gagal: {error}",
   "authScreen_dontHaveAnAccountSignUp": "Tiada akaun? Daftar",
+  "dhikrExitCelebration_keepItUp": "Teruskan!",
   "@readNTimes": {
     "placeholders": {
       "count": {
@@ -5916,6 +5917,5 @@
         "type": "String"
       }
     }
-  },
-  "dhikrExitCelebration_keepItUp": "Keep it up!"
+  }
 }
