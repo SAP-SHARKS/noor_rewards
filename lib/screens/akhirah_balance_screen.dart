@@ -368,6 +368,13 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
           const SizedBox(width: 14),
           Expanded(
             child: Column(
+              // Column must be `min` so its height reflects the intrinsic
+              // size of the two Texts. Default `max` makes the Column try
+              // to fill any vertical space the Row hands it; when Urdu /
+              // Arabic wraps the reflection onto 2-3 lines the reflow
+              // trips a RenderFlex overflow because the Row's height was
+              // already resolved based on the shorter English layout.
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -382,6 +389,12 @@ class _AkhirahBalanceScreenState extends State<AkhirahBalanceScreen>
                 const SizedBox(height: 6),
                 Text(
                   _reflectionPool(context)[_reflectionIdx],
+                  // Cap at 5 lines with ellipsis so an unusually long
+                  // translation can't push the card off screen. Most
+                  // reflection strings fit in 2-3 lines even in the
+                  // wordier locales.
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
