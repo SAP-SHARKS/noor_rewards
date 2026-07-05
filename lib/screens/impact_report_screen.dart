@@ -536,6 +536,31 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
     // bar. The accent is its own child (NOT a non-uniform Border, which
     // can't combine with borderRadius and would silently break the card).
     final olive = Y4.palette.accentOlive;
+    // Reminder-body typography.
+    //
+    // - English/Latin locales get the intended Fraunces italic serif.
+    // - Arabic-script locales (ar, ur) explicitly use Noto Naskh Arabic
+    //   at upright angle. Italic on cursive Naskh is (a) typographically
+    //   incorrect, and (b) causes fractional-pixel row heights that
+    //   overflow the RenderFlex by ~1px depending on font metrics — the
+    //   exact bug the user hit. Also bump line-height a hair so tall
+    //   Naskh descenders (mim/lam-alif tails) never clip the box.
+    final lang = Localizations.localeOf(context).languageCode;
+    final isArabicScript = lang == 'ar' || lang == 'ur';
+    final bodyStyle = isArabicScript
+        ? GoogleFonts.notoNaskhArabic(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w600,
+            color: Y4.palette.ink,
+            height: 1.6,
+          )
+        : Y4.display(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w600,
+            color: Y4.palette.ink,
+            fontStyle: FontStyle.italic,
+            height: 1.45,
+          );
     return Container(
       decoration: BoxDecoration(
         color: Y4.palette.surface.withValues(alpha: 0.85),
@@ -553,8 +578,14 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             Container(width: 4, color: olive),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
                 child: Column(
+                  // `min` so IntrinsicHeight sizes to the content instead
+                  // of the ambient height. Combined with the maxLines cap
+                  // below, this makes the card unable to overflow for any
+                  // locale, including tall Naskh Arabic and Urdu that
+                  // otherwise overshoot by ~1px.
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -569,14 +600,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      _reminderPool(context)[_reminderIdx],
-                      style: Y4.display(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
-                        color: Y4.palette.ink,
-                        fontStyle: FontStyle.italic,
-                        height: 1.45,
-                      ),
+                      _cleanReminder(_reminderPool(context)[_reminderIdx]),
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      style: bodyStyle,
                     ),
                   ],
                 ),
@@ -586,6 +613,21 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
         ),
       ),
     );
+  }
+
+  // Strip the decorative smart-quote / guillemet marks the MT run added
+  // inconsistently across locales. See akhirah_balance_screen for the same
+  // helper — this is a mirror because MT hit both reminder pools with the
+  // same quote-mix problem (Urdu ’’…‘‘, Arabic ""…"", French «»…, etc.).
+  // Single-quote apostrophes are left alone so contractions still render.
+  static final _kQuoteStrip = RegExp('[“”„‟«»"]');
+  String _cleanReminder(String s) {
+    return s
+        .replaceAll('’’', '')
+        .replaceAll('‘‘', '')
+        .replaceAll(_kQuoteStrip, '')
+        .replaceAll(RegExp(r'\s{2,}'), ' ')
+        .trim();
   }
 
   @override
