@@ -1577,7 +1577,11 @@ class _ContinueCardState extends State<_ContinueCard> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Surah ${widget.surah}  •  Verse ${widget.ayah}  •  ${AppLocalizations.of(context)?.continueReading ?? 'Continue reading'}',
+                      // Compose from two localised parts so "Surah" / "Verse"
+                      // translate too — earlier only the trailing
+                      // `continueReading` was wrapped, so Urdu / Arabic users
+                      // saw a jarring mix of English + native text on this row.
+                      '${AppLocalizations.of(context)?.surahVerseRow(widget.surah, widget.ayah) ?? 'Surah ${widget.surah}  •  Verse ${widget.ayah}'}  •  ${AppLocalizations.of(context)?.continueReading ?? 'Continue reading'}',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: Y4.palette.inkSoft,
