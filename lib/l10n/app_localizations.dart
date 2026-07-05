@@ -3956,6 +3956,12 @@ abstract class AppLocalizations {
   /// **'TODAY'**
   String get todayLabel;
 
+  /// No description provided for @plusSeedsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} today'**
+  String plusSeedsToday(String count);
+
   /// No description provided for @azkaarPerDay.
   ///
   /// In en, this message translates to:

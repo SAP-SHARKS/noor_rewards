@@ -1023,6 +1023,12 @@
   "yourAkhirahBalance": "YOUR AKHIRAH BALANCE",
   "seedsCollectedSinceJoined": "Seeds collected since you joined",
   "todayLabel": "TODAY",
+  "plusSeedsToday": "+{count} today",
+  "@plusSeedsToday": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
   "azkaarPerDay": "azkaar per day",
   "viewFullStats": "View full stats",
   "fatherLabel": "Father",

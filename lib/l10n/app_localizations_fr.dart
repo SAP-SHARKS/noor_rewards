@@ -2103,6 +2103,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get todayLabel => 'AUJOURD\'HUI';
 
   @override
+  String plusSeedsToday(String count) {
+    return '+$count today';
+  }
+
+  @override
   String get azkaarPerDay => 'azkaar par jour';
 
   @override

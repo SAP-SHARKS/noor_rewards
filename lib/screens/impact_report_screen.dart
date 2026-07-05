@@ -405,7 +405,10 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        '+${_todayPoints > 0 ? _todayPoints : 0} today',
+                        AppLocalizations.of(context)?.plusSeedsToday(
+                              '${_todayPoints > 0 ? _todayPoints : 0}',
+                            ) ??
+                            '+${_todayPoints > 0 ? _todayPoints : 0} today',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -2156,7 +2159,7 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
             ),
             Container(height: 44, width: 1, color: Y4.palette.honey.withValues(alpha: 0.4)),
             Expanded(
-              child: _DarkStat('Level', '$_level', NoorIcon.medal(size: 16)),
+              child: _DarkStat(AppLocalizations.of(context)?.level ?? 'Level', '$_level', NoorIcon.medal(size: 16)),
             ),
             Container(height: 44, width: 1, color: Y4.palette.honey.withValues(alpha: 0.4)),
             Expanded(

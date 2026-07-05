@@ -2095,6 +2095,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get todayLabel => 'BUGÜN';
 
   @override
+  String plusSeedsToday(String count) {
+    return '+$count today';
+  }
+
+  @override
   String get azkaarPerDay => 'günlük azkar';
 
   @override

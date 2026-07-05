@@ -2097,6 +2097,11 @@ class AppLocalizationsMs extends AppLocalizations {
   String get todayLabel => 'HARI INI';
 
   @override
+  String plusSeedsToday(String count) {
+    return '+$count today';
+  }
+
+  @override
   String get azkaarPerDay => 'azkar sehari';
 
   @override
