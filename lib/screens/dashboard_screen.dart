@@ -2395,7 +2395,7 @@ class _InviteSheetState extends State<_InviteSheet>
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
-                              'Have an invite code?',
+                              AppLocalizations.of(context)?.haveInviteCode ?? 'Have an invite code?',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: Y4.palette.inkSoft,
