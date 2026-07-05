@@ -2097,7 +2097,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String plusSeedsToday(String count) {
-    return '+$count today';
+    return '+$count hari ini';
   }
 
   @override

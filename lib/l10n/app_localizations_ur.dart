@@ -2088,7 +2088,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String plusSeedsToday(String count) {
-    return '+$count today';
+    return '+$count آج';
   }
 
   @override
@@ -9356,7 +9356,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get celebrationStatSeeds => 'بیج';
 
   @override
-  String get celebrationStatSeedsEarned => 'SEEDS EARNED';
+  String get celebrationStatSeedsEarned => 'بیج کمایا';
 
   @override
   String get celebrationStatAyahs => 'آیاحس';

@@ -2071,7 +2071,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String plusSeedsToday(String count) {
-    return '+$count today';
+    return '+$count اليوم';
   }
 
   @override

@@ -8,21 +8,7 @@
   "readBtn": "Okumak",
   "readOnce": "Bir kez okuyun",
   "readNTimes": "{count} kez okuyun",
-  "@readNTimes": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "seedsEarnedToday": "+{count} Sabiq Seeds bugün kazanıldı!",
-  "@seedsEarnedToday": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "catDailyRemembrance": "GÜNLÜK ANMA",
   "catNightlyRemembrance": "GECE ANMA",
   "catYourSelection": "SEÇİMİNİZ",
@@ -56,13 +42,6 @@
   "onboarding5Title": "Ver ve\nBereket Kazan",
   "onboarding5Subtitle": "Sadaka günahı suyun ateşi söndürdüğü gibi söndürür. Her hayır ve iyilik için ödül kazan.",
   "welcomeUser": "Hoş Geldin, {name} 🌙",
-  "@welcomeUser": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "gatesOfNoor": "Işığın kapıları açık.\nManevi yolculuğun bugün başlıyor.",
   "earnNoorPoints": "TOHUM KAZAN",
   "yourProgress": "İLERLEMEN",
@@ -162,13 +141,6 @@
   "pts": "Tohum",
   "funded": "fonlandı",
   "bySponsor": "{sponsor} tarafından",
-  "@bySponsor": {
-    "placeholders": {
-      "sponsor": {
-        "type": "String"
-      }
-    }
-  },
   "viewCampaignDonate": "Kampanyayı Gör & Bağış Yap",
   "supportThisCause": "Bu Davaya Destek Ol",
   "availableBalance": "Mevcut Bakiye:",
@@ -179,13 +151,6 @@
   "leaderboard": "Sıralama Tablosu",
   "loadingDots": "Yükleniyor…",
   "yourRank": "Sıralaman: #{rank}",
-  "@yourRank": {
-    "placeholders": {
-      "rank": {
-        "type": "String"
-      }
-    }
-  },
   "outOf": "Toplam",
   "believers": "mümin",
   "topTenContributors": "En Çok Katkıda Bulunan 10 Kişi",
@@ -202,24 +167,7 @@
   "tabChallenges": "Meydan Okumalar",
   "allTime": "Tüm Zamanlar",
   "ptsToLevel": "Seviye {level}'e {pts} Tohum",
-  "@ptsToLevel": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      },
-      "level": {
-        "type": "String"
-      }
-    }
-  },
   "dayStreak": "{count} günlük seri",
-  "@dayStreak": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "actions": "ameller",
   "action": "amel",
   "breakdown": "Dağılım",
@@ -228,13 +176,6 @@
   "seeMore": "Daha Fazla Gör",
   "more": "daha",
   "noActivity": "{period} aktivite yok",
-  "@noActivity": {
-    "placeholders": {
-      "period": {
-        "type": "String"
-      }
-    }
-  },
   "startEarningPts": "Tohum kazanmaya başla: Kur'an oku, zikir ve dua et.",
   "howToEarnPts": "Tohum Nasıl Kazanılır",
   "readOneAyah": "1 Ayet Oku",
@@ -247,42 +188,11 @@
   "exclusiveVotingRights": "Özel oy kullanma hakkı",
   "hallOfFameListing": "Şöhret Salonu listesi",
   "unlocks": "Açılır: {feature}",
-  "@unlocks": {
-    "placeholders": {
-      "feature": {
-        "type": "String"
-      }
-    }
-  },
   "now": "ŞİMDİ",
   "trophyVault": "Kupa Kasası",
   "badgesCollected": "{earned} / {total} rozet toplandı",
-  "@badgesCollected": {
-    "placeholders": {
-      "earned": {
-        "type": "String"
-      },
-      "total": {
-        "type": "String"
-      }
-    }
-  },
   "percentComplete": "%{pct} Tamamlandı",
-  "@percentComplete": {
-    "placeholders": {
-      "pct": {
-        "type": "String"
-      }
-    }
-  },
   "toUnlock": "Açmak için {count}",
-  "@toUnlock": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "earned": "KAZANILDI",
   "locked": "KİLİTLİ",
   "seasonalEvents": "Mevsimlik Etkinlikler",
@@ -295,21 +205,7 @@
   "comingSoonStayConsistent": "Yakında Geliyor, İstikrarını Koru!",
   "done": "Tamam!",
   "ptsBoost": "{multiplier}× Tohum Bonusu",
-  "@ptsBoost": {
-    "placeholders": {
-      "multiplier": {
-        "type": "String"
-      }
-    }
-  },
   "ends": "{date} tarihinde sona eriyor",
-  "@ends": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "loadingStreaks": "Seriler yükleniyor…",
   "centurion": "Centurion, Maşallah!",
   "currentBestStreak": "Mevcut en iyi seri",
@@ -317,29 +213,8 @@
   "nextMilestone": "SONRAKİ KİLOMETRE TAŞI",
   "allMilestones": "TÜM KİLOMETRE TAŞLARI",
   "moreDaysToGo": "{count} gün kaldı, devam!",
-  "@moreDaysToGo": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "dayStreakLabel": "{count} günlük seri",
-  "@dayStreakLabel": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "best": "En İyi {count}",
-  "@best": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "dhikarAndDua": "Zikir & Dua",
   "listenTafsir": "Tefsir Dinle",
   "challenge": "Meydan Okuma",
@@ -349,21 +224,7 @@
   "featuredSurahs": "Öne Çıkan Sureler",
   "browseAll114": "Tüm 114 Sureyi Gör",
   "verses": "{count} ayet",
-  "@verses": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "ayahN": "Ayet {n}",
-  "@ayahN": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "readTafsir": "Tefsir Oku",
   "translation": "Çeviri",
   "loadingTafsir": "Tefsir yükleniyor...",
@@ -386,13 +247,6 @@
   "selectSurah": "Sure Seç",
   "audioNotLoaded": "Ses henüz yüklenmedi. Lütfen bekleyin...",
   "playbackError": "Oynatma hatası: {message}",
-  "@playbackError": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
   "audioUnavailable": "Ses kullanılamıyor, internet bağlantısını kontrol edin.",
   "signInToSaveFavourites": "Favorileri kaydetmek için giriş yapın",
   "addedToFavourites": "Favorilere Eklendi",
@@ -431,25 +285,11 @@
   "showWordMeaning": "Her Arapça kelimenin İngilizce anlamını göster",
   "translationLanguage": "Çeviri Dili",
   "translationsAvailable": "{count} çeviri mevcut",
-  "@translationsAvailable": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "reciterLabel": "Kari:",
   "playing": "Çalıyor",
   "favourite": "Favori",
   "bookmark": "Yer İmi",
   "ayahsRead": "{count} ayet okundu",
-  "@ayahsRead": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "goalAyahs": "Hedef: Günde 50 ayet",
   "nextPage": "Sonraki Sayfa",
   "exit": "Çıkış",
@@ -468,34 +308,10 @@
   "chooseSurah": "Sure Seç",
   "chooseVerse": "Ayet Seç",
   "surahHasVerses": "{surah} suresinde {count} ayet var",
-  "@surahHasVerses": {
-    "placeholders": {
-      "surah": {
-        "type": "String"
-      },
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "favourites": "Favoriler",
   "bookmarks": "Yer İmleri",
   "saved": "{count} kayıtlı",
-  "@saved": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "noSavedYet": "Henüz {title} yok",
-  "@noSavedYet": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      }
-    }
-  },
   "tapToSaveVerses": "Okurken kalp/yer imi simgesine dokunarak ayetleri kaydet.",
   "randomVerse": "Rastgele Ayet",
   "sunnahFriday": "Sünnet Cuması",
@@ -536,13 +352,6 @@
   "reference": "Kaynak",
   "benefit": "Faydası",
   "continueAdhkar": "{category} Ezkarına kaldığın yerden devam et.",
-  "@continueAdhkar": {
-    "placeholders": {
-      "category": {
-        "type": "String"
-      }
-    }
-  },
   "set": "ayarlamak",
   "sets": "set",
   "duasOfUmmah": "Ümmetin Duaları",
@@ -578,29 +387,8 @@
   "priceless": "Paha Biçilemez",
   "beyondWorldCanHold": "Dünyanın taşıyabileceğinin ötesinde",
   "deedsToday": "Bugün +{count} amel",
-  "@deedsToday": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "deedsThisWeek": "Bu hafta +{count}",
-  "@deedsThisWeek": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "bestDayStreak": "En iyi: {count} günlük seri",
-  "@bestDayStreak": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "donateMoreEarn": "Daha Fazla Bağışla & Kazan",
   "yourHoldings": "Varlıkların",
   "seeAll": "Tümünü Gör →",
@@ -625,63 +413,21 @@
   "title": "Başlık",
   "everyDeedRecorded": "Her amel kaydedilir. Devam et!",
   "yourAvailable": "Kullanılabilir: {pts} Tohum",
-  "@yourAvailable": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "jazakAllahDonated": "Cezakallah! {pts} Tohum bağışlandı",
-  "@jazakAllahDonated": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "insufficientPoints": "Tohum yetersiz",
   "donatePoints": "{pts} Tohum bağışla",
-  "@donatePoints": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "everyRecitationCanChange": "Her Okuma Bir\nHayat Değiştirebilir",
   "fullyFunded": "Tamamen Fonlandı ✓",
   "noPointsAvailable": "Tohum yok",
   "communityProgress": "Topluluk İlerlemesi",
   "myContribution": "Benim katkım: {pts} puan",
-  "@myContribution": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "ptsRaised": "puan toplandı",
   "ofGoal": "{goal} puan hedefinin",
-  "@ofGoal": {
-    "placeholders": {
-      "goal": {
-        "type": "String"
-      }
-    }
-  },
   "daysLeft": "gün kaldı",
   "lastDay": "Son gün!",
   "deadline": "son tarih",
   "campaignStory": "Kampanya Hikayesi",
   "updates": "Güncellemeler ({count})",
-  "@updates": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "campaign": "Kampanya",
   "noStoryYet": "Henüz hikaye eklenmedi.",
   "checkAdminPanel": "Kampanya hikayesi eklemek için yönetici panelini kontrol edin.",
@@ -689,13 +435,6 @@
   "checkBackForNews": "Kampanya haberleri için yakında tekrar kontrol edin.",
   "yesterday": "Dün",
   "daysAgo": "{count} gün önce",
-  "@daysAgo": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "shareCampaign": "Kampanyayı Paylaş",
   "spreadTheWord": "Haberi yay ve bu davanın hedefine ulaşmasına yardım et.",
   "shareViaWhatsApp": "WhatsApp ile Paylaş",
@@ -732,13 +471,6 @@
   "notifOffDesc": "Kapalı, yeni uyarı eklenmeyecek",
   "viewNotificationsInbox": "Bildirim kutusunu görüntüle",
   "nNew": "{n} yeni",
-  "@nNew": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "helpCenter": "Yardım Merkezi",
   "reportABug": "Hata Bildir",
   "aboutNoorRewards": "Sabiq Rewards Hakkında",
@@ -789,13 +521,6 @@
   "connectedAccount": "Bağlı Hesap",
   "active": "Aktif",
   "noorPlusPoints": "+{pts} Sabiq Tohumları",
-  "@noorPlusPoints": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "yourGarden": "BAHÇENİZ",
   "noorPointsBloomed": "Sabiq Tohumları çiçek açtı",
   "growingStreakTitle": "BÜYÜYEN SERİ",
@@ -807,61 +532,16 @@
   "monthTab": "Ay",
   "todayTab": "Bugün",
   "ofTabGoal": "{goal} {tab} hedefinin",
-  "@ofTabGoal": {
-    "placeholders": {
-      "goal": {
-        "type": "String"
-      },
-      "tab": {
-        "type": "String"
-      }
-    }
-  },
   "todaysPlots": "Bugünkü planlar",
   "setsTodayCount": "bugün ayarlar {count}",
-  "@setsTodayCount": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "earnPerFriend": "Arkadaş başına +500 kazanın",
   "lastAchievement": "Son: {name}",
-  "@lastAchievement": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "outOfBelievers": "{count} inananlardan",
-  "@outOfBelievers": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "yourRankNum": "Sıralamanız: #{rank}",
-  "@yourRankNum": {
-    "placeholders": {
-      "rank": {
-        "type": "String"
-      }
-    }
-  },
   "youIndicator": "(Sen)",
   "greetingPrefix": "Esselamu aleyküm,",
   "fundProjectsText": "Sabiq Seeds'iniz bu projeleri finanse ediyor",
   "activeCount": "{count} aktif",
-  "@activeCount": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "seeDetailsForMoreProjects": "Daha fazla Proje için Ayrıntılara Bakın →",
   "notificationsSubtitle": "Ödüller ve kilometre taşlarından haberdar olun",
   "markAllAsRead": "Tümünü okundu olarak işaretle",
@@ -872,71 +552,16 @@
   "whenYouEarnRewards": "Ödül kazandığınızda, seriye ulaştığınızda veya bir rozetin kilidini açtığınızda,\nburada görünecek.",
   "justNow": "Şu anda",
   "mAgo": "{delta}dk önce",
-  "@mAgo": {
-    "placeholders": {
-      "delta": {
-        "type": "String"
-      }
-    }
-  },
   "hAgo": "{delta}sa önce",
-  "@hAgo": {
-    "placeholders": {
-      "delta": {
-        "type": "String"
-      }
-    }
-  },
   "dAgo": "{delta}g önce",
-  "@dAgo": {
-    "placeholders": {
-      "delta": {
-        "type": "String"
-      }
-    }
-  },
   "newBadgeUnlocked": "Yeni rozetin kilidi açıldı",
   "daySealed": "Gün mühürlendi",
   "dailyLoginBonus": "Günlük giriş bonusu",
   "oneWeek": "Bir Hafta",
   "twoWeeks": "İki Hafta",
   "badgeEarnedDesc": "\"{badge}\" rozetini kazandınız.",
-  "@badgeEarnedDesc": {
-    "placeholders": {
-      "badge": {
-        "type": "String"
-      }
-    }
-  },
   "pointsForSealing": "+{points} Sabiq Tohumları bugün mühürlenecek.",
-  "@pointsForSealing": {
-    "placeholders": {
-      "points": {
-        "type": "String"
-      }
-    }
-  },
   "welcomeBack": "+{points} Sabiq Seeds · tekrar hoş geldiniz!",
-  "@welcomeBack": {
-    "placeholders": {
-      "points": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakBonus": {
-    "placeholders": {
-      "days": {
-        "type": "String"
-      },
-      "type": {
-        "type": "String"
-      },
-      "points": {
-        "type": "String"
-      }
-    }
-  },
   "onbV2Skip": "Atlamak",
   "onbV2Next": "Sonraki",
   "onbV2_1_TitleA": "Kur'an okumanız",
@@ -1004,13 +629,6 @@
   "qfConflictExplanation": "Bu e-posta, farklı bir oturum açma yöntemiyle (E-posta veya Google) Sabiq Rewards'ta zaten kayıtlı.\n\nMevcut ilerlemenizi, serilerinizi ve Sabiq Seeds'inizi korumak için lütfen orijinal yönteminizle oturum açın.",
   "qfConflictStep1": "Giriş ekranına geri dön",
   "qfConflictStep2": "E-posta veya Google ile şunu kullanarak oturum açın\n{email}",
-  "@qfConflictStep2": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
   "qfConflictStep3": "Tüm ilerlemeniz orada olacak",
   "qfConflictBackButton": "Girişe Dön",
   "sponsorAnOrphan": "Bir Yetime Sponsor Olun",
@@ -1023,14 +641,7 @@
   "yourAkhirahBalance": "AHİRET BAKİYENİZ",
   "seedsCollectedSinceJoined": "Katıldığınızdan beri toplanan Tohum",
   "todayLabel": "BUGÜN",
-  "plusSeedsToday": "+{count} today",
-  "@plusSeedsToday": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
+  "plusSeedsToday": "+{count} bugün",
   "azkaarPerDay": "günlük azkar",
   "viewFullStats": "Tüm istatistikleri görüntüle",
   "fatherLabel": "Baba",
@@ -1043,13 +654,6 @@
   "theirStorySection": "Onların hikayesi",
   "yourBalanceLabel": "Bakiyeniz:",
   "sponsorCta": "{name} için Sponsor Ol",
-  "@sponsorCta": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "notEnoughSeeds": "Yeterli Tohum yok",
   "bookmarkSyncDialogTitle": "Quran.com Yer İmi Senkronizasyonu",
   "closeLabel": "Kapat",
@@ -1062,47 +666,12 @@
   "retryLabel": "Tekrar Dene",
   "authErrorTitle": "Kimlik Doğrulama Hatası",
   "sealWithinHours": "{hours} sa içinde mühürle",
-  "@sealWithinHours": {
-    "placeholders": {
-      "hours": {
-        "type": "int"
-      }
-    }
-  },
   "sealWithinMinutes": "{minutes} dk içinde mühürle",
-  "@sealWithinMinutes": {
-    "placeholders": {
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
   "sealNow": "Şimdi mühürle",
   "goalLabel": "Hedef",
   "contributorCount": "{count, plural, =1{1 katılımcı} other{{count} katılımcı}}",
-  "@contributorCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "dayStreakCount": "{streak} Günlük Seri 🔥",
-  "@dayStreakCount": {
-    "placeholders": {
-      "streak": {
-        "type": "int"
-      }
-    }
-  },
   "seedsPendingCount": "{count, plural, =1{1 Tohum bekliyor} other{{count} Tohum bekliyor}}",
-  "@seedsPendingCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "sealToSave": "Kaydetmek için mühürle",
   "top10Contributors": "İlk 10 Katılımcı",
   "copyLabel": "Kopyala",
@@ -1110,13 +679,6 @@
   "whatsappLabel": "WhatsApp",
   "youBothEarnSeeds": "İkiniz de 500 Tohum kazanırsınız!",
   "jazakAllahPlusSeeds": "JazakAllah!  +{seeds} Tohum",
-  "@jazakAllahPlusSeeds": {
-    "placeholders": {
-      "seeds": {
-        "type": "int"
-      }
-    }
-  },
   "jazakAllahDaySealed": "JazakAllah!  Gün mühürlendi",
   "pointsGoals": "PUAN HEDEFLERİ",
   "editLabel": "Düzenle",
@@ -1124,13 +686,6 @@
   "weeklyGoal": "Haftalık Hedef",
   "monthlyGoal": "Aylık Hedef",
   "setTargetSeeds": "Hedef Tohum belirleyin (varsayılan: {defaultVal})",
-  "@setTargetSeeds": {
-    "placeholders": {
-      "defaultVal": {
-        "type": "int"
-      }
-    }
-  },
   "noInternetTitle": "İnternet Bağlantısı Yok",
   "connectingTitle": "Bağlanıyor…",
   "somethingWentWrongTitle": "Bir Şeyler Ters Gitti",
@@ -1143,21 +698,7 @@
   "goalUpper": "HEDEF",
   "aboutThisCause": "Bu Dava Hakkında",
   "myContributionSeeds": "{count, plural, =1{Katkım: 1 Tohum} other{Katkım: {count} Tohum}}",
-  "@myContributionSeeds": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "jazakAllahKhayranDonated": "{amount, plural, =1{JazakAllah Khayran! 1 Tohum bağışlandı.} other{JazakAllah Khayran! {amount} Tohum bağışlandı.}}",
-  "@jazakAllahKhayranDonated": {
-    "placeholders": {
-      "amount": {
-        "type": "int"
-      }
-    }
-  },
   "coinsSealedTitle": "Sikkeler Mühürlendi! ماشاء الله",
   "seedsSealedSafe": "Tohumlarınız mühürlendi ve Ahiret için\ngüvende.",
   "validationSeedsLabel": "Doğrulama Tohumları",
@@ -1169,25 +710,8 @@
   "shareWithFriendsCta": "Arkadaşlarla Paylaş",
   "earnMoreSeedsCta": "Daha Fazla Tohum Kazan",
   "levelTitleFormat": "Sv {level} · {title}",
-  "@levelTitleFormat": {
-    "placeholders": {
-      "level": {
-        "type": "int"
-      },
-      "title": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceUpper": "AHİRET BAKİYESİ",
   "bestDayStreakBadge": "En iyi: {streak} günlük seri",
-  "@bestDayStreakBadge": {
-    "placeholders": {
-      "streak": {
-        "type": "int"
-      }
-    }
-  },
   "deedsLabel": "AMELLER",
   "treesLabel": "AĞAÇLAR",
   "forgivenLabel": "AFFEDİLDİ",
@@ -1198,65 +722,20 @@
   "poolSeedsImpact": "Kalıcı etki için Tohumlarınızı birleştirin",
   "featuredSponsorChild": "Öne çıkan · Bir çocuğa sponsor ol",
   "meetOrphanAge": "Tanışın: {name}, {age}",
-  "@meetOrphanAge": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "age": {
-        "type": "int"
-      }
-    }
-  },
   "sponsorNameArrow": "{name} için Sponsor Ol →",
-  "@sponsorNameArrow": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "featuredCampaign": "Öne Çıkan Kampanya",
   "yourGiving": "Bağışlarınız",
   "havenNotGivenYet": "Henüz bağış yapmadınız. Etki yolculuğunuza başlamak için yukarıdan birini seçin.",
   "seedsDonatedLabel": "Bağışlanan Tohum",
   "orphanCount": "{count, plural, =1{Yetim} other{Yetimler}}",
-  "@orphanCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "projectCount": "{count, plural, =1{Proje} other{Projeler}}",
-  "@projectCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "couldntLoadJourney": "Yolculuğunuz yüklenemedi",
   "checkConnectionRetry": "Bağlantınızı kontrol edip tekrar deneyin.",
   "actionsCount": "{count, plural, =1{1 eylem} other{{count} eylem}}",
-  "@actionsCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "showLessAction": "Daha Az Göster ←",
   "hadithReference": "Hadis Kaynağı",
   "howYouEarnedThis": "Bunu nasıl kazandınız",
   "seedsCount": "{count, plural, =1{1 Tohum} other{{count} Tohum}}",
-  "@seedsCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "seedsUnit": "Tohum",
   "topContribByLifetimeSeeds": "Tüm zamanların en iyi Tohum katılımcıları",
   "romanisedPronunciation": "Her kelimenin altında Latin alfabesi telaffuzu",
@@ -1267,70 +746,15 @@
   "earnPerVerseRead": "Okunan her ayet için +10 Tohum kazanın",
   "surahPickerLabel": "Sure",
   "versesCount": "{count, plural, =1{1 ayet} other{{count} ayet}}",
-  "@versesCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "startFromVerse": "Ayetten Başla",
   "verseN": "Ayet {n}",
-  "@verseN": {
-    "placeholders": {
-      "n": {
-        "type": "int"
-      }
-    }
-  },
   "ofN": "/ {n}",
-  "@ofN": {
-    "placeholders": {
-      "n": {
-        "type": "int"
-      }
-    }
-  },
   "surahHasNVerses": "{name} Suresi {count} ayet içerir",
-  "@surahHasNVerses": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "noXYet": "Henüz {label} yok",
-  "@noXYet": {
-    "placeholders": {
-      "label": {
-        "type": "String"
-      }
-    }
-  },
   "tapHeartToSave": "Ayetleri kaydetmek için okurken kalp/yer imi simgesine dokunun.",
   "surahVerseRow": "Sure {surah}  •  Ayet {ayah}",
-  "@surahVerseRow": {
-    "placeholders": {
-      "surah": {
-        "type": "int"
-      },
-      "ayah": {
-        "type": "int"
-      }
-    }
-  },
   "hasanatFromQuran": "Kuran'dan Hasenat",
   "tenPerLetterSubtitle": "Harf başına 10, ayet başına {count}",
-  "@tenPerLetterSubtitle": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "fromSubhanAllahTasbih": "SubhanAllah & Tesbihten",
   "likeFoamOfSea": "Deniz köpüğü gibi",
   "fromSurahIkhlasRecitation": "İhlas Suresi okunuşundan",
@@ -1361,13 +785,6 @@
   "essentialsWord": "Temeller",
   "seedsExpiringNotificationTitle": "Tohumlar gece yarısı bitiyor!",
   "seedsExpiringNotificationBody": "{pending} Tohumunuz bekliyor. Şimdi Günü mühürleyin yoksa süresi dolacak!",
-  "@seedsExpiringNotificationBody": {
-    "placeholders": {
-      "pending": {
-        "type": "int"
-      }
-    }
-  },
   "okButton": "Tamam",
   "signUpTitle": "Kayıt Ol",
   "signInTitle": "Giriş Yap",
@@ -1385,84 +802,15 @@
   "realImpactTitle": "Gerçek Etki",
   "realImpactSubtitle": "Tohumlar asil davaları\nfinanse eder",
   "plusDeedsTodayBadge": "+{count} amel bugün",
-  "@plusDeedsTodayBadge": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "equivalentChange": "{count} eşdeğer",
-  "@equivalentChange": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "receivedChange": "{count} alındı",
-  "@receivedChange": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "readAyahsPlusTimeToday": "{count, plural, =1{Bugün 1 ayet okundu ve {time} Kuran okumaya harcandı} other{Bugün {count} ayet okundu ve {time} Kuran okumaya harcandı}}",
-  "@readAyahsPlusTimeToday": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      },
-      "time": {
-        "type": "String"
-      }
-    }
-  },
   "readAyahsToday": "{count, plural, =1{Bugün 1 ayet okundu} other{Bugün {count} ayet okundu}}",
-  "@readAyahsToday": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "spentTimeReadingQuranToday": "Bugün Kuran okumaya {time} harcandı",
-  "@spentTimeReadingQuranToday": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
   "everyDeedRecordedKeepGoing": "🌙  Her amel kaydediliyor. Devam edin!",
   "viewAllDonors": "Tüm {count} bağışçıyı göster",
-  "@viewAllDonors": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "nextMilestoneInfo": "Sonraki: {label} ({days} gün)",
-  "@nextMilestoneInfo": {
-    "placeholders": {
-      "label": {
-        "type": "String"
-      },
-      "days": {
-        "type": "int"
-      }
-    }
-  },
   "bestN": "En İyi {n}",
-  "@bestN": {
-    "placeholders": {
-      "n": {
-        "type": "int"
-      }
-    }
-  },
   "streakMilestoneWarmingUp": "Isınma",
   "streakMilestoneOneWeek": "Bir Hafta",
   "streakMilestoneTwoWeeks": "İki Hafta",
@@ -1472,41 +820,10 @@
   "firstTrackedWeek": "İlk takip edilen haftanız — devam edin!",
   "rightOnSevenDayPace": "Tam 7 günlük temponuzda",
   "aboveSevenDayAvg": "7 günlük ortalamanızın %{pct} üzerinde",
-  "@aboveSevenDayAvg": {
-    "placeholders": {
-      "pct": {
-        "type": "int"
-      }
-    }
-  },
   "belowSevenDayAvg": "7 günlük ortalamanızın %{pct} altında",
-  "@belowSevenDayAvg": {
-    "placeholders": {
-      "pct": {
-        "type": "int"
-      }
-    }
-  },
   "sponsoredBy": "Sponsor",
   "currentOverDays": "{current} / {days} gün",
-  "@currentOverDays": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "days": {
-        "type": "int"
-      }
-    }
-  },
   "daysWord": "{count, plural, =1{gün} other{gün}}",
-  "@daysWord": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "dayAbbrMon": "Pt",
   "dayAbbrTue": "Sa",
   "dayAbbrWed": "Ça",
@@ -1541,178 +858,31 @@
   "secondSingular": "saniye",
   "secondPlural": "saniye",
   "seedsThisSession": "+{count} tohum bu oturum",
-  "@seedsThisSession": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "sevenDayAvgAzkaar": "7 günlük ort.: {count} zikir/gün",
-  "@sevenDayAvgAzkaar": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeAyahs": "{count} ayet",
-  "@holdingChangeAyahs": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangePlanted": "{count} ekildi",
-  "@holdingChangePlanted": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeCycles": "{count} döngü",
-  "@holdingChangeCycles": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeBuilt": "{count} inşa edildi",
-  "@holdingChangeBuilt": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeEarned": "{count} kazanıldı",
-  "@holdingChangeEarned": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeOpened": "{count} açıldı",
-  "@holdingChangeOpened": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeInvocations": "{count} dua",
-  "@holdingChangeInvocations": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "holdingChangeRecitations": "{count} okuma",
-  "@holdingChangeRecitations": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "bookmarksOnQuranCom": "Quran.com'daki yer imleri: {count}",
-  "@bookmarksOnQuranCom": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "bookmarksInThisApp": "Bu uygulamadaki yer imleri: {count}",
-  "@bookmarksInThisApp": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "streakSeedsBonus": "+{count} Tohum",
-  "@streakSeedsBonus": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "plusSeedsThisWeek": "+{count} bu hafta",
-  "@plusSeedsThisWeek": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "unitDuas": "{count} dua",
-  "@unitDuas": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "unitAdhkar": "{count} zikir",
-  "@unitAdhkar": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "moreCollections": "Daha fazla koleksiyon",
   "donateAndEarnReward": "Bağışla & Ödül Kazan",
   "donateAmountSeeds": "{amount} Tohum bağışla",
-  "@donateAmountSeeds": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "readMore": "Devamını oku",
   "beFirstToContribute": "İlk katkıda bulunan siz olun.",
   "showFewer": "Daha az göster ↑",
   "viewAllN": "Tümünü gör ({n}) →",
-  "@viewAllN": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "liveReadersNow": "{count} çevrimiçi",
-  "@liveReadersNow": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "communityReadingToday": "{count} bugün okudu (topluluk)",
-  "@communityReadingToday": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "communityHasanatToday": "+{count} topluluk sevabı bugün",
-  "@communityHasanatToday": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "peopleReadingNow": "şu an okuyor",
   "readToday": "bugün okudu",
   "communityHasanat": "topluluk sevabı",
@@ -1722,37 +892,10 @@
   "authScreen_alreadyHaveAnAccount": "Zaten bir hesabınız var mı? Oturum aç",
   "authScreen_haveAnAccountSign": "hesabın yok mu? Üye olmak",
   "qfAuthService_qfemailconflictexceptionAlreadyHasAn": "QfEmailConflictException: {email}'nin zaten bir hesabı var",
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
   "qfAuthService_openidOfflineAccessUser": "openid offline_access kullanıcı yer imi koleksiyonu read_session",
   "qfAuthService_tokenExchangeFailed": "Jeton değişimi başarısız oldu ({arg1}): {arg2}",
-  "@qfAuthService_tokenExchangeFailed": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "qfAuthService_errorNullResponse": "HATA: Boş yanıt",
   "orphan_be2bf7": "{firstName} {lastInitial}.",
-  "@orphan_be2bf7": {
-    "placeholders": {
-      "firstName": {
-        "type": "String"
-      },
-      "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceScreen_subhanallahiWaBiHamdihi": "Günde 100 defa \"Sübhanallahi ve bi-hamdihi\" demek, deniz köpüğü gibi günahları siler. (Buhari)",
   "akhirahBalanceScreen_sayLaIlahaIllallah": "100 defa La ilahe illallah demek, 10 köle ve 100 hasenat azadına denktir. (Buhari)",
   "akhirahBalanceScreen_lightOnTheTongue": "Dilde hafif, terazide ağır: Sübhanallahi ve bi-hamdihi, Sübhanallahil-azim. (Buhari 6406)",
@@ -1778,127 +921,24 @@
   "akhirahBalanceScreen_heartThatForgetsDhikr": "Zikri unutan kalp paslanmaya başlar. Hatırlayan kalp yanar.",
   "akhirahBalanceScreen_haveYouFortifiedYourself": "Bugün sabah ve akşam zikirleriyle kendinizi güçlendirdiniz mi?",
   "akhirahBalanceScreen_thisSession": "Bu oturum: +{arg1}",
-  "@akhirahBalanceScreen_thisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceScreen_seedsThisSession": "+{arg1} bu oturumu başlatıyor",
-  "@akhirahBalanceScreen_seedsThisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceScreen_dayAvgAzkaarDay": "7 günlük ortalama: {arg1} azkaar/gün",
-  "@akhirahBalanceScreen_dayAvgAzkaarDay": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_profileReturnedZeroRows": "Profil {uid} için sıfır satır döndürdü",
-  "@dashboardScreen_profileReturnedZeroRows": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dashboardLoadError": "Kontrol Paneli Yükleme Hatası: {e}",
-  "@dashboardScreen_dashboardLoadError": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_invalidReferralCode": "Geçersiz yönlendirme kodu",
   "dashboardScreen_cannotReferYourself": "Kendinize başvuramazsınız",
   "dashboardScreen_sponsor": "Sponsor {name}, {arg1}",
-  "@dashboardScreen_sponsor": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dashboardDoesn": ": 0, // kontrol paneli çalışmıyor",
   "dashboardScreen_today": "{arg1} · {_lastAyah} · +{_ayahsToday} bugün",
-  "@dashboardScreen_today": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_606140": "{arg1} · {_lastAyah}",
-  "@dashboardScreen_606140": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_setsToday": "{_dhikrToday} bugün ayarlanıyor",
-  "@dashboardScreen_setsToday": {
-    "placeholders": {
-      "_dhikrToday": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dayStreak": "{arg1} günlük seri",
-  "@dashboardScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_last": "Son: {arg1}",
-  "@dashboardScreen_last": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_earnPerFriend": "Arkadaş başına +500 kazanın",
   "dashboardScreen_yourSabiqSeedsFund": "Sabiq Seeds'iniz bu projeleri finanse ediyor",
   "dashboardScreen_active": "{arg1} aktif",
-  "@dashboardScreen_active": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_joinMeOnSabiq": "Sabiq Ödüllerinde bana katılın, günlük Kuran, Zikir ve salih ameller için Tohum kazanın!\\n\\n",
   "dashboardScreen_useMyCodeAnd": "*{arg1}* kodumu kullanın ve ikimiz de 500 Sabiq Seeds kazanalım!\\n\\n",
-  "@dashboardScreen_useMyCodeAnd": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_messageCopiedShareOr": "Mesaj kopyalandı, paylaşıldı veya WhatsApp'a yapıştırıldı!",
   "dashboardScreen_sabiqSeedsRewardedTo": "İkinize de 500 Sabiq Tohumu ödülü!",
   "dashboardScreen_youHaveAlreadyUsed": "Zaten bir yönlendirme kodu kullandınız.",
@@ -1906,79 +946,18 @@
   "dashboardScreen_youCannotUseYour": "Kendi kodunuzu kullanamazsınız.",
   "dashboardScreen_anErrorOccurredPlease": "Bir hata oluştu. Lütfen tekrar deneyin.",
   "dashboardScreen_52b02c": "{pts}",
-  "@dashboardScreen_52b02c": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_e4e562": "{arg1}%",
-  "@dashboardScreen_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_seeDetailsForMore": "Daha fazla Proje için Ayrıntılara Bakın →",
   "dashboardScreen_yourTOTALSABIQSEEDS": "TOPLAM SABIQ TOHUMLARINIZ",
   "dashboardScreen_viewCampaignDonate": "🤲 Kampanyayı Görüntüle ve Bağış Yap",
   "dashboardScreen_yourRank": "Sıralamanız: {rankText}",
-  "@dashboardScreen_yourRank": {
-    "placeholders": {
-      "rankText": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_d13a42": "{_myPoints} {unit} • {arg1}",
-  "@dashboardScreen_d13a42": {
-    "placeholders": {
-      "_myPoints": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_beTheFirstOn": "Tahtadaki ilk kişi olun",
   "dashboardScreen_readAnAyahOr": "En üst sıralarda yer almak için bir ayet veya zikir okuyun",
   "dashboardScreen_lvl": "Seviye {level} · {arg1}",
-  "@dashboardScreen_lvl": {
-    "placeholders": {
-      "level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_sealWithin": "{arg1}h içinde mühürle",
-  "@dashboardScreen_sealWithin": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_jazakallahDaySealed": "CezakAllah!  Gün mühürlendi",
   "dashboardScreen_ofGoal": "{arg1} {arg2} hedefinin",
-  "@dashboardScreen_ofGoal": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrHubScreen_propheticSupplications": "Peygamberlik Duaları",
   "dhikrHubScreen_morningEveningRemembrance": "Sabah ve Akşam Anması",
   "dhikrHubScreen_furtherSupplications": "Diğer Dualar",
@@ -1987,82 +966,21 @@
   "dhikrHubScreen_falseHiddenAdd": "] == false) Hidden.add(r[",
   "dhikrScreen_indoPak": "Hint pakistanı",
   "dhikrScreen_default": "Varsayılan: {recommendedCount}",
-  "@dhikrScreen_default": {
-    "placeholders": {
-      "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_duaAzkarSettings": "Dua ve Azkar Ayarları",
   "dhikrScreen_hideTheVisualArtwork": "Görsel sanat alanını gizle",
   "dhikrScreen_pinTheIllustrationAt": "Arapça metin altında kayarken çizimi en üste sabitleyin",
   "dhikrScreen_readTimes": "{readCount} kez okuyun",
-  "@dhikrScreen_readTimes": {
-    "placeholders": {
-      "readCount": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_d08433": "{arg1} / {arg2}",
-  "@dhikrScreen_d08433": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_alBaqarahAmanaAr": "Bakara 285 (Amane'r-Resul)",
   "dhikrScreen_alBaqarahAlifLam": "Bakara 1-5 (Elif Lam Mim)",
   "dhikrScreen_alBaqarahLaIkraha": "Bakara 256 (La İkraha)",
   "dhikrScreen_alBaqarahAllahuWaliyy": "Bakara 257 (Allahu Veliyy)",
   "dhikrScreen_salawatIbrahimiyyaDurood": "Salavat İbrahimiyye (Durood)",
   "dhikrScreen_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
-  "@dhikrScreen_9a4c42": {
-    "placeholders": {
-      "bismillah": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      },
-      "rest": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_86f857": "\\u2060{matched}",
-  "@dhikrScreen_86f857": {
-    "placeholders": {
-      "matched": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_49900d": "+{hasanaat}",
-  "@dhikrScreen_49900d": {
-    "placeholders": {
-      "hasanaat": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_hisnulMuslimChapter": "Hisnül Müslim, Bölüm:",
   "dhikrScreen_3856c1": "{rawRef} | {bottomRef}",
-  "@dhikrScreen_3856c1": {
-    "placeholders": {
-      "rawRef": {
-        "type": "String"
-      },
-      "bottomRef": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_bestOfBothWorlds": "Her iki dünyanın en iyisi, ateşten sığınak",
   "dhikrScreen_patienceAndSteadfastnessIn": "Her denemede sabır ve kararlılık",
   "dhikrScreen_allahBurdensNoSoul": "Allah hiç kimseye kapasitesinin ötesinde yük yüklemez",
@@ -2384,13 +1302,6 @@
   "dhikrScreen_protectionFromEvilEye": "Nazardan Korunma",
   "dhikrScreen_doNotLeaveMe": "Göz açıp kapayıncaya kadar\\nbeni kendime bırakma",
   "dhikrScreen_35c165": "{arg1}",
-  "@dhikrScreen_35c165": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_allahWillSufficeYou": "Allah sana yeter",
   "dhikrScreen_againstWhateverConcernsYou": "seni ilgilendiren her şeye karşı",
   "dhikrScreen_sinsWashedAway": "Günahlar Yıkandı",
@@ -2447,13 +1358,6 @@
   "dhikrScreen_allahDoesNotBurden": "Allah yük vermez",
   "dhikrScreen_soul": "bir ruh",
   "dhikrScreen_a5cfd1": "×{count}",
-  "@dhikrScreen_a5cfd1": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_equalsTheWholeQuran": "Kuran'ın tamamına eşittir × 3",
   "dhikrScreen_completeToWatchYour": "Yukarıda bahçenizin çiçek açmasını izlemek için tamamlayın",
   "impactReportScreen_whoeverDoesAnAtom": "“Kim bir atomu yaparsa\\",
@@ -2481,641 +1385,111 @@
   "impactReportScreen_youWillMeetAllah": "Allah'a kaydınızla kavuşacaksınız. Bugün emin olun\\",
   "impactReportScreen_noDeedIsToo": "Atomları sayan için hiçbir amel küçük değildir.",
   "impactReportScreen_lvl": "Seviye {_level} · {arg1}",
-  "@impactReportScreen_lvl": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_200447": "+{arg1}",
-  "@impactReportScreen_200447": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_deedsTODAY": "BUGÜN YAPILACAKLAR",
   "impactReportScreen_634027": "+{arg1}",
-  "@impactReportScreen_634027": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_thisWEEK": "BU HAFTA",
   "impactReportScreen_hasanaatEarned": "Kazanılan Hasanaat",
   "impactReportScreen_whoeverDoesGoodDeed": "Kim bir iyilik yaparsa, onun on katı kadarı kendisine verilir.",
   "impactReportScreen_whoeverReadsLetterFrom": "Kim Allah'ın kitabından bir harf okursa ona bir hasene verilir ve hasene onla çarpılır.",
   "impactReportScreen_twoHadithGrowThis": "Bu sayıyı iki hadis yan yana büyütüyor:\\n\\n",
   "impactReportScreen_dhikrRecitedLifetime": "Okunan zikir (ömür boyu): {arg1}\\n",
-  "@impactReportScreen_dhikrRecitedLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_hasanat": "→ Hasanat: {arg1}\\n\\n",
-  "@impactReportScreen_hasanat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ayahsReadLifetime": "Okunan ayetler (ömür boyu): {arg1}\\n",
-  "@impactReportScreen_ayahsReadLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_hasanat_e68a30": "→ Hasanat: {arg1}\\n\\n",
-  "@impactReportScreen_hasanat_e68a30": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalHasanaat": "Toplam hasanat: {arg1}",
-  "@impactReportScreen_totalHasanaat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ayahs": "{arg1} ayetler",
-  "@impactReportScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_hasanatFromQuran": "Kur'an'dan Hasanat",
   "impactReportScreen_planted": "{arg1} ekildi",
-  "@impactReportScreen_planted": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_treesInJannah": "Cennet'teki ağaçlar",
   "impactReportScreen_cycles": "{arg1} döngüler",
-  "@impactReportScreen_cycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_sinsForgiven": "Bağışlanan Günahlar",
   "impactReportScreen_whoeverSaysSubhanAllahiWa": "Kim günde 100 defa Sübhanallahi ve bihamdihi derse, günahları deniz köpüğü kadar olsa bile affedilir.",
   "impactReportScreen_subhanallahiWaBihamdihi": "SübhanAllahi ve bihamdihi",
   "impactReportScreen_totalRecitations": "Toplam okuma sayısı: {arg1}\\n",
-  "@impactReportScreen_totalRecitations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_dividedByForgivenessCycles": "100'e bölünür → bağışlama döngüleri: {arg1}",
-  "@impactReportScreen_dividedByForgivenessCycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_built": "{arg1} inşa edildi",
-  "@impactReportScreen_built": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_palacesBuilt": "İnşa Edilen Saraylar",
   "impactReportScreen_dividedByPalaces": "10'a bölünür → saraylar: {arg1}",
-  "@impactReportScreen_dividedByPalaces": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_earned": "{arg1} kazanıldı",
-  "@impactReportScreen_earned": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_treasuresOfJannah": "Cennet Hazineleri",
   "impactReportScreen_equivalent": "{arg1} eşdeğeri",
-  "@impactReportScreen_equivalent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_slavesFreed": "Köleler Serbest Bırakıldı",
   "impactReportScreen_laIlahaIllallahuWahdahu": "La ilahe illallahu vahdehu la şerike lehu...",
   "impactReportScreen_totalRecitations_262e54": "Toplam okuma sayısı: {arg1}\\n",
-  "@impactReportScreen_totalRecitations_262e54": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_setsOfSetsSlaves": "10'lu setler → {arg1} setler × 4 bağımlı = {arg2}",
-  "@impactReportScreen_setsOfSetsSlaves": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_opened": "{arg1} açıldı",
-  "@impactReportScreen_opened": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_gatesOfParadiseOpened": "Cennetin Kapıları Açıldı",
   "impactReportScreen_received": "{arg1} alındı",
-  "@impactReportScreen_received": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_blessingsFromAllah": "Allah'tan bereket",
   "impactReportScreen_totalSalawatSent": "Gönderilen toplam salavat: {arg1}\\n",
-  "@impactReportScreen_totalSalawatSent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_multipliedByBlessingsReceived": "10 ile çarpılır → {arg1} alınan bereketler",
-  "@impactReportScreen_multipliedByBlessingsReceived": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_invocations": "{arg1} çağrılar",
-  "@impactReportScreen_invocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_timesProtected": "Kez Korumalı",
   "impactReportScreen_protectionFromEvil": "Kötülükten korunma",
   "impactReportScreen_goodHealthProtection": "İyi sağlık ve koruma",
   "impactReportScreen_totalInvocations": "Toplam çağrı sayısı: {arg1}",
-  "@impactReportScreen_totalInvocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_equivalent_d7e6f6": "{arg1} eşdeğeri",
-  "@impactReportScreen_equivalent_d7e6f6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_quranCompletions": "Kuran Tamamlamaları",
   "impactReportScreen_dividedByQuranCompletions": "3'e bölünür → {arg1} Kuran tamamlamaları",
-  "@impactReportScreen_dividedByQuranCompletions": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_recitations": "{arg1} okunuşlar",
-  "@impactReportScreen_recitations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_bonusMillionHasanaat": "Bonus Milyon Hasanaat",
   "impactReportScreen_sadaqahGiven": "Verilen Sadaka",
   "impactReportScreen_564740": "{_monthActiveDays}",
-  "@impactReportScreen_564740": {
-    "placeholders": {
-      "_monthActiveDays": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_3dc421": "{arg1}h",
-  "@impactReportScreen_3dc421": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_08990a": "{arg1}m",
-  "@impactReportScreen_08990a": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ago": "{arg1}m önce",
-  "@impactReportScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ago_c25b44": "{arg1}h önce",
-  "@impactReportScreen_ago_c25b44": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ago_e160e3": "{arg1}w önce",
-  "@impactReportScreen_ago_e160e3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_moAgo": "{arg1}ay önce",
-  "@impactReportScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ago_65f0ec": "{arg1}y önce",
-  "@impactReportScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_viewAllDonors": "Tüm {arg1} bağışçılarını görüntüle",
-  "@impactReportScreen_viewAllDonors": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_failed": "Başarısız: {e}",
-  "@impactReportScreen_failed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_meet": "{arg1}, {arg2} ile tanışın",
-  "@impactReportScreen_meet": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_sponsor": "Sponsor {arg1} →",
-  "@impactReportScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_funded": "{arg1}% finanse edildi",
-  "@impactReportScreen_funded": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_yourLifetimeImpact": "Yaşam boyu etkiniz",
   "impactReportScreen_startYourImpactJourney": "Etki yolculuğunuza başlayın",
   "impactReportScreen_bd3721": "{_myOrphansSponsoredCount}",
-  "@impactReportScreen_bd3721": {
-    "placeholders": {
-      "_myOrphansSponsoredCount": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_b3d969": "{_myProjectsSupportedCount}",
-  "@impactReportScreen_b3d969": {
-    "placeholders": {
-      "_myProjectsSupportedCount": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_customProfileThemes": "Özel profil temaları",
   "levelScreen_exclusiveVotingRights": "Özel oy hakları",
   "levelScreen_hallOfFameListing": "Hall of Fame listesi",
   "levelScreen_seeds": "+{arg1} Tohumlar",
-  "@levelScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_laIlahaIllallah": "La ilahe illallah x100",
   "levelScreen_seeds_59c6a1": "+{arg1} Tohumlar",
-  "@levelScreen_seeds_59c6a1": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_seeds_a20530": "+{arg1} Tohumlar",
-  "@levelScreen_seeds_a20530": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_unlocks": "Kilidi açar: {arg1}",
-  "@levelScreen_unlocks": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_seeds_a49180": "+{arg1} Tohumlar ✓",
-  "@levelScreen_seeds_a49180": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_seeds_a22be5": "+{arg1} Tohumlar",
-  "@levelScreen_seeds_a22be5": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_seedsBoost": "{arg1}× Tohum Artırma",
-  "@levelScreen_seedsBoost": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "@levelScreen_cf765f": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      },
-      "arg3": {
-        "type": "String"
-      },
-      "arg4": {
-        "type": "String"
-      },
-      "arg5": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_nextDays": "Sonraki: {arg1} ({arg2} gün)",
-  "@levelScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_seeds_990893": "+{arg1} Tohumlar",
-  "@levelScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_days": "{current} / {arg1} gün",
-  "@levelScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_dayStreak": "{arg1} gün serisi",
-  "@levelScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "phase1Screens_inTheNameOf": "Rahman ve Rahim olan Allah'ın adıyla…",
   "phase1Screens_quranReadingNimage": "Kur'an okuması\\nipage",
   "phase1Screens_orphansNimage": "Yetimler\\nimage",
   "onboardingComponents_355c50": "{first}",
-  "@onboardingComponents_355c50": {
-    "placeholders": {
-      "first": {
-        "type": "String"
-      }
-    }
-  },
   "onboardingComponents_b236c9": "{trailing}",
-  "@onboardingComponents_b236c9": {
-    "placeholders": {
-      "trailing": {
-        "type": "String"
-      }
-    }
-  },
   "quranMini_inTheNameOf": "Rahman ve Rahim olan Allah'ın adıyla.",
   "quranMini_allPraiseBelongsTo": "Hamd alemlerin Rabbi olan Allah'a mahsustur.",
   "orphansGridScreen_36cd3b": "{arg1} · {arg2}",
-  "@orphansGridScreen_36cd3b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_years": "{arg1} yıl",
-  "@orphanDetailScreen_years": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_ofSeeds": "{arg1} / {arg2} Tohumlar",
-  "@orphanDetailScreen_ofSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_through": "{arg1} aracılığıyla",
-  "@orphanDetailScreen_through": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_andTheyGiveFood": "Ve sevgilerine rağmen, yoksula, yetime ve esire yiyecek verirler.",
   "orphanDetailScreen_ago": "{arg1}m önce",
-  "@orphanDetailScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_ago_c25b44": "{arg1}h önce",
-  "@orphanDetailScreen_ago_c25b44": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_ago_e160e3": "{arg1}w önce",
-  "@orphanDetailScreen_ago_e160e3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_moAgo": "{arg1}ay önce",
-  "@orphanDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_ago_65f0ec": "{arg1}y önce",
-  "@orphanDetailScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_seeds": "{_availablePoints} Tohumlar",
-  "@orphanDetailScreen_seeds": {
-    "placeholders": {
-      "_availablePoints": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_sponsor": "Sponsor {arg1}",
-  "@orphanDetailScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_jazakallahKhayranSeedsSponsored": "CezakAllah Hayran! {amount} Sponsorlu tohumlar.",
-  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_chooseHowManySeeds": "Kaç tane Tohum vereceğinizi seçin. Minimum {arg1}.",
-  "@orphanDetailScreen_chooseHowManySeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_yourBalanceSeeds": "Bakiyeniz: {arg1} Tohumlar",
-  "@orphanDetailScreen_yourBalanceSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "profileSettingsScreen_nameCannotBeEmpty": "Ad boş olamaz",
   "profileSettingsScreen_sabiqRewards": "Sabiq Ödülleri • v1.0",
   "profileSettingsScreen_bosniaAndHerzegovina": "Bosna Hersek",
@@ -3125,176 +1499,34 @@
   "profileSettingsScreen_signedInWithQuran": "Kuran.com'da oturum açıldı",
   "profileSettingsScreen_signedInWithEmail": "E-posta ile oturum açıldı",
   "profileSettingsScreen_seeds": "{arg1} Tohumlar",
-  "@profileSettingsScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "profileSettingsScreen_seeds_59ba7c": "{arg1} Tohumlar",
-  "@profileSettingsScreen_seeds_59ba7c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "profileSettingsScreen_seeds_2bc978": "{arg1} Tohumlar",
-  "@profileSettingsScreen_seeds_2bc978": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "profileSettingsScreen_guidesFAQsAndHow": "Kılavuzlar, SSS'ler ve nasıl yapılırlar",
   "profileSettingsScreen_somethingNotWorkingTell": "Bir şey çalışmıyor mu? Bize söyle",
   "profileSetupScreen_ahmadFatimaYusuf": "Ahmed, Fatıma, Yusuf…",
   "profileSetupScreen_pakistanEgyptMalaysia": "Pakistan, Mısır, Malezya…",
   "projectDetailScreen_organisedBy": "Düzenleyen: {sponsor}\\n\\n",
-  "@projectDetailScreen_organisedBy": {
-    "placeholders": {
-      "sponsor": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_fundedSoFarEvery": "Şu ana kadar finanse edilen her Tohum önemlidir!\\n\\n",
   "projectDetailScreen_openSabiqRewardsApp": "Tohumlarınızı bağışlamak ve ödül kazanmak için Sabiq Rewards uygulamasını açın.\\n",
   "projectDetailScreen_sabiqrewardsSadaqahIslamicCharity": "#SabiqRewards #Sadaqah #IslamicCharity",
   "projectDetailScreen_4c2b09": "{arg1} {arg2} {arg3}",
-  "@projectDetailScreen_4c2b09": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      },
-      "arg3": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_donateToProvideUrgent": "Kritik düzeyde gıda, su ve tıbbi malzeme sıkıntısı çeken Filistinlilere acil, hayat kurtaran yardım sağlamak için bağışta bulunun...",
   "projectDetailScreen_seeds": "{arg1} Tohumlar",
-  "@projectDetailScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_seeds_801ec7": "{arg1} Tohumlar",
-  "@projectDetailScreen_seeds_801ec7": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_e4e562": "{arg1}%",
-  "@projectDetailScreen_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_ago": "{arg1}m önce",
-  "@projectDetailScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_ago_c25b44": "{arg1}h önce",
-  "@projectDetailScreen_ago_c25b44": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_ago_e160e3": "{arg1}w önce",
-  "@projectDetailScreen_ago_e160e3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_moAgo": "{arg1}ay önce",
-  "@projectDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_ago_65f0ec": "{arg1}y önce",
-  "@projectDetailScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_viewAll": "Tümünü görüntüle {arg1} →",
-  "@projectDetailScreen_viewAll": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_saved": "{arg1} kaydedildi",
-  "@quranHubScreen_saved": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_tapTheHeartBookmark": "Ayetleri kaydetmek için okurken kalp/yer imi simgesine dokunun.",
   "quranHubScreen_surahVerse": "{s} Suresi • Ayet {a}",
-  "@quranHubScreen_surahVerse": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_loadingQuran": "Kuran yükleniyor…",
   "quranHubScreen_verses": "{arg1} ayetler",
-  "@quranHubScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_of": "{arg1}",
-  "@quranHubScreen_of": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_saved_edce53": "{arg1} kaydedildi",
-  "@quranHubScreen_saved_edce53": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_englishSahihIntl": "İngilizce, Sahih Uluslararası.",
   "quranScreen_saheehInternational": "Sahih Uluslararası",
   "quranScreen_englishPickthall": "İngilizce, Pickthall",
@@ -3319,79 +1551,16 @@
   "quranScreen_couldNotLoadAyah": "Ayah yüklenemedi. Lütfen tekrar deneyin.",
   "quranScreen_noConnectionCachedData": "Bağlantı yok. Önbelleğe alınmış veriler mevcut olabilir.",
   "quranScreen_ayahs": "{arg1} ayetler",
-  "@quranScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_couldNotRemoveBookmark": "Yer işareti kaldırılamadı, lütfen tekrar deneyin",
   "quranScreen_removedBookmark": "Yer işareti kaldırıldı {_surahName} {_surah}:{_ayah}",
-  "@quranScreen_removedBookmark": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_couldNotSaveBookmark": "Yer işareti kaydedilemedi, lütfen tekrar deneyin",
   "quranScreen_bookmarked": "Favorilere eklendi {_surahName} {_surah}:{_ayah}",
-  "@quranScreen_bookmarked": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_trimmedContains": ") && !trimed.contains(",
   "quranScreen_tafsir": "Tefsir · {_surahName} {_surah}:{_ayah}",
-  "@quranScreen_tafsir": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_addedToFavourites": "♥️ Favorilere eklendi",
   "quranScreen_comfortableNightTimeReading": "Rahat gece okuması",
   "quranScreen_pt": "{arg1} nk",
-  "@quranScreen_pt": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_003843": "{arg1} {arg2}",
-  "@quranScreen_003843": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_displayMeaningBelowEach": "Anlamı her ayetin altında göster",
   "quranScreen_showTransliteration": "Harf çevirisini göster",
   "quranScreen_romanisedPronunciationUnderEach": "Her kelimenin altında Romanlaştırılmış telaffuz",
@@ -3404,164 +1573,28 @@
   "quranScreen_showEachArabicWord": "Her Arapça kelimeyi İngilizce anlamı ile gösterin",
   "quranScreen_translationLanguage": "Çeviri Dili",
   "quranScreen_translationsAvailable": "{arg1} çeviriler mevcut",
-  "@quranScreen_translationsAvailable": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_3502e8": "{arg1} / {arg2}",
-  "@quranScreen_3502e8": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_sabiqSeedsEarnedToday": "+{_pointsToday} Sabiq Seeds bugün kazanıldı!",
-  "@quranScreen_sabiqSeedsEarnedToday": {
-    "placeholders": {
-      "_pointsToday": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_dcacc4": "{_ayah} / {arg1}",
-  "@quranScreen_dcacc4": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_wordDataUnavailableCheck": "Kelime verileri mevcut değil. Bağlantınızı kontrol edin.",
   "quranScreen_6d1f9d": "{arg1}",
-  "@quranScreen_6d1f9d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_ayahsRead": "{_ayahsToday} ayetler okundu",
-  "@quranScreen_ayahsRead": {
-    "placeholders": {
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_ce2af3": "{arg1}%",
-  "@quranScreen_ce2af3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_6e8ac8": "{text}",
-  "@quranScreen_6e8ac8": {
-    "placeholders": {
-      "text": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_pageJuz": "Sayfa {_currentPage} · Cüz {arg1}",
-  "@quranScreen_pageJuz": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "startJourneyScreen_unexpectedErrorDuringGoogle": "Google Oturum Açma sırasında beklenmeyen hata",
   "startJourneyScreen_connectedToQuranCom": "Kuran.com'a bağlanıldı",
   "startJourneyScreen_connectedToQuranCom_0ac4de": "Kuran.com'a bağlanıldı (yer imi senkronizasyonu ertelendi)",
   "streakScreen_nextDays": "Sonraki: {arg1} ({arg2} gün)",
-  "@streakScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "streakScreen_seeds": "+{arg1} Tohumlar",
-  "@streakScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "streakScreen_days": "{current} / {arg1} gün",
-  "@streakScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "streakScreen_dayStreak": "{arg1} gün serisi",
-  "@streakScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirHubScreen_earnSeedsForEvery": "Her 10 dakikalık Tefsir dinlemesi için Tohum kazanın",
   "tafsirScreen_alJalalaynEN": "El Celaleyn (TR)",
   "tafsirScreen_verses": "{arg1} ayetler",
-  "@tafsirScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirScreen_trimmedContains": ") && !trimed.contains(",
   "tafsirScreen_ayahOf": "{_surahLen} Ayeti {_ayah}",
-  "@tafsirScreen_ayahOf": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirScreen_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "@tafsirScreen_4815bb": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirScreen_tafsirNotAvailableFor": "Bu ayetin tefsiri mevcut değildir.",
   "donationService_youMustBeLogged": "Bağış yapmak için giriş yapmalısınız.",
   "donationService_donationCouldNotBe": "Bağış şu anda işlenemiyor.",
@@ -3569,61 +1602,16 @@
   "donationService_youMustBeLogged_edc4b5": "Sponsor olmak için giriş yapmalısınız.",
   "donationService_sponsorshipReceived": "Sponsorluk alındı ​​💝",
   "donationService_youSponsoredSeedsJazak": "{amount} Seeds · jazak Allah khair'e sponsor oldunuz.",
-  "@donationService_youSponsoredSeedsJazak": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "donationService_sponsorshipCouldNotBe": "Sponsorluk şu anda işlenemiyor.",
   "liveNotificationService_remindersToSealYour": "Bekleyen Tohumlarınızı gece yarısından önce mühürlemeniz için hatırlatıcılar.",
   "liveNotificationService_sealYourSeedsBefore": "Tohumlarınızı gece yarısından önce mühürleyin",
   "liveNotificationService_sealYourSeedsBefore_be2183": "Tohumlarınızı gece yarısından önce mühürleyin!",
   "liveNotificationService_youHavePendingSeeds": "{pendingSeeds} bekleyen Seed'leriniz var. Gece yarısından önce Günü Mühürle'ye dokunun, aksi takdirde süreleri dolar.",
-  "@liveNotificationService_youHavePendingSeeds": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_ayatReadToday": "{_ayahCount} Ayet Bugün Oku 📖",
-  "@liveNotificationService_ayatReadToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_readQuranToday": "{arg1} Bugün Kuran okuyun ⏱️",
-  "@liveNotificationService_readQuranToday": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_nothingReadFromQuran": "Bugün Kur'an'dan hiçbir şey okunmadı 📖",
   "liveNotificationService_dhikrCompletedToday": "{_dhikrCount} Zikir bugün tamamlandı 📿",
-  "@liveNotificationService_dhikrCompletedToday": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_ayatDhikrToday": "{_ayahCount} ayet · {_dhikrCount} bugün zikir",
-  "@liveNotificationService_ayatDhikrToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_keepReadingAndDoing": "Okumaya ve Zikir yapmaya devam edin!",
   "liveNotificationService_yourSeedsToday": "Bugünkü Tohumlarınız ✨",
   "localReminderScheduler_sabiqRewardsNotifications": "Sabiq Ödül Bildirimleri",
@@ -3635,36 +1623,9 @@
   "localReminderScheduler_fewHoursToMaghrib": "Akşam yemeğine birkaç saat kaldı; eğer okumadıysanız Kehf Suresi'ni bitirin.",
   "quranApiService_notConnectedToQuran": "Kuran.com'a bağlı değil",
   "quranApiService_syncFailedBookmarkCould": "Senkronizasyon başarısız oldu, {failed} yer işaretleri Kuran.com'a aktarılamadı (kontrol jetonu / uç nokta).",
-  "@quranApiService_syncFailedBookmarkCould": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
   "quranApiService_bookmarksAlreadyInSync": "Yer işaretleri zaten senkronize durumda",
   "quranApiService_syncedBookmarksUpDown": "Senkronize edilmiş {total} yer imleri ({uploaded} yukarı, {downloaded} aşağı)",
-  "@quranApiService_syncedBookmarksUpDown": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
   "quranApiService_syncFailed": "Senkronizasyon başarısız oldu: {e}",
-  "@quranApiService_syncFailed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_warmingUp": "Isınma",
   "streakService_oneWeek": "Bir Hafta",
   "streakService_twoWeeks": "İki Hafta",
@@ -3672,88 +1633,17 @@
   "streakService_twoMonths": "İki Ay",
   "streakService_theCenturion": "Centurion",
   "streakService_1fc043": "{arg1} {arg2}",
-  "@streakService_1fc043": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_dayStreak": "{arg1}-gün {arg2} serisi ·",
-  "@streakService_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_bonusSeedsUnlocked": "+{arg1} bonus Tohumların kilidi açıldı",
-  "@streakService_bonusSeedsUnlocked": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "trackingService_c7528c": "{arg1} {arg2}",
-  "@trackingService_c7528c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_level": "{title} • Seviye {level}",
-  "@xpService_level": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      },
-      "level": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_newBadgeUnlocked": "Yeni rozetin kilidi açıldı 🏆",
   "xpService_you": "Sen\\",
   "xpService_dailyLoginBonus": "Günlük giriş bonusu",
   "xpService_seedsWelcomeBack": "+{arg1} Tohumlar · tekrar hoş geldiniz!",
-  "@xpService_seedsWelcomeBack": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_daySealed": "Gün mühürlendi 🌙",
   "xpService_sabiqSeedsConfirmedBonus": "+{flushed} Sabiq Seeds onaylandı! ({bonus} mühürleme bonusu)",
-  "@xpService_sabiqSeedsConfirmedBonus": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      },
-      "bonus": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_sabiqSeedsConfirmed": "+{flushed} Sabiq Seeds onaylandı!",
-  "@xpService_sabiqSeedsConfirmed": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrExitCelebration_everyBreathCounts": "Her nefes önemlidir.",
   "impactAnimation_yourRewardHasBeen": "Ödülünüz kaydedildi.",
   "motivationalPopup_verilyWithHardshipComes": "Şüphesiz zorlukla beraber kolaylık gelir.\\nHer imtihan, daha büyük bir şeye açılan kapıdır.",
@@ -3771,21 +1661,7 @@
   "motivationalPopup_takeAdvantageOfFive": "Beşten önce beşin avantajlarından yararlanın.",
   "motivationalPopup_youHaveBeenRewarded": "Bugün tutarlılığınız için\\nödüllendirildiniz!",
   "motivationalPopup_seeds": "+{arg1} Tohumlar",
-  "@motivationalPopup_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "motivationalPopup_seeds_b14996": "+{arg1} Tohumlar",
-  "@motivationalPopup_seeds_b14996": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "motivationalPopup_readQuranPages": "5 Kuran Sayfası Oku",
   "motivationalPopup_completeNowEarnSeeds": "Şimdi tamamlayın → +50 Tohum bonusu kazanın",
   "motivationalPopup_completeDhikrSet": "Bir Zikir Seti Tamamla",
@@ -3799,77 +1675,22 @@
   "notificationsSheet_inboxKeepsExistingItems": "Gelen Kutusu mevcut öğeleri koruyor ancak yeni öğeler gelmeyecek.",
   "notificationsSheet_sabiqSeedsForSealing": "Bugün mühürlemek için Sabiq Tohumları",
   "notificationsSheet_ago": "{arg1}m önce",
-  "@notificationsSheet_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "notificationsSheet_ago_5d4e7f": "{arg1}h önce",
-  "@notificationsSheet_ago_5d4e7f": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "notificationsSheet_ago_67b1d9": "{arg1}d önce",
-  "@notificationsSheet_ago_67b1d9": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectMediaCarousel_couldNotLoadVideo": "Video yüklenemedi",
   "quranExitCelebration_beautifulRecitation": "Güzel okuma.",
   "quranExitCelebration_everyMomentCounts": "Her an önemlidir.",
   "sealCoinAnimation_e16fa4": "+{arg1}",
-  "@sealCoinAnimation_e16fa4": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "authScreen_pleaseEnterYourEmail_d36dc6": "Lütfen e-postanızı girin",
   "authScreen_pleaseEnterYourPassword_0f8b9b": "Lütfen şifrenizi girin",
   "authScreen_passwordMustBeAt_c936ae": "Şifre en az 6 karakter olmalıdır",
   "authScreen_alreadyHaveAnAccount_07e598": "Zaten bir hesabınız var mı? Oturum aç",
   "authScreen_haveAnAccountSign_ae2883": "hesabın yok mu? Üye olmak",
   "qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": "QfEmailConflictException: {email}'nin zaten bir hesabı var",
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
   "qfAuthService_openidOfflineAccessUser_fc4bcc": "openid offline_access kullanıcı yer imi koleksiyonu read_session",
   "qfAuthService_tokenExchangeFailed_89d8a0": "Jeton değişimi başarısız oldu ({arg1}): {arg2}",
-  "@qfAuthService_tokenExchangeFailed_89d8a0": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "qfAuthService_errorNullResponse_bd81c7": "HATA: Boş yanıt",
   "orphan_be2bf7_be2bf7": "{firstName} {lastInitial}.",
-  "@orphan_be2bf7_be2bf7": {
-    "placeholders": {
-      "firstName": {
-        "type": "String"
-      },
-      "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2": "Günde 100 defa \"Sübhanallahi ve bi-hamdihi\" demek, deniz köpüğü gibi günahları siler. (Buhari)",
   "akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f": "100 defa La ilahe illallah demek, 10 köle ve 100 hasenat azadına denktir. (Buhari)",
   "akhirahBalanceScreen_lightOnTheTongue_ea6114": "Dilde hafif, terazide ağır: Sübhanallahi ve bi-hamdihi, Sübhanallahil-azim. (Buhari 6406)",
@@ -3895,189 +1716,39 @@
   "akhirahBalanceScreen_heartThatForgetsDhikr_3a6173": "Zikri unutan kalp paslanmaya başlar. Hatırlayan kalp yanar.",
   "akhirahBalanceScreen_haveYouFortifiedYourself_17ccac": "Bugün sabah ve akşam zikirleriyle kendinizi güçlendirdiniz mi?",
   "akhirahBalanceScreen_thisSession_702ffc": "Bu oturum: +{arg1}",
-  "@akhirahBalanceScreen_thisSession_702ffc": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceScreen_seedsThisSession_cd9411": "+{arg1} bu oturumu başlatıyor",
-  "@akhirahBalanceScreen_seedsThisSession_cd9411": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": "7 günlük ortalama: {arg1} azkaar/gün",
-  "@akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_profileReturnedZeroRows_3ccedb": "Profil {uid} için sıfır satır döndürdü",
-  "@dashboardScreen_profileReturnedZeroRows_3ccedb": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dashboardLoadError_6168de": "Kontrol Paneli Yükleme Hatası: {e}",
-  "@dashboardScreen_dashboardLoadError_6168de": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_invalidReferralCode_bb3b10": "Geçersiz yönlendirme kodu",
   "dashboardScreen_cannotReferYourself_d836b8": "Kendinize başvuramazsınız",
   "dashboardScreen_sponsor_d48549": "Sponsor {name}, {arg1}",
-  "@dashboardScreen_sponsor_d48549": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dashboardDoesn_b8feb4": ": 0, // kontrol paneli çalışmıyor",
   "dashboardScreen_today_261fbb": "{arg1} · {_lastAyah} · +{_ayahsToday} bugün",
-  "@dashboardScreen_today_261fbb": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_606140_606140": "{arg1} · {_lastAyah}",
-  "@dashboardScreen_606140_606140": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dayStreak_2934ca": "{arg1} günlük seri",
-  "@dashboardScreen_dayStreak_2934ca": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_yourSabiqSeedsFund_3e8748": "Sabiq Seeds'iniz bu projeleri finanse ediyor",
   "dashboardScreen_active_2d214a": "{arg1} aktif",
-  "@dashboardScreen_active_2d214a": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_joinMeOnSabiq_755fb5": "Sabiq Ödüllerinde bana katılın, günlük Kuran, Zikir ve salih ameller için Tohum kazanın!\\n\\n",
   "dashboardScreen_useMyCodeAnd_7d13b3": "*{arg1}* kodumu kullanın ve ikimiz de 500 Sabiq Seeds kazanalım!\\n\\n",
-  "@dashboardScreen_useMyCodeAnd_7d13b3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_messageCopiedShareOr_7b977e": "Mesaj kopyalandı, paylaşıldı veya WhatsApp'a yapıştırıldı!",
   "dashboardScreen_sabiqSeedsRewardedTo_c209d6": "İkinize de 500 Sabiq Tohumu ödülü!",
   "dashboardScreen_youHaveAlreadyUsed_f7c387": "Zaten bir yönlendirme kodu kullandınız.",
   "dashboardScreen_youCannotUseYour_b7dbfe": "Kendi kodunuzu kullanamazsınız.",
   "dashboardScreen_anErrorOccurredPlease_8ee486": "Bir hata oluştu. Lütfen tekrar deneyin.",
   "dashboardScreen_52b02c_52b02c": "{pts}",
-  "@dashboardScreen_52b02c_52b02c": {
-    "placeholders": {
-      "pts": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_e4e562_e4e562": "{arg1}%",
-  "@dashboardScreen_e4e562_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_seeDetailsForMore_54551e": "Daha fazla Proje için Ayrıntılara Bakın →",
   "dashboardScreen_yourTOTALSABIQSEEDS_f1d60a": "TOPLAM SABIQ TOHUMLARINIZ",
   "dashboardScreen_viewCampaignDonate_450be4": "🤲 Kampanyayı Görüntüle ve Bağış Yap",
   "dashboardScreen_yourRank_67be90": "Sıralamanız: {rankText}",
-  "@dashboardScreen_yourRank_67be90": {
-    "placeholders": {
-      "rankText": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_d13a42_d13a42": "{_myPoints} {unit} • {arg1}",
-  "@dashboardScreen_d13a42_d13a42": {
-    "placeholders": {
-      "_myPoints": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_beTheFirstOn_63de17": "Tahtadaki ilk kişi olun",
   "dashboardScreen_readAnAyahOr_9c7ab7": "En üst sıralarda yer almak için bir ayet veya zikir okuyun",
   "dashboardScreen_lvl_ac180d": "Seviye {level} · {arg1}",
-  "@dashboardScreen_lvl_ac180d": {
-    "placeholders": {
-      "level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_sealWithin_381d5d": "{arg1}h içinde mühürle",
-  "@dashboardScreen_sealWithin_381d5d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_jazakallahDaySealed_70a34b": "CezakAllah!  Gün mühürlendi",
   "dashboardScreen_ofGoal_9660ee": "{arg1} {arg2} hedefinin",
-  "@dashboardScreen_ofGoal_9660ee": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrHubScreen_propheticSupplications_907064": "Peygamberlik Duaları",
   "dhikrHubScreen_morningEveningRemembrance_ec6bc2": "Sabah ve Akşam Anması",
   "dhikrHubScreen_furtherSupplications_f72602": "Diğer Dualar",
@@ -4086,82 +1757,21 @@
   "dhikrHubScreen_falseHiddenAdd_c45662": "] == false) Hidden.add(r[",
   "dhikrScreen_indoPak_fd8751": "Hint pakistanı",
   "dhikrScreen_default_8bd36b": "Varsayılan: {recommendedCount}",
-  "@dhikrScreen_default_8bd36b": {
-    "placeholders": {
-      "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_duaAzkarSettings_71de01": "Dua ve Azkar Ayarları",
   "dhikrScreen_hideTheVisualArtwork_28b4d2": "Görsel sanat alanını gizle",
   "dhikrScreen_pinTheIllustrationAt_5ec641": "Arapça metin altında kayarken çizimi en üste sabitleyin",
   "dhikrScreen_readTimes_537f51": "{readCount} kez okuyun",
-  "@dhikrScreen_readTimes_537f51": {
-    "placeholders": {
-      "readCount": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_d08433_d08433": "{arg1} / {arg2}",
-  "@dhikrScreen_d08433_d08433": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_alBaqarahAmanaAr_e9d62e": "Bakara 285 (Amane'r-Resul)",
   "dhikrScreen_alBaqarahAlifLam_71ad0e": "Bakara 1-5 (Elif Lam Mim)",
   "dhikrScreen_alBaqarahLaIkraha_e837fb": "Bakara 256 (La İkraha)",
   "dhikrScreen_alBaqarahAllahuWaliyy_c2a18b": "Bakara 257 (Allahu Veliyy)",
   "dhikrScreen_salawatIbrahimiyyaDurood_171c60": "Salavat İbrahimiyye (Durood)",
   "dhikrScreen_9a4c42_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
-  "@dhikrScreen_9a4c42_9a4c42": {
-    "placeholders": {
-      "bismillah": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      },
-      "rest": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_86f857_86f857": "\\u2060{matched}",
-  "@dhikrScreen_86f857_86f857": {
-    "placeholders": {
-      "matched": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_49900d_49900d": "+{hasanaat}",
-  "@dhikrScreen_49900d_49900d": {
-    "placeholders": {
-      "hasanaat": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_hisnulMuslimChapter_8745dc": "Hisnül Müslim, Bölüm:",
   "dhikrScreen_3856c1_3856c1": "{rawRef} | {bottomRef}",
-  "@dhikrScreen_3856c1_3856c1": {
-    "placeholders": {
-      "rawRef": {
-        "type": "String"
-      },
-      "bottomRef": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_bestOfBothWorlds_e1cc22": "Her iki dünyanın en iyisi, ateşten sığınak",
   "dhikrScreen_patienceAndSteadfastnessIn_114391": "Her denemede sabır ve kararlılık",
   "dhikrScreen_allahBurdensNoSoul_c8bf72": "Allah hiç kimseye kapasitesinin ötesinde yük yüklemez",
@@ -4470,13 +2080,6 @@
   "dhikrScreen_protectionFromEvilEye_3b6074": "Nazardan Korunma",
   "dhikrScreen_doNotLeaveMe_1e2414": "Göz açıp kapayıncaya kadar\\nbeni kendime bırakma",
   "dhikrScreen_35c165_35c165": "{arg1}",
-  "@dhikrScreen_35c165_35c165": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_allahWillSufficeYou_f177b2": "Allah sana yeter",
   "dhikrScreen_againstWhateverConcernsYou_176991": "seni ilgilendiren her şeye karşı",
   "dhikrScreen_doNotBurdenUs_4401b2": "Bize taşıyamayacağımız yükü yükleme, bizi bağışla ve merhamet et",
@@ -4530,13 +2133,6 @@
   "dhikrScreen_allahDoesNotBurden_63f3eb": "Allah yük vermez",
   "dhikrScreen_soul_b7f1ee": "bir ruh",
   "dhikrScreen_a5cfd1_a5cfd1": "×{count}",
-  "@dhikrScreen_a5cfd1_a5cfd1": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrScreen_equalsTheWholeQuran_a2b879": "Kuran'ın tamamına eşittir × 3",
   "impactReportScreen_whoeverDoesAnAtom_9013b0": "“Kim bir atomu yaparsa\\",
   "impactReportScreen_theHomeOfThe_4602d2": "\"Ahiret yurdu, işte sonsuz hayat budur, keşke bilselerdi.\" — Ankebut Suresi 29:64",
@@ -4563,513 +2159,81 @@
   "impactReportScreen_youWillMeetAllah_c19524": "Allah'a kaydınızla kavuşacaksınız. Bugün emin olun\\",
   "impactReportScreen_noDeedIsToo_c04d50": "Atomları sayan için hiçbir amel küçük değildir.",
   "impactReportScreen_lvl_987904": "Seviye {_level} · {arg1}",
-  "@impactReportScreen_lvl_987904": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_200447_200447": "+{arg1}",
-  "@impactReportScreen_200447_200447": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_634027_634027": "+{arg1}",
-  "@impactReportScreen_634027_634027": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_whoeverDoesGoodDeed_89c2bf": "Kim bir iyilik yaparsa, onun on katı kadarı kendisine verilir.",
   "impactReportScreen_whoeverReadsLetterFrom_36d74f": "Kim Allah'ın kitabından bir harf okursa ona bir hasene verilir ve hasene onla çarpılır.",
   "impactReportScreen_twoHadithGrowThis_c8d4a2": "Bu sayıyı iki hadis yan yana büyütüyor:\\n\\n",
   "impactReportScreen_dhikrRecitedLifetime_669e2a": "Okunan zikir (ömür boyu): {arg1}\\n",
-  "@impactReportScreen_dhikrRecitedLifetime_669e2a": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_hasanat_64c7b6": "→ Hasanat: {arg1}\\n\\n",
-  "@impactReportScreen_hasanat_64c7b6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ayahsReadLifetime_75eef6": "Okunan ayetler (ömür boyu): {arg1}\\n",
-  "@impactReportScreen_ayahsReadLifetime_75eef6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalHasanaat_c43112": "Toplam hasanat: {arg1}",
-  "@impactReportScreen_totalHasanaat_c43112": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ayahs_6a500c": "{arg1} ayetler",
-  "@impactReportScreen_ayahs_6a500c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_planted_90ec47": "{arg1} ekildi",
-  "@impactReportScreen_planted_90ec47": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_cycles_f6649b": "{arg1} döngüler",
-  "@impactReportScreen_cycles_f6649b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459": "Kim günde 100 defa Sübhanallahi ve bihamdihi derse, günahları deniz köpüğü kadar olsa bile affedilir.",
   "impactReportScreen_subhanallahiWaBihamdihi_992976": "SübhanAllahi ve bihamdihi",
   "impactReportScreen_totalRecitations_5ed733": "Toplam okuma sayısı: {arg1}\\n",
-  "@impactReportScreen_totalRecitations_5ed733": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_dividedByForgivenessCycles_4e175d": "100'e bölünür → bağışlama döngüleri: {arg1}",
-  "@impactReportScreen_dividedByForgivenessCycles_4e175d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_built_d62c2d": "{arg1} inşa edildi",
-  "@impactReportScreen_built_d62c2d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_dividedByPalaces_6f066c": "10'a bölünür → saraylar: {arg1}",
-  "@impactReportScreen_dividedByPalaces_6f066c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_earned_abd189": "{arg1} kazanıldı",
-  "@impactReportScreen_earned_abd189": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_equivalent_cb7bb5": "{arg1} eşdeğeri",
-  "@impactReportScreen_equivalent_cb7bb5": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_laIlahaIllallahuWahdahu_895dde": "La ilahe illallahu vahdehu la şerike lehu...",
   "impactReportScreen_setsOfSetsSlaves_b43b31": "10'lu setler → {arg1} setler × 4 bağımlı = {arg2}",
-  "@impactReportScreen_setsOfSetsSlaves_b43b31": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_opened_1bf8da": "{arg1} açıldı",
-  "@impactReportScreen_opened_1bf8da": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_received_a526e3": "{arg1} alındı",
-  "@impactReportScreen_received_a526e3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalSalawatSent_cfe45e": "Gönderilen toplam salavat: {arg1}\\n",
-  "@impactReportScreen_totalSalawatSent_cfe45e": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_multipliedByBlessingsReceived_52810f": "10 ile çarpılır → {arg1} alınan bereketler",
-  "@impactReportScreen_multipliedByBlessingsReceived_52810f": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_invocations_d80c33": "{arg1} çağrılar",
-  "@impactReportScreen_invocations_d80c33": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_protectionFromEvil_37b53a": "Kötülükten korunma",
   "impactReportScreen_goodHealthProtection_058808": "İyi sağlık ve koruma",
   "impactReportScreen_totalInvocations_1fd02b": "Toplam çağrı sayısı: {arg1}",
-  "@impactReportScreen_totalInvocations_1fd02b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_dividedByQuranCompletions_b9a013": "3'e bölünür → {arg1} Kuran tamamlamaları",
-  "@impactReportScreen_dividedByQuranCompletions_b9a013": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_recitations_3cb9ec": "{arg1} okunuşlar",
-  "@impactReportScreen_recitations_3cb9ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_564740_564740": "{_monthActiveDays}",
-  "@impactReportScreen_564740_564740": {
-    "placeholders": {
-      "_monthActiveDays": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_3dc421_3dc421": "{arg1}h",
-  "@impactReportScreen_3dc421_3dc421": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_08990a_08990a": "{arg1}m",
-  "@impactReportScreen_08990a_08990a": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_ago_71107c": "{arg1}m önce",
-  "@impactReportScreen_ago_71107c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_moAgo_325a71": "{arg1}ay önce",
-  "@impactReportScreen_moAgo_325a71": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_viewAllDonors_e72932": "Tüm {arg1} bağışçılarını görüntüle",
-  "@impactReportScreen_viewAllDonors_e72932": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_failed_190558": "Başarısız: {e}",
-  "@impactReportScreen_failed_190558": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_meet_82797d": "{arg1}, {arg2} ile tanışın",
-  "@impactReportScreen_meet_82797d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_sponsor_a47417": "Sponsor {arg1} →",
-  "@impactReportScreen_sponsor_a47417": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_funded_add009": "{arg1}% finanse edildi",
-  "@impactReportScreen_funded_add009": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_yourLifetimeImpact_8bfdcd": "Yaşam boyu etkiniz",
   "impactReportScreen_startYourImpactJourney_1ae8c4": "Etki yolculuğunuza başlayın",
   "impactReportScreen_bd3721_bd3721": "{_myOrphansSponsoredCount}",
-  "@impactReportScreen_bd3721_bd3721": {
-    "placeholders": {
-      "_myOrphansSponsoredCount": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_b3d969_b3d969": "{_myProjectsSupportedCount}",
-  "@impactReportScreen_b3d969_b3d969": {
-    "placeholders": {
-      "_myProjectsSupportedCount": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_customProfileThemes_cec15c": "Özel profil temaları",
   "levelScreen_exclusiveVotingRights_684759": "Özel oy hakları",
   "levelScreen_hallOfFameListing_eb6ad1": "Hall of Fame listesi",
   "levelScreen_seeds_fff97b": "+{arg1} Tohumlar",
-  "@levelScreen_seeds_fff97b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_laIlahaIllallah_e8c26b": "La ilahe illallah x100",
   "levelScreen_unlocks_6f2513": "Kilidi açar: {arg1}",
-  "@levelScreen_unlocks_6f2513": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_seedsBoost_464454": "{arg1}× Tohum Artırma",
-  "@levelScreen_seedsBoost_464454": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_cf765f_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "@levelScreen_cf765f_cf765f": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      },
-      "arg3": {
-        "type": "String"
-      },
-      "arg4": {
-        "type": "String"
-      },
-      "arg5": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_nextDays_212b86": "Sonraki: {arg1} ({arg2} gün)",
-  "@levelScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_days_100e10": "{current} / {arg1} gün",
-  "@levelScreen_days_100e10": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "levelScreen_dayStreak_df2abf": "{arg1} gün serisi",
-  "@levelScreen_dayStreak_df2abf": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "phase1Screens_quranReadingNimage_5ebac0": "Kur'an okuması\\nipage",
   "phase1Screens_orphansNimage_24d12a": "Yetimler\\nimage",
   "onboardingComponents_355c50_355c50": "{first}",
-  "@onboardingComponents_355c50_355c50": {
-    "placeholders": {
-      "first": {
-        "type": "String"
-      }
-    }
-  },
   "onboardingComponents_b236c9_b236c9": "{trailing}",
-  "@onboardingComponents_b236c9_b236c9": {
-    "placeholders": {
-      "trailing": {
-        "type": "String"
-      }
-    }
-  },
   "quranMini_inTheNameOf_46925d": "Rahman ve Rahim olan Allah'ın adıyla.",
   "quranMini_allPraiseBelongsTo_2d51df": "Hamd alemlerin Rabbi olan Allah'a mahsustur.",
   "orphansGridScreen_36cd3b_36cd3b": "{arg1} · {arg2}",
-  "@orphansGridScreen_36cd3b_36cd3b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_years_debb46": "{arg1} yıl",
-  "@orphanDetailScreen_years_debb46": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_ofSeeds_2a29fc": "{arg1} / {arg2} Tohumlar",
-  "@orphanDetailScreen_ofSeeds_2a29fc": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_through_2cdb72": "{arg1} aracılığıyla",
-  "@orphanDetailScreen_through_2cdb72": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_andTheyGiveFood_7ddcff": "Ve sevgilerine rağmen, yoksula, yetime ve esire yiyecek verirler.",
   "orphanDetailScreen_ago_71107c": "{arg1}m önce",
-  "@orphanDetailScreen_ago_71107c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_moAgo_325a71": "{arg1}ay önce",
-  "@orphanDetailScreen_moAgo_325a71": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_seeds_30d8dc": "{_availablePoints} Tohumlar",
-  "@orphanDetailScreen_seeds_30d8dc": {
-    "placeholders": {
-      "_availablePoints": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_sponsor_b34bcf": "Sponsor {arg1}",
-  "@orphanDetailScreen_sponsor_b34bcf": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec": "CezakAllah Hayran! {amount} Sponsorlu tohumlar.",
-  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_chooseHowManySeeds_b69aa2": "Kaç tane Tohum vereceğinizi seçin. Minimum {arg1}.",
-  "@orphanDetailScreen_chooseHowManySeeds_b69aa2": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "orphanDetailScreen_yourBalanceSeeds_f8045b": "Bakiyeniz: {arg1} Tohumlar",
-  "@orphanDetailScreen_yourBalanceSeeds_f8045b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "profileSettingsScreen_nameCannotBeEmpty_c737ab": "Ad boş olamaz",
   "profileSettingsScreen_bosniaAndHerzegovina_a428ef": "Bosna Hersek",
   "profileSettingsScreen_centralAfricanRepublic_0fde6c": "Orta Afrika Cumhuriyeti",
@@ -5078,117 +2242,24 @@
   "profileSettingsScreen_signedInWithQuran_2e1ffc": "Kuran.com'da oturum açıldı",
   "profileSettingsScreen_signedInWithEmail_dd881f": "E-posta ile oturum açıldı",
   "profileSettingsScreen_seeds_53d666": "{arg1} Tohumlar",
-  "@profileSettingsScreen_seeds_53d666": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "profileSettingsScreen_guidesFAQsAndHow_b990d6": "Kılavuzlar, SSS'ler ve nasıl yapılırlar",
   "profileSettingsScreen_somethingNotWorkingTell_07f659": "Bir şey çalışmıyor mu? Bize söyle",
   "projectDetailScreen_organisedBy_8b317a": "Düzenleyen: {sponsor}\\n\\n",
-  "@projectDetailScreen_organisedBy_8b317a": {
-    "placeholders": {
-      "sponsor": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_fundedSoFarEvery_dab3fd": "Şu ana kadar finanse edilen her Tohum önemlidir!\\n\\n",
   "projectDetailScreen_openSabiqRewardsApp_cdda14": "Tohumlarınızı bağışlamak ve ödül kazanmak için Sabiq Rewards uygulamasını açın.\\n",
   "projectDetailScreen_sabiqrewardsSadaqahIslamicCharity_663ba5": "#SabiqRewards #Sadaqah #IslamicCharity",
   "projectDetailScreen_4c2b09_4c2b09": "{arg1} {arg2} {arg3}",
-  "@projectDetailScreen_4c2b09_4c2b09": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      },
-      "arg3": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_donateToProvideUrgent_246035": "Kritik düzeyde gıda, su ve tıbbi malzeme sıkıntısı çeken Filistinlilere acil, hayat kurtaran yardım sağlamak için bağışta bulunun...",
   "projectDetailScreen_seeds_47387f": "{arg1} Tohumlar",
-  "@projectDetailScreen_seeds_47387f": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_e4e562_e4e562": "{arg1}%",
-  "@projectDetailScreen_e4e562_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_ago_71107c": "{arg1}m önce",
-  "@projectDetailScreen_ago_71107c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_moAgo_325a71": "{arg1}ay önce",
-  "@projectDetailScreen_moAgo_325a71": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "projectDetailScreen_viewAll_3d2c48": "Tümünü görüntüle {arg1} →",
-  "@projectDetailScreen_viewAll_3d2c48": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_saved_9c28a3": "{arg1} kaydedildi",
-  "@quranHubScreen_saved_9c28a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_tapTheHeartBookmark_c62da1": "Ayetleri kaydetmek için okurken kalp/yer imi simgesine dokunun.",
   "quranHubScreen_surahVerse_2c65ec": "{s} Suresi • Ayet {a}",
-  "@quranHubScreen_surahVerse_2c65ec": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_verses_f97238": "{arg1} ayetler",
-  "@quranHubScreen_verses_f97238": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranHubScreen_of_0420fc": "{arg1}",
-  "@quranHubScreen_of_0420fc": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_englishSahihIntl_da5e9e": "İngilizce, Sahih Uluslararası.",
   "quranScreen_saheehInternational_fd1d5c": "Sahih Uluslararası",
   "quranScreen_englishPickthall_a0d265": "İngilizce, Pickthall",
@@ -5213,79 +2284,16 @@
   "quranScreen_couldNotLoadAyah_62f120": "Ayah yüklenemedi. Lütfen tekrar deneyin.",
   "quranScreen_noConnectionCachedData_e5a215": "Bağlantı yok. Önbelleğe alınmış veriler mevcut olabilir.",
   "quranScreen_ayahs_c98642": "{arg1} ayetler",
-  "@quranScreen_ayahs_c98642": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_couldNotRemoveBookmark_699a82": "Yer işareti kaldırılamadı, lütfen tekrar deneyin",
   "quranScreen_removedBookmark_d7a16a": "Yer işareti kaldırıldı {_surahName} {_surah}:{_ayah}",
-  "@quranScreen_removedBookmark_d7a16a": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_couldNotSaveBookmark_976448": "Yer işareti kaydedilemedi, lütfen tekrar deneyin",
   "quranScreen_bookmarked_2c6203": "Favorilere eklendi {_surahName} {_surah}:{_ayah}",
-  "@quranScreen_bookmarked_2c6203": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_trimmedContains_039f31": ") && !trimed.contains(",
   "quranScreen_tafsir_391c0d": "Tefsir · {_surahName} {_surah}:{_ayah}",
-  "@quranScreen_tafsir_391c0d": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_addedToFavourites_b3cce0": "♥️ Favorilere eklendi",
   "quranScreen_comfortableNightTimeReading_da3df2": "Rahat gece okuması",
   "quranScreen_pt_9e58e8": "{arg1} nk",
-  "@quranScreen_pt_9e58e8": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_003843_003843": "{arg1} {arg2}",
-  "@quranScreen_003843_003843": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_displayMeaningBelowEach_a26f31": "Anlamı her ayetin altında göster",
   "quranScreen_showTransliteration_e04abd": "Harf çevirisini göster",
   "quranScreen_romanisedPronunciationUnderEach_2c0136": "Her kelimenin altında Romanlaştırılmış telaffuz",
@@ -5298,222 +2306,41 @@
   "quranScreen_showEachArabicWord_64532d": "Her Arapça kelimeyi İngilizce anlamı ile gösterin",
   "quranScreen_translationLanguage_d8c9b3": "Çeviri Dili",
   "quranScreen_translationsAvailable_55c648": "{arg1} çeviriler mevcut",
-  "@quranScreen_translationsAvailable_55c648": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_3502e8_3502e8": "{arg1} / {arg2}",
-  "@quranScreen_3502e8_3502e8": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_sabiqSeedsEarnedToday_13ddb3": "+{_pointsToday} Sabiq Seeds bugün kazanıldı!",
-  "@quranScreen_sabiqSeedsEarnedToday_13ddb3": {
-    "placeholders": {
-      "_pointsToday": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_dcacc4_dcacc4": "{_ayah} / {arg1}",
-  "@quranScreen_dcacc4_dcacc4": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_6d1f9d_6d1f9d": "{arg1}",
-  "@quranScreen_6d1f9d_6d1f9d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_ayahsRead_862866": "{_ayahsToday} ayetler okundu",
-  "@quranScreen_ayahsRead_862866": {
-    "placeholders": {
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_ce2af3_ce2af3": "{arg1}%",
-  "@quranScreen_ce2af3_ce2af3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_6e8ac8_6e8ac8": "{text}",
-  "@quranScreen_6e8ac8_6e8ac8": {
-    "placeholders": {
-      "text": {
-        "type": "String"
-      }
-    }
-  },
   "quranScreen_pageJuz_6ac28a": "Sayfa {_currentPage} · Cüz {arg1}",
-  "@quranScreen_pageJuz_6ac28a": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5": "Google Oturum Açma sırasında beklenmeyen hata",
   "startJourneyScreen_connectedToQuranCom_c0c631": "Kuran.com'a bağlanıldı",
   "streakScreen_nextDays_212b86": "Sonraki: {arg1} ({arg2} gün)",
-  "@streakScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "streakScreen_seeds_990893": "+{arg1} Tohumlar",
-  "@streakScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "streakScreen_days_100e10": "{current} / {arg1} gün",
-  "@streakScreen_days_100e10": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "streakScreen_dayStreak_df2abf": "{arg1} gün serisi",
-  "@streakScreen_dayStreak_df2abf": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirHubScreen_earnSeedsForEvery_ffb3d5": "Her 10 dakikalık Tefsir dinlemesi için Tohum kazanın",
   "tafsirScreen_alJalalaynEN_af0584": "El Celaleyn (TR)",
   "tafsirScreen_verses_fed624": "{arg1} ayetler",
-  "@tafsirScreen_verses_fed624": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirScreen_trimmedContains_039f31": ") && !trimed.contains(",
   "tafsirScreen_ayahOf_63c42b": "{_surahLen} Ayeti {_ayah}",
-  "@tafsirScreen_ayahOf_63c42b": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirScreen_4815bb_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "@tafsirScreen_4815bb_4815bb": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
-        "type": "String"
-      }
-    }
-  },
   "tafsirScreen_tafsirNotAvailableFor_0fce81": "Bu ayetin tefsiri mevcut değildir.",
   "donationService_youMustBeLogged_6813cf": "Bağış yapmak için giriş yapmalısınız.",
   "donationService_donationCouldNotBe_074195": "Bağış şu anda işlenemiyor.",
   "donationService_anUnexpectedNetworkError_914b7a": "Beklenmeyen bir ağ hatası oluştu.",
   "donationService_sponsorshipReceived_671201": "Sponsorluk alındı ​​💝",
   "donationService_youSponsoredSeedsJazak_7711e1": "{amount} Seeds · jazak Allah khair'e sponsor oldunuz.",
-  "@donationService_youSponsoredSeedsJazak_7711e1": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "donationService_sponsorshipCouldNotBe_55003e": "Sponsorluk şu anda işlenemiyor.",
   "liveNotificationService_remindersToSealYour_782a67": "Bekleyen Tohumlarınızı gece yarısından önce mühürlemeniz için hatırlatıcılar.",
   "liveNotificationService_sealYourSeedsBefore_62a726": "Tohumlarınızı gece yarısından önce mühürleyin",
   "liveNotificationService_youHavePendingSeeds_dd762f": "{pendingSeeds} bekleyen Seed'leriniz var. Gece yarısından önce Günü Mühürle'ye dokunun, aksi takdirde süreleri dolar.",
-  "@liveNotificationService_youHavePendingSeeds_dd762f": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_ayatReadToday_b5a4e8": "{_ayahCount} Ayet Bugün Oku 📖",
-  "@liveNotificationService_ayatReadToday_b5a4e8": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_readQuranToday_703122": "{arg1} Bugün Kuran okuyun ⏱️",
-  "@liveNotificationService_readQuranToday_703122": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_nothingReadFromQuran_b1c2eb": "Bugün Kur'an'dan hiçbir şey okunmadı 📖",
   "liveNotificationService_dhikrCompletedToday_835583": "{_dhikrCount} Zikir bugün tamamlandı 📿",
-  "@liveNotificationService_dhikrCompletedToday_835583": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_ayatDhikrToday_548e91": "{_ayahCount} ayet · {_dhikrCount} bugün zikir",
-  "@liveNotificationService_ayatDhikrToday_548e91": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
   "liveNotificationService_keepReadingAndDoing_cdc7b2": "Okumaya ve Zikir yapmaya devam edin!",
   "liveNotificationService_yourSeedsToday_8649c6": "Bugünkü Tohumlarınız ✨",
   "localReminderScheduler_sabiqRewardsNotifications_96d36c": "Sabiq Ödül Bildirimleri",
@@ -5525,36 +2352,9 @@
   "localReminderScheduler_fewHoursToMaghrib_d99fd2": "Akşam yemeğine birkaç saat kaldı; eğer okumadıysanız Kehf Suresi'ni bitirin.",
   "quranApiService_notConnectedToQuran_9f4f89": "Kuran.com'a bağlı değil",
   "quranApiService_syncFailedBookmarkCould_3393f7": "Senkronizasyon başarısız oldu, {failed} yer işaretleri Kuran.com'a aktarılamadı (kontrol jetonu / uç nokta).",
-  "@quranApiService_syncFailedBookmarkCould_3393f7": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
   "quranApiService_bookmarksAlreadyInSync_fad9e1": "Yer işaretleri zaten senkronize durumda",
   "quranApiService_syncedBookmarksUpDown_dd2f96": "Senkronize edilmiş {total} yer imleri ({uploaded} yukarı, {downloaded} aşağı)",
-  "@quranApiService_syncedBookmarksUpDown_dd2f96": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
   "quranApiService_syncFailed_ae7629": "Senkronizasyon başarısız oldu: {e}",
-  "@quranApiService_syncFailed_ae7629": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_warmingUp_b1687b": "Isınma",
   "streakService_oneWeek_4f98dc": "Bir Hafta",
   "streakService_twoWeeks_9a2d93": "İki Hafta",
@@ -5562,88 +2362,17 @@
   "streakService_twoMonths_84d275": "İki Ay",
   "streakService_theCenturion_f1de7f": "Centurion",
   "streakService_1fc043_1fc043": "{arg1} {arg2}",
-  "@streakService_1fc043_1fc043": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_dayStreak_9ee8a3": "{arg1}-gün {arg2} serisi ·",
-  "@streakService_dayStreak_9ee8a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_bonusSeedsUnlocked_bcdda5": "+{arg1} bonus Tohumların kilidi açıldı",
-  "@streakService_bonusSeedsUnlocked_bcdda5": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "trackingService_c7528c_c7528c": "{arg1} {arg2}",
-  "@trackingService_c7528c_c7528c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_level_226f81": "{title} • Seviye {level}",
-  "@xpService_level_226f81": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      },
-      "level": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_newBadgeUnlocked_2c8d0e": "Yeni rozetin kilidi açıldı 🏆",
   "xpService_you_79d09a": "Sen\\",
   "xpService_dailyLoginBonus_d011fa": "Günlük giriş bonusu",
   "xpService_seedsWelcomeBack_47888a": "+{arg1} Tohumlar · tekrar hoş geldiniz!",
-  "@xpService_seedsWelcomeBack_47888a": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_daySealed_037a56": "Gün mühürlendi 🌙",
   "xpService_sabiqSeedsConfirmedBonus_702902": "+{flushed} Sabiq Seeds onaylandı! ({bonus} mühürleme bonusu)",
-  "@xpService_sabiqSeedsConfirmedBonus_702902": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      },
-      "bonus": {
-        "type": "String"
-      }
-    }
-  },
   "xpService_sabiqSeedsConfirmed_34969c": "+{flushed} Sabiq Seeds onaylandı!",
-  "@xpService_sabiqSeedsConfirmed_34969c": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      }
-    }
-  },
   "dhikrExitCelebration_everyBreathCounts_45b3df": "Her nefes önemlidir.",
   "impactAnimation_yourRewardHasBeen_e3d106": "Ödülünüz kaydedildi.",
   "motivationalPopup_verilyWithHardshipComes_f23637": "Şüphesiz zorlukla beraber kolaylık gelir.\\nHer imtihan, daha büyük bir şeye açılan kapıdır.",
@@ -5661,13 +2390,6 @@
   "motivationalPopup_takeAdvantageOfFive_e573fd": "Beşten önce beşin avantajlarından yararlanın.",
   "motivationalPopup_youHaveBeenRewarded_9bde33": "Bugün tutarlılığınız için\\nödüllendirildiniz!",
   "motivationalPopup_seeds_3a9c69": "+{arg1} Tohumlar",
-  "@motivationalPopup_seeds_3a9c69": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "motivationalPopup_completeNowEarnSeeds_16ea6e": "Şimdi tamamlayın → +50 Tohum bonusu kazanın",
   "motivationalPopup_finishYourAzkaarEarn_e264fa": "Azkaar'ınızı bitirin → +30 Tohum bonusu kazanın",
   "motivationalPopup_shareSabiqWithSomeone_c60dcc": "Sabiq'i birisiyle paylaşın → +100 Seeds kazanın",
@@ -5681,142 +2403,23 @@
   "quranExitCelebration_beautifulRecitation_9d2655": "Güzel okuma.",
   "quranExitCelebration_everyMomentCounts_fddb4c": "Her an önemlidir.",
   "sealCoinAnimation_e16fa4_e16fa4": "+{arg1}",
-  "@sealCoinAnimation_e16fa4_e16fa4": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalHasanatFromQuran": "Kuran'dan toplam hasenat: {n}",
-  "@impactReportScreen_totalHasanatFromQuran": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalTreesPlanted": "Dikilen toplam ağaç sayısı: {n}",
-  "@impactReportScreen_totalTreesPlanted": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalTreasures": "Toplam hazineler: {n}",
-  "@impactReportScreen_totalTreasures": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_multipliedByGates": "8 kapıyla çarpılır → {n} açıklıklar",
-  "@impactReportScreen_multipliedByGates": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_bonusHasanaat": "Bonus hasanat: {n}",
-  "@impactReportScreen_bonusHasanaat": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      }
-    }
-  },
   "impactReportScreen_totalDonatedSeeds": "Bağışlanan toplam: {n} {seeds}",
-  "@impactReportScreen_totalDonatedSeeds": {
-    "placeholders": {
-      "n": {
-        "type": "String"
-      },
-      "seeds": {
-        "type": "String"
-      }
-    }
-  },
   "dashboardScreen_dashboardLoadFailed": "Kontrol paneliniz yüklenemedi. Lütfen tekrar deneyin.",
   "zikrLabel": "Zikir",
   "quranLabel": "Kuran",
   "streakService_dayStreakBody": "{days}-gün {type} serisi · +{bonus} bonus Tohumların kilidi açıldı",
-  "@streakService_dayStreakBody": {
-    "placeholders": {
-      "days": {
-        "type": "String"
-      },
-      "type": {
-        "type": "String"
-      },
-      "bonus": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_milestoneTitle": "{emoji} {label}",
-  "@streakService_milestoneTitle": {
-    "placeholders": {
-      "emoji": {
-        "type": "String"
-      },
-      "label": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_60a570": "{arg1} {localLabel}",
-  "@streakService_60a570": {
-    "placeholders": {
-      "arg1": {
-        "type": "Object"
-      },
-      "localLabel": {
-        "type": "Object"
-      }
-    }
-  },
   "streakService_dayStreak_b49b65": "{arg1}-gün {arg2} serisi ·",
-  "@streakService_dayStreak_b49b65": {
-    "placeholders": {
-      "arg1": {
-        "type": "Object"
-      },
-      "arg2": {
-        "type": "Object"
-      }
-    }
-  },
   "donationService_donationReceivedTitle": "Bağış alındı ​​💝",
   "donationService_youDonatedSeeds": "{amount} Tohum · jazak Allah khair bağışladınız.",
-  "@donationService_youDonatedSeeds": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "streakService_60a570_60a570": "{arg1} {localLabel}",
-  "@streakService_60a570_60a570": {
-    "placeholders": {
-      "arg1": {
-        "type": "Object"
-      },
-      "localLabel": {
-        "type": "Object"
-      }
-    }
-  },
   "xpService_badgeEarnedBody": "\"{name}\" rozetini kazandınız.",
-  "@xpService_badgeEarnedBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "localReminderScheduler_channelName": "Sabiq Ödül Bildirimleri",
   "localReminderScheduler_morningTitle": "Sabah Azkar",
   "localReminderScheduler_morningBody": "Güne Allah'ın koruması altında başlayın; sabah ezkarını okuyun.",
@@ -5836,6 +2439,3429 @@
   "liveNotificationService_validateTicker": "Tohumlarınızı gece yarısından önce mühürleyin",
   "liveNotificationService_validateTitle": "Tohumlarınızı gece yarısından önce mühürleyin!",
   "liveNotificationService_validateBody": "{n} bekleyen Seed'leriniz var. Gece yarısından önce Günü Mühürle'ye dokunun, aksi takdirde süreleri dolar.",
+  "liveNotificationService_ayatRead": "{n} Ayet Bugün Oku 📖",
+  "liveNotificationService_readQuranTime": "{time} Bugün Kuran okuyun ⏱️",
+  "liveNotificationService_nothingRead": "Bugün Kur'an'dan hiçbir şey okunmadı 📖",
+  "liveNotificationService_dhikrCompleted": "{n} Zikir bugün tamamlandı 📿",
+  "liveNotificationService_tickerBusy": "{ayah} ayet · {dhikr} bugün zikir",
+  "liveNotificationService_tickerIdle": "Okumaya ve Zikir yapmaya devam edin!",
+  "liveNotificationService_channelDesc": "Bugünkü Kur'an ve Zikir ilerlemesini canlı izleyin",
+  "liveNotificationService_seedsToday": "Bugünkü Tohumlarınız ✨",
+  "liveNotificationService_summary": "Sabiq'i açmak için dokunun",
+  "quranApiService_notConnected": "Kuran.com'a bağlı değil",
+  "quranApiService_notSignedIn": "Noor'da oturum açılmadı",
+  "quranApiService_syncFailedPush": "Senkronizasyon başarısız oldu, {n} yer işaretleri Kuran.com'a aktarılamadı (kontrol jetonu / uç nokta).",
+  "quranApiService_alreadyInSync": "Yer işaretleri zaten senkronize durumda",
+  "quranApiService_syncedBookmarks": "Senkronize edilmiş {total} yer imleri ({up} yukarı, {down} aşağı)",
+  "quranApiService_syncFailedPartial": ", {n} başarısız oldu",
+  "quranApiService_syncFailedGeneric": "Senkronizasyon başarısız oldu: {error}",
+  "authScreen_dontHaveAnAccountSignUp": "Hesabınız yok mu? Üye olmak",
+  "dhikrExitCelebration_keepItUp": "Aynen böyle devam!",
+  "unknownError": "Bilinmeyen hata",
+  "celebrationStatSeeds": "TOHUMLAR",
+  "celebrationStatSeedsEarned": "KAZANILAN TOHUMLAR",
+  "celebrationStatAyahs": "AYAHLAR",
+  "celebrationStatTime": "ZAMAN",
+  "celebrationStatStreak": "RÜZGÂR GİBİ GEÇMEK",
+  "celebrationStreakStartToday": "Bugün başla",
+  "celebrationDaysCount": "{count, plural, =1{1 day} other{{count} days}}",
+  "@readNTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@seedsEarnedToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@welcomeUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@bySponsor": {
+    "placeholders": {
+      "sponsor": {
+        "type": "String"
+      }
+    }
+  },
+  "@yourRank": {
+    "placeholders": {
+      "rank": {
+        "type": "String"
+      }
+    }
+  },
+  "@ptsToLevel": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "@dayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@noActivity": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "@unlocks": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "@badgesCollected": {
+    "placeholders": {
+      "earned": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "@percentComplete": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "@toUnlock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@ptsBoost": {
+    "placeholders": {
+      "multiplier": {
+        "type": "String"
+      }
+    }
+  },
+  "@ends": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@moreDaysToGo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@dayStreakLabel": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@best": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@verses": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@ayahN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@playbackError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "@translationsAvailable": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@ayahsRead": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@surahHasVerses": {
+    "placeholders": {
+      "surah": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@saved": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@noSavedYet": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@continueAdhkar": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "@deedsToday": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@deedsThisWeek": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@bestDayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@yourAvailable": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@jazakAllahDonated": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@donatePoints": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@myContribution": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@ofGoal": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "@updates": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@nNew": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@noorPlusPoints": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@ofTabGoal": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      },
+      "tab": {
+        "type": "String"
+      }
+    }
+  },
+  "@setsTodayCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@lastAchievement": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@outOfBelievers": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@yourRankNum": {
+    "placeholders": {
+      "rank": {
+        "type": "String"
+      }
+    }
+  },
+  "@activeCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@mAgo": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "@hAgo": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "@dAgo": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "@badgeEarnedDesc": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "@pointsForSealing": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "@welcomeBack": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakBonus": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "@qfConflictStep2": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@plusSeedsToday": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@sponsorCta": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@sealWithinHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@sealWithinMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@contributorCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@dayStreakCount": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@seedsPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@jazakAllahPlusSeeds": {
+    "placeholders": {
+      "seeds": {
+        "type": "int"
+      }
+    }
+  },
+  "@setTargetSeeds": {
+    "placeholders": {
+      "defaultVal": {
+        "type": "int"
+      }
+    }
+  },
+  "@myContributionSeeds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@jazakAllahKhayranDonated": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "@levelTitleFormat": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@bestDayStreakBadge": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@meetOrphanAge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "@sponsorNameArrow": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@projectCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@actionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@seedsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@versesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@verseN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@ofN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@surahHasNVerses": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@noXYet": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "@surahVerseRow": {
+    "placeholders": {
+      "surah": {
+        "type": "int"
+      },
+      "ayah": {
+        "type": "int"
+      }
+    }
+  },
+  "@tenPerLetterSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@seedsExpiringNotificationBody": {
+    "placeholders": {
+      "pending": {
+        "type": "int"
+      }
+    }
+  },
+  "@plusDeedsTodayBadge": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@equivalentChange": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@receivedChange": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@readAyahsPlusTimeToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@readAyahsToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@spentTimeReadingQuranToday": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@viewAllDonors": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@nextMilestoneInfo": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@bestN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@aboveSevenDayAvg": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "@belowSevenDayAvg": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "@currentOverDays": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@daysWord": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@seedsThisSession": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@sevenDayAvgAzkaar": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeAyahs": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangePlanted": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeCycles": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeBuilt": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeEarned": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeOpened": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeInvocations": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@holdingChangeRecitations": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@bookmarksOnQuranCom": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@bookmarksInThisApp": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakSeedsBonus": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@plusSeedsThisWeek": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@unitDuas": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@unitAdhkar": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@donateAmountSeeds": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@viewAllN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveReadersNow": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@communityReadingToday": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@communityHasanatToday": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@qfAuthService_tokenExchangeFailed": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphan_be2bf7": {
+    "placeholders": {
+      "firstName": {
+        "type": "String"
+      },
+      "lastInitial": {
+        "type": "String"
+      }
+    }
+  },
+  "@akhirahBalanceScreen_thisSession": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@akhirahBalanceScreen_seedsThisSession": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@akhirahBalanceScreen_dayAvgAzkaarDay": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_profileReturnedZeroRows": {
+    "placeholders": {
+      "uid": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_dashboardLoadError": {
+    "placeholders": {
+      "e": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_sponsor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_today": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "_lastAyah": {
+        "type": "String"
+      },
+      "_ayahsToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_606140": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "_lastAyah": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_setsToday": {
+    "placeholders": {
+      "_dhikrToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_dayStreak": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_last": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_active": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_useMyCodeAnd": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_52b02c": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_e4e562": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_yourRank": {
+    "placeholders": {
+      "rankText": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_d13a42": {
+    "placeholders": {
+      "_myPoints": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_lvl": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_sealWithin": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_ofGoal": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_default": {
+    "placeholders": {
+      "recommendedCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_readTimes": {
+    "placeholders": {
+      "readCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_d08433": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_9a4c42": {
+    "placeholders": {
+      "bismillah": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      },
+      "rest": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_86f857": {
+    "placeholders": {
+      "matched": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_49900d": {
+    "placeholders": {
+      "hasanaat": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_3856c1": {
+    "placeholders": {
+      "rawRef": {
+        "type": "String"
+      },
+      "bottomRef": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_35c165": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_a5cfd1": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_lvl": {
+    "placeholders": {
+      "_level": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_200447": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_634027": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dhikrRecitedLifetime": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_hasanat": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ayahsReadLifetime": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_hasanat_e68a30": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalHasanaat": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ayahs": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_planted": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_cycles": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalRecitations": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dividedByForgivenessCycles": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_built": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dividedByPalaces": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_earned": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_equivalent": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalRecitations_262e54": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_setsOfSetsSlaves": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_opened": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_received": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalSalawatSent": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_multipliedByBlessingsReceived": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_invocations": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalInvocations": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_equivalent_d7e6f6": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dividedByQuranCompletions": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_recitations": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_564740": {
+    "placeholders": {
+      "_monthActiveDays": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_3dc421": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_08990a": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ago": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ago_c25b44": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ago_e160e3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_moAgo": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ago_65f0ec": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_viewAllDonors": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_failed": {
+    "placeholders": {
+      "e": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_meet": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_sponsor": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_funded": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_bd3721": {
+    "placeholders": {
+      "_myOrphansSponsoredCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_b3d969": {
+    "placeholders": {
+      "_myProjectsSupportedCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds_59c6a1": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds_a20530": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_unlocks": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds_a49180": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds_a22be5": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seedsBoost": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_cf765f": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      },
+      "arg3": {
+        "type": "String"
+      },
+      "arg4": {
+        "type": "String"
+      },
+      "arg5": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_nextDays": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds_990893": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_days": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_dayStreak": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@onboardingComponents_355c50": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      }
+    }
+  },
+  "@onboardingComponents_b236c9": {
+    "placeholders": {
+      "trailing": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphansGridScreen_36cd3b": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_years": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ofSeeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_through": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ago": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ago_c25b44": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ago_e160e3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_moAgo": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ago_65f0ec": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_seeds": {
+    "placeholders": {
+      "_availablePoints": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_sponsor": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_chooseHowManySeeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_yourBalanceSeeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@profileSettingsScreen_seeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@profileSettingsScreen_seeds_59ba7c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@profileSettingsScreen_seeds_2bc978": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_organisedBy": {
+    "placeholders": {
+      "sponsor": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_4c2b09": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      },
+      "arg3": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_seeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_seeds_801ec7": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_e4e562": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_ago": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_ago_c25b44": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_ago_e160e3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_moAgo": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_ago_65f0ec": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_viewAll": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_saved": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_surahVerse": {
+    "placeholders": {
+      "s": {
+        "type": "String"
+      },
+      "a": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_verses": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_of": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_saved_edce53": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_ayahs": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_removedBookmark": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_surah": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_bookmarked": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_surah": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_tafsir": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_surah": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_pt": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_003843": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_translationsAvailable": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_3502e8": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_sabiqSeedsEarnedToday": {
+    "placeholders": {
+      "_pointsToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_dcacc4": {
+    "placeholders": {
+      "_ayah": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_6d1f9d": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_ayahsRead": {
+    "placeholders": {
+      "_ayahsToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_ce2af3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_6e8ac8": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_pageJuz": {
+    "placeholders": {
+      "_currentPage": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_nextDays": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_seeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_days": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_dayStreak": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@tafsirScreen_verses": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@tafsirScreen_ayahOf": {
+    "placeholders": {
+      "_ayah": {
+        "type": "String"
+      },
+      "_surahLen": {
+        "type": "String"
+      }
+    }
+  },
+  "@tafsirScreen_4815bb": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      },
+      "_surahLen": {
+        "type": "String"
+      }
+    }
+  },
+  "@donationService_youSponsoredSeedsJazak": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_youHavePendingSeeds": {
+    "placeholders": {
+      "pendingSeeds": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_ayatReadToday": {
+    "placeholders": {
+      "_ayahCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_readQuranToday": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_dhikrCompletedToday": {
+    "placeholders": {
+      "_dhikrCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_ayatDhikrToday": {
+    "placeholders": {
+      "_ayahCount": {
+        "type": "String"
+      },
+      "_dhikrCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranApiService_syncFailedBookmarkCould": {
+    "placeholders": {
+      "failed": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranApiService_syncedBookmarksUpDown": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "uploaded": {
+        "type": "String"
+      },
+      "downloaded": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranApiService_syncFailed": {
+    "placeholders": {
+      "e": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_1fc043": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_dayStreak": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_bonusSeedsUnlocked": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@trackingService_c7528c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_level": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_seedsWelcomeBack": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_sabiqSeedsConfirmedBonus": {
+    "placeholders": {
+      "flushed": {
+        "type": "String"
+      },
+      "bonus": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_sabiqSeedsConfirmed": {
+    "placeholders": {
+      "flushed": {
+        "type": "String"
+      }
+    }
+  },
+  "@motivationalPopup_seeds": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@motivationalPopup_seeds_b14996": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationsSheet_ago": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationsSheet_ago_5d4e7f": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationsSheet_ago_67b1d9": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@sealCoinAnimation_e16fa4": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@qfAuthService_tokenExchangeFailed_89d8a0": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphan_be2bf7_be2bf7": {
+    "placeholders": {
+      "firstName": {
+        "type": "String"
+      },
+      "lastInitial": {
+        "type": "String"
+      }
+    }
+  },
+  "@akhirahBalanceScreen_thisSession_702ffc": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@akhirahBalanceScreen_seedsThisSession_cd9411": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_profileReturnedZeroRows_3ccedb": {
+    "placeholders": {
+      "uid": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_dashboardLoadError_6168de": {
+    "placeholders": {
+      "e": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_sponsor_d48549": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_today_261fbb": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "_lastAyah": {
+        "type": "String"
+      },
+      "_ayahsToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_606140_606140": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "_lastAyah": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_dayStreak_2934ca": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_active_2d214a": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_useMyCodeAnd_7d13b3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_52b02c_52b02c": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_e4e562_e4e562": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_yourRank_67be90": {
+    "placeholders": {
+      "rankText": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_d13a42_d13a42": {
+    "placeholders": {
+      "_myPoints": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_lvl_ac180d": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_sealWithin_381d5d": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardScreen_ofGoal_9660ee": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_default_8bd36b": {
+    "placeholders": {
+      "recommendedCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_readTimes_537f51": {
+    "placeholders": {
+      "readCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_d08433_d08433": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_9a4c42_9a4c42": {
+    "placeholders": {
+      "bismillah": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      },
+      "rest": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_86f857_86f857": {
+    "placeholders": {
+      "matched": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_49900d_49900d": {
+    "placeholders": {
+      "hasanaat": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_3856c1_3856c1": {
+    "placeholders": {
+      "rawRef": {
+        "type": "String"
+      },
+      "bottomRef": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_35c165_35c165": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@dhikrScreen_a5cfd1_a5cfd1": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_lvl_987904": {
+    "placeholders": {
+      "_level": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_200447_200447": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_634027_634027": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dhikrRecitedLifetime_669e2a": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_hasanat_64c7b6": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ayahsReadLifetime_75eef6": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalHasanaat_c43112": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ayahs_6a500c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_planted_90ec47": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_cycles_f6649b": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalRecitations_5ed733": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dividedByForgivenessCycles_4e175d": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_built_d62c2d": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dividedByPalaces_6f066c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_earned_abd189": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_equivalent_cb7bb5": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_setsOfSetsSlaves_b43b31": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_opened_1bf8da": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_received_a526e3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalSalawatSent_cfe45e": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_multipliedByBlessingsReceived_52810f": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_invocations_d80c33": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalInvocations_1fd02b": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_dividedByQuranCompletions_b9a013": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_recitations_3cb9ec": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_564740_564740": {
+    "placeholders": {
+      "_monthActiveDays": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_3dc421_3dc421": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_08990a_08990a": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_ago_71107c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_moAgo_325a71": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_viewAllDonors_e72932": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_failed_190558": {
+    "placeholders": {
+      "e": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_meet_82797d": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_sponsor_a47417": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_funded_add009": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_bd3721_bd3721": {
+    "placeholders": {
+      "_myOrphansSponsoredCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_b3d969_b3d969": {
+    "placeholders": {
+      "_myProjectsSupportedCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seeds_fff97b": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_unlocks_6f2513": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_seedsBoost_464454": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_cf765f_cf765f": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      },
+      "arg3": {
+        "type": "String"
+      },
+      "arg4": {
+        "type": "String"
+      },
+      "arg5": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_nextDays_212b86": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_days_100e10": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@levelScreen_dayStreak_df2abf": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@onboardingComponents_355c50_355c50": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      }
+    }
+  },
+  "@onboardingComponents_b236c9_b236c9": {
+    "placeholders": {
+      "trailing": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphansGridScreen_36cd3b_36cd3b": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_years_debb46": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ofSeeds_2a29fc": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_through_2cdb72": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_ago_71107c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_moAgo_325a71": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_seeds_30d8dc": {
+    "placeholders": {
+      "_availablePoints": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_sponsor_b34bcf": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_chooseHowManySeeds_b69aa2": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@orphanDetailScreen_yourBalanceSeeds_f8045b": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@profileSettingsScreen_seeds_53d666": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_organisedBy_8b317a": {
+    "placeholders": {
+      "sponsor": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_4c2b09_4c2b09": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      },
+      "arg3": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_seeds_47387f": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_e4e562_e4e562": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_ago_71107c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_moAgo_325a71": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@projectDetailScreen_viewAll_3d2c48": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_saved_9c28a3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_surahVerse_2c65ec": {
+    "placeholders": {
+      "s": {
+        "type": "String"
+      },
+      "a": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_verses_f97238": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranHubScreen_of_0420fc": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_ayahs_c98642": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_removedBookmark_d7a16a": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_surah": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_bookmarked_2c6203": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_surah": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_tafsir_391c0d": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_surah": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_pt_9e58e8": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_003843_003843": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_translationsAvailable_55c648": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_3502e8_3502e8": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_sabiqSeedsEarnedToday_13ddb3": {
+    "placeholders": {
+      "_pointsToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_dcacc4_dcacc4": {
+    "placeholders": {
+      "_ayah": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_6d1f9d_6d1f9d": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_ayahsRead_862866": {
+    "placeholders": {
+      "_ayahsToday": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_ce2af3_ce2af3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_6e8ac8_6e8ac8": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranScreen_pageJuz_6ac28a": {
+    "placeholders": {
+      "_currentPage": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_nextDays_212b86": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_seeds_990893": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_days_100e10": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakScreen_dayStreak_df2abf": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@tafsirScreen_verses_fed624": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@tafsirScreen_ayahOf_63c42b": {
+    "placeholders": {
+      "_ayah": {
+        "type": "String"
+      },
+      "_surahLen": {
+        "type": "String"
+      }
+    }
+  },
+  "@tafsirScreen_4815bb_4815bb": {
+    "placeholders": {
+      "_surahName": {
+        "type": "String"
+      },
+      "_ayah": {
+        "type": "String"
+      },
+      "_surahLen": {
+        "type": "String"
+      }
+    }
+  },
+  "@donationService_youSponsoredSeedsJazak_7711e1": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_youHavePendingSeeds_dd762f": {
+    "placeholders": {
+      "pendingSeeds": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_ayatReadToday_b5a4e8": {
+    "placeholders": {
+      "_ayahCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_readQuranToday_703122": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_dhikrCompletedToday_835583": {
+    "placeholders": {
+      "_dhikrCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@liveNotificationService_ayatDhikrToday_548e91": {
+    "placeholders": {
+      "_ayahCount": {
+        "type": "String"
+      },
+      "_dhikrCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranApiService_syncFailedBookmarkCould_3393f7": {
+    "placeholders": {
+      "failed": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranApiService_syncedBookmarksUpDown_dd2f96": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "uploaded": {
+        "type": "String"
+      },
+      "downloaded": {
+        "type": "String"
+      }
+    }
+  },
+  "@quranApiService_syncFailed_ae7629": {
+    "placeholders": {
+      "e": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_1fc043_1fc043": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_dayStreak_9ee8a3": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_bonusSeedsUnlocked_bcdda5": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@trackingService_c7528c_c7528c": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      },
+      "arg2": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_level_226f81": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_seedsWelcomeBack_47888a": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_sabiqSeedsConfirmedBonus_702902": {
+    "placeholders": {
+      "flushed": {
+        "type": "String"
+      },
+      "bonus": {
+        "type": "String"
+      }
+    }
+  },
+  "@xpService_sabiqSeedsConfirmed_34969c": {
+    "placeholders": {
+      "flushed": {
+        "type": "String"
+      }
+    }
+  },
+  "@motivationalPopup_seeds_3a9c69": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@sealCoinAnimation_e16fa4_e16fa4": {
+    "placeholders": {
+      "arg1": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalHasanatFromQuran": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalTreesPlanted": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalTreasures": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_multipliedByGates": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_bonusHasanaat": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@impactReportScreen_totalDonatedSeeds": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "seeds": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_dayStreakBody": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "bonus": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_milestoneTitle": {
+    "placeholders": {
+      "emoji": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_60a570": {
+    "placeholders": {
+      "arg1": {
+        "type": "Object"
+      },
+      "localLabel": {
+        "type": "Object"
+      }
+    }
+  },
+  "@streakService_dayStreak_b49b65": {
+    "placeholders": {
+      "arg1": {
+        "type": "Object"
+      },
+      "arg2": {
+        "type": "Object"
+      }
+    }
+  },
+  "@donationService_youDonatedSeeds": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@streakService_60a570_60a570": {
+    "placeholders": {
+      "arg1": {
+        "type": "Object"
+      },
+      "localLabel": {
+        "type": "Object"
+      }
+    }
+  },
+  "@xpService_badgeEarnedBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "@liveNotificationService_validateBody": {
     "placeholders": {
       "n": {
@@ -5843,7 +5869,6 @@
       }
     }
   },
-  "liveNotificationService_ayatRead": "{n} Ayet Bugün Oku 📖",
   "@liveNotificationService_ayatRead": {
     "placeholders": {
       "n": {
@@ -5851,7 +5876,6 @@
       }
     }
   },
-  "liveNotificationService_readQuranTime": "{time} Bugün Kuran okuyun ⏱️",
   "@liveNotificationService_readQuranTime": {
     "placeholders": {
       "time": {
@@ -5859,8 +5883,6 @@
       }
     }
   },
-  "liveNotificationService_nothingRead": "Bugün Kur'an'dan hiçbir şey okunmadı 📖",
-  "liveNotificationService_dhikrCompleted": "{n} Zikir bugün tamamlandı 📿",
   "@liveNotificationService_dhikrCompleted": {
     "placeholders": {
       "n": {
@@ -5868,7 +5890,6 @@
       }
     }
   },
-  "liveNotificationService_tickerBusy": "{ayah} ayet · {dhikr} bugün zikir",
   "@liveNotificationService_tickerBusy": {
     "placeholders": {
       "ayah": {
@@ -5879,13 +5900,6 @@
       }
     }
   },
-  "liveNotificationService_tickerIdle": "Okumaya ve Zikir yapmaya devam edin!",
-  "liveNotificationService_channelDesc": "Bugünkü Kur'an ve Zikir ilerlemesini canlı izleyin",
-  "liveNotificationService_seedsToday": "Bugünkü Tohumlarınız ✨",
-  "liveNotificationService_summary": "Sabiq'i açmak için dokunun",
-  "quranApiService_notConnected": "Kuran.com'a bağlı değil",
-  "quranApiService_notSignedIn": "Noor'da oturum açılmadı",
-  "quranApiService_syncFailedPush": "Senkronizasyon başarısız oldu, {n} yer işaretleri Kuran.com'a aktarılamadı (kontrol jetonu / uç nokta).",
   "@quranApiService_syncFailedPush": {
     "placeholders": {
       "n": {
@@ -5893,8 +5907,6 @@
       }
     }
   },
-  "quranApiService_alreadyInSync": "Yer işaretleri zaten senkronize durumda",
-  "quranApiService_syncedBookmarks": "Senkronize edilmiş {total} yer imleri ({up} yukarı, {down} aşağı)",
   "@quranApiService_syncedBookmarks": {
     "placeholders": {
       "total": {
@@ -5908,7 +5920,6 @@
       }
     }
   },
-  "quranApiService_syncFailedPartial": ", {n} başarısız oldu",
   "@quranApiService_syncFailedPartial": {
     "placeholders": {
       "n": {
@@ -5916,7 +5927,6 @@
       }
     }
   },
-  "quranApiService_syncFailedGeneric": "Senkronizasyon başarısız oldu: {error}",
   "@quranApiService_syncFailedGeneric": {
     "placeholders": {
       "error": {
@@ -5924,16 +5934,6 @@
       }
     }
   },
-  "authScreen_dontHaveAnAccountSignUp": "Hesabınız yok mu? Üye olmak",
-  "dhikrExitCelebration_keepItUp": "Aynen böyle devam!",
-  "unknownError": "Bilinmeyen hata",
-  "celebrationStatSeeds": "TOHUMLAR",
-  "celebrationStatSeedsEarned": "KAZANILAN TOHUMLAR",
-  "celebrationStatAyahs": "AYAHLAR",
-  "celebrationStatTime": "ZAMAN",
-  "celebrationStatStreak": "RÜZGÂR GİBİ GEÇMEK",
-  "celebrationStreakStartToday": "Bugün başla",
-  "celebrationDaysCount": "{count, plural, =1{1 day} other{{count} days}}",
   "@celebrationDaysCount": {
     "placeholders": {
       "count": {

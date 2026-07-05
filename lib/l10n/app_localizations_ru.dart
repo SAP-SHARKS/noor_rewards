@@ -2095,7 +2095,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String plusSeedsToday(String count) {
-    return '+$count today';
+    return '+$count сегодня';
   }
 
   @override
