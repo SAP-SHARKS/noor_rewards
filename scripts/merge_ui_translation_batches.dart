@@ -183,27 +183,94 @@ void main() {
   print('Now run: flutter gen-l10n');
 }
 
-// Extracts `~~~<locale> … ~~~` fenced JSON blocks from the LLM output.
-// The prompt asks for exactly this format; if the LLM used ``` instead
-// of ~~~ we also accept that.
+// Extracts per-locale JSON translation objects from the LLM output.
+// Handles two response formats seen in the wild:
+//
+//   1. Fenced blocks tagged with the locale code, e.g.:
+//        ~~~ur
+//        { "someKey": "…" }
+//        ~~~
+//      The prompt asks for this shape and it's the most reliable
+//      because the locale tag is explicit.
+//
+//   2. Bare JSON objects back-to-back, no fences (Claude Sonnet's
+//      default when the token budget is tight). Order is inferred
+//      from the prompt's declared locale order (`_locales`).
+//
+// If neither works for a given batch, the validator will flag every
+// key as "missing" and the old .arb value survives.
 Map<String, Map<String, dynamic>> _parseOutputBlocks(String content) {
-  final result = <String, Map<String, dynamic>>{};
-  // Match either fence style. Locale tag is the word right after the
-  // opening fence. Body is everything up to the next matching fence.
-  final re = RegExp(
+  // ── Try fenced first ─────────────────────────────────────────────
+  final fenced = <String, Map<String, dynamic>>{};
+  final fenceRe = RegExp(
     r'(?:~~~|```)\s*([a-z]{2})\s*\n([\s\S]*?)\n\s*(?:~~~|```)',
     multiLine: true,
   );
-  for (final m in re.allMatches(content)) {
+  for (final m in fenceRe.allMatches(content)) {
     final loc = m.group(1)!;
     if (!_locales.contains(loc)) continue;
     final body = m.group(2)!.trim();
     try {
       final decoded = jsonDecode(body);
-      if (decoded is Map<String, dynamic>) result[loc] = decoded;
-    } catch (_) {
-      // Silent skip — validator will flag missing keys per locale.
+      if (decoded is Map<String, dynamic>) fenced[loc] = decoded;
+    } catch (_) {/* fall through */}
+  }
+  if (fenced.length == _locales.length) return fenced;
+
+  // ── Fallback: brace-balanced scan for standalone JSON objects ─────
+  // Locate every top-level `{ … }` block (JSON object, not code fence)
+  // and assign them positionally in the prompt's declared order.
+  final blocks = _extractJsonObjects(content);
+  final positional = <String, Map<String, dynamic>>{};
+  for (var i = 0; i < blocks.length && i < _locales.length; i++) {
+    try {
+      final decoded = jsonDecode(blocks[i]);
+      if (decoded is Map<String, dynamic>) {
+        positional[_locales[i]] = decoded;
+      }
+    } catch (_) {/* keep going */}
+  }
+  // Prefer positional only if it's strictly better than fenced.
+  return positional.length > fenced.length ? positional : fenced;
+}
+
+// Brace-balanced scanner. Finds every top-level `{ … }` in the input,
+// respecting nesting and string literals so `{` inside a JSON string
+// doesn't confuse the depth counter.
+List<String> _extractJsonObjects(String s) {
+  final out = <String>[];
+  var depth = 0;
+  var start = -1;
+  var inString = false;
+  var escape = false;
+  for (var i = 0; i < s.length; i++) {
+    final c = s[i];
+    if (escape) {
+      escape = false;
+      continue;
+    }
+    if (inString) {
+      if (c == r'\') {
+        escape = true;
+      } else if (c == '"') {
+        inString = false;
+      }
+      continue;
+    }
+    if (c == '"') {
+      inString = true;
+      continue;
+    }
+    if (c == '{') {
+      if (depth == 0) start = i;
+      depth++;
+    } else if (c == '}') {
+      depth--;
+      if (depth == 0 && start >= 0) {
+        out.add(s.substring(start, i + 1));
+        start = -1;
+      }
     }
   }
-  return result;
+  return out;
 }
