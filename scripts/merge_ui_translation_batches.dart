@@ -184,22 +184,58 @@ void main() {
 }
 
 // Extracts per-locale JSON translation objects from the LLM output.
-// Handles two response formats seen in the wild:
+// Handles three response formats seen in the wild:
 //
-//   1. Fenced blocks tagged with the locale code, e.g.:
+//   1. Single nested JSON object keyed by locale code (Gemini
+//      default when asked for one code block):
+//        { "ur": {…}, "ar": {…}, "fr": {…}, "id": {…}, "ms": {…}, "ru": {…}, "tr": {…} }
+//      Most reliable — locale tag is explicit AND wrapped inside
+//      one block so nothing outside can confuse the parser.
+//
+//   2. Fenced blocks tagged with the locale code, e.g.:
 //        ~~~ur
 //        { "someKey": "…" }
 //        ~~~
-//      The prompt asks for this shape and it's the most reliable
-//      because the locale tag is explicit.
+//      The original prompt asked for this. Still supported.
 //
-//   2. Bare JSON objects back-to-back, no fences (Claude Sonnet's
-//      default when the token budget is tight). Order is inferred
-//      from the prompt's declared locale order (`_locales`).
+//   3. Bare JSON objects back-to-back, no fences (Claude Sonnet's
+//      compact-mode default). Order is inferred positionally from
+//      the prompt's declared locale order (`_locales`).
 //
-// If neither works for a given batch, the validator will flag every
-// key as "missing" and the old .arb value survives.
+// If none of these work, the validator flags every key as "missing"
+// and the old .arb value survives — safe fallback.
 Map<String, Map<String, dynamic>> _parseOutputBlocks(String content) {
+  // ── Try nested single-object first ────────────────────────────────
+  // Look for a top-level JSON object that has the locale codes as its
+  // own keys. Doesn't require fences — but a fenced code block is the
+  // most common Gemini shape and worth extracting first for cleanliness.
+  final fencedContentRe = RegExp(
+    r'```(?:json)?\s*\n([\s\S]*?)\n\s*```',
+    multiLine: true,
+  );
+  final candidates = <String>[];
+  for (final m in fencedContentRe.allMatches(content)) {
+    candidates.add(m.group(1)!.trim());
+  }
+  // Also try the whole document — in case the LLM skipped the fence.
+  candidates.add(content.trim());
+  for (final candidate in candidates) {
+    try {
+      final decoded = jsonDecode(candidate);
+      if (decoded is Map<String, dynamic>) {
+        final localeKeys = decoded.keys.where(_locales.contains).toList();
+        if (localeKeys.length >= 2) {
+          final nested = <String, Map<String, dynamic>>{};
+          for (final loc in localeKeys) {
+            final v = decoded[loc];
+            if (v is Map<String, dynamic>) nested[loc] = v;
+          }
+          if (nested.length >= 2) return nested;
+        }
+      }
+    } catch (_) {/* not JSON — keep trying other formats */}
+  }
+
   // ── Try fenced first ─────────────────────────────────────────────
   final fenced = <String, Map<String, dynamic>>{};
   final fenceRe = RegExp(
