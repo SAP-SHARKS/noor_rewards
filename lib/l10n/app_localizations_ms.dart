@@ -827,10 +827,10 @@ class AppLocalizationsMs extends AppLocalizations {
   String get appearance => 'PENAMPILAN';
 
   @override
-  String get appearanceLabel => 'Appearance';
+  String get appearanceLabel => 'Penampilan';
 
   @override
-  String get freezeIllustration => 'Freeze Illustration';
+  String get freezeIllustration => 'Ilustrasi Pembekuan';
 
   @override
   String get comfortableNightReading => 'Bacaan malam yang selesa';

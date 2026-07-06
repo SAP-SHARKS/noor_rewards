@@ -830,10 +830,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appearance => 'ВНЕШНИЙ ВИД';
 
   @override
-  String get appearanceLabel => 'Appearance';
+  String get appearanceLabel => 'Появление';
 
   @override
-  String get freezeIllustration => 'Freeze Illustration';
+  String get freezeIllustration => 'Заморозить иллюстрацию';
 
   @override
   String get comfortableNightReading => 'Удобное чтение в ночное время';

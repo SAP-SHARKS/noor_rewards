@@ -818,10 +818,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appearance => 'المظهر';
 
   @override
-  String get appearanceLabel => 'Appearance';
+  String get appearanceLabel => 'مظهر';
 
   @override
-  String get freezeIllustration => 'Freeze Illustration';
+  String get freezeIllustration => 'تجميد التوضيح';
 
   @override
   String get comfortableNightReading => 'قراءة مريحة في الليل';

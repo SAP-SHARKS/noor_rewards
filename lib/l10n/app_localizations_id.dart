@@ -829,10 +829,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get appearance => 'TAMPILAN';
 
   @override
-  String get appearanceLabel => 'Appearance';
+  String get appearanceLabel => 'Penampilan';
 
   @override
-  String get freezeIllustration => 'Freeze Illustration';
+  String get freezeIllustration => 'Ilustrasi Bekukan';
 
   @override
   String get comfortableNightReading => 'Nyaman untuk membaca di malam hari';

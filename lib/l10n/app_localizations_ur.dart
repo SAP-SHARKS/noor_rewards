@@ -826,10 +826,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get appearance => 'ظاہری شکل';
 
   @override
-  String get appearanceLabel => 'Appearance';
+  String get appearanceLabel => 'ظاہری شکل';
 
   @override
-  String get freezeIllustration => 'Freeze Illustration';
+  String get freezeIllustration => 'منجمد عکاسی';
 
   @override
   String get comfortableNightReading => 'رات کی آرام دہ پڑھائی';
@@ -9368,7 +9368,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get celebrationStatAyahs => 'آیاحس';
 
   @override
-  String get celebrationStatTime => 'TIME';
+  String get celebrationStatTime => 'وقت';
 
   @override
   String get celebrationStatStreak => 'سٹریک';
