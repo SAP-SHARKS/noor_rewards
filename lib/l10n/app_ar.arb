@@ -888,817 +888,121 @@
   "peopleReadingNow": "يقرأون الآن",
   "readToday": "قرأوا اليوم",
   "communityHasanat": "حسنات المجتمع",
-  "authScreen_pleaseEnterYourEmail": "الرجاء إدخال البريد الإلكتروني الخاص بك",
-  "authScreen_pleaseEnterYourPassword": "الرجاء إدخال كلمة المرور الخاصة بك",
-  "authScreen_passwordMustBeAt": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
-  "authScreen_alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ تسجيل الدخول",
-  "authScreen_haveAnAccountSign": "ليس لديك حساب؟ اشتراك",
-  "qfAuthService_qfemailconflictexceptionAlreadyHasAn": "QfEmailConflictException: {email} لديه حساب بالفعل",
-  "qfAuthService_openidOfflineAccessUser": "openid دون اتصال_الوصول إلى مجموعة الإشارات المرجعية للمستخدم read_session",
-  "qfAuthService_tokenExchangeFailed": "فشل تبادل الرمز المميز ({arg1}): {arg2}",
-  "qfAuthService_errorNullResponse": "خطأ: استجابة فارغة",
   "orphan_be2bf7": "{firstName} {lastInitial}.",
-  "akhirahBalanceScreen_subhanallahiWaBiHamdihi": "\"\"سبحان الله وبحمده\"\" في اليوم 100 مرة تمحو الخطايا مثل زبد البحر. (البخاري)",
-  "akhirahBalanceScreen_sayLaIlahaIllallah": "وقول لا إله إلا الله 100 مرة تعدل عتق 10 عبيد و100 حسنة. (البخاري)",
-  "akhirahBalanceScreen_lightOnTheTongue": "خفيف على اللسان، ثقيل في الميزان: سبحان الله وبحمده، سبحان الله العظيم. (البخاري 6406) .",
-  "akhirahBalanceScreen_theDhikrOfAllah": "فإن ذكر الله أثقل في الميزان من ذهب مثله. يستمر في التقدم.",
-  "akhirahBalanceScreen_yourTongueShouldStay": "«وينبغي أن يظل لسانك رطبًا بذكر الله». - هل لا تزال رطبة؟",
-  "akhirahBalanceScreen_astaghfirullahTheProphetSaid": "استغفر الله — قالها النبي ✍ في اليوم 100 مرة، ولم يكن له ذنب. كم لديك؟",
-  "akhirahBalanceScreen_whenYouRememberAllah": "وإذا ذكرتم الله خفية ذكركم في ملأ أكبر.",
-  "akhirahBalanceScreen_reciteAyatAlKursi": "اقرأ آية الكرسي بعد كل صلاة، فلا يمنعك من الجنة إلا الموت.",
-  "akhirahBalanceScreen_oneAlhamdulillahFillsThe": "الحمدلله يملأ الميزان . سبحان الله ملء ما بين السماء والأرض.",
-  "akhirahBalanceScreen_theRemembranceOfAllah": "«ذكر الله أكبر من كل شيء». — سورة العنكبوت 29:45",
-  "akhirahBalanceScreen_rememberMeWillRemember": "\" فاذكروني أذكركم \". - سورة البقرة 2: 152. سوف تفعل؟",
-  "akhirahBalanceScreen_inTheRemembranceOf": "«بذكر الله تطمئن القلوب». — سورة الرعد 13:28",
-  "akhirahBalanceScreen_fiveMinutesOfDhikr": "خمس دقائق من الذكر تشكل الآن الـ 24 ساعة القادمة من قلبك.",
-  "akhirahBalanceScreen_streakIsnAboutToday": "لا يتعلق الخط باليوم، بل يتعلق بما ستصبح عليه خلال 30 يومًا.",
-  "akhirahBalanceScreen_smallDropsFillAn": "قطرات صغيرة تملأ المحيط. أذكارك اليومية تملأ شيئًا أكبر بكثير.",
-  "akhirahBalanceScreen_noOneSeesThe": "لا أحد يرى الذكر في قلبك، ولكن كل ملاك يكتب سجلك يفعل ذلك.",
-  "akhirahBalanceScreen_theBiggestWinsAre": "أعظم المكاسب تبنى من أصغر العادات اليومية. لا تكسر السلسلة.",
-  "akhirahBalanceScreen_youCameBackToday": "لقد عدت اليوم. هذه عبادة بالفعل. البقاء دقيقة واحدة أخرى؟",
-  "akhirahBalanceScreen_tomorrowPeaceIsBuilt": "فسلام الغد مبني على ذكرى اليوم. زرع بذرة أخرى.",
-  "akhirahBalanceScreen_areYouDoneAllah": "هل انتهيت؟ باب الله مفتوح دائما، حتى بعد أن تغلقه.",
-  "akhirahBalanceScreen_dhikrIsTheLanguage": "الذكر هو لغة القلب. هل كلمت ربها اليوم؟",
-  "akhirahBalanceScreen_everySubhanallahIsSadaqah": "وكل سبحان الله صدقة. كم ستعطي قبل النوم؟",
-  "akhirahBalanceScreen_heartThatForgetsDhikr": "القلب الذي ينسى الذكر يبدأ بالصدأ. القلب الذي يتذكر يبقى مشتعلا.",
-  "akhirahBalanceScreen_haveYouFortifiedYourself": "هل حصنت نفسك بأذكار الصباح والمساء اليوم؟",
-  "akhirahBalanceScreen_thisSession": "هذه الجلسة: +{arg1}",
-  "akhirahBalanceScreen_seedsThisSession": "+{arg1} بذور هذه الجلسة",
-  "akhirahBalanceScreen_dayAvgAzkaarDay": "متوسط ​​7 أيام: {arg1} أذكار/يوم",
-  "dashboardScreen_profileReturnedZeroRows": "لم يُرجع الملف الشخصي أي صفوف لـ {uid}",
-  "dashboardScreen_dashboardLoadError": "خطأ في تحميل لوحة المعلومات: {e}",
-  "dashboardScreen_invalidReferralCode": "رمز الإحالة غير صالح",
-  "dashboardScreen_cannotReferYourself": "لا يمكن الرجوع نفسك",
-  "dashboardScreen_sponsor": "الراعي {name}، {arg1}",
-  "dashboardScreen_dashboardDoesn": ": 0، // لوحة القيادة لا",
-  "dashboardScreen_today": "{arg1} · {_lastAyah} · +{_ayahsToday} اليوم",
   "dashboardScreen_606140": "{arg1} · {_lastAyah}",
   "dashboardScreen_setsToday": "{_dhikrToday} مجموعات اليوم",
-  "dashboardScreen_dayStreak": "{arg1}-خط يوم",
   "dashboardScreen_last": "الأخير: {arg1}",
   "dashboardScreen_earnPerFriend": "اربح +500 لكل صديق",
-  "dashboardScreen_yourSabiqSeedsFund": "تقوم شركة Sabiq Seeds الخاصة بكم بتمويل هذه المشاريع",
-  "dashboardScreen_active": "{arg1} نشط",
-  "dashboardScreen_joinMeOnSabiq": "انضم إلي في برنامج Sabiq Rewards واحصل على بذور القرآن والذكر والأعمال الصالحة يوميًا!\\n\\n",
-  "dashboardScreen_useMyCodeAnd": "استخدم الرمز الخاص بي *{arg1}* وسنحصل على 500 بذرة سابق!\\n\\n",
-  "dashboardScreen_messageCopiedShareOr": "تم نسخ الرسالة أو مشاركتها أو لصقها في WhatsApp!",
-  "dashboardScreen_sabiqSeedsRewardedTo": "500 بذرة سابق مكافأة لكما!",
-  "dashboardScreen_youHaveAlreadyUsed": "لقد استخدمت بالفعل رمز الإحالة.",
   "dashboardScreen_invalidReferralCode_59fb25": "رمز الإحالة غير صالح.",
-  "dashboardScreen_youCannotUseYour": "لا يمكنك استخدام الكود الخاص بك.",
-  "dashboardScreen_anErrorOccurredPlease": "حدث خطأ. يرجى المحاولة مرة أخرى.",
   "dashboardScreen_52b02c": "{pts}",
   "dashboardScreen_e4e562": "{arg1}%",
-  "dashboardScreen_seeDetailsForMore": "انظر التفاصيل لمزيد من المشاريع →",
-  "dashboardScreen_yourTOTALSABIQSEEDS": "مجموع بذور سابق الخاصة بك",
-  "dashboardScreen_viewCampaignDonate": "🤲 شاهد الحملة وتبرع",
-  "dashboardScreen_yourRank": "رتبتك: {rankText}",
   "dashboardScreen_d13a42": "{_myPoints} {unit} • {arg1}",
-  "dashboardScreen_beTheFirstOn": "كن الأول على اللوح",
-  "dashboardScreen_readAnAyahOr": "اقرأ آية أو ذكر لتحصل على المركز الأول",
-  "dashboardScreen_lvl": "المستوى {level} · {arg1}",
-  "dashboardScreen_sealWithin": "الختم داخل {arg1}h",
-  "dashboardScreen_jazakallahDaySealed": "جزاك الله!  يوم مختوم",
-  "dashboardScreen_ofGoal": "من {arg1} {arg2} هدف",
-  "dhikrHubScreen_propheticSupplications": "أدعية نبوية",
-  "dhikrHubScreen_morningEveningRemembrance": "أذكار الصباح والمساء",
-  "dhikrHubScreen_furtherSupplications": "مزيد من الأدعية",
-  "dhikrHubScreen_closingRemembranceSalawat": "أذكار الختام والصلاة",
-  "dhikrHubScreen_hajjUmrahSupplications": "أدعية الحج والعمرة",
-  "dhikrHubScreen_falseHiddenAdd": "] == خطأ) Hidden.add(r[",
-  "dhikrScreen_indoPak": "إندو باك",
-  "dhikrScreen_default": "الافتراضي: {recommendedCount}",
-  "dhikrScreen_duaAzkarSettings": "إعدادات الدعاء والأذكار",
-  "dhikrScreen_hideTheVisualArtwork": "إخفاء منطقة العمل الفني المرئي",
-  "dhikrScreen_pinTheIllustrationAt": "قم بتثبيت الرسم التوضيحي في الأعلى أثناء تمرير النص العربي أسفله",
-  "dhikrScreen_readTimes": "اقرأ {readCount} مرات",
   "dhikrScreen_d08433": "{arg1} / {arg2}",
-  "dhikrScreen_alBaqarahAmanaAr": "سورة البقرة 285 (أمانة الرسول)",
-  "dhikrScreen_alBaqarahAlifLam": "سورة البقرة 1-5 (ألف لم ميم)",
-  "dhikrScreen_alBaqarahLaIkraha": "البقرة 256 (لا إكراها)",
-  "dhikrScreen_alBaqarahAllahuWaliyy": "سورة البقرة 257 (الله وليه)",
-  "dhikrScreen_salawatIbrahimiyyaDurood": "الصلاة الإبراهيمية (الدرود)",
   "dhikrScreen_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
   "dhikrScreen_86f857": "\\u2060{matched}",
   "dhikrScreen_49900d": "+{hasanaat}",
-  "dhikrScreen_hisnulMuslimChapter": "حصن مسلم، باب:",
   "dhikrScreen_3856c1": "{rawRef} | {bottomRef}",
-  "dhikrScreen_bestOfBothWorlds": "وخير الدارين العتق من النار",
-  "dhikrScreen_patienceAndSteadfastnessIn": "الصبر والثبات في كل تجربة",
-  "dhikrScreen_allahBurdensNoSoul": "ولا يكلف الله نفسا إلا وسعها",
-  "dhikrScreen_keepTheHeartFirm": "ثبت القلب على الهدى",
-  "dhikrScreen_faithAnsweredWithForgiveness": "أجاب الإيمان بالمغفرة من الجحيم",
-  "dhikrScreen_allSovereigntyInAllah": "الملك كله في الله\\",
-  "dhikrScreen_allahHearsEveryCall": "إن الله سميع لكل دعوة بالذرية الصالحة",
-  "dhikrScreen_countedWithTheWitnesses": "محسوبا مع شهود الحق",
-  "dhikrScreen_forgivenessFirmFeetAnd": "المغفرة والأقدام الثابتة والنصر",
-  "dhikrScreen_theDuaOfThose": "دعاء الذين يتفكرون",
-  "dhikrScreen_inscribedWithTheWitnesses": "مكتوب مع شهود الوحي",
-  "dhikrScreen_theDuaAllahAccepted": "الدعاء المقبول من آدم ﷺ",
-  "dhikrScreen_spareUsTheCompany": "وارزقنا صحبة الظالمين",
-  "dhikrScreen_neverTrialForThe": "أبدا محاكمة للظالمين",
-  "dhikrScreen_refugeFromAskingWithout": "أعوذ بالله من السؤال بغير علم",
-  "dhikrScreen_prayerForSafetyAnd": "صلاة من أجل السلامة والإيمان",
-  "dhikrScreen_steadfastInPrayerMe": "أقم الصلاة أنا وأولادي",
-  "dhikrScreen_mercyForMeMy": "رحمة لي ولوالدي وللمؤمنين",
-  "dhikrScreen_prayerForParents": "دعاء للوالدين",
-  "dhikrScreen_entryOfTruthExit": "دخول الحقيقة، خروج الحقيقة",
-  "dhikrScreen_prayerOfTheYouth": "دعاء شباب الكهف",
-  "dhikrScreen_askAllahForMore": "اسأل الله المزيد من العلم",
-  "dhikrScreen_allahAnswersAndSaves": "الله يجيب وينجي من كل ضيق",
-  "dhikrScreen_allahIsTheBest": "والله خير الوارثين",
-  "dhikrScreen_blessedLandingWhereverYou": "هبوط مبارك أينما توقفت",
-  "dhikrScreen_refugeFromTheWhispers": "الاستعاذة من وساوس الشياطين",
-  "dhikrScreen_mercyFromTheBest": "رحمة من خير الراحمين",
-  "dhikrScreen_pardonAndMercyFrom": "عفواً ورحمة من الرحمن",
-  "dhikrScreen_piousSpousesAndRighteous": "وأزواج صالحين وذرية صالحة",
-  "dhikrScreen_prayerForThoseWho": "صلاة لمن تاب",
-  "dhikrScreen_gratitudeForParentsRighteousness": "شكر الوالدين، والبر في النسل",
-  "dhikrScreen_pleaGiftOfIshaq": "نداء - هدية إسحاق ﷺ",
-  "dhikrScreen_loveForTheBelievers": "محبة المؤمنين الذين سبقونا",
-  "dhikrScreen_pureTawakkulOnYou": "التوكل الخالص – عليك توكلنا",
-  "dhikrScreen_forgivenessForEveryBelieving": "المغفرة لكل بيت مؤمن",
-  "dhikrScreen_tasbeehByTheWeight": "التسبيح بثقل الله\\",
-  "dhikrScreen_tasbeehByTheNumber": "التسبيح بعدد كل ما صنع",
-  "dhikrScreen_tasbeehThatFillsAll": "التسبيح ملء كل ما خلق الله",
-  "dhikrScreen_paradiseSoughtTheFire": "الجنة المطلوبة – النار\\",
-  "dhikrScreen_cryToTheOne": "ابكي على من يسمع ويرى ويعلم",
-  "dhikrScreen_nameOnTheCorner": "إسمه على زاوية الكعبة",
-  "dhikrScreen_theDuaBetweenYemen": "الدعاء بين الركن اليماني والحجر الأسود",
-  "dhikrScreen_prayAtTheStation": "الصلاة في مقام إبراهيم ﷺ",
-  "dhikrScreen_tawheedDeclaredAtopSafa": "وأعلن التوحيد على الصفا والمروة",
-  "dhikrScreen_reaffirmTheOnenessOf": "التأكيد على وحدانية الله",
-  "dhikrScreen_magnifyAllahAtEvery": "سبحوا الله عند كل عتبة حج",
-  "dhikrScreen_magnifyAllahOnThe": "سبحوا الله يوم النحر",
-  "dhikrScreen_knowledgeProvisionHealingSought": "العلم والرزق والشفاء مطلوب في مكة",
-  "dhikrScreen_theDuaMostRepeated": "أكثر دعاء ردده النبي صلى الله عليه وسلم",
-  "dhikrScreen_refugeFromEveryTrial": "اهرب من كل تجربة حياة أو موت",
-  "dhikrScreen_refugeFromEveryWeakness": "اعوذ بالله من كل ضعف في الجسد والروح",
-  "dhikrScreen_refugeFromSevereTrial": "اعوذ بالله من شدة البلاء والعدو\\",
-  "dhikrScreen_religionSetRightWorld": "أصلح الدين، وأصلح الدنيا والآخرة",
-  "dhikrScreen_guidancePietyVirtueSelf": "الهداية والتقوى والفضيلة والاكتفاء بالنفس",
-  "dhikrScreen_refugeFromWeaknessWealth": "اهرب من الضعف – ثروة التقوى في داخلك",
-  "dhikrScreen_theGuiderOfHearts": "مرشد القلوب – حولنا إلى الطاعة",
-  "dhikrScreen_turnerOfHeartsMake": "مقلب القلوب ثبتني على الدين",
-  "dhikrScreen_wellBeingInBoth": "العافية في كلا العالمين",
-  "dhikrScreen_rewardsSaveFromDisgrace": "الأجر والثواب من الخزي والقبر\\",
-  "dhikrScreen_mindForGoodVictory": "العقل للخير، النصر للخير",
-  "dhikrScreen_refugeFromEvilOf": "التعوذ من شر كل حس و جوارح",
-  "dhikrScreen_theForgiverWhoLoves": "الغفور الذي يحب التائبين",
-  "dhikrScreen_takeMeBeforeYou": "خذني قبل أن تضلني",
-  "dhikrScreen_everyGoodAndRefuge": "من كل خير - و التعوذ من كل شر",
-  "dhikrScreen_standingSittingLyingGuarded": "الوقوف والجلوس والكذب - حراسة في الإسلام",
-  "dhikrScreen_refugeFromCowardiceMiserliness": "أعوذ بالله من الجبن والبخل والفتنة",
-  "dhikrScreen_forgivenessForJestAnd": "العفو عن الهزل والجد، المعروف والمجهول",
-  "dhikrScreen_forgiveMeWithForgiveness": "اغفر لي مغفرة من عندك",
-  "dhikrScreen_submissionBeliefRepentanceFull": "التسليم، الإيمان، التوبة، الثقة الكاملة",
-  "dhikrScreen_mercyForgivenessParadiseSaved": "الرحمة والمغفرة والجنة والنجاة من النار",
-  "dhikrScreen_refugeFromEvilSeen": "أعوذ بالله من الشر ما يرى وما لا يرى",
-  "dhikrScreen_provisionThatLastsTill": "رزق يدوم مدى الحياة\\",
-  "dhikrScreen_sinsForgivenHomeSpacious": "الذنوب مغفورة، والدار فسيحة، والرزق مبارك",
-  "dhikrScreen_favorAndMercyNone": "الفضل والرحمة لا يملكهما إلا أنت",
-  "dhikrScreen_refugeFromDrowningBurning": "نجاة من الغرق والحرق والموت المفاجئ",
-  "dhikrScreen_refugeFromHypocrisyShowiness": "اعوذ بالله من النفاق والتباهي والتمرد",
-  "dhikrScreen_refugeFromPovertyScarcity": "اعوذ بالله من الفقر والقلة والقهر",
-  "dhikrScreen_refugeFromHeartThat": "ملجأ من قلب فاز\\",
-  "dhikrScreen_payMyDebtEnrich": "ادفع ديني وأغنيني من الفقر",
-  "dhikrScreen_allahCalledByHis": "ودعا الله بأسمائه الحسنى",
-  "dhikrScreen_theAccepterOfRepentance": "وقابل التوبة يقبل دائما",
-  "dhikrScreen_anEasyReckoningOn": "الحساب اليسير يوم القيامة",
-  "dhikrScreen_remembranceGratitudeAndThe": "والذكر والشكر وأفضل العبادة",
-  "dhikrScreen_eternalBlissWithThe": "النعيم الدائم مع النبي صلى الله عليه وسلم في الفردوس",
-  "dhikrScreen_forgiveSinsKnownHidden": "اغفر الذنوب ما علم منها وما خفي منها والمقصود منها والخطأ",
-  "dhikrScreen_refugeFromBeingCrushed": "ملجأ من التعرض للسحق من قبل الديون والأعداء",
-  "dhikrScreen_askForParadiseRefuge": "اطلب الجنة، والتعوذ من النار",
-  "dhikrScreen_forgiveGuideProvideProtect": "يغفر، يرشد، يوفر، يحمي",
-  "dhikrScreen_sensesMadeBeneficialAnd": "أصبحت الحواس مفيدة - ودائمة",
-  "dhikrScreen_theMostBeneficentThe": "الرحمن، المنشئ للجميع",
-  "dhikrScreen_allahTruthOwnerOf": "الله - الحق، مالك كل سلطان",
-  "dhikrScreen_submissionWithFullSincerity": "التقديم بكل إخلاص",
-  "dhikrScreen_amongTheGuidedThe": "من المهتدين الأصحاء المختارين",
-  "dhikrScreen_whatTheProphetAsked": "ما سأله النبي صلى الله عليه وسلم - أنا أسأل أيضا",
-  "dhikrScreen_sayyidAlIstighfarThe": "السيد الاستغفار – سيد التوبة كلها",
-  "dhikrScreen_refugeFromEveryEvil": "تعوذ من كل شر يأتي بالليل",
-  "dhikrScreen_blessEverySenseEvery": "بارك كل حاسة، وكل طرف",
-  "dhikrScreen_smallAndGreatFirst": "الصغير والكبير، الأول والأخير، العلني والسري",
-  "dhikrScreen_noneWithholdsWhatYou": "لا مانع لما أعطيت، ولا معطي لما أعطيت",
-  "dhikrScreen_forgiveGuideProvideElevate": "يغفر، يهدي، يرزق، يرفع",
-  "dhikrScreen_increaseFavorBeKind": "أكثر المعروف، وكن لطيفًا، ولا تسخط أبدًا",
-  "dhikrScreen_beautifyOurCharacterAs": "وزين خلقنا كما حسنت خلقنا",
-  "dhikrScreen_firmInBeliefGuided": "ثابتون على الإيمان – هادون ومرشدون",
-  "dhikrScreen_wisdomAndWithIt": "الحكمة - ومعها الكثير من الخير",
-  "dhikrScreen_nameShieldsFromEvery": "واسمه تحصين من كل مكروه",
-  "dhikrScreen_mightAgainstEveryShaytan": "قوتها على كل شيطان",
-  "dhikrScreen_dayBlessedFromBeginning": "يوم مبارك من أوله إلى آخره",
-  "dhikrScreen_witnessNoneDeservesWorship": "إشهد - لا أحد يستحق العبادة إلا أنت",
-  "dhikrScreen_refugeFromHumiliatingOld": "أعوذ بالله من الشيخوخة المهينة",
-  "dhikrScreen_guidedToTheBest": "يرشد إلى الأفضل، ويحفظ من الأسوأ",
-  "dhikrScreen_faithSetRightHome": "الإيمان ثابت، البيت واسع، الرزق مبارك",
-  "dhikrScreen_refugeFromEveryInner": "اعوذ بك من كل داء باطني وظاهري",
-  "dhikrScreen_refugeFromEveryKind": "اعوذ بالله من كل سوء خاتمة",
-  "dhikrScreen_steadfastGratefulRightlyGuided": "قلبًا ثابتًا شاكرًا مسترشدًا",
-  "dhikrScreen_theLoveOfAllah": "محبة الله وملائكته وأنبيائه",
-  "dhikrScreen_loveOfAllahAbove": "حب الله فوق حب النفس",
-  "dhikrScreen_bestDeedsLastBest": "وخير الأعمال تدوم – وخير يوم لقائك",
-  "dhikrScreen_pureLifeAndPeaceful": "حياة نقية وعودة سلمية",
-  "dhikrScreen_patientGratefulSmallIn": "صبور، ممتن، صغير في أعين نفسه",
-  "dhikrScreen_theBestRequestAnd": "خير الطلب وخير الجزاء",
-  "dhikrScreen_theHighestLevelOf": "أعلى درجات الجنة",
-  "dhikrScreen_firdawsTheBestOf": "الفردوس — أفضل ذلك كله\\",
-  "dhikrScreen_mentionRaisedSinsErased": "يُرفع الذكر، وتُمحى الذنوب، ويُطهر القلب",
   "dhikrScreen_blessEverySenseEvery_b81b9b": "بارك كل حاسة، وكل عضو، وكل عمل",
-  "dhikrScreen_mercyPleasureParadiseSaved": "الرحمة والرضوان والجنة والنجاة من النار",
-  "dhikrScreen_noSinUncoveredNo": "لا خطيئة مكشوفة، ولا دين غير مدفوع",
-  "dhikrScreen_mercyThatGuidesSets": "الرحمة التي ترشد، وتصلح، وتطهر",
-  "dhikrScreen_trueBeliefCertainKnowledge": "الإيمان الحق، العلم اليقين، الله\\",
-  "dhikrScreen_withTheProphetsThe": "مع النبيين والشهداء والصديقين",
-  "dhikrScreen_everyNeedEntrustedTo": "وكل حاجة موكولة إلى قاضي جميع الحاجات",
-  "dhikrScreen_bestOfWhatAllah": "أفضل ما وعد الله عباده",
-  "dhikrScreen_safetyOnTheDay": "السلامة يوم، والجنة يوم الخلود",
-  "dhikrScreen_glorifyTheOneOf": "تمجيد ذو الشرف والعلم الذي لا مثيل له",
-  "dhikrScreen_pardonPlentySecurityIn": "العفو، الكثير، الأمن في الدين والدنيا",
-  "dhikrScreen_healthFaithEthicsSuccess": "الصحة، الإيمان، الأخلاق، النجاح، الرحمة",
-  "dhikrScreen_healthPurityEthicsAcceptance": "الصحة، الطهارة، الأخلاق، القبول",
-  "dhikrScreen_guidedSecureVictorious": "مهتدين، آمنين، منتصرين",
-  "dhikrScreen_refugeFromEveryCreature": "أعوذ بالله من كل مخلوق\\",
-  "dhikrScreen_theOneWhoAnswers": "هو الذي يجيب المضطر والمكسور",
-  "dhikrScreen_morningReachedByAllah": "صباح بلغه الله\\",
-  "dhikrScreen_refugeSoughtByMusa": "طلب اللجوء موسى وعيسى وإبراهيم",
-  "dhikrScreen_allTheGoodPower": "كل الخير – القوة، الرحمة، البركات",
-  "dhikrScreen_allPraiseAndDominion": "لك كل الحمد والسيادة",
-  "dhikrScreen_pastPardonedFutureProtected": "الماضي عفواً، والمستقبل محمي",
-  "dhikrScreen_takeMyForelockTo": "خذ بناصيتي إلى الخير",
-  "dhikrScreen_strengthForWeaknessDignity": "القوة مقابل الضعف، والكرامة مقابل العار",
-  "dhikrScreen_justiceForThoseWho": "العدالة لمن يحجب الحقيقة",
-  "dhikrScreen_refugeFromEveryFatal": "اعوذ بالله من كل مصيبة قاتلة",
-  "dhikrScreen_refugeFromEveryBad": "اعوذ بالله من كل سوء خاتمة وتجربة",
-  "dhikrScreen_turnBackEveryEvil": "رد كل نية سيئة إلى مصدرها",
-  "dhikrScreen_justiceAndRefugeAgainst": "العدل والنجاة من شرورهم",
-  "dhikrScreen_forgivenessForMeMy": "اغفر لي ولوالدي ولجميع المؤمنين",
-  "dhikrScreen_purifyHeartDeedsTongue": "طهارة القلب، والعمل، واللسان، والعين",
-  "dhikrScreen_selfContentWithAllah": "الرضا عن الله\\",
-  "dhikrScreen_youKnowMySecret": "أنت تعرف سرّي وحاجتي",
-  "dhikrScreen_certaintyNothingHarmsWhat": "اليقين: لا شيء يضر ما\\",
-  "dhikrScreen_beliefLightAndLawful": "الإيمان والنور والرزق الحلال",
-  "dhikrScreen_totalLoveAndTotal": "الحب الكامل والنضال الكامل في سبيل الله",
-  "dhikrScreen_makeWhatYouWithheld": "واجعل ما منعت قوة في الطاعة",
-  "dhikrScreen_praiseTheOwnerOf": "سبحان صاحب كل إسم جميل",
-  "dhikrScreen_allahKnowsTheHearts": "الله يعلم القلوب والسماء وما وراءها",
-  "dhikrScreen_hopeBuiltOnAllah": "الأمل مبني على الله\\",
-  "dhikrScreen_belovedToTheBelievers": "حبيب للمؤمنين، بريء من الأشرار",
-  "dhikrScreen_mightPowerAndMajesty": "القوة والقوة والعظمة",
-  "dhikrScreen_gratefulPatientHelpfulTo": "شاكراً صابراً مستعيناً بالله\\",
-  "dhikrScreen_withholdYourGoodFor": "لا تمنع خيرك من أجل شري",
-  "dhikrScreen_settledLifeAmpleProvision": "حياة مستقرة، ورزق واسع، وعمل صالح",
-  "dhikrScreen_wealthInNeedingYou": "الثروة في الحاجة إليك - لا تتحرر منك أبدًا",
-  "dhikrScreen_defectsCoveredFearsCalmed": "غطت العيوب، وهدأت المخاوف، وزال الكرب",
-  "dhikrScreen_openTheGatesOf": "افتحوا أبواب الرحمة والكرم",
-  "dhikrScreen_holdUsInYour": "احفظنا في أمانك – لا تتخلى عنا أبدًا",
-  "dhikrScreen_withinYourSecurityYour": "في أمانك، صلاحك",
-  "dhikrScreen_everySinEveryDistress": "كل خطيئة، كل ضيق، كل جانب",
-  "dhikrScreen_helpInDeathIn": "استعانة بالموت، في القبر، على الصراط",
-  "dhikrScreen_beautifiedLifeBlessedGifts": "حياة جميلة، عطايا مباركة، حفظة نعم",
-  "dhikrScreen_firmFootingBlessedEnd": "قدم ثابتة، نهاية مباركة، حفظ العهد",
-  "dhikrScreen_hopesFulfilledEnemiesRepelled": "تتحقق الآمال، ويصد الأعداء، وتصلح الأمور",
-  "dhikrScreen_guidedToTheUpright": "هدى إلى المستقيمين، معصومين من النفس",
-  "dhikrScreen_lightAndForgivenessFrom": "نور ومغفرة من ذي العرش",
-  "dhikrScreen_forgivenessForWhatRepented": "المغفرة لما تبت ورجعت إليه",
-  "dhikrScreen_understandingThatDrawsNear": "فهم يتقرب إلى الله",
-  "dhikrScreen_soulsDwellingInThe": "نفوس ساكنة في أعالي التقوى",
-  "dhikrScreen_crossTheBridgeOf": "اعبر جسر الرغبة بالصبر",
-  "dhikrScreen_followThePathOf": "اتبع طريق الصدق واليقين",
-  "dhikrScreen_helpAgainstTheSoul": "عون على النفس وضد الشيطان",
-  "dhikrScreen_fearHappinessVictorySecurity": "الخوف، السعادة، النصر، الأمان",
-  "dhikrScreen_entrustFamilyWealthChildren": "استودع الأسرة والثروة والأولاد - كل ذلك لله",
-  "dhikrScreen_faithGuardedFaithPreserved": "الإيمان مصون، الإيمان محفوظ",
-  "dhikrScreen_wellBeingTillThe": "العافية حتى النهاية - مختومة بالمغفرة",
-  "dhikrScreen_whatProtectsMeFrom": "ما يحميني من هذا العالم\\",
-  "dhikrScreen_mercyOnEverySoul": "رحمة لكل نفس\\",
-  "dhikrScreen_burdenUsAsThose": "لا تثقل علينا كما ثقل الذين من قبل",
-  "dhikrScreen_mercyPardonForgivenessVictory": "الرحمة، العفو، المغفرة، النصر",
   "dhikrScreen_keepTheHeartFirm_9c4efb": "ثبت القلب بعد الهدى",
-  "dhikrScreen_allahNeverFailsHis": "إن الله لا يخلف وعده أبدا",
   "dhikrScreen_faithAnsweredWithForgiveness_3f30c4": "أجاب الإيمان بالمغفرة من النار",
-  "dhikrScreen_recordUsWithThe": "سجلنا مع شهود الحق",
-  "dhikrScreen_forgivenessFirmnessAndVictory": "العفو والحزم والنصر",
-  "dhikrScreen_creationHasPurposeRefuge": "الخلق له غرض - النجاة من النار",
-  "dhikrScreen_refugeFromTheDisgrace": "التعوذ من خزي النار",
-  "dhikrScreen_heardBelievedAskingForgiveness": "سمعت، صدقت، الاستغفار",
-  "dhikrScreen_sinsForgivenDeathAmong": "مغفورة الخطايا - الموت بين الأبرار",
-  "dhikrScreen_promisedRewardNeverDisgraced": "ووعد بالأجر فلا يخزى يوم القيامة",
   "dhikrScreen_inscribedWithTheWitnesses_e2612d": "مكتوب مع شهود الحق",
-  "dhikrScreen_provisionAndSignsFrom": "رزق وآيات من السماء",
-  "dhikrScreen_duaTheDuaOf": "دعاء - دعاء كل تائب",
-  "dhikrScreen_spareUsFromThe": "نجنا من صحبة الظالمين",
   "dhikrScreen_allahIsTheBest_4f2bf7": "والله أحكم بين الصدق والكذب",
-  "dhikrScreen_patienceTillTheEnd": "الصبر حتى النهاية، والموت عند التسليم",
   "dhikrScreen_neverTrialForThe_5eb10a": "أبدا فتنة للكافرين",
-  "dhikrScreen_hiddenInEveryChest": "مخبأة في كل صدر",
-  "dhikrScreen_prayerForPrayerAccepted": "صلاة مقبولة الصلاة",
-  "dhikrScreen_mercyGrantedGuidancePrepared": "الرحمة منحت، والتوجيه معد",
-  "dhikrScreen_duaBeforePharaoh": "الدعاء أمام فرعون",
-  "dhikrScreen_refugeFromClingingEvil": "اعوذ بالله من العذاب الخبيث",
-  "dhikrScreen_piousSpousesRighteousChildren": "أزواج صالحون، أولاد صالحون، قيادة",
-  "dhikrScreen_allahIsEverThankful": "والله الشكر دائمًا على كل جهد",
-  "dhikrScreen_mercyEncompassingEveryRepentant": "الرحمة تشمل كل نفس تائبة",
-  "dhikrScreen_mercyOnThatDay": "الرحمة يومئذ – الفوز العظيم",
-  "dhikrScreen_loveAndForgivenessFor": "المحبة والغفران للمؤمنين السابقين",
-  "dhikrScreen_kindnessAndMercyUpon": "اللطف والرحمة من الله\\",
-  "dhikrScreen_pureTawakkulToYou": "التوكل الخالص - إليك راجعون",
-  "dhikrScreen_neverFitnahForThose": "لا تكون فتنة للذين كفروا",
-  "dhikrScreen_completeTheLightForgive": "أكمل النور – اغفر لنا",
-  "dhikrScreen_strongerThanServantThe": "أقوى من خادم – الليل\\",
-  "dhikrScreen_refugeFromEveryVisible": "التعوذ من كل شر ظاهرة قبل النوم",
-  "dhikrScreen_refugeFromEveryWhisper": "اعوذ بك من كل همسة قبل النوم",
-  "dhikrScreen_guardedByAnAngel": "يحرسه ملاك حتى الصباح",
-  "dhikrScreen_twoVersesThatSuffice": "آيتان تكفيان ليلة كاملة",
-  "dhikrScreen_pureTawheedDeclaredBefore": "أعلن التوحيد الخالص قبل النوم",
-  "dhikrScreen_sleepIsSmallDeath": "النوم موت صغير في ذمة الله",
-  "dhikrScreen_whoeverDiesThatNight": "ومن مات تلك الليلة مات على الفطرة",
-  "dhikrScreen_guardTheSoulThat": "احفظ النفس التي تعود، أو ارحم",
-  "dhikrScreen_refugeFromThePunishment": "نجاة من عذاب ذلك اليوم",
-  "dhikrScreen_gratitudeForShelterFood": "الامتنان للمأوى والغذاء والرعاية",
-  "dhikrScreen_handOverTheSoul": "تسليم الروح قبل النوم",
   "dhikrScreen_refugeFromEveryEvil_6d2534": "أعوذ بك من كل شر يمسك",
-  "dhikrScreen_joinTheHighestAssembly": "انضم إلى المجلس الأعلى أثناء نومك",
-  "dhikrScreen_gratitudeBeforeClosingThe": "الشكر قبل أن تغمض عينيك",
-  "dhikrScreen_surahAsSajdahRecited": "قراءة سورة السجدة قبل النوم",
-  "dhikrScreen_refugeFromEvilBefore": "الاستعاذة من الشر قبل دخول الخلاء",
-  "dhikrScreen_seekForgivenessAsYou": "استغفر وأنت تغادر",
-  "dhikrScreen_bismillahEveryBiteBegins": "بسم الله - كل لقمة تبدأ بالله",
-  "dhikrScreen_catchUpTheName": "اللحاق بالاسم – الله في البداية والنهاية",
-  "dhikrScreen_threeSunnahDuasTo": "ثلاث أدعية لشكر الله بعد الأكل",
-  "dhikrScreen_beginWithAllahThe": "ابدأ بالله الرحمن قبل الشرب",
-  "dhikrScreen_openTheEightDoors": "افتح أبواب الجنة الثمانية بعد الوضوء",
-  "dhikrScreen_openTheDoorsOf": "افتحوا أبواب الله\\",
-  "dhikrScreen_bountyAsYouLeave": "فضله عند خروجك من المسجد",
-  "dhikrScreen_mayAllahGuideYou": "الله يوفقك ويصلح حالك",
-  "dhikrScreen_askAllahLordOf": "اسأل الله رب العرش أن يشفيه",
-  "dhikrScreen_allahIsTheOnly": "الله وحده هو الذي يشفي",
-  "dhikrScreen_shieldChildrenWithAllah": "حماية الأطفال مع الله\\",
-  "dhikrScreen_anicPrayerForOne": "صلاة أنيك لأحد\\",
-  "dhikrScreen_twoPhrasesBelovedTo": "كلمتان حبيبتان إلى الرحمن",
-  "dhikrScreen_allahLovesToPardon": "إن الله يحب العفو فاسألوا",
-  "dhikrScreen_treasureFromBeneathThe": "كنز من تحت العرش",
-  "dhikrScreen_theFourPhrasesDearest": "العبارات الأربع أحب إلى الله",
-  "dhikrScreen_theDuaThatReleases": "الدعاء الذي يفرج من كل ضيق",
-  "dhikrScreen_protectionForHomeAnd": "حماية للبيت والذرية",
-  "dhikrScreen_theCompleteDhikrOf": "اذكار التوحيد كاملة",
-  "dhikrScreen_trialPurifiedByAllah": "محاكمة مطهرة من الله\\",
-  "dhikrScreen_guidanceBeforeAnyChoice": "التوجيه قبل أي خيار",
-  "dhikrScreen_completeRuqyaSequenceFatihah": "تسلسل الرقية كاملة – الفاتحة والمعوذتين",
-  "dhikrScreen_sinsForgivenEvenIf": "تغفر الذنوب ولو مثل زبد البحر",
-  "dhikrScreen_freedHasanatSinsErased": "10 محرومة · 100 حسنة · تمحى 100 خطيئة · طرد الشيطان",
-  "dhikrScreen_blessingsDescendFromAllah": "10 بركات تنزل من الله عليك",
-  "dhikrScreen_askAllahToBless": "اسأل الله أن يبارك يومك ويجمله",
-  "dhikrScreen_guaranteedJannahIfYou": "وتضمن لك الجنة إذا مت في هذا اليوم",
   "dhikrScreen_guaranteedJannahIfYou_48d274": "وتضمن لك الجنة إذا مت هذه الليلة",
-  "dhikrScreen_yourLifeEntrustedTo": "حياتك مؤتمنة على الحي الدائم",
-  "dhikrScreen_allEvilInHis": "يدفع عنك كل سوء في خلقه",
-  "dhikrScreen_nothingShallHarmYou": "لن يضرك شيء بالكلمات المثالية",
-  "dhikrScreen_shieldYourselfFromMinor": "احفظ نفسك من الشرك الأصغر والأكبر صباحاً ومساءً",
-  "dhikrScreen_completeProtectionInThe": "الحماية الكاملة بسم الله",
-  "dhikrScreen_weightierThanAllVoluntary": "أثقل من جميع صلاة التطوع من الفجر إلى المغرب",
-  "dhikrScreen_reciteMorningEveningEarn": "أقرأها في الصباح والمساء تنال رضوان الله وبركاته يوم القيامة",
-  "dhikrScreen_yourRewardAwaitsDirectly": "أجرك ينتظرك مباشرة عند الله عندما تقابله",
-  "dhikrScreen_reciteMorningEveningTo": "أقرأ في الصباح والمساء لأداء واجب الشكر لله",
-  "dhikrScreen_theProphetTaughtThis": "وقد علم النبي هذا الدعاء في الصباح والمساء فلا تفوته",
-  "dhikrScreen_dominionAtTheStart": "الملك في أول صباحك، له الملك كله",
-  "dhikrScreen_asEveningFallsThe": "ومع حلول المساء، يصبح الملك كله لله وحده",
-  "dhikrScreen_endYourEveningUpon": "اختم أمسيتك على الفطرة الطاهرة كما علم النبي صلى الله عليه وسلم",
-  "dhikrScreen_satanWillNotEnter": "لا يدخل الشيطان بيت من قرأ هذا",
-  "dhikrScreen_readingLastVersesOf": "تكفيك قراءة آخر آيتين من سورة البقرة",
-  "dhikrScreen_everyDuaInThis": "كل دعاء في هذه الآية - قال الله: قد فعلت",
-  "dhikrScreen_guardedByAllahUntil": "في حراسة الله حتى يأتي الصباح",
-  "dhikrScreen_recitingEqualsReadingThe": "القراءة 3x تعدل قراءة القرآن كاملا والبخاري ومسلم",
-  "dhikrScreen_reciteAtDawnDusk": "وقل ثلاث مرات عند الفجر والمغرب تكفيك من كل سوء",
   "dhikrScreen_reciteAtDawnDusk_f17fb8": "وقل ثلاث مرات عند الفجر والمغرب تكفيك من جميع النواحي",
-  "dhikrScreen_refugeFromTheWhisperer": "اعوذ بالله من الوسواس برب الناس",
-  "dhikrScreen_reciteMorningEveningYour": "وقل 3 مرات صباحا ومساءا يتم شكرك لله",
-  "dhikrScreen_sufficientAgainstEveryHarm": "تكفي من كل ضرر تلاوة 3 مرات",
-  "dhikrScreen_doorsOfAllahMercy": "أبواب رحمة الله مفتوحة لكم",
-  "dhikrScreen_worryAndSorrowLifted": "يرفع الهم والحزن بإذن الله",
-  "dhikrScreen_guardedInYourDeen": "تحرس في دينك الدنيا والآخرة",
-  "dhikrScreen_evilRepelledFromEvery": "طارد الشر من كل جانب",
-  "dhikrScreen_heartHeldByThe": "القلب الذي يحمله الحي الدائم الدائم",
-  "dhikrScreen_fulfilledYourObligationOf": "أوفيت بواجب الشكر",
-  "dhikrScreen_recitingTheLastVerses": "تكفيك قراءة آخر آيتين من سورة البقرة في الليل",
-  "dhikrScreen_gratitudeThatMultipliesYour": "الشكر الذي يضاعف نعمك",
-  "dhikrScreen_startPureOnThe": "ابدأوا خالصين على فطرة الإسلام",
-  "dhikrScreen_praiseThatRipplesThrough": "التسبيح الذي يسري في كل الخليقة",
-  "dhikrScreen_guidedToEveryGood": "هدى إلى كل خير في هذا اليوم",
   "dhikrScreen_nothingShallHarmYou_8c5c6c": "لن يضرك شيء باسمه",
-  "dhikrScreen_allahWillFreeHim": "أعتقه الله من النار من قرأها 4 مرات",
   "dhikrScreen_guaranteedJannahIfYou_0ffafe": "وتضمن لك الجنة إذا مت اليوم",
-  "dhikrScreen_wellbeingOfBodyHearing": "سلامة الجسم من السمع والبصر",
-  "dhikrScreen_guidedByTheHand": "الهداية بيد الله",
-  "dhikrScreen_wordsHeavierThanThe": "كلام أثقل من السماء والأرض",
-  "dhikrScreen_beginYourDayIn": "ابدأ يومك بالاستسلام لله",
-  "dhikrScreen_theyAreEnoughFor": "تكفيك - أقرأ قبل النوم",
   "dhikrScreen_guardedInYourDeen_4a0b4a": "تحفظ في دينك · الدنيا · الآخرة، ومن الجهات الستة",
-  "dhikrScreen_wellBeing": "الرفاهية",
-  "dhikrScreen_fulfilled": "تم الوفاء به.",
-  "dhikrScreen_wellBeingInFaith": "الرفاهية في الإيمان · الأسرة · الثروة",
-  "dhikrScreen_concealMyFaultsCalm": "أخفي عيوبي · هدئ مخاوفي",
   "dhikrScreen_guardMeFromAll": "احرسني من جميع الجهات الستة",
-  "dhikrScreen_protectionFromEvilEye": "الحماية من العين الشريرة",
-  "dhikrScreen_doNotLeaveMe": "فلا تكلني إلى نفسي طرفة عين",
   "dhikrScreen_35c165": "{arg1}",
-  "dhikrScreen_allahWillSufficeYou": "الله يكفيك",
-  "dhikrScreen_againstWhateverConcernsYou": "ضد كل ما يقلقك",
   "dhikrScreen_sinsWashedAway": "غسلت الخطايا",
   "dhikrScreen_slavesFreed": "العبيد المحررين",
-  "dhikrScreen_doNotBurdenUs": "ولا تحملنا ما لا طاقة لنا به واعف عنا وارحمنا",
-  "dhikrScreen_weHaveBelievedForgive": "لقد آمنا فاغفر لنا ذنوبنا وقنا من النار",
-  "dhikrScreen_ownerOfSovereigntyIn": "يا مالك الملك بيدك الخير إنك أنت القادر",
-  "dhikrScreen_forgiveOurSinsAnd": "واغفر ذنوبنا وإسرافنا وثبتنا وانصرنا",
-  "dhikrScreen_youCreatedNotIn": "ما خلقت عبثا فقنا عذاب النار",
-  "dhikrScreen_weHaveWrongedOurselves": "لقد ظلمنا أنفسنا فمن دون رحمتك ضللنا",
-  "dhikrScreen_ourLordDoNot": "ربنا لا تجعلنا مع القوم الظالمين",
-  "dhikrScreen_doNotMakeUs": "ولا تجعلنا فتنة للظالمين",
-  "dhikrScreen_makeMeSteadfastIn": "وأثبتني على الصلاة وذريتي أيضًا",
-  "dhikrScreen_forgiveMeMyParents": "اغفر لي ولوالدي وللمؤمنين يوم الحساب",
-  "dhikrScreen_bringMeInBy": "أدخلني من مدخل الحق وأخرجني من مخرج الحق",
-  "dhikrScreen_myLordIncreaseMe": "ربي زدني علما",
-  "dhikrScreen_seekRefugeInYou": "وأعوذ بك من همزات الشياطين",
   "dhikrScreen_weHaveBelievedForgive_e958e6": "لقد آمنا فاغفر لنا وأنت خير الراحمين",
-  "dhikrScreen_forgiveAndHaveMercy": "اغفر وارحم وأنت خير الراحمين",
-  "dhikrScreen_enableMeToBe": "أوزعني أن أشكر نعمتك علي وعلى والدي",
-  "dhikrScreen_myLordHaveWronged": "ربي إني ظلمت نفسي فاغفر لي",
-  "dhikrScreen_myLordWillNever": "ربي لا أكون ظهيراً للمجرمين",
-  "dhikrScreen_myLordSaveMe": "ربي نجني من القوم الظالمين",
-  "dhikrScreen_myLordAmIn": "ربي إني محتاج إلى أي خير تنزله إلي",
-  "dhikrScreen_myLordHelpMe": "ربي انصرني على القوم المفسدين",
-  "dhikrScreen_ourLordAvertFrom": "ربنا اصرف عنا عذاب الجحيم",
-  "dhikrScreen_ourLordYouEncompass": "ربنا وسعت كل شيء رحمة وعلما",
-  "dhikrScreen_enableMeToThank": "أوزعني أن أشكرك وأصلح لي ذريتي",
-  "dhikrScreen_myLordGrantMe": "ربي هب لي من الصالحين",
-  "dhikrScreen_forgiveUsAndOur": "اغفر لنا ولإخواننا الذين سبقونا بالإيمان",
-  "dhikrScreen_uponYouWeRely": "عليك توكلنا، وإليك أنبنا، وإليك المصير",
-  "dhikrScreen_pauseRememberAllah": "يوقف. اذكروا الله .",
   "dhikrScreen_mashaallahRewardSecured": "ما شاء الله! المكافأة مضمونة",
-  "dhikrScreen_satanCannot": "الشيطان لا يستطيع",
-  "dhikrScreen_enterTheHome": "أدخل المنزل",
-  "dhikrScreen_whoeverRecites": "من يقرأ",
-  "dhikrScreen_theLastTwoVerses": "الآيتين الأخيرتين",
-  "dhikrScreen_ofSurahAlBaqarah": "من سورة البقرة",
-  "dhikrScreen_atNight": "في الليل --",
-  "dhikrScreen_theyWillBe": "سيكونون كذلك",
-  "dhikrScreen_enoughForHim": "يكفي له",
-  "dhikrScreen_weHaveEnteredThe": "لقد دخلنا المساء",
-  "dhikrScreen_theKingdomBelongsTo": "الملك لله",
-  "dhikrScreen_noneWorthyOfWorship": "لا أحد يستحق العبادة إلا الله وحده",
-  "dhikrScreen_allPraiseHeIs": "الحمد · إنه على كل شيء قدير",
-  "dhikrScreen_weAskForThe": "نسألك خير هذه الليلة",
-  "dhikrScreen_saySeekRefuge": "قل : أعوذ",
-  "dhikrScreen_inTheLordOf": "في رب البشر",
-  "dhikrScreen_theKingOfMankind": "ملك البشرية",
-  "dhikrScreen_theGodOfMankind": "إله البشرية،",
-  "dhikrScreen_heRetreatsWhenYou": "يتراجع عندما تذكر الله.",
-  "dhikrScreen_seekRefugeInThe": "اعوذ برب الفلق",
-  "dhikrScreen_sufficedInAllRespects": "يكفي من جميع النواحي.",
-  "dhikrScreen_allahDoesNotBurden": "الله لا يثقل",
-  "dhikrScreen_soul": "روح",
   "dhikrScreen_a5cfd1": "×{count}",
-  "dhikrScreen_equalsTheWholeQuran": "يساوي القرآن كله × 3",
   "dhikrScreen_completeToWatchYour": "اكتمل لمشاهدة حديقتك تزدهر بالأعلى",
-  "impactReportScreen_whoeverDoesAnAtom": "«من عمل ذرة",
-  "impactReportScreen_theHomeOfThe": "«إن الدار الآخرة تلك هي الحياة الأبدية لو كانوا يعلمون». — سورة العنكبوت 29:64",
-  "impactReportScreen_raceTowardsForgivenessFrom": "«سارعوا إلى مغفرة من ربكم وجنة عرضها السماوات والأرض». — سورة الحديد 57:21",
-  "impactReportScreen_andWhatIsThe": "\"وما الحياة الدنيا إلا لعب الغرور؟\" - سورة علي عمران 3: 185",
-  "impactReportScreen_indeedWithHardshipComes": "«إن مع العسر يسرا». — سورة الشرح 94:6",
-  "impactReportScreen_singleGoodDeedIn": "«الحسنة في رمضان تعدل سبعين حسنة فيما سواه». كومة بينما الباب مفتوح.",
-  "impactReportScreen_theProphetSaidCharity": "قال النبي ✍: ما نقصت الصدقة من مال إلا نبته. (مسلم)",
-  "impactReportScreen_smilingAtYourBrother": "«تبسمك في وجه أخيك صدقة». يمكنك الربح حتى عندما تكون جيوبك فارغة. (الترمذي)",
-  "impactReportScreen_theMostBelovedDeeds": "«أحب الأعمال إلى الله أدومها وإن قل». (البخاري)",
-  "impactReportScreen_inJannahIsWhat": "\"في الجنة ما لا عين رأت، ولا أذن سمعت، ولا خطر على قلب بشر.\" (البخاري)",
-  "impactReportScreen_twoRakatsAtFajr": "وركعتان الفجر خير من الدنيا وما فيها. (مسلم)",
-  "impactReportScreen_everyStepTowardSalah": "وكل خطوة إلى الصلاة تمحو خطيئة وترفع درجة. (مسلم)",
-  "impactReportScreen_everySeedYouDonate": "كل بذرة تتبرع بها تزرع شجرة في شخص آخر\\",
-  "impactReportScreen_takeWealthWithYou": "لا تأخذ الثروة معك. فقط الأفعال التي اشتراها.",
-  "impactReportScreen_theAngelsRecordNothing": "الملائكة لا يسجلون شيئًا صغيرًا جدًا. سبحان الله قد يفوق جبلاً.",
-  "impactReportScreen_sadaqahIsTomorrow": "صدقة غدا\\",
-  "impactReportScreen_heartThatGivesIs": "القلب الذي يعطي هو قلب يبقيه الله ممتلئا. اِتَّشَح\\",
-  "impactReportScreen_theReceiptWhatDid": "هو الإيصال. ماذا أرسلت قدما؟",
-  "impactReportScreen_imagineYourScaleOn": "تخيل ميزانك في يوم القيامة. ما الوزن الذي تضيفه اليوم؟",
-  "impactReportScreen_theWorldIsBorrowed": "العالم مستعار. الآخرة مملوكة. استثمر وفقًا لذلك.",
-  "impactReportScreen_youBuryTheBody": "أنت تدفن الجسد، ولكن ليس الأفعال. أرسلهم للأمام بينما تستطيع.",
-  "impactReportScreen_righteousChildWhoPrays": "ولد صالح يدعو لك، أو صدقة تجري، أو علم ينتفع - ثلاث استثمارات خالدة. (مسلم)",
-  "impactReportScreen_youWillMeetAllah": "ستقابل الله بسجلك. تأكد اليوم\\",
-  "impactReportScreen_noDeedIsToo": "لا يستصغر عملاً من يعد الذرات.",
-  "impactReportScreen_lvl": "المستوى {_level} · {arg1}",
   "impactReportScreen_200447": "+{arg1}",
   "impactReportScreen_deedsTODAY": "الأفعال اليوم",
   "impactReportScreen_634027": "+{arg1}",
   "impactReportScreen_thisWEEK": "هذا الاسبوع",
   "impactReportScreen_hasanaatEarned": "حسنات مكتسبة",
-  "impactReportScreen_whoeverDoesGoodDeed": "من عمل الحسنة فله عشر أمثالها.",
-  "impactReportScreen_whoeverReadsLetterFrom": "من قرأ حرفاً من كتاب الله فله حسنة، والحسنة بعشر أمثالها.",
-  "impactReportScreen_twoHadithGrowThis": "حديثان يزيدان هذا العدد جنباً إلى جنب:\\n\\n",
-  "impactReportScreen_dhikrRecitedLifetime": "الأذكار المرتلة (مدى الحياة): {arg1}\\n",
-  "impactReportScreen_hasanat": "→ حسنات: {arg1}\\n\\n",
-  "impactReportScreen_ayahsReadLifetime": "قراءة الآيات (العمر): {arg1}\\n",
   "impactReportScreen_hasanat_e68a30": "→ حسنات: {arg1}\\n\\n",
-  "impactReportScreen_totalHasanaat": "مجموع الحسنات: {arg1}",
-  "impactReportScreen_ayahs": "{arg1} الآيات",
   "impactReportScreen_hasanatFromQuran": "حسنات من القرآن",
-  "impactReportScreen_planted": "{arg1} مزروعة",
   "impactReportScreen_treesInJannah": "أشجار في الجنة",
-  "impactReportScreen_cycles": "{arg1} دورات",
   "impactReportScreen_sinsForgiven": "مغفورة الذنوب",
-  "impactReportScreen_whoeverSaysSubhanAllahiWa": "من قال سبحان الله وبحمده في يوم 100 مرة غفرت ذنوبه ولو كانت مثل زبد البحر.",
-  "impactReportScreen_subhanallahiWaBihamdihi": "سبحان الله وبحمده",
-  "impactReportScreen_totalRecitations": "مجموع التلاوات: {arg1}\\n",
-  "impactReportScreen_dividedByForgivenessCycles": "مقسومًا على 100 ← دورات الغفران: {arg1}",
-  "impactReportScreen_built": "{arg1} بنيت",
   "impactReportScreen_palacesBuilt": "بنيت القصور",
-  "impactReportScreen_dividedByPalaces": "مقسمة على 10 → القصور: {arg1}",
-  "impactReportScreen_earned": "{arg1} حصل",
   "impactReportScreen_treasuresOfJannah": "كنوز الجنة",
-  "impactReportScreen_equivalent": "{arg1} يعادل",
   "impactReportScreen_slavesFreed": "العبيد المحررين",
-  "impactReportScreen_laIlahaIllallahuWahdahu": "لا إله إلا الله وحده لا شريك له...",
   "impactReportScreen_totalRecitations_262e54": "مجموع التلاوات: {arg1}\\n",
-  "impactReportScreen_setsOfSetsSlaves": "مجموعات من 10 → {arg1} مجموعات × 4 عبيد = {arg2}",
-  "impactReportScreen_opened": "{arg1} مفتوح",
   "impactReportScreen_gatesOfParadiseOpened": "فتحت أبواب الجنة",
-  "impactReportScreen_received": "تم استلام {arg1}",
   "impactReportScreen_blessingsFromAllah": "بركات من الله",
-  "impactReportScreen_totalSalawatSent": "إجمالي الصلوات المرسلة: {arg1}\\n",
-  "impactReportScreen_multipliedByBlessingsReceived": "مضروبة في 10 → {arg1} النعم المستلمة",
-  "impactReportScreen_invocations": "{arg1} الدعوات",
   "impactReportScreen_timesProtected": "الأوقات المحمية",
-  "impactReportScreen_protectionFromEvil": "الحماية من الشر",
-  "impactReportScreen_goodHealthProtection": "صحة جيدة وحماية",
-  "impactReportScreen_totalInvocations": "إجمالي الدعوات: {arg1}",
-  "impactReportScreen_equivalent_d7e6f6": "{arg1} يعادل",
   "impactReportScreen_quranCompletions": "ختمات القرآن",
-  "impactReportScreen_dividedByQuranCompletions": "مقسمة على 3 → {arg1} ختمات القرآن",
-  "impactReportScreen_recitations": "{arg1} تلاوات",
   "impactReportScreen_bonusMillionHasanaat": "مكافأة مليون حسنات",
   "impactReportScreen_sadaqahGiven": "صدقة معطى",
   "impactReportScreen_564740": "{_monthActiveDays}",
   "impactReportScreen_3dc421": "{arg1}h",
   "impactReportScreen_08990a": "{arg1}م",
-  "impactReportScreen_ago": "{arg1}م مضت",
   "impactReportScreen_ago_c25b44": "{arg1}h منذ",
   "impactReportScreen_ago_e160e3": "{arg1}w منذ",
-  "impactReportScreen_moAgo": "{arg1} منذ شهر",
   "impactReportScreen_ago_65f0ec": "{arg1}y منذ",
-  "impactReportScreen_viewAllDonors": "عرض جميع الجهات المانحة {arg1}",
-  "impactReportScreen_failed": "فشل: {e}",
-  "impactReportScreen_meet": "تعرف على {arg1}، {arg2}",
-  "impactReportScreen_sponsor": "الراعي {arg1} →",
-  "impactReportScreen_funded": "{arg1}% ممولة",
-  "impactReportScreen_yourLifetimeImpact": "تأثير حياتك",
-  "impactReportScreen_startYourImpactJourney": "ابدأ رحلة التأثير الخاصة بك",
   "impactReportScreen_bd3721": "{_myOrphansSponsoredCount}",
   "impactReportScreen_b3d969": "{_myProjectsSupportedCount}",
-  "levelScreen_customProfileThemes": "موضوعات الملف الشخصي المخصصة",
-  "levelScreen_exclusiveVotingRights": "حقوق التصويت الحصرية",
-  "levelScreen_hallOfFameListing": "قائمة قاعة المشاهير",
-  "levelScreen_seeds": "+{arg1} البذور",
-  "levelScreen_laIlahaIllallah": "لا إله إلا الله x100",
   "levelScreen_seeds_59c6a1": "+{arg1} البذور",
   "levelScreen_seeds_a20530": "+{arg1} البذور",
-  "levelScreen_unlocks": "يفتح: {arg1}",
   "levelScreen_seeds_a49180": "+{arg1} بذور ✓",
   "levelScreen_seeds_a22be5": "+{arg1} البذور",
-  "levelScreen_seedsBoost": "{arg1}× تعزيز البذور",
   "levelScreen_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "levelScreen_nextDays": "التالي: {arg1} ({arg2} أيام)",
   "levelScreen_seeds_990893": "+{arg1} البذور",
-  "levelScreen_days": "{current} / {arg1} أيام",
-  "levelScreen_dayStreak": "{arg1} خط يوم",
   "phase1Screens_inTheNameOf": "بسم الله الرحمن…",
-  "phase1Screens_quranReadingNimage": "قراءة القرآن\\nصورة",
-  "phase1Screens_orphansNimage": "الصورة اليتيمة\\n",
   "onboardingComponents_355c50": "{first}",
   "onboardingComponents_b236c9": "{trailing}",
-  "quranMini_inTheNameOf": "بسم الله الرحمن الرحيم.",
-  "quranMini_allPraiseBelongsTo": "والحمد لله رب العالمين.",
   "orphansGridScreen_36cd3b": "{arg1} · {arg2}",
-  "orphanDetailScreen_years": "{arg1} سنة",
-  "orphanDetailScreen_ofSeeds": "{arg1} من {arg2} البذور",
-  "orphanDetailScreen_through": "من خلال {arg1}",
-  "orphanDetailScreen_andTheyGiveFood": "ويطعمون الطعام على حبهم له مسكينا ويتيما وأسيرا.",
-  "orphanDetailScreen_ago": "{arg1}م مضت",
   "orphanDetailScreen_ago_c25b44": "{arg1}h منذ",
   "orphanDetailScreen_ago_e160e3": "{arg1}w منذ",
-  "orphanDetailScreen_moAgo": "{arg1} منذ شهر",
   "orphanDetailScreen_ago_65f0ec": "{arg1}y منذ",
-  "orphanDetailScreen_seeds": "{_availablePoints} بذور",
-  "orphanDetailScreen_sponsor": "الراعي {arg1}",
-  "orphanDetailScreen_jazakallahKhayranSeedsSponsored": "جزاك الله خيران! {amount} البذور برعاية.",
-  "orphanDetailScreen_chooseHowManySeeds": "اختر عدد البذور التي تريد تقديمها. الحد الأدنى {arg1}.",
-  "orphanDetailScreen_yourBalanceSeeds": "رصيدك: {arg1} بذور",
-  "profileSettingsScreen_nameCannotBeEmpty": "لا يمكن أن يكون الاسم فارغًا",
   "profileSettingsScreen_sabiqRewards": "مكافآت سابق • v1.0",
-  "profileSettingsScreen_bosniaAndHerzegovina": "البوسنة والهرسك",
-  "profileSettingsScreen_centralAfricanRepublic": "جمهورية أفريقيا الوسطى",
-  "profileSettingsScreen_unitedArabEmirates": "الإمارات العربية المتحدة",
-  "profileSettingsScreen_signedInWithGoogle": "تم تسجيل الدخول باستخدام جوجل",
-  "profileSettingsScreen_signedInWithQuran": "تم التسجيل في موقع القرآن الكريم",
-  "profileSettingsScreen_signedInWithEmail": "تم تسجيل الدخول باستخدام البريد الإلكتروني",
-  "profileSettingsScreen_seeds": "{arg1} بذور",
   "profileSettingsScreen_seeds_59ba7c": "{arg1} بذور",
   "profileSettingsScreen_seeds_2bc978": "{arg1} بذور",
-  "profileSettingsScreen_guidesFAQsAndHow": "الأدلة والأسئلة الشائعة والكيفية",
-  "profileSettingsScreen_somethingNotWorkingTell": "شيء لا يعمل؟ أخبرنا",
   "profileSetupScreen_ahmadFatimaYusuf": "أحمد، فاطمة، يوسف...",
   "profileSetupScreen_pakistanEgyptMalaysia": "باكستان، مصر، ماليزيا...",
-  "projectDetailScreen_organisedBy": "تم التنظيم بواسطة {sponsor}\\n\\n",
-  "projectDetailScreen_fundedSoFarEvery": "تم تمويل كل بذرة حتى الآن!\\n\\n",
-  "projectDetailScreen_openSabiqRewardsApp": "افتح تطبيق Sabiq Rewards للتبرع ببذورك والحصول على المكافأة.\\n",
-  "projectDetailScreen_sabiqrewardsSadaqahIslamicCharity": "#مكافآت سابق #صدقة #الجمعية الخيرية الإسلامية",
   "projectDetailScreen_4c2b09": "{arg1} {arg2} {arg3}",
-  "projectDetailScreen_donateToProvideUrgent": "تبرع لتقديم مساعدات عاجلة ومنقذة للحياة للفلسطينيين الذين يعانون من نقص حاد في الغذاء والمياه والإمدادات الطبية...",
-  "projectDetailScreen_seeds": "{arg1} بذور",
   "projectDetailScreen_seeds_801ec7": "{arg1} بذور",
   "projectDetailScreen_e4e562": "{arg1}%",
-  "projectDetailScreen_ago": "{arg1}م مضت",
   "projectDetailScreen_ago_c25b44": "{arg1}h منذ",
   "projectDetailScreen_ago_e160e3": "{arg1}w منذ",
-  "projectDetailScreen_moAgo": "{arg1} منذ شهر",
   "projectDetailScreen_ago_65f0ec": "{arg1}y منذ",
-  "projectDetailScreen_viewAll": "عرض الكل {arg1} →",
-  "quranHubScreen_saved": "تم حفظ {arg1}",
-  "quranHubScreen_tapTheHeartBookmark": "اضغط على أيقونة القلب/الإشارة المرجعية أثناء القراءة لحفظ الآيات.",
-  "quranHubScreen_surahVerse": "سورة __ص0__ • الآية __ص1__",
   "quranHubScreen_loadingQuran": "جاري تحميل القرآن...",
-  "quranHubScreen_verses": "{arg1} الآيات",
-  "quranHubScreen_of": "من {arg1}",
   "quranHubScreen_saved_edce53": "تم حفظ {arg1}",
-  "quranScreen_englishSahihIntl": "الإنجليزية، صحيح الدولي.",
-  "quranScreen_saheehInternational": "صحيح الدولية",
-  "quranScreen_englishPickthall": "الإنجليزية، بيكثال",
-  "quranScreen_mohammadMarmadukePickthall": "محمد مارمادوك بيكثال",
-  "quranScreen_englishTheMessage": "الإنجليزية، الرسالة",
-  "quranScreen_englishMuhsinKhan": "الإنجليزية، محسن خان",
-  "quranScreen_muhsinKhanHilali": "محسن خان وهلالي",
-  "quranScreen_fatehMuhammadJalandhry": "فاتح محمد جلندري",
-  "quranScreen_imamAhmadRazaKhan": "الإمام أحمد رضا خان",
-  "quranScreen_maulanaSayyidAbulAla": "مولانا السيد أبو العلاء المودودي",
-  "quranScreen_franAisHamidullah": "فرانسيس، حميد الله",
-  "quranScreen_rkDiyanet": "التركية، ديانت",
-  "quranScreen_rkLeymanAte": "تركسي، سليمان اتيش",
-  "quranScreen_bahasaIndonesian": "البهاسا، الإندونيسية",
-  "quranScreen_ministryOfReligiousAffairs": "وزارة الشؤون الدينية",
-  "quranScreen_muhiuddinKhan": "تمام، محي الدين خان",
-  "quranScreen_deutschAbuRida": "دويتش، أبو ريدة",
-  "quranScreen_abuRidaMuhammadIbn": "أبو رضا محمد بن أحمد",
-  "quranScreen_espaOlAsad": "اسبانيول، اسد",
-  "quranScreen_uthmaniMadinah": "العثماني (المدينة المنورة)",
-  "quranScreen_alJalalaynEN": "الجلالين (EN)",
-  "quranScreen_couldNotLoadAyah": "تعذر تحميل الآية. يرجى إعادة المحاولة.",
-  "quranScreen_noConnectionCachedData": "لا يوجد اتصال. قد تكون البيانات المخزنة مؤقتًا متاحة.",
-  "quranScreen_ayahs": "{arg1} الآيات",
-  "quranScreen_couldNotRemoveBookmark": "تعذرت إزالة الإشارة المرجعية، يرجى إعادة المحاولة",
-  "quranScreen_removedBookmark": "تمت إزالة الإشارة المرجعية {_surahName} {_surah}:{_ayah}",
-  "quranScreen_couldNotSaveBookmark": "تعذر حفظ الإشارة المرجعية، يرجى إعادة المحاولة",
-  "quranScreen_bookmarked": "تم وضع إشارة مرجعية {_surahName} {_surah}:{_ayah}",
-  "quranScreen_trimmedContains": ") && !مشذّب.يحتوي على(",
-  "quranScreen_tafsir": "التفسير · {_surahName} {_surah}:{_ayah}",
-  "quranScreen_addedToFavourites": "♥ تم الإضافة إلى المفضلة",
-  "quranScreen_comfortableNightTimeReading": "قراءة مريحة ليلا",
-  "quranScreen_pt": "{arg1} نقطة",
   "quranScreen_003843": "{arg1} {arg2}",
-  "quranScreen_displayMeaningBelowEach": "عرض المعنى تحت كل آية",
-  "quranScreen_showTransliteration": "إظهار الترجمة الصوتية",
-  "quranScreen_romanisedPronunciationUnderEach": "النطق بالحروف اللاتينية تحت كل كلمة",
-  "quranScreen_progressBarAyahCount": "شريط التقدم وبطاقة عدد الآيات",
-  "quranScreen_moveToNextVerse": "الانتقال إلى الآية التالية عندما ينتهي الصوت",
-  "quranScreen_repeatCurrentVerse": "كرر الآية الحالية",
-  "quranScreen_notificationsALERTS": "الإخطارات والتنبيهات",
-  "quranScreen_milestoneSoundAlerts": "تنبيهات صوتية مهمة",
-  "quranScreen_chimeWhenYouReach": "رنين عندما تصل إلى 10، 25، 50 آية",
-  "quranScreen_showEachArabicWord": "إظهار كل كلمة عربية بمعناها الإنجليزي",
-  "quranScreen_translationLanguage": "لغة الترجمة",
-  "quranScreen_translationsAvailable": "{arg1} الترجمات المتاحة",
   "quranScreen_3502e8": "{arg1} / {arg2}",
-  "quranScreen_sabiqSeedsEarnedToday": "+{_pointsToday} بذور سابق التي حصلت عليها اليوم!",
   "quranScreen_dcacc4": "{_ayah} / {arg1}",
   "quranScreen_wordDataUnavailableCheck": "بيانات الكلمة غير متوفرة. تحقق من اتصالك.",
   "quranScreen_6d1f9d": "{arg1}",
-  "quranScreen_ayahsRead": "{_ayahsToday} آيات مقروءة",
   "quranScreen_ce2af3": "{arg1}%",
   "quranScreen_6e8ac8": "{text}",
-  "quranScreen_pageJuz": "الصفحة {_currentPage} · الجزء {arg1}",
-  "startJourneyScreen_unexpectedErrorDuringGoogle": "حدث خطأ غير متوقع أثناء تسجيل الدخول إلى Google",
-  "startJourneyScreen_connectedToQuranCom": "متصل بموقع القرآن الكريم",
   "startJourneyScreen_connectedToQuranCom_0ac4de": "متصل بـ Quran.com (تم تأجيل مزامنة الإشارات المرجعية)",
-  "streakScreen_nextDays": "التالي: {arg1} ({arg2} أيام)",
-  "streakScreen_seeds": "+{arg1} البذور",
-  "streakScreen_days": "{current} / {arg1} أيام",
-  "streakScreen_dayStreak": "{arg1} خط يوم",
-  "tafsirHubScreen_earnSeedsForEvery": "اربح بذورًا مقابل كل 10 دقائق من استماع التفسير",
-  "tafsirScreen_alJalalaynEN": "الجلالين (EN)",
-  "tafsirScreen_verses": "{arg1} الآيات",
-  "tafsirScreen_trimmedContains": ") && !مشذّب.يحتوي على(",
-  "tafsirScreen_ayahOf": "آية {_ayah} من {_surahLen}",
   "tafsirScreen_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "tafsirScreen_tafsirNotAvailableFor": "التفسير غير متوفر لهذه الآية.",
-  "donationService_youMustBeLogged": "يجب عليك تسجيل الدخول للتبرع.",
-  "donationService_donationCouldNotBe": "لا يمكن معالجة التبرع في هذا الوقت.",
-  "donationService_anUnexpectedNetworkError": "حدث خطأ غير متوقع في الشبكة.",
   "donationService_youMustBeLogged_edc4b5": "يجب عليك تسجيل الدخول للراعي.",
-  "donationService_sponsorshipReceived": "تم الحصول على الرعاية 💝",
-  "donationService_youSponsoredSeedsJazak": "لقد قمت برعاية {amount} بذور · جزاك الله خيرا.",
-  "donationService_sponsorshipCouldNotBe": "لا يمكن معالجة الرعاية في هذا الوقت.",
-  "liveNotificationService_remindersToSealYour": "تذكيرات لإغلاق بذورك المعلقة قبل منتصف الليل.",
-  "liveNotificationService_sealYourSeedsBefore": "ختم البذور الخاصة بك قبل منتصف الليل",
   "liveNotificationService_sealYourSeedsBefore_be2183": "ختم البذور الخاصة بك قبل منتصف الليل!",
-  "liveNotificationService_youHavePendingSeeds": "لديك {pendingSeeds} بذور معلقة. اضغط على ختم اليوم قبل منتصف الليل أو تنتهي صلاحيته.",
-  "liveNotificationService_ayatReadToday": "{_ayahCount} آيات إقرأها اليوم 📖",
-  "liveNotificationService_readQuranToday": "{arg1} إقرأ القرآن اليوم ⏱️",
-  "liveNotificationService_nothingReadFromQuran": "لا شيء يقرأ من القرآن اليوم 📖",
-  "liveNotificationService_dhikrCompletedToday": "{_dhikrCount} تم الانتهاء من الأذكار اليوم 📿",
-  "liveNotificationService_ayatDhikrToday": "{_ayahCount} آيات · {_dhikrCount} أذكار اليوم",
-  "liveNotificationService_keepReadingAndDoing": "استمر في القراءة والقيام بالذكر!",
-  "liveNotificationService_yourSeedsToday": "بذورك اليوم ✨",
-  "localReminderScheduler_sabiqRewardsNotifications": "إشعارات مكافآت سابق",
-  "localReminderScheduler_it": "هو - هي\\",
-  "localReminderScheduler_fridayReadSurahAl": "يوم الجمعة - قراءة سورة الكهف",
-  "localReminderScheduler_whoeverRecitesSurahAl": "من قرأ سورة الكهف في يوم الجمعة أضاء له من النور ما بين الجمعتين.",
-  "localReminderScheduler_don": "اِتَّشَح\\",
-  "localReminderScheduler_missSurahAlKahf": "لا تفوت سورة الكهف اليوم",
-  "localReminderScheduler_fewHoursToMaghrib": "ساعات قليلة تفصلنا عن المغرب – أكمل سورة الكهف إذا لم تكن قد وصلت",
-  "quranApiService_notConnectedToQuran": "غير متصل بموقع القرآن الكريم",
-  "quranApiService_syncFailedBookmarkCould": "فشلت المزامنة، تعذر دفع الإشارة (الإشارات) المرجعية {failed} إلى موقع Quran.com (التحقق من الرمز المميز / نقطة النهاية).",
-  "quranApiService_bookmarksAlreadyInSync": "الإشارات المرجعية متزامنة بالفعل",
-  "quranApiService_syncedBookmarksUpDown": "الإشارات المرجعية {total} المتزامنة ({uploaded} لأعلى، {downloaded} لأسفل)",
-  "quranApiService_syncFailed": "فشلت المزامنة: {e}",
-  "streakService_warmingUp": "الاحماء",
-  "streakService_oneWeek": "أسبوع واحد",
-  "streakService_twoWeeks": "اسبوعين",
-  "streakService_oneMonth": "شهر واحد",
-  "streakService_twoMonths": "شهرين",
-  "streakService_theCenturion": "قائد المئة",
   "streakService_1fc043": "{arg1} {arg2}",
-  "streakService_dayStreak": "{arg1}-يوم {arg2} خط ·",
-  "streakService_bonusSeedsUnlocked": "+{arg1} تم فتح البذور الإضافية",
   "trackingService_c7528c": "{arg1} {arg2}",
-  "xpService_level": "{title} • المستوى {level}",
-  "xpService_newBadgeUnlocked": "تم فتح شارة جديدة 🏆",
-  "xpService_you": "أنت\\",
-  "xpService_dailyLoginBonus": "مكافأة تسجيل الدخول اليومية",
-  "xpService_seedsWelcomeBack": "+{arg1} البذور · أهلاً بعودتك!",
-  "xpService_daySealed": "اليوم مختوم 🌙",
-  "xpService_sabiqSeedsConfirmedBonus": "+{flushed} بذور سابق مؤكدة! ({bonus} مكافأة للختم)",
-  "xpService_sabiqSeedsConfirmed": "+{flushed} بذور سابق مؤكدة!",
-  "dhikrExitCelebration_everyBreathCounts": "كل نفس مهم.",
-  "impactAnimation_yourRewardHasBeen": "لقد تم تسجيل مكافأتك.",
-  "motivationalPopup_verilyWithHardshipComes": "إن مع العسر يسرا.\\nوكل فتنة باب إلى ما هو أعظم.",
-  "motivationalPopup_quranAlInshirah": "القرآن • الانشراح 94:6",
-  "motivationalPopup_quranAlAnkabut": "القرآن • العنكبوت 29:45",
-  "motivationalPopup_quranAlBaqarah": "القرآن • البقرة 2:152",
-  "motivationalPopup_quranAnNahl": "القرآن • النحل 16:18",
-  "motivationalPopup_makeYourTimePrecious": "اجعل وقتك ثميناً.\\nشارك الخير مع صديق اليوم،\\nكل عمل صالح تشاركه صدقة.",
-  "motivationalPopup_guideOthersToGood": "أرشد غيرك إلى الخير، تنال أجره.",
-  "motivationalPopup_theBestOfPeople": "خير الناس من أنفعهم للآخرين.",
-  "motivationalPopup_verilyInTheRemembrance": "ألا بذكر الله تطمئن القلوب.",
-  "motivationalPopup_remindYourselfTimeIs": "ذكّر نفسك أن الوقت هو أغلى صدقة.",
-  "motivationalPopup_yourTimeIsYour": "وقتك هو أثمن\\nأصولك. استثمرها بحكمة\\nفي ما يدوم إلى الأبد.",
-  "motivationalPopup_quranAlAnfal": "القرآن • الأنفال 8:28",
-  "motivationalPopup_takeAdvantageOfFive": "اغتنم خمسا قبل خمس.",
-  "motivationalPopup_youHaveBeenRewarded": "لقد تمت مكافأتك على\\nثباتك اليوم!",
-  "motivationalPopup_seeds": "+{arg1} البذور",
   "motivationalPopup_seeds_b14996": "+{arg1} البذور",
   "motivationalPopup_readQuranPages": "قراءة 5 صفحات القرآن",
-  "motivationalPopup_completeNowEarnSeeds": "أكمل الآن → اربح +50 بذرة إضافية",
   "motivationalPopup_completeDhikrSet": "أكمل مجموعة الأذكار",
-  "motivationalPopup_finishYourAzkaarEarn": "أنهي الأذكار ← اربح +30 بذرة إضافية",
   "motivationalPopup_inviteFriend": "قم بدعوة صديق",
-  "motivationalPopup_shareSabiqWithSomeone": "شارك سابق مع شخص ما ← اربح +100 بذرة",
-  "motivationalPopup_keepYourSpiritualMomentum": "حافظ على استمرار زخمك الروحي\\nوشاهد بذورك تنمو ✨",
-  "noorOffline_somethingWentWrong": "حدث خطأ ما",
-  "notificationsSheet_stayOnTopOf": "البقاء على رأس المكافآت والمعالم",
-  "notificationsSheet_llBeNotifiedAbout": "سيتم إعلامك بشأن المكافآت والخطوط والمعالم.",
-  "notificationsSheet_inboxKeepsExistingItems": "يحتفظ Inbox بالعناصر الموجودة ولكن لن تصل عناصر جديدة.",
-  "notificationsSheet_sabiqSeedsForSealing": "بذور سابق لختم اليوم",
   "notificationsSheet_ago": "{arg1}م مضت",
   "notificationsSheet_ago_5d4e7f": "{arg1}h منذ",
   "notificationsSheet_ago_67b1d9": "{arg1}d منذ",
-  "projectMediaCarousel_couldNotLoadVideo": "تعذر تحميل الفيديو",
-  "quranExitCelebration_beautifulRecitation": "تلاوة جميلة.",
-  "quranExitCelebration_everyMomentCounts": "كل لحظة لها أهميتها.",
   "sealCoinAnimation_e16fa4": "+{arg1}",
-  "authScreen_pleaseEnterYourEmail_d36dc6": "الرجاء إدخال البريد الإلكتروني الخاص بك",
-  "authScreen_pleaseEnterYourPassword_0f8b9b": "الرجاء إدخال كلمة المرور الخاصة بك",
-  "authScreen_passwordMustBeAt_c936ae": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
-  "authScreen_alreadyHaveAnAccount_07e598": "هل لديك حساب بالفعل؟ تسجيل الدخول",
-  "authScreen_haveAnAccountSign_ae2883": "ليس لديك حساب؟ اشتراك",
-  "qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": "QfEmailConflictException: {email} لديه حساب بالفعل",
-  "qfAuthService_openidOfflineAccessUser_fc4bcc": "openid دون اتصال_الوصول إلى مجموعة الإشارات المرجعية للمستخدم read_session",
-  "qfAuthService_tokenExchangeFailed_89d8a0": "فشل تبادل الرمز المميز ({arg1}): {arg2}",
-  "qfAuthService_errorNullResponse_bd81c7": "خطأ: استجابة فارغة",
   "orphan_be2bf7_be2bf7": "{firstName} {lastInitial}.",
   "akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2": "\"\"سبحان الله وبحمده\"\" في اليوم 100 مرة تمحو الخطايا مثل زبد البحر. (البخاري)",
   "akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f": "وقول لا إله إلا الله 100 مرة تعدل عتق 10 عبيد و100 حسنة. (البخاري)",
   "akhirahBalanceScreen_lightOnTheTongue_ea6114": "خفيف على اللسان، ثقيل في الميزان: سبحان الله وبحمده، سبحان الله العظيم. (البخاري 6406) .",
   "akhirahBalanceScreen_theDhikrOfAllah_a23f17": "فإن ذكر الله أثقل في الميزان من ذهب مثله. يستمر في التقدم.",
   "akhirahBalanceScreen_yourTongueShouldStay_34816c": "«وينبغي أن يظل لسانك رطبًا بذكر الله». - هل لا تزال رطبة؟",
-  "akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff": "استغفر الله — قالها النبي ✍ في اليوم 100 مرة، ولم يكن له ذنب. كم لديك؟",
+  "akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff": "استغفر الله — قالها النبي ﷺ في اليوم 100 مرة، ولم يكن له ذنب. كم لديك؟",
   "akhirahBalanceScreen_whenYouRememberAllah_60f406": "وإذا ذكرتم الله خفية ذكركم في ملأ أكبر.",
   "akhirahBalanceScreen_reciteAyatAlKursi_d0751f": "اقرأ آية الكرسي بعد كل صلاة، فلا يمنعك من الجنة إلا الموت.",
   "akhirahBalanceScreen_oneAlhamdulillahFillsThe_4794bb": "الحمدلله يملأ الميزان . سبحان الله ملء ما بين السماء والأرض.",
@@ -1717,20 +1021,8 @@
   "akhirahBalanceScreen_everySubhanallahIsSadaqah_16b797": "وكل سبحان الله صدقة. كم ستعطي قبل النوم؟",
   "akhirahBalanceScreen_heartThatForgetsDhikr_3a6173": "القلب الذي ينسى الذكر يبدأ بالصدأ. القلب الذي يتذكر يبقى مشتعلا.",
   "akhirahBalanceScreen_haveYouFortifiedYourself_17ccac": "هل حصنت نفسك بأذكار الصباح والمساء اليوم؟",
-  "akhirahBalanceScreen_thisSession_702ffc": "هذه الجلسة: +{arg1}",
-  "akhirahBalanceScreen_seedsThisSession_cd9411": "+{arg1} بذور هذه الجلسة",
-  "akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": "متوسط ​​7 أيام: {arg1} أذكار/يوم",
-  "dashboardScreen_profileReturnedZeroRows_3ccedb": "لم يُرجع الملف الشخصي أي صفوف لـ {uid}",
-  "dashboardScreen_dashboardLoadError_6168de": "خطأ في تحميل لوحة المعلومات: {e}",
-  "dashboardScreen_invalidReferralCode_bb3b10": "رمز الإحالة غير صالح",
-  "dashboardScreen_cannotReferYourself_d836b8": "لا يمكن الرجوع نفسك",
   "dashboardScreen_sponsor_d48549": "الراعي {name}، {arg1}",
-  "dashboardScreen_dashboardDoesn_b8feb4": ": 0، // لوحة القيادة لا",
-  "dashboardScreen_today_261fbb": "{arg1} · {_lastAyah} · +{_ayahsToday} اليوم",
   "dashboardScreen_606140_606140": "{arg1} · {_lastAyah}",
-  "dashboardScreen_dayStreak_2934ca": "{arg1}-خط يوم",
-  "dashboardScreen_yourSabiqSeedsFund_3e8748": "تقوم شركة Sabiq Seeds الخاصة بكم بتمويل هذه المشاريع",
-  "dashboardScreen_active_2d214a": "{arg1} نشط",
   "dashboardScreen_joinMeOnSabiq_755fb5": "انضم إلي في برنامج Sabiq Rewards واحصل على بذور القرآن والذكر والأعمال الصالحة يوميًا!\\n\\n",
   "dashboardScreen_useMyCodeAnd_7d13b3": "استخدم الرمز الخاص بي *{arg1}* وسنحصل على 500 بذرة سابق!\\n\\n",
   "dashboardScreen_messageCopiedShareOr_7b977e": "تم نسخ الرسالة أو مشاركتها أو لصقها في WhatsApp!",
@@ -1740,402 +1032,20 @@
   "dashboardScreen_anErrorOccurredPlease_8ee486": "حدث خطأ. يرجى المحاولة مرة أخرى.",
   "dashboardScreen_52b02c_52b02c": "{pts}",
   "dashboardScreen_e4e562_e4e562": "{arg1}%",
-  "dashboardScreen_seeDetailsForMore_54551e": "انظر التفاصيل لمزيد من المشاريع →",
-  "dashboardScreen_yourTOTALSABIQSEEDS_f1d60a": "مجموع بذور سابق الخاصة بك",
   "dashboardScreen_viewCampaignDonate_450be4": "🤲 شاهد الحملة وتبرع",
-  "dashboardScreen_yourRank_67be90": "رتبتك: {rankText}",
   "dashboardScreen_d13a42_d13a42": "{_myPoints} {unit} • {arg1}",
   "dashboardScreen_beTheFirstOn_63de17": "كن الأول على اللوح",
   "dashboardScreen_readAnAyahOr_9c7ab7": "اقرأ آية أو ذكر لتحصل على المركز الأول",
   "dashboardScreen_lvl_ac180d": "المستوى {level} · {arg1}",
-  "dashboardScreen_sealWithin_381d5d": "الختم داخل {arg1}h",
-  "dashboardScreen_jazakallahDaySealed_70a34b": "جزاك الله!  يوم مختوم",
-  "dashboardScreen_ofGoal_9660ee": "من {arg1} {arg2} هدف",
-  "dhikrHubScreen_propheticSupplications_907064": "أدعية نبوية",
-  "dhikrHubScreen_morningEveningRemembrance_ec6bc2": "أذكار الصباح والمساء",
-  "dhikrHubScreen_furtherSupplications_f72602": "مزيد من الأدعية",
-  "dhikrHubScreen_closingRemembranceSalawat_5204e8": "أذكار الختام والصلاة",
-  "dhikrHubScreen_hajjUmrahSupplications_f4d1b9": "أدعية الحج والعمرة",
-  "dhikrHubScreen_falseHiddenAdd_c45662": "] == خطأ) Hidden.add(r[",
-  "dhikrScreen_indoPak_fd8751": "إندو باك",
   "dhikrScreen_default_8bd36b": "الافتراضي: {recommendedCount}",
-  "dhikrScreen_duaAzkarSettings_71de01": "إعدادات الدعاء والأذكار",
-  "dhikrScreen_hideTheVisualArtwork_28b4d2": "إخفاء منطقة العمل الفني المرئي",
   "dhikrScreen_pinTheIllustrationAt_5ec641": "قم بتثبيت الرسم التوضيحي في الأعلى أثناء تمرير النص العربي أسفله",
-  "dhikrScreen_readTimes_537f51": "اقرأ {readCount} مرات",
   "dhikrScreen_d08433_d08433": "{arg1} / {arg2}",
-  "dhikrScreen_alBaqarahAmanaAr_e9d62e": "سورة البقرة 285 (أمانة الرسول)",
-  "dhikrScreen_alBaqarahAlifLam_71ad0e": "سورة البقرة 1-5 (ألف لم ميم)",
-  "dhikrScreen_alBaqarahLaIkraha_e837fb": "البقرة 256 (لا إكراها)",
-  "dhikrScreen_alBaqarahAllahuWaliyy_c2a18b": "سورة البقرة 257 (الله وليه)",
-  "dhikrScreen_salawatIbrahimiyyaDurood_171c60": "الصلاة الإبراهيمية (الدرود)",
   "dhikrScreen_9a4c42_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
   "dhikrScreen_86f857_86f857": "\\u2060{matched}",
   "dhikrScreen_49900d_49900d": "+{hasanaat}",
-  "dhikrScreen_hisnulMuslimChapter_8745dc": "حصن مسلم، باب:",
   "dhikrScreen_3856c1_3856c1": "{rawRef} | {bottomRef}",
-  "dhikrScreen_bestOfBothWorlds_e1cc22": "وخير الدارين العتق من النار",
-  "dhikrScreen_patienceAndSteadfastnessIn_114391": "الصبر والثبات في كل تجربة",
-  "dhikrScreen_allahBurdensNoSoul_c8bf72": "ولا يكلف الله نفسا إلا وسعها",
-  "dhikrScreen_keepTheHeartFirm_7729fe": "ثبت القلب على الهدى",
-  "dhikrScreen_faithAnsweredWithForgiveness_e8c93c": "أجاب الإيمان بالمغفرة من الجحيم",
-  "dhikrScreen_allSovereigntyInAllah_a9e0b3": "الملك كله في الله\\",
-  "dhikrScreen_allahHearsEveryCall_bf9969": "إن الله سميع لكل دعوة بالذرية الصالحة",
-  "dhikrScreen_countedWithTheWitnesses_99a05a": "محسوبا مع شهود الحق",
-  "dhikrScreen_forgivenessFirmFeetAnd_28f209": "المغفرة والأقدام الثابتة والنصر",
-  "dhikrScreen_theDuaOfThose_0ee764": "دعاء الذين يتفكرون",
-  "dhikrScreen_inscribedWithTheWitnesses_2257ce": "مكتوب مع شهود الوحي",
-  "dhikrScreen_theDuaAllahAccepted_7e207c": "الدعاء المقبول من آدم ﷺ",
-  "dhikrScreen_spareUsTheCompany_c290d3": "وارزقنا صحبة الظالمين",
-  "dhikrScreen_neverTrialForThe_292b26": "أبدا محاكمة للظالمين",
-  "dhikrScreen_refugeFromAskingWithout_0e04a4": "أعوذ بالله من السؤال بغير علم",
-  "dhikrScreen_prayerForSafetyAnd_5f4e34": "صلاة من أجل السلامة والإيمان",
-  "dhikrScreen_steadfastInPrayerMe_8ce7b5": "أقم الصلاة أنا وأولادي",
-  "dhikrScreen_mercyForMeMy_3edb52": "رحمة لي ولوالدي وللمؤمنين",
-  "dhikrScreen_prayerForParents_ae7e5c": "دعاء للوالدين",
-  "dhikrScreen_entryOfTruthExit_88c367": "دخول الحقيقة، خروج الحقيقة",
-  "dhikrScreen_prayerOfTheYouth_1bf835": "دعاء شباب الكهف",
-  "dhikrScreen_askAllahForMore_07c189": "اسأل الله المزيد من العلم",
-  "dhikrScreen_allahAnswersAndSaves_c337ab": "الله يجيب وينجي من كل ضيق",
-  "dhikrScreen_allahIsTheBest_1adf97": "والله خير الوارثين",
-  "dhikrScreen_blessedLandingWhereverYou_273aaf": "هبوط مبارك أينما توقفت",
-  "dhikrScreen_refugeFromTheWhispers_7ff5fd": "الاستعاذة من وساوس الشياطين",
-  "dhikrScreen_mercyFromTheBest_b394bb": "رحمة من خير الراحمين",
-  "dhikrScreen_pardonAndMercyFrom_5d9eb1": "عفواً ورحمة من الرحمن",
-  "dhikrScreen_piousSpousesAndRighteous_e9918c": "وأزواج صالحين وذرية صالحة",
-  "dhikrScreen_prayerForThoseWho_1ccfb5": "صلاة لمن تاب",
-  "dhikrScreen_gratitudeForParentsRighteousness_966d90": "شكر الوالدين، والبر في النسل",
-  "dhikrScreen_pleaGiftOfIshaq_5568af": "نداء - هدية إسحاق ﷺ",
-  "dhikrScreen_loveForTheBelievers_d0cae3": "محبة المؤمنين الذين سبقونا",
-  "dhikrScreen_pureTawakkulOnYou_02bc03": "التوكل الخالص – عليك توكلنا",
-  "dhikrScreen_forgivenessForEveryBelieving_e256a1": "المغفرة لكل بيت مؤمن",
-  "dhikrScreen_tasbeehByTheWeight_27484a": "التسبيح بثقل الله\\",
-  "dhikrScreen_tasbeehByTheNumber_224c3f": "التسبيح بعدد كل ما صنع",
-  "dhikrScreen_tasbeehThatFillsAll_4b1a52": "التسبيح ملء كل ما خلق الله",
-  "dhikrScreen_paradiseSoughtTheFire_5740e3": "الجنة المطلوبة – النار\\",
-  "dhikrScreen_cryToTheOne_30f419": "ابكي على من يسمع ويرى ويعلم",
-  "dhikrScreen_nameOnTheCorner_b6afeb": "إسمه على زاوية الكعبة",
-  "dhikrScreen_theDuaBetweenYemen_0bea3e": "الدعاء بين الركن اليماني والحجر الأسود",
-  "dhikrScreen_prayAtTheStation_178d24": "الصلاة في مقام إبراهيم ﷺ",
-  "dhikrScreen_tawheedDeclaredAtopSafa_828769": "وأعلن التوحيد على الصفا والمروة",
-  "dhikrScreen_reaffirmTheOnenessOf_8589ea": "التأكيد على وحدانية الله",
-  "dhikrScreen_magnifyAllahAtEvery_448549": "سبحوا الله عند كل عتبة حج",
-  "dhikrScreen_magnifyAllahOnThe_0fbc83": "سبحوا الله يوم النحر",
-  "dhikrScreen_knowledgeProvisionHealingSought_9733f3": "العلم والرزق والشفاء مطلوب في مكة",
-  "dhikrScreen_theDuaMostRepeated_a9da8d": "أكثر دعاء ردده النبي صلى الله عليه وسلم",
-  "dhikrScreen_refugeFromEveryTrial_8ca1b1": "اهرب من كل تجربة حياة أو موت",
-  "dhikrScreen_refugeFromEveryWeakness_b1a834": "اعوذ بالله من كل ضعف في الجسد والروح",
-  "dhikrScreen_refugeFromSevereTrial_0029f0": "اعوذ بالله من شدة البلاء والعدو\\",
-  "dhikrScreen_religionSetRightWorld_3b0102": "أصلح الدين، وأصلح الدنيا والآخرة",
-  "dhikrScreen_guidancePietyVirtueSelf_cc439a": "الهداية والتقوى والفضيلة والاكتفاء بالنفس",
-  "dhikrScreen_refugeFromWeaknessWealth_d879f5": "اهرب من الضعف – ثروة التقوى في داخلك",
-  "dhikrScreen_theGuiderOfHearts_1f40d9": "مرشد القلوب – حولنا إلى الطاعة",
-  "dhikrScreen_turnerOfHeartsMake_eba687": "مقلب القلوب ثبتني على الدين",
-  "dhikrScreen_wellBeingInBoth_442958": "العافية في كلا العالمين",
-  "dhikrScreen_rewardsSaveFromDisgrace_8b71bb": "الأجر والثواب من الخزي والقبر\\",
-  "dhikrScreen_mindForGoodVictory_582759": "العقل للخير، النصر للخير",
-  "dhikrScreen_refugeFromEvilOf_0c8916": "التعوذ من شر كل حس و جوارح",
-  "dhikrScreen_theForgiverWhoLoves_e5d83f": "الغفور الذي يحب التائبين",
-  "dhikrScreen_takeMeBeforeYou_28ef55": "خذني قبل أن تضلني",
-  "dhikrScreen_everyGoodAndRefuge_4205e2": "من كل خير - و التعوذ من كل شر",
-  "dhikrScreen_standingSittingLyingGuarded_254177": "الوقوف والجلوس والكذب - حراسة في الإسلام",
-  "dhikrScreen_refugeFromCowardiceMiserliness_9b59bd": "أعوذ بالله من الجبن والبخل والفتنة",
-  "dhikrScreen_forgivenessForJestAnd_e683b5": "العفو عن الهزل والجد، المعروف والمجهول",
-  "dhikrScreen_forgiveMeWithForgiveness_894a1a": "اغفر لي مغفرة من عندك",
-  "dhikrScreen_submissionBeliefRepentanceFull_7338d6": "التسليم، الإيمان، التوبة، الثقة الكاملة",
-  "dhikrScreen_mercyForgivenessParadiseSaved_0d9edd": "الرحمة والمغفرة والجنة والنجاة من النار",
-  "dhikrScreen_refugeFromEvilSeen_140ec4": "أعوذ بالله من الشر ما يرى وما لا يرى",
-  "dhikrScreen_provisionThatLastsTill_dcef82": "رزق يدوم مدى الحياة\\",
-  "dhikrScreen_sinsForgivenHomeSpacious_2ac37c": "الذنوب مغفورة، والدار فسيحة، والرزق مبارك",
-  "dhikrScreen_favorAndMercyNone_f665cf": "الفضل والرحمة لا يملكهما إلا أنت",
-  "dhikrScreen_refugeFromDrowningBurning_402b3e": "نجاة من الغرق والحرق والموت المفاجئ",
-  "dhikrScreen_refugeFromHypocrisyShowiness_d863c2": "اعوذ بالله من النفاق والتباهي والتمرد",
-  "dhikrScreen_refugeFromPovertyScarcity_03ef3d": "اعوذ بالله من الفقر والقلة والقهر",
-  "dhikrScreen_refugeFromHeartThat_21f7ab": "ملجأ من قلب فاز\\",
-  "dhikrScreen_payMyDebtEnrich_f5affc": "ادفع ديني وأغنيني من الفقر",
-  "dhikrScreen_allahCalledByHis_c11af9": "ودعا الله بأسمائه الحسنى",
-  "dhikrScreen_theAccepterOfRepentance_4f2d60": "وقابل التوبة يقبل دائما",
-  "dhikrScreen_anEasyReckoningOn_11b060": "الحساب اليسير يوم القيامة",
-  "dhikrScreen_remembranceGratitudeAndThe_d7ee7b": "والذكر والشكر وأفضل العبادة",
-  "dhikrScreen_eternalBlissWithThe_dc255b": "النعيم الدائم مع النبي صلى الله عليه وسلم في الفردوس",
-  "dhikrScreen_forgiveSinsKnownHidden_ceda62": "اغفر الذنوب ما علم منها وما خفي منها والمقصود منها والخطأ",
-  "dhikrScreen_refugeFromBeingCrushed_4ba6ac": "ملجأ من التعرض للسحق من قبل الديون والأعداء",
-  "dhikrScreen_askForParadiseRefuge_4bf2eb": "اطلب الجنة، والتعوذ من النار",
-  "dhikrScreen_forgiveGuideProvideProtect_e93013": "يغفر، يرشد، يوفر، يحمي",
-  "dhikrScreen_sensesMadeBeneficialAnd_4da09c": "أصبحت الحواس مفيدة - ودائمة",
-  "dhikrScreen_theMostBeneficentThe_65d7a6": "الرحمن، المنشئ للجميع",
-  "dhikrScreen_allahTruthOwnerOf_d4bede": "الله - الحق، مالك كل سلطان",
-  "dhikrScreen_submissionWithFullSincerity_cbd7b6": "التقديم بكل إخلاص",
-  "dhikrScreen_amongTheGuidedThe_e4d9d0": "من المهتدين الأصحاء المختارين",
-  "dhikrScreen_whatTheProphetAsked_e3a810": "ما سأله النبي صلى الله عليه وسلم - أنا أسأل أيضا",
-  "dhikrScreen_sayyidAlIstighfarThe_51076a": "السيد الاستغفار – سيد التوبة كلها",
-  "dhikrScreen_refugeFromEveryEvil_ea8dab": "تعوذ من كل شر يأتي بالليل",
-  "dhikrScreen_blessEverySenseEvery_e7779d": "بارك كل حاسة، وكل طرف",
-  "dhikrScreen_smallAndGreatFirst_dbcc00": "الصغير والكبير، الأول والأخير، العلني والسري",
-  "dhikrScreen_noneWithholdsWhatYou_c4dca7": "لا مانع لما أعطيت، ولا معطي لما أعطيت",
-  "dhikrScreen_forgiveGuideProvideElevate_55fa36": "يغفر، يهدي، يرزق، يرفع",
-  "dhikrScreen_increaseFavorBeKind_5fbc5c": "أكثر المعروف، وكن لطيفًا، ولا تسخط أبدًا",
-  "dhikrScreen_beautifyOurCharacterAs_cc5d8c": "وزين خلقنا كما حسنت خلقنا",
-  "dhikrScreen_firmInBeliefGuided_73f8af": "ثابتون على الإيمان – هادون ومرشدون",
-  "dhikrScreen_wisdomAndWithIt_e8e5bd": "الحكمة - ومعها الكثير من الخير",
-  "dhikrScreen_nameShieldsFromEvery_59e06f": "واسمه تحصين من كل مكروه",
-  "dhikrScreen_mightAgainstEveryShaytan_73b152": "قوتها على كل شيطان",
-  "dhikrScreen_dayBlessedFromBeginning_c6d87d": "يوم مبارك من أوله إلى آخره",
-  "dhikrScreen_witnessNoneDeservesWorship_385aa9": "إشهد - لا أحد يستحق العبادة إلا أنت",
-  "dhikrScreen_refugeFromHumiliatingOld_46a3f0": "أعوذ بالله من الشيخوخة المهينة",
-  "dhikrScreen_guidedToTheBest_03e8d2": "يرشد إلى الأفضل، ويحفظ من الأسوأ",
-  "dhikrScreen_faithSetRightHome_08f8e1": "الإيمان ثابت، البيت واسع، الرزق مبارك",
-  "dhikrScreen_refugeFromEveryInner_dc67c7": "اعوذ بك من كل داء باطني وظاهري",
-  "dhikrScreen_refugeFromEveryKind_dfbe62": "اعوذ بالله من كل سوء خاتمة",
-  "dhikrScreen_steadfastGratefulRightlyGuided_45b393": "قلبًا ثابتًا شاكرًا مسترشدًا",
-  "dhikrScreen_theLoveOfAllah_3bf08a": "محبة الله وملائكته وأنبيائه",
-  "dhikrScreen_loveOfAllahAbove_4c81b3": "حب الله فوق حب النفس",
-  "dhikrScreen_bestDeedsLastBest_2ff65e": "وخير الأعمال تدوم – وخير يوم لقائك",
-  "dhikrScreen_pureLifeAndPeaceful_a7eb0f": "حياة نقية وعودة سلمية",
-  "dhikrScreen_patientGratefulSmallIn_059385": "صبور، ممتن، صغير في أعين نفسه",
-  "dhikrScreen_theBestRequestAnd_cd3f6f": "خير الطلب وخير الجزاء",
-  "dhikrScreen_theHighestLevelOf_221efa": "أعلى درجات الجنة",
-  "dhikrScreen_firdawsTheBestOf_01be47": "الفردوس — أفضل ذلك كله\\",
-  "dhikrScreen_mentionRaisedSinsErased_c6e2f3": "يُرفع الذكر، وتُمحى الذنوب، ويُطهر القلب",
-  "dhikrScreen_mercyPleasureParadiseSaved_8b4a98": "الرحمة والرضوان والجنة والنجاة من النار",
-  "dhikrScreen_noSinUncoveredNo_efd903": "لا خطيئة مكشوفة، ولا دين غير مدفوع",
-  "dhikrScreen_mercyThatGuidesSets_89b7cf": "الرحمة التي ترشد، وتصلح، وتطهر",
-  "dhikrScreen_trueBeliefCertainKnowledge_d27506": "الإيمان الحق، العلم اليقين، الله\\",
-  "dhikrScreen_withTheProphetsThe_b2123f": "مع النبيين والشهداء والصديقين",
-  "dhikrScreen_everyNeedEntrustedTo_8b33b6": "وكل حاجة موكولة إلى قاضي جميع الحاجات",
-  "dhikrScreen_bestOfWhatAllah_70d237": "أفضل ما وعد الله عباده",
-  "dhikrScreen_safetyOnTheDay_89cb9f": "السلامة يوم، والجنة يوم الخلود",
-  "dhikrScreen_glorifyTheOneOf_de3669": "تمجيد ذو الشرف والعلم الذي لا مثيل له",
-  "dhikrScreen_pardonPlentySecurityIn_d6b56a": "العفو، الكثير، الأمن في الدين والدنيا",
-  "dhikrScreen_healthFaithEthicsSuccess_000fef": "الصحة، الإيمان، الأخلاق، النجاح، الرحمة",
-  "dhikrScreen_healthPurityEthicsAcceptance_b6929c": "الصحة، الطهارة، الأخلاق، القبول",
-  "dhikrScreen_guidedSecureVictorious_b56e05": "مهتدين، آمنين، منتصرين",
-  "dhikrScreen_refugeFromEveryCreature_cbe2de": "أعوذ بالله من كل مخلوق\\",
-  "dhikrScreen_theOneWhoAnswers_f2e37f": "هو الذي يجيب المضطر والمكسور",
-  "dhikrScreen_morningReachedByAllah_b03f32": "صباح بلغه الله\\",
-  "dhikrScreen_refugeSoughtByMusa_176ee5": "طلب اللجوء موسى وعيسى وإبراهيم",
-  "dhikrScreen_allTheGoodPower_418dc3": "كل الخير – القوة، الرحمة، البركات",
-  "dhikrScreen_allPraiseAndDominion_27662b": "لك كل الحمد والسيادة",
-  "dhikrScreen_pastPardonedFutureProtected_a8bfa1": "الماضي عفواً، والمستقبل محمي",
-  "dhikrScreen_takeMyForelockTo_a44b8f": "خذ بناصيتي إلى الخير",
-  "dhikrScreen_strengthForWeaknessDignity_dce155": "القوة مقابل الضعف، والكرامة مقابل العار",
-  "dhikrScreen_justiceForThoseWho_4e52f3": "العدالة لمن يحجب الحقيقة",
-  "dhikrScreen_refugeFromEveryFatal_b155a7": "اعوذ بالله من كل مصيبة قاتلة",
-  "dhikrScreen_refugeFromEveryBad_a9e27f": "اعوذ بالله من كل سوء خاتمة وتجربة",
-  "dhikrScreen_turnBackEveryEvil_66e6fa": "رد كل نية سيئة إلى مصدرها",
-  "dhikrScreen_justiceAndRefugeAgainst_e4e734": "العدل والنجاة من شرورهم",
-  "dhikrScreen_forgivenessForMeMy_27b932": "اغفر لي ولوالدي ولجميع المؤمنين",
-  "dhikrScreen_purifyHeartDeedsTongue_10837e": "طهارة القلب، والعمل، واللسان، والعين",
-  "dhikrScreen_selfContentWithAllah_68c73a": "الرضا عن الله\\",
-  "dhikrScreen_youKnowMySecret_2b63c7": "أنت تعرف سرّي وحاجتي",
-  "dhikrScreen_certaintyNothingHarmsWhat_e513d7": "اليقين: لا شيء يضر ما\\",
-  "dhikrScreen_beliefLightAndLawful_e69a59": "الإيمان والنور والرزق الحلال",
-  "dhikrScreen_totalLoveAndTotal_3d137e": "الحب الكامل والنضال الكامل في سبيل الله",
-  "dhikrScreen_makeWhatYouWithheld_14be7d": "واجعل ما منعت قوة في الطاعة",
-  "dhikrScreen_praiseTheOwnerOf_244f8b": "سبحان صاحب كل إسم جميل",
-  "dhikrScreen_allahKnowsTheHearts_d6010c": "الله يعلم القلوب والسماء وما وراءها",
-  "dhikrScreen_hopeBuiltOnAllah_217ad7": "الأمل مبني على الله\\",
-  "dhikrScreen_belovedToTheBelievers_b1f5a3": "حبيب للمؤمنين، بريء من الأشرار",
-  "dhikrScreen_mightPowerAndMajesty_91ca0a": "القوة والقوة والعظمة",
-  "dhikrScreen_gratefulPatientHelpfulTo_3710c6": "شاكراً صابراً مستعيناً بالله\\",
-  "dhikrScreen_withholdYourGoodFor_0d39a1": "لا تمنع خيرك من أجل شري",
-  "dhikrScreen_settledLifeAmpleProvision_77b32b": "حياة مستقرة، ورزق واسع، وعمل صالح",
-  "dhikrScreen_wealthInNeedingYou_547729": "الثروة في الحاجة إليك - لا تتحرر منك أبدًا",
-  "dhikrScreen_defectsCoveredFearsCalmed_a85797": "غطت العيوب، وهدأت المخاوف، وزال الكرب",
-  "dhikrScreen_openTheGatesOf_402eac": "افتحوا أبواب الرحمة والكرم",
-  "dhikrScreen_holdUsInYour_b82607": "احفظنا في أمانك – لا تتخلى عنا أبدًا",
-  "dhikrScreen_withinYourSecurityYour_f72b6e": "في أمانك، صلاحك",
-  "dhikrScreen_everySinEveryDistress_eab128": "كل خطيئة، كل ضيق، كل جانب",
-  "dhikrScreen_helpInDeathIn_342d0b": "استعانة بالموت، في القبر، على الصراط",
-  "dhikrScreen_beautifiedLifeBlessedGifts_7f2384": "حياة جميلة، عطايا مباركة، حفظة نعم",
-  "dhikrScreen_firmFootingBlessedEnd_c78f99": "قدم ثابتة، نهاية مباركة، حفظ العهد",
-  "dhikrScreen_hopesFulfilledEnemiesRepelled_afd008": "تتحقق الآمال، ويصد الأعداء، وتصلح الأمور",
-  "dhikrScreen_guidedToTheUpright_9e1527": "هدى إلى المستقيمين، معصومين من النفس",
-  "dhikrScreen_lightAndForgivenessFrom_3923eb": "نور ومغفرة من ذي العرش",
-  "dhikrScreen_forgivenessForWhatRepented_6a44f8": "المغفرة لما تبت ورجعت إليه",
-  "dhikrScreen_understandingThatDrawsNear_e1455e": "فهم يتقرب إلى الله",
-  "dhikrScreen_soulsDwellingInThe_1bd11b": "نفوس ساكنة في أعالي التقوى",
-  "dhikrScreen_crossTheBridgeOf_4f4ff3": "اعبر جسر الرغبة بالصبر",
-  "dhikrScreen_followThePathOf_934775": "اتبع طريق الصدق واليقين",
-  "dhikrScreen_helpAgainstTheSoul_44a7db": "عون على النفس وضد الشيطان",
-  "dhikrScreen_fearHappinessVictorySecurity_9017c9": "الخوف، السعادة، النصر، الأمان",
-  "dhikrScreen_entrustFamilyWealthChildren_1da596": "استودع الأسرة والثروة والأولاد - كل ذلك لله",
-  "dhikrScreen_faithGuardedFaithPreserved_88eecb": "الإيمان مصون، الإيمان محفوظ",
-  "dhikrScreen_wellBeingTillThe_ee180d": "العافية حتى النهاية - مختومة بالمغفرة",
-  "dhikrScreen_whatProtectsMeFrom_052090": "ما يحميني من هذا العالم\\",
-  "dhikrScreen_mercyOnEverySoul_a9a197": "رحمة لكل نفس\\",
-  "dhikrScreen_burdenUsAsThose_78b517": "لا تثقل علينا كما ثقل الذين من قبل",
-  "dhikrScreen_mercyPardonForgivenessVictory_300143": "الرحمة، العفو، المغفرة، النصر",
-  "dhikrScreen_allahNeverFailsHis_c2265a": "إن الله لا يخلف وعده أبدا",
-  "dhikrScreen_recordUsWithThe_b93190": "سجلنا مع شهود الحق",
-  "dhikrScreen_forgivenessFirmnessAndVictory_a8b674": "العفو والحزم والنصر",
-  "dhikrScreen_creationHasPurposeRefuge_ce2eee": "الخلق له غرض - النجاة من النار",
-  "dhikrScreen_refugeFromTheDisgrace_605b1b": "التعوذ من خزي النار",
-  "dhikrScreen_heardBelievedAskingForgiveness_d5387f": "سمعت، صدقت، الاستغفار",
-  "dhikrScreen_sinsForgivenDeathAmong_bd82ed": "مغفورة الخطايا - الموت بين الأبرار",
-  "dhikrScreen_promisedRewardNeverDisgraced_490396": "ووعد بالأجر فلا يخزى يوم القيامة",
-  "dhikrScreen_provisionAndSignsFrom_81db14": "رزق وآيات من السماء",
-  "dhikrScreen_duaTheDuaOf_4b9d01": "دعاء - دعاء كل تائب",
-  "dhikrScreen_spareUsFromThe_79732a": "نجنا من صحبة الظالمين",
-  "dhikrScreen_patienceTillTheEnd_a8a4c4": "الصبر حتى النهاية، والموت عند التسليم",
-  "dhikrScreen_hiddenInEveryChest_ce7671": "مخبأة في كل صدر",
-  "dhikrScreen_prayerForPrayerAccepted_e68fa6": "صلاة مقبولة الصلاة",
-  "dhikrScreen_mercyGrantedGuidancePrepared_5c6f63": "الرحمة منحت، والتوجيه معد",
-  "dhikrScreen_duaBeforePharaoh_2d90cd": "الدعاء أمام فرعون",
-  "dhikrScreen_refugeFromClingingEvil_b1e6e4": "اعوذ بالله من العذاب الخبيث",
-  "dhikrScreen_piousSpousesRighteousChildren_64225f": "أزواج صالحون، أولاد صالحون، قيادة",
-  "dhikrScreen_allahIsEverThankful_464c97": "والله الشكر دائمًا على كل جهد",
-  "dhikrScreen_mercyEncompassingEveryRepentant_fb0759": "الرحمة تشمل كل نفس تائبة",
-  "dhikrScreen_mercyOnThatDay_a1b18b": "الرحمة يومئذ – الفوز العظيم",
-  "dhikrScreen_loveAndForgivenessFor_660a56": "المحبة والغفران للمؤمنين السابقين",
-  "dhikrScreen_kindnessAndMercyUpon_1c62c8": "اللطف والرحمة من الله\\",
-  "dhikrScreen_pureTawakkulToYou_389089": "التوكل الخالص - إليك راجعون",
-  "dhikrScreen_neverFitnahForThose_dc1363": "لا تكون فتنة للذين كفروا",
-  "dhikrScreen_completeTheLightForgive_fd7380": "أكمل النور – اغفر لنا",
-  "dhikrScreen_strongerThanServantThe_4cc56e": "أقوى من خادم – الليل\\",
-  "dhikrScreen_refugeFromEveryVisible_b81e69": "التعوذ من كل شر ظاهرة قبل النوم",
-  "dhikrScreen_refugeFromEveryWhisper_b030ed": "اعوذ بك من كل همسة قبل النوم",
-  "dhikrScreen_guardedByAnAngel_65d1c1": "يحرسه ملاك حتى الصباح",
-  "dhikrScreen_twoVersesThatSuffice_1941c5": "آيتان تكفيان ليلة كاملة",
-  "dhikrScreen_pureTawheedDeclaredBefore_50673a": "أعلن التوحيد الخالص قبل النوم",
-  "dhikrScreen_sleepIsSmallDeath_b4b84d": "النوم موت صغير في ذمة الله",
-  "dhikrScreen_whoeverDiesThatNight_75dda7": "ومن مات تلك الليلة مات على الفطرة",
-  "dhikrScreen_guardTheSoulThat_a0850e": "احفظ النفس التي تعود، أو ارحم",
-  "dhikrScreen_refugeFromThePunishment_18162a": "نجاة من عذاب ذلك اليوم",
-  "dhikrScreen_gratitudeForShelterFood_1f5e94": "الامتنان للمأوى والغذاء والرعاية",
-  "dhikrScreen_handOverTheSoul_fda192": "تسليم الروح قبل النوم",
-  "dhikrScreen_joinTheHighestAssembly_68e2d3": "انضم إلى المجلس الأعلى أثناء نومك",
-  "dhikrScreen_gratitudeBeforeClosingThe_20f3db": "الشكر قبل أن تغمض عينيك",
-  "dhikrScreen_surahAsSajdahRecited_a4beaa": "قراءة سورة السجدة قبل النوم",
-  "dhikrScreen_refugeFromEvilBefore_a5d312": "الاستعاذة من الشر قبل دخول الخلاء",
-  "dhikrScreen_seekForgivenessAsYou_f14da9": "استغفر وأنت تغادر",
-  "dhikrScreen_bismillahEveryBiteBegins_8a678d": "بسم الله - كل لقمة تبدأ بالله",
-  "dhikrScreen_catchUpTheName_e6d0d6": "اللحاق بالاسم – الله في البداية والنهاية",
-  "dhikrScreen_threeSunnahDuasTo_a56769": "ثلاث أدعية لشكر الله بعد الأكل",
-  "dhikrScreen_beginWithAllahThe_a64af2": "ابدأ بالله الرحمن قبل الشرب",
-  "dhikrScreen_openTheEightDoors_011a50": "افتح أبواب الجنة الثمانية بعد الوضوء",
-  "dhikrScreen_openTheDoorsOf_15e084": "افتحوا أبواب الله\\",
-  "dhikrScreen_bountyAsYouLeave_a06fc6": "فضله عند خروجك من المسجد",
-  "dhikrScreen_mayAllahGuideYou_af987e": "الله يوفقك ويصلح حالك",
-  "dhikrScreen_askAllahLordOf_4a3eb0": "اسأل الله رب العرش أن يشفيه",
-  "dhikrScreen_allahIsTheOnly_9750c1": "الله وحده هو الذي يشفي",
-  "dhikrScreen_shieldChildrenWithAllah_858245": "حماية الأطفال مع الله\\",
-  "dhikrScreen_anicPrayerForOne_e18aca": "صلاة أنيك لأحد\\",
-  "dhikrScreen_twoPhrasesBelovedTo_5d16a7": "كلمتان حبيبتان إلى الرحمن",
-  "dhikrScreen_allahLovesToPardon_a64d0a": "إن الله يحب العفو فاسألوا",
-  "dhikrScreen_treasureFromBeneathThe_87d578": "كنز من تحت العرش",
-  "dhikrScreen_theFourPhrasesDearest_680ef8": "العبارات الأربع أحب إلى الله",
-  "dhikrScreen_theDuaThatReleases_ddc7eb": "الدعاء الذي يفرج من كل ضيق",
-  "dhikrScreen_protectionForHomeAnd_0c4973": "حماية للبيت والذرية",
-  "dhikrScreen_theCompleteDhikrOf_31b993": "اذكار التوحيد كاملة",
-  "dhikrScreen_trialPurifiedByAllah_39fb26": "محاكمة مطهرة من الله\\",
-  "dhikrScreen_guidanceBeforeAnyChoice_50eb02": "التوجيه قبل أي خيار",
-  "dhikrScreen_completeRuqyaSequenceFatihah_5ced40": "تسلسل الرقية كاملة – الفاتحة والمعوذتين",
-  "dhikrScreen_sinsForgivenEvenIf_cd9a85": "تغفر الذنوب ولو مثل زبد البحر",
-  "dhikrScreen_freedHasanatSinsErased_54ebbb": "10 محرومة · 100 حسنة · تمحى 100 خطيئة · طرد الشيطان",
-  "dhikrScreen_blessingsDescendFromAllah_41e8f6": "10 بركات تنزل من الله عليك",
-  "dhikrScreen_askAllahToBless_3470fe": "اسأل الله أن يبارك يومك ويجمله",
-  "dhikrScreen_guaranteedJannahIfYou_6f7054": "وتضمن لك الجنة إذا مت في هذا اليوم",
-  "dhikrScreen_yourLifeEntrustedTo_77feba": "حياتك مؤتمنة على الحي الدائم",
-  "dhikrScreen_allEvilInHis_f02365": "يدفع عنك كل سوء في خلقه",
-  "dhikrScreen_nothingShallHarmYou_cbc2fc": "لن يضرك شيء بالكلمات المثالية",
-  "dhikrScreen_shieldYourselfFromMinor_2a73ed": "احفظ نفسك من الشرك الأصغر والأكبر صباحاً ومساءً",
-  "dhikrScreen_completeProtectionInThe_620c30": "الحماية الكاملة بسم الله",
-  "dhikrScreen_weightierThanAllVoluntary_7af10a": "أثقل من جميع صلاة التطوع من الفجر إلى المغرب",
-  "dhikrScreen_reciteMorningEveningEarn_77aa68": "أقرأها في الصباح والمساء تنال رضوان الله وبركاته يوم القيامة",
-  "dhikrScreen_yourRewardAwaitsDirectly_1827f4": "أجرك ينتظرك مباشرة عند الله عندما تقابله",
-  "dhikrScreen_reciteMorningEveningTo_1843f8": "أقرأ في الصباح والمساء لأداء واجب الشكر لله",
-  "dhikrScreen_theProphetTaughtThis_50fab2": "وقد علم النبي هذا الدعاء في الصباح والمساء فلا تفوته",
-  "dhikrScreen_dominionAtTheStart_690ca9": "الملك في أول صباحك، له الملك كله",
-  "dhikrScreen_asEveningFallsThe_934b7e": "ومع حلول المساء، يصبح الملك كله لله وحده",
-  "dhikrScreen_endYourEveningUpon_ada386": "اختم أمسيتك على الفطرة الطاهرة كما علم النبي صلى الله عليه وسلم",
-  "dhikrScreen_satanWillNotEnter_446a1c": "لا يدخل الشيطان بيت من قرأ هذا",
-  "dhikrScreen_readingLastVersesOf_99a432": "تكفيك قراءة آخر آيتين من سورة البقرة",
-  "dhikrScreen_everyDuaInThis_f790b4": "كل دعاء في هذه الآية - قال الله: قد فعلت",
-  "dhikrScreen_guardedByAllahUntil_f4d276": "في حراسة الله حتى يأتي الصباح",
-  "dhikrScreen_recitingEqualsReadingThe_e0a62a": "القراءة 3x تعدل قراءة القرآن كاملا والبخاري ومسلم",
-  "dhikrScreen_reciteAtDawnDusk_4173a8": "وقل ثلاث مرات عند الفجر والمغرب تكفيك من كل سوء",
-  "dhikrScreen_refugeFromTheWhisperer_bdd280": "اعوذ بالله من الوسواس برب الناس",
-  "dhikrScreen_reciteMorningEveningYour_c464cb": "وقل 3 مرات صباحا ومساءا يتم شكرك لله",
-  "dhikrScreen_sufficientAgainstEveryHarm_0a3206": "تكفي من كل ضرر تلاوة 3 مرات",
-  "dhikrScreen_doorsOfAllahMercy_937263": "أبواب رحمة الله مفتوحة لكم",
-  "dhikrScreen_worryAndSorrowLifted_fd1f04": "يرفع الهم والحزن بإذن الله",
-  "dhikrScreen_guardedInYourDeen_bb9b33": "تحرس في دينك الدنيا والآخرة",
-  "dhikrScreen_evilRepelledFromEvery_3f1588": "طارد الشر من كل جانب",
-  "dhikrScreen_heartHeldByThe_0f7007": "القلب الذي يحمله الحي الدائم الدائم",
-  "dhikrScreen_fulfilledYourObligationOf_44ddfc": "أوفيت بواجب الشكر",
-  "dhikrScreen_recitingTheLastVerses_3d260d": "تكفيك قراءة آخر آيتين من سورة البقرة في الليل",
-  "dhikrScreen_gratitudeThatMultipliesYour_24c5dd": "الشكر الذي يضاعف نعمك",
-  "dhikrScreen_startPureOnThe_a0198e": "ابدأوا خالصين على فطرة الإسلام",
-  "dhikrScreen_praiseThatRipplesThrough_cef105": "التسبيح الذي يسري في كل الخليقة",
-  "dhikrScreen_guidedToEveryGood_e5e914": "هدى إلى كل خير في هذا اليوم",
-  "dhikrScreen_allahWillFreeHim_20396f": "أعتقه الله من النار من قرأها 4 مرات",
-  "dhikrScreen_wellbeingOfBodyHearing_f9d3af": "سلامة الجسم من السمع والبصر",
-  "dhikrScreen_guidedByTheHand_da5d5b": "الهداية بيد الله",
-  "dhikrScreen_wordsHeavierThanThe_6a9c4f": "كلام أثقل من السماء والأرض",
-  "dhikrScreen_beginYourDayIn_530c07": "ابدأ يومك بالاستسلام لله",
-  "dhikrScreen_theyAreEnoughFor_14acc6": "تكفيك - أقرأ قبل النوم",
-  "dhikrScreen_wellBeing_85c1f4": "الرفاهية",
-  "dhikrScreen_fulfilled_7d487f": "تم الوفاء به.",
-  "dhikrScreen_wellBeingInFaith_e70162": "الرفاهية في الإيمان · الأسرة · الثروة",
-  "dhikrScreen_concealMyFaultsCalm_0252f3": "أخفي عيوبي · هدئ مخاوفي",
-  "dhikrScreen_protectionFromEvilEye_3b6074": "الحماية من العين الشريرة",
-  "dhikrScreen_doNotLeaveMe_1e2414": "فلا تكلني إلى نفسي طرفة عين",
   "dhikrScreen_35c165_35c165": "{arg1}",
-  "dhikrScreen_allahWillSufficeYou_f177b2": "الله يكفيك",
-  "dhikrScreen_againstWhateverConcernsYou_176991": "ضد كل ما يقلقك",
-  "dhikrScreen_doNotBurdenUs_4401b2": "ولا تحملنا ما لا طاقة لنا به واعف عنا وارحمنا",
-  "dhikrScreen_weHaveBelievedForgive_d34c4a": "لقد آمنا فاغفر لنا ذنوبنا وقنا من النار",
-  "dhikrScreen_ownerOfSovereigntyIn_b0948c": "يا مالك الملك بيدك الخير إنك أنت القادر",
-  "dhikrScreen_forgiveOurSinsAnd_692ad8": "واغفر ذنوبنا وإسرافنا وثبتنا وانصرنا",
-  "dhikrScreen_youCreatedNotIn_d24f50": "ما خلقت عبثا فقنا عذاب النار",
-  "dhikrScreen_weHaveWrongedOurselves_24ab82": "لقد ظلمنا أنفسنا فمن دون رحمتك ضللنا",
-  "dhikrScreen_ourLordDoNot_ca9f87": "ربنا لا تجعلنا مع القوم الظالمين",
-  "dhikrScreen_doNotMakeUs_d5b5d2": "ولا تجعلنا فتنة للظالمين",
-  "dhikrScreen_makeMeSteadfastIn_cc7dfe": "وأثبتني على الصلاة وذريتي أيضًا",
-  "dhikrScreen_forgiveMeMyParents_1a319b": "اغفر لي ولوالدي وللمؤمنين يوم الحساب",
-  "dhikrScreen_bringMeInBy_62c19a": "أدخلني من مدخل الحق وأخرجني من مخرج الحق",
-  "dhikrScreen_myLordIncreaseMe_2fec5a": "ربي زدني علما",
-  "dhikrScreen_seekRefugeInYou_3a2efd": "وأعوذ بك من همزات الشياطين",
-  "dhikrScreen_forgiveAndHaveMercy_58f2df": "اغفر وارحم وأنت خير الراحمين",
-  "dhikrScreen_enableMeToBe_e78eb3": "أوزعني أن أشكر نعمتك علي وعلى والدي",
-  "dhikrScreen_myLordHaveWronged_e6421b": "ربي إني ظلمت نفسي فاغفر لي",
-  "dhikrScreen_myLordWillNever_d4a663": "ربي لا أكون ظهيراً للمجرمين",
-  "dhikrScreen_myLordSaveMe_ea6c67": "ربي نجني من القوم الظالمين",
-  "dhikrScreen_myLordAmIn_0acb2a": "ربي إني محتاج إلى أي خير تنزله إلي",
-  "dhikrScreen_myLordHelpMe_80f8c7": "ربي انصرني على القوم المفسدين",
-  "dhikrScreen_ourLordAvertFrom_bc7354": "ربنا اصرف عنا عذاب الجحيم",
-  "dhikrScreen_ourLordYouEncompass_7e0f2a": "ربنا وسعت كل شيء رحمة وعلما",
-  "dhikrScreen_enableMeToThank_d1f4df": "أوزعني أن أشكرك وأصلح لي ذريتي",
-  "dhikrScreen_myLordGrantMe_ef9ff1": "ربي هب لي من الصالحين",
-  "dhikrScreen_forgiveUsAndOur_60d1fd": "اغفر لنا ولإخواننا الذين سبقونا بالإيمان",
-  "dhikrScreen_uponYouWeRely_0c8229": "عليك توكلنا، وإليك أنبنا، وإليك المصير",
-  "dhikrScreen_pauseRememberAllah_1ddb4d": "يوقف. اذكروا الله .",
-  "dhikrScreen_mashaallahRewardSecured_f51254": "ما شاء الله! المكافأة مضمونة",
-  "dhikrScreen_satanCannot_1c96dd": "الشيطان لا يستطيع",
-  "dhikrScreen_enterTheHome_3086d7": "أدخل المنزل",
-  "dhikrScreen_whoeverRecites_ee68bc": "من يقرأ",
-  "dhikrScreen_theLastTwoVerses_a865c4": "الآيتين الأخيرتين",
-  "dhikrScreen_ofSurahAlBaqarah_302bf4": "من سورة البقرة",
-  "dhikrScreen_atNight_f3945a": "في الليل --",
-  "dhikrScreen_theyWillBe_019495": "سيكونون كذلك",
-  "dhikrScreen_enoughForHim_6e37aa": "يكفي له",
-  "dhikrScreen_weHaveEnteredThe_f5ed3a": "لقد دخلنا المساء",
-  "dhikrScreen_theKingdomBelongsTo_2f7681": "الملك لله",
-  "dhikrScreen_noneWorthyOfWorship_f1c87f": "لا أحد يستحق العبادة إلا الله وحده",
-  "dhikrScreen_allPraiseHeIs_c3ece6": "الحمد · إنه على كل شيء قدير",
-  "dhikrScreen_weAskForThe_21b846": "نسألك خير هذه الليلة",
-  "dhikrScreen_saySeekRefuge_84c616": "قل : أعوذ",
-  "dhikrScreen_inTheLordOf_39c875": "في رب البشر",
-  "dhikrScreen_theKingOfMankind_d99354": "ملك البشرية",
-  "dhikrScreen_theGodOfMankind_e5231c": "إله البشرية،",
-  "dhikrScreen_heRetreatsWhenYou_1fea37": "يتراجع عندما تذكر الله.",
-  "dhikrScreen_seekRefugeInThe_96a762": "اعوذ برب الفلق",
-  "dhikrScreen_sufficedInAllRespects_57c52b": "يكفي من جميع النواحي.",
-  "dhikrScreen_allahDoesNotBurden_63f3eb": "الله لا يثقل",
-  "dhikrScreen_soul_b7f1ee": "روح",
   "dhikrScreen_a5cfd1_a5cfd1": "×{count}",
-  "dhikrScreen_equalsTheWholeQuran_a2b879": "يساوي القرآن كله × 3",
   "impactReportScreen_whoeverDoesAnAtom_9013b0": "«من عمل ذرة",
   "impactReportScreen_theHomeOfThe_4602d2": "«إن الدار الآخرة تلك هي الحياة الأبدية لو كانوا يعلمون». — سورة العنكبوت 29:64",
   "impactReportScreen_raceTowardsForgivenessFrom_94d614": "«سارعوا إلى مغفرة من ربكم وجنة عرضها السماوات والأرض». — سورة الحديد 57:21",
@@ -2160,7 +1070,6 @@
   "impactReportScreen_righteousChildWhoPrays_7bcef4": "ولد صالح يدعو لك، أو صدقة تجري، أو علم ينتفع - ثلاث استثمارات خالدة. (مسلم)",
   "impactReportScreen_youWillMeetAllah_c19524": "ستقابل الله بسجلك. تأكد اليوم\\",
   "impactReportScreen_noDeedIsToo_c04d50": "لا يستصغر عملاً من يعد الذرات.",
-  "impactReportScreen_lvl_987904": "المستوى {_level} · {arg1}",
   "impactReportScreen_200447_200447": "+{arg1}",
   "impactReportScreen_634027_634027": "+{arg1}",
   "impactReportScreen_whoeverDoesGoodDeed_89c2bf": "من عمل الحسنة فله عشر أمثالها.",
@@ -2170,56 +1079,36 @@
   "impactReportScreen_hasanat_64c7b6": "→ حسنات: {arg1}\\n\\n",
   "impactReportScreen_ayahsReadLifetime_75eef6": "قراءة الآيات (العمر): {arg1}\\n",
   "impactReportScreen_totalHasanaat_c43112": "مجموع الحسنات: {arg1}",
-  "impactReportScreen_ayahs_6a500c": "{arg1} الآيات",
-  "impactReportScreen_planted_90ec47": "{arg1} مزروعة",
-  "impactReportScreen_cycles_f6649b": "{arg1} دورات",
   "impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459": "من قال سبحان الله وبحمده في يوم 100 مرة غفرت ذنوبه ولو كانت مثل زبد البحر.",
   "impactReportScreen_subhanallahiWaBihamdihi_992976": "سبحان الله وبحمده",
   "impactReportScreen_totalRecitations_5ed733": "مجموع التلاوات: {arg1}\\n",
   "impactReportScreen_dividedByForgivenessCycles_4e175d": "مقسومًا على 100 ← دورات الغفران: {arg1}",
-  "impactReportScreen_built_d62c2d": "{arg1} بنيت",
   "impactReportScreen_dividedByPalaces_6f066c": "مقسمة على 10 → القصور: {arg1}",
-  "impactReportScreen_earned_abd189": "{arg1} حصل",
-  "impactReportScreen_equivalent_cb7bb5": "{arg1} يعادل",
   "impactReportScreen_laIlahaIllallahuWahdahu_895dde": "لا إله إلا الله وحده لا شريك له...",
   "impactReportScreen_setsOfSetsSlaves_b43b31": "مجموعات من 10 → {arg1} مجموعات × 4 عبيد = {arg2}",
-  "impactReportScreen_opened_1bf8da": "{arg1} مفتوح",
-  "impactReportScreen_received_a526e3": "تم استلام {arg1}",
   "impactReportScreen_totalSalawatSent_cfe45e": "إجمالي الصلوات المرسلة: {arg1}\\n",
   "impactReportScreen_multipliedByBlessingsReceived_52810f": "مضروبة في 10 → {arg1} النعم المستلمة",
-  "impactReportScreen_invocations_d80c33": "{arg1} الدعوات",
   "impactReportScreen_protectionFromEvil_37b53a": "الحماية من الشر",
   "impactReportScreen_goodHealthProtection_058808": "صحة جيدة وحماية",
   "impactReportScreen_totalInvocations_1fd02b": "إجمالي الدعوات: {arg1}",
   "impactReportScreen_dividedByQuranCompletions_b9a013": "مقسمة على 3 → {arg1} ختمات القرآن",
-  "impactReportScreen_recitations_3cb9ec": "{arg1} تلاوات",
   "impactReportScreen_564740_564740": "{_monthActiveDays}",
   "impactReportScreen_3dc421_3dc421": "{arg1}h",
   "impactReportScreen_08990a_08990a": "{arg1}م",
   "impactReportScreen_ago_71107c": "{arg1}م مضت",
   "impactReportScreen_moAgo_325a71": "{arg1} منذ شهر",
-  "impactReportScreen_viewAllDonors_e72932": "عرض جميع الجهات المانحة {arg1}",
   "impactReportScreen_failed_190558": "فشل: {e}",
-  "impactReportScreen_meet_82797d": "تعرف على {arg1}، {arg2}",
-  "impactReportScreen_sponsor_a47417": "الراعي {arg1} →",
   "impactReportScreen_funded_add009": "{arg1}% ممولة",
   "impactReportScreen_yourLifetimeImpact_8bfdcd": "تأثير حياتك",
   "impactReportScreen_startYourImpactJourney_1ae8c4": "ابدأ رحلة التأثير الخاصة بك",
   "impactReportScreen_bd3721_bd3721": "{_myOrphansSponsoredCount}",
   "impactReportScreen_b3d969_b3d969": "{_myProjectsSupportedCount}",
-  "levelScreen_customProfileThemes_cec15c": "موضوعات الملف الشخصي المخصصة",
-  "levelScreen_exclusiveVotingRights_684759": "حقوق التصويت الحصرية",
-  "levelScreen_hallOfFameListing_eb6ad1": "قائمة قاعة المشاهير",
   "levelScreen_seeds_fff97b": "+{arg1} البذور",
   "levelScreen_laIlahaIllallah_e8c26b": "لا إله إلا الله x100",
-  "levelScreen_unlocks_6f2513": "يفتح: {arg1}",
   "levelScreen_seedsBoost_464454": "{arg1}× تعزيز البذور",
   "levelScreen_cf765f_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "levelScreen_nextDays_212b86": "التالي: {arg1} ({arg2} أيام)",
   "levelScreen_days_100e10": "{current} / {arg1} أيام",
   "levelScreen_dayStreak_df2abf": "{arg1} خط يوم",
-  "phase1Screens_quranReadingNimage_5ebac0": "قراءة القرآن\\nصورة",
-  "phase1Screens_orphansNimage_24d12a": "الصورة اليتيمة\\n",
   "onboardingComponents_355c50_355c50": "{first}",
   "onboardingComponents_b236c9_b236c9": "{trailing}",
   "quranMini_inTheNameOf_46925d": "بسم الله الرحمن الرحيم.",
@@ -2237,9 +1126,6 @@
   "orphanDetailScreen_chooseHowManySeeds_b69aa2": "اختر عدد البذور التي تريد تقديمها. الحد الأدنى {arg1}.",
   "orphanDetailScreen_yourBalanceSeeds_f8045b": "رصيدك: {arg1} بذور",
   "profileSettingsScreen_nameCannotBeEmpty_c737ab": "لا يمكن أن يكون الاسم فارغًا",
-  "profileSettingsScreen_bosniaAndHerzegovina_a428ef": "البوسنة والهرسك",
-  "profileSettingsScreen_centralAfricanRepublic_0fde6c": "جمهورية أفريقيا الوسطى",
-  "profileSettingsScreen_unitedArabEmirates_d8e2d8": "الإمارات العربية المتحدة",
   "profileSettingsScreen_signedInWithGoogle_17e053": "تم تسجيل الدخول باستخدام جوجل",
   "profileSettingsScreen_signedInWithQuran_2e1ffc": "تم التسجيل في موقع القرآن الكريم",
   "profileSettingsScreen_signedInWithEmail_dd881f": "تم تسجيل الدخول باستخدام البريد الإلكتروني",
@@ -2256,33 +1142,7 @@
   "projectDetailScreen_e4e562_e4e562": "{arg1}%",
   "projectDetailScreen_ago_71107c": "{arg1}م مضت",
   "projectDetailScreen_moAgo_325a71": "{arg1} منذ شهر",
-  "projectDetailScreen_viewAll_3d2c48": "عرض الكل {arg1} →",
   "quranHubScreen_saved_9c28a3": "تم حفظ {arg1}",
-  "quranHubScreen_tapTheHeartBookmark_c62da1": "اضغط على أيقونة القلب/الإشارة المرجعية أثناء القراءة لحفظ الآيات.",
-  "quranHubScreen_surahVerse_2c65ec": "سورة __ص0__ • الآية __ص1__",
-  "quranHubScreen_verses_f97238": "{arg1} الآيات",
-  "quranHubScreen_of_0420fc": "من {arg1}",
-  "quranScreen_englishSahihIntl_da5e9e": "الإنجليزية، صحيح الدولي.",
-  "quranScreen_saheehInternational_fd1d5c": "صحيح الدولية",
-  "quranScreen_englishPickthall_a0d265": "الإنجليزية، بيكثال",
-  "quranScreen_mohammadMarmadukePickthall_554557": "محمد مارمادوك بيكثال",
-  "quranScreen_englishTheMessage_24a984": "الإنجليزية، الرسالة",
-  "quranScreen_englishMuhsinKhan_a5402b": "الإنجليزية، محسن خان",
-  "quranScreen_muhsinKhanHilali_471c43": "محسن خان وهلالي",
-  "quranScreen_fatehMuhammadJalandhry_262387": "فاتح محمد جلندري",
-  "quranScreen_imamAhmadRazaKhan_225277": "الإمام أحمد رضا خان",
-  "quranScreen_maulanaSayyidAbulAla_75d35f": "مولانا السيد أبو العلاء المودودي",
-  "quranScreen_franAisHamidullah_2ca2c2": "فرانسيس، حميد الله",
-  "quranScreen_rkDiyanet_431130": "التركية، ديانت",
-  "quranScreen_rkLeymanAte_7aa8e1": "تركسي، سليمان اتيش",
-  "quranScreen_bahasaIndonesian_2a26f0": "البهاسا، الإندونيسية",
-  "quranScreen_ministryOfReligiousAffairs_e30db8": "وزارة الشؤون الدينية",
-  "quranScreen_muhiuddinKhan_df9bfe": "تمام، محي الدين خان",
-  "quranScreen_deutschAbuRida_9acffd": "دويتش، أبو ريدة",
-  "quranScreen_abuRidaMuhammadIbn_3a40b3": "أبو رضا محمد بن أحمد",
-  "quranScreen_espaOlAsad_1c1933": "اسبانيول، اسد",
-  "quranScreen_uthmaniMadinah_e1f10e": "العثماني (المدينة المنورة)",
-  "quranScreen_alJalalaynEN_af0584": "الجلالين (EN)",
   "quranScreen_couldNotLoadAyah_62f120": "تعذر تحميل الآية. يرجى إعادة المحاولة.",
   "quranScreen_noConnectionCachedData_e5a215": "لا يوجد اتصال. قد تكون البيانات المخزنة مؤقتًا متاحة.",
   "quranScreen_ayahs_c98642": "{arg1} الآيات",
@@ -2290,73 +1150,27 @@
   "quranScreen_removedBookmark_d7a16a": "تمت إزالة الإشارة المرجعية {_surahName} {_surah}:{_ayah}",
   "quranScreen_couldNotSaveBookmark_976448": "تعذر حفظ الإشارة المرجعية، يرجى إعادة المحاولة",
   "quranScreen_bookmarked_2c6203": "تم وضع إشارة مرجعية {_surahName} {_surah}:{_ayah}",
-  "quranScreen_trimmedContains_039f31": ") && !مشذّب.يحتوي على(",
   "quranScreen_tafsir_391c0d": "التفسير · {_surahName} {_surah}:{_ayah}",
   "quranScreen_addedToFavourites_b3cce0": "♥ تم الإضافة إلى المفضلة",
-  "quranScreen_comfortableNightTimeReading_da3df2": "قراءة مريحة ليلا",
   "quranScreen_pt_9e58e8": "{arg1} نقطة",
   "quranScreen_003843_003843": "{arg1} {arg2}",
-  "quranScreen_displayMeaningBelowEach_a26f31": "عرض المعنى تحت كل آية",
-  "quranScreen_showTransliteration_e04abd": "إظهار الترجمة الصوتية",
-  "quranScreen_romanisedPronunciationUnderEach_2c0136": "النطق بالحروف اللاتينية تحت كل كلمة",
-  "quranScreen_progressBarAyahCount_3cd24d": "شريط التقدم وبطاقة عدد الآيات",
-  "quranScreen_moveToNextVerse_ea29fd": "الانتقال إلى الآية التالية عندما ينتهي الصوت",
-  "quranScreen_repeatCurrentVerse_552669": "كرر الآية الحالية",
-  "quranScreen_notificationsALERTS_fbea75": "الإخطارات والتنبيهات",
-  "quranScreen_milestoneSoundAlerts_03cdc3": "تنبيهات صوتية مهمة",
-  "quranScreen_chimeWhenYouReach_dd60c0": "رنين عندما تصل إلى 10، 25، 50 آية",
-  "quranScreen_showEachArabicWord_64532d": "إظهار كل كلمة عربية بمعناها الإنجليزي",
-  "quranScreen_translationLanguage_d8c9b3": "لغة الترجمة",
-  "quranScreen_translationsAvailable_55c648": "{arg1} الترجمات المتاحة",
   "quranScreen_3502e8_3502e8": "{arg1} / {arg2}",
-  "quranScreen_sabiqSeedsEarnedToday_13ddb3": "+{_pointsToday} بذور سابق التي حصلت عليها اليوم!",
   "quranScreen_dcacc4_dcacc4": "{_ayah} / {arg1}",
   "quranScreen_6d1f9d_6d1f9d": "{arg1}",
   "quranScreen_ayahsRead_862866": "{_ayahsToday} آيات مقروءة",
   "quranScreen_ce2af3_ce2af3": "{arg1}%",
   "quranScreen_6e8ac8_6e8ac8": "{text}",
-  "quranScreen_pageJuz_6ac28a": "الصفحة {_currentPage} · الجزء {arg1}",
   "startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5": "حدث خطأ غير متوقع أثناء تسجيل الدخول إلى Google",
   "startJourneyScreen_connectedToQuranCom_c0c631": "متصل بموقع القرآن الكريم",
-  "streakScreen_nextDays_212b86": "التالي: {arg1} ({arg2} أيام)",
-  "streakScreen_seeds_990893": "+{arg1} البذور",
-  "streakScreen_days_100e10": "{current} / {arg1} أيام",
-  "streakScreen_dayStreak_df2abf": "{arg1} خط يوم",
-  "tafsirHubScreen_earnSeedsForEvery_ffb3d5": "اربح بذورًا مقابل كل 10 دقائق من استماع التفسير",
-  "tafsirScreen_alJalalaynEN_af0584": "الجلالين (EN)",
   "tafsirScreen_verses_fed624": "{arg1} الآيات",
-  "tafsirScreen_trimmedContains_039f31": ") && !مشذّب.يحتوي على(",
   "tafsirScreen_ayahOf_63c42b": "آية {_ayah} من {_surahLen}",
   "tafsirScreen_4815bb_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "tafsirScreen_tafsirNotAvailableFor_0fce81": "التفسير غير متوفر لهذه الآية.",
   "donationService_youMustBeLogged_6813cf": "يجب عليك تسجيل الدخول للتبرع.",
   "donationService_donationCouldNotBe_074195": "لا يمكن معالجة التبرع في هذا الوقت.",
   "donationService_anUnexpectedNetworkError_914b7a": "حدث خطأ غير متوقع في الشبكة.",
   "donationService_sponsorshipReceived_671201": "تم الحصول على الرعاية 💝",
   "donationService_youSponsoredSeedsJazak_7711e1": "لقد قمت برعاية {amount} بذور · جزاك الله خيرا.",
   "donationService_sponsorshipCouldNotBe_55003e": "لا يمكن معالجة الرعاية في هذا الوقت.",
-  "liveNotificationService_remindersToSealYour_782a67": "تذكيرات لإغلاق بذورك المعلقة قبل منتصف الليل.",
-  "liveNotificationService_sealYourSeedsBefore_62a726": "ختم البذور الخاصة بك قبل منتصف الليل",
-  "liveNotificationService_youHavePendingSeeds_dd762f": "لديك {pendingSeeds} بذور معلقة. اضغط على ختم اليوم قبل منتصف الليل أو تنتهي صلاحيته.",
-  "liveNotificationService_ayatReadToday_b5a4e8": "{_ayahCount} آيات إقرأها اليوم 📖",
-  "liveNotificationService_readQuranToday_703122": "{arg1} إقرأ القرآن اليوم ⏱️",
-  "liveNotificationService_nothingReadFromQuran_b1c2eb": "لا شيء يقرأ من القرآن اليوم 📖",
-  "liveNotificationService_dhikrCompletedToday_835583": "{_dhikrCount} تم الانتهاء من الأذكار اليوم 📿",
-  "liveNotificationService_ayatDhikrToday_548e91": "{_ayahCount} آيات · {_dhikrCount} أذكار اليوم",
-  "liveNotificationService_keepReadingAndDoing_cdc7b2": "استمر في القراءة والقيام بالذكر!",
-  "liveNotificationService_yourSeedsToday_8649c6": "بذورك اليوم ✨",
-  "localReminderScheduler_sabiqRewardsNotifications_96d36c": "إشعارات مكافآت سابق",
-  "localReminderScheduler_it_0c8340": "هو - هي\\",
-  "localReminderScheduler_fridayReadSurahAl_077436": "يوم الجمعة - قراءة سورة الكهف",
-  "localReminderScheduler_whoeverRecitesSurahAl_15b9a5": "من قرأ سورة الكهف في يوم الجمعة أضاء له من النور ما بين الجمعتين.",
-  "localReminderScheduler_don_b4d354": "اِتَّشَح\\",
-  "localReminderScheduler_missSurahAlKahf_634857": "لا تفوت سورة الكهف اليوم",
-  "localReminderScheduler_fewHoursToMaghrib_d99fd2": "ساعات قليلة تفصلنا عن المغرب – أكمل سورة الكهف إذا لم تكن قد وصلت",
-  "quranApiService_notConnectedToQuran_9f4f89": "غير متصل بموقع القرآن الكريم",
-  "quranApiService_syncFailedBookmarkCould_3393f7": "فشلت المزامنة، تعذر دفع الإشارة (الإشارات) المرجعية {failed} إلى موقع Quran.com (التحقق من الرمز المميز / نقطة النهاية).",
-  "quranApiService_bookmarksAlreadyInSync_fad9e1": "الإشارات المرجعية متزامنة بالفعل",
-  "quranApiService_syncedBookmarksUpDown_dd2f96": "الإشارات المرجعية {total} المتزامنة ({uploaded} لأعلى، {downloaded} لأسفل)",
-  "quranApiService_syncFailed_ae7629": "فشلت المزامنة: {e}",
   "streakService_warmingUp_b1687b": "الاحماء",
   "streakService_oneWeek_4f98dc": "أسبوع واحد",
   "streakService_twoWeeks_9a2d93": "اسبوعين",
@@ -2364,12 +1178,9 @@
   "streakService_twoMonths_84d275": "شهرين",
   "streakService_theCenturion_f1de7f": "قائد المئة",
   "streakService_1fc043_1fc043": "{arg1} {arg2}",
-  "streakService_dayStreak_9ee8a3": "{arg1}-يوم {arg2} خط ·",
-  "streakService_bonusSeedsUnlocked_bcdda5": "+{arg1} تم فتح البذور الإضافية",
   "trackingService_c7528c_c7528c": "{arg1} {arg2}",
   "xpService_level_226f81": "{title} • المستوى {level}",
   "xpService_newBadgeUnlocked_2c8d0e": "تم فتح شارة جديدة 🏆",
-  "xpService_you_79d09a": "أنت\\",
   "xpService_dailyLoginBonus_d011fa": "مكافأة تسجيل الدخول اليومية",
   "xpService_seedsWelcomeBack_47888a": "+{arg1} البذور · أهلاً بعودتك!",
   "xpService_daySealed_037a56": "اليوم مختوم 🌙",
@@ -2390,17 +1201,11 @@
   "motivationalPopup_yourTimeIsYour_be6731": "وقتك هو أثمن\\nأصولك. استثمرها بحكمة\\nفي ما يدوم إلى الأبد.",
   "motivationalPopup_quranAlAnfal_b10486": "القرآن • الأنفال 8:28",
   "motivationalPopup_takeAdvantageOfFive_e573fd": "اغتنم خمسا قبل خمس.",
-  "motivationalPopup_youHaveBeenRewarded_9bde33": "لقد تمت مكافأتك على\\nثباتك اليوم!",
   "motivationalPopup_seeds_3a9c69": "+{arg1} البذور",
   "motivationalPopup_completeNowEarnSeeds_16ea6e": "أكمل الآن → اربح +50 بذرة إضافية",
   "motivationalPopup_finishYourAzkaarEarn_e264fa": "أنهي الأذكار ← اربح +30 بذرة إضافية",
   "motivationalPopup_shareSabiqWithSomeone_c60dcc": "شارك سابق مع شخص ما ← اربح +100 بذرة",
   "motivationalPopup_keepYourSpiritualMomentum_0f172c": "حافظ على استمرار زخمك الروحي\\nوشاهد بذورك تنمو ✨",
-  "noorOffline_somethingWentWrong_76fc46": "حدث خطأ ما",
-  "notificationsSheet_stayOnTopOf_811366": "البقاء على رأس المكافآت والمعالم",
-  "notificationsSheet_llBeNotifiedAbout_9e7a1b": "سيتم إعلامك بشأن المكافآت والخطوط والمعالم.",
-  "notificationsSheet_inboxKeepsExistingItems_611668": "يحتفظ Inbox بالعناصر الموجودة ولكن لن تصل عناصر جديدة.",
-  "notificationsSheet_sabiqSeedsForSealing_001312": "بذور سابق لختم اليوم",
   "projectMediaCarousel_couldNotLoadVideo_deb8dd": "تعذر تحميل الفيديو",
   "quranExitCelebration_beautifulRecitation_9d2655": "تلاوة جميلة.",
   "quranExitCelebration_everyMomentCounts_fddb4c": "كل لحظة لها أهميتها.",
@@ -2417,7 +1222,6 @@
   "streakService_dayStreakBody": "{days}-يوم {type} خط · +{bonus} بذور إضافية تم فتحها",
   "streakService_milestoneTitle": "{emoji} {label}",
   "streakService_60a570": "{arg1} {localLabel}",
-  "streakService_dayStreak_b49b65": "{arg1}-يوم {arg2} خط ·",
   "donationService_donationReceivedTitle": "تم وصول التبرع 💝",
   "donationService_youDonatedSeeds": "لقد تبرعت ببذور {amount} · جزاك الله خيرا.",
   "streakService_60a570_60a570": "{arg1} {localLabel}",
@@ -3297,87 +2101,12 @@
       }
     }
   },
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@qfAuthService_tokenExchangeFailed": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@orphan_be2bf7": {
     "placeholders": {
       "firstName": {
         "type": "String"
       },
       "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_thisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_seedsThisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_dayAvgAzkaarDay": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_profileReturnedZeroRows": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dashboardLoadError": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_sponsor": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_today": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
         "type": "String"
       }
     }
@@ -3399,28 +2128,7 @@
       }
     }
   },
-  "@dashboardScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_last": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_active": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_useMyCodeAnd": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3441,13 +2149,6 @@
       }
     }
   },
-  "@dashboardScreen_yourRank": {
-    "placeholders": {
-      "rankText": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_d13a42": {
     "placeholders": {
       "_myPoints": {
@@ -3457,47 +2158,6 @@
         "type": "String"
       },
       "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_lvl": {
-    "placeholders": {
-      "level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_sealWithin": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_ofGoal": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_default": {
-    "placeholders": {
-      "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_readTimes": {
-    "placeholders": {
-      "readCount": {
         "type": "String"
       }
     }
@@ -3563,16 +2223,6 @@
       }
     }
   },
-  "@impactReportScreen_lvl": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_200447": {
     "placeholders": {
       "arg1": {
@@ -3587,27 +2237,6 @@
       }
     }
   },
-  "@impactReportScreen_dhikrRecitedLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_hasanat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_ayahsReadLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_hasanat_e68a30": {
     "placeholders": {
       "arg1": {
@@ -3615,150 +2244,7 @@
       }
     }
   },
-  "@impactReportScreen_totalHasanaat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_planted": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_cycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalRecitations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByForgivenessCycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_built": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByPalaces": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_earned": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalRecitations_262e54": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_setsOfSetsSlaves": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_opened": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_received": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalSalawatSent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_multipliedByBlessingsReceived": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_invocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalInvocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent_d7e6f6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByQuranCompletions": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_recitations": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3786,13 +2272,6 @@
       }
     }
   },
-  "@impactReportScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_ago_c25b44": {
     "placeholders": {
       "arg1": {
@@ -3807,52 +2286,7 @@
       }
     }
   },
-  "@impactReportScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_viewAllDonors": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_failed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_meet": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_funded": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3873,13 +2307,6 @@
       }
     }
   },
-  "@levelScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_59c6a1": {
     "placeholders": {
       "arg1": {
@@ -3894,13 +2321,6 @@
       }
     }
   },
-  "@levelScreen_unlocks": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_a49180": {
     "placeholders": {
       "arg1": {
@@ -3909,13 +2329,6 @@
     }
   },
   "@levelScreen_seeds_a22be5": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_seedsBoost": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3941,34 +2354,7 @@
       }
     }
   },
-  "@levelScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_dayStreak": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3999,37 +2385,6 @@
       }
     }
   },
-  "@orphanDetailScreen_years": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_ofSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_through": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@orphanDetailScreen_ago_c25b44": {
     "placeholders": {
       "arg1": {
@@ -4044,56 +2399,7 @@
       }
     }
   },
-  "@orphanDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@orphanDetailScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_seeds": {
-    "placeholders": {
-      "_availablePoints": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_chooseHowManySeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_yourBalanceSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@profileSettingsScreen_seeds": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4114,13 +2420,6 @@
       }
     }
   },
-  "@projectDetailScreen_organisedBy": {
-    "placeholders": {
-      "sponsor": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_4c2b09": {
     "placeholders": {
       "arg1": {
@@ -4134,13 +2433,6 @@
       }
     }
   },
-  "@projectDetailScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_seeds_801ec7": {
     "placeholders": {
       "arg1": {
@@ -4149,13 +2441,6 @@
     }
   },
   "@projectDetailScreen_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@projectDetailScreen_ago": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4176,13 +2461,6 @@
       }
     }
   },
-  "@projectDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_ago_65f0ec": {
     "placeholders": {
       "arg1": {
@@ -4190,98 +2468,7 @@
       }
     }
   },
-  "@projectDetailScreen_viewAll": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_saved": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_surahVerse": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_of": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranHubScreen_saved_edce53": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_removedBookmark": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_bookmarked": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_tafsir": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_pt": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4298,26 +2485,12 @@
       }
     }
   },
-  "@quranScreen_translationsAvailable": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_3502e8": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_sabiqSeedsEarnedToday": {
-    "placeholders": {
-      "_pointsToday": {
         "type": "String"
       }
     }
@@ -4339,13 +2512,6 @@
       }
     }
   },
-  "@quranScreen_ayahsRead": {
-    "placeholders": {
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_ce2af3": {
     "placeholders": {
       "arg1": {
@@ -4356,67 +2522,6 @@
   "@quranScreen_6e8ac8": {
     "placeholders": {
       "text": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_pageJuz": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@tafsirScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@tafsirScreen_ayahOf": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
         "type": "String"
       }
     }
@@ -4434,78 +2539,6 @@
       }
     }
   },
-  "@donationService_youSponsoredSeedsJazak": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_youHavePendingSeeds": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatReadToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_readQuranToday": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_dhikrCompletedToday": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatDhikrToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailedBookmarkCould": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncedBookmarksUpDown": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "@streakService_1fc043": {
     "placeholders": {
       "arg1": {
@@ -4516,70 +2549,12 @@
       }
     }
   },
-  "@streakService_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_bonusSeedsUnlocked": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@trackingService_c7528c": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_level": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      },
-      "level": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_seedsWelcomeBack": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_sabiqSeedsConfirmedBonus": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      },
-      "bonus": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_sabiqSeedsConfirmed": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      }
-    }
-  },
-  "@motivationalPopup_seeds": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -4619,64 +2594,12 @@
       }
     }
   },
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@qfAuthService_tokenExchangeFailed_89d8a0": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@orphan_be2bf7_be2bf7": {
     "placeholders": {
       "firstName": {
         "type": "String"
       },
       "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_thisSession_702ffc": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_seedsThisSession_cd9411": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_profileReturnedZeroRows_3ccedb": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dashboardLoadError_6168de": {
-    "placeholders": {
-      "e": {
         "type": "String"
       }
     }
@@ -4691,39 +2614,12 @@
       }
     }
   },
-  "@dashboardScreen_today_261fbb": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_606140_606140": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "_lastAyah": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dayStreak_2934ca": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_active_2d214a": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -4745,13 +2641,6 @@
   "@dashboardScreen_e4e562_e4e562": {
     "placeholders": {
       "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_yourRank_67be90": {
-    "placeholders": {
-      "rankText": {
         "type": "String"
       }
     }
@@ -4779,33 +2668,9 @@
       }
     }
   },
-  "@dashboardScreen_sealWithin_381d5d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_ofGoal_9660ee": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@dhikrScreen_default_8bd36b": {
     "placeholders": {
       "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_readTimes_537f51": {
-    "placeholders": {
-      "readCount": {
         "type": "String"
       }
     }
@@ -4871,16 +2736,6 @@
       }
     }
   },
-  "@impactReportScreen_lvl_987904": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_200447_200447": {
     "placeholders": {
       "arg1": {
@@ -4923,27 +2778,6 @@
       }
     }
   },
-  "@impactReportScreen_ayahs_6a500c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_planted_90ec47": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_cycles_f6649b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalRecitations_5ed733": {
     "placeholders": {
       "arg1": {
@@ -4958,28 +2792,7 @@
       }
     }
   },
-  "@impactReportScreen_built_d62c2d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_dividedByPalaces_6f066c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_earned_abd189": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent_cb7bb5": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4992,20 +2805,6 @@
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_opened_1bf8da": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_received_a526e3": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5024,13 +2823,6 @@
       }
     }
   },
-  "@impactReportScreen_invocations_d80c33": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalInvocations_1fd02b": {
     "placeholders": {
       "arg1": {
@@ -5039,13 +2831,6 @@
     }
   },
   "@impactReportScreen_dividedByQuranCompletions_b9a013": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_recitations_3cb9ec": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -5087,33 +2872,9 @@
       }
     }
   },
-  "@impactReportScreen_viewAllDonors_e72932": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_failed_190558": {
     "placeholders": {
       "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_meet_82797d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_sponsor_a47417": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5146,13 +2907,6 @@
       }
     }
   },
-  "@levelScreen_unlocks_6f2513": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seedsBoost_464454": {
     "placeholders": {
       "arg1": {
@@ -5175,16 +2929,6 @@
         "type": "String"
       },
       "arg5": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
         "type": "String"
       }
     }
@@ -5358,38 +3102,7 @@
       }
     }
   },
-  "@projectDetailScreen_viewAll_3d2c48": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranHubScreen_saved_9c28a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_surahVerse_2c65ec": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_verses_f97238": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_of_0420fc": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -5459,26 +3172,12 @@
       }
     }
   },
-  "@quranScreen_translationsAvailable_55c648": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_3502e8_3502e8": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_sabiqSeedsEarnedToday_13ddb3": {
-    "placeholders": {
-      "_pointsToday": {
         "type": "String"
       }
     }
@@ -5521,50 +3220,6 @@
       }
     }
   },
-  "@quranScreen_pageJuz_6ac28a": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_days_100e10": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_dayStreak_df2abf": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@tafsirScreen_verses_fed624": {
     "placeholders": {
       "arg1": {
@@ -5602,94 +3257,12 @@
       }
     }
   },
-  "@liveNotificationService_youHavePendingSeeds_dd762f": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatReadToday_b5a4e8": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_readQuranToday_703122": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_dhikrCompletedToday_835583": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatDhikrToday_548e91": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailedBookmarkCould_3393f7": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncedBookmarksUpDown_dd2f96": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailed_ae7629": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "@streakService_1fc043_1fc043": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_dayStreak_9ee8a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_bonusSeedsUnlocked_bcdda5": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5826,16 +3399,6 @@
         "type": "Object"
       },
       "localLabel": {
-        "type": "Object"
-      }
-    }
-  },
-  "@streakService_dayStreak_b49b65": {
-    "placeholders": {
-      "arg1": {
-        "type": "Object"
-      },
-      "arg2": {
         "type": "Object"
       }
     }

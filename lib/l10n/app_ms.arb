@@ -888,817 +888,121 @@
   "peopleReadingNow": "sedang membaca",
   "readToday": "dibaca hari ini",
   "communityHasanat": "hasanat komuniti",
-  "authScreen_pleaseEnterYourEmail": "Sila masukkan e-mel anda",
-  "authScreen_pleaseEnterYourPassword": "Sila masukkan kata laluan anda",
-  "authScreen_passwordMustBeAt": "Kata laluan mestilah sekurang-kurangnya 6 aksara",
-  "authScreen_alreadyHaveAnAccount": "Sudah mempunyai akaun? Log Masuk",
-  "authScreen_haveAnAccountSign": "t mempunyai akaun? Daftar",
-  "qfAuthService_qfemailconflictexceptionAlreadyHasAn": "QfEmailConflictException: {email} sudah mempunyai akaun",
-  "qfAuthService_openidOfflineAccessUser": "openid offline_access koleksi penanda halaman pengguna membaca_session",
-  "qfAuthService_tokenExchangeFailed": "Pertukaran token gagal ({arg1}): {arg2}",
-  "qfAuthService_errorNullResponse": "RALAT: Balasan batal",
   "orphan_be2bf7": "{firstName} {lastInitial}.",
-  "akhirahBalanceScreen_subhanallahiWaBiHamdihi": "\"Subhanallahi wa bi-hamdihi\" - 100 kali sehari menghapuskan dosa, walaupun seperti buih di lautan. (Bukhari)",
-  "akhirahBalanceScreen_sayLaIlahaIllallah": "Ucapkan La ilaha illallah 100 kali - sama dengan memerdekakan 10 hamba dan 100 hasanat. (Bukhari)",
-  "akhirahBalanceScreen_lightOnTheTongue": "Ringan di lidah, berat di timbangan: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)",
-  "akhirahBalanceScreen_theDhikrOfAllah": "Zikir kepada Allah lebih berat di timbangan daripada emas yang sama beratnya. Teruskan.",
-  "akhirahBalanceScreen_yourTongueShouldStay": "“Lidahmu hendaklah sentiasa basah dengan berzikir kepada Allah.” - Adakah ia masih lembap?",
-  "akhirahBalanceScreen_astaghfirullahTheProphetSaid": "Astaghfirullah — Nabi ✍ mengucapkannya 100 kali sehari, dan dia tidak mempunyai dosa. Berapa ramai yang anda ada?",
-  "akhirahBalanceScreen_whenYouRememberAllah": "Apabila kamu mengingati Allah dengan tenang, Dia mengingati kamu dalam majlis yang lebih besar.",
-  "akhirahBalanceScreen_reciteAyatAlKursi": "Bacalah Ayat Kursi selepas setiap solat - tidak ada yang menghalangmu dari Jannah melainkan kematian.",
-  "akhirahBalanceScreen_oneAlhamdulillahFillsThe": "Satu Alhamdulillah memenuhi skali. Satu Subhanallah memenuhi apa yang ada di antara langit dan bumi.",
-  "akhirahBalanceScreen_theRemembranceOfAllah": "\"Berzikir kepada Allah lebih besar dari segalanya.\" — Surah Al-Ankabut 29:45",
-  "akhirahBalanceScreen_rememberMeWillRemember": "\"Ingatlah Aku - Aku akan ingat kamu.\" — Surah Al-Baqarah 2:152. sudikah anda",
-  "akhirahBalanceScreen_inTheRemembranceOf": "\"Dengan mengingati Allah, hati menjadi tenang.\" — Surah Ar-Ra’d 13:28",
-  "akhirahBalanceScreen_fiveMinutesOfDhikr": "Lima minit berzikir kini membentuk 24 jam seterusnya hati anda.",
-  "akhirahBalanceScreen_streakIsnAboutToday": "Satu coretan bukan tentang hari ini — ini tentang siapa anda dalam masa 30 hari.",
-  "akhirahBalanceScreen_smallDropsFillAn": "Titisan kecil memenuhi lautan. Zikir harian anda mengisi sesuatu yang jauh lebih besar.",
-  "akhirahBalanceScreen_noOneSeesThe": "Tiada siapa yang melihat zikir dalam hati anda - tetapi setiap malaikat yang menulis rekod anda melihatnya.",
-  "akhirahBalanceScreen_theBiggestWinsAre": "Kemenangan terbesar dibina daripada tabiat harian yang paling kecil. Jangan putuskan rantai.",
-  "akhirahBalanceScreen_youCameBackToday": "Awak balik hari ni. Itu sudah ibadah. Tinggal satu minit lagi?",
-  "akhirahBalanceScreen_tomorrowPeaceIsBuilt": "Keamanan hari esok dibina atas zikir hari ini. Tanam satu biji lagi.",
-  "akhirahBalanceScreen_areYouDoneAllah": "Adakah anda sudah selesai? Pintu Allah sentiasa terbuka — walaupun selepas anda menutupnya.",
-  "akhirahBalanceScreen_dhikrIsTheLanguage": "Zikir adalah bahasa hati. Adakah anda telah bercakap dengan Tuhannya hari ini?",
-  "akhirahBalanceScreen_everySubhanallahIsSadaqah": "Setiap Subhanallah adalah sedekah. Berapa banyak yang akan anda berikan sebelum tidur?",
-  "akhirahBalanceScreen_heartThatForgetsDhikr": "Hati yang lupa berzikir mula berkarat. Hati yang mengingati tetap menyala.",
-  "akhirahBalanceScreen_haveYouFortifiedYourself": "Sudahkah anda membentengi diri anda dengan adhkar pagi dan petang hari ini?",
-  "akhirahBalanceScreen_thisSession": "Sesi ini: +{arg1}",
-  "akhirahBalanceScreen_seedsThisSession": "+{arg1} biji sesi ini",
-  "akhirahBalanceScreen_dayAvgAzkaarDay": "Purata 7 hari: {arg1} azkaar/hari",
-  "dashboardScreen_profileReturnedZeroRows": "Profil mengembalikan sifar baris untuk {uid}",
-  "dashboardScreen_dashboardLoadError": "Ralat Muatan Papan Pemuka: {e}",
-  "dashboardScreen_invalidReferralCode": "Kod rujukan tidak sah",
-  "dashboardScreen_cannotReferYourself": "Tidak boleh merujuk sendiri",
-  "dashboardScreen_sponsor": "Penaja {name}, {arg1}",
-  "dashboardScreen_dashboardDoesn": ": 0, // papan pemuka tidak",
-  "dashboardScreen_today": "{arg1} · {_lastAyah} · +{_ayahsToday} hari ini",
   "dashboardScreen_606140": "{arg1} · {_lastAyah}",
   "dashboardScreen_setsToday": "{_dhikrToday} ditetapkan hari ini",
-  "dashboardScreen_dayStreak": "{arg1}-hari berturut-turut",
   "dashboardScreen_last": "Terakhir: {arg1}",
   "dashboardScreen_earnPerFriend": "Dapatkan +500 setiap rakan",
-  "dashboardScreen_yourSabiqSeedsFund": "Sabiq Seeds anda membiayai projek ini",
-  "dashboardScreen_active": "{arg1} aktif",
-  "dashboardScreen_joinMeOnSabiq": "Sertai saya di Ganjaran Sabiq, dapatkan Benih untuk Al-Quran, Zikir & amal soleh setiap hari!\\n\\n",
-  "dashboardScreen_useMyCodeAnd": "Gunakan kod saya *{arg1}* dan kami berdua mendapat 500 Biji Sabiq!\\n\\n",
-  "dashboardScreen_messageCopiedShareOr": "Mesej disalin, kongsi atau tampal dalam WhatsApp!",
-  "dashboardScreen_sabiqSeedsRewardedTo": "500 Biji Sabiq diberi ganjaran kepada anda berdua!",
-  "dashboardScreen_youHaveAlreadyUsed": "Anda telah menggunakan kod rujukan.",
   "dashboardScreen_invalidReferralCode_59fb25": "Kod rujukan tidak sah.",
-  "dashboardScreen_youCannotUseYour": "Anda tidak boleh menggunakan kod anda sendiri.",
-  "dashboardScreen_anErrorOccurredPlease": "Ralat berlaku. Sila cuba lagi.",
   "dashboardScreen_52b02c": "{pts}",
   "dashboardScreen_e4e562": "{arg1}%",
-  "dashboardScreen_seeDetailsForMore": "Lihat Butiran untuk lebih banyak Projek →",
-  "dashboardScreen_yourTOTALSABIQSEEDS": "JUMLAH BIJI SABIQ ANDA",
-  "dashboardScreen_viewCampaignDonate": "🤲 Lihat Kempen & Derma",
-  "dashboardScreen_yourRank": "Kedudukan Anda: {rankText}",
   "dashboardScreen_d13a42": "{_myPoints} {unit} • {arg1}",
-  "dashboardScreen_beTheFirstOn": "Jadilah yang pertama di papan tulis",
-  "dashboardScreen_readAnAyahOr": "Baca ayat atau zikir untuk menuntut tempat teratas",
-  "dashboardScreen_lvl": "Lvl {level} · {arg1}",
-  "dashboardScreen_sealWithin": "Meterai dalam {arg1}h",
-  "dashboardScreen_jazakallahDaySealed": "JazakAllah!  Hari dimeterai",
-  "dashboardScreen_ofGoal": "daripada {arg1} {arg2} matlamat",
-  "dhikrHubScreen_propheticSupplications": "Doa Nabi",
-  "dhikrHubScreen_morningEveningRemembrance": "Zikir Pagi & Petang",
-  "dhikrHubScreen_furtherSupplications": "Doa Selanjutnya",
-  "dhikrHubScreen_closingRemembranceSalawat": "Zikir Penutup & Selawat",
-  "dhikrHubScreen_hajjUmrahSupplications": "Doa Haji & Umrah",
-  "dhikrHubScreen_falseHiddenAdd": "] == palsu) hidden.add(r[",
-  "dhikrScreen_indoPak": "pak indo",
-  "dhikrScreen_default": "Lalai: {recommendedCount}",
-  "dhikrScreen_duaAzkarSettings": "Tetapan Dua & Azkar",
-  "dhikrScreen_hideTheVisualArtwork": "Sembunyikan kawasan karya seni visual",
-  "dhikrScreen_pinTheIllustrationAt": "Sematkan ilustrasi di bahagian atas manakala teks Arab menatal di bawahnya",
-  "dhikrScreen_readTimes": "Baca {readCount} kali",
   "dhikrScreen_d08433": "{arg1} / {arg2}",
-  "dhikrScreen_alBaqarahAmanaAr": "Al-Baqarah 285 (Amana ar-Rasool)",
-  "dhikrScreen_alBaqarahAlifLam": "Al-Baqarah 1-5 (Alif Lam Mim)",
-  "dhikrScreen_alBaqarahLaIkraha": "Al-Baqarah 256 (La Ikraha)",
-  "dhikrScreen_alBaqarahAllahuWaliyy": "Al-Baqarah 257 (Allahu Waliyy)",
-  "dhikrScreen_salawatIbrahimiyyaDurood": "Selawat Ibrahimiyya (Durood)",
   "dhikrScreen_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
   "dhikrScreen_86f857": "\\u2060{matched}",
   "dhikrScreen_49900d": "+{hasanaat}",
-  "dhikrScreen_hisnulMuslimChapter": "Hisnul Muslim, Bab:",
   "dhikrScreen_3856c1": "{rawRef} | {bottomRef}",
-  "dhikrScreen_bestOfBothWorlds": "Sebaik-baik dunia, berlindung dari Neraka",
-  "dhikrScreen_patienceAndSteadfastnessIn": "Sabar dan tabah dalam setiap ujian",
-  "dhikrScreen_allahBurdensNoSoul": "Allah tidak membebani seseorang melainkan kesanggupannya",
-  "dhikrScreen_keepTheHeartFirm": "Teguhkan hati atas petunjuk",
-  "dhikrScreen_faithAnsweredWithForgiveness": "Iman menjawab dengan keampunan dari Neraka",
-  "dhikrScreen_allSovereigntyInAllah": "Segala kedaulatan pada Allah\\",
-  "dhikrScreen_allahHearsEveryCall": "Allah mendengar setiap panggilan kepada zuriat yang soleh",
-  "dhikrScreen_countedWithTheWitnesses": "Dikira dengan saksi kebenaran",
-  "dhikrScreen_forgivenessFirmFeetAnd": "Pengampunan, kaki teguh, dan kemenangan",
-  "dhikrScreen_theDuaOfThose": "Doa orang yang berfikir",
-  "dhikrScreen_inscribedWithTheWitnesses": "Ditulis dengan saksi-saksi wahyu",
-  "dhikrScreen_theDuaAllahAccepted": "Doa yang diterima Allah dari Adam ﷺ",
-  "dhikrScreen_spareUsTheCompany": "Selamatkan kami kumpulan orang-orang yang zalim",
-  "dhikrScreen_neverTrialForThe": "Jangan sekali-kali ujian bagi orang yang zalim",
-  "dhikrScreen_refugeFromAskingWithout": "Berlindung daripada bertanya tanpa ilmu",
-  "dhikrScreen_prayerForSafetyAnd": "s doa untuk keselamatan dan iman",
-  "dhikrScreen_steadfastInPrayerMe": "Istiqamah dalam solat, saya dan anak-anak saya",
-  "dhikrScreen_mercyForMeMy": "Kasihanilah aku, ibu bapaku, orang-orang yang beriman",
-  "dhikrScreen_prayerForParents": "s doa untuk ibu bapa",
-  "dhikrScreen_entryOfTruthExit": "Masuk kebenaran, keluar kebenaran",
-  "dhikrScreen_prayerOfTheYouth": "Doa pemuda gua",
-  "dhikrScreen_askAllahForMore": "Mohonlah kepada Allah untuk menambah ilmu",
-  "dhikrScreen_allahAnswersAndSaves": "Allah menjawab dan menyelamatkan dari setiap kesusahan",
-  "dhikrScreen_allahIsTheBest": "Allah adalah sebaik-baik pewaris",
-  "dhikrScreen_blessedLandingWhereverYou": "Pendaratan yang diberkati di mana sahaja anda berhenti",
-  "dhikrScreen_refugeFromTheWhispers": "Berlindung dari bisikan syaitan",
-  "dhikrScreen_mercyFromTheBest": "Rahmat dari Tuhan Yang Maha Penyayang",
-  "dhikrScreen_pardonAndMercyFrom": "Keampunan dan rahmat dari Yang Maha Pemurah",
-  "dhikrScreen_piousSpousesAndRighteous": "Pasangan yang soleh dan zuriat yang soleh",
-  "dhikrScreen_prayerForThoseWho": "doa untuk orang yang bertaubat",
-  "dhikrScreen_gratitudeForParentsRighteousness": "Syukur kepada ibu bapa, soleh dalam zuriat",
-  "dhikrScreen_pleaGiftOfIshaq": "rayuan — pemberian Ishaq ﷺ",
-  "dhikrScreen_loveForTheBelievers": "Cintailah orang-orang yang beriman sebelum kita",
-  "dhikrScreen_pureTawakkulOnYou": "s pure tawakkul — KepadaMu kami berserah",
-  "dhikrScreen_forgivenessForEveryBelieving": "Pengampunan untuk setiap rumah yang beriman",
-  "dhikrScreen_tasbeehByTheWeight": "Tasbih menurut berat Allah\\",
-  "dhikrScreen_tasbeehByTheNumber": "Tasbih dengan bilangan semua yang Dia jadikan",
-  "dhikrScreen_tasbeehThatFillsAll": "Tasbih yang memenuhi semua ciptaan Allah",
-  "dhikrScreen_paradiseSoughtTheFire": "Syurga dicari — Api\\",
-  "dhikrScreen_cryToTheOne": "Menangislah kepada Dia yang mendengar, melihat, dan mengetahui",
-  "dhikrScreen_nameOnTheCorner": "nama s di sudut Kaabah",
-  "dhikrScreen_theDuaBetweenYemen": "Doa antara Sudut Yaman dan Hajar Aswad",
-  "dhikrScreen_prayAtTheStation": "Solatlah di maqam Ibrahim ﷺ",
-  "dhikrScreen_tawheedDeclaredAtopSafa": "Tauhid diisytiharkan di atas Safa dan Marwah",
-  "dhikrScreen_reaffirmTheOnenessOf": "Menegaskan semula keesaan Allah",
-  "dhikrScreen_magnifyAllahAtEvery": "Mengagungkan Allah di setiap ambang haji",
-  "dhikrScreen_magnifyAllahOnThe": "Mengagungkan Allah pada hari qurban",
-  "dhikrScreen_knowledgeProvisionHealingSought": "Ilmu, rezeki, kesembuhan — dicari di Makkah",
-  "dhikrScreen_theDuaMostRepeated": "Doa yang paling banyak diulang oleh Rasulullah ﷺ",
-  "dhikrScreen_refugeFromEveryTrial": "Berlindung dari setiap ujian hidup dan mati",
-  "dhikrScreen_refugeFromEveryWeakness": "Berlindung dari setiap kelemahan badan dan jiwa",
-  "dhikrScreen_refugeFromSevereTrial": "Berlindung daripada ujian dan musuh yang berat\\",
-  "dhikrScreen_religionSetRightWorld": "Agama ditetapkan dengan betul, dunia dan Akhirah dijadikan yang terbaik",
-  "dhikrScreen_guidancePietyVirtueSelf": "Hidayah, takwa, kebajikan, kecukupan diri",
-  "dhikrScreen_refugeFromWeaknessWealth": "Perlindungan dari kelemahan - kekayaan ketakwaan dalam diri",
-  "dhikrScreen_theGuiderOfHearts": "Pemberi petunjuk hati - ubahlah hati kita kepada ketaatan",
-  "dhikrScreen_turnerOfHeartsMake": "Yang membolak-balikkan hati - teguhkan hatiku di atas deen",
-  "dhikrScreen_wellBeingInBoth": "Kesejahteraan di kedua-dua dunia",
-  "dhikrScreen_rewardsSaveFromDisgrace": "Pahala, selamatkan dari kehinaan dan kubur\\",
-  "dhikrScreen_mindForGoodVictory": "Fikiran untuk kebaikan, kemenangan untuk kebaikan",
-  "dhikrScreen_refugeFromEvilOf": "Berlindung daripada kejahatan setiap pancaindera dan anggota badan",
-  "dhikrScreen_theForgiverWhoLoves": "Maha Pengampun yang mencintai orang yang bertaubat",
-  "dhikrScreen_takeMeBeforeYou": "Ambillah aku sebelum Engkau sesatkan",
-  "dhikrScreen_everyGoodAndRefuge": "Setiap kebaikan - dan perlindungan dari setiap kejahatan",
-  "dhikrScreen_standingSittingLyingGuarded": "Berdiri, duduk, berbaring - dikawal dalam Islam",
-  "dhikrScreen_refugeFromCowardiceMiserliness": "Berlindung dari sifat pengecut, bakhil, fitnah",
-  "dhikrScreen_forgivenessForJestAnd": "Pengampunan untuk gurauan dan serius, diketahui dan tidak diketahui",
-  "dhikrScreen_forgiveMeWithForgiveness": "Ampunilah aku dengan keampunan dariMu",
-  "dhikrScreen_submissionBeliefRepentanceFull": "Ketundukan, kepercayaan, keinsafan, kepercayaan penuh",
-  "dhikrScreen_mercyForgivenessParadiseSaved": "Rahmat, pengampunan, Syurga - diselamatkan dari Neraka",
-  "dhikrScreen_refugeFromEvilSeen": "Berlindung dari kejahatan yang nampak dan yang ghaib",
-  "dhikrScreen_provisionThatLastsTill": "Rezeki yang kekal hingga hayat\\",
-  "dhikrScreen_sinsForgivenHomeSpacious": "Dosa diampun, rumah lapang, rezeki diberkati",
-  "dhikrScreen_favorAndMercyNone": "Karunia dan rahmat - tidak ada yang memilikinya kecuali Engkau",
-  "dhikrScreen_refugeFromDrowningBurning": "Perlindungan daripada lemas, terbakar, kematian mengejut",
-  "dhikrScreen_refugeFromHypocrisyShowiness": "Berlindung dari kemunafikan, kesombongan, pemberontakan",
-  "dhikrScreen_refugeFromPovertyScarcity": "Berlindung daripada kemiskinan, kekurangan, penindasan",
-  "dhikrScreen_refugeFromHeartThat": "Berlindung dari hati yang menang\\",
-  "dhikrScreen_payMyDebtEnrich": "Bayarlah hutangku, kayakanlah aku dari kemiskinan",
-  "dhikrScreen_allahCalledByHis": "Allah memanggil dengan nama-nama-Nya yang paling indah",
-  "dhikrScreen_theAccepterOfRepentance": "Penerima taubat sentiasa menerima",
-  "dhikrScreen_anEasyReckoningOn": "Hisab yang mudah pada hari itu",
-  "dhikrScreen_remembranceGratitudeAndThe": "Zikir, syukur, dan sebaik-baik ibadah",
-  "dhikrScreen_eternalBlissWithThe": "Kebahagiaan abadi bersama Nabi ﷺ di Firdaus",
-  "dhikrScreen_forgiveSinsKnownHidden": "Ampuni dosa - diketahui, tersembunyi, sengaja, tersilap",
-  "dhikrScreen_refugeFromBeingCrushed": "Berlindung daripada dihimpit hutang dan musuh",
-  "dhikrScreen_askForParadiseRefuge": "Mintalah syurga, berlindung dari api neraka",
-  "dhikrScreen_forgiveGuideProvideProtect": "Maafkan, bimbing, sediakan, lindungi",
-  "dhikrScreen_sensesMadeBeneficialAnd": "Deria yang dibuat bermanfaat — dan berkekalan",
-  "dhikrScreen_theMostBeneficentThe": "Yang Maha Pemurah lagi Maha Pemula",
-  "dhikrScreen_allahTruthOwnerOf": "Allah - Kebenaran, Pemilik segala kerajaan",
-  "dhikrScreen_submissionWithFullSincerity": "Tunduk dengan penuh keikhlasan",
-  "dhikrScreen_amongTheGuidedThe": "Antara yang dibimbing, yang sihat, yang terpilih",
-  "dhikrScreen_whatTheProphetAsked": "Apa yang ditanya oleh Rasulullah ﷺ - saya juga bertanya",
-  "dhikrScreen_sayyidAlIstighfarThe": "Sayyid al-Istighfar - penguasa segala taubat",
-  "dhikrScreen_refugeFromEveryEvil": "Berlindung dari setiap kejahatan yang datang pada malam hari",
-  "dhikrScreen_blessEverySenseEvery": "Berkati setiap deria, setiap anggota badan",
-  "dhikrScreen_smallAndGreatFirst": "Kecil dan hebat, pertama dan terakhir, terbuka dan rahsia",
-  "dhikrScreen_noneWithholdsWhatYou": "Tiada yang menahan apa yang Engkau berikan, tiada yang memberi apa yang Engkau pegang",
-  "dhikrScreen_forgiveGuideProvideElevate": "Maafkan, bimbing, sediakan, tingkatkan",
-  "dhikrScreen_increaseFavorBeKind": "Perbanyakkan nikmat, jadilah baik, jangan pernah kecewa",
-  "dhikrScreen_beautifyOurCharacterAs": "Cantikkanlah akhlak kami sebagaimana Engkau indahkan ciptaan kami",
-  "dhikrScreen_firmInBeliefGuided": "Teguh dalam kepercayaan — dibimbing dan dibimbing",
-  "dhikrScreen_wisdomAndWithIt": "Kebijaksanaan - dan dengannya, banyak kebaikan",
-  "dhikrScreen_nameShieldsFromEvery": "nama s melindungi daripada setiap bahaya",
-  "dhikrScreen_mightAgainstEveryShaytan": "kekuatannya terhadap setiap syaitan",
-  "dhikrScreen_dayBlessedFromBeginning": "Hari yang diberkati dari awal hingga akhir",
-  "dhikrScreen_witnessNoneDeservesWorship": "Saksi - tiada yang berhak disembah melainkan Engkau",
-  "dhikrScreen_refugeFromHumiliatingOld": "Berlindung dari usia tua yang memalukan",
-  "dhikrScreen_guidedToTheBest": "Dibimbing kepada yang terbaik, diselamatkan daripada yang paling buruk",
-  "dhikrScreen_faithSetRightHome": "Iman ditetapkan betul, luas rumah, rezeki diberkati",
-  "dhikrScreen_refugeFromEveryInner": "Berlindung dari segala penyakit batin dan zahir",
-  "dhikrScreen_refugeFromEveryKind": "Berlindung dari segala bentuk keburukan",
-  "dhikrScreen_steadfastGratefulRightlyGuided": "Tabah, bersyukur, hati yang dibimbing dengan benar",
-  "dhikrScreen_theLoveOfAllah": "Cinta Allah, malaikat-malaikat-Nya, para nabi-Nya",
-  "dhikrScreen_loveOfAllahAbove": "Cinta kepada Allah melebihi cinta kepada diri sendiri",
-  "dhikrScreen_bestDeedsLastBest": "Perbuatan terbaik kekal — hari terbaik adalah bertemu dengan-Mu",
-  "dhikrScreen_pureLifeAndPeaceful": "Kehidupan yang bersih dan pulangan yang damai",
-  "dhikrScreen_patientGratefulSmallIn": "Sabar, bersyukur - kecil di mata sendiri",
-  "dhikrScreen_theBestRequestAnd": "Permintaan yang terbaik dan ganjaran yang terbaik",
-  "dhikrScreen_theHighestLevelOf": "Syurga peringkat tertinggi",
-  "dhikrScreen_firdawsTheBestOf": "Firdaws — yang terbaik dari semua itu\\",
-  "dhikrScreen_mentionRaisedSinsErased": "Sebutan diangkat, dosa terhapus, hati disucikan",
   "dhikrScreen_blessEverySenseEvery_b81b9b": "Berkatilah setiap rasa, setiap anggota badan, setiap perbuatan",
-  "dhikrScreen_mercyPleasureParadiseSaved": "Rahmat, kesenangan, Syurga - diselamatkan dari Api",
-  "dhikrScreen_noSinUncoveredNo": "Tiada dosa yang terbongkar, tiada hutang yang belum dibayar",
-  "dhikrScreen_mercyThatGuidesSets": "Rahmat yang membimbing, memperbaiki, menyucikan",
-  "dhikrScreen_trueBeliefCertainKnowledge": "Iman yang benar, ilmu yang pasti, Allah\\",
-  "dhikrScreen_withTheProphetsThe": "Bersama para Nabi, para syuhada, dan orang-orang yang benar",
-  "dhikrScreen_everyNeedEntrustedTo": "Setiap keperluan diamanahkan kepada Hakim segala keperluan",
-  "dhikrScreen_bestOfWhatAllah": "Terbaik dari apa yang Allah janjikan kepada hambaNya",
-  "dhikrScreen_safetyOnTheDay": "Keselamatan pada hari, syurga pada hari yang kekal",
-  "dhikrScreen_glorifyTheOneOf": "Muliakan Dzat yang mempunyai kemuliaan dan ilmu yang tiada tara",
-  "dhikrScreen_pardonPlentySecurityIn": "Maaf, banyak, selamat dalam deen dan dunia",
-  "dhikrScreen_healthFaithEthicsSuccess": "Kesihatan, iman, etika, kejayaan, rahmat",
-  "dhikrScreen_healthPurityEthicsAcceptance": "Kesihatan, kesucian, etika, penerimaan",
-  "dhikrScreen_guidedSecureVictorious": "Dibimbing, selamat, menang",
-  "dhikrScreen_refugeFromEveryCreature": "perlindungan dari setiap makhluk kepada Allah\\",
-  "dhikrScreen_theOneWhoAnswers": "Yang menjawab terpaksa dan patah",
-  "dhikrScreen_morningReachedByAllah": "Pagi dicapai oleh Allah\\",
-  "dhikrScreen_refugeSoughtByMusa": "Tempat perlindungan yang dicari oleh Musa, Isa, Ibrahim",
-  "dhikrScreen_allTheGoodPower": "Semua yang baik - kuasa, belas kasihan, berkat",
-  "dhikrScreen_allPraiseAndDominion": "Segala pujian dan kekuasaan adalah milik-Mu",
-  "dhikrScreen_pastPardonedFutureProtected": "Masa lalu diampuni, masa depan dilindungi",
-  "dhikrScreen_takeMyForelockTo": "Bawa ubun-ubunku menuju kebaikan",
-  "dhikrScreen_strengthForWeaknessDignity": "Kekuatan untuk kelemahan, maruah untuk malu",
-  "dhikrScreen_justiceForThoseWho": "Keadilan bagi mereka yang menyekat kebenaran",
-  "dhikrScreen_refugeFromEveryFatal": "Berlindung dari setiap musibah yang membawa maut",
-  "dhikrScreen_refugeFromEveryBad": "Berlindung dari setiap pengakhiran dan ujian yang buruk",
-  "dhikrScreen_turnBackEveryEvil": "Kembalikan setiap niat jahat kepada puncanya",
-  "dhikrScreen_justiceAndRefugeAgainst": "Keadilan dan perlindungan terhadap kejahatan mereka",
-  "dhikrScreen_forgivenessForMeMy": "Ampun untukku, ibubapaku, sekalian mukmin",
-  "dhikrScreen_purifyHeartDeedsTongue": "Sucikan hati, amal, lidah, mata",
-  "dhikrScreen_selfContentWithAllah": "Redha diri dengan Allah\\",
-  "dhikrScreen_youKnowMySecret": "Awak tahu rahsia saya dan keperluan saya",
-  "dhikrScreen_certaintyNothingHarmsWhat": "Kepastian: tiada apa yang membahayakan\\",
-  "dhikrScreen_beliefLightAndLawful": "Iman, cahaya, dan rezeki yang halal",
-  "dhikrScreen_totalLoveAndTotal": "Penuh cinta dan perjuangan total untuk Allah",
-  "dhikrScreen_makeWhatYouWithheld": "Jadikanlah apa yang Engkau tahan sebagai kekuatan dalam ketaatan",
-  "dhikrScreen_praiseTheOwnerOf": "Pujilah Pemilik setiap nama yang indah",
-  "dhikrScreen_allahKnowsTheHearts": "Allah mengetahui isi hati, langit dan seterusnya",
-  "dhikrScreen_hopeBuiltOnAllah": "Harapan yang dibina pada Allah\\",
-  "dhikrScreen_belovedToTheBelievers": "Dikasihi oleh orang-orang yang beriman, bebas dari kejahatan",
-  "dhikrScreen_mightPowerAndMajesty": "kekuatan, kuasa, dan keagungan",
-  "dhikrScreen_gratefulPatientHelpfulTo": "Bersyukur, sabar, suka menolong kepada Allah\\",
-  "dhikrScreen_withholdYourGoodFor": "t menahan kebaikan-Mu untuk kejahatanku",
-  "dhikrScreen_settledLifeAmpleProvision": "Kehidupan yang tenang, rezeki yang luas, amal yang soleh",
-  "dhikrScreen_wealthInNeedingYou": "Kekayaan dalam memerlukan Anda - tidak pernah bebas daripada Anda",
-  "dhikrScreen_defectsCoveredFearsCalmed": "Kecacatan ditutup, ketakutan ditenangkan, kesedihan dihilangkan",
-  "dhikrScreen_openTheGatesOf": "Bukalah pintu rahmat dan kemurahan hati",
-  "dhikrScreen_holdUsInYour": "Peliharalah kami dalam keselamatan-Mu — jangan sekali-kali meninggalkan kami",
-  "dhikrScreen_withinYourSecurityYour": "Dalam keamanan-Mu, ya ampun",
-  "dhikrScreen_everySinEveryDistress": "Setiap dosa, setiap kesusahan, setiap sisi",
-  "dhikrScreen_helpInDeathIn": "Tolong dalam kematian, dalam kubur, di Jambatan",
-  "dhikrScreen_beautifiedLifeBlessedGifts": "Kehidupan yang indah, hadiah yang diberkati, nikmat yang disimpan",
-  "dhikrScreen_firmFootingBlessedEnd": "Pijakan yang kukuh, pengakhiran yang diberkati, perjanjian yang dipegang",
-  "dhikrScreen_hopesFulfilledEnemiesRepelled": "Harapan tercapai, musuh ditangkis, urusan diperbetulkan",
-  "dhikrScreen_guidedToTheUpright": "Dibimbing kepada yang lurus, terpelihara dari diri",
-  "dhikrScreen_lightAndForgivenessFrom": "Cahaya dan keampunan dari Pemilik Arasy",
-  "dhikrScreen_forgivenessForWhatRepented": "Ampun atas apa yang saya insaf dan kembali",
-  "dhikrScreen_understandingThatDrawsNear": "Kefahaman yang mendekatkan diri kepada Allah",
-  "dhikrScreen_soulsDwellingInThe": "Jiwa-jiwa bersemayam di ketinggian taqwa",
-  "dhikrScreen_crossTheBridgeOf": "Lintas titian keinginan dengan kesabaran",
-  "dhikrScreen_followThePathOf": "Ikuti jalan keikhlasan dan kepastian",
-  "dhikrScreen_helpAgainstTheSoul": "Bantuan terhadap jiwa dan terhadap syaitan",
-  "dhikrScreen_fearHappinessVictorySecurity": "Ketakutan, kebahagiaan, kemenangan, keselamatan",
-  "dhikrScreen_entrustFamilyWealthChildren": "Serahkanlah keluarga, harta, anak-anak — semuanya kepada Allah",
-  "dhikrScreen_faithGuardedFaithPreserved": "Iman terpelihara, iman terpelihara",
-  "dhikrScreen_wellBeingTillThe": "Kesejahteraan hingga akhir — dimeterai dengan pengampunan",
-  "dhikrScreen_whatProtectsMeFrom": "Apa yang melindungi saya dari dunia ini\\",
-  "dhikrScreen_mercyOnEverySoul": "Rahmat pada setiap jiwa\\",
-  "dhikrScreen_burdenUsAsThose": "t membebani kami sebagaimana mereka yang dahulu dibebani",
-  "dhikrScreen_mercyPardonForgivenessVictory": "Rahmat, pengampunan, pengampunan, kemenangan",
   "dhikrScreen_keepTheHeartFirm_9c4efb": "Teguhkan hati selepas hidayah",
-  "dhikrScreen_allahNeverFailsHis": "Allah tidak pernah memungkiri janjiNya",
   "dhikrScreen_faithAnsweredWithForgiveness_3f30c4": "Iman menjawab dengan pengampunan dari Api",
-  "dhikrScreen_recordUsWithThe": "Catatlah kami dengan saksi-saksi kebenaran",
-  "dhikrScreen_forgivenessFirmnessAndVictory": "Pengampunan, ketegasan, dan kemenangan",
-  "dhikrScreen_creationHasPurposeRefuge": "Penciptaan mempunyai tujuan - perlindungan daripada Neraka",
-  "dhikrScreen_refugeFromTheDisgrace": "Berlindung dari kehinaan Neraka",
-  "dhikrScreen_heardBelievedAskingForgiveness": "Mendengar, percaya, memohon ampun",
-  "dhikrScreen_sinsForgivenDeathAmong": "Dosa diampuni - kematian di kalangan orang benar",
-  "dhikrScreen_promisedRewardNeverDisgraced": "Ganjaran yang dijanjikan — tidak pernah dihina pada Hari Kebangkitan",
   "dhikrScreen_inscribedWithTheWitnesses_e2612d": "Ditulis dengan saksi-saksi kebenaran",
-  "dhikrScreen_provisionAndSignsFrom": "Rezeki dan tanda-tanda dari langit",
-  "dhikrScreen_duaTheDuaOf": "s dua — doa setiap orang yang bertaubat",
-  "dhikrScreen_spareUsFromThe": "Jauhkanlah kami daripada kumpulan orang-orang yang zalim",
   "dhikrScreen_allahIsTheBest_4f2bf7": "Allah adalah sebaik-baik hakim antara kebenaran dan dusta",
-  "dhikrScreen_patienceTillTheEnd": "Sabar hingga akhir, mati demi penyerahan",
   "dhikrScreen_neverTrialForThe_5eb10a": "Tidak sekali-kali cobaan bagi orang-orang kafir",
-  "dhikrScreen_hiddenInEveryChest": "s tersembunyi di setiap dada",
-  "dhikrScreen_prayerForPrayerAccepted": "s doa untuk doa diterima",
-  "dhikrScreen_mercyGrantedGuidancePrepared": "Rahmat dikurniakan, bimbingan disediakan",
-  "dhikrScreen_duaBeforePharaoh": "s doa di hadapan Firaun",
-  "dhikrScreen_refugeFromClingingEvil": "Berlindung daripada azab yang berpaut dan jahat",
-  "dhikrScreen_piousSpousesRighteousChildren": "Pasangan yang soleh, anak yang soleh, kepimpinan",
-  "dhikrScreen_allahIsEverThankful": "Allah sentiasa bersyukur atas setiap usaha",
-  "dhikrScreen_mercyEncompassingEveryRepentant": "Rahmat meliputi setiap jiwa yang bertaubat",
-  "dhikrScreen_mercyOnThatDay": "Rahmat pada hari itu - kejayaan yang besar",
-  "dhikrScreen_loveAndForgivenessFor": "Kasih sayang dan pengampunan bagi orang-orang beriman yang terdahulu",
-  "dhikrScreen_kindnessAndMercyUpon": "Kebaikan dan rahmat kepada Allah\\",
-  "dhikrScreen_pureTawakkulToYou": "Tawakkul tulen - kepadaMu kami kembali",
-  "dhikrScreen_neverFitnahForThose": "Tidak pernah menjadi fitnah bagi orang-orang kafir",
-  "dhikrScreen_completeTheLightForgive": "Lengkapkan cahaya - maafkan kami",
-  "dhikrScreen_strongerThanServantThe": "Lebih kuat daripada seorang hamba — malam\\",
-  "dhikrScreen_refugeFromEveryVisible": "Berlindung dari setiap kejahatan yang nampak sebelum tidur",
-  "dhikrScreen_refugeFromEveryWhisper": "Berlindung dari setiap bisikan sebelum tidur",
-  "dhikrScreen_guardedByAnAngel": "Dijaga oleh malaikat hingga pagi",
-  "dhikrScreen_twoVersesThatSuffice": "Dua ayat yang cukup untuk sepanjang malam",
-  "dhikrScreen_pureTawheedDeclaredBefore": "Tauhid tulen diisytiharkan sebelum tidur",
-  "dhikrScreen_sleepIsSmallDeath": "Tidur adalah kematian yang kecil - diamanahkan kepada Allah",
-  "dhikrScreen_whoeverDiesThatNight": "Sesiapa yang mati pada malam itu mati dalam keadaan fitrah",
-  "dhikrScreen_guardTheSoulThat": "Jagalah jiwa yang kembali, atau kasihanilah",
-  "dhikrScreen_refugeFromThePunishment": "berlindung daripada azab hari itu",
-  "dhikrScreen_gratitudeForShelterFood": "Bersyukur untuk tempat tinggal, makanan, dan penjagaan",
-  "dhikrScreen_handOverTheSoul": "Serahkan jiwa sebelum tidur",
   "dhikrScreen_refugeFromEveryEvil_6d2534": "Berlindung dari setiap kejahatan yang mencengkam",
-  "dhikrScreen_joinTheHighestAssembly": "Sertai perhimpunan tertinggi semasa anda tidur",
-  "dhikrScreen_gratitudeBeforeClosingThe": "Syukur sebelum menutup mata",
-  "dhikrScreen_surahAsSajdahRecited": "Surah As-Sajdah dibaca sebelum tidur",
-  "dhikrScreen_refugeFromEvilBefore": "Berlindung daripada kejahatan sebelum memasuki tandas",
-  "dhikrScreen_seekForgivenessAsYou": "Minta pengampunan semasa anda pergi",
-  "dhikrScreen_bismillahEveryBiteBegins": "Bismillah - setiap gigitan bermula dengan Allah",
-  "dhikrScreen_catchUpTheName": "Kejar nama - Allah pada permulaan dan akhir",
-  "dhikrScreen_threeSunnahDuasTo": "Tiga doa sunnah untuk bersyukur kepada Allah selepas makan",
-  "dhikrScreen_beginWithAllahThe": "Mulakan dengan Allah Yang Maha Penyayang, sebelum minum",
-  "dhikrScreen_openTheEightDoors": "Buka lapan pintu syurga selepas wudhu",
-  "dhikrScreen_openTheDoorsOf": "Bukalah pintu-pintu Allah\\",
-  "dhikrScreen_bountyAsYouLeave": "limpah kurnia apabila anda meninggalkan masjid",
-  "dhikrScreen_mayAllahGuideYou": "Semoga Allah membimbingmu dan memperbaiki keadaanmu",
-  "dhikrScreen_askAllahLordOf": "Mintalah kepada Allah, Tuhan Pemilik Arasy, supaya diberi kesembuhan",
-  "dhikrScreen_allahIsTheOnly": "Allah sahaja yang menyembuhkan",
-  "dhikrScreen_shieldChildrenWithAllah": "Lindungi anak-anak dengan Allah\\",
-  "dhikrScreen_anicPrayerForOne": "doa anik untuk seorang\\",
-  "dhikrScreen_twoPhrasesBelovedTo": "Dua kalimah yang dicintai oleh Yang Maha Pemurah",
-  "dhikrScreen_allahLovesToPardon": "Allah suka memaafkan - maka mintalah",
-  "dhikrScreen_treasureFromBeneathThe": "Harta karun dari bawah Arasy",
-  "dhikrScreen_theFourPhrasesDearest": "Empat kalimat yang paling dicintai Allah",
-  "dhikrScreen_theDuaThatReleases": "Doa yang melepaskan dari setiap kesusahan",
-  "dhikrScreen_protectionForHomeAnd": "s perlindungan untuk rumah dan keturunan",
-  "dhikrScreen_theCompleteDhikrOf": "Zikir Tauhid yang lengkap",
-  "dhikrScreen_trialPurifiedByAllah": "Ujian yang disucikan oleh Allah\\",
-  "dhikrScreen_guidanceBeforeAnyChoice": "bimbingan sebelum sebarang pilihan",
-  "dhikrScreen_completeRuqyaSequenceFatihah": "Urutan ruqya yang lengkap - Fatihah dan perlindungan",
-  "dhikrScreen_sinsForgivenEvenIf": "Dosa diampuni walaupun seperti buih di lautan",
-  "dhikrScreen_freedHasanatSinsErased": "10 dibebaskan · 100 hasanat · 100 dosa dihapuskan · Syaitan dihalau",
-  "dhikrScreen_blessingsDescendFromAllah": "10 rahmat Allah turun ke atas kamu",
-  "dhikrScreen_askAllahToBless": "Mohon kepada Allah agar diberkati dan indahkan hari anda",
-  "dhikrScreen_guaranteedJannahIfYou": "Dijamin Jannah, jika anda mati hari ini",
   "dhikrScreen_guaranteedJannahIfYou_48d274": "Dijamin Jannah, jika anda mati malam ini",
-  "dhikrScreen_yourLifeEntrustedTo": "Hidupmu diamanahkan kepada Yang Hidup Kekal",
-  "dhikrScreen_allEvilInHis": "Segala kejahatan dalam ciptaan-Nya ditolak darimu",
-  "dhikrScreen_nothingShallHarmYou": "Tiada apa-apa yang boleh membahayakan kamu, dengan kata-kata yang sempurna",
-  "dhikrScreen_shieldYourselfFromMinor": "Lindungi diri anda daripada syirik kecil dan besar, pagi & petang",
-  "dhikrScreen_completeProtectionInThe": "Perlindungan sepenuhnya dengan nama Allah",
-  "dhikrScreen_weightierThanAllVoluntary": "Lebih berat daripada semua solat sunat, dari subuh hingga maghrib",
-  "dhikrScreen_reciteMorningEveningEarn": "Mengaji pagi & petang, dapatkan keredhaan & keberkatan Allah pada hari kiamat",
-  "dhikrScreen_yourRewardAwaitsDirectly": "Pahala anda menanti secara langsung di sisi Allah apabila anda bertemu dengan-Nya",
-  "dhikrScreen_reciteMorningEveningTo": "Mengaji pagi & petang untuk menunaikan kewajipan bersyukur kepada Allah",
-  "dhikrScreen_theProphetTaughtThis": "Nabi mengajarkan doa ini untuk pagi dan petang, jangan ketinggalan",
-  "dhikrScreen_dominionAtTheStart": "Kekuasaan pada awal pagimu, semua kerajaan adalah milik-Nya",
-  "dhikrScreen_asEveningFallsThe": "Apabila petang tiba, seluruh kerajaan adalah milik Allah sahaja",
-  "dhikrScreen_endYourEveningUpon": "Akhiri malammu dengan fitrah yang suci, sebagaimana yang diajarkan oleh Nabi (ﷺ).",
-  "dhikrScreen_satanWillNotEnter": "Syaitan tidak akan masuk ke rumah orang yang membacanya",
-  "dhikrScreen_readingLastVersesOf": "Membaca 2 ayat terakhir al-Baqarah sudah memadai",
-  "dhikrScreen_everyDuaInThis": "Setiap doa dalam ayat ini - Allah berfirman: Aku telah melakukannya",
-  "dhikrScreen_guardedByAllahUntil": "Dijaga oleh Allah hingga pagi tiba",
-  "dhikrScreen_recitingEqualsReadingThe": "Membaca 3x sama dengan membaca keseluruhan Al-Quran, Bukhari & Muslim",
-  "dhikrScreen_reciteAtDawnDusk": "Berzikir 3x pada waktu subuh & senja, cukuplah kamu dari segala bahaya",
   "dhikrScreen_reciteAtDawnDusk_f17fb8": "Berzikir 3x pada waktu subuh & maghrib nescaya mencukupi dari segala segi",
-  "dhikrScreen_refugeFromTheWhisperer": "Berlindung daripada pembisik, kepada Tuhan Manusia",
-  "dhikrScreen_reciteMorningEveningYour": "Mengaji 3x pagi & petang, kesyukuran anda kepada Allah termakbul",
-  "dhikrScreen_sufficientAgainstEveryHarm": "Memadai dari setiap kemudaratan yang dibaca 3 kali",
-  "dhikrScreen_doorsOfAllahMercy": "Pintu-pintu rahmat Allah terbuka luas untukmu",
-  "dhikrScreen_worryAndSorrowLifted": "Kebimbangan dan kesedihan terangkat dengan kehendak Allah",
-  "dhikrScreen_guardedInYourDeen": "Dipelihara di dunia dan akhiratmu",
-  "dhikrScreen_evilRepelledFromEvery": "Kejahatan ditolak dari segala arah",
-  "dhikrScreen_heartHeldByThe": "Hati yang dipegang oleh Ever Living Ever Sustaining",
-  "dhikrScreen_fulfilledYourObligationOf": "Menunaikan kewajipan anda untuk bersyukur",
-  "dhikrScreen_recitingTheLastVerses": "Membaca 2 ayat terakhir Al-Baqarah pada waktu malam sudah memadai",
-  "dhikrScreen_gratitudeThatMultipliesYour": "Syukur yang melipatgandakan nikmatmu",
-  "dhikrScreen_startPureOnThe": "Mulakan murni di atas fitrah Islam",
-  "dhikrScreen_praiseThatRipplesThrough": "Pujian yang beralun di seluruh ciptaan",
-  "dhikrScreen_guidedToEveryGood": "Dibimbing kepada setiap kebaikan hari ini",
   "dhikrScreen_nothingShallHarmYou_8c5c6c": "Tiada apa-apa yang akan membahayakan kamu dengan nama-Nya",
-  "dhikrScreen_allahWillFreeHim": "Allah akan membebaskannya dari api neraka yang membacanya sebanyak 4 kali",
   "dhikrScreen_guaranteedJannahIfYou_0ffafe": "Dijamin Jannah jika anda mati hari ini",
-  "dhikrScreen_wellbeingOfBodyHearing": "Kesejahteraan pendengaran dan penglihatan badan",
-  "dhikrScreen_guidedByTheHand": "Dibimbing oleh tangan Allah",
-  "dhikrScreen_wordsHeavierThanThe": "Perkataan yang lebih berat daripada langit dan bumi",
-  "dhikrScreen_beginYourDayIn": "Mulakan hari anda dengan berserah kepada Allah",
-  "dhikrScreen_theyAreEnoughFor": "Mereka cukup untuk anda - mengaji sebelum tidur",
   "dhikrScreen_guardedInYourDeen_4a0b4a": "Dipelihara dalam Deenmu · Dunya · Akhirah, dan dari enam penjuru",
-  "dhikrScreen_wellBeing": "kesejahteraan",
-  "dhikrScreen_fulfilled": "Dipenuhi.",
-  "dhikrScreen_wellBeingInFaith": "Kesejahteraan dalam Iman · Keluarga · Kekayaan",
-  "dhikrScreen_concealMyFaultsCalm": "Sembunyikan kesalahan saya · Tenangkan ketakutan saya",
   "dhikrScreen_guardMeFromAll": "Jaga saya dari semua enam pihak",
-  "dhikrScreen_protectionFromEvilEye": "Perlindungan daripada Mata Jahat",
-  "dhikrScreen_doNotLeaveMe": "Jangan tinggalkan saya sendiri\\walaupun sekelip mata",
   "dhikrScreen_35c165": "{arg1}",
-  "dhikrScreen_allahWillSufficeYou": "Allah akan mencukupkan kamu",
-  "dhikrScreen_againstWhateverConcernsYou": "terhadap apa sahaja yang membimbangkan anda",
   "dhikrScreen_sinsWashedAway": "Dosa Dicuci",
   "dhikrScreen_slavesFreed": "Hamba Dibebaskan",
-  "dhikrScreen_doNotBurdenUs": "Janganlah Engkau bebankan kami melebihi kemampuan kami, ampunilah kami dan kasihanilah kami",
-  "dhikrScreen_weHaveBelievedForgive": "Kami telah beriman - ampunilah dosa-dosa kami dan peliharalah kami dari api neraka",
-  "dhikrScreen_ownerOfSovereigntyIn": "Wahai Pemilik Kedaulatan — di TanganMu segala kebaikan, Engkau Maha Berkuasa",
-  "dhikrScreen_forgiveOurSinsAnd": "Ampunilah dosa dan keterlaluan kami, teguhkan kami dan kurniakanlah kemenangan kepada kami",
-  "dhikrScreen_youCreatedNotIn": "Engkau tidak menciptakan dengan sia-sia - lindungilah kami dari azab Neraka",
-  "dhikrScreen_weHaveWrongedOurselves": "Kami telah menganiaya diri kami sendiri - tanpa belas kasihan-Mu kami sesat",
-  "dhikrScreen_ourLordDoNot": "Ya Tuhan kami, janganlah Engkau jadikan kami bersama orang-orang yang zalim",
-  "dhikrScreen_doNotMakeUs": "Jangan jadikan kami ujian bagi orang yang zalim",
-  "dhikrScreen_makeMeSteadfastIn": "Jadikan aku teguh dalam solat - dan juga keturunanku",
-  "dhikrScreen_forgiveMeMyParents": "Ampunilah aku, ibu bapaku, dan orang-orang mukmin pada hari perhitungan",
-  "dhikrScreen_bringMeInBy": "Bawalah aku masuk dengan pintu masuk kebenaran dan keluar dengan jalan keluar kebenaran",
-  "dhikrScreen_myLordIncreaseMe": "Ya Tuhanku, tambahkanlah kepadaku ilmu",
-  "dhikrScreen_seekRefugeInYou": "Aku berlindung kepadaMu dari bisikan syaitan",
   "dhikrScreen_weHaveBelievedForgive_e958e6": "Kami telah beriman - ampunilah kami, Engkau adalah sebaik-baik Penyayang",
-  "dhikrScreen_forgiveAndHaveMercy": "Ampunilah dan berilah rahmat - Engkau adalah sebaik-baik Pemberi Penyayang",
-  "dhikrScreen_enableMeToBe": "Izinkan aku untuk mensyukuri nikmat-Mu kepadaku dan kepada kedua orang tuaku",
-  "dhikrScreen_myLordHaveWronged": "Tuhanku, aku telah menganiaya diriku sendiri, maka ampunilah aku",
-  "dhikrScreen_myLordWillNever": "Tuhanku, aku sekali-kali tidak akan menjadi penyokong penjenayah",
-  "dhikrScreen_myLordSaveMe": "Ya Tuhanku, selamatkanlah aku dari kaum yang zalim",
-  "dhikrScreen_myLordAmIn": "Ya Tuhanku, aku sangat memerlukan kebaikan yang Engkau turunkan kepadaku",
-  "dhikrScreen_myLordHelpMe": "Ya Tuhanku, tolonglah aku terhadap orang-orang yang berbuat kerusakan",
-  "dhikrScreen_ourLordAvertFrom": "Ya Tuhan kami, jauhkan azab neraka dari kami",
-  "dhikrScreen_ourLordYouEncompass": "Ya Tuhan kami, rahmat dan ilmu Engkau meliputi segala sesuatu",
-  "dhikrScreen_enableMeToThank": "Mampukanlah aku untuk bersyukur kepadaMu dan jadikanlah anak cucuku yang soleh",
-  "dhikrScreen_myLordGrantMe": "Ya Tuhanku, anugerahkanlah kepadaku orang-orang yang bertakwa",
-  "dhikrScreen_forgiveUsAndOur": "Ampunilah kami dan saudara-saudara kami yang sebelum kami beriman",
-  "dhikrScreen_uponYouWeRely": "KepadaMu kami bertawakkal, kepadaMu kami kembali, dan kepadaMulah tempat kembali",
-  "dhikrScreen_pauseRememberAllah": "jeda. Ingat Allah.",
   "dhikrScreen_mashaallahRewardSecured": "MashaAllah! Ganjaran Dijamin",
-  "dhikrScreen_satanCannot": "Syaitan tidak boleh",
-  "dhikrScreen_enterTheHome": "masuk rumah",
-  "dhikrScreen_whoeverRecites": "Sesiapa yang mengaji",
-  "dhikrScreen_theLastTwoVerses": "dua ayat terakhir",
-  "dhikrScreen_ofSurahAlBaqarah": "of Surah Al-Baqarah",
-  "dhikrScreen_atNight": "pada waktu malam --",
-  "dhikrScreen_theyWillBe": "mereka akan menjadi",
-  "dhikrScreen_enoughForHim": "cukup untuk dia",
-  "dhikrScreen_weHaveEnteredThe": "Kita dah masuk petang",
-  "dhikrScreen_theKingdomBelongsTo": "Kerajaan itu milik Allah",
-  "dhikrScreen_noneWorthyOfWorship": "Tiada yang berhak disembah melainkan Allah sahaja",
-  "dhikrScreen_allPraiseHeIs": "Segala puji · Dia Maha Kuasa atas segala sesuatu",
-  "dhikrScreen_weAskForThe": "Kami memohon kebaikan malam ini",
-  "dhikrScreen_saySeekRefuge": "Katakanlah: Aku berlindung",
-  "dhikrScreen_inTheLordOf": "dalam Tuhan Manusia",
-  "dhikrScreen_theKingOfMankind": "Raja Manusia",
-  "dhikrScreen_theGodOfMankind": "Tuhan Manusia,",
-  "dhikrScreen_heRetreatsWhenYou": "Dia berundur apabila kamu mengingati Allah.",
-  "dhikrScreen_seekRefugeInThe": "Berlindunglah kepada Tuhan Yang Menguasai Subuh",
-  "dhikrScreen_sufficedInAllRespects": "Memadai dalam semua segi.",
-  "dhikrScreen_allahDoesNotBurden": "Allah tidak membebankan",
-  "dhikrScreen_soul": "sebuah jiwa",
   "dhikrScreen_a5cfd1": "×{count}",
-  "dhikrScreen_equalsTheWholeQuran": "Sama dengan keseluruhan Al-Quran × 3",
   "dhikrScreen_completeToWatchYour": "Lengkap untuk melihat taman anda mekar di atas",
-  "impactReportScreen_whoeverDoesAnAtom": "“Sesiapa yang melakukan atom\\",
-  "impactReportScreen_theHomeOfThe": "“Negeri akhirat itulah kehidupan yang kekal, kalaulah mereka mengetahui”. — Surah Al-Ankabut 29:64",
-  "impactReportScreen_raceTowardsForgivenessFrom": "“Berlomba-lombalah kamu kepada ampunan dari Tuhanmu dan surga yang luasnya seluas langit dan bumi.” — Surah Al-Hadid 57:21",
-  "impactReportScreen_andWhatIsThe": "“Dan apakah kehidupan dunia ini selain senda gurau yang memperdayakan?” — Surah Ali Imran 3:185",
-  "impactReportScreen_indeedWithHardshipComes": "“Sesungguhnya bersama kesulitan ada kemudahan.” — Surah Ash-Sharh 94:6",
-  "impactReportScreen_singleGoodDeedIn": "“Satu kebaikan di bulan Ramadhan menyamai 70 di bulan lain.” Tumpukan semasa pintu terbuka.",
-  "impactReportScreen_theProphetSaidCharity": "Nabi ✍ bersabda: sedekah tidak mengurangkan harta - ia menumbuhkannya. (Muslim)",
-  "impactReportScreen_smilingAtYourBrother": "\"Senyum kepada saudaramu adalah sedekah.\" Anda boleh menjana pendapatan walaupun poket anda kosong. (Tirmizi)",
-  "impactReportScreen_theMostBelovedDeeds": "“Amalan yang paling dicintai Allah adalah yang paling konsisten walaupun sedikit.” (Bukhari)",
-  "impactReportScreen_inJannahIsWhat": "“Di dalam Jannah terdapat apa yang tidak pernah dilihat oleh mata, tidak pernah didengar oleh telinga, dan tidak pernah dibayangkan oleh hati.” (Bukhari)",
-  "impactReportScreen_twoRakatsAtFajr": "Dua rakaat pada waktu Subuh lebih baik daripada dunia dan segala isinya. (Muslim)",
-  "impactReportScreen_everyStepTowardSalah": "Setiap langkah menuju solat menghapuskan dosa dan menaikkan darjat. (Muslim)",
-  "impactReportScreen_everySeedYouDonate": "Setiap benih yang anda dermakan menanam pokok pada orang lain\\",
-  "impactReportScreen_takeWealthWithYou": "t bawa kekayaan bersama anda. Hanya akta yang dibelinya.",
-  "impactReportScreen_theAngelsRecordNothing": "Para malaikat tidak mencatatkan sesuatu yang terlalu kecil. Satu Subhanallah mungkin melebihi segunung.",
-  "impactReportScreen_sadaqahIsTomorrow": "sedekah adalah esok\\",
-  "impactReportScreen_heartThatGivesIs": "Hati yang memberi adalah hati yang Allah tetapkan penuh. Don\\",
-  "impactReportScreen_theReceiptWhatDid": "s resit. Apa yang anda hantar dahulu?",
-  "impactReportScreen_imagineYourScaleOn": "Bayangkan skala anda pada Yawm al-Qiyamah. Berapakah berat yang anda tambah hari ini?",
-  "impactReportScreen_theWorldIsBorrowed": "Dunia dipinjam. Akhirah adalah milik. Melabur sewajarnya.",
-  "impactReportScreen_youBuryTheBody": "Anda mengebumikan mayat - tetapi bukan perbuatan. Hantar mereka ke hadapan selagi anda boleh.",
-  "impactReportScreen_righteousChildWhoPrays": "Anak soleh yang mendoakan anda, amal yang mengalir, atau ilmu yang memberi manfaat - tiga pelaburan yang kekal. (Muslim)",
-  "impactReportScreen_youWillMeetAllah": "Kamu akan bertemu Allah dengan catatan kamu. Pastikan hari ini\\",
-  "impactReportScreen_noDeedIsToo": "Tidak ada amal yang terlalu kecil bagi Dzat yang menghitung atom.",
-  "impactReportScreen_lvl": "Lvl {_level} · {arg1}",
   "impactReportScreen_200447": "+{arg1}",
   "impactReportScreen_deedsTODAY": "PERBUATAN HARI INI",
   "impactReportScreen_634027": "+{arg1}",
   "impactReportScreen_thisWEEK": "MINGGU INI",
   "impactReportScreen_hasanaatEarned": "Hasanaat Diperolehi",
-  "impactReportScreen_whoeverDoesGoodDeed": "Barangsiapa yang mengerjakan kebaikan maka baginya sepuluh kali lipat kebaikannya.",
-  "impactReportScreen_whoeverReadsLetterFrom": "Barangsiapa membaca satu huruf dari kitab Allah, maka baginya satu hasanah, dan satu hasanah digandakan sepuluh.",
-  "impactReportScreen_twoHadithGrowThis": "Dua hadis menumbuhkan bilangan ini bersebelahan:\\n\\n",
-  "impactReportScreen_dhikrRecitedLifetime": "Dzikir yang dibaca (seumur hidup): {arg1}\\n",
-  "impactReportScreen_hasanat": "→ Hasanat: {arg1}\\n\\n",
-  "impactReportScreen_ayahsReadLifetime": "Ayah dibaca (seumur hidup): {arg1}\\n",
   "impactReportScreen_hasanat_e68a30": "→ Hasanat: {arg1}\\n\\n",
-  "impactReportScreen_totalHasanaat": "Jumlah hasanat: {arg1}",
-  "impactReportScreen_ayahs": "{arg1} ayahs",
   "impactReportScreen_hasanatFromQuran": "Hasanat dari Quran",
-  "impactReportScreen_planted": "{arg1} ditanam",
   "impactReportScreen_treesInJannah": "Pokok di Jannah",
-  "impactReportScreen_cycles": "{arg1} kitaran",
   "impactReportScreen_sinsForgiven": "Dosa Diampuni",
-  "impactReportScreen_whoeverSaysSubhanAllahiWa": "Barangsiapa mengucapkan Subhanallahi wa bihamdihi 100 kali dalam sehari, maka dosanya diampuni walaupun sebanyak buih di lautan.",
-  "impactReportScreen_subhanallahiWaBihamdihi": "SubhanAllahi wa bihamdihi",
-  "impactReportScreen_totalRecitations": "Jumlah bacaan: {arg1}\\n",
-  "impactReportScreen_dividedByForgivenessCycles": "Dibahagikan dengan 100 → kitaran pengampunan: {arg1}",
-  "impactReportScreen_built": "{arg1} dibina",
   "impactReportScreen_palacesBuilt": "Istana Dibina",
-  "impactReportScreen_dividedByPalaces": "Dibahagikan dengan 10 → istana: {arg1}",
-  "impactReportScreen_earned": "{arg1} diperolehi",
   "impactReportScreen_treasuresOfJannah": "Khazanah Jannah",
-  "impactReportScreen_equivalent": "{arg1} setara",
   "impactReportScreen_slavesFreed": "Hamba Dibebaskan",
-  "impactReportScreen_laIlahaIllallahuWahdahu": "La ilaha illallahu wahdahu la sharika lahu...",
   "impactReportScreen_totalRecitations_262e54": "Jumlah bacaan: {arg1}\\n",
-  "impactReportScreen_setsOfSetsSlaves": "Set 10 → {arg1} set × 4 hamba = {arg2}",
-  "impactReportScreen_opened": "{arg1} dibuka",
   "impactReportScreen_gatesOfParadiseOpened": "Pintu Syurga Dibuka",
-  "impactReportScreen_received": "{arg1} diterima",
   "impactReportScreen_blessingsFromAllah": "Keberkatan dari Allah",
-  "impactReportScreen_totalSalawatSent": "Jumlah selawat yang dihantar: {arg1}\\n",
-  "impactReportScreen_multipliedByBlessingsReceived": "Darab dengan 10 → {arg1} berkat yang diterima",
-  "impactReportScreen_invocations": "{arg1} seruan",
   "impactReportScreen_timesProtected": "Masa Dilindungi",
-  "impactReportScreen_protectionFromEvil": "Perlindungan daripada kejahatan",
-  "impactReportScreen_goodHealthProtection": "Kesihatan & perlindungan yang baik",
-  "impactReportScreen_totalInvocations": "Jumlah seruan: {arg1}",
-  "impactReportScreen_equivalent_d7e6f6": "{arg1} setara",
   "impactReportScreen_quranCompletions": "Khatam Al-Quran",
-  "impactReportScreen_dividedByQuranCompletions": "Dibahagikan dengan 3 → {arg1} khatam Al-Quran",
-  "impactReportScreen_recitations": "{arg1} bacaan",
   "impactReportScreen_bonusMillionHasanaat": "Bonus Juta Hasanaat",
   "impactReportScreen_sadaqahGiven": "Sedekah yang Diberikan",
   "impactReportScreen_564740": "{_monthActiveDays}",
   "impactReportScreen_3dc421": "{arg1}h",
   "impactReportScreen_08990a": "{arg1}m",
-  "impactReportScreen_ago": "{arg1}m yang lalu",
   "impactReportScreen_ago_c25b44": "{arg1}j lalu",
   "impactReportScreen_ago_e160e3": "{arg1}w lalu",
-  "impactReportScreen_moAgo": "{arg1}mo lalu",
   "impactReportScreen_ago_65f0ec": "{arg1}y yang lalu",
-  "impactReportScreen_viewAllDonors": "Lihat semua {arg1} penderma",
-  "impactReportScreen_failed": "Gagal: {e}",
-  "impactReportScreen_meet": "Temui {arg1}, {arg2}",
-  "impactReportScreen_sponsor": "Penaja {arg1} →",
-  "impactReportScreen_funded": "{arg1}% dibiayai",
-  "impactReportScreen_yourLifetimeImpact": "Kesan seumur hidup anda",
-  "impactReportScreen_startYourImpactJourney": "Mulakan perjalanan kesan anda",
   "impactReportScreen_bd3721": "{_myOrphansSponsoredCount}",
   "impactReportScreen_b3d969": "{_myProjectsSupportedCount}",
-  "levelScreen_customProfileThemes": "Tema profil tersuai",
-  "levelScreen_exclusiveVotingRights": "Hak mengundi eksklusif",
-  "levelScreen_hallOfFameListing": "Penyenaraian Dewan Kemasyhuran",
-  "levelScreen_seeds": "+{arg1} Benih",
-  "levelScreen_laIlahaIllallah": "La ilaha illallah x100",
   "levelScreen_seeds_59c6a1": "+{arg1} Benih",
   "levelScreen_seeds_a20530": "+{arg1} Benih",
-  "levelScreen_unlocks": "Membuka kunci: {arg1}",
   "levelScreen_seeds_a49180": "+{arg1} Benih ✓",
   "levelScreen_seeds_a22be5": "+{arg1} Benih",
-  "levelScreen_seedsBoost": "{arg1}× Penggalak Benih",
   "levelScreen_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "levelScreen_nextDays": "Seterusnya: {arg1} ({arg2} hari)",
   "levelScreen_seeds_990893": "+{arg1} Benih",
-  "levelScreen_days": "{current} / {arg1} hari",
-  "levelScreen_dayStreak": "{arg1} hari berturut-turut",
   "phase1Screens_inTheNameOf": "Dengan nama Allah yang Maha Pemurah…",
-  "phase1Screens_quranReadingNimage": "Bacaan Al-Quran\\ngambar",
-  "phase1Screens_orphansNimage": "Anak yatim\\ngambar",
   "onboardingComponents_355c50": "{first}",
   "onboardingComponents_b236c9": "{trailing}",
-  "quranMini_inTheNameOf": "Dengan nama Allah yang Maha Pemurah lagi Maha Penyayang.",
-  "quranMini_allPraiseBelongsTo": "Segala puji bagi Allah, Tuhan sekalian alam.",
   "orphansGridScreen_36cd3b": "{arg1} · {arg2}",
-  "orphanDetailScreen_years": "{arg1} tahun",
-  "orphanDetailScreen_ofSeeds": "{arg1} daripada {arg2} Benih",
-  "orphanDetailScreen_through": "Melalui {arg1}",
-  "orphanDetailScreen_andTheyGiveFood": "Dan mereka memberikan makanan, walaupun mereka menyukainya, kepada orang miskin, anak yatim, dan orang tawanan.",
-  "orphanDetailScreen_ago": "{arg1}m yang lalu",
   "orphanDetailScreen_ago_c25b44": "{arg1}j lalu",
   "orphanDetailScreen_ago_e160e3": "{arg1}w lalu",
-  "orphanDetailScreen_moAgo": "{arg1}mo lalu",
   "orphanDetailScreen_ago_65f0ec": "{arg1}y yang lalu",
-  "orphanDetailScreen_seeds": "{_availablePoints} Benih",
-  "orphanDetailScreen_sponsor": "Penaja {arg1}",
-  "orphanDetailScreen_jazakallahKhayranSeedsSponsored": "JazakAllah Khayran! {amount} Benih ditaja.",
-  "orphanDetailScreen_chooseHowManySeeds": "Pilih berapa Biji untuk diberikan. Minimum {arg1}.",
-  "orphanDetailScreen_yourBalanceSeeds": "Baki anda: {arg1} Benih",
-  "profileSettingsScreen_nameCannotBeEmpty": "Nama tidak boleh kosong",
   "profileSettingsScreen_sabiqRewards": "Ganjaran Sabiq • v1.0",
-  "profileSettingsScreen_bosniaAndHerzegovina": "Bosnia dan Herzegovina",
-  "profileSettingsScreen_centralAfricanRepublic": "Republik Afrika Tengah",
-  "profileSettingsScreen_unitedArabEmirates": "Emiriah Arab Bersatu",
-  "profileSettingsScreen_signedInWithGoogle": "Log masuk dengan Google",
-  "profileSettingsScreen_signedInWithQuran": "Log masuk dengan Quran.com",
-  "profileSettingsScreen_signedInWithEmail": "Log masuk dengan E-mel",
-  "profileSettingsScreen_seeds": "{arg1} Benih",
   "profileSettingsScreen_seeds_59ba7c": "{arg1} Benih",
   "profileSettingsScreen_seeds_2bc978": "{arg1} Benih",
-  "profileSettingsScreen_guidesFAQsAndHow": "Panduan, Soalan Lazim dan cara-cara",
-  "profileSettingsScreen_somethingNotWorkingTell": "Sesuatu yang tidak berfungsi? Beritahu kami",
   "profileSetupScreen_ahmadFatimaYusuf": "Ahmad, Fatima, Yusuf…",
   "profileSetupScreen_pakistanEgyptMalaysia": "Pakistan, Mesir, Malaysia…",
-  "projectDetailScreen_organisedBy": "Dianjurkan oleh {sponsor}\\n\\n",
-  "projectDetailScreen_fundedSoFarEvery": "Dibiayai setakat ini, setiap Benih penting!\\n\\n",
-  "projectDetailScreen_openSabiqRewardsApp": "Buka apl Sabiq Rewards untuk menderma Benih anda dan dapatkan ganjaran.\\n",
-  "projectDetailScreen_sabiqrewardsSadaqahIslamicCharity": "#SabiqRewards #Sadaqah #IslamicCharity",
   "projectDetailScreen_4c2b09": "{arg1} {arg2} {arg3}",
-  "projectDetailScreen_donateToProvideUrgent": "Menderma untuk menyediakan bantuan segera dan menyelamatkan nyawa kepada rakyat Palestin yang menghadapi kekurangan makanan, air dan bekalan perubatan yang kritikal...",
-  "projectDetailScreen_seeds": "{arg1} Benih",
   "projectDetailScreen_seeds_801ec7": "{arg1} Benih",
   "projectDetailScreen_e4e562": "{arg1}%",
-  "projectDetailScreen_ago": "{arg1}m yang lalu",
   "projectDetailScreen_ago_c25b44": "{arg1}j lalu",
   "projectDetailScreen_ago_e160e3": "{arg1}w lalu",
-  "projectDetailScreen_moAgo": "{arg1}mo lalu",
   "projectDetailScreen_ago_65f0ec": "{arg1}y yang lalu",
-  "projectDetailScreen_viewAll": "Lihat semua {arg1} →",
-  "quranHubScreen_saved": "{arg1} disimpan",
-  "quranHubScreen_tapTheHeartBookmark": "Ketik ikon hati/penanda halaman semasa membaca untuk menyimpan ayat.",
-  "quranHubScreen_surahVerse": "Surah {s} • Ayat {a}",
   "quranHubScreen_loadingQuran": "Memuatkan Al-Quran…",
-  "quranHubScreen_verses": "{arg1} ayat",
-  "quranHubScreen_of": "daripada {arg1}",
   "quranHubScreen_saved_edce53": "{arg1} disimpan",
-  "quranScreen_englishSahihIntl": "Bahasa Inggeris, Sahih Intl.",
-  "quranScreen_saheehInternational": "Antarabangsa Saheeh",
-  "quranScreen_englishPickthall": "Inggeris, Pickthall",
-  "quranScreen_mohammadMarmadukePickthall": "Mohammad Marmaduke Pickthall",
-  "quranScreen_englishTheMessage": "Bahasa Inggeris, The Message",
-  "quranScreen_englishMuhsinKhan": "Inggeris, Muhsin Khan",
-  "quranScreen_muhsinKhanHilali": "Muhsin Khan & Hilali",
-  "quranScreen_fatehMuhammadJalandhry": "Fateh Muhammad Jalandhry",
-  "quranScreen_imamAhmadRazaKhan": "Imam Ahmad Raza Khan",
-  "quranScreen_maulanaSayyidAbulAla": "Maulana Sayyid Abul Ala Maududi",
-  "quranScreen_franAisHamidullah": "Français, Hamidullah",
-  "quranScreen_rkDiyanet": "Türkçe, Diyanet",
-  "quranScreen_rkLeymanAte": "Türkçe, Süleyman Ateş",
-  "quranScreen_bahasaIndonesian": "Bahasa, Indonesia",
-  "quranScreen_ministryOfReligiousAffairs": "Kementerian Hal Ehwal Ugama",
-  "quranScreen_muhiuddinKhan": "বাংলা, Muhiuddin Khan",
-  "quranScreen_deutschAbuRida": "Deutsch, Abu Rida",
-  "quranScreen_abuRidaMuhammadIbn": "Abu Rida Muhammad ibn Ahmad",
-  "quranScreen_espaOlAsad": "Español, Asad",
-  "quranScreen_uthmaniMadinah": "Uthmani (Madinah)",
-  "quranScreen_alJalalaynEN": "Al-Jalalayn (EN)",
-  "quranScreen_couldNotLoadAyah": "Tidak dapat memuatkan ayah. Sila cuba semula.",
-  "quranScreen_noConnectionCachedData": "Tiada sambungan. Data cache mungkin tersedia.",
-  "quranScreen_ayahs": "{arg1} ayahs",
-  "quranScreen_couldNotRemoveBookmark": "Tidak dapat mengalih keluar penanda halaman, sila cuba semula",
-  "quranScreen_removedBookmark": "Penanda halaman dialih keluar {_surahName} {_surah}:{_ayah}",
-  "quranScreen_couldNotSaveBookmark": "Tidak dapat menyimpan penanda halaman, sila cuba semula",
-  "quranScreen_bookmarked": "Ditandakan {_surahName} {_surah}:{_ayah}",
-  "quranScreen_trimmedContains": ") && !trimmed.contains(",
-  "quranScreen_tafsir": "Tafsir · {_surahName} {_surah}:{_ayah}",
-  "quranScreen_addedToFavourites": "♥️ Ditambah pada Kegemaran",
-  "quranScreen_comfortableNightTimeReading": "Bacaan waktu malam yang selesa",
-  "quranScreen_pt": "{arg1} pt",
   "quranScreen_003843": "{arg1} {arg2}",
-  "quranScreen_displayMeaningBelowEach": "Paparkan maksud di bawah setiap ayat",
-  "quranScreen_showTransliteration": "Tunjukkan Alih Huruf",
-  "quranScreen_romanisedPronunciationUnderEach": "Sebutan roman di bawah setiap perkataan",
-  "quranScreen_progressBarAyahCount": "Bar kemajuan & kad kiraan ayah",
-  "quranScreen_moveToNextVerse": "Beralih ke ayat seterusnya apabila audio tamat",
-  "quranScreen_repeatCurrentVerse": "Ulang Ayat Semasa",
-  "quranScreen_notificationsALERTS": "PEMBERITAHUAN & MAKLUM",
-  "quranScreen_milestoneSoundAlerts": "Makluman Bunyi Milestone",
-  "quranScreen_chimeWhenYouReach": "Berbunyi apabila anda mencapai 10, 25, 50 ayat",
-  "quranScreen_showEachArabicWord": "Tunjukkan setiap perkataan Arab dengan maksud Inggerisnya",
-  "quranScreen_translationLanguage": "Bahasa Terjemahan",
-  "quranScreen_translationsAvailable": "{arg1} terjemahan tersedia",
   "quranScreen_3502e8": "{arg1} / {arg2}",
-  "quranScreen_sabiqSeedsEarnedToday": "+{_pointsToday} Biji Sabiq diperoleh hari ini!",
   "quranScreen_dcacc4": "{_ayah} / {arg1}",
   "quranScreen_wordDataUnavailableCheck": "Data perkataan tidak tersedia. Semak sambungan anda.",
   "quranScreen_6d1f9d": "{arg1}",
-  "quranScreen_ayahsRead": "{_ayahsToday} ayah membaca",
   "quranScreen_ce2af3": "{arg1}%",
   "quranScreen_6e8ac8": "{text}",
-  "quranScreen_pageJuz": "Halaman {_currentPage} · Juz {arg1}",
-  "startJourneyScreen_unexpectedErrorDuringGoogle": "Ralat yang tidak dijangka semasa Log Masuk Google",
-  "startJourneyScreen_connectedToQuranCom": "Bersambung ke Quran.com",
   "startJourneyScreen_connectedToQuranCom_0ac4de": "Disambungkan ke Quran.com (penyegerakan penanda halaman ditangguhkan)",
-  "streakScreen_nextDays": "Seterusnya: {arg1} ({arg2} hari)",
-  "streakScreen_seeds": "+{arg1} Benih",
-  "streakScreen_days": "{current} / {arg1} hari",
-  "streakScreen_dayStreak": "{arg1} hari berturut-turut",
-  "tafsirHubScreen_earnSeedsForEvery": "Dapatkan Benih untuk setiap 10 minit mendengar Tafsir",
-  "tafsirScreen_alJalalaynEN": "Al-Jalalayn (EN)",
-  "tafsirScreen_verses": "{arg1} ayat",
-  "tafsirScreen_trimmedContains": ") && !trimmed.contains(",
-  "tafsirScreen_ayahOf": "Ayah {_ayah} daripada {_surahLen}",
   "tafsirScreen_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "tafsirScreen_tafsirNotAvailableFor": "Tafsir tidak tersedia untuk ayat ini.",
-  "donationService_youMustBeLogged": "Anda mesti log masuk untuk menderma.",
-  "donationService_donationCouldNotBe": "Derma tidak dapat diproses pada masa ini.",
-  "donationService_anUnexpectedNetworkError": "Ralat rangkaian yang tidak dijangka telah berlaku.",
   "donationService_youMustBeLogged_edc4b5": "Anda mesti log masuk untuk menaja.",
-  "donationService_sponsorshipReceived": "Tajaan diterima 💝",
-  "donationService_youSponsoredSeedsJazak": "Anda menaja {amount} Benih · jazak Allah khair.",
-  "donationService_sponsorshipCouldNotBe": "Tajaan tidak dapat diproses pada masa ini.",
-  "liveNotificationService_remindersToSealYour": "Peringatan untuk mengelak Benih anda yang belum selesai sebelum tengah malam.",
-  "liveNotificationService_sealYourSeedsBefore": "Tutup Benih anda sebelum tengah malam",
   "liveNotificationService_sealYourSeedsBefore_be2183": "Tutup Benih anda sebelum tengah malam!",
-  "liveNotificationService_youHavePendingSeeds": "Anda mempunyai {pendingSeeds} Benih yang belum selesai. Ketik Seal the Day sebelum tengah malam atau ia tamat tempoh.",
-  "liveNotificationService_ayatReadToday": "{_ayahCount} Ayat Baca hari ini 📖",
-  "liveNotificationService_readQuranToday": "{arg1} Baca Al-Quran hari ini ⏱️",
-  "liveNotificationService_nothingReadFromQuran": "Tiada Baca Al-Quran hari ini 📖",
-  "liveNotificationService_dhikrCompletedToday": "{_dhikrCount} Dzikir selesai hari ini 📿",
-  "liveNotificationService_ayatDhikrToday": "{_ayahCount} ayat · {_dhikrCount} zikir hari ini",
-  "liveNotificationService_keepReadingAndDoing": "Teruskan membaca dan berzikir!",
-  "liveNotificationService_yourSeedsToday": "Benih Anda Hari Ini ✨",
-  "localReminderScheduler_sabiqRewardsNotifications": "Pemberitahuan Ganjaran Sabiq",
-  "localReminderScheduler_it": "Ia\\",
-  "localReminderScheduler_fridayReadSurahAl": "s Friday — baca Surah Al-Kahfi",
-  "localReminderScheduler_whoeverRecitesSurahAl": "Sesiapa yang membaca surah Al-Kahfi pada hari Jumaat, nescaya bersinar bagi mereka cahaya di antara dua Jumaat.",
-  "localReminderScheduler_don": "Don\\",
-  "localReminderScheduler_missSurahAlKahf": "t miss Surah Al-Kahfi today",
-  "localReminderScheduler_fewHoursToMaghrib": "Beberapa jam ke Maghrib — habiskan Surah Al-Kahfi jika anda belum\\",
-  "quranApiService_notConnectedToQuran": "Tidak bersambung dengan Quran.com",
-  "quranApiService_syncFailedBookmarkCould": "Penyegerakan gagal, {failed} penanda halaman tidak dapat ditolak ke Quran.com (semak token / titik akhir).",
-  "quranApiService_bookmarksAlreadyInSync": "Penanda halaman sudah disegerakkan",
-  "quranApiService_syncedBookmarksUpDown": "{total} penanda halaman disegerakkan ({uploaded} ke atas, {downloaded} ke bawah)",
-  "quranApiService_syncFailed": "Penyegerakan gagal: {e}",
-  "streakService_warmingUp": "Memanaskan Badan",
-  "streakService_oneWeek": "Satu Minggu",
-  "streakService_twoWeeks": "Dua Minggu",
-  "streakService_oneMonth": "Satu Bulan",
-  "streakService_twoMonths": "Dua Bulan",
-  "streakService_theCenturion": "The Centurion",
   "streakService_1fc043": "{arg1} {arg2}",
-  "streakService_dayStreak": "{arg1}-hari {arg2} coretan ·",
-  "streakService_bonusSeedsUnlocked": "+{arg1} bonus Benih dibuka kunci",
   "trackingService_c7528c": "{arg1} {arg2}",
-  "xpService_level": "{title} • Tahap {level}",
-  "xpService_newBadgeUnlocked": "Lencana baharu dibuka 🏆",
-  "xpService_you": "awak\\",
-  "xpService_dailyLoginBonus": "Bonus log masuk harian",
-  "xpService_seedsWelcomeBack": "+{arg1} Benih · selamat datang kembali!",
-  "xpService_daySealed": "Hari dimeterai 🌙",
-  "xpService_sabiqSeedsConfirmedBonus": "+{flushed} Biji Sabiq disahkan! ({bonus} bonus untuk pengedap)",
-  "xpService_sabiqSeedsConfirmed": "+{flushed} Biji Sabiq disahkan!",
-  "dhikrExitCelebration_everyBreathCounts": "Setiap nafas dikira.",
-  "impactAnimation_yourRewardHasBeen": "Ganjaran anda telah direkodkan.",
-  "motivationalPopup_verilyWithHardshipComes": "Sesungguhnya bersama kesulitan ada kemudahan.\\nSetiap ujian adalah pintu kepada sesuatu yang lebih besar.",
-  "motivationalPopup_quranAlInshirah": "Quran • Al-Inshirah 94:6",
-  "motivationalPopup_quranAlAnkabut": "Quran • Al-Ankabut 29:45",
-  "motivationalPopup_quranAlBaqarah": "Quran • Al-Baqarah 2:152",
-  "motivationalPopup_quranAnNahl": "Quran • An-Nahl 16:18",
-  "motivationalPopup_makeYourTimePrecious": "Jadikan masa anda berharga.\\nBerkongsi kebaikan dengan rakan hari ini ,\\setiap amalan baik yang dikongsi adalah sedekah.",
-  "motivationalPopup_guideOthersToGood": "Bimbinglah orang lain kepada kebaikan, maka kamu akan mendapat pahalanya.",
-  "motivationalPopup_theBestOfPeople": "Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.",
-  "motivationalPopup_verilyInTheRemembrance": "Sesungguhnya dengan mengingati Allah, hati menjadi tenang.",
-  "motivationalPopup_remindYourselfTimeIs": "Ingatkan diri, masa adalah sedekah yang paling berharga.",
-  "motivationalPopup_yourTimeIsYour": "Masa anda ialah aset paling\\nberharga anda. Laburlah dengan bijak\\dalam perkara yang kekal selama-lamanya.",
-  "motivationalPopup_quranAlAnfal": "Quran • Al-Anfal 8:28",
-  "motivationalPopup_takeAdvantageOfFive": "Manfaatkan lima sebelum lima.",
-  "motivationalPopup_youHaveBeenRewarded": "Anda telah diberi ganjaran untuk\\konsistensi anda hari ini!",
-  "motivationalPopup_seeds": "+{arg1} Benih",
   "motivationalPopup_seeds_b14996": "+{arg1} Benih",
   "motivationalPopup_readQuranPages": "Baca 5 Muka Surat Al-Quran",
-  "motivationalPopup_completeNowEarnSeeds": "Lengkapkan sekarang → dapatkan bonus +50 Benih",
   "motivationalPopup_completeDhikrSet": "Lengkapkan Set Dzikir",
-  "motivationalPopup_finishYourAzkaarEarn": "Selesaikan Azkaar anda → dapatkan bonus +30 Benih",
   "motivationalPopup_inviteFriend": "Jemput Rakan",
-  "motivationalPopup_shareSabiqWithSomeone": "Kongsi Sabiq dengan seseorang → peroleh +100 Biji",
-  "motivationalPopup_keepYourSpiritualMomentum": "Kekalkan momentum rohani anda\\na lihat Benih anda berkembang ✨",
-  "noorOffline_somethingWentWrong": "Sesuatu telah berlaku",
-  "notificationsSheet_stayOnTopOf": "Kekal mendapat ganjaran & pencapaian",
-  "notificationsSheet_llBeNotifiedAbout": "akan dimaklumkan tentang ganjaran, coretan & pencapaian.",
-  "notificationsSheet_inboxKeepsExistingItems": "Peti masuk menyimpan item sedia ada tetapi tiada yang baharu akan sampai.",
-  "notificationsSheet_sabiqSeedsForSealing": "Biji Sabiq untuk pengedap hari ini",
   "notificationsSheet_ago": "{arg1}m yang lalu",
   "notificationsSheet_ago_5d4e7f": "{arg1}j lalu",
   "notificationsSheet_ago_67b1d9": "{arg1}d lalu",
-  "projectMediaCarousel_couldNotLoadVideo": "Tidak dapat memuatkan video",
-  "quranExitCelebration_beautifulRecitation": "bacaan yang indah.",
-  "quranExitCelebration_everyMomentCounts": "Setiap saat adalah penting.",
   "sealCoinAnimation_e16fa4": "+{arg1}",
-  "authScreen_pleaseEnterYourEmail_d36dc6": "Sila masukkan e-mel anda",
-  "authScreen_pleaseEnterYourPassword_0f8b9b": "Sila masukkan kata laluan anda",
-  "authScreen_passwordMustBeAt_c936ae": "Kata laluan mestilah sekurang-kurangnya 6 aksara",
-  "authScreen_alreadyHaveAnAccount_07e598": "Sudah mempunyai akaun? Log Masuk",
-  "authScreen_haveAnAccountSign_ae2883": "t mempunyai akaun? Daftar",
-  "qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": "QfEmailConflictException: {email} sudah mempunyai akaun",
-  "qfAuthService_openidOfflineAccessUser_fc4bcc": "openid offline_access koleksi penanda halaman pengguna membaca_session",
-  "qfAuthService_tokenExchangeFailed_89d8a0": "Pertukaran token gagal ({arg1}): {arg2}",
-  "qfAuthService_errorNullResponse_bd81c7": "RALAT: Balasan batal",
   "orphan_be2bf7_be2bf7": "{firstName} {lastInitial}.",
   "akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2": "\"Subhanallahi wa bi-hamdihi\" - 100 kali sehari menghapuskan dosa, walaupun seperti buih di lautan. (Bukhari)",
   "akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f": "Ucapkan La ilaha illallah 100 kali - sama dengan memerdekakan 10 hamba dan 100 hasanat. (Bukhari)",
   "akhirahBalanceScreen_lightOnTheTongue_ea6114": "Ringan di lidah, berat di timbangan: Subhanallahi wa bi-hamdihi, Subhanallahil-azim. (Bukhari 6406)",
   "akhirahBalanceScreen_theDhikrOfAllah_a23f17": "Zikir kepada Allah lebih berat di timbangan daripada emas yang sama beratnya. Teruskan.",
   "akhirahBalanceScreen_yourTongueShouldStay_34816c": "“Lidahmu hendaklah sentiasa basah dengan berzikir kepada Allah.” - Adakah ia masih lembap?",
-  "akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff": "Astaghfirullah — Nabi ✍ mengucapkannya 100 kali sehari, dan dia tidak mempunyai dosa. Berapa ramai yang anda ada?",
+  "akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff": "Astaghfirullah — Nabi ﷺ mengucapkannya 100 kali sehari, dan dia tidak mempunyai dosa. Berapa ramai yang anda ada?",
   "akhirahBalanceScreen_whenYouRememberAllah_60f406": "Apabila kamu mengingati Allah dengan tenang, Dia mengingati kamu dalam majlis yang lebih besar.",
   "akhirahBalanceScreen_reciteAyatAlKursi_d0751f": "Bacalah Ayat Kursi selepas setiap solat - tidak ada yang menghalangmu dari Jannah melainkan kematian.",
   "akhirahBalanceScreen_oneAlhamdulillahFillsThe_4794bb": "Satu Alhamdulillah memenuhi skali. Satu Subhanallah memenuhi apa yang ada di antara langit dan bumi.",
@@ -1717,20 +1021,8 @@
   "akhirahBalanceScreen_everySubhanallahIsSadaqah_16b797": "Setiap Subhanallah adalah sedekah. Berapa banyak yang akan anda berikan sebelum tidur?",
   "akhirahBalanceScreen_heartThatForgetsDhikr_3a6173": "Hati yang lupa berzikir mula berkarat. Hati yang mengingati tetap menyala.",
   "akhirahBalanceScreen_haveYouFortifiedYourself_17ccac": "Sudahkah anda membentengi diri anda dengan adhkar pagi dan petang hari ini?",
-  "akhirahBalanceScreen_thisSession_702ffc": "Sesi ini: +{arg1}",
-  "akhirahBalanceScreen_seedsThisSession_cd9411": "+{arg1} biji sesi ini",
-  "akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": "Purata 7 hari: {arg1} azkaar/hari",
-  "dashboardScreen_profileReturnedZeroRows_3ccedb": "Profil mengembalikan sifar baris untuk {uid}",
-  "dashboardScreen_dashboardLoadError_6168de": "Ralat Muatan Papan Pemuka: {e}",
-  "dashboardScreen_invalidReferralCode_bb3b10": "Kod rujukan tidak sah",
-  "dashboardScreen_cannotReferYourself_d836b8": "Tidak boleh merujuk sendiri",
   "dashboardScreen_sponsor_d48549": "Penaja {name}, {arg1}",
-  "dashboardScreen_dashboardDoesn_b8feb4": ": 0, // papan pemuka tidak",
-  "dashboardScreen_today_261fbb": "{arg1} · {_lastAyah} · +{_ayahsToday} hari ini",
   "dashboardScreen_606140_606140": "{arg1} · {_lastAyah}",
-  "dashboardScreen_dayStreak_2934ca": "{arg1}-hari berturut-turut",
-  "dashboardScreen_yourSabiqSeedsFund_3e8748": "Sabiq Seeds anda membiayai projek ini",
-  "dashboardScreen_active_2d214a": "{arg1} aktif",
   "dashboardScreen_joinMeOnSabiq_755fb5": "Sertai saya di Ganjaran Sabiq, dapatkan Benih untuk Al-Quran, Zikir & amal soleh setiap hari!\\n\\n",
   "dashboardScreen_useMyCodeAnd_7d13b3": "Gunakan kod saya *{arg1}* dan kami berdua mendapat 500 Biji Sabiq!\\n\\n",
   "dashboardScreen_messageCopiedShareOr_7b977e": "Mesej disalin, kongsi atau tampal dalam WhatsApp!",
@@ -1740,402 +1032,20 @@
   "dashboardScreen_anErrorOccurredPlease_8ee486": "Ralat berlaku. Sila cuba lagi.",
   "dashboardScreen_52b02c_52b02c": "{pts}",
   "dashboardScreen_e4e562_e4e562": "{arg1}%",
-  "dashboardScreen_seeDetailsForMore_54551e": "Lihat Butiran untuk lebih banyak Projek →",
-  "dashboardScreen_yourTOTALSABIQSEEDS_f1d60a": "JUMLAH BIJI SABIQ ANDA",
   "dashboardScreen_viewCampaignDonate_450be4": "🤲 Lihat Kempen & Derma",
-  "dashboardScreen_yourRank_67be90": "Kedudukan Anda: {rankText}",
   "dashboardScreen_d13a42_d13a42": "{_myPoints} {unit} • {arg1}",
   "dashboardScreen_beTheFirstOn_63de17": "Jadilah yang pertama di papan tulis",
   "dashboardScreen_readAnAyahOr_9c7ab7": "Baca ayat atau zikir untuk menuntut tempat teratas",
   "dashboardScreen_lvl_ac180d": "Lvl {level} · {arg1}",
-  "dashboardScreen_sealWithin_381d5d": "Meterai dalam {arg1}h",
-  "dashboardScreen_jazakallahDaySealed_70a34b": "JazakAllah!  Hari dimeterai",
-  "dashboardScreen_ofGoal_9660ee": "daripada {arg1} {arg2} matlamat",
-  "dhikrHubScreen_propheticSupplications_907064": "Doa Nabi",
-  "dhikrHubScreen_morningEveningRemembrance_ec6bc2": "Zikir Pagi & Petang",
-  "dhikrHubScreen_furtherSupplications_f72602": "Doa Selanjutnya",
-  "dhikrHubScreen_closingRemembranceSalawat_5204e8": "Zikir Penutup & Selawat",
-  "dhikrHubScreen_hajjUmrahSupplications_f4d1b9": "Doa Haji & Umrah",
-  "dhikrHubScreen_falseHiddenAdd_c45662": "] == palsu) hidden.add(r[",
-  "dhikrScreen_indoPak_fd8751": "pak indo",
   "dhikrScreen_default_8bd36b": "Lalai: {recommendedCount}",
-  "dhikrScreen_duaAzkarSettings_71de01": "Tetapan Dua & Azkar",
-  "dhikrScreen_hideTheVisualArtwork_28b4d2": "Sembunyikan kawasan karya seni visual",
   "dhikrScreen_pinTheIllustrationAt_5ec641": "Sematkan ilustrasi di bahagian atas manakala teks Arab menatal di bawahnya",
-  "dhikrScreen_readTimes_537f51": "Baca {readCount} kali",
   "dhikrScreen_d08433_d08433": "{arg1} / {arg2}",
-  "dhikrScreen_alBaqarahAmanaAr_e9d62e": "Al-Baqarah 285 (Amana ar-Rasool)",
-  "dhikrScreen_alBaqarahAlifLam_71ad0e": "Al-Baqarah 1-5 (Alif Lam Mim)",
-  "dhikrScreen_alBaqarahLaIkraha_e837fb": "Al-Baqarah 256 (La Ikraha)",
-  "dhikrScreen_alBaqarahAllahuWaliyy_c2a18b": "Al-Baqarah 257 (Allahu Waliyy)",
-  "dhikrScreen_salawatIbrahimiyyaDurood_171c60": "Selawat Ibrahimiyya (Durood)",
   "dhikrScreen_9a4c42_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
   "dhikrScreen_86f857_86f857": "\\u2060{matched}",
   "dhikrScreen_49900d_49900d": "+{hasanaat}",
-  "dhikrScreen_hisnulMuslimChapter_8745dc": "Hisnul Muslim, Bab:",
   "dhikrScreen_3856c1_3856c1": "{rawRef} | {bottomRef}",
-  "dhikrScreen_bestOfBothWorlds_e1cc22": "Sebaik-baik dunia, berlindung dari Neraka",
-  "dhikrScreen_patienceAndSteadfastnessIn_114391": "Sabar dan tabah dalam setiap ujian",
-  "dhikrScreen_allahBurdensNoSoul_c8bf72": "Allah tidak membebani seseorang melainkan kesanggupannya",
-  "dhikrScreen_keepTheHeartFirm_7729fe": "Teguhkan hati atas petunjuk",
-  "dhikrScreen_faithAnsweredWithForgiveness_e8c93c": "Iman menjawab dengan keampunan dari Neraka",
-  "dhikrScreen_allSovereigntyInAllah_a9e0b3": "Segala kedaulatan pada Allah\\",
-  "dhikrScreen_allahHearsEveryCall_bf9969": "Allah mendengar setiap panggilan kepada zuriat yang soleh",
-  "dhikrScreen_countedWithTheWitnesses_99a05a": "Dikira dengan saksi kebenaran",
-  "dhikrScreen_forgivenessFirmFeetAnd_28f209": "Pengampunan, kaki teguh, dan kemenangan",
-  "dhikrScreen_theDuaOfThose_0ee764": "Doa orang yang berfikir",
-  "dhikrScreen_inscribedWithTheWitnesses_2257ce": "Ditulis dengan saksi-saksi wahyu",
-  "dhikrScreen_theDuaAllahAccepted_7e207c": "Doa yang diterima Allah dari Adam ﷺ",
-  "dhikrScreen_spareUsTheCompany_c290d3": "Selamatkan kami kumpulan orang-orang yang zalim",
-  "dhikrScreen_neverTrialForThe_292b26": "Jangan sekali-kali ujian bagi orang yang zalim",
-  "dhikrScreen_refugeFromAskingWithout_0e04a4": "Berlindung daripada bertanya tanpa ilmu",
-  "dhikrScreen_prayerForSafetyAnd_5f4e34": "s doa untuk keselamatan dan iman",
-  "dhikrScreen_steadfastInPrayerMe_8ce7b5": "Istiqamah dalam solat, saya dan anak-anak saya",
-  "dhikrScreen_mercyForMeMy_3edb52": "Kasihanilah aku, ibu bapaku, orang-orang yang beriman",
-  "dhikrScreen_prayerForParents_ae7e5c": "s doa untuk ibu bapa",
-  "dhikrScreen_entryOfTruthExit_88c367": "Masuk kebenaran, keluar kebenaran",
-  "dhikrScreen_prayerOfTheYouth_1bf835": "Doa pemuda gua",
-  "dhikrScreen_askAllahForMore_07c189": "Mohonlah kepada Allah untuk menambah ilmu",
-  "dhikrScreen_allahAnswersAndSaves_c337ab": "Allah menjawab dan menyelamatkan dari setiap kesusahan",
-  "dhikrScreen_allahIsTheBest_1adf97": "Allah adalah sebaik-baik pewaris",
-  "dhikrScreen_blessedLandingWhereverYou_273aaf": "Pendaratan yang diberkati di mana sahaja anda berhenti",
-  "dhikrScreen_refugeFromTheWhispers_7ff5fd": "Berlindung dari bisikan syaitan",
-  "dhikrScreen_mercyFromTheBest_b394bb": "Rahmat dari Tuhan Yang Maha Penyayang",
-  "dhikrScreen_pardonAndMercyFrom_5d9eb1": "Keampunan dan rahmat dari Yang Maha Pemurah",
-  "dhikrScreen_piousSpousesAndRighteous_e9918c": "Pasangan yang soleh dan zuriat yang soleh",
-  "dhikrScreen_prayerForThoseWho_1ccfb5": "doa untuk orang yang bertaubat",
-  "dhikrScreen_gratitudeForParentsRighteousness_966d90": "Syukur kepada ibu bapa, soleh dalam zuriat",
-  "dhikrScreen_pleaGiftOfIshaq_5568af": "rayuan — pemberian Ishaq ﷺ",
-  "dhikrScreen_loveForTheBelievers_d0cae3": "Cintailah orang-orang yang beriman sebelum kita",
-  "dhikrScreen_pureTawakkulOnYou_02bc03": "s pure tawakkul — KepadaMu kami berserah",
-  "dhikrScreen_forgivenessForEveryBelieving_e256a1": "Pengampunan untuk setiap rumah yang beriman",
-  "dhikrScreen_tasbeehByTheWeight_27484a": "Tasbih menurut berat Allah\\",
-  "dhikrScreen_tasbeehByTheNumber_224c3f": "Tasbih dengan bilangan semua yang Dia jadikan",
-  "dhikrScreen_tasbeehThatFillsAll_4b1a52": "Tasbih yang memenuhi semua ciptaan Allah",
-  "dhikrScreen_paradiseSoughtTheFire_5740e3": "Syurga dicari — Api\\",
-  "dhikrScreen_cryToTheOne_30f419": "Menangislah kepada Dia yang mendengar, melihat, dan mengetahui",
-  "dhikrScreen_nameOnTheCorner_b6afeb": "nama s di sudut Kaabah",
-  "dhikrScreen_theDuaBetweenYemen_0bea3e": "Doa antara Sudut Yaman dan Hajar Aswad",
-  "dhikrScreen_prayAtTheStation_178d24": "Solatlah di maqam Ibrahim ﷺ",
-  "dhikrScreen_tawheedDeclaredAtopSafa_828769": "Tauhid diisytiharkan di atas Safa dan Marwah",
-  "dhikrScreen_reaffirmTheOnenessOf_8589ea": "Menegaskan semula keesaan Allah",
-  "dhikrScreen_magnifyAllahAtEvery_448549": "Mengagungkan Allah di setiap ambang haji",
-  "dhikrScreen_magnifyAllahOnThe_0fbc83": "Mengagungkan Allah pada hari qurban",
-  "dhikrScreen_knowledgeProvisionHealingSought_9733f3": "Ilmu, rezeki, kesembuhan — dicari di Makkah",
-  "dhikrScreen_theDuaMostRepeated_a9da8d": "Doa yang paling banyak diulang oleh Rasulullah ﷺ",
-  "dhikrScreen_refugeFromEveryTrial_8ca1b1": "Berlindung dari setiap ujian hidup dan mati",
-  "dhikrScreen_refugeFromEveryWeakness_b1a834": "Berlindung dari setiap kelemahan badan dan jiwa",
-  "dhikrScreen_refugeFromSevereTrial_0029f0": "Berlindung daripada ujian dan musuh yang berat\\",
-  "dhikrScreen_religionSetRightWorld_3b0102": "Agama ditetapkan dengan betul, dunia dan Akhirah dijadikan yang terbaik",
-  "dhikrScreen_guidancePietyVirtueSelf_cc439a": "Hidayah, takwa, kebajikan, kecukupan diri",
-  "dhikrScreen_refugeFromWeaknessWealth_d879f5": "Perlindungan dari kelemahan - kekayaan ketakwaan dalam diri",
-  "dhikrScreen_theGuiderOfHearts_1f40d9": "Pemberi petunjuk hati - ubahlah hati kita kepada ketaatan",
-  "dhikrScreen_turnerOfHeartsMake_eba687": "Yang membolak-balikkan hati - teguhkan hatiku di atas deen",
-  "dhikrScreen_wellBeingInBoth_442958": "Kesejahteraan di kedua-dua dunia",
-  "dhikrScreen_rewardsSaveFromDisgrace_8b71bb": "Pahala, selamatkan dari kehinaan dan kubur\\",
-  "dhikrScreen_mindForGoodVictory_582759": "Fikiran untuk kebaikan, kemenangan untuk kebaikan",
-  "dhikrScreen_refugeFromEvilOf_0c8916": "Berlindung daripada kejahatan setiap pancaindera dan anggota badan",
-  "dhikrScreen_theForgiverWhoLoves_e5d83f": "Maha Pengampun yang mencintai orang yang bertaubat",
-  "dhikrScreen_takeMeBeforeYou_28ef55": "Ambillah aku sebelum Engkau sesatkan",
-  "dhikrScreen_everyGoodAndRefuge_4205e2": "Setiap kebaikan - dan perlindungan dari setiap kejahatan",
-  "dhikrScreen_standingSittingLyingGuarded_254177": "Berdiri, duduk, berbaring - dikawal dalam Islam",
-  "dhikrScreen_refugeFromCowardiceMiserliness_9b59bd": "Berlindung dari sifat pengecut, bakhil, fitnah",
-  "dhikrScreen_forgivenessForJestAnd_e683b5": "Pengampunan untuk gurauan dan serius, diketahui dan tidak diketahui",
-  "dhikrScreen_forgiveMeWithForgiveness_894a1a": "Ampunilah aku dengan keampunan dariMu",
-  "dhikrScreen_submissionBeliefRepentanceFull_7338d6": "Ketundukan, kepercayaan, keinsafan, kepercayaan penuh",
-  "dhikrScreen_mercyForgivenessParadiseSaved_0d9edd": "Rahmat, pengampunan, Syurga - diselamatkan dari Neraka",
-  "dhikrScreen_refugeFromEvilSeen_140ec4": "Berlindung dari kejahatan yang nampak dan yang ghaib",
-  "dhikrScreen_provisionThatLastsTill_dcef82": "Rezeki yang kekal hingga hayat\\",
-  "dhikrScreen_sinsForgivenHomeSpacious_2ac37c": "Dosa diampun, rumah lapang, rezeki diberkati",
-  "dhikrScreen_favorAndMercyNone_f665cf": "Karunia dan rahmat - tidak ada yang memilikinya kecuali Engkau",
-  "dhikrScreen_refugeFromDrowningBurning_402b3e": "Perlindungan daripada lemas, terbakar, kematian mengejut",
-  "dhikrScreen_refugeFromHypocrisyShowiness_d863c2": "Berlindung dari kemunafikan, kesombongan, pemberontakan",
-  "dhikrScreen_refugeFromPovertyScarcity_03ef3d": "Berlindung daripada kemiskinan, kekurangan, penindasan",
-  "dhikrScreen_refugeFromHeartThat_21f7ab": "Berlindung dari hati yang menang\\",
-  "dhikrScreen_payMyDebtEnrich_f5affc": "Bayarlah hutangku, kayakanlah aku dari kemiskinan",
-  "dhikrScreen_allahCalledByHis_c11af9": "Allah memanggil dengan nama-nama-Nya yang paling indah",
-  "dhikrScreen_theAccepterOfRepentance_4f2d60": "Penerima taubat sentiasa menerima",
-  "dhikrScreen_anEasyReckoningOn_11b060": "Hisab yang mudah pada hari itu",
-  "dhikrScreen_remembranceGratitudeAndThe_d7ee7b": "Zikir, syukur, dan sebaik-baik ibadah",
-  "dhikrScreen_eternalBlissWithThe_dc255b": "Kebahagiaan abadi bersama Nabi ﷺ di Firdaus",
-  "dhikrScreen_forgiveSinsKnownHidden_ceda62": "Ampuni dosa - diketahui, tersembunyi, sengaja, tersilap",
-  "dhikrScreen_refugeFromBeingCrushed_4ba6ac": "Berlindung daripada dihimpit hutang dan musuh",
-  "dhikrScreen_askForParadiseRefuge_4bf2eb": "Mintalah syurga, berlindung dari api neraka",
-  "dhikrScreen_forgiveGuideProvideProtect_e93013": "Maafkan, bimbing, sediakan, lindungi",
-  "dhikrScreen_sensesMadeBeneficialAnd_4da09c": "Deria yang dibuat bermanfaat — dan berkekalan",
-  "dhikrScreen_theMostBeneficentThe_65d7a6": "Yang Maha Pemurah lagi Maha Pemula",
-  "dhikrScreen_allahTruthOwnerOf_d4bede": "Allah - Kebenaran, Pemilik segala kerajaan",
-  "dhikrScreen_submissionWithFullSincerity_cbd7b6": "Tunduk dengan penuh keikhlasan",
-  "dhikrScreen_amongTheGuidedThe_e4d9d0": "Antara yang dibimbing, yang sihat, yang terpilih",
-  "dhikrScreen_whatTheProphetAsked_e3a810": "Apa yang ditanya oleh Rasulullah ﷺ - saya juga bertanya",
-  "dhikrScreen_sayyidAlIstighfarThe_51076a": "Sayyid al-Istighfar - penguasa segala taubat",
-  "dhikrScreen_refugeFromEveryEvil_ea8dab": "Berlindung dari setiap kejahatan yang datang pada malam hari",
-  "dhikrScreen_blessEverySenseEvery_e7779d": "Berkati setiap deria, setiap anggota badan",
-  "dhikrScreen_smallAndGreatFirst_dbcc00": "Kecil dan hebat, pertama dan terakhir, terbuka dan rahsia",
-  "dhikrScreen_noneWithholdsWhatYou_c4dca7": "Tiada yang menahan apa yang Engkau berikan, tiada yang memberi apa yang Engkau pegang",
-  "dhikrScreen_forgiveGuideProvideElevate_55fa36": "Maafkan, bimbing, sediakan, tingkatkan",
-  "dhikrScreen_increaseFavorBeKind_5fbc5c": "Perbanyakkan nikmat, jadilah baik, jangan pernah kecewa",
-  "dhikrScreen_beautifyOurCharacterAs_cc5d8c": "Cantikkanlah akhlak kami sebagaimana Engkau indahkan ciptaan kami",
-  "dhikrScreen_firmInBeliefGuided_73f8af": "Teguh dalam kepercayaan — dibimbing dan dibimbing",
-  "dhikrScreen_wisdomAndWithIt_e8e5bd": "Kebijaksanaan - dan dengannya, banyak kebaikan",
-  "dhikrScreen_nameShieldsFromEvery_59e06f": "nama s melindungi daripada setiap bahaya",
-  "dhikrScreen_mightAgainstEveryShaytan_73b152": "kekuatannya terhadap setiap syaitan",
-  "dhikrScreen_dayBlessedFromBeginning_c6d87d": "Hari yang diberkati dari awal hingga akhir",
-  "dhikrScreen_witnessNoneDeservesWorship_385aa9": "Saksi - tiada yang berhak disembah melainkan Engkau",
-  "dhikrScreen_refugeFromHumiliatingOld_46a3f0": "Berlindung dari usia tua yang memalukan",
-  "dhikrScreen_guidedToTheBest_03e8d2": "Dibimbing kepada yang terbaik, diselamatkan daripada yang paling buruk",
-  "dhikrScreen_faithSetRightHome_08f8e1": "Iman ditetapkan betul, luas rumah, rezeki diberkati",
-  "dhikrScreen_refugeFromEveryInner_dc67c7": "Berlindung dari segala penyakit batin dan zahir",
-  "dhikrScreen_refugeFromEveryKind_dfbe62": "Berlindung dari segala bentuk keburukan",
-  "dhikrScreen_steadfastGratefulRightlyGuided_45b393": "Tabah, bersyukur, hati yang dibimbing dengan benar",
-  "dhikrScreen_theLoveOfAllah_3bf08a": "Cinta Allah, malaikat-malaikat-Nya, para nabi-Nya",
-  "dhikrScreen_loveOfAllahAbove_4c81b3": "Cinta kepada Allah melebihi cinta kepada diri sendiri",
-  "dhikrScreen_bestDeedsLastBest_2ff65e": "Perbuatan terbaik kekal — hari terbaik adalah bertemu dengan-Mu",
-  "dhikrScreen_pureLifeAndPeaceful_a7eb0f": "Kehidupan yang bersih dan pulangan yang damai",
-  "dhikrScreen_patientGratefulSmallIn_059385": "Sabar, bersyukur - kecil di mata sendiri",
-  "dhikrScreen_theBestRequestAnd_cd3f6f": "Permintaan yang terbaik dan ganjaran yang terbaik",
-  "dhikrScreen_theHighestLevelOf_221efa": "Syurga peringkat tertinggi",
-  "dhikrScreen_firdawsTheBestOf_01be47": "Firdaws — yang terbaik dari semua itu\\",
-  "dhikrScreen_mentionRaisedSinsErased_c6e2f3": "Sebutan diangkat, dosa terhapus, hati disucikan",
-  "dhikrScreen_mercyPleasureParadiseSaved_8b4a98": "Rahmat, kesenangan, Syurga - diselamatkan dari Api",
-  "dhikrScreen_noSinUncoveredNo_efd903": "Tiada dosa yang terbongkar, tiada hutang yang belum dibayar",
-  "dhikrScreen_mercyThatGuidesSets_89b7cf": "Rahmat yang membimbing, memperbaiki, menyucikan",
-  "dhikrScreen_trueBeliefCertainKnowledge_d27506": "Iman yang benar, ilmu yang pasti, Allah\\",
-  "dhikrScreen_withTheProphetsThe_b2123f": "Bersama para Nabi, para syuhada, dan orang-orang yang benar",
-  "dhikrScreen_everyNeedEntrustedTo_8b33b6": "Setiap keperluan diamanahkan kepada Hakim segala keperluan",
-  "dhikrScreen_bestOfWhatAllah_70d237": "Terbaik dari apa yang Allah janjikan kepada hambaNya",
-  "dhikrScreen_safetyOnTheDay_89cb9f": "Keselamatan pada hari, syurga pada hari yang kekal",
-  "dhikrScreen_glorifyTheOneOf_de3669": "Muliakan Dzat yang mempunyai kemuliaan dan ilmu yang tiada tara",
-  "dhikrScreen_pardonPlentySecurityIn_d6b56a": "Maaf, banyak, selamat dalam deen dan dunia",
-  "dhikrScreen_healthFaithEthicsSuccess_000fef": "Kesihatan, iman, etika, kejayaan, rahmat",
-  "dhikrScreen_healthPurityEthicsAcceptance_b6929c": "Kesihatan, kesucian, etika, penerimaan",
-  "dhikrScreen_guidedSecureVictorious_b56e05": "Dibimbing, selamat, menang",
-  "dhikrScreen_refugeFromEveryCreature_cbe2de": "perlindungan dari setiap makhluk kepada Allah\\",
-  "dhikrScreen_theOneWhoAnswers_f2e37f": "Yang menjawab terpaksa dan patah",
-  "dhikrScreen_morningReachedByAllah_b03f32": "Pagi dicapai oleh Allah\\",
-  "dhikrScreen_refugeSoughtByMusa_176ee5": "Tempat perlindungan yang dicari oleh Musa, Isa, Ibrahim",
-  "dhikrScreen_allTheGoodPower_418dc3": "Semua yang baik - kuasa, belas kasihan, berkat",
-  "dhikrScreen_allPraiseAndDominion_27662b": "Segala pujian dan kekuasaan adalah milik-Mu",
-  "dhikrScreen_pastPardonedFutureProtected_a8bfa1": "Masa lalu diampuni, masa depan dilindungi",
-  "dhikrScreen_takeMyForelockTo_a44b8f": "Bawa ubun-ubunku menuju kebaikan",
-  "dhikrScreen_strengthForWeaknessDignity_dce155": "Kekuatan untuk kelemahan, maruah untuk malu",
-  "dhikrScreen_justiceForThoseWho_4e52f3": "Keadilan bagi mereka yang menyekat kebenaran",
-  "dhikrScreen_refugeFromEveryFatal_b155a7": "Berlindung dari setiap musibah yang membawa maut",
-  "dhikrScreen_refugeFromEveryBad_a9e27f": "Berlindung dari setiap pengakhiran dan ujian yang buruk",
-  "dhikrScreen_turnBackEveryEvil_66e6fa": "Kembalikan setiap niat jahat kepada puncanya",
-  "dhikrScreen_justiceAndRefugeAgainst_e4e734": "Keadilan dan perlindungan terhadap kejahatan mereka",
-  "dhikrScreen_forgivenessForMeMy_27b932": "Ampun untukku, ibubapaku, sekalian mukmin",
-  "dhikrScreen_purifyHeartDeedsTongue_10837e": "Sucikan hati, amal, lidah, mata",
-  "dhikrScreen_selfContentWithAllah_68c73a": "Redha diri dengan Allah\\",
-  "dhikrScreen_youKnowMySecret_2b63c7": "Awak tahu rahsia saya dan keperluan saya",
-  "dhikrScreen_certaintyNothingHarmsWhat_e513d7": "Kepastian: tiada apa yang membahayakan\\",
-  "dhikrScreen_beliefLightAndLawful_e69a59": "Iman, cahaya, dan rezeki yang halal",
-  "dhikrScreen_totalLoveAndTotal_3d137e": "Penuh cinta dan perjuangan total untuk Allah",
-  "dhikrScreen_makeWhatYouWithheld_14be7d": "Jadikanlah apa yang Engkau tahan sebagai kekuatan dalam ketaatan",
-  "dhikrScreen_praiseTheOwnerOf_244f8b": "Pujilah Pemilik setiap nama yang indah",
-  "dhikrScreen_allahKnowsTheHearts_d6010c": "Allah mengetahui isi hati, langit dan seterusnya",
-  "dhikrScreen_hopeBuiltOnAllah_217ad7": "Harapan yang dibina pada Allah\\",
-  "dhikrScreen_belovedToTheBelievers_b1f5a3": "Dikasihi oleh orang-orang yang beriman, bebas dari kejahatan",
-  "dhikrScreen_mightPowerAndMajesty_91ca0a": "kekuatan, kuasa, dan keagungan",
-  "dhikrScreen_gratefulPatientHelpfulTo_3710c6": "Bersyukur, sabar, suka menolong kepada Allah\\",
-  "dhikrScreen_withholdYourGoodFor_0d39a1": "t menahan kebaikan-Mu untuk kejahatanku",
-  "dhikrScreen_settledLifeAmpleProvision_77b32b": "Kehidupan yang tenang, rezeki yang luas, amal yang soleh",
-  "dhikrScreen_wealthInNeedingYou_547729": "Kekayaan dalam memerlukan Anda - tidak pernah bebas daripada Anda",
-  "dhikrScreen_defectsCoveredFearsCalmed_a85797": "Kecacatan ditutup, ketakutan ditenangkan, kesedihan dihilangkan",
-  "dhikrScreen_openTheGatesOf_402eac": "Bukalah pintu rahmat dan kemurahan hati",
-  "dhikrScreen_holdUsInYour_b82607": "Peliharalah kami dalam keselamatan-Mu — jangan sekali-kali meninggalkan kami",
-  "dhikrScreen_withinYourSecurityYour_f72b6e": "Dalam keamanan-Mu, ya ampun",
-  "dhikrScreen_everySinEveryDistress_eab128": "Setiap dosa, setiap kesusahan, setiap sisi",
-  "dhikrScreen_helpInDeathIn_342d0b": "Tolong dalam kematian, dalam kubur, di Jambatan",
-  "dhikrScreen_beautifiedLifeBlessedGifts_7f2384": "Kehidupan yang indah, hadiah yang diberkati, nikmat yang disimpan",
-  "dhikrScreen_firmFootingBlessedEnd_c78f99": "Pijakan yang kukuh, pengakhiran yang diberkati, perjanjian yang dipegang",
-  "dhikrScreen_hopesFulfilledEnemiesRepelled_afd008": "Harapan tercapai, musuh ditangkis, urusan diperbetulkan",
-  "dhikrScreen_guidedToTheUpright_9e1527": "Dibimbing kepada yang lurus, terpelihara dari diri",
-  "dhikrScreen_lightAndForgivenessFrom_3923eb": "Cahaya dan keampunan dari Pemilik Arasy",
-  "dhikrScreen_forgivenessForWhatRepented_6a44f8": "Ampun atas apa yang saya insaf dan kembali",
-  "dhikrScreen_understandingThatDrawsNear_e1455e": "Kefahaman yang mendekatkan diri kepada Allah",
-  "dhikrScreen_soulsDwellingInThe_1bd11b": "Jiwa-jiwa bersemayam di ketinggian taqwa",
-  "dhikrScreen_crossTheBridgeOf_4f4ff3": "Lintas titian keinginan dengan kesabaran",
-  "dhikrScreen_followThePathOf_934775": "Ikuti jalan keikhlasan dan kepastian",
-  "dhikrScreen_helpAgainstTheSoul_44a7db": "Bantuan terhadap jiwa dan terhadap syaitan",
-  "dhikrScreen_fearHappinessVictorySecurity_9017c9": "Ketakutan, kebahagiaan, kemenangan, keselamatan",
-  "dhikrScreen_entrustFamilyWealthChildren_1da596": "Serahkanlah keluarga, harta, anak-anak — semuanya kepada Allah",
-  "dhikrScreen_faithGuardedFaithPreserved_88eecb": "Iman terpelihara, iman terpelihara",
-  "dhikrScreen_wellBeingTillThe_ee180d": "Kesejahteraan hingga akhir — dimeterai dengan pengampunan",
-  "dhikrScreen_whatProtectsMeFrom_052090": "Apa yang melindungi saya dari dunia ini\\",
-  "dhikrScreen_mercyOnEverySoul_a9a197": "Rahmat pada setiap jiwa\\",
-  "dhikrScreen_burdenUsAsThose_78b517": "t membebani kami sebagaimana mereka yang dahulu dibebani",
-  "dhikrScreen_mercyPardonForgivenessVictory_300143": "Rahmat, pengampunan, pengampunan, kemenangan",
-  "dhikrScreen_allahNeverFailsHis_c2265a": "Allah tidak pernah memungkiri janjiNya",
-  "dhikrScreen_recordUsWithThe_b93190": "Catatlah kami dengan saksi-saksi kebenaran",
-  "dhikrScreen_forgivenessFirmnessAndVictory_a8b674": "Pengampunan, ketegasan, dan kemenangan",
-  "dhikrScreen_creationHasPurposeRefuge_ce2eee": "Penciptaan mempunyai tujuan - perlindungan daripada Neraka",
-  "dhikrScreen_refugeFromTheDisgrace_605b1b": "Berlindung dari kehinaan Neraka",
-  "dhikrScreen_heardBelievedAskingForgiveness_d5387f": "Mendengar, percaya, memohon ampun",
-  "dhikrScreen_sinsForgivenDeathAmong_bd82ed": "Dosa diampuni - kematian di kalangan orang benar",
-  "dhikrScreen_promisedRewardNeverDisgraced_490396": "Ganjaran yang dijanjikan — tidak pernah dihina pada Hari Kebangkitan",
-  "dhikrScreen_provisionAndSignsFrom_81db14": "Rezeki dan tanda-tanda dari langit",
-  "dhikrScreen_duaTheDuaOf_4b9d01": "s dua — doa setiap orang yang bertaubat",
-  "dhikrScreen_spareUsFromThe_79732a": "Jauhkanlah kami daripada kumpulan orang-orang yang zalim",
-  "dhikrScreen_patienceTillTheEnd_a8a4c4": "Sabar hingga akhir, mati demi penyerahan",
-  "dhikrScreen_hiddenInEveryChest_ce7671": "s tersembunyi di setiap dada",
-  "dhikrScreen_prayerForPrayerAccepted_e68fa6": "s doa untuk doa diterima",
-  "dhikrScreen_mercyGrantedGuidancePrepared_5c6f63": "Rahmat dikurniakan, bimbingan disediakan",
-  "dhikrScreen_duaBeforePharaoh_2d90cd": "s doa di hadapan Firaun",
-  "dhikrScreen_refugeFromClingingEvil_b1e6e4": "Berlindung daripada azab yang berpaut dan jahat",
-  "dhikrScreen_piousSpousesRighteousChildren_64225f": "Pasangan yang soleh, anak yang soleh, kepimpinan",
-  "dhikrScreen_allahIsEverThankful_464c97": "Allah sentiasa bersyukur atas setiap usaha",
-  "dhikrScreen_mercyEncompassingEveryRepentant_fb0759": "Rahmat meliputi setiap jiwa yang bertaubat",
-  "dhikrScreen_mercyOnThatDay_a1b18b": "Rahmat pada hari itu - kejayaan yang besar",
-  "dhikrScreen_loveAndForgivenessFor_660a56": "Kasih sayang dan pengampunan bagi orang-orang beriman yang terdahulu",
-  "dhikrScreen_kindnessAndMercyUpon_1c62c8": "Kebaikan dan rahmat kepada Allah\\",
-  "dhikrScreen_pureTawakkulToYou_389089": "Tawakkul tulen - kepadaMu kami kembali",
-  "dhikrScreen_neverFitnahForThose_dc1363": "Tidak pernah menjadi fitnah bagi orang-orang kafir",
-  "dhikrScreen_completeTheLightForgive_fd7380": "Lengkapkan cahaya - maafkan kami",
-  "dhikrScreen_strongerThanServantThe_4cc56e": "Lebih kuat daripada seorang hamba — malam\\",
-  "dhikrScreen_refugeFromEveryVisible_b81e69": "Berlindung dari setiap kejahatan yang nampak sebelum tidur",
-  "dhikrScreen_refugeFromEveryWhisper_b030ed": "Berlindung dari setiap bisikan sebelum tidur",
-  "dhikrScreen_guardedByAnAngel_65d1c1": "Dijaga oleh malaikat hingga pagi",
-  "dhikrScreen_twoVersesThatSuffice_1941c5": "Dua ayat yang cukup untuk sepanjang malam",
-  "dhikrScreen_pureTawheedDeclaredBefore_50673a": "Tauhid tulen diisytiharkan sebelum tidur",
-  "dhikrScreen_sleepIsSmallDeath_b4b84d": "Tidur adalah kematian yang kecil - diamanahkan kepada Allah",
-  "dhikrScreen_whoeverDiesThatNight_75dda7": "Sesiapa yang mati pada malam itu mati dalam keadaan fitrah",
-  "dhikrScreen_guardTheSoulThat_a0850e": "Jagalah jiwa yang kembali, atau kasihanilah",
-  "dhikrScreen_refugeFromThePunishment_18162a": "berlindung daripada azab hari itu",
-  "dhikrScreen_gratitudeForShelterFood_1f5e94": "Bersyukur untuk tempat tinggal, makanan, dan penjagaan",
-  "dhikrScreen_handOverTheSoul_fda192": "Serahkan jiwa sebelum tidur",
-  "dhikrScreen_joinTheHighestAssembly_68e2d3": "Sertai perhimpunan tertinggi semasa anda tidur",
-  "dhikrScreen_gratitudeBeforeClosingThe_20f3db": "Syukur sebelum menutup mata",
-  "dhikrScreen_surahAsSajdahRecited_a4beaa": "Surah As-Sajdah dibaca sebelum tidur",
-  "dhikrScreen_refugeFromEvilBefore_a5d312": "Berlindung daripada kejahatan sebelum memasuki tandas",
-  "dhikrScreen_seekForgivenessAsYou_f14da9": "Minta pengampunan semasa anda pergi",
-  "dhikrScreen_bismillahEveryBiteBegins_8a678d": "Bismillah - setiap gigitan bermula dengan Allah",
-  "dhikrScreen_catchUpTheName_e6d0d6": "Kejar nama - Allah pada permulaan dan akhir",
-  "dhikrScreen_threeSunnahDuasTo_a56769": "Tiga doa sunnah untuk bersyukur kepada Allah selepas makan",
-  "dhikrScreen_beginWithAllahThe_a64af2": "Mulakan dengan Allah Yang Maha Penyayang, sebelum minum",
-  "dhikrScreen_openTheEightDoors_011a50": "Buka lapan pintu syurga selepas wudhu",
-  "dhikrScreen_openTheDoorsOf_15e084": "Bukalah pintu-pintu Allah\\",
-  "dhikrScreen_bountyAsYouLeave_a06fc6": "limpah kurnia apabila anda meninggalkan masjid",
-  "dhikrScreen_mayAllahGuideYou_af987e": "Semoga Allah membimbingmu dan memperbaiki keadaanmu",
-  "dhikrScreen_askAllahLordOf_4a3eb0": "Mintalah kepada Allah, Tuhan Pemilik Arasy, supaya diberi kesembuhan",
-  "dhikrScreen_allahIsTheOnly_9750c1": "Allah sahaja yang menyembuhkan",
-  "dhikrScreen_shieldChildrenWithAllah_858245": "Lindungi anak-anak dengan Allah\\",
-  "dhikrScreen_anicPrayerForOne_e18aca": "doa anik untuk seorang\\",
-  "dhikrScreen_twoPhrasesBelovedTo_5d16a7": "Dua kalimah yang dicintai oleh Yang Maha Pemurah",
-  "dhikrScreen_allahLovesToPardon_a64d0a": "Allah suka memaafkan - maka mintalah",
-  "dhikrScreen_treasureFromBeneathThe_87d578": "Harta karun dari bawah Arasy",
-  "dhikrScreen_theFourPhrasesDearest_680ef8": "Empat kalimat yang paling dicintai Allah",
-  "dhikrScreen_theDuaThatReleases_ddc7eb": "Doa yang melepaskan dari setiap kesusahan",
-  "dhikrScreen_protectionForHomeAnd_0c4973": "s perlindungan untuk rumah dan keturunan",
-  "dhikrScreen_theCompleteDhikrOf_31b993": "Zikir Tauhid yang lengkap",
-  "dhikrScreen_trialPurifiedByAllah_39fb26": "Ujian yang disucikan oleh Allah\\",
-  "dhikrScreen_guidanceBeforeAnyChoice_50eb02": "bimbingan sebelum sebarang pilihan",
-  "dhikrScreen_completeRuqyaSequenceFatihah_5ced40": "Urutan ruqya yang lengkap - Fatihah dan perlindungan",
-  "dhikrScreen_sinsForgivenEvenIf_cd9a85": "Dosa diampuni walaupun seperti buih di lautan",
-  "dhikrScreen_freedHasanatSinsErased_54ebbb": "10 dibebaskan · 100 hasanat · 100 dosa dihapuskan · Syaitan dihalau",
-  "dhikrScreen_blessingsDescendFromAllah_41e8f6": "10 rahmat Allah turun ke atas kamu",
-  "dhikrScreen_askAllahToBless_3470fe": "Mohon kepada Allah agar diberkati dan indahkan hari anda",
-  "dhikrScreen_guaranteedJannahIfYou_6f7054": "Dijamin Jannah, jika anda mati hari ini",
-  "dhikrScreen_yourLifeEntrustedTo_77feba": "Hidupmu diamanahkan kepada Yang Hidup Kekal",
-  "dhikrScreen_allEvilInHis_f02365": "Segala kejahatan dalam ciptaan-Nya ditolak darimu",
-  "dhikrScreen_nothingShallHarmYou_cbc2fc": "Tiada apa-apa yang boleh membahayakan kamu, dengan kata-kata yang sempurna",
-  "dhikrScreen_shieldYourselfFromMinor_2a73ed": "Lindungi diri anda daripada syirik kecil dan besar, pagi & petang",
-  "dhikrScreen_completeProtectionInThe_620c30": "Perlindungan sepenuhnya dengan nama Allah",
-  "dhikrScreen_weightierThanAllVoluntary_7af10a": "Lebih berat daripada semua solat sunat, dari subuh hingga maghrib",
-  "dhikrScreen_reciteMorningEveningEarn_77aa68": "Mengaji pagi & petang, dapatkan keredhaan & keberkatan Allah pada hari kiamat",
-  "dhikrScreen_yourRewardAwaitsDirectly_1827f4": "Pahala anda menanti secara langsung di sisi Allah apabila anda bertemu dengan-Nya",
-  "dhikrScreen_reciteMorningEveningTo_1843f8": "Mengaji pagi & petang untuk menunaikan kewajipan bersyukur kepada Allah",
-  "dhikrScreen_theProphetTaughtThis_50fab2": "Nabi mengajarkan doa ini untuk pagi dan petang, jangan ketinggalan",
-  "dhikrScreen_dominionAtTheStart_690ca9": "Kekuasaan pada awal pagimu, semua kerajaan adalah milik-Nya",
-  "dhikrScreen_asEveningFallsThe_934b7e": "Apabila petang tiba, seluruh kerajaan adalah milik Allah sahaja",
-  "dhikrScreen_endYourEveningUpon_ada386": "Akhiri malammu dengan fitrah yang suci, sebagaimana yang diajarkan oleh Nabi (ﷺ).",
-  "dhikrScreen_satanWillNotEnter_446a1c": "Syaitan tidak akan masuk ke rumah orang yang membacanya",
-  "dhikrScreen_readingLastVersesOf_99a432": "Membaca 2 ayat terakhir al-Baqarah sudah memadai",
-  "dhikrScreen_everyDuaInThis_f790b4": "Setiap doa dalam ayat ini - Allah berfirman: Aku telah melakukannya",
-  "dhikrScreen_guardedByAllahUntil_f4d276": "Dijaga oleh Allah hingga pagi tiba",
-  "dhikrScreen_recitingEqualsReadingThe_e0a62a": "Membaca 3x sama dengan membaca keseluruhan Al-Quran, Bukhari & Muslim",
-  "dhikrScreen_reciteAtDawnDusk_4173a8": "Berzikir 3x pada waktu subuh & senja, cukuplah kamu dari segala bahaya",
-  "dhikrScreen_refugeFromTheWhisperer_bdd280": "Berlindung daripada pembisik, kepada Tuhan Manusia",
-  "dhikrScreen_reciteMorningEveningYour_c464cb": "Mengaji 3x pagi & petang, kesyukuran anda kepada Allah termakbul",
-  "dhikrScreen_sufficientAgainstEveryHarm_0a3206": "Memadai dari setiap kemudaratan yang dibaca 3 kali",
-  "dhikrScreen_doorsOfAllahMercy_937263": "Pintu-pintu rahmat Allah terbuka luas untukmu",
-  "dhikrScreen_worryAndSorrowLifted_fd1f04": "Kebimbangan dan kesedihan terangkat dengan kehendak Allah",
-  "dhikrScreen_guardedInYourDeen_bb9b33": "Dipelihara di dunia dan akhiratmu",
-  "dhikrScreen_evilRepelledFromEvery_3f1588": "Kejahatan ditolak dari segala arah",
-  "dhikrScreen_heartHeldByThe_0f7007": "Hati yang dipegang oleh Ever Living Ever Sustaining",
-  "dhikrScreen_fulfilledYourObligationOf_44ddfc": "Menunaikan kewajipan anda untuk bersyukur",
-  "dhikrScreen_recitingTheLastVerses_3d260d": "Membaca 2 ayat terakhir Al-Baqarah pada waktu malam sudah memadai",
-  "dhikrScreen_gratitudeThatMultipliesYour_24c5dd": "Syukur yang melipatgandakan nikmatmu",
-  "dhikrScreen_startPureOnThe_a0198e": "Mulakan murni di atas fitrah Islam",
-  "dhikrScreen_praiseThatRipplesThrough_cef105": "Pujian yang beralun di seluruh ciptaan",
-  "dhikrScreen_guidedToEveryGood_e5e914": "Dibimbing kepada setiap kebaikan hari ini",
-  "dhikrScreen_allahWillFreeHim_20396f": "Allah akan membebaskannya dari api neraka yang membacanya sebanyak 4 kali",
-  "dhikrScreen_wellbeingOfBodyHearing_f9d3af": "Kesejahteraan pendengaran dan penglihatan badan",
-  "dhikrScreen_guidedByTheHand_da5d5b": "Dibimbing oleh tangan Allah",
-  "dhikrScreen_wordsHeavierThanThe_6a9c4f": "Perkataan yang lebih berat daripada langit dan bumi",
-  "dhikrScreen_beginYourDayIn_530c07": "Mulakan hari anda dengan berserah kepada Allah",
-  "dhikrScreen_theyAreEnoughFor_14acc6": "Mereka cukup untuk anda - mengaji sebelum tidur",
-  "dhikrScreen_wellBeing_85c1f4": "kesejahteraan",
-  "dhikrScreen_fulfilled_7d487f": "Dipenuhi.",
-  "dhikrScreen_wellBeingInFaith_e70162": "Kesejahteraan dalam Iman · Keluarga · Kekayaan",
-  "dhikrScreen_concealMyFaultsCalm_0252f3": "Sembunyikan kesalahan saya · Tenangkan ketakutan saya",
-  "dhikrScreen_protectionFromEvilEye_3b6074": "Perlindungan daripada Mata Jahat",
-  "dhikrScreen_doNotLeaveMe_1e2414": "Jangan tinggalkan saya sendiri\\walaupun sekelip mata",
   "dhikrScreen_35c165_35c165": "{arg1}",
-  "dhikrScreen_allahWillSufficeYou_f177b2": "Allah akan mencukupkan kamu",
-  "dhikrScreen_againstWhateverConcernsYou_176991": "terhadap apa sahaja yang membimbangkan anda",
-  "dhikrScreen_doNotBurdenUs_4401b2": "Janganlah Engkau bebankan kami melebihi kemampuan kami, ampunilah kami dan kasihanilah kami",
-  "dhikrScreen_weHaveBelievedForgive_d34c4a": "Kami telah beriman - ampunilah dosa-dosa kami dan peliharalah kami dari api neraka",
-  "dhikrScreen_ownerOfSovereigntyIn_b0948c": "Wahai Pemilik Kedaulatan — di TanganMu segala kebaikan, Engkau Maha Berkuasa",
-  "dhikrScreen_forgiveOurSinsAnd_692ad8": "Ampunilah dosa dan keterlaluan kami, teguhkan kami dan kurniakanlah kemenangan kepada kami",
-  "dhikrScreen_youCreatedNotIn_d24f50": "Engkau tidak menciptakan dengan sia-sia - lindungilah kami dari azab Neraka",
-  "dhikrScreen_weHaveWrongedOurselves_24ab82": "Kami telah menganiaya diri kami sendiri - tanpa belas kasihan-Mu kami sesat",
-  "dhikrScreen_ourLordDoNot_ca9f87": "Ya Tuhan kami, janganlah Engkau jadikan kami bersama orang-orang yang zalim",
-  "dhikrScreen_doNotMakeUs_d5b5d2": "Jangan jadikan kami ujian bagi orang yang zalim",
-  "dhikrScreen_makeMeSteadfastIn_cc7dfe": "Jadikan aku teguh dalam solat - dan juga keturunanku",
-  "dhikrScreen_forgiveMeMyParents_1a319b": "Ampunilah aku, ibu bapaku, dan orang-orang mukmin pada hari perhitungan",
-  "dhikrScreen_bringMeInBy_62c19a": "Bawalah aku masuk dengan pintu masuk kebenaran dan keluar dengan jalan keluar kebenaran",
-  "dhikrScreen_myLordIncreaseMe_2fec5a": "Ya Tuhanku, tambahkanlah kepadaku ilmu",
-  "dhikrScreen_seekRefugeInYou_3a2efd": "Aku berlindung kepadaMu dari bisikan syaitan",
-  "dhikrScreen_forgiveAndHaveMercy_58f2df": "Ampunilah dan berilah rahmat - Engkau adalah sebaik-baik Pemberi Penyayang",
-  "dhikrScreen_enableMeToBe_e78eb3": "Izinkan aku untuk mensyukuri nikmat-Mu kepadaku dan kepada kedua orang tuaku",
-  "dhikrScreen_myLordHaveWronged_e6421b": "Tuhanku, aku telah menganiaya diriku sendiri, maka ampunilah aku",
-  "dhikrScreen_myLordWillNever_d4a663": "Tuhanku, aku sekali-kali tidak akan menjadi penyokong penjenayah",
-  "dhikrScreen_myLordSaveMe_ea6c67": "Ya Tuhanku, selamatkanlah aku dari kaum yang zalim",
-  "dhikrScreen_myLordAmIn_0acb2a": "Ya Tuhanku, aku sangat memerlukan kebaikan yang Engkau turunkan kepadaku",
-  "dhikrScreen_myLordHelpMe_80f8c7": "Ya Tuhanku, tolonglah aku terhadap orang-orang yang berbuat kerusakan",
-  "dhikrScreen_ourLordAvertFrom_bc7354": "Ya Tuhan kami, jauhkan azab neraka dari kami",
-  "dhikrScreen_ourLordYouEncompass_7e0f2a": "Ya Tuhan kami, rahmat dan ilmu Engkau meliputi segala sesuatu",
-  "dhikrScreen_enableMeToThank_d1f4df": "Mampukanlah aku untuk bersyukur kepadaMu dan jadikanlah anak cucuku yang soleh",
-  "dhikrScreen_myLordGrantMe_ef9ff1": "Ya Tuhanku, anugerahkanlah kepadaku orang-orang yang bertakwa",
-  "dhikrScreen_forgiveUsAndOur_60d1fd": "Ampunilah kami dan saudara-saudara kami yang sebelum kami beriman",
-  "dhikrScreen_uponYouWeRely_0c8229": "KepadaMu kami bertawakkal, kepadaMu kami kembali, dan kepadaMulah tempat kembali",
-  "dhikrScreen_pauseRememberAllah_1ddb4d": "jeda. Ingat Allah.",
-  "dhikrScreen_mashaallahRewardSecured_f51254": "MashaAllah! Ganjaran Dijamin",
-  "dhikrScreen_satanCannot_1c96dd": "Syaitan tidak boleh",
-  "dhikrScreen_enterTheHome_3086d7": "masuk rumah",
-  "dhikrScreen_whoeverRecites_ee68bc": "Sesiapa yang mengaji",
-  "dhikrScreen_theLastTwoVerses_a865c4": "dua ayat terakhir",
-  "dhikrScreen_ofSurahAlBaqarah_302bf4": "of Surah Al-Baqarah",
-  "dhikrScreen_atNight_f3945a": "pada waktu malam --",
-  "dhikrScreen_theyWillBe_019495": "mereka akan menjadi",
-  "dhikrScreen_enoughForHim_6e37aa": "cukup untuk dia",
-  "dhikrScreen_weHaveEnteredThe_f5ed3a": "Kita dah masuk petang",
-  "dhikrScreen_theKingdomBelongsTo_2f7681": "Kerajaan itu milik Allah",
-  "dhikrScreen_noneWorthyOfWorship_f1c87f": "Tiada yang berhak disembah melainkan Allah sahaja",
-  "dhikrScreen_allPraiseHeIs_c3ece6": "Segala puji · Dia Maha Kuasa atas segala sesuatu",
-  "dhikrScreen_weAskForThe_21b846": "Kami memohon kebaikan malam ini",
-  "dhikrScreen_saySeekRefuge_84c616": "Katakanlah: Aku berlindung",
-  "dhikrScreen_inTheLordOf_39c875": "dalam Tuhan Manusia",
-  "dhikrScreen_theKingOfMankind_d99354": "Raja Manusia",
-  "dhikrScreen_theGodOfMankind_e5231c": "Tuhan Manusia,",
-  "dhikrScreen_heRetreatsWhenYou_1fea37": "Dia berundur apabila kamu mengingati Allah.",
-  "dhikrScreen_seekRefugeInThe_96a762": "Berlindunglah kepada Tuhan Yang Menguasai Subuh",
-  "dhikrScreen_sufficedInAllRespects_57c52b": "Memadai dalam semua segi.",
-  "dhikrScreen_allahDoesNotBurden_63f3eb": "Allah tidak membebankan",
-  "dhikrScreen_soul_b7f1ee": "sebuah jiwa",
   "dhikrScreen_a5cfd1_a5cfd1": "×{count}",
-  "dhikrScreen_equalsTheWholeQuran_a2b879": "Sama dengan keseluruhan Al-Quran × 3",
   "impactReportScreen_whoeverDoesAnAtom_9013b0": "“Sesiapa yang melakukan atom\\",
   "impactReportScreen_theHomeOfThe_4602d2": "“Negeri akhirat itulah kehidupan yang kekal, kalaulah mereka mengetahui”. — Surah Al-Ankabut 29:64",
   "impactReportScreen_raceTowardsForgivenessFrom_94d614": "“Berlomba-lombalah kamu kepada ampunan dari Tuhanmu dan surga yang luasnya seluas langit dan bumi.” — Surah Al-Hadid 57:21",
@@ -2160,7 +1070,6 @@
   "impactReportScreen_righteousChildWhoPrays_7bcef4": "Anak soleh yang mendoakan anda, amal yang mengalir, atau ilmu yang memberi manfaat - tiga pelaburan yang kekal. (Muslim)",
   "impactReportScreen_youWillMeetAllah_c19524": "Kamu akan bertemu Allah dengan catatan kamu. Pastikan hari ini\\",
   "impactReportScreen_noDeedIsToo_c04d50": "Tidak ada amal yang terlalu kecil bagi Dzat yang menghitung atom.",
-  "impactReportScreen_lvl_987904": "Lvl {_level} · {arg1}",
   "impactReportScreen_200447_200447": "+{arg1}",
   "impactReportScreen_634027_634027": "+{arg1}",
   "impactReportScreen_whoeverDoesGoodDeed_89c2bf": "Barangsiapa yang mengerjakan kebaikan maka baginya sepuluh kali lipat kebaikannya.",
@@ -2170,56 +1079,36 @@
   "impactReportScreen_hasanat_64c7b6": "→ Hasanat: {arg1}\\n\\n",
   "impactReportScreen_ayahsReadLifetime_75eef6": "Ayah dibaca (seumur hidup): {arg1}\\n",
   "impactReportScreen_totalHasanaat_c43112": "Jumlah hasanat: {arg1}",
-  "impactReportScreen_ayahs_6a500c": "{arg1} ayahs",
-  "impactReportScreen_planted_90ec47": "{arg1} ditanam",
-  "impactReportScreen_cycles_f6649b": "{arg1} kitaran",
   "impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459": "Barangsiapa mengucapkan Subhanallahi wa bihamdihi 100 kali dalam sehari, maka dosanya diampuni walaupun sebanyak buih di lautan.",
   "impactReportScreen_subhanallahiWaBihamdihi_992976": "SubhanAllahi wa bihamdihi",
   "impactReportScreen_totalRecitations_5ed733": "Jumlah bacaan: {arg1}\\n",
   "impactReportScreen_dividedByForgivenessCycles_4e175d": "Dibahagikan dengan 100 → kitaran pengampunan: {arg1}",
-  "impactReportScreen_built_d62c2d": "{arg1} dibina",
   "impactReportScreen_dividedByPalaces_6f066c": "Dibahagikan dengan 10 → istana: {arg1}",
-  "impactReportScreen_earned_abd189": "{arg1} diperolehi",
-  "impactReportScreen_equivalent_cb7bb5": "{arg1} setara",
   "impactReportScreen_laIlahaIllallahuWahdahu_895dde": "La ilaha illallahu wahdahu la sharika lahu...",
   "impactReportScreen_setsOfSetsSlaves_b43b31": "Set 10 → {arg1} set × 4 hamba = {arg2}",
-  "impactReportScreen_opened_1bf8da": "{arg1} dibuka",
-  "impactReportScreen_received_a526e3": "{arg1} diterima",
   "impactReportScreen_totalSalawatSent_cfe45e": "Jumlah selawat yang dihantar: {arg1}\\n",
   "impactReportScreen_multipliedByBlessingsReceived_52810f": "Darab dengan 10 → {arg1} berkat yang diterima",
-  "impactReportScreen_invocations_d80c33": "{arg1} seruan",
   "impactReportScreen_protectionFromEvil_37b53a": "Perlindungan daripada kejahatan",
   "impactReportScreen_goodHealthProtection_058808": "Kesihatan & perlindungan yang baik",
   "impactReportScreen_totalInvocations_1fd02b": "Jumlah seruan: {arg1}",
   "impactReportScreen_dividedByQuranCompletions_b9a013": "Dibahagikan dengan 3 → {arg1} khatam Al-Quran",
-  "impactReportScreen_recitations_3cb9ec": "{arg1} bacaan",
   "impactReportScreen_564740_564740": "{_monthActiveDays}",
   "impactReportScreen_3dc421_3dc421": "{arg1}h",
   "impactReportScreen_08990a_08990a": "{arg1}m",
   "impactReportScreen_ago_71107c": "{arg1}m yang lalu",
   "impactReportScreen_moAgo_325a71": "{arg1}mo lalu",
-  "impactReportScreen_viewAllDonors_e72932": "Lihat semua {arg1} penderma",
   "impactReportScreen_failed_190558": "Gagal: {e}",
-  "impactReportScreen_meet_82797d": "Temui {arg1}, {arg2}",
-  "impactReportScreen_sponsor_a47417": "Penaja {arg1} →",
   "impactReportScreen_funded_add009": "{arg1}% dibiayai",
   "impactReportScreen_yourLifetimeImpact_8bfdcd": "Kesan seumur hidup anda",
   "impactReportScreen_startYourImpactJourney_1ae8c4": "Mulakan perjalanan kesan anda",
   "impactReportScreen_bd3721_bd3721": "{_myOrphansSponsoredCount}",
   "impactReportScreen_b3d969_b3d969": "{_myProjectsSupportedCount}",
-  "levelScreen_customProfileThemes_cec15c": "Tema profil tersuai",
-  "levelScreen_exclusiveVotingRights_684759": "Hak mengundi eksklusif",
-  "levelScreen_hallOfFameListing_eb6ad1": "Penyenaraian Dewan Kemasyhuran",
   "levelScreen_seeds_fff97b": "+{arg1} Benih",
   "levelScreen_laIlahaIllallah_e8c26b": "La ilaha illallah x100",
-  "levelScreen_unlocks_6f2513": "Membuka kunci: {arg1}",
   "levelScreen_seedsBoost_464454": "{arg1}× Penggalak Benih",
   "levelScreen_cf765f_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "levelScreen_nextDays_212b86": "Seterusnya: {arg1} ({arg2} hari)",
   "levelScreen_days_100e10": "{current} / {arg1} hari",
   "levelScreen_dayStreak_df2abf": "{arg1} hari berturut-turut",
-  "phase1Screens_quranReadingNimage_5ebac0": "Bacaan Al-Quran\\ngambar",
-  "phase1Screens_orphansNimage_24d12a": "Anak yatim\\ngambar",
   "onboardingComponents_355c50_355c50": "{first}",
   "onboardingComponents_b236c9_b236c9": "{trailing}",
   "quranMini_inTheNameOf_46925d": "Dengan nama Allah yang Maha Pemurah lagi Maha Penyayang.",
@@ -2237,9 +1126,6 @@
   "orphanDetailScreen_chooseHowManySeeds_b69aa2": "Pilih berapa Biji untuk diberikan. Minimum {arg1}.",
   "orphanDetailScreen_yourBalanceSeeds_f8045b": "Baki anda: {arg1} Benih",
   "profileSettingsScreen_nameCannotBeEmpty_c737ab": "Nama tidak boleh kosong",
-  "profileSettingsScreen_bosniaAndHerzegovina_a428ef": "Bosnia dan Herzegovina",
-  "profileSettingsScreen_centralAfricanRepublic_0fde6c": "Republik Afrika Tengah",
-  "profileSettingsScreen_unitedArabEmirates_d8e2d8": "Emiriah Arab Bersatu",
   "profileSettingsScreen_signedInWithGoogle_17e053": "Log masuk dengan Google",
   "profileSettingsScreen_signedInWithQuran_2e1ffc": "Log masuk dengan Quran.com",
   "profileSettingsScreen_signedInWithEmail_dd881f": "Log masuk dengan E-mel",
@@ -2256,33 +1142,7 @@
   "projectDetailScreen_e4e562_e4e562": "{arg1}%",
   "projectDetailScreen_ago_71107c": "{arg1}m yang lalu",
   "projectDetailScreen_moAgo_325a71": "{arg1}mo lalu",
-  "projectDetailScreen_viewAll_3d2c48": "Lihat semua {arg1} →",
   "quranHubScreen_saved_9c28a3": "{arg1} disimpan",
-  "quranHubScreen_tapTheHeartBookmark_c62da1": "Ketik ikon hati/penanda halaman semasa membaca untuk menyimpan ayat.",
-  "quranHubScreen_surahVerse_2c65ec": "Surah {s} • Ayat {a}",
-  "quranHubScreen_verses_f97238": "{arg1} ayat",
-  "quranHubScreen_of_0420fc": "daripada {arg1}",
-  "quranScreen_englishSahihIntl_da5e9e": "Bahasa Inggeris, Sahih Intl.",
-  "quranScreen_saheehInternational_fd1d5c": "Antarabangsa Saheeh",
-  "quranScreen_englishPickthall_a0d265": "Inggeris, Pickthall",
-  "quranScreen_mohammadMarmadukePickthall_554557": "Mohammad Marmaduke Pickthall",
-  "quranScreen_englishTheMessage_24a984": "Bahasa Inggeris, The Message",
-  "quranScreen_englishMuhsinKhan_a5402b": "Inggeris, Muhsin Khan",
-  "quranScreen_muhsinKhanHilali_471c43": "Muhsin Khan & Hilali",
-  "quranScreen_fatehMuhammadJalandhry_262387": "Fateh Muhammad Jalandhry",
-  "quranScreen_imamAhmadRazaKhan_225277": "Imam Ahmad Raza Khan",
-  "quranScreen_maulanaSayyidAbulAla_75d35f": "Maulana Sayyid Abul Ala Maududi",
-  "quranScreen_franAisHamidullah_2ca2c2": "Français, Hamidullah",
-  "quranScreen_rkDiyanet_431130": "Türkçe, Diyanet",
-  "quranScreen_rkLeymanAte_7aa8e1": "Türkçe, Süleyman Ateş",
-  "quranScreen_bahasaIndonesian_2a26f0": "Bahasa, Indonesia",
-  "quranScreen_ministryOfReligiousAffairs_e30db8": "Kementerian Hal Ehwal Ugama",
-  "quranScreen_muhiuddinKhan_df9bfe": "বাংলা, Muhiuddin Khan",
-  "quranScreen_deutschAbuRida_9acffd": "Deutsch, Abu Rida",
-  "quranScreen_abuRidaMuhammadIbn_3a40b3": "Abu Rida Muhammad ibn Ahmad",
-  "quranScreen_espaOlAsad_1c1933": "Español, Asad",
-  "quranScreen_uthmaniMadinah_e1f10e": "Uthmani (Madinah)",
-  "quranScreen_alJalalaynEN_af0584": "Al-Jalalayn (EN)",
   "quranScreen_couldNotLoadAyah_62f120": "Tidak dapat memuatkan ayah. Sila cuba semula.",
   "quranScreen_noConnectionCachedData_e5a215": "Tiada sambungan. Data cache mungkin tersedia.",
   "quranScreen_ayahs_c98642": "{arg1} ayahs",
@@ -2290,73 +1150,27 @@
   "quranScreen_removedBookmark_d7a16a": "Penanda halaman dialih keluar {_surahName} {_surah}:{_ayah}",
   "quranScreen_couldNotSaveBookmark_976448": "Tidak dapat menyimpan penanda halaman, sila cuba semula",
   "quranScreen_bookmarked_2c6203": "Ditandakan {_surahName} {_surah}:{_ayah}",
-  "quranScreen_trimmedContains_039f31": ") && !trimmed.contains(",
   "quranScreen_tafsir_391c0d": "Tafsir · {_surahName} {_surah}:{_ayah}",
   "quranScreen_addedToFavourites_b3cce0": "♥️ Ditambah pada Kegemaran",
-  "quranScreen_comfortableNightTimeReading_da3df2": "Bacaan waktu malam yang selesa",
   "quranScreen_pt_9e58e8": "{arg1} pt",
   "quranScreen_003843_003843": "{arg1} {arg2}",
-  "quranScreen_displayMeaningBelowEach_a26f31": "Paparkan maksud di bawah setiap ayat",
-  "quranScreen_showTransliteration_e04abd": "Tunjukkan Alih Huruf",
-  "quranScreen_romanisedPronunciationUnderEach_2c0136": "Sebutan roman di bawah setiap perkataan",
-  "quranScreen_progressBarAyahCount_3cd24d": "Bar kemajuan & kad kiraan ayah",
-  "quranScreen_moveToNextVerse_ea29fd": "Beralih ke ayat seterusnya apabila audio tamat",
-  "quranScreen_repeatCurrentVerse_552669": "Ulang Ayat Semasa",
-  "quranScreen_notificationsALERTS_fbea75": "PEMBERITAHUAN & MAKLUM",
-  "quranScreen_milestoneSoundAlerts_03cdc3": "Makluman Bunyi Milestone",
-  "quranScreen_chimeWhenYouReach_dd60c0": "Berbunyi apabila anda mencapai 10, 25, 50 ayat",
-  "quranScreen_showEachArabicWord_64532d": "Tunjukkan setiap perkataan Arab dengan maksud Inggerisnya",
-  "quranScreen_translationLanguage_d8c9b3": "Bahasa Terjemahan",
-  "quranScreen_translationsAvailable_55c648": "{arg1} terjemahan tersedia",
   "quranScreen_3502e8_3502e8": "{arg1} / {arg2}",
-  "quranScreen_sabiqSeedsEarnedToday_13ddb3": "+{_pointsToday} Biji Sabiq diperoleh hari ini!",
   "quranScreen_dcacc4_dcacc4": "{_ayah} / {arg1}",
   "quranScreen_6d1f9d_6d1f9d": "{arg1}",
   "quranScreen_ayahsRead_862866": "{_ayahsToday} ayah membaca",
   "quranScreen_ce2af3_ce2af3": "{arg1}%",
   "quranScreen_6e8ac8_6e8ac8": "{text}",
-  "quranScreen_pageJuz_6ac28a": "Halaman {_currentPage} · Juz {arg1}",
   "startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5": "Ralat yang tidak dijangka semasa Log Masuk Google",
   "startJourneyScreen_connectedToQuranCom_c0c631": "Bersambung ke Quran.com",
-  "streakScreen_nextDays_212b86": "Seterusnya: {arg1} ({arg2} hari)",
-  "streakScreen_seeds_990893": "+{arg1} Benih",
-  "streakScreen_days_100e10": "{current} / {arg1} hari",
-  "streakScreen_dayStreak_df2abf": "{arg1} hari berturut-turut",
-  "tafsirHubScreen_earnSeedsForEvery_ffb3d5": "Dapatkan Benih untuk setiap 10 minit mendengar Tafsir",
-  "tafsirScreen_alJalalaynEN_af0584": "Al-Jalalayn (EN)",
   "tafsirScreen_verses_fed624": "{arg1} ayat",
-  "tafsirScreen_trimmedContains_039f31": ") && !trimmed.contains(",
   "tafsirScreen_ayahOf_63c42b": "Ayah {_ayah} daripada {_surahLen}",
   "tafsirScreen_4815bb_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "tafsirScreen_tafsirNotAvailableFor_0fce81": "Tafsir tidak tersedia untuk ayat ini.",
   "donationService_youMustBeLogged_6813cf": "Anda mesti log masuk untuk menderma.",
   "donationService_donationCouldNotBe_074195": "Derma tidak dapat diproses pada masa ini.",
   "donationService_anUnexpectedNetworkError_914b7a": "Ralat rangkaian yang tidak dijangka telah berlaku.",
   "donationService_sponsorshipReceived_671201": "Tajaan diterima 💝",
   "donationService_youSponsoredSeedsJazak_7711e1": "Anda menaja {amount} Benih · jazak Allah khair.",
   "donationService_sponsorshipCouldNotBe_55003e": "Tajaan tidak dapat diproses pada masa ini.",
-  "liveNotificationService_remindersToSealYour_782a67": "Peringatan untuk mengelak Benih anda yang belum selesai sebelum tengah malam.",
-  "liveNotificationService_sealYourSeedsBefore_62a726": "Tutup Benih anda sebelum tengah malam",
-  "liveNotificationService_youHavePendingSeeds_dd762f": "Anda mempunyai {pendingSeeds} Benih yang belum selesai. Ketik Seal the Day sebelum tengah malam atau ia tamat tempoh.",
-  "liveNotificationService_ayatReadToday_b5a4e8": "{_ayahCount} Ayat Baca hari ini 📖",
-  "liveNotificationService_readQuranToday_703122": "{arg1} Baca Al-Quran hari ini ⏱️",
-  "liveNotificationService_nothingReadFromQuran_b1c2eb": "Tiada Baca Al-Quran hari ini 📖",
-  "liveNotificationService_dhikrCompletedToday_835583": "{_dhikrCount} Dzikir selesai hari ini 📿",
-  "liveNotificationService_ayatDhikrToday_548e91": "{_ayahCount} ayat · {_dhikrCount} zikir hari ini",
-  "liveNotificationService_keepReadingAndDoing_cdc7b2": "Teruskan membaca dan berzikir!",
-  "liveNotificationService_yourSeedsToday_8649c6": "Benih Anda Hari Ini ✨",
-  "localReminderScheduler_sabiqRewardsNotifications_96d36c": "Pemberitahuan Ganjaran Sabiq",
-  "localReminderScheduler_it_0c8340": "Ia\\",
-  "localReminderScheduler_fridayReadSurahAl_077436": "s Friday — baca Surah Al-Kahfi",
-  "localReminderScheduler_whoeverRecitesSurahAl_15b9a5": "Sesiapa yang membaca surah Al-Kahfi pada hari Jumaat, nescaya bersinar bagi mereka cahaya di antara dua Jumaat.",
-  "localReminderScheduler_don_b4d354": "Don\\",
-  "localReminderScheduler_missSurahAlKahf_634857": "t miss Surah Al-Kahfi today",
-  "localReminderScheduler_fewHoursToMaghrib_d99fd2": "Beberapa jam ke Maghrib — habiskan Surah Al-Kahfi jika anda belum\\",
-  "quranApiService_notConnectedToQuran_9f4f89": "Tidak bersambung dengan Quran.com",
-  "quranApiService_syncFailedBookmarkCould_3393f7": "Penyegerakan gagal, {failed} penanda halaman tidak dapat ditolak ke Quran.com (semak token / titik akhir).",
-  "quranApiService_bookmarksAlreadyInSync_fad9e1": "Penanda halaman sudah disegerakkan",
-  "quranApiService_syncedBookmarksUpDown_dd2f96": "{total} penanda halaman disegerakkan ({uploaded} ke atas, {downloaded} ke bawah)",
-  "quranApiService_syncFailed_ae7629": "Penyegerakan gagal: {e}",
   "streakService_warmingUp_b1687b": "Memanaskan Badan",
   "streakService_oneWeek_4f98dc": "Satu Minggu",
   "streakService_twoWeeks_9a2d93": "Dua Minggu",
@@ -2364,12 +1178,9 @@
   "streakService_twoMonths_84d275": "Dua Bulan",
   "streakService_theCenturion_f1de7f": "The Centurion",
   "streakService_1fc043_1fc043": "{arg1} {arg2}",
-  "streakService_dayStreak_9ee8a3": "{arg1}-hari {arg2} coretan ·",
-  "streakService_bonusSeedsUnlocked_bcdda5": "+{arg1} bonus Benih dibuka kunci",
   "trackingService_c7528c_c7528c": "{arg1} {arg2}",
   "xpService_level_226f81": "{title} • Tahap {level}",
   "xpService_newBadgeUnlocked_2c8d0e": "Lencana baharu dibuka 🏆",
-  "xpService_you_79d09a": "awak\\",
   "xpService_dailyLoginBonus_d011fa": "Bonus log masuk harian",
   "xpService_seedsWelcomeBack_47888a": "+{arg1} Benih · selamat datang kembali!",
   "xpService_daySealed_037a56": "Hari dimeterai 🌙",
@@ -2390,17 +1201,11 @@
   "motivationalPopup_yourTimeIsYour_be6731": "Masa anda ialah aset paling\\nberharga anda. Laburlah dengan bijak\\dalam perkara yang kekal selama-lamanya.",
   "motivationalPopup_quranAlAnfal_b10486": "Quran • Al-Anfal 8:28",
   "motivationalPopup_takeAdvantageOfFive_e573fd": "Manfaatkan lima sebelum lima.",
-  "motivationalPopup_youHaveBeenRewarded_9bde33": "Anda telah diberi ganjaran untuk\\konsistensi anda hari ini!",
   "motivationalPopup_seeds_3a9c69": "+{arg1} Benih",
   "motivationalPopup_completeNowEarnSeeds_16ea6e": "Lengkapkan sekarang → dapatkan bonus +50 Benih",
   "motivationalPopup_finishYourAzkaarEarn_e264fa": "Selesaikan Azkaar anda → dapatkan bonus +30 Benih",
   "motivationalPopup_shareSabiqWithSomeone_c60dcc": "Kongsi Sabiq dengan seseorang → peroleh +100 Biji",
   "motivationalPopup_keepYourSpiritualMomentum_0f172c": "Kekalkan momentum rohani anda\\na lihat Benih anda berkembang ✨",
-  "noorOffline_somethingWentWrong_76fc46": "Sesuatu telah berlaku",
-  "notificationsSheet_stayOnTopOf_811366": "Kekal mendapat ganjaran & pencapaian",
-  "notificationsSheet_llBeNotifiedAbout_9e7a1b": "akan dimaklumkan tentang ganjaran, coretan & pencapaian.",
-  "notificationsSheet_inboxKeepsExistingItems_611668": "Peti masuk menyimpan item sedia ada tetapi tiada yang baharu akan sampai.",
-  "notificationsSheet_sabiqSeedsForSealing_001312": "Biji Sabiq untuk pengedap hari ini",
   "projectMediaCarousel_couldNotLoadVideo_deb8dd": "Tidak dapat memuatkan video",
   "quranExitCelebration_beautifulRecitation_9d2655": "bacaan yang indah.",
   "quranExitCelebration_everyMomentCounts_fddb4c": "Setiap saat adalah penting.",
@@ -2417,7 +1222,6 @@
   "streakService_dayStreakBody": "{days}-hari {type} coretan · +{bonus} bonus Benih dibuka kunci",
   "streakService_milestoneTitle": "{emoji} {label}",
   "streakService_60a570": "{arg1} {localLabel}",
-  "streakService_dayStreak_b49b65": "{arg1}-hari {arg2} coretan ·",
   "donationService_donationReceivedTitle": "Sumbangan diterima 💝",
   "donationService_youDonatedSeeds": "Anda menderma {amount} Biji · jazak Allah khair.",
   "streakService_60a570_60a570": "{arg1} {localLabel}",
@@ -3297,87 +2101,12 @@
       }
     }
   },
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@qfAuthService_tokenExchangeFailed": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@orphan_be2bf7": {
     "placeholders": {
       "firstName": {
         "type": "String"
       },
       "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_thisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_seedsThisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_dayAvgAzkaarDay": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_profileReturnedZeroRows": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dashboardLoadError": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_sponsor": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_today": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
         "type": "String"
       }
     }
@@ -3399,28 +2128,7 @@
       }
     }
   },
-  "@dashboardScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_last": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_active": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_useMyCodeAnd": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3441,13 +2149,6 @@
       }
     }
   },
-  "@dashboardScreen_yourRank": {
-    "placeholders": {
-      "rankText": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_d13a42": {
     "placeholders": {
       "_myPoints": {
@@ -3457,47 +2158,6 @@
         "type": "String"
       },
       "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_lvl": {
-    "placeholders": {
-      "level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_sealWithin": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_ofGoal": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_default": {
-    "placeholders": {
-      "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_readTimes": {
-    "placeholders": {
-      "readCount": {
         "type": "String"
       }
     }
@@ -3563,16 +2223,6 @@
       }
     }
   },
-  "@impactReportScreen_lvl": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_200447": {
     "placeholders": {
       "arg1": {
@@ -3587,27 +2237,6 @@
       }
     }
   },
-  "@impactReportScreen_dhikrRecitedLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_hasanat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_ayahsReadLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_hasanat_e68a30": {
     "placeholders": {
       "arg1": {
@@ -3615,150 +2244,7 @@
       }
     }
   },
-  "@impactReportScreen_totalHasanaat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_planted": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_cycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalRecitations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByForgivenessCycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_built": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByPalaces": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_earned": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalRecitations_262e54": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_setsOfSetsSlaves": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_opened": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_received": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalSalawatSent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_multipliedByBlessingsReceived": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_invocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalInvocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent_d7e6f6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByQuranCompletions": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_recitations": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3786,13 +2272,6 @@
       }
     }
   },
-  "@impactReportScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_ago_c25b44": {
     "placeholders": {
       "arg1": {
@@ -3807,52 +2286,7 @@
       }
     }
   },
-  "@impactReportScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_viewAllDonors": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_failed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_meet": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_funded": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3873,13 +2307,6 @@
       }
     }
   },
-  "@levelScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_59c6a1": {
     "placeholders": {
       "arg1": {
@@ -3894,13 +2321,6 @@
       }
     }
   },
-  "@levelScreen_unlocks": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_a49180": {
     "placeholders": {
       "arg1": {
@@ -3909,13 +2329,6 @@
     }
   },
   "@levelScreen_seeds_a22be5": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_seedsBoost": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3941,34 +2354,7 @@
       }
     }
   },
-  "@levelScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_dayStreak": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3999,37 +2385,6 @@
       }
     }
   },
-  "@orphanDetailScreen_years": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_ofSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_through": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@orphanDetailScreen_ago_c25b44": {
     "placeholders": {
       "arg1": {
@@ -4044,56 +2399,7 @@
       }
     }
   },
-  "@orphanDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@orphanDetailScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_seeds": {
-    "placeholders": {
-      "_availablePoints": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_chooseHowManySeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_yourBalanceSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@profileSettingsScreen_seeds": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4114,13 +2420,6 @@
       }
     }
   },
-  "@projectDetailScreen_organisedBy": {
-    "placeholders": {
-      "sponsor": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_4c2b09": {
     "placeholders": {
       "arg1": {
@@ -4134,13 +2433,6 @@
       }
     }
   },
-  "@projectDetailScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_seeds_801ec7": {
     "placeholders": {
       "arg1": {
@@ -4149,13 +2441,6 @@
     }
   },
   "@projectDetailScreen_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@projectDetailScreen_ago": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4176,13 +2461,6 @@
       }
     }
   },
-  "@projectDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_ago_65f0ec": {
     "placeholders": {
       "arg1": {
@@ -4190,98 +2468,7 @@
       }
     }
   },
-  "@projectDetailScreen_viewAll": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_saved": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_surahVerse": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_of": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranHubScreen_saved_edce53": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_removedBookmark": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_bookmarked": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_tafsir": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_pt": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4298,26 +2485,12 @@
       }
     }
   },
-  "@quranScreen_translationsAvailable": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_3502e8": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_sabiqSeedsEarnedToday": {
-    "placeholders": {
-      "_pointsToday": {
         "type": "String"
       }
     }
@@ -4339,13 +2512,6 @@
       }
     }
   },
-  "@quranScreen_ayahsRead": {
-    "placeholders": {
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_ce2af3": {
     "placeholders": {
       "arg1": {
@@ -4356,67 +2522,6 @@
   "@quranScreen_6e8ac8": {
     "placeholders": {
       "text": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_pageJuz": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@tafsirScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@tafsirScreen_ayahOf": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
         "type": "String"
       }
     }
@@ -4434,78 +2539,6 @@
       }
     }
   },
-  "@donationService_youSponsoredSeedsJazak": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_youHavePendingSeeds": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatReadToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_readQuranToday": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_dhikrCompletedToday": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatDhikrToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailedBookmarkCould": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncedBookmarksUpDown": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "@streakService_1fc043": {
     "placeholders": {
       "arg1": {
@@ -4516,70 +2549,12 @@
       }
     }
   },
-  "@streakService_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_bonusSeedsUnlocked": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@trackingService_c7528c": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_level": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      },
-      "level": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_seedsWelcomeBack": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_sabiqSeedsConfirmedBonus": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      },
-      "bonus": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_sabiqSeedsConfirmed": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      }
-    }
-  },
-  "@motivationalPopup_seeds": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -4619,64 +2594,12 @@
       }
     }
   },
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@qfAuthService_tokenExchangeFailed_89d8a0": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@orphan_be2bf7_be2bf7": {
     "placeholders": {
       "firstName": {
         "type": "String"
       },
       "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_thisSession_702ffc": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_seedsThisSession_cd9411": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_profileReturnedZeroRows_3ccedb": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dashboardLoadError_6168de": {
-    "placeholders": {
-      "e": {
         "type": "String"
       }
     }
@@ -4691,39 +2614,12 @@
       }
     }
   },
-  "@dashboardScreen_today_261fbb": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_606140_606140": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "_lastAyah": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dayStreak_2934ca": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_active_2d214a": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -4745,13 +2641,6 @@
   "@dashboardScreen_e4e562_e4e562": {
     "placeholders": {
       "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_yourRank_67be90": {
-    "placeholders": {
-      "rankText": {
         "type": "String"
       }
     }
@@ -4779,33 +2668,9 @@
       }
     }
   },
-  "@dashboardScreen_sealWithin_381d5d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_ofGoal_9660ee": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@dhikrScreen_default_8bd36b": {
     "placeholders": {
       "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_readTimes_537f51": {
-    "placeholders": {
-      "readCount": {
         "type": "String"
       }
     }
@@ -4871,16 +2736,6 @@
       }
     }
   },
-  "@impactReportScreen_lvl_987904": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_200447_200447": {
     "placeholders": {
       "arg1": {
@@ -4923,27 +2778,6 @@
       }
     }
   },
-  "@impactReportScreen_ayahs_6a500c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_planted_90ec47": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_cycles_f6649b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalRecitations_5ed733": {
     "placeholders": {
       "arg1": {
@@ -4958,28 +2792,7 @@
       }
     }
   },
-  "@impactReportScreen_built_d62c2d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_dividedByPalaces_6f066c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_earned_abd189": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent_cb7bb5": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4992,20 +2805,6 @@
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_opened_1bf8da": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_received_a526e3": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5024,13 +2823,6 @@
       }
     }
   },
-  "@impactReportScreen_invocations_d80c33": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalInvocations_1fd02b": {
     "placeholders": {
       "arg1": {
@@ -5039,13 +2831,6 @@
     }
   },
   "@impactReportScreen_dividedByQuranCompletions_b9a013": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_recitations_3cb9ec": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -5087,33 +2872,9 @@
       }
     }
   },
-  "@impactReportScreen_viewAllDonors_e72932": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_failed_190558": {
     "placeholders": {
       "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_meet_82797d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_sponsor_a47417": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5146,13 +2907,6 @@
       }
     }
   },
-  "@levelScreen_unlocks_6f2513": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seedsBoost_464454": {
     "placeholders": {
       "arg1": {
@@ -5175,16 +2929,6 @@
         "type": "String"
       },
       "arg5": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
         "type": "String"
       }
     }
@@ -5358,38 +3102,7 @@
       }
     }
   },
-  "@projectDetailScreen_viewAll_3d2c48": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranHubScreen_saved_9c28a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_surahVerse_2c65ec": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_verses_f97238": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_of_0420fc": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -5459,26 +3172,12 @@
       }
     }
   },
-  "@quranScreen_translationsAvailable_55c648": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_3502e8_3502e8": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_sabiqSeedsEarnedToday_13ddb3": {
-    "placeholders": {
-      "_pointsToday": {
         "type": "String"
       }
     }
@@ -5521,50 +3220,6 @@
       }
     }
   },
-  "@quranScreen_pageJuz_6ac28a": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_days_100e10": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_dayStreak_df2abf": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@tafsirScreen_verses_fed624": {
     "placeholders": {
       "arg1": {
@@ -5602,94 +3257,12 @@
       }
     }
   },
-  "@liveNotificationService_youHavePendingSeeds_dd762f": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatReadToday_b5a4e8": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_readQuranToday_703122": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_dhikrCompletedToday_835583": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatDhikrToday_548e91": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailedBookmarkCould_3393f7": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncedBookmarksUpDown_dd2f96": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailed_ae7629": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "@streakService_1fc043_1fc043": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_dayStreak_9ee8a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_bonusSeedsUnlocked_bcdda5": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5826,16 +3399,6 @@
         "type": "Object"
       },
       "localLabel": {
-        "type": "Object"
-      }
-    }
-  },
-  "@streakService_dayStreak_b49b65": {
-    "placeholders": {
-      "arg1": {
-        "type": "Object"
-      },
-      "arg2": {
         "type": "Object"
       }
     }

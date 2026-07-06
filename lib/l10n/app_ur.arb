@@ -888,810 +888,114 @@
   "peopleReadingNow": "ابھی پڑھ رہے ہیں",
   "readToday": "نے آج پڑھا",
   "communityHasanat": "کمیونٹی نیکیاں",
-  "authScreen_pleaseEnterYourEmail": "براہ کرم اپنا ای میل درج کریں۔",
-  "authScreen_pleaseEnterYourPassword": "براہ کرم اپنا پاس ورڈ درج کریں۔",
-  "authScreen_passwordMustBeAt": "پاس ورڈ کم از کم 6 حروف کا ہونا چاہیے۔",
-  "authScreen_alreadyHaveAnAccount": "پہلے سے ہی اکاؤنٹ ہے؟ سائن ان کریں۔",
-  "authScreen_haveAnAccountSign": "کیا آپ کا اکاؤنٹ نہیں ہے؟ سائن اپ کریں۔",
-  "qfAuthService_qfemailconflictexceptionAlreadyHasAn": "QfEmailConflictException: {email} کا پہلے سے ہی ایک اکاؤنٹ ہے۔",
-  "qfAuthService_openidOfflineAccessUser": "openid offline_access صارف کے بُک مارک کلیکشن ریڈنگ_سیشن",
-  "qfAuthService_tokenExchangeFailed": "ٹوکن کا تبادلہ ناکام ہو گیا ({arg1}): {arg2}",
-  "qfAuthService_errorNullResponse": "خرابی: کالعدم جواب",
   "orphan_be2bf7": "{firstName} {lastInitial}.",
-  "akhirahBalanceScreen_subhanallahiWaBiHamdihi": "\"سبحان اللہ وبحمدہ\" - دن میں 100 بار کہنے سے گناہوں کو مٹا دیا جاتا ہے، یہاں تک کہ سمندر کی جھاگ کی طرح۔ (بخاری)",
-  "akhirahBalanceScreen_sayLaIlahaIllallah": "100 بار لا الہ الا اللہ کہنا 10 غلام آزاد کرنے اور 100 حسنات کے برابر ہے۔ (بخاری)",
-  "akhirahBalanceScreen_lightOnTheTongue": "زبان پر ہلکا، ترازو پر بھاری: سبحان اللہ و بحمدہ، سبحان اللہ العظیم۔ (بخاری 6406)",
-  "akhirahBalanceScreen_theDhikrOfAllah": "اللہ کا ذکر ترازو میں سونے کے برابر وزنی ہے۔ جاری رکھیں۔",
-  "akhirahBalanceScreen_yourTongueShouldStay": "’’تمہاری زبان اللہ کے ذکر سے تر رہے‘‘۔ - کیا یہ اب بھی نم ہے؟",
-  "akhirahBalanceScreen_astaghfirullahTheProphetSaid": "استغفر اللہ - نبی صلی اللہ علیہ وسلم نے اسے دن میں 100 مرتبہ کہا اور اس پر کوئی گناہ نہیں ہوا۔ آپ کے پاس کتنے ہیں؟",
-  "akhirahBalanceScreen_whenYouRememberAllah": "جب آپ اللہ کو خاموشی سے یاد کرتے ہیں تو وہ آپ کو مجلس میں زیادہ یاد کرتا ہے۔",
-  "akhirahBalanceScreen_reciteAyatAlKursi": "ہر نماز کے بعد آیت الکرسی پڑھیں، موت کے سوا کوئی چیز جنت سے نہیں روک سکتی۔",
-  "akhirahBalanceScreen_oneAlhamdulillahFillsThe": "ایک الحمدللہ پیمانہ بھرتا ہے۔ ایک سبحان اللہ آسمان و زمین کے درمیان جو کچھ ہے اسے بھر دیتا ہے۔",
-  "akhirahBalanceScreen_theRemembranceOfAllah": "’’اللہ کا ذکر ہر چیز سے بڑھ کر ہے۔‘‘ سورہ عنکبوت 29:45",
-  "akhirahBalanceScreen_rememberMeWillRemember": "’’مجھے یاد رکھو میں تمہیں یاد رکھوں گا۔‘‘ سورہ البقرہ 2:152۔ کرو گے؟",
-  "akhirahBalanceScreen_inTheRemembranceOf": "\"اللہ کے ذکر سے دلوں کو سکون ملتا ہے۔\" - سورہ رعد 13:28",
-  "akhirahBalanceScreen_fiveMinutesOfDhikr": "پانچ منٹ کا ذکر اب آپ کے دل کے اگلے 24 گھنٹوں کو تشکیل دیتا ہے۔",
-  "akhirahBalanceScreen_streakIsnAboutToday": "ایک سلسلہ آج کے بارے میں نہیں ہے - یہ اس کے بارے میں ہے کہ آپ 30 دنوں میں کون بن جاتے ہیں۔",
-  "akhirahBalanceScreen_smallDropsFillAn": "چھوٹے قطروں سے سمندر بھر جاتا ہے۔ آپ کا یومیہ ذکر ایک بہت بڑی چیز کو بھر رہا ہے۔",
-  "akhirahBalanceScreen_noOneSeesThe": "آپ کے دل میں ذکر کو کوئی نہیں دیکھتا - لیکن آپ کا ریکارڈ لکھنے والا ہر فرشتہ کرتا ہے۔",
-  "akhirahBalanceScreen_theBiggestWinsAre": "سب سے بڑی جیت روزانہ کی چھوٹی عادات سے بنتی ہے۔ زنجیر مت توڑو۔",
-  "akhirahBalanceScreen_youCameBackToday": "تم آج واپس آئے۔ یہ پہلے سے ہی عبادت ہے۔ ایک منٹ اور ٹھہرو؟",
-  "akhirahBalanceScreen_tomorrowPeaceIsBuilt": "کل کا امن آج کی یاد پر قائم ہے۔ ایک اور بیج لگائیں۔",
-  "akhirahBalanceScreen_areYouDoneAllah": "کیا آپ نے کیا؟ اللہ کا دروازہ ہمیشہ کھلا رہتا ہے - آپ کے بند ہونے کے بعد بھی۔",
-  "akhirahBalanceScreen_dhikrIsTheLanguage": "ذکر دل کی زبان ہے۔ کیا آج آپ نے اپنے رب سے بات کی ہے؟",
-  "akhirahBalanceScreen_everySubhanallahIsSadaqah": "ہر سبحان اللہ صدقہ ہے۔ سونے سے پہلے کتنے دو گے؟",
-  "akhirahBalanceScreen_heartThatForgetsDhikr": "جو دل ذکر کو بھول جاتا ہے اسے زنگ لگنے لگتا ہے۔ یاد رکھنے والا دل روشن رہتا ہے۔",
-  "akhirahBalanceScreen_haveYouFortifiedYourself": "کیا آپ نے آج صبح و شام اذکار سے خود کو مضبوط کیا ہے؟",
-  "akhirahBalanceScreen_thisSession": "یہ سیشن: +{arg1}",
-  "akhirahBalanceScreen_seedsThisSession": "+{arg1} بیج اس سیشن میں",
-  "akhirahBalanceScreen_dayAvgAzkaarDay": "7 دن کی اوسط: {arg1} اذکار/دن",
-  "dashboardScreen_profileReturnedZeroRows": "پروفائل نے {uid} کے لیے صفر قطاریں لوٹائی",
-  "dashboardScreen_dashboardLoadError": "ڈیش بورڈ لوڈ کی خرابی: {e}",
-  "dashboardScreen_invalidReferralCode": "غلط ریفرل کوڈ",
-  "dashboardScreen_cannotReferYourself": "اپنا حوالہ نہیں دے سکتے",
-  "dashboardScreen_sponsor": "اسپانسر {name}, {arg1}",
-  "dashboardScreen_dashboardDoesn": ": 0، // ڈیش بورڈ نہیں کرتا",
-  "dashboardScreen_today": "{arg1} · {_lastAyah} · +{_ayahsToday} آج",
   "dashboardScreen_606140": "{arg1} · {_lastAyah}",
   "dashboardScreen_setsToday": "{_dhikrToday} آج سیٹ کرتا ہے۔",
-  "dashboardScreen_dayStreak": "{arg1} دن کا سلسلہ",
   "dashboardScreen_last": "آخری: {arg1}",
   "dashboardScreen_earnPerFriend": "فی دوست +500 کمائیں۔",
-  "dashboardScreen_yourSabiqSeedsFund": "آپ کا Sabiq Seeds ان منصوبوں کو فنڈ دیتا ہے۔",
-  "dashboardScreen_active": "{arg1} فعال",
-  "dashboardScreen_joinMeOnSabiq": "سبیق انعامات پر میرے ساتھ شامل ہوں، روزانہ قرآن، ذکر اور نیک اعمال کے لیے بیج حاصل کریں!\\n\\n",
-  "dashboardScreen_useMyCodeAnd": "میرا کوڈ *{arg1}* استعمال کریں اور ہم دونوں کو 500 Sabiq بیج ملیں گے!\\n\\n",
-  "dashboardScreen_messageCopiedShareOr": "پیغام کاپی، شیئر یا واٹس ایپ میں پیسٹ کریں!",
-  "dashboardScreen_sabiqSeedsRewardedTo": "آپ دونوں کو 500 صابق سیڈز کا انعام!",
-  "dashboardScreen_youHaveAlreadyUsed": "آپ پہلے ہی ریفرل کوڈ استعمال کر چکے ہیں۔",
   "dashboardScreen_invalidReferralCode_59fb25": "غلط ریفرل کوڈ۔",
-  "dashboardScreen_youCannotUseYour": "آپ اپنا کوڈ استعمال نہیں کر سکتے۔",
-  "dashboardScreen_anErrorOccurredPlease": "ایک خرابی پیش آگئی۔ براہ کرم دوبارہ کوشش کریں۔",
   "dashboardScreen_52b02c": "{pts}",
   "dashboardScreen_e4e562": "{arg1}%",
-  "dashboardScreen_seeDetailsForMore": "مزید پروجیکٹس کے لیے تفصیلات دیکھیں →",
-  "dashboardScreen_yourTOTALSABIQSEEDS": "آپ کے کل سبک کے بیج",
-  "dashboardScreen_viewCampaignDonate": "🤲 مہم دیکھیں اور عطیہ کریں۔",
-  "dashboardScreen_yourRank": "آپ کا درجہ: {rankText}",
   "dashboardScreen_d13a42": "{_myPoints} {unit} • {arg1}",
-  "dashboardScreen_beTheFirstOn": "بورڈ میں پہلے نمبر پر رہیں",
-  "dashboardScreen_readAnAyahOr": "سرفہرست مقام حاصل کرنے کے لیے کوئی آیت یا ذکر پڑھیں",
-  "dashboardScreen_lvl": "Lvl {level} · {arg1}",
-  "dashboardScreen_sealWithin": "{arg1}h کے اندر مہر لگائیں۔",
-  "dashboardScreen_jazakallahDaySealed": "جزاک اللہ!  دن مہربند",
-  "dashboardScreen_ofGoal": "کا {arg1} {arg2} مقصد",
-  "dhikrHubScreen_propheticSupplications": "نبوی دعائیں",
-  "dhikrHubScreen_morningEveningRemembrance": "صبح و شام کی یاد",
-  "dhikrHubScreen_furtherSupplications": "مزید دعائیں",
-  "dhikrHubScreen_closingRemembranceSalawat": "اختتامی ذکر و صلوات",
-  "dhikrHubScreen_hajjUmrahSupplications": "حج اور عمرہ کی دعائیں",
-  "dhikrHubScreen_falseHiddenAdd": "] == غلط) hidden.add(r[",
-  "dhikrScreen_indoPak": "انڈو پاک",
-  "dhikrScreen_default": "ڈیفالٹ: {recommendedCount}",
-  "dhikrScreen_duaAzkarSettings": "دعا اور اذکار کی ترتیبات",
-  "dhikrScreen_hideTheVisualArtwork": "بصری آرٹ ورک کے علاقے کو چھپائیں",
-  "dhikrScreen_pinTheIllustrationAt": "مثال کو اوپر پن کریں جب کہ عربی متن اس کے نیچے سکرول کرتا ہے۔",
-  "dhikrScreen_readTimes": "{readCount} بار پڑھیں",
   "dhikrScreen_d08433": "{arg1} / {arg2}",
-  "dhikrScreen_alBaqarahAmanaAr": "البقرہ 285 (آمنۃ الرسول)",
-  "dhikrScreen_alBaqarahAlifLam": "البقرہ 1-5 (الف لام میم)",
-  "dhikrScreen_alBaqarahLaIkraha": "البقرہ 256 (لا اقراء)",
-  "dhikrScreen_alBaqarahAllahuWaliyy": "البقرہ 257 (اللہ والی)",
-  "dhikrScreen_salawatIbrahimiyyaDurood": "صلوات ابراہیمیہ (درود)",
   "dhikrScreen_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
   "dhikrScreen_86f857": "\\u2060{matched}",
   "dhikrScreen_49900d": "+{hasanaat}",
-  "dhikrScreen_hisnulMuslimChapter": "حسن المسلم، باب:",
   "dhikrScreen_3856c1": "{rawRef} | {bottomRef}",
-  "dhikrScreen_bestOfBothWorlds": "دونوں جہانوں میں بہترین، آگ سے پناہ",
-  "dhikrScreen_patienceAndSteadfastnessIn": "ہر آزمائش میں صبر اور استقامت",
-  "dhikrScreen_allahBurdensNoSoul": "اللہ کسی جان کو اس کی طاقت سے زیادہ تکلیف نہیں دیتا",
-  "dhikrScreen_keepTheHeartFirm": "دل کو ہدایت پر قائم رکھیں",
-  "dhikrScreen_faithAnsweredWithForgiveness": "ایمان نے جہنم سے معافی کے ساتھ جواب دیا۔",
-  "dhikrScreen_allSovereigntyInAllah": "تمام حاکمیت اللہ کی ہے",
-  "dhikrScreen_allahHearsEveryCall": "اللہ نیک اولاد کی ہر پکار سنتا ہے۔",
-  "dhikrScreen_countedWithTheWitnesses": "حق کے گواہوں کے ساتھ شمار کیا جاتا ہے۔",
-  "dhikrScreen_forgivenessFirmFeetAnd": "معافی، مضبوط پاؤں، اور فتح",
-  "dhikrScreen_theDuaOfThose": "غور کرنے والوں کی دعا",
-  "dhikrScreen_inscribedWithTheWitnesses": "وحی کے گواہوں کے ساتھ کندہ",
-  "dhikrScreen_theDuaAllahAccepted": "اللہ تعالیٰ نے آدم علیہ السلام سے قبول فرمائی",
-  "dhikrScreen_spareUsTheCompany": "ہمیں ظالموں کی جماعت سے بچا",
-  "dhikrScreen_neverTrialForThe": "ظالموں کی کبھی آزمائش نہیں۔",
-  "dhikrScreen_refugeFromAskingWithout": "بغیر علم کے مانگنے سے پناہ",
-  "dhikrScreen_prayerForSafetyAnd": "سلامتی اور ایمان کی دعا",
-  "dhikrScreen_steadfastInPrayerMe": "نماز میں ثابت قدم رہو، میں اور میرے بچے",
-  "dhikrScreen_mercyForMeMy": "میرے لیے، میرے والدین، مومنین کے لیے رحمت",
-  "dhikrScreen_prayerForParents": "والدین کے لیے دعا",
-  "dhikrScreen_entryOfTruthExit": "سچائی کا داخل ہونا، سچ کا نکلنا",
-  "dhikrScreen_prayerOfTheYouth": "غار کے نوجوانوں کی دعا",
-  "dhikrScreen_askAllahForMore": "اللہ سے مزید علم مانگیں۔",
-  "dhikrScreen_allahAnswersAndSaves": "اللہ جواب دیتا ہے اور ہر مصیبت سے بچاتا ہے۔",
-  "dhikrScreen_allahIsTheBest": "اللہ بہترین وارث ہے۔",
-  "dhikrScreen_blessedLandingWhereverYou": "جہاں بھی آپ رکیں ایک مبارک لینڈنگ",
-  "dhikrScreen_refugeFromTheWhispers": "شیطانوں کے وسوسوں سے پناہ",
-  "dhikrScreen_mercyFromTheBest": "رحمٰن کی طرف سے رحمت",
-  "dhikrScreen_pardonAndMercyFrom": "رحمن کی طرف سے معافی اور رحمت",
-  "dhikrScreen_piousSpousesAndRighteous": "نیک بیویاں اور صالح اولاد",
-  "dhikrScreen_prayerForThoseWho": "توبہ کرنے والوں کے لیے دعا",
-  "dhikrScreen_gratitudeForParentsRighteousness": "والدین کا احسان، اولاد میں نیکی",
-  "dhikrScreen_pleaGiftOfIshaq": "s التجا - اسحاق ﷺ کا تحفہ",
-  "dhikrScreen_loveForTheBelievers": "ہم سے پہلے مومنوں کے لیے محبت",
-  "dhikrScreen_pureTawakkulOnYou": "خالص توکل - ہم آپ پر بھروسہ کرتے ہیں۔",
-  "dhikrScreen_forgivenessForEveryBelieving": "ہر مومن کے گھر کی بخشش",
-  "dhikrScreen_tasbeehByTheWeight": "اللہ کے وزن سے تسبیح",
-  "dhikrScreen_tasbeehByTheNumber": "تسبیح ان سب کی تعداد کے حساب سے جو اس نے بنائی",
-  "dhikrScreen_tasbeehThatFillsAll": "تسبیح جو اللہ کی بنائی ہوئی تمام چیزوں کو بھر دیتی ہے۔",
-  "dhikrScreen_paradiseSoughtTheFire": "جنت کی تلاش - آگ \\",
-  "dhikrScreen_cryToTheOne": "اس کو پکارو جو سنتا ہے، دیکھتا ہے اور جانتا ہے۔",
-  "dhikrScreen_nameOnTheCorner": "کعبہ کے کونے پر s کا نام",
-  "dhikrScreen_theDuaBetweenYemen": "یمن گوشہ اور حجر اسود کے درمیان کی دعا",
-  "dhikrScreen_prayAtTheStation": "مقام ابراہیم پر نماز پڑھنا",
-  "dhikrScreen_tawheedDeclaredAtopSafa": "صفا و مروہ کے اوپر توحید کا اعلان کیا۔",
-  "dhikrScreen_reaffirmTheOnenessOf": "اللہ کی وحدانیت کا اعادہ کریں۔",
-  "dhikrScreen_magnifyAllahAtEvery": "حج کی ہر دہلیز پر اللہ کی بڑائی کرو",
-  "dhikrScreen_magnifyAllahOnThe": "قربانی کے دن اللہ کی بڑائی بیان کریں۔",
-  "dhikrScreen_knowledgeProvisionHealingSought": "علم، رزق، شفاء - مکہ مکرمہ میں تلاش کیا گیا۔",
-  "dhikrScreen_theDuaMostRepeated": "نبی کریم صلی اللہ علیہ وسلم کی سب سے زیادہ دہرائی جانے والی دعا",
-  "dhikrScreen_refugeFromEveryTrial": "زندگی اور موت کی ہر آزمائش سے پناہ",
-  "dhikrScreen_refugeFromEveryWeakness": "جسم اور روح کی ہر کمزوری سے پناہ",
-  "dhikrScreen_refugeFromSevereTrial": "سخت آزمائش اور دشمن سے پناہ",
-  "dhikrScreen_religionSetRightWorld": "دین نے درست کیا، دنیا اور آخرت کو بہترین بنایا",
-  "dhikrScreen_guidancePietyVirtueSelf": "ہدایت، تقویٰ، نیکی، خودداری",
-  "dhikrScreen_refugeFromWeaknessWealth": "کمزوری سے پناہ - اندر تقویٰ کی دولت",
-  "dhikrScreen_theGuiderOfHearts": "دلوں کا رہنما - ہماری اطاعت کی طرف موڑ دیں۔",
-  "dhikrScreen_turnerOfHeartsMake": "دلوں کو پھیرنے والا - مجھے دین پر ثابت قدم رکھ",
-  "dhikrScreen_wellBeingInBoth": "دونوں جہانوں میں خیریت",
-  "dhikrScreen_rewardsSaveFromDisgrace": "ثواب، ذلت اور قبر سے بچاؤ",
-  "dhikrScreen_mindForGoodVictory": "اچھے کے لیے دماغ، بھلائی کی جیت",
-  "dhikrScreen_refugeFromEvilOf": "ہر حس اور عضو کے شر سے پناہ",
-  "dhikrScreen_theForgiverWhoLoves": "معاف کرنے والا جو توبہ کرنے والوں سے محبت کرتا ہے۔",
-  "dhikrScreen_takeMeBeforeYou": "مجھے لے جاؤ اس سے پہلے کہ تم مجھے گمراہ کر دو",
-  "dhikrScreen_everyGoodAndRefuge": "ہر بھلائی - اور ہر برائی سے پناہ",
-  "dhikrScreen_standingSittingLyingGuarded": "کھڑا ہونا، بیٹھنا، لیٹنا - اسلام میں حفاظت ہے۔",
-  "dhikrScreen_refugeFromCowardiceMiserliness": "بزدلی، کنجوسی، فتنہ سے پناہ",
-  "dhikrScreen_forgivenessForJestAnd": "مذاق اور سنجیدہ، معلوم اور نامعلوم کے لئے معافی",
-  "dhikrScreen_forgiveMeWithForgiveness": "مجھے اپنی بخشش کے ساتھ بخش دے۔",
-  "dhikrScreen_submissionBeliefRepentanceFull": "تسلیم، یقین، توبہ، مکمل بھروسہ",
-  "dhikrScreen_mercyForgivenessParadiseSaved": "رحمت، بخشش، جنت - آگ سے بچایا",
-  "dhikrScreen_refugeFromEvilSeen": "نظر اور غیب سے پناہ",
-  "dhikrScreen_provisionThatLastsTill": "رزق جو تا حیات رہے",
-  "dhikrScreen_sinsForgivenHomeSpacious": "گناہ معاف، گھر کشادہ، رزق میں برکت",
-  "dhikrScreen_favorAndMercyNone": "فضل اور رحمت - تیرے سوا ان کا کوئی مالک نہیں۔",
-  "dhikrScreen_refugeFromDrowningBurning": "ڈوبنے، جلنے، اچانک موت سے پناہ",
-  "dhikrScreen_refugeFromHypocrisyShowiness": "منافقت، دکھاوے، سرکشی سے پناہ",
-  "dhikrScreen_refugeFromPovertyScarcity": "غربت، تنگدستی، جبر سے پناہ",
-  "dhikrScreen_refugeFromHeartThat": "ایسے دل سے پناہ جو جیت جائے",
-  "dhikrScreen_payMyDebtEnrich": "میرا قرض ادا کر، مجھے غربت سے مالا مال کر",
-  "dhikrScreen_allahCalledByHis": "اللہ نے اپنے سب سے خوبصورت ناموں سے پکارا۔",
-  "dhikrScreen_theAccepterOfRepentance": "توبہ قبول کرنے والا ہمیشہ قبول کرتا ہے۔",
-  "dhikrScreen_anEasyReckoningOn": "دن کا آسان حساب",
-  "dhikrScreen_remembranceGratitudeAndThe": "ذکر، شکر اور بہترین عبادت",
-  "dhikrScreen_eternalBlissWithThe": "فردوس میں نبی صلی اللہ علیہ وسلم کے ساتھ دائمی خوشی",
-  "dhikrScreen_forgiveSinsKnownHidden": "گناہوں کو معاف کرنا - معلوم، پوشیدہ، ارادہ، غلطی",
-  "dhikrScreen_refugeFromBeingCrushed": "قرض اور دشمن کے ہاتھوں پسے جانے سے پناہ",
-  "dhikrScreen_askForParadiseRefuge": "جنت مانگو، آگ سے پناہ مانگو",
-  "dhikrScreen_forgiveGuideProvideProtect": "معاف کرنا، رہنمائی کرنا، فراہم کرنا، حفاظت کرنا",
-  "dhikrScreen_sensesMadeBeneficialAnd": "حواس کو فائدہ مند بنایا - اور دیرپا",
-  "dhikrScreen_theMostBeneficentThe": "سب سے زیادہ رحم کرنے والا، سب کا پیدا کرنے والا",
-  "dhikrScreen_allahTruthOwnerOf": "اللہ - حق، تمام سلطنت کا مالک",
-  "dhikrScreen_submissionWithFullSincerity": "پورے خلوص کے ساتھ عرض کرنا",
-  "dhikrScreen_amongTheGuidedThe": "ہدایت یافتہ، صحت مند، چنے ہوئے لوگوں میں",
-  "dhikrScreen_whatTheProphetAsked": "رسول اللہ صلی اللہ علیہ وسلم نے کیا پوچھا میں بھی پوچھتا ہوں۔",
-  "dhikrScreen_sayyidAlIstighfarThe": "سید الاستغفار - تمام توبہ کے مالک",
-  "dhikrScreen_refugeFromEveryEvil": "رات کو آنے والی ہر برائی سے پناہ",
-  "dhikrScreen_blessEverySenseEvery": "ہر حس، ہر عضو کو برکت دے۔",
-  "dhikrScreen_smallAndGreatFirst": "چھوٹا اور بڑا، پہلا اور آخری، کھلا اور خفیہ",
-  "dhikrScreen_noneWithholdsWhatYou": "جو آپ دیتے ہیں اسے کوئی نہیں روکتا، جو آپ رکھتے ہیں اسے کوئی نہیں دیتا",
-  "dhikrScreen_forgiveGuideProvideElevate": "معاف کرنا، رہنمائی کرنا، فراہم کرنا، بلند کرنا",
-  "dhikrScreen_increaseFavorBeKind": "احسان میں اضافہ کریں، مہربان بنیں، کبھی ناراض نہ ہوں۔",
-  "dhikrScreen_beautifyOurCharacterAs": "ہمارے کردار کو اس طرح سنوار دے جس طرح تو نے ہماری تخلیق کو سنوارا۔",
-  "dhikrScreen_firmInBeliefGuided": "یقین میں پختہ — رہنمائی اور رہنمائی",
-  "dhikrScreen_wisdomAndWithIt": "حکمت - اور اس کے ساتھ، بہت سے اچھے",
-  "dhikrScreen_nameShieldsFromEvery": "نام ہر نقصان سے بچاتا ہے۔",
-  "dhikrScreen_mightAgainstEveryShaytan": "ہر شیطان کے خلاف ہو سکتا ہے۔",
-  "dhikrScreen_dayBlessedFromBeginning": "شروع سے آخر تک بابرکت دن",
-  "dhikrScreen_witnessNoneDeservesWorship": "گواہی دے کہ تیرے سوا کوئی عبادت کا مستحق نہیں۔",
-  "dhikrScreen_refugeFromHumiliatingOld": "ذلت آمیز بڑھاپے سے پناہ",
-  "dhikrScreen_guidedToTheBest": "بہترین کی طرف رہنمائی کی، بدترین سے بچایا",
-  "dhikrScreen_faithSetRightHome": "ایمان درست، گھر میں وسیع، رزق میں برکت",
-  "dhikrScreen_refugeFromEveryInner": "ہر ظاہری اور باطنی بیماری سے پناہ",
-  "dhikrScreen_refugeFromEveryKind": "ہر قسم کے برے انجام سے پناہ",
-  "dhikrScreen_steadfastGratefulRightlyGuided": "ثابت قدم، شکر گزار، صحیح راہنمائی کرنے والا دل",
-  "dhikrScreen_theLoveOfAllah": "اللہ، اس کے فرشتوں، اس کے نبیوں کی محبت",
-  "dhikrScreen_loveOfAllahAbove": "اللہ کی محبت نفس کی محبت سے بڑھ کر",
-  "dhikrScreen_bestDeedsLastBest": "بہترین اعمال آخری - بہترین دن آپ سے ملنا ہے۔",
-  "dhikrScreen_pureLifeAndPeaceful": "ایک پاکیزہ زندگی اور پرامن واپسی۔",
-  "dhikrScreen_patientGratefulSmallIn": "مریض، شکر گزار - اپنی نظر میں چھوٹا",
-  "dhikrScreen_theBestRequestAnd": "بہترین درخواست اور بہترین اجر",
-  "dhikrScreen_theHighestLevelOf": "جنت کا اعلیٰ درجہ",
-  "dhikrScreen_firdawsTheBestOf": "فردوس - ان سب سے بہتر\\",
-  "dhikrScreen_mentionRaisedSinsErased": "ذکر بلند ہوا، گناہ مٹ گئے، دل پاک ہو گئے۔",
   "dhikrScreen_blessEverySenseEvery_b81b9b": "ہر حس، ہر عضو، ہر عمل میں برکت عطا فرما",
-  "dhikrScreen_mercyPleasureParadiseSaved": "رحمت، لذت، جنت - آگ سے بچا",
-  "dhikrScreen_noSinUncoveredNo": "کوئی گناہ بے پردہ نہیں، کوئی قرض ادا نہیں ہوا۔",
-  "dhikrScreen_mercyThatGuidesSets": "وہ رحمت جو رہنمائی کرتی ہے، درست کرتی ہے، پاک کرتی ہے۔",
-  "dhikrScreen_trueBeliefCertainKnowledge": "سچا عقیدہ، یقینی علم، اللہ۔",
-  "dhikrScreen_withTheProphetsThe": "انبیاء، شہداء، صادقین کے ساتھ",
-  "dhikrScreen_everyNeedEntrustedTo": "ہر ضرورت تمام ضروریات کے جج کے سپرد",
-  "dhikrScreen_bestOfWhatAllah": "اللہ نے اپنے بندوں سے جو وعدہ کیا ہے اس میں سے بہترین",
-  "dhikrScreen_safetyOnTheDay": "دن پر سلامتی، ابدی دن پر جنت",
-  "dhikrScreen_glorifyTheOneOf": "بے مثال عزت اور علم والے کی تسبیح کرو",
-  "dhikrScreen_pardonPlentySecurityIn": "بخشش، کثرت، دین و دنیا کی سلامتی",
-  "dhikrScreen_healthFaithEthicsSuccess": "صحت، ایمان، اخلاق، کامیابی، رحمت",
-  "dhikrScreen_healthPurityEthicsAcceptance": "صحت، پاکیزگی، اخلاقیات، قبولیت",
-  "dhikrScreen_guidedSecureVictorious": "ہدایت یافتہ، محفوظ، فاتح",
-  "dhikrScreen_refugeFromEveryCreature": "اللہ کی ہر مخلوق سے پناہ",
-  "dhikrScreen_theOneWhoAnswers": "وہ جو مجبور اور ٹوٹے ہوئے کو جواب دیتا ہے۔",
-  "dhikrScreen_morningReachedByAllah": "اللہ کی طرف سے صبح ہوئی",
-  "dhikrScreen_refugeSoughtByMusa": "موسیٰ، عیسیٰ، ابراہیم نے پناہ مانگی۔",
-  "dhikrScreen_allTheGoodPower": "تمام بھلائیاں - طاقت، رحمت، برکت",
-  "dhikrScreen_allPraiseAndDominion": "تمام تعریفیں اور بادشاہی تیرے لیے ہے۔",
-  "dhikrScreen_pastPardonedFutureProtected": "ماضی کو معاف کر دیا، مستقبل محفوظ",
-  "dhikrScreen_takeMyForelockTo": "میری پیشانی نیکی کی طرف لے جاؤ",
-  "dhikrScreen_strengthForWeaknessDignity": "کمزوری کے بدلے طاقت، شرم کے بدلے وقار",
-  "dhikrScreen_justiceForThoseWho": "سچائی کو روکنے والوں کے لیے انصاف",
-  "dhikrScreen_refugeFromEveryFatal": "ہر موذی آفت سے پناہ",
-  "dhikrScreen_refugeFromEveryBad": "ہر برے انجام اور آزمائش سے پناہ",
-  "dhikrScreen_turnBackEveryEvil": "ہر برے ارادے کو اس کے منبع کی طرف پھیر دو",
-  "dhikrScreen_justiceAndRefugeAgainst": "ان کی برائیوں کے خلاف انصاف اور پناہ",
-  "dhikrScreen_forgivenessForMeMy": "میرے لیے، میرے والدین، تمام مومنین کے لیے بخشش",
-  "dhikrScreen_purifyHeartDeedsTongue": "دل، عمل، زبان، آنکھ کو پاک کریں۔",
-  "dhikrScreen_selfContentWithAllah": "اللہ سے راضی ہونا۔",
-  "dhikrScreen_youKnowMySecret": "تم میرے راز اور میری ضرورت کو جانتے ہو۔",
-  "dhikrScreen_certaintyNothingHarmsWhat": "یقینی: کچھ بھی نقصان نہیں پہنچاتا ہے",
-  "dhikrScreen_beliefLightAndLawful": "ایمان، نور اور حلال رزق",
-  "dhikrScreen_totalLoveAndTotal": "اللہ کے لیے مکمل محبت اور مکمل جدوجہد",
-  "dhikrScreen_makeWhatYouWithheld": "جس چیز کو آپ نے روکا ہے اسے اطاعت میں طاقت بنا دیں۔",
-  "dhikrScreen_praiseTheOwnerOf": "ہر خوبصورت نام کے مالک کی تعریف کرو",
-  "dhikrScreen_allahKnowsTheHearts": "اللہ دلوں، آسمانوں اور اس سے باہر کو جانتا ہے۔",
-  "dhikrScreen_hopeBuiltOnAllah": "امید اللہ پر قائم ہے",
-  "dhikrScreen_belovedToTheBelievers": "مومنوں کے لیے محبوب، بدکاروں سے پاک",
-  "dhikrScreen_mightPowerAndMajesty": "طاقت، طاقت، اور عظمت",
-  "dhikrScreen_gratefulPatientHelpfulTo": "شکر گزار، صبر کرنے والا، اللہ کا مددگار۔",
-  "dhikrScreen_withholdYourGoodFor": "میری برائی پر اپنی بھلائی کو روکنا",
-  "dhikrScreen_settledLifeAmpleProvision": "ایک آباد زندگی، وافر رزق، عمل صالح",
-  "dhikrScreen_wealthInNeedingYou": "آپ کی ضرورت میں دولت - آپ سے کبھی خالی نہیں۔",
-  "dhikrScreen_defectsCoveredFearsCalmed": "نقائص چھپ گئے، خوف دور ہو گئے، غم دور ہو گئے۔",
-  "dhikrScreen_openTheGatesOf": "رحمت اور سخاوت کے دروازے کھول دے۔",
-  "dhikrScreen_holdUsInYour": "ہمیں اپنی حفاظت میں رکھنا - ہمیں کبھی نہ چھوڑنا",
-  "dhikrScreen_withinYourSecurityYour": "آپ کی سلامتی کے اندر، آپ کی بھلائی",
-  "dhikrScreen_everySinEveryDistress": "ہر گناہ، ہر مصیبت، ہر طرف",
-  "dhikrScreen_helpInDeathIn": "موت میں، قبر میں، پل پر مدد کریں۔",
-  "dhikrScreen_beautifiedLifeBlessedGifts": "خوبصورت زندگی، بابرکت تحفے، احسانات رکھے",
-  "dhikrScreen_firmFootingBlessedEnd": "پختہ قدم، بابرکت انجام، عہد کا پاس رکھا",
-  "dhikrScreen_hopesFulfilledEnemiesRepelled": "امیدیں پوری ہوئیں، دشمنوں کو پسپا کر دیا، معاملات ٹھیک ہو گئے۔",
-  "dhikrScreen_guidedToTheUpright": "راست بازوں کی رہنمائی، نفس سے محفوظ",
-  "dhikrScreen_lightAndForgivenessFrom": "عرش کے مالک کی طرف سے نور اور بخشش",
-  "dhikrScreen_forgivenessForWhatRepented": "معافی جس سے میں نے توبہ کی اور واپس آ گیا۔",
-  "dhikrScreen_understandingThatDrawsNear": "وہ سمجھنا جو اللہ کے قریب ہو جاتا ہے۔",
-  "dhikrScreen_soulsDwellingInThe": "تقویٰ کی بلندیوں میں رہنے والی روحیں۔",
-  "dhikrScreen_crossTheBridgeOf": "صبر سے خواہش کے پل کو عبور کریں۔",
-  "dhikrScreen_followThePathOf": "اخلاص اور یقین کی راہ پر چلیں۔",
-  "dhikrScreen_helpAgainstTheSoul": "روح کے خلاف اور شیطان کے خلاف مدد",
-  "dhikrScreen_fearHappinessVictorySecurity": "خوف، خوشی، فتح، سلامتی",
-  "dhikrScreen_entrustFamilyWealthChildren": "خاندان، مال، اولاد سب اللہ کے سپرد کر دیں۔",
-  "dhikrScreen_faithGuardedFaithPreserved": "ایمان محفوظ، ایمان محفوظ",
-  "dhikrScreen_wellBeingTillThe": "خیریت آخر تک - معافی کے ساتھ مہر لگا دی گئی۔",
-  "dhikrScreen_whatProtectsMeFrom": "مجھے اس دنیا سے کیا بچاتا ہے",
-  "dhikrScreen_mercyOnEverySoul": "ہر ذی روح پر رحم",
-  "dhikrScreen_burdenUsAsThose": "ہم پر بوجھ نہ ڈالو جیسا کہ پہلے بوجھے ہوئے تھے۔",
-  "dhikrScreen_mercyPardonForgivenessVictory": "رحم، معافی، بخشش، فتح",
   "dhikrScreen_keepTheHeartFirm_9c4efb": "ہدایت کے بعد دل کو مضبوط رکھیں",
-  "dhikrScreen_allahNeverFailsHis": "اللہ اپنے وعدے کو کبھی ناکام نہیں کرتا",
   "dhikrScreen_faithAnsweredWithForgiveness_3f30c4": "ایمان نے آگ سے معافی کے ساتھ جواب دیا۔",
-  "dhikrScreen_recordUsWithThe": "ہمیں سچے گواہوں کے ساتھ قلمبند کر",
-  "dhikrScreen_forgivenessFirmnessAndVictory": "معافی، مضبوطی، اور فتح",
-  "dhikrScreen_creationHasPurposeRefuge": "تخلیق کا مقصد ہے - آگ سے پناہ",
-  "dhikrScreen_refugeFromTheDisgrace": "آگ کی رسوائی سے پناہ",
-  "dhikrScreen_heardBelievedAskingForgiveness": "سنا، یقین کیا، استغفار کیا۔",
-  "dhikrScreen_sinsForgivenDeathAmong": "گناہوں کی معافی - نیک لوگوں میں موت",
-  "dhikrScreen_promisedRewardNeverDisgraced": "انعام کا وعدہ - قیامت میں کبھی رسوا نہیں ہوا۔",
   "dhikrScreen_inscribedWithTheWitnesses_e2612d": "سچ کے گواہوں کے ساتھ کندہ",
-  "dhikrScreen_provisionAndSignsFrom": "آسمان سے رزق اور نشانیاں",
-  "dhikrScreen_duaTheDuaOf": "s dua - ہر توبہ کرنے والے کی دعا",
-  "dhikrScreen_spareUsFromThe": "ہمیں ظالموں کی صحبت سے بچا",
   "dhikrScreen_allahIsTheBest_4f2bf7": "اللہ سچ اور جھوٹ کے درمیان بہترین فیصلہ کرنے والا ہے۔",
-  "dhikrScreen_patienceTillTheEnd": "آخر تک صبر، تسلیم کرنے پر موت",
   "dhikrScreen_neverTrialForThe_5eb10a": "کافروں پر کبھی آزمائش نہیں۔",
-  "dhikrScreen_hiddenInEveryChest": "ہر سینے میں چھپا ہوا ہے۔",
-  "dhikrScreen_prayerForPrayerAccepted": "s دعا کے لیے دعا قبول ہوئی۔",
-  "dhikrScreen_mercyGrantedGuidancePrepared": "رحمت دی گئی، رہنمائی تیار ہے۔",
-  "dhikrScreen_duaBeforePharaoh": "فرعون کے سامنے دعا",
-  "dhikrScreen_refugeFromClingingEvil": "معلق، برے عذاب سے پناہ",
-  "dhikrScreen_piousSpousesRighteousChildren": "نیک بیویاں، صالح اولاد، قیادت",
-  "dhikrScreen_allahIsEverThankful": "اللہ ہر کوشش پر ہمیشہ شکر گزار ہے۔",
-  "dhikrScreen_mercyEncompassingEveryRepentant": "رحمت ہر توبہ کرنے والی روح کو گھیرے ہوئے ہے۔",
-  "dhikrScreen_mercyOnThatDay": "اس دن رحمت - بڑی کامیابی",
-  "dhikrScreen_loveAndForgivenessFor": "پہلے کے مومنوں کے لیے محبت اور بخشش",
-  "dhikrScreen_kindnessAndMercyUpon": "اللہ کی مہربانی اور رحمت",
-  "dhikrScreen_pureTawakkulToYou": "خالص توکل - ہم تیری طرف لوٹتے ہیں۔",
-  "dhikrScreen_neverFitnahForThose": "کافروں کے لیے کبھی فتنہ نہیں۔",
-  "dhikrScreen_completeTheLightForgive": "روشنی کو مکمل کریں - ہمیں معاف کر دیں۔",
-  "dhikrScreen_strongerThanServantThe": "بندے سے زیادہ مضبوط - رات",
-  "dhikrScreen_refugeFromEveryVisible": "سونے سے پہلے ہر ظاہری برائی سے پناہ",
-  "dhikrScreen_refugeFromEveryWhisper": "سونے سے پہلے ہر سرگوشی سے پناہ",
-  "dhikrScreen_guardedByAnAngel": "صبح تک فرشتہ کی حفاظت میں",
-  "dhikrScreen_twoVersesThatSuffice": "دو آیتیں جو پوری رات کے لیے کافی ہیں۔",
-  "dhikrScreen_pureTawheedDeclaredBefore": "سونے سے پہلے خالص توحید کا اعلان کیا۔",
-  "dhikrScreen_sleepIsSmallDeath": "نیند ایک چھوٹی سی موت ہے جو اللہ کے سپرد ہے۔",
-  "dhikrScreen_whoeverDiesThatNight": "جو اس رات مرے وہ فطرت پر مرے۔",
-  "dhikrScreen_guardTheSoulThat": "واپس آنے والی روح کی حفاظت کرو، یا رحم کرو",
-  "dhikrScreen_refugeFromThePunishment": "اس دن کے عذاب سے پناہ",
-  "dhikrScreen_gratitudeForShelterFood": "پناہ گاہ، خوراک، اور دیکھ بھال کے لیے شکریہ",
-  "dhikrScreen_handOverTheSoul": "سونے سے پہلے روح کو حوالے کرنا",
   "dhikrScreen_refugeFromEveryEvil_6d2534": "ہر گرفت میں آنے والی برائی سے پناہ",
-  "dhikrScreen_joinTheHighestAssembly": "جب آپ سوتے ہو تو سب سے زیادہ اسمبلی میں شامل ہوں۔",
-  "dhikrScreen_gratitudeBeforeClosingThe": "آنکھیں بند کرنے سے پہلے شکر ادا کرنا",
-  "dhikrScreen_surahAsSajdahRecited": "سونے سے پہلے سورہ سجدہ پڑھنا",
-  "dhikrScreen_refugeFromEvilBefore": "بیت الخلا میں داخل ہونے سے پہلے برائی سے پناہ",
-  "dhikrScreen_seekForgivenessAsYou": "جاتے جاتے معافی مانگو",
-  "dhikrScreen_bismillahEveryBiteBegins": "بسم اللہ - ہر کاٹنے کا آغاز اللہ سے ہوتا ہے۔",
-  "dhikrScreen_catchUpTheName": "شروع اور آخر میں اللہ کا نام پکڑو",
-  "dhikrScreen_threeSunnahDuasTo": "کھانے کے بعد اللہ کا شکر ادا کرنے کی تین سنتیں",
-  "dhikrScreen_beginWithAllahThe": "پینے سے پہلے اللہ رحمٰن سے شروع کریں۔",
-  "dhikrScreen_openTheEightDoors": "وضو کے بعد جنت کے آٹھ دروازے کھول دیں۔",
-  "dhikrScreen_openTheDoorsOf": "اللہ کے دروازے کھول دو۔",
-  "dhikrScreen_bountyAsYouLeave": "مسجد سے نکلتے ہی فضل ہے۔",
-  "dhikrScreen_mayAllahGuideYou": "اللہ آپ کو ہدایت دے اور آپ کی حالت درست کرے۔",
-  "dhikrScreen_askAllahLordOf": "اللہ رب العزت سے دعا ہے کہ وہ شفاء عطا فرمائے",
-  "dhikrScreen_allahIsTheOnly": "اللہ ہی شفا دینے والا ہے۔",
-  "dhikrScreen_shieldChildrenWithAllah": "بچوں کو اللہ کے ساتھ ڈھال۔",
-  "dhikrScreen_anicPrayerForOne": "ایک کے لیے ایک دعا\\",
-  "dhikrScreen_twoPhrasesBelovedTo": "دو جملے جو رحمٰن کو محبوب ہیں۔",
-  "dhikrScreen_allahLovesToPardon": "اللہ معاف کرنا پسند کرتا ہے - اس لیے مانگو",
-  "dhikrScreen_treasureFromBeneathThe": "عرش کے نیچے سے ایک خزانہ",
-  "dhikrScreen_theFourPhrasesDearest": "اللہ کو سب سے زیادہ پیارے چار کلمات",
-  "dhikrScreen_theDuaThatReleases": "وہ دعا جو ہر پریشانی سے نجات دیتی ہے۔",
-  "dhikrScreen_protectionForHomeAnd": "گھر اور اولاد کا تحفظ",
-  "dhikrScreen_theCompleteDhikrOf": "توحید کا مکمل ذکر",
-  "dhikrScreen_trialPurifiedByAllah": "اللہ کی طرف سے آزمائش",
-  "dhikrScreen_guidanceBeforeAnyChoice": "کسی بھی انتخاب سے پہلے رہنمائی",
-  "dhikrScreen_completeRuqyaSequenceFatihah": "مکمل رقیہ ترتیب - فاتحہ اور پناہ",
-  "dhikrScreen_sinsForgivenEvenIf": "گناہ بخشے گئے خواہ سمندر کی جھاگ کے برابر",
-  "dhikrScreen_freedHasanatSinsErased": "10 آزاد · 100 حسنات · 100 گناہ مٹائے گئے · شیطان کو بھگا دیا گیا",
-  "dhikrScreen_blessingsDescendFromAllah": "اللہ کی طرف سے آپ پر 10 رحمتیں نازل ہوتی ہیں۔",
-  "dhikrScreen_askAllahToBless": "اللہ سے دعا ہے کہ وہ آپ کے دن کو برکت اور رونق بخشے۔",
-  "dhikrScreen_guaranteedJannahIfYou": "جنت کی ضمانت، اگر آپ اس دن مر گئے تو",
   "dhikrScreen_guaranteedJannahIfYou_48d274": "جنت کی ضمانت ہے، اگر آپ اس رات مر گئے تو",
-  "dhikrScreen_yourLifeEntrustedTo": "آپ کی زندگی ہمیشہ زندہ رہنے والے کے سپرد ہے۔",
-  "dhikrScreen_allEvilInHis": "اس کی تخلیق میں تمام برائیاں تم سے دور ہو گئیں۔",
-  "dhikrScreen_nothingShallHarmYou": "کامل الفاظ سے آپ کو کوئی چیز نقصان نہیں پہنچائے گی۔",
-  "dhikrScreen_shieldYourselfFromMinor": "اپنے آپ کو چھوٹے بڑے شرک سے بچاؤ، صبح و شام",
-  "dhikrScreen_completeProtectionInThe": "اللہ کے نام پر مکمل حفاظت",
-  "dhikrScreen_weightierThanAllVoluntary": "فجر سے شام تک تمام نفل نمازوں سے زیادہ وزنی ہے۔",
-  "dhikrScreen_reciteMorningEveningEarn": "صبح و شام پڑھیں، روزِ قیامت اللہ کی خوشنودی حاصل کریں۔",
-  "dhikrScreen_yourRewardAwaitsDirectly": "جب آپ اس سے ملیں گے تو آپ کا اجر براہ راست اللہ کے پاس ہے۔",
-  "dhikrScreen_reciteMorningEveningTo": "اللہ کا شکر ادا کرنے کے لیے صبح و شام تلاوت کریں۔",
-  "dhikrScreen_theProphetTaughtThis": "نبی کریم صلی اللہ علیہ وسلم نے صبح و شام یہ دعا سکھائی، اسے مت چھوڑیں۔",
-  "dhikrScreen_dominionAtTheStart": "آپ کی صبح کے آغاز میں بادشاہی ہے، تمام بادشاہی اسی کی ہے۔",
-  "dhikrScreen_asEveningFallsThe": "شام ہوتے ہی ساری بادشاہی اللہ ہی کی ہو جاتی ہے۔",
-  "dhikrScreen_endYourEveningUpon": "اپنی شام کو خالص فطرت پر ختم کرو جیسا کہ رسول اللہ صلی اللہ علیہ وسلم نے سکھایا تھا۔",
-  "dhikrScreen_satanWillNotEnter": "یہ پڑھنے والے کے گھر شیطان داخل نہیں ہوگا۔",
-  "dhikrScreen_readingLastVersesOf": "البقرہ کی آخری 2 آیات کا پڑھنا آپ کے لیے کافی ہوگا۔",
-  "dhikrScreen_everyDuaInThis": "اس آیت میں ہر دعا - اللہ نے فرمایا: میں نے ایسا کیا ہے۔",
-  "dhikrScreen_guardedByAllahUntil": "صبح ہونے تک اللہ کی حفاظت میں",
-  "dhikrScreen_recitingEqualsReadingThe": "3 بار پڑھنا پورا قرآن، بخاری اور مسلم پڑھنے کے برابر ہے۔",
-  "dhikrScreen_reciteAtDawnDusk": "فجر اور شام کے وقت 3 بار پڑھیں، ہر قسم کے نقصان کے لیے کافی ہے۔",
   "dhikrScreen_reciteAtDawnDusk_f17fb8": "فجر اور شام کے وقت 3 بار پڑھیں، یہ آپ کے لیے ہر لحاظ سے کافی ہوگا۔",
-  "dhikrScreen_refugeFromTheWhisperer": "سرگوشی کرنے والے سے پناہ، انسانوں کے رب میں",
-  "dhikrScreen_reciteMorningEveningYour": "صبح و شام تین بار پڑھیں، اللہ کا شکر ادا ہو گا۔",
-  "dhikrScreen_sufficientAgainstEveryHarm": "ہر ضرر کے لیے 3 مرتبہ پڑھنا کافی ہے۔",
-  "dhikrScreen_doorsOfAllahMercy": "اللہ کی رحمت کے دروازے آپ کے لیے کھلے ہیں۔",
-  "dhikrScreen_worryAndSorrowLifted": "اللہ کی مرضی سے پریشانی اور غم دور ہو گئے۔",
-  "dhikrScreen_guardedInYourDeen": "آپ کے دین دنیا اور آخرت میں حفاظت فرما",
-  "dhikrScreen_evilRepelledFromEvery": "برائی کو ہر طرف سے بھگا دیا گیا۔",
-  "dhikrScreen_heartHeldByThe": "ہمیشہ زندہ رہنے والے کی طرف سے منعقد دل",
-  "dhikrScreen_fulfilledYourObligationOf": "شکریہ ادا کرنے کا فرض ادا کیا۔",
-  "dhikrScreen_recitingTheLastVerses": "رات کو سورہ بقرہ کی آخری دو آیات کا پڑھنا کافی ہے۔",
-  "dhikrScreen_gratitudeThatMultipliesYour": "شکر جو آپ کی نعمتوں کو بڑھاتا ہے۔",
-  "dhikrScreen_startPureOnThe": "اسلام کی فطرت پر خالص شروع کریں۔",
-  "dhikrScreen_praiseThatRipplesThrough": "اس کی تعریف کریں جو تمام تخلیق میں لہراتا ہے۔",
-  "dhikrScreen_guidedToEveryGood": "اس دن ہر نیکی کی رہنمائی کی۔",
   "dhikrScreen_nothingShallHarmYou_8c5c6c": "اس کے نام سے آپ کو کوئی چیز نقصان نہیں پہنچائے گی۔",
-  "dhikrScreen_allahWillFreeHim": "جو شخص یہ 4 مرتبہ پڑھے گا اللہ اسے آگ سے آزاد کر دے گا۔",
   "dhikrScreen_guaranteedJannahIfYou_0ffafe": "آج مر جائے تو جنت کی ضمانت ہے۔",
-  "dhikrScreen_wellbeingOfBodyHearing": "جسم کی سماعت اور بینائی کی تندرستی",
-  "dhikrScreen_guidedByTheHand": "اللہ کے ہاتھ سے ہدایت",
-  "dhikrScreen_wordsHeavierThanThe": "آسمانوں اور زمین سے بھاری الفاظ",
-  "dhikrScreen_beginYourDayIn": "اپنے دن کا آغاز اللہ کے سپرد کر کے کریں۔",
-  "dhikrScreen_theyAreEnoughFor": "وہ آپ کے لیے کافی ہیں - سونے سے پہلے پڑھیں",
   "dhikrScreen_guardedInYourDeen_4a0b4a": "اپنے دین، دنیا، آخرت اور چھ طرفوں کی حفاظت میں",
-  "dhikrScreen_wellBeing": "خیریت",
-  "dhikrScreen_fulfilled": "پورا کیا۔",
-  "dhikrScreen_wellBeingInFaith": "ایمان میں فلاح و بہبود · خاندان · دولت",
-  "dhikrScreen_concealMyFaultsCalm": "میرے عیبوں کو چھپاؤ · میرے خوف کو پرسکون کرو",
   "dhikrScreen_guardMeFromAll": "مجھے چھ طرفوں سے محفوظ رکھ",
-  "dhikrScreen_protectionFromEvilEye": "نظر بد سے حفاظت",
-  "dhikrScreen_doNotLeaveMe": "پلک جھپکنے کے لیے بھی مجھے اپنے حال پر مت چھوڑنا",
   "dhikrScreen_35c165": "{arg1}",
-  "dhikrScreen_allahWillSufficeYou": "اللہ آپ کے لیے کافی ہوگا۔",
-  "dhikrScreen_againstWhateverConcernsYou": "جو بھی آپ سے متعلق ہے اس کے خلاف",
   "dhikrScreen_sinsWashedAway": "گناہ دھل گئے۔",
   "dhikrScreen_slavesFreed": "غلام آزاد",
-  "dhikrScreen_doNotBurdenUs": "ہم پر ہماری استطاعت سے زیادہ بوجھ نہ ڈال، ہمیں معاف فرما اور رحم فرما",
-  "dhikrScreen_weHaveBelievedForgive": "ہم ایمان لائے - ہمارے گناہوں کو بخش دے اور ہمیں آگ سے بچا",
-  "dhikrScreen_ownerOfSovereigntyIn": "اے بادشاہی کے مالک - تیرے ہاتھ میں سب اچھا ہے، تو سب سے زیادہ قادر ہے۔",
-  "dhikrScreen_forgiveOurSinsAnd": "ہمارے گناہوں اور زیادتیوں کو معاف فرما، ہمیں ثابت قدم رکھ اور ہمیں فتح عطا فرما",
-  "dhikrScreen_youCreatedNotIn": "تو نے بیکار پیدا نہیں کیا، ہمیں آگ کے عذاب سے بچا",
-  "dhikrScreen_weHaveWrongedOurselves": "ہم نے اپنے آپ پر ظلم کیا - تیری رحمت کے بغیر ہم ضائع ہو گئے۔",
-  "dhikrScreen_ourLordDoNot": "اے ہمارے رب ہمیں ظالم لوگوں کے ساتھ نہ رکھنا",
-  "dhikrScreen_doNotMakeUs": "ہمیں ظالموں کا فتنہ نہ بنا",
-  "dhikrScreen_makeMeSteadfastIn": "مجھے نماز پر قائم رکھ - اور میری اولاد کو بھی",
-  "dhikrScreen_forgiveMeMyParents": "مجھے، میرے والدین کو اور ایمان والوں کو حساب کے دن بخش دے۔",
-  "dhikrScreen_bringMeInBy": "مجھے سچائی کے دروازے سے اندر لاؤ اور سچائی کے راستے سے باہر لاؤ",
-  "dhikrScreen_myLordIncreaseMe": "میرے رب میرے علم میں اضافہ فرما",
-  "dhikrScreen_seekRefugeInYou": "میں شیطانوں کے وسوسوں سے تیری پناہ مانگتا ہوں۔",
   "dhikrScreen_weHaveBelievedForgive_e958e6": "ہم ایمان لائے - ہمیں بخش دے، تو سب سے بہتر رحم کرنے والا ہے۔",
-  "dhikrScreen_forgiveAndHaveMercy": "بخش دے اور رحم کر - تو سب سے بہتر رحم کرنے والا ہے۔",
-  "dhikrScreen_enableMeToBe": "مجھے توفیق دے کہ میں اور میرے والدین پر تیرے احسان کا شکر ادا کروں",
-  "dhikrScreen_myLordHaveWronged": "اے میرے رب میں نے اپنے اوپر ظلم کیا ہے تو مجھے معاف کر دے۔",
-  "dhikrScreen_myLordWillNever": "اے میرے رب میں کبھی مجرموں کا حامی نہیں بنوں گا۔",
-  "dhikrScreen_myLordSaveMe": "اے میرے رب مجھے ظالم لوگوں سے بچا",
-  "dhikrScreen_myLordAmIn": "اے میرے رب میں اس نیکی کا محتاج ہوں جو تو مجھ پر نازل کرے۔",
-  "dhikrScreen_myLordHelpMe": "اے میرے رب، فساد کرنے والوں کے خلاف میری مدد فرما",
-  "dhikrScreen_ourLordAvertFrom": "اے ہمارے رب ہم سے جہنم کے عذاب کو ٹال دے۔",
-  "dhikrScreen_ourLordYouEncompass": "اے ہمارے رب، تو ہر چیز کو رحمت اور علم میں گھیرے ہوئے ہے۔",
-  "dhikrScreen_enableMeToThank": "مجھے تیرا شکر ادا کرنے کی توفیق عطا فرما اور میری اولاد کو صالح بنا",
-  "dhikrScreen_myLordGrantMe": "اے میرے رب مجھے نیک لوگوں میں سے عطا فرما",
-  "dhikrScreen_forgiveUsAndOur": "ہمیں اور ہمارے ان بھائیوں کو بخش دے جو ہم سے پہلے ایمان کے ساتھ آئے",
-  "dhikrScreen_uponYouWeRely": "ہم تجھ پر بھروسہ کرتے ہیں، تیری ہی طرف رجوع کرتے ہیں اور تیری ہی طرف منزل ہے۔",
-  "dhikrScreen_pauseRememberAllah": "توقف۔ اللہ کو یاد کرو۔",
   "dhikrScreen_mashaallahRewardSecured": "ماشاءاللہ! انعام محفوظ",
-  "dhikrScreen_satanCannot": "شیطان نہیں کر سکتا",
-  "dhikrScreen_enterTheHome": "گھر میں داخل ہو جاؤ",
-  "dhikrScreen_whoeverRecites": "جو بھی تلاوت کرتا ہے۔",
-  "dhikrScreen_theLastTwoVerses": "آخری دو آیات",
-  "dhikrScreen_ofSurahAlBaqarah": "سورۃ البقرہ کی",
-  "dhikrScreen_atNight": "رات کو --",
-  "dhikrScreen_theyWillBe": "وہ ہوں گے",
-  "dhikrScreen_enoughForHim": "اس کے لیے کافی ہے",
-  "dhikrScreen_weHaveEnteredThe": "ہم شام میں داخل ہو چکے ہیں۔",
-  "dhikrScreen_theKingdomBelongsTo": "بادشاہی اللہ کی ہے۔",
-  "dhikrScreen_noneWorthyOfWorship": "اللہ کے سوا کوئی عبادت کے لائق نہیں۔",
-  "dhikrScreen_allPraiseHeIs": "تمام تعریفیں · وہ ہر چیز پر قادر ہے۔",
-  "dhikrScreen_weAskForThe": "ہم اس رات کی خیر مانگتے ہیں۔",
-  "dhikrScreen_saySeekRefuge": "کہو: میں پناہ مانگتا ہوں۔",
-  "dhikrScreen_inTheLordOf": "انسانوں کے رب میں",
-  "dhikrScreen_theKingOfMankind": "بنی نوع انسان کا بادشاہ",
-  "dhikrScreen_theGodOfMankind": "انسانوں کا خدا،",
-  "dhikrScreen_heRetreatsWhenYou": "جب تم اللہ کو یاد کرتے ہو تو وہ پیچھے ہٹ جاتا ہے۔",
-  "dhikrScreen_seekRefugeInThe": "طلوع آفتاب کے رب کی پناہ مانگو",
-  "dhikrScreen_sufficedInAllRespects": "ہر لحاظ سے کافی ہے۔",
-  "dhikrScreen_allahDoesNotBurden": "اللہ بوجھ نہیں ڈالتا",
-  "dhikrScreen_soul": "ایک روح",
   "dhikrScreen_a5cfd1": "×{count}",
-  "dhikrScreen_equalsTheWholeQuran": "پورے قرآن کے برابر ہے × 3",
   "dhikrScreen_completeToWatchYour": "اپنے باغ کو اوپر کھلتا دیکھنے کے لیے مکمل کریں۔",
-  "impactReportScreen_whoeverDoesAnAtom": "\"جو کوئی ایٹم کرتا ہے",
-  "impactReportScreen_theHomeOfThe": "\"آخرت کا گھر - یہ ہمیشہ کی زندگی ہے، کاش وہ جانتے۔\" سورہ عنکبوت 29:64",
-  "impactReportScreen_raceTowardsForgivenessFrom": "\"اپنے رب کی بخشش اور اس جنت کی طرف دوڑو جس کی چوڑائی آسمانوں اور زمین کے برابر ہے۔\" سورۃ الحدید 57:21",
-  "impactReportScreen_andWhatIsThe": "’’اور دنیا کی زندگی دھوکے کے سوا کیا ہے؟‘‘ سورہ علی عمران 3:185",
-  "impactReportScreen_indeedWithHardshipComes": "’’بے شک مشکل کے ساتھ آسانی آتی ہے۔‘‘ سورۃ الشرح 94:6",
-  "impactReportScreen_singleGoodDeedIn": "\"رمضان میں ایک نیکی دوسرے مہینوں میں 70 کے برابر ہے۔\" جب دروازہ کھلا ہو تو اسٹیک کریں۔",
-  "impactReportScreen_theProphetSaidCharity": "آپ صلی اللہ علیہ وسلم نے فرمایا: صدقہ مال کو کم نہیں کرتا بلکہ بڑھاتا ہے۔ (مسلم)",
-  "impactReportScreen_smilingAtYourBrother": "\"اپنے بھائی کو دیکھ کر مسکرانا صدقہ ہے۔\" جیب خالی ہونے پر بھی آپ کما سکتے ہیں۔ (ترمذی)",
-  "impactReportScreen_theMostBelovedDeeds": "\"اللہ کے نزدیک سب سے زیادہ پسندیدہ عمل وہ ہے، چاہے چھوٹے ہی کیوں نہ ہوں۔\" (بخاری)",
-  "impactReportScreen_inJannahIsWhat": "’’جنت میں وہ ہے جو نہ کسی آنکھ نے دیکھا، نہ کسی کان نے سنا اور نہ کسی دل نے اس کا تصور کیا۔‘‘ (بخاری)",
-  "impactReportScreen_twoRakatsAtFajr": "فجر کی دو رکعتیں دنیا اور اس کی ہر چیز سے بہتر ہیں۔ (مسلم)",
-  "impactReportScreen_everyStepTowardSalah": "صلاۃ کی طرف ہر قدم ایک گناہ کو مٹاتا ہے اور درجات بلند کرتا ہے۔ (مسلم)",
-  "impactReportScreen_everySeedYouDonate": "ہر بیج جو آپ عطیہ کرتے ہیں ایک درخت کسی اور میں لگاتے ہیں۔",
-  "impactReportScreen_takeWealthWithYou": "دولت اپنے ساتھ نہ لے جاؤ۔ صرف اعمال جو اس نے خریدے۔",
-  "impactReportScreen_theAngelsRecordNothing": "فرشتے کوئی چھوٹی چیز ریکارڈ نہیں کرتے۔ ایک سبحان اللہ پہاڑ سے بھی زیادہ ہو سکتا ہے۔",
-  "impactReportScreen_sadaqahIsTomorrow": "صدقہ کل ہے",
-  "impactReportScreen_heartThatGivesIs": "جو دل دیتا ہے وہ دل ہے اللہ بھرا رکھتا ہے۔ ڈان\\",
-  "impactReportScreen_theReceiptWhatDid": "رسید ہے. آگے کیا بھیجا؟",
-  "impactReportScreen_imagineYourScaleOn": "یوم القیامہ پر اپنے پیمانے کا تصور کریں۔ آج آپ کیا وزن بڑھا رہے ہیں؟",
-  "impactReportScreen_theWorldIsBorrowed": "دنیا مستعار ہے۔ آخرت کی ملکیت ہے۔ اس کے مطابق سرمایہ کاری کریں۔",
-  "impactReportScreen_youBuryTheBody": "آپ لاش کو دفن کرتے ہیں - لیکن اعمال کو نہیں۔ جب تک ہو سکے انہیں آگے بھیجیں۔",
-  "impactReportScreen_righteousChildWhoPrays": "ایک نیک بچہ جو آپ کے لئے دعا کرتا ہے، ایک صدقہ جو بہتا ہے، یا علم جو فائدہ پہنچاتا ہے - تین ابدی سرمایہ کاری۔ (مسلم)",
-  "impactReportScreen_youWillMeetAllah": "تم اللہ سے اپنے اعمال نامے کے ساتھ ملو گے۔ آج یقینی بنائیں\\",
-  "impactReportScreen_noDeedIsToo": "ایٹم شمار کرنے والے کے لیے کوئی عمل چھوٹا نہیں۔",
-  "impactReportScreen_lvl": "Lvl {_level} · {arg1}",
   "impactReportScreen_200447": "+{arg1}",
   "impactReportScreen_deedsTODAY": "آج کے اعمال",
   "impactReportScreen_634027": "+{arg1}",
   "impactReportScreen_thisWEEK": "اس ہفتے",
   "impactReportScreen_hasanaatEarned": "حسنات کمائی",
-  "impactReportScreen_whoeverDoesGoodDeed": "جو کوئی نیکی کرے گا اسے اس کے برابر دس گنا ملے گا۔",
-  "impactReportScreen_whoeverReadsLetterFrom": "جس نے کتاب اللہ کا ایک حرف پڑھا اس کے لیے ایک حسنہ ہوگا اور ایک حسنہ کو دس سے ضرب دیا جائے گا۔",
-  "impactReportScreen_twoHadithGrowThis": "دو حدیثیں اس تعداد کو ساتھ ساتھ بڑھاتی ہیں:\\n\\n",
-  "impactReportScreen_dhikrRecitedLifetime": "ذکر (زندگی بھر): {arg1}\\n",
-  "impactReportScreen_hasanat": "→ حسنات: {arg1}\\n\\n",
-  "impactReportScreen_ayahsReadLifetime": "آیات پڑھی (زندگی بھر): {arg1}\\n",
   "impactReportScreen_hasanat_e68a30": "→ حسنات: {arg1}\\n\\n",
-  "impactReportScreen_totalHasanaat": "کل حسنات: {arg1}",
-  "impactReportScreen_ayahs": "{arg1} آیات",
   "impactReportScreen_hasanatFromQuran": "حسنات قرآن سے",
-  "impactReportScreen_planted": "{arg1} لگائے گئے",
   "impactReportScreen_treesInJannah": "جنت میں درخت",
-  "impactReportScreen_cycles": "{arg1} سائیکل",
   "impactReportScreen_sinsForgiven": "گناہ معاف کر دیے گئے۔",
-  "impactReportScreen_whoeverSaysSubhanAllahiWa": "جو شخص دن میں 100 مرتبہ سبحان اللہ وبحمدہ کہے اس کے گناہ بخش دیئے جاتے ہیں خواہ سمندر کی جھاگ کے برابر ہوں۔",
-  "impactReportScreen_subhanallahiWaBihamdihi": "سبحان اللہ و بحمدہ",
-  "impactReportScreen_totalRecitations": "کل تلاوت: {arg1}\\n",
-  "impactReportScreen_dividedByForgivenessCycles": "100 → معافی کے چکروں سے تقسیم: {arg1}",
-  "impactReportScreen_built": "{arg1} بنایا گیا۔",
   "impactReportScreen_palacesBuilt": "محلات بنائے گئے۔",
-  "impactReportScreen_dividedByPalaces": "10 → محلات سے تقسیم: {arg1}",
-  "impactReportScreen_earned": "{arg1} کمایا",
   "impactReportScreen_treasuresOfJannah": "جنت کے خزانے۔",
-  "impactReportScreen_equivalent": "{arg1} مساوی",
   "impactReportScreen_slavesFreed": "غلام آزاد",
-  "impactReportScreen_laIlahaIllallahuWahdahu": "لا الہ الا اللہ وحدہ لا شریک لہ...",
   "impactReportScreen_totalRecitations_262e54": "کل تلاوت: {arg1}\\n",
-  "impactReportScreen_setsOfSetsSlaves": "10 کے سیٹ → {arg1} سیٹ × 4 غلام = {arg2}",
-  "impactReportScreen_opened": "{arg1} کھولا گیا۔",
   "impactReportScreen_gatesOfParadiseOpened": "جنت کے دروازے کھل گئے۔",
-  "impactReportScreen_received": "{arg1} موصول ہوا۔",
   "impactReportScreen_blessingsFromAllah": "اللہ کی طرف سے برکت",
-  "impactReportScreen_totalSalawatSent": "کل صلوات بھیجی گئی: {arg1}\\n",
-  "impactReportScreen_multipliedByBlessingsReceived": "10 سے ضرب → {arg1} برکتیں موصول ہوئیں",
-  "impactReportScreen_invocations": "{arg1} دعوتیں",
   "impactReportScreen_timesProtected": "ٹائمز پروٹیکٹڈ",
-  "impactReportScreen_protectionFromEvil": "برائی سے حفاظت",
-  "impactReportScreen_goodHealthProtection": "اچھی صحت اور تحفظ",
-  "impactReportScreen_totalInvocations": "کل درخواستیں: {arg1}",
-  "impactReportScreen_equivalent_d7e6f6": "{arg1} مساوی",
   "impactReportScreen_quranCompletions": "قرآن کی تکمیل",
-  "impactReportScreen_dividedByQuranCompletions": "تقسیم شدہ 3 → {arg1} قرآن کی تکمیل",
-  "impactReportScreen_recitations": "{arg1} قرات",
   "impactReportScreen_bonusMillionHasanaat": "بونس ملین حسنات",
   "impactReportScreen_sadaqahGiven": "صدقہ دیا گیا۔",
   "impactReportScreen_564740": "{_monthActiveDays}",
   "impactReportScreen_3dc421": "{arg1}h",
   "impactReportScreen_08990a": "{arg1}m",
-  "impactReportScreen_ago": "{arg1} منٹ پہلے",
   "impactReportScreen_ago_c25b44": "{arg1}گھنٹہ پہلے",
   "impactReportScreen_ago_e160e3": "{arg1} ہفتہ پہلے",
-  "impactReportScreen_moAgo": "{arg1}مہینہ پہلے",
   "impactReportScreen_ago_65f0ec": "{arg1}سال پہلے",
-  "impactReportScreen_viewAllDonors": "تمام {arg1} عطیہ دہندگان کو دیکھیں",
-  "impactReportScreen_failed": "ناکام: {e}",
-  "impactReportScreen_meet": "{arg1}، {arg2} سے ملیں",
-  "impactReportScreen_sponsor": "اسپانسر {arg1} →",
-  "impactReportScreen_funded": "{arg1}% فنڈڈ",
-  "impactReportScreen_yourLifetimeImpact": "آپ کی زندگی بھر کا اثر",
-  "impactReportScreen_startYourImpactJourney": "اپنا اثر سفر شروع کریں۔",
   "impactReportScreen_bd3721": "{_myOrphansSponsoredCount}",
   "impactReportScreen_b3d969": "{_myProjectsSupportedCount}",
-  "levelScreen_customProfileThemes": "حسب ضرورت پروفائل تھیمز",
-  "levelScreen_exclusiveVotingRights": "خصوصی ووٹنگ کے حقوق",
-  "levelScreen_hallOfFameListing": "ہال آف فیم لسٹنگ",
-  "levelScreen_seeds": "+{arg1} بیج",
-  "levelScreen_laIlahaIllallah": "لا الہ الا اللہ x100",
   "levelScreen_seeds_59c6a1": "+{arg1} بیج",
   "levelScreen_seeds_a20530": "+{arg1} بیج",
-  "levelScreen_unlocks": "غیر مقفل کرتا ہے: {arg1}",
   "levelScreen_seeds_a49180": "+{arg1} بیج ✓",
   "levelScreen_seeds_a22be5": "+{arg1} بیج",
-  "levelScreen_seedsBoost": "{arg1}× بیج بوسٹ",
   "levelScreen_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "levelScreen_nextDays": "اگلا: {arg1} ({arg2} دن)",
   "levelScreen_seeds_990893": "+{arg1} بیج",
-  "levelScreen_days": "{current} / {arg1} دن",
-  "levelScreen_dayStreak": "{arg1} دن کا سلسلہ",
   "phase1Screens_inTheNameOf": "اللہ کے نام سے جو بڑا مہربان ہے...",
-  "phase1Screens_quranReadingNimage": "قرآن پڑھنے کی تصویر",
-  "phase1Screens_orphansNimage": "یتیموں کی تصویر",
   "onboardingComponents_355c50": "{first}",
   "onboardingComponents_b236c9": "{trailing}",
-  "quranMini_inTheNameOf": "اللہ کے نام سے جو بڑا مہربان نہایت رحم والا ہے۔",
-  "quranMini_allPraiseBelongsTo": "تمام تعریفیں اللہ کے لیے ہیں جو تمام جہانوں کا رب ہے۔",
   "orphansGridScreen_36cd3b": "{arg1} · {arg2}",
-  "orphanDetailScreen_years": "{arg1} سال",
-  "orphanDetailScreen_ofSeeds": "{arg1} کا {arg2} بیج",
-  "orphanDetailScreen_through": "{arg1} کے ذریعے",
-  "orphanDetailScreen_andTheyGiveFood": "اور وہ اس سے محبت کے باوجود مسکینوں، یتیموں اور قیدیوں کو کھانا دیتے ہیں۔",
-  "orphanDetailScreen_ago": "{arg1} منٹ پہلے",
   "orphanDetailScreen_ago_c25b44": "{arg1}گھنٹہ پہلے",
   "orphanDetailScreen_ago_e160e3": "{arg1} ہفتہ پہلے",
-  "orphanDetailScreen_moAgo": "{arg1}مہینہ پہلے",
   "orphanDetailScreen_ago_65f0ec": "{arg1}سال پہلے",
-  "orphanDetailScreen_seeds": "{_availablePoints} بیج",
-  "orphanDetailScreen_sponsor": "اسپانسر {arg1}",
-  "orphanDetailScreen_jazakallahKhayranSeedsSponsored": "جزاک اللہ خیران! {amount} بیج سپانسر شدہ۔",
-  "orphanDetailScreen_chooseHowManySeeds": "منتخب کریں کہ کتنے بیج دینے ہیں۔ کم از کم {arg1}",
-  "orphanDetailScreen_yourBalanceSeeds": "آپ کا بیلنس: {arg1} بیج",
-  "profileSettingsScreen_nameCannotBeEmpty": "نام خالی نہیں ہو سکتا",
   "profileSettingsScreen_sabiqRewards": "Sabiq Rewards • v1.0",
-  "profileSettingsScreen_bosniaAndHerzegovina": "بوسنیا اور ہرزیگووینا",
-  "profileSettingsScreen_centralAfricanRepublic": "وسطی افریقی جمہوریہ",
-  "profileSettingsScreen_unitedArabEmirates": "متحدہ عرب امارات",
-  "profileSettingsScreen_signedInWithGoogle": "گوگل کے ساتھ سائن ان ہے۔",
-  "profileSettingsScreen_signedInWithQuran": "Quran.com کے ساتھ سائن ان ہوا۔",
-  "profileSettingsScreen_signedInWithEmail": "ای میل کے ساتھ سائن ان ہوا۔",
-  "profileSettingsScreen_seeds": "{arg1} بیج",
   "profileSettingsScreen_seeds_59ba7c": "{arg1} بیج",
   "profileSettingsScreen_seeds_2bc978": "{arg1} بیج",
-  "profileSettingsScreen_guidesFAQsAndHow": "گائیڈز، اکثر پوچھے گئے سوالات اور طریقہ کار",
-  "profileSettingsScreen_somethingNotWorkingTell": "کچھ کام نہیں کر رہا ہے؟ ہمیں بتائیں",
   "profileSetupScreen_ahmadFatimaYusuf": "احمد، فاطمہ، یوسف...",
   "profileSetupScreen_pakistanEgyptMalaysia": "پاکستان، مصر، ملائیشیا…",
-  "projectDetailScreen_organisedBy": "منظم بذریعہ {sponsor}\\n\\n",
-  "projectDetailScreen_fundedSoFarEvery": "اب تک کی فنڈنگ، ہر بیج شمار ہوتا ہے!\\n\\n",
-  "projectDetailScreen_openSabiqRewardsApp": "اپنے بیجوں کو عطیہ کرنے اور انعام حاصل کرنے کے لیے Sabiq Rewards ایپ کھولیں۔\\n",
-  "projectDetailScreen_sabiqrewardsSadaqahIslamicCharity": "#SabiqRewards #Sadaqah #Islamic Charity",
   "projectDetailScreen_4c2b09": "{arg1} {arg2} {arg3}",
-  "projectDetailScreen_donateToProvideUrgent": "خوراک، پانی اور طبی سامان کی شدید قلت کا سامنا کرنے والے فلسطینیوں کو فوری، جان بچانے والی امداد فراہم کرنے کے لیے عطیہ کریں...",
-  "projectDetailScreen_seeds": "{arg1} بیج",
   "projectDetailScreen_seeds_801ec7": "{arg1} بیج",
   "projectDetailScreen_e4e562": "{arg1}%",
-  "projectDetailScreen_ago": "{arg1} منٹ پہلے",
   "projectDetailScreen_ago_c25b44": "{arg1}گھنٹہ پہلے",
   "projectDetailScreen_ago_e160e3": "{arg1} ہفتہ پہلے",
-  "projectDetailScreen_moAgo": "{arg1}مہینہ پہلے",
   "projectDetailScreen_ago_65f0ec": "{arg1}سال پہلے",
-  "projectDetailScreen_viewAll": "تمام {arg1} → دیکھیں",
-  "quranHubScreen_saved": "{arg1} محفوظ کیا گیا۔",
-  "quranHubScreen_tapTheHeartBookmark": "آیات کو محفوظ کرنے کے لیے پڑھتے وقت ہارٹ/بُک مارک آئیکن کو تھپتھپائیں۔",
-  "quranHubScreen_surahVerse": "سورہ {s} • آیت {a}",
   "quranHubScreen_loadingQuran": "قرآن لوڈ ہو رہا ہے…",
-  "quranHubScreen_verses": "{arg1} آیات",
-  "quranHubScreen_of": "کا {arg1}",
   "quranHubScreen_saved_edce53": "{arg1} محفوظ کیا گیا۔",
-  "quranScreen_englishSahihIntl": "انگریزی، Sahih Intl.",
-  "quranScreen_saheehInternational": "صحیح انٹرنیشنل",
-  "quranScreen_englishPickthall": "انگریزی، Pickthall",
-  "quranScreen_mohammadMarmadukePickthall": "محمد مرماڈوکے پکتھال",
-  "quranScreen_englishTheMessage": "انگریزی، پیغام",
-  "quranScreen_englishMuhsinKhan": "انگلش، محسن خان",
-  "quranScreen_muhsinKhanHilali": "محسن خان اور ہلالی",
-  "quranScreen_fatehMuhammadJalandhry": "فتح محمد جالندھری۔",
-  "quranScreen_imamAhmadRazaKhan": "امام احمد رضا خان",
-  "quranScreen_maulanaSayyidAbulAla": "مولانا سید ابوالاعلیٰ مودودی",
-  "quranScreen_franAisHamidullah": "فرانسس، حمید اللہ",
-  "quranScreen_rkDiyanet": "Türkçe، Diyanet",
-  "quranScreen_rkLeymanAte": "Türkçe، Süleyman Ateş",
-  "quranScreen_bahasaIndonesian": "بہاسا، انڈونیشیا",
-  "quranScreen_ministryOfReligiousAffairs": "وزارت مذہبی امور",
-  "quranScreen_muhiuddinKhan": "بنگالی، محی الدین خان",
-  "quranScreen_deutschAbuRida": "ڈوئچ، ابو ردا",
-  "quranScreen_abuRidaMuhammadIbn": "ابو ردا محمد بن احمد",
-  "quranScreen_espaOlAsad": "اسپینول، اسد",
-  "quranScreen_uthmaniMadinah": "عثمانی (مدینہ)",
-  "quranScreen_alJalalaynEN": "الجلالین (EN)",
-  "quranScreen_couldNotLoadAyah": "آیت لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
-  "quranScreen_noConnectionCachedData": "کوئی تعلق نہیں۔ کیشڈ ڈیٹا دستیاب ہو سکتا ہے۔",
-  "quranScreen_ayahs": "{arg1} آیات",
-  "quranScreen_couldNotRemoveBookmark": "بک مارک کو ہٹایا نہیں جا سکا، براہ کرم دوبارہ کوشش کریں۔",
-  "quranScreen_removedBookmark": "بک مارک کو ہٹا دیا گیا {_surahName} {_surah}:{_ayah}",
-  "quranScreen_couldNotSaveBookmark": "بک مارک محفوظ نہیں کیا جا سکا، براہ کرم دوبارہ کوشش کریں۔",
-  "quranScreen_bookmarked": "بک مارک کردہ {_surahName} {_surah}:{_ayah}",
-  "quranScreen_trimmedContains": ") && !trimmed.contains(",
-  "quranScreen_tafsir": "تفسیر · {_surahName} {_surah}:{_ayah}",
-  "quranScreen_addedToFavourites": "♥️ پسندیدہ میں شامل کر دیا گیا۔",
-  "quranScreen_comfortableNightTimeReading": "رات کے وقت آرام سے پڑھنا",
-  "quranScreen_pt": "{arg1} pt",
   "quranScreen_003843": "{arg1} {arg2}",
-  "quranScreen_displayMeaningBelowEach": "ہر آیت کے نیچے معنی ظاہر کریں۔",
-  "quranScreen_showTransliteration": "نقل حرفی دکھائیں۔",
-  "quranScreen_romanisedPronunciationUnderEach": "ہر لفظ کے نیچے رومنائزڈ تلفظ",
-  "quranScreen_progressBarAyahCount": "پروگریس بار اور آیاہ کاؤنٹ کارڈ",
-  "quranScreen_moveToNextVerse": "آڈیو ختم ہونے پر اگلی آیت پر جائیں۔",
-  "quranScreen_repeatCurrentVerse": "موجودہ آیت کو دہرائیں۔",
-  "quranScreen_notificationsALERTS": "اطلاعات اور انتباہات",
-  "quranScreen_milestoneSoundAlerts": "سنگ میل ساؤنڈ الرٹس",
-  "quranScreen_chimeWhenYouReach": "جب آپ 10، 25، 50 آیات تک پہنچ جائیں تو گھنٹی بجائیں۔",
-  "quranScreen_showEachArabicWord": "ہر عربی لفظ کو اس کے انگریزی معنی کے ساتھ دکھائیں۔",
-  "quranScreen_translationLanguage": "ترجمہ کی زبان",
-  "quranScreen_translationsAvailable": "{arg1} ترجمے دستیاب ہیں۔",
   "quranScreen_3502e8": "{arg1} / {arg2}",
-  "quranScreen_sabiqSeedsEarnedToday": "+{_pointsToday} Sabiq بیج نے آج کمایا!",
   "quranScreen_dcacc4": "{_ayah} / {arg1}",
   "quranScreen_wordDataUnavailableCheck": "لفظ ڈیٹا دستیاب نہیں ہے۔ اپنا کنکشن چیک کریں۔",
   "quranScreen_6d1f9d": "{arg1}",
-  "quranScreen_ayahsRead": "__پ0__ آیات پڑھیں",
   "quranScreen_ce2af3": "{arg1}%",
   "quranScreen_6e8ac8": "{text}",
-  "quranScreen_pageJuz": "صفحہ {_currentPage} · Juz {arg1}",
-  "startJourneyScreen_unexpectedErrorDuringGoogle": "گوگل سائن ان کے دوران غیر متوقع خرابی۔",
-  "startJourneyScreen_connectedToQuranCom": "Quran.com سے منسلک",
   "startJourneyScreen_connectedToQuranCom_0ac4de": "Quran.com سے منسلک (بک مارک کی مطابقت پذیری موخر)",
-  "streakScreen_nextDays": "اگلا: {arg1} ({arg2} دن)",
-  "streakScreen_seeds": "+{arg1} بیج",
-  "streakScreen_days": "{current} / {arg1} دن",
-  "streakScreen_dayStreak": "{arg1} دن کا سلسلہ",
-  "tafsirHubScreen_earnSeedsForEvery": "ہر 10 منٹ تفسیر سننے کے لیے بیج حاصل کریں۔",
-  "tafsirScreen_alJalalaynEN": "الجلالین (EN)",
-  "tafsirScreen_verses": "{arg1} آیات",
-  "tafsirScreen_trimmedContains": ") && !trimmed.contains(",
-  "tafsirScreen_ayahOf": "آیت {_ayah} از {_surahLen}",
   "tafsirScreen_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "tafsirScreen_tafsirNotAvailableFor": "اس آیت کی تفسیر دستیاب نہیں۔",
-  "donationService_youMustBeLogged": "عطیہ کرنے کے لیے آپ کا لاگ ان ہونا ضروری ہے۔",
-  "donationService_donationCouldNotBe": "اس وقت عطیہ پر کارروائی نہیں ہو سکی۔",
-  "donationService_anUnexpectedNetworkError": "نیٹ ورک کی ایک غیر متوقع خرابی پیش آگئی۔",
   "donationService_youMustBeLogged_edc4b5": "اسپانسر کرنے کے لیے آپ کا لاگ ان ہونا ضروری ہے۔",
-  "donationService_sponsorshipReceived": "اسپانسر شپ موصول ہوئی 💝",
-  "donationService_youSponsoredSeedsJazak": "آپ نے سپانسر کیا {amount} بیج · جزاک اللہ خیر۔",
-  "donationService_sponsorshipCouldNotBe": "اس وقت اسپانسرشپ پر کارروائی نہیں ہو سکی۔",
-  "liveNotificationService_remindersToSealYour": "آدھی رات سے پہلے اپنے زیر التواء بیجوں کو سیل کرنے کی یاددہانی۔",
-  "liveNotificationService_sealYourSeedsBefore": "آدھی رات سے پہلے اپنے بیجوں کو سیل کریں۔",
   "liveNotificationService_sealYourSeedsBefore_be2183": "آدھی رات سے پہلے اپنے بیجوں پر مہر لگائیں!",
-  "liveNotificationService_youHavePendingSeeds": "آپ کے پاس {pendingSeeds} زیر التواء بیج ہیں۔ آدھی رات سے پہلے دن پر مہر لگائیں یا ان کی میعاد ختم ہوجائے۔",
-  "liveNotificationService_ayatReadToday": "{_ayahCount}آیت آج پڑھیں 📖",
-  "liveNotificationService_readQuranToday": "{arg1} آج قرآن پڑھیں ⏱️",
-  "liveNotificationService_nothingReadFromQuran": "آج قرآن سے کچھ نہیں پڑھا گیا 📖",
-  "liveNotificationService_dhikrCompletedToday": "{_dhikrCount}ذکر آج مکمل ہوا 📿",
-  "liveNotificationService_ayatDhikrToday": "{_ayahCount} آیت · {_dhikrCount} آج کا ذکر",
-  "liveNotificationService_keepReadingAndDoing": "پڑھتے رہیں اور ذکر کرتے رہیں!",
-  "liveNotificationService_yourSeedsToday": "آج آپ کے بیج ✨",
-  "localReminderScheduler_sabiqRewardsNotifications": "صابق انعامات کی اطلاع",
-  "localReminderScheduler_it": "یہ\\",
-  "localReminderScheduler_fridayReadSurahAl": "جمعہ - سورہ کہف پڑھیں",
-  "localReminderScheduler_whoeverRecitesSurahAl": "جو شخص جمعہ کے دن سورۃ الکہف کی تلاوت کرتا ہے اس کے لیے دونوں جمعوں کے درمیان نور روشن ہوجاتا ہے۔",
-  "localReminderScheduler_don": "ڈان\\",
-  "localReminderScheduler_missSurahAlKahf": "آج سورہ کہف کو یاد نہ کریں۔",
-  "localReminderScheduler_fewHoursToMaghrib": "مغرب کے چند گھنٹے - اگر آپ کے پاس ہے تو سورۃ الکہف ختم کریں۔",
-  "quranApiService_notConnectedToQuran": "Quran.com سے منسلک نہیں ہے۔",
-  "quranApiService_syncFailedBookmarkCould": "مطابقت پذیری ناکام ہو گئی، {failed} بک مارک (زبانیں) Quran.com پر نہیں جا سکے (ٹوکن/اینڈ پوائنٹ چیک کریں)۔",
-  "quranApiService_bookmarksAlreadyInSync": "بک مارکس پہلے سے ہی مطابقت پذیر ہیں۔",
-  "quranApiService_syncedBookmarksUpDown": "مطابقت پذیر {total} بک مارکس ({uploaded} اوپر، {downloaded} نیچے)",
-  "quranApiService_syncFailed": "مطابقت پذیری ناکام ہوگئی: {e}",
-  "streakService_warmingUp": "وارمنگ اپ",
-  "streakService_oneWeek": "ایک ہفتہ",
-  "streakService_twoWeeks": "دو ہفتے",
-  "streakService_oneMonth": "ایک مہینہ",
-  "streakService_twoMonths": "دو مہینے",
-  "streakService_theCenturion": "سنچورین",
   "streakService_1fc043": "{arg1} {arg2}",
-  "streakService_dayStreak": "{arg1}-دن {arg2} سلسلہ ·",
-  "streakService_bonusSeedsUnlocked": "+{arg1} بونس بیج غیر مقفل",
   "trackingService_c7528c": "{arg1} {arg2}",
-  "xpService_level": "{title} • سطح {level}",
-  "xpService_newBadgeUnlocked": "نیا بیج غیر مقفل ہو گیا 🏆",
-  "xpService_you": "آپ\\",
-  "xpService_dailyLoginBonus": "روزانہ لاگ ان بونس",
-  "xpService_seedsWelcomeBack": "+{arg1} بیج · واپس خوش آمدید!",
-  "xpService_daySealed": "دن مہربند 🌙",
-  "xpService_sabiqSeedsConfirmedBonus": "+{flushed} Sabiq بیجوں کی تصدیق ہوگئی! (سیل کرنے کے لیے {bonus} بونس)",
-  "xpService_sabiqSeedsConfirmed": "+{flushed} Sabiq بیجوں کی تصدیق ہوگئی!",
-  "dhikrExitCelebration_everyBreathCounts": "ہر سانس شمار ہوتی ہے۔",
-  "impactAnimation_yourRewardHasBeen": "آپ کا انعام ریکارڈ ہو چکا ہے۔",
-  "motivationalPopup_verilyWithHardshipComes": "بے شک، مشکل کے ساتھ آسانی آتی ہے۔\\nہر آزمائش اس سے بڑی چیز کا دروازہ ہے۔",
-  "motivationalPopup_quranAlInshirah": "Quran • الانشیرہ 94:6",
-  "motivationalPopup_quranAlAnkabut": "قرآن • العنکبوت 29:45",
-  "motivationalPopup_quranAlBaqarah": "Quran • البقرہ 2:152",
-  "motivationalPopup_quranAnNahl": "قرآن • النحل 16:18",
-  "motivationalPopup_makeYourTimePrecious": "اپنے وقت کو قیمتی بنائیں۔\\nآج ہی کسی دوست کے ساتھ نیکی بانٹیں،\\nہر نیکی کا اشتراک صدقہ ہے۔",
-  "motivationalPopup_guideOthersToGood": "دوسروں کو نیکی کی طرف رہنمائی کرو، اس کا اجر تمہیں ملے گا۔",
-  "motivationalPopup_theBestOfPeople": "بہترین لوگ وہ ہیں جو دوسروں کے لیے سب سے زیادہ فائدہ مند ہوں۔",
-  "motivationalPopup_verilyInTheRemembrance": "بے شک اللہ کے ذکر سے دلوں کو سکون ملتا ہے۔",
-  "motivationalPopup_remindYourselfTimeIs": "اپنے آپ کو یاد دلائیں، وقت سب سے قیمتی صدقہ ہے۔",
-  "motivationalPopup_yourTimeIsYour": "آپ کا وقت آپ کا سب سے قیمتی اثاثہ ہے۔ اس میں دانشمندی سے سرمایہ کاری کریں\\nجو ہمیشہ کے لیے قائم رہتا ہے۔",
-  "motivationalPopup_quranAlAnfal": "قرآن • الانفال 8:28",
-  "motivationalPopup_takeAdvantageOfFive": "پانچ سے پہلے پانچ کا فائدہ اٹھائیں۔",
-  "motivationalPopup_youHaveBeenRewarded": "آپ کو آج آپ کی مستقل مزاجی کے لیے انعام دیا گیا ہے!",
-  "motivationalPopup_seeds": "+{arg1} بیج",
   "motivationalPopup_seeds_b14996": "+{arg1} بیج",
   "motivationalPopup_readQuranPages": "قرآن کے 5 صفحات پڑھیں",
-  "motivationalPopup_completeNowEarnSeeds": "ابھی مکمل کریں → +50 بیج بونس حاصل کریں۔",
   "motivationalPopup_completeDhikrSet": "ذکر سیٹ مکمل کریں۔",
-  "motivationalPopup_finishYourAzkaarEarn": "اپنا ازکار ختم کریں → +30 بیج بونس حاصل کریں۔",
   "motivationalPopup_inviteFriend": "ایک دوست کو مدعو کریں۔",
-  "motivationalPopup_shareSabiqWithSomeone": "کسی کے ساتھ Sabiq کا اشتراک کریں → +100 بیج حاصل کریں۔",
-  "motivationalPopup_keepYourSpiritualMomentum": "اپنی روحانی رفتار کو جاری رکھیں\\اور اپنے بیجوں کو بڑھتے ہوئے دیکھیں ✨",
-  "noorOffline_somethingWentWrong": "کچھ غلط ہو گیا۔",
-  "notificationsSheet_stayOnTopOf": "انعامات اور سنگ میل کے اوپر رہیں",
-  "notificationsSheet_llBeNotifiedAbout": "انعامات، لکیروں اور سنگ میلوں کے بارے میں مطلع کیا جائے گا۔",
-  "notificationsSheet_inboxKeepsExistingItems": "Inbox موجودہ آئٹمز رکھتا ہے لیکن کوئی نیا نہیں آئے گا۔",
-  "notificationsSheet_sabiqSeedsForSealing": "Sabiq بیج آج سیل کرنے کے لئے",
   "notificationsSheet_ago": "{arg1} منٹ پہلے",
   "notificationsSheet_ago_5d4e7f": "{arg1}گھنٹہ پہلے",
   "notificationsSheet_ago_67b1d9": "{arg1} دن پہلے",
-  "projectMediaCarousel_couldNotLoadVideo": "ویڈیو لوڈ نہیں ہو سکی",
-  "quranExitCelebration_beautifulRecitation": "خوبصورت تلاوت۔",
-  "quranExitCelebration_everyMomentCounts": "ہر لمحہ شمار ہوتا ہے۔",
   "sealCoinAnimation_e16fa4": "+{arg1}",
-  "authScreen_pleaseEnterYourEmail_d36dc6": "براہ کرم اپنا ای میل درج کریں۔",
-  "authScreen_pleaseEnterYourPassword_0f8b9b": "براہ کرم اپنا پاس ورڈ درج کریں۔",
-  "authScreen_passwordMustBeAt_c936ae": "پاس ورڈ کم از کم 6 حروف کا ہونا چاہیے۔",
-  "authScreen_alreadyHaveAnAccount_07e598": "پہلے سے ہی اکاؤنٹ ہے؟ سائن ان کریں۔",
-  "authScreen_haveAnAccountSign_ae2883": "کیا آپ کا اکاؤنٹ نہیں ہے؟ سائن اپ کریں۔",
-  "qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": "QfEmailConflictException: {email} کا پہلے سے ہی ایک اکاؤنٹ ہے۔",
-  "qfAuthService_openidOfflineAccessUser_fc4bcc": "openid offline_access صارف کے بُک مارک کلیکشن ریڈنگ_سیشن",
-  "qfAuthService_tokenExchangeFailed_89d8a0": "ٹوکن کا تبادلہ ناکام ہو گیا ({arg1}): {arg2}",
-  "qfAuthService_errorNullResponse_bd81c7": "خرابی: کالعدم جواب",
   "orphan_be2bf7_be2bf7": "{firstName} {lastInitial}.",
   "akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2": "\"سبحان اللہ وبحمدہ\" - دن میں 100 بار کہنے سے گناہوں کو مٹا دیا جاتا ہے، یہاں تک کہ سمندر کی جھاگ کی طرح۔ (بخاری)",
   "akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f": "100 بار لا الہ الا اللہ کہنا 10 غلام آزاد کرنے اور 100 حسنات کے برابر ہے۔ (بخاری)",
@@ -1717,20 +1021,8 @@
   "akhirahBalanceScreen_everySubhanallahIsSadaqah_16b797": "ہر سبحان اللہ صدقہ ہے۔ سونے سے پہلے کتنے دو گے؟",
   "akhirahBalanceScreen_heartThatForgetsDhikr_3a6173": "جو دل ذکر کو بھول جاتا ہے اسے زنگ لگنے لگتا ہے۔ یاد رکھنے والا دل روشن رہتا ہے۔",
   "akhirahBalanceScreen_haveYouFortifiedYourself_17ccac": "کیا آپ نے آج صبح و شام اذکار سے خود کو مضبوط کیا ہے؟",
-  "akhirahBalanceScreen_thisSession_702ffc": "یہ سیشن: +{arg1}",
-  "akhirahBalanceScreen_seedsThisSession_cd9411": "+{arg1} بیج اس سیشن میں",
-  "akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": "7 دن کی اوسط: {arg1} اذکار/دن",
-  "dashboardScreen_profileReturnedZeroRows_3ccedb": "پروفائل نے {uid} کے لیے صفر قطاریں لوٹائی",
-  "dashboardScreen_dashboardLoadError_6168de": "ڈیش بورڈ لوڈ کی خرابی: {e}",
-  "dashboardScreen_invalidReferralCode_bb3b10": "غلط ریفرل کوڈ",
-  "dashboardScreen_cannotReferYourself_d836b8": "اپنا حوالہ نہیں دے سکتے",
   "dashboardScreen_sponsor_d48549": "اسپانسر {name}, {arg1}",
-  "dashboardScreen_dashboardDoesn_b8feb4": ": 0، // ڈیش بورڈ نہیں کرتا",
-  "dashboardScreen_today_261fbb": "{arg1} · {_lastAyah} · +{_ayahsToday} آج",
   "dashboardScreen_606140_606140": "{arg1} · {_lastAyah}",
-  "dashboardScreen_dayStreak_2934ca": "{arg1} دن کا سلسلہ",
-  "dashboardScreen_yourSabiqSeedsFund_3e8748": "آپ کا Sabiq Seeds ان منصوبوں کو فنڈ دیتا ہے۔",
-  "dashboardScreen_active_2d214a": "{arg1} فعال",
   "dashboardScreen_joinMeOnSabiq_755fb5": "سبیق انعامات پر میرے ساتھ شامل ہوں، روزانہ قرآن، ذکر اور نیک اعمال کے لیے بیج حاصل کریں!\\n\\n",
   "dashboardScreen_useMyCodeAnd_7d13b3": "میرا کوڈ *{arg1}* استعمال کریں اور ہم دونوں کو 500 Sabiq بیج ملیں گے!\\n\\n",
   "dashboardScreen_messageCopiedShareOr_7b977e": "پیغام کاپی، شیئر یا واٹس ایپ میں پیسٹ کریں!",
@@ -1740,402 +1032,20 @@
   "dashboardScreen_anErrorOccurredPlease_8ee486": "ایک خرابی پیش آگئی۔ براہ کرم دوبارہ کوشش کریں۔",
   "dashboardScreen_52b02c_52b02c": "{pts}",
   "dashboardScreen_e4e562_e4e562": "{arg1}%",
-  "dashboardScreen_seeDetailsForMore_54551e": "مزید پروجیکٹس کے لیے تفصیلات دیکھیں →",
-  "dashboardScreen_yourTOTALSABIQSEEDS_f1d60a": "آپ کے کل سبک کے بیج",
   "dashboardScreen_viewCampaignDonate_450be4": "🤲 مہم دیکھیں اور عطیہ کریں۔",
-  "dashboardScreen_yourRank_67be90": "آپ کا درجہ: {rankText}",
   "dashboardScreen_d13a42_d13a42": "{_myPoints} {unit} • {arg1}",
   "dashboardScreen_beTheFirstOn_63de17": "بورڈ میں پہلے نمبر پر رہیں",
   "dashboardScreen_readAnAyahOr_9c7ab7": "سرفہرست مقام حاصل کرنے کے لیے کوئی آیت یا ذکر پڑھیں",
   "dashboardScreen_lvl_ac180d": "Lvl {level} · {arg1}",
-  "dashboardScreen_sealWithin_381d5d": "{arg1}h کے اندر مہر لگائیں۔",
-  "dashboardScreen_jazakallahDaySealed_70a34b": "جزاک اللہ!  دن مہربند",
-  "dashboardScreen_ofGoal_9660ee": "کا {arg1} {arg2} مقصد",
-  "dhikrHubScreen_propheticSupplications_907064": "نبوی دعائیں",
-  "dhikrHubScreen_morningEveningRemembrance_ec6bc2": "صبح و شام کی یاد",
-  "dhikrHubScreen_furtherSupplications_f72602": "مزید دعائیں",
-  "dhikrHubScreen_closingRemembranceSalawat_5204e8": "اختتامی ذکر و صلوات",
-  "dhikrHubScreen_hajjUmrahSupplications_f4d1b9": "حج اور عمرہ کی دعائیں",
-  "dhikrHubScreen_falseHiddenAdd_c45662": "] == غلط) hidden.add(r[",
-  "dhikrScreen_indoPak_fd8751": "انڈو پاک",
   "dhikrScreen_default_8bd36b": "ڈیفالٹ: {recommendedCount}",
-  "dhikrScreen_duaAzkarSettings_71de01": "دعا اور اذکار کی ترتیبات",
-  "dhikrScreen_hideTheVisualArtwork_28b4d2": "بصری آرٹ ورک کے علاقے کو چھپائیں",
   "dhikrScreen_pinTheIllustrationAt_5ec641": "مثال کو اوپر پن کریں جب کہ عربی متن اس کے نیچے سکرول کرتا ہے۔",
-  "dhikrScreen_readTimes_537f51": "{readCount} بار پڑھیں",
   "dhikrScreen_d08433_d08433": "{arg1} / {arg2}",
-  "dhikrScreen_alBaqarahAmanaAr_e9d62e": "البقرہ 285 (آمنۃ الرسول)",
-  "dhikrScreen_alBaqarahAlifLam_71ad0e": "البقرہ 1-5 (الف لام میم)",
-  "dhikrScreen_alBaqarahLaIkraha_e837fb": "البقرہ 256 (لا اقراء)",
-  "dhikrScreen_alBaqarahAllahuWaliyy_c2a18b": "البقرہ 257 (اللہ والی)",
-  "dhikrScreen_salawatIbrahimiyyaDurood_171c60": "صلوات ابراہیمیہ (درود)",
   "dhikrScreen_9a4c42_9a4c42": "{bismillah} ﴿{arg1}﴾\\n{rest}",
   "dhikrScreen_86f857_86f857": "\\u2060{matched}",
   "dhikrScreen_49900d_49900d": "+{hasanaat}",
-  "dhikrScreen_hisnulMuslimChapter_8745dc": "حسن المسلم، باب:",
   "dhikrScreen_3856c1_3856c1": "{rawRef} | {bottomRef}",
-  "dhikrScreen_bestOfBothWorlds_e1cc22": "دونوں جہانوں میں بہترین، آگ سے پناہ",
-  "dhikrScreen_patienceAndSteadfastnessIn_114391": "ہر آزمائش میں صبر اور استقامت",
-  "dhikrScreen_allahBurdensNoSoul_c8bf72": "اللہ کسی جان کو اس کی طاقت سے زیادہ تکلیف نہیں دیتا",
-  "dhikrScreen_keepTheHeartFirm_7729fe": "دل کو ہدایت پر قائم رکھیں",
-  "dhikrScreen_faithAnsweredWithForgiveness_e8c93c": "ایمان نے جہنم سے معافی کے ساتھ جواب دیا۔",
-  "dhikrScreen_allSovereigntyInAllah_a9e0b3": "تمام حاکمیت اللہ کی ہے",
-  "dhikrScreen_allahHearsEveryCall_bf9969": "اللہ نیک اولاد کی ہر پکار سنتا ہے۔",
-  "dhikrScreen_countedWithTheWitnesses_99a05a": "حق کے گواہوں کے ساتھ شمار کیا جاتا ہے۔",
-  "dhikrScreen_forgivenessFirmFeetAnd_28f209": "معافی، مضبوط پاؤں، اور فتح",
-  "dhikrScreen_theDuaOfThose_0ee764": "غور کرنے والوں کی دعا",
-  "dhikrScreen_inscribedWithTheWitnesses_2257ce": "وحی کے گواہوں کے ساتھ کندہ",
-  "dhikrScreen_theDuaAllahAccepted_7e207c": "اللہ تعالیٰ نے آدم علیہ السلام سے قبول فرمائی",
-  "dhikrScreen_spareUsTheCompany_c290d3": "ہمیں ظالموں کی جماعت سے بچا",
-  "dhikrScreen_neverTrialForThe_292b26": "ظالموں کی کبھی آزمائش نہیں۔",
-  "dhikrScreen_refugeFromAskingWithout_0e04a4": "بغیر علم کے مانگنے سے پناہ",
-  "dhikrScreen_prayerForSafetyAnd_5f4e34": "سلامتی اور ایمان کی دعا",
-  "dhikrScreen_steadfastInPrayerMe_8ce7b5": "نماز میں ثابت قدم رہو، میں اور میرے بچے",
-  "dhikrScreen_mercyForMeMy_3edb52": "میرے لیے، میرے والدین، مومنین کے لیے رحمت",
-  "dhikrScreen_prayerForParents_ae7e5c": "والدین کے لیے دعا",
-  "dhikrScreen_entryOfTruthExit_88c367": "سچائی کا داخل ہونا، سچ کا نکلنا",
-  "dhikrScreen_prayerOfTheYouth_1bf835": "غار کے نوجوانوں کی دعا",
-  "dhikrScreen_askAllahForMore_07c189": "اللہ سے مزید علم مانگیں۔",
-  "dhikrScreen_allahAnswersAndSaves_c337ab": "اللہ جواب دیتا ہے اور ہر مصیبت سے بچاتا ہے۔",
-  "dhikrScreen_allahIsTheBest_1adf97": "اللہ بہترین وارث ہے۔",
-  "dhikrScreen_blessedLandingWhereverYou_273aaf": "جہاں بھی آپ رکیں ایک مبارک لینڈنگ",
-  "dhikrScreen_refugeFromTheWhispers_7ff5fd": "شیطانوں کے وسوسوں سے پناہ",
-  "dhikrScreen_mercyFromTheBest_b394bb": "رحمٰن کی طرف سے رحمت",
-  "dhikrScreen_pardonAndMercyFrom_5d9eb1": "رحمن کی طرف سے معافی اور رحمت",
-  "dhikrScreen_piousSpousesAndRighteous_e9918c": "نیک بیویاں اور صالح اولاد",
-  "dhikrScreen_prayerForThoseWho_1ccfb5": "توبہ کرنے والوں کے لیے دعا",
-  "dhikrScreen_gratitudeForParentsRighteousness_966d90": "والدین کا احسان، اولاد میں نیکی",
-  "dhikrScreen_pleaGiftOfIshaq_5568af": "s التجا - اسحاق ﷺ کا تحفہ",
-  "dhikrScreen_loveForTheBelievers_d0cae3": "ہم سے پہلے مومنوں کے لیے محبت",
-  "dhikrScreen_pureTawakkulOnYou_02bc03": "خالص توکل - ہم آپ پر بھروسہ کرتے ہیں۔",
-  "dhikrScreen_forgivenessForEveryBelieving_e256a1": "ہر مومن کے گھر کی بخشش",
-  "dhikrScreen_tasbeehByTheWeight_27484a": "اللہ کے وزن سے تسبیح",
-  "dhikrScreen_tasbeehByTheNumber_224c3f": "تسبیح ان سب کی تعداد کے حساب سے جو اس نے بنائی",
-  "dhikrScreen_tasbeehThatFillsAll_4b1a52": "تسبیح جو اللہ کی بنائی ہوئی تمام چیزوں کو بھر دیتی ہے۔",
-  "dhikrScreen_paradiseSoughtTheFire_5740e3": "جنت کی تلاش - آگ \\",
-  "dhikrScreen_cryToTheOne_30f419": "اس کو پکارو جو سنتا ہے، دیکھتا ہے اور جانتا ہے۔",
-  "dhikrScreen_nameOnTheCorner_b6afeb": "کعبہ کے کونے پر s کا نام",
-  "dhikrScreen_theDuaBetweenYemen_0bea3e": "یمن گوشہ اور حجر اسود کے درمیان کی دعا",
-  "dhikrScreen_prayAtTheStation_178d24": "مقام ابراہیم پر نماز پڑھنا",
-  "dhikrScreen_tawheedDeclaredAtopSafa_828769": "صفا و مروہ کے اوپر توحید کا اعلان کیا۔",
-  "dhikrScreen_reaffirmTheOnenessOf_8589ea": "اللہ کی وحدانیت کا اعادہ کریں۔",
-  "dhikrScreen_magnifyAllahAtEvery_448549": "حج کی ہر دہلیز پر اللہ کی بڑائی کرو",
-  "dhikrScreen_magnifyAllahOnThe_0fbc83": "قربانی کے دن اللہ کی بڑائی بیان کریں۔",
-  "dhikrScreen_knowledgeProvisionHealingSought_9733f3": "علم، رزق، شفاء - مکہ مکرمہ میں تلاش کیا گیا۔",
-  "dhikrScreen_theDuaMostRepeated_a9da8d": "نبی کریم صلی اللہ علیہ وسلم کی سب سے زیادہ دہرائی جانے والی دعا",
-  "dhikrScreen_refugeFromEveryTrial_8ca1b1": "زندگی اور موت کی ہر آزمائش سے پناہ",
-  "dhikrScreen_refugeFromEveryWeakness_b1a834": "جسم اور روح کی ہر کمزوری سے پناہ",
-  "dhikrScreen_refugeFromSevereTrial_0029f0": "سخت آزمائش اور دشمن سے پناہ",
-  "dhikrScreen_religionSetRightWorld_3b0102": "دین نے درست کیا، دنیا اور آخرت کو بہترین بنایا",
-  "dhikrScreen_guidancePietyVirtueSelf_cc439a": "ہدایت، تقویٰ، نیکی، خودداری",
-  "dhikrScreen_refugeFromWeaknessWealth_d879f5": "کمزوری سے پناہ - اندر تقویٰ کی دولت",
-  "dhikrScreen_theGuiderOfHearts_1f40d9": "دلوں کا رہنما - ہماری اطاعت کی طرف موڑ دیں۔",
-  "dhikrScreen_turnerOfHeartsMake_eba687": "دلوں کو پھیرنے والا - مجھے دین پر ثابت قدم رکھ",
-  "dhikrScreen_wellBeingInBoth_442958": "دونوں جہانوں میں خیریت",
-  "dhikrScreen_rewardsSaveFromDisgrace_8b71bb": "ثواب، ذلت اور قبر سے بچاؤ",
-  "dhikrScreen_mindForGoodVictory_582759": "اچھے کے لیے دماغ، بھلائی کی جیت",
-  "dhikrScreen_refugeFromEvilOf_0c8916": "ہر حس اور عضو کے شر سے پناہ",
-  "dhikrScreen_theForgiverWhoLoves_e5d83f": "معاف کرنے والا جو توبہ کرنے والوں سے محبت کرتا ہے۔",
-  "dhikrScreen_takeMeBeforeYou_28ef55": "مجھے لے جاؤ اس سے پہلے کہ تم مجھے گمراہ کر دو",
-  "dhikrScreen_everyGoodAndRefuge_4205e2": "ہر بھلائی - اور ہر برائی سے پناہ",
-  "dhikrScreen_standingSittingLyingGuarded_254177": "کھڑا ہونا، بیٹھنا، لیٹنا - اسلام میں حفاظت ہے۔",
-  "dhikrScreen_refugeFromCowardiceMiserliness_9b59bd": "بزدلی، کنجوسی، فتنہ سے پناہ",
-  "dhikrScreen_forgivenessForJestAnd_e683b5": "مذاق اور سنجیدہ، معلوم اور نامعلوم کے لئے معافی",
-  "dhikrScreen_forgiveMeWithForgiveness_894a1a": "مجھے اپنی بخشش کے ساتھ بخش دے۔",
-  "dhikrScreen_submissionBeliefRepentanceFull_7338d6": "تسلیم، یقین، توبہ، مکمل بھروسہ",
-  "dhikrScreen_mercyForgivenessParadiseSaved_0d9edd": "رحمت، بخشش، جنت - آگ سے بچایا",
-  "dhikrScreen_refugeFromEvilSeen_140ec4": "نظر اور غیب سے پناہ",
-  "dhikrScreen_provisionThatLastsTill_dcef82": "رزق جو تا حیات رہے",
-  "dhikrScreen_sinsForgivenHomeSpacious_2ac37c": "گناہ معاف، گھر کشادہ، رزق میں برکت",
-  "dhikrScreen_favorAndMercyNone_f665cf": "فضل اور رحمت - تیرے سوا ان کا کوئی مالک نہیں۔",
-  "dhikrScreen_refugeFromDrowningBurning_402b3e": "ڈوبنے، جلنے، اچانک موت سے پناہ",
-  "dhikrScreen_refugeFromHypocrisyShowiness_d863c2": "منافقت، دکھاوے، سرکشی سے پناہ",
-  "dhikrScreen_refugeFromPovertyScarcity_03ef3d": "غربت، تنگدستی، جبر سے پناہ",
-  "dhikrScreen_refugeFromHeartThat_21f7ab": "ایسے دل سے پناہ جو جیت جائے",
-  "dhikrScreen_payMyDebtEnrich_f5affc": "میرا قرض ادا کر، مجھے غربت سے مالا مال کر",
-  "dhikrScreen_allahCalledByHis_c11af9": "اللہ نے اپنے سب سے خوبصورت ناموں سے پکارا۔",
-  "dhikrScreen_theAccepterOfRepentance_4f2d60": "توبہ قبول کرنے والا ہمیشہ قبول کرتا ہے۔",
-  "dhikrScreen_anEasyReckoningOn_11b060": "دن کا آسان حساب",
-  "dhikrScreen_remembranceGratitudeAndThe_d7ee7b": "ذکر، شکر اور بہترین عبادت",
-  "dhikrScreen_eternalBlissWithThe_dc255b": "فردوس میں نبی صلی اللہ علیہ وسلم کے ساتھ دائمی خوشی",
-  "dhikrScreen_forgiveSinsKnownHidden_ceda62": "گناہوں کو معاف کرنا - معلوم، پوشیدہ، ارادہ، غلطی",
-  "dhikrScreen_refugeFromBeingCrushed_4ba6ac": "قرض اور دشمن کے ہاتھوں پسے جانے سے پناہ",
-  "dhikrScreen_askForParadiseRefuge_4bf2eb": "جنت مانگو، آگ سے پناہ مانگو",
-  "dhikrScreen_forgiveGuideProvideProtect_e93013": "معاف کرنا، رہنمائی کرنا، فراہم کرنا، حفاظت کرنا",
-  "dhikrScreen_sensesMadeBeneficialAnd_4da09c": "حواس کو فائدہ مند بنایا - اور دیرپا",
-  "dhikrScreen_theMostBeneficentThe_65d7a6": "سب سے زیادہ رحم کرنے والا، سب کا پیدا کرنے والا",
-  "dhikrScreen_allahTruthOwnerOf_d4bede": "اللہ - حق، تمام سلطنت کا مالک",
-  "dhikrScreen_submissionWithFullSincerity_cbd7b6": "پورے خلوص کے ساتھ عرض کرنا",
-  "dhikrScreen_amongTheGuidedThe_e4d9d0": "ہدایت یافتہ، صحت مند، چنے ہوئے لوگوں میں",
-  "dhikrScreen_whatTheProphetAsked_e3a810": "رسول اللہ صلی اللہ علیہ وسلم نے کیا پوچھا میں بھی پوچھتا ہوں۔",
-  "dhikrScreen_sayyidAlIstighfarThe_51076a": "سید الاستغفار - تمام توبہ کے مالک",
-  "dhikrScreen_refugeFromEveryEvil_ea8dab": "رات کو آنے والی ہر برائی سے پناہ",
-  "dhikrScreen_blessEverySenseEvery_e7779d": "ہر حس، ہر عضو کو برکت دے۔",
-  "dhikrScreen_smallAndGreatFirst_dbcc00": "چھوٹا اور بڑا، پہلا اور آخری، کھلا اور خفیہ",
-  "dhikrScreen_noneWithholdsWhatYou_c4dca7": "جو آپ دیتے ہیں اسے کوئی نہیں روکتا، جو آپ رکھتے ہیں اسے کوئی نہیں دیتا",
-  "dhikrScreen_forgiveGuideProvideElevate_55fa36": "معاف کرنا، رہنمائی کرنا، فراہم کرنا، بلند کرنا",
-  "dhikrScreen_increaseFavorBeKind_5fbc5c": "احسان میں اضافہ کریں، مہربان بنیں، کبھی ناراض نہ ہوں۔",
-  "dhikrScreen_beautifyOurCharacterAs_cc5d8c": "ہمارے کردار کو اس طرح سنوار دے جس طرح تو نے ہماری تخلیق کو سنوارا۔",
-  "dhikrScreen_firmInBeliefGuided_73f8af": "یقین میں پختہ — رہنمائی اور رہنمائی",
-  "dhikrScreen_wisdomAndWithIt_e8e5bd": "حکمت - اور اس کے ساتھ، بہت سے اچھے",
-  "dhikrScreen_nameShieldsFromEvery_59e06f": "نام ہر نقصان سے بچاتا ہے۔",
-  "dhikrScreen_mightAgainstEveryShaytan_73b152": "ہر شیطان کے خلاف ہو سکتا ہے۔",
-  "dhikrScreen_dayBlessedFromBeginning_c6d87d": "شروع سے آخر تک بابرکت دن",
-  "dhikrScreen_witnessNoneDeservesWorship_385aa9": "گواہی دے کہ تیرے سوا کوئی عبادت کا مستحق نہیں۔",
-  "dhikrScreen_refugeFromHumiliatingOld_46a3f0": "ذلت آمیز بڑھاپے سے پناہ",
-  "dhikrScreen_guidedToTheBest_03e8d2": "بہترین کی طرف رہنمائی کی، بدترین سے بچایا",
-  "dhikrScreen_faithSetRightHome_08f8e1": "ایمان درست، گھر میں وسیع، رزق میں برکت",
-  "dhikrScreen_refugeFromEveryInner_dc67c7": "ہر ظاہری اور باطنی بیماری سے پناہ",
-  "dhikrScreen_refugeFromEveryKind_dfbe62": "ہر قسم کے برے انجام سے پناہ",
-  "dhikrScreen_steadfastGratefulRightlyGuided_45b393": "ثابت قدم، شکر گزار، صحیح راہنمائی کرنے والا دل",
-  "dhikrScreen_theLoveOfAllah_3bf08a": "اللہ، اس کے فرشتوں، اس کے نبیوں کی محبت",
-  "dhikrScreen_loveOfAllahAbove_4c81b3": "اللہ کی محبت نفس کی محبت سے بڑھ کر",
-  "dhikrScreen_bestDeedsLastBest_2ff65e": "بہترین اعمال آخری - بہترین دن آپ سے ملنا ہے۔",
-  "dhikrScreen_pureLifeAndPeaceful_a7eb0f": "ایک پاکیزہ زندگی اور پرامن واپسی۔",
-  "dhikrScreen_patientGratefulSmallIn_059385": "مریض، شکر گزار - اپنی نظر میں چھوٹا",
-  "dhikrScreen_theBestRequestAnd_cd3f6f": "بہترین درخواست اور بہترین اجر",
-  "dhikrScreen_theHighestLevelOf_221efa": "جنت کا اعلیٰ درجہ",
-  "dhikrScreen_firdawsTheBestOf_01be47": "فردوس - ان سب سے بہتر\\",
-  "dhikrScreen_mentionRaisedSinsErased_c6e2f3": "ذکر بلند ہوا، گناہ مٹ گئے، دل پاک ہو گئے۔",
-  "dhikrScreen_mercyPleasureParadiseSaved_8b4a98": "رحمت، لذت، جنت - آگ سے بچا",
-  "dhikrScreen_noSinUncoveredNo_efd903": "کوئی گناہ بے پردہ نہیں، کوئی قرض ادا نہیں ہوا۔",
-  "dhikrScreen_mercyThatGuidesSets_89b7cf": "وہ رحمت جو رہنمائی کرتی ہے، درست کرتی ہے، پاک کرتی ہے۔",
-  "dhikrScreen_trueBeliefCertainKnowledge_d27506": "سچا عقیدہ، یقینی علم، اللہ۔",
-  "dhikrScreen_withTheProphetsThe_b2123f": "انبیاء، شہداء، صادقین کے ساتھ",
-  "dhikrScreen_everyNeedEntrustedTo_8b33b6": "ہر ضرورت تمام ضروریات کے جج کے سپرد",
-  "dhikrScreen_bestOfWhatAllah_70d237": "اللہ نے اپنے بندوں سے جو وعدہ کیا ہے اس میں سے بہترین",
-  "dhikrScreen_safetyOnTheDay_89cb9f": "دن پر سلامتی، ابدی دن پر جنت",
-  "dhikrScreen_glorifyTheOneOf_de3669": "بے مثال عزت اور علم والے کی تسبیح کرو",
-  "dhikrScreen_pardonPlentySecurityIn_d6b56a": "بخشش، کثرت، دین و دنیا کی سلامتی",
-  "dhikrScreen_healthFaithEthicsSuccess_000fef": "صحت، ایمان، اخلاق، کامیابی، رحمت",
-  "dhikrScreen_healthPurityEthicsAcceptance_b6929c": "صحت، پاکیزگی، اخلاقیات، قبولیت",
-  "dhikrScreen_guidedSecureVictorious_b56e05": "ہدایت یافتہ، محفوظ، فاتح",
-  "dhikrScreen_refugeFromEveryCreature_cbe2de": "اللہ کی ہر مخلوق سے پناہ",
-  "dhikrScreen_theOneWhoAnswers_f2e37f": "وہ جو مجبور اور ٹوٹے ہوئے کو جواب دیتا ہے۔",
-  "dhikrScreen_morningReachedByAllah_b03f32": "اللہ کی طرف سے صبح ہوئی",
-  "dhikrScreen_refugeSoughtByMusa_176ee5": "موسیٰ، عیسیٰ، ابراہیم نے پناہ مانگی۔",
-  "dhikrScreen_allTheGoodPower_418dc3": "تمام بھلائیاں - طاقت، رحمت، برکت",
-  "dhikrScreen_allPraiseAndDominion_27662b": "تمام تعریفیں اور بادشاہی تیرے لیے ہے۔",
-  "dhikrScreen_pastPardonedFutureProtected_a8bfa1": "ماضی کو معاف کر دیا، مستقبل محفوظ",
-  "dhikrScreen_takeMyForelockTo_a44b8f": "میری پیشانی نیکی کی طرف لے جاؤ",
-  "dhikrScreen_strengthForWeaknessDignity_dce155": "کمزوری کے بدلے طاقت، شرم کے بدلے وقار",
-  "dhikrScreen_justiceForThoseWho_4e52f3": "سچائی کو روکنے والوں کے لیے انصاف",
-  "dhikrScreen_refugeFromEveryFatal_b155a7": "ہر موذی آفت سے پناہ",
-  "dhikrScreen_refugeFromEveryBad_a9e27f": "ہر برے انجام اور آزمائش سے پناہ",
-  "dhikrScreen_turnBackEveryEvil_66e6fa": "ہر برے ارادے کو اس کے منبع کی طرف پھیر دو",
-  "dhikrScreen_justiceAndRefugeAgainst_e4e734": "ان کی برائیوں کے خلاف انصاف اور پناہ",
-  "dhikrScreen_forgivenessForMeMy_27b932": "میرے لیے، میرے والدین، تمام مومنین کے لیے بخشش",
-  "dhikrScreen_purifyHeartDeedsTongue_10837e": "دل، عمل، زبان، آنکھ کو پاک کریں۔",
-  "dhikrScreen_selfContentWithAllah_68c73a": "اللہ سے راضی ہونا۔",
-  "dhikrScreen_youKnowMySecret_2b63c7": "تم میرے راز اور میری ضرورت کو جانتے ہو۔",
-  "dhikrScreen_certaintyNothingHarmsWhat_e513d7": "یقینی: کچھ بھی نقصان نہیں پہنچاتا ہے",
-  "dhikrScreen_beliefLightAndLawful_e69a59": "ایمان، نور اور حلال رزق",
-  "dhikrScreen_totalLoveAndTotal_3d137e": "اللہ کے لیے مکمل محبت اور مکمل جدوجہد",
-  "dhikrScreen_makeWhatYouWithheld_14be7d": "جس چیز کو آپ نے روکا ہے اسے اطاعت میں طاقت بنا دیں۔",
-  "dhikrScreen_praiseTheOwnerOf_244f8b": "ہر خوبصورت نام کے مالک کی تعریف کرو",
-  "dhikrScreen_allahKnowsTheHearts_d6010c": "اللہ دلوں، آسمانوں اور اس سے باہر کو جانتا ہے۔",
-  "dhikrScreen_hopeBuiltOnAllah_217ad7": "امید اللہ پر قائم ہے",
-  "dhikrScreen_belovedToTheBelievers_b1f5a3": "مومنوں کے لیے محبوب، بدکاروں سے پاک",
-  "dhikrScreen_mightPowerAndMajesty_91ca0a": "طاقت، طاقت، اور عظمت",
-  "dhikrScreen_gratefulPatientHelpfulTo_3710c6": "شکر گزار، صبر کرنے والا، اللہ کا مددگار۔",
-  "dhikrScreen_withholdYourGoodFor_0d39a1": "میری برائی پر اپنی بھلائی کو روکنا",
-  "dhikrScreen_settledLifeAmpleProvision_77b32b": "ایک آباد زندگی، وافر رزق، عمل صالح",
-  "dhikrScreen_wealthInNeedingYou_547729": "آپ کی ضرورت میں دولت - آپ سے کبھی خالی نہیں۔",
-  "dhikrScreen_defectsCoveredFearsCalmed_a85797": "نقائص چھپ گئے، خوف دور ہو گئے، غم دور ہو گئے۔",
-  "dhikrScreen_openTheGatesOf_402eac": "رحمت اور سخاوت کے دروازے کھول دے۔",
-  "dhikrScreen_holdUsInYour_b82607": "ہمیں اپنی حفاظت میں رکھنا - ہمیں کبھی نہ چھوڑنا",
-  "dhikrScreen_withinYourSecurityYour_f72b6e": "آپ کی سلامتی کے اندر، آپ کی بھلائی",
-  "dhikrScreen_everySinEveryDistress_eab128": "ہر گناہ، ہر مصیبت، ہر طرف",
-  "dhikrScreen_helpInDeathIn_342d0b": "موت میں، قبر میں، پل پر مدد کریں۔",
-  "dhikrScreen_beautifiedLifeBlessedGifts_7f2384": "خوبصورت زندگی، بابرکت تحفے، احسانات رکھے",
-  "dhikrScreen_firmFootingBlessedEnd_c78f99": "پختہ قدم، بابرکت انجام، عہد کا پاس رکھا",
-  "dhikrScreen_hopesFulfilledEnemiesRepelled_afd008": "امیدیں پوری ہوئیں، دشمنوں کو پسپا کر دیا، معاملات ٹھیک ہو گئے۔",
-  "dhikrScreen_guidedToTheUpright_9e1527": "راست بازوں کی رہنمائی، نفس سے محفوظ",
-  "dhikrScreen_lightAndForgivenessFrom_3923eb": "عرش کے مالک کی طرف سے نور اور بخشش",
-  "dhikrScreen_forgivenessForWhatRepented_6a44f8": "معافی جس سے میں نے توبہ کی اور واپس آ گیا۔",
-  "dhikrScreen_understandingThatDrawsNear_e1455e": "وہ سمجھنا جو اللہ کے قریب ہو جاتا ہے۔",
-  "dhikrScreen_soulsDwellingInThe_1bd11b": "تقویٰ کی بلندیوں میں رہنے والی روحیں۔",
-  "dhikrScreen_crossTheBridgeOf_4f4ff3": "صبر سے خواہش کے پل کو عبور کریں۔",
-  "dhikrScreen_followThePathOf_934775": "اخلاص اور یقین کی راہ پر چلیں۔",
-  "dhikrScreen_helpAgainstTheSoul_44a7db": "روح کے خلاف اور شیطان کے خلاف مدد",
-  "dhikrScreen_fearHappinessVictorySecurity_9017c9": "خوف، خوشی، فتح، سلامتی",
-  "dhikrScreen_entrustFamilyWealthChildren_1da596": "خاندان، مال، اولاد سب اللہ کے سپرد کر دیں۔",
-  "dhikrScreen_faithGuardedFaithPreserved_88eecb": "ایمان محفوظ، ایمان محفوظ",
-  "dhikrScreen_wellBeingTillThe_ee180d": "خیریت آخر تک - معافی کے ساتھ مہر لگا دی گئی۔",
-  "dhikrScreen_whatProtectsMeFrom_052090": "مجھے اس دنیا سے کیا بچاتا ہے",
-  "dhikrScreen_mercyOnEverySoul_a9a197": "ہر ذی روح پر رحم",
-  "dhikrScreen_burdenUsAsThose_78b517": "ہم پر بوجھ نہ ڈالو جیسا کہ پہلے بوجھے ہوئے تھے۔",
-  "dhikrScreen_mercyPardonForgivenessVictory_300143": "رحم، معافی، بخشش، فتح",
-  "dhikrScreen_allahNeverFailsHis_c2265a": "اللہ اپنے وعدے کو کبھی ناکام نہیں کرتا",
-  "dhikrScreen_recordUsWithThe_b93190": "ہمیں سچے گواہوں کے ساتھ قلمبند کر",
-  "dhikrScreen_forgivenessFirmnessAndVictory_a8b674": "معافی، مضبوطی، اور فتح",
-  "dhikrScreen_creationHasPurposeRefuge_ce2eee": "تخلیق کا مقصد ہے - آگ سے پناہ",
-  "dhikrScreen_refugeFromTheDisgrace_605b1b": "آگ کی رسوائی سے پناہ",
-  "dhikrScreen_heardBelievedAskingForgiveness_d5387f": "سنا، یقین کیا، استغفار کیا۔",
-  "dhikrScreen_sinsForgivenDeathAmong_bd82ed": "گناہوں کی معافی - نیک لوگوں میں موت",
-  "dhikrScreen_promisedRewardNeverDisgraced_490396": "انعام کا وعدہ - قیامت میں کبھی رسوا نہیں ہوا۔",
-  "dhikrScreen_provisionAndSignsFrom_81db14": "آسمان سے رزق اور نشانیاں",
-  "dhikrScreen_duaTheDuaOf_4b9d01": "s dua - ہر توبہ کرنے والے کی دعا",
-  "dhikrScreen_spareUsFromThe_79732a": "ہمیں ظالموں کی صحبت سے بچا",
-  "dhikrScreen_patienceTillTheEnd_a8a4c4": "آخر تک صبر، تسلیم کرنے پر موت",
-  "dhikrScreen_hiddenInEveryChest_ce7671": "ہر سینے میں چھپا ہوا ہے۔",
-  "dhikrScreen_prayerForPrayerAccepted_e68fa6": "s دعا کے لیے دعا قبول ہوئی۔",
-  "dhikrScreen_mercyGrantedGuidancePrepared_5c6f63": "رحمت دی گئی، رہنمائی تیار ہے۔",
-  "dhikrScreen_duaBeforePharaoh_2d90cd": "فرعون کے سامنے دعا",
-  "dhikrScreen_refugeFromClingingEvil_b1e6e4": "معلق، برے عذاب سے پناہ",
-  "dhikrScreen_piousSpousesRighteousChildren_64225f": "نیک بیویاں، صالح اولاد، قیادت",
-  "dhikrScreen_allahIsEverThankful_464c97": "اللہ ہر کوشش پر ہمیشہ شکر گزار ہے۔",
-  "dhikrScreen_mercyEncompassingEveryRepentant_fb0759": "رحمت ہر توبہ کرنے والی روح کو گھیرے ہوئے ہے۔",
-  "dhikrScreen_mercyOnThatDay_a1b18b": "اس دن رحمت - بڑی کامیابی",
-  "dhikrScreen_loveAndForgivenessFor_660a56": "پہلے کے مومنوں کے لیے محبت اور بخشش",
-  "dhikrScreen_kindnessAndMercyUpon_1c62c8": "اللہ کی مہربانی اور رحمت",
-  "dhikrScreen_pureTawakkulToYou_389089": "خالص توکل - ہم تیری طرف لوٹتے ہیں۔",
-  "dhikrScreen_neverFitnahForThose_dc1363": "کافروں کے لیے کبھی فتنہ نہیں۔",
-  "dhikrScreen_completeTheLightForgive_fd7380": "روشنی کو مکمل کریں - ہمیں معاف کر دیں۔",
-  "dhikrScreen_strongerThanServantThe_4cc56e": "بندے سے زیادہ مضبوط - رات",
-  "dhikrScreen_refugeFromEveryVisible_b81e69": "سونے سے پہلے ہر ظاہری برائی سے پناہ",
-  "dhikrScreen_refugeFromEveryWhisper_b030ed": "سونے سے پہلے ہر سرگوشی سے پناہ",
-  "dhikrScreen_guardedByAnAngel_65d1c1": "صبح تک فرشتہ کی حفاظت میں",
-  "dhikrScreen_twoVersesThatSuffice_1941c5": "دو آیتیں جو پوری رات کے لیے کافی ہیں۔",
-  "dhikrScreen_pureTawheedDeclaredBefore_50673a": "سونے سے پہلے خالص توحید کا اعلان کیا۔",
-  "dhikrScreen_sleepIsSmallDeath_b4b84d": "نیند ایک چھوٹی سی موت ہے جو اللہ کے سپرد ہے۔",
-  "dhikrScreen_whoeverDiesThatNight_75dda7": "جو اس رات مرے وہ فطرت پر مرے۔",
-  "dhikrScreen_guardTheSoulThat_a0850e": "واپس آنے والی روح کی حفاظت کرو، یا رحم کرو",
-  "dhikrScreen_refugeFromThePunishment_18162a": "اس دن کے عذاب سے پناہ",
-  "dhikrScreen_gratitudeForShelterFood_1f5e94": "پناہ گاہ، خوراک، اور دیکھ بھال کے لیے شکریہ",
-  "dhikrScreen_handOverTheSoul_fda192": "سونے سے پہلے روح کو حوالے کرنا",
-  "dhikrScreen_joinTheHighestAssembly_68e2d3": "جب آپ سوتے ہو تو سب سے زیادہ اسمبلی میں شامل ہوں۔",
-  "dhikrScreen_gratitudeBeforeClosingThe_20f3db": "آنکھیں بند کرنے سے پہلے شکر ادا کرنا",
-  "dhikrScreen_surahAsSajdahRecited_a4beaa": "سونے سے پہلے سورہ سجدہ پڑھنا",
-  "dhikrScreen_refugeFromEvilBefore_a5d312": "بیت الخلا میں داخل ہونے سے پہلے برائی سے پناہ",
-  "dhikrScreen_seekForgivenessAsYou_f14da9": "جاتے جاتے معافی مانگو",
-  "dhikrScreen_bismillahEveryBiteBegins_8a678d": "بسم اللہ - ہر کاٹنے کا آغاز اللہ سے ہوتا ہے۔",
-  "dhikrScreen_catchUpTheName_e6d0d6": "شروع اور آخر میں اللہ کا نام پکڑو",
-  "dhikrScreen_threeSunnahDuasTo_a56769": "کھانے کے بعد اللہ کا شکر ادا کرنے کی تین سنتیں",
-  "dhikrScreen_beginWithAllahThe_a64af2": "پینے سے پہلے اللہ رحمٰن سے شروع کریں۔",
-  "dhikrScreen_openTheEightDoors_011a50": "وضو کے بعد جنت کے آٹھ دروازے کھول دیں۔",
-  "dhikrScreen_openTheDoorsOf_15e084": "اللہ کے دروازے کھول دو۔",
-  "dhikrScreen_bountyAsYouLeave_a06fc6": "مسجد سے نکلتے ہی فضل ہے۔",
-  "dhikrScreen_mayAllahGuideYou_af987e": "اللہ آپ کو ہدایت دے اور آپ کی حالت درست کرے۔",
-  "dhikrScreen_askAllahLordOf_4a3eb0": "اللہ رب العزت سے دعا ہے کہ وہ شفاء عطا فرمائے",
-  "dhikrScreen_allahIsTheOnly_9750c1": "اللہ ہی شفا دینے والا ہے۔",
-  "dhikrScreen_shieldChildrenWithAllah_858245": "بچوں کو اللہ کے ساتھ ڈھال۔",
-  "dhikrScreen_anicPrayerForOne_e18aca": "ایک کے لیے ایک دعا\\",
-  "dhikrScreen_twoPhrasesBelovedTo_5d16a7": "دو جملے جو رحمٰن کو محبوب ہیں۔",
-  "dhikrScreen_allahLovesToPardon_a64d0a": "اللہ معاف کرنا پسند کرتا ہے - اس لیے مانگو",
-  "dhikrScreen_treasureFromBeneathThe_87d578": "عرش کے نیچے سے ایک خزانہ",
-  "dhikrScreen_theFourPhrasesDearest_680ef8": "اللہ کو سب سے زیادہ پیارے چار کلمات",
-  "dhikrScreen_theDuaThatReleases_ddc7eb": "وہ دعا جو ہر پریشانی سے نجات دیتی ہے۔",
-  "dhikrScreen_protectionForHomeAnd_0c4973": "گھر اور اولاد کا تحفظ",
-  "dhikrScreen_theCompleteDhikrOf_31b993": "توحید کا مکمل ذکر",
-  "dhikrScreen_trialPurifiedByAllah_39fb26": "اللہ کی طرف سے آزمائش",
-  "dhikrScreen_guidanceBeforeAnyChoice_50eb02": "کسی بھی انتخاب سے پہلے رہنمائی",
-  "dhikrScreen_completeRuqyaSequenceFatihah_5ced40": "مکمل رقیہ ترتیب - فاتحہ اور پناہ",
-  "dhikrScreen_sinsForgivenEvenIf_cd9a85": "گناہ بخشے گئے خواہ سمندر کی جھاگ کے برابر",
-  "dhikrScreen_freedHasanatSinsErased_54ebbb": "10 آزاد · 100 حسنات · 100 گناہ مٹائے گئے · شیطان کو بھگا دیا گیا",
-  "dhikrScreen_blessingsDescendFromAllah_41e8f6": "اللہ کی طرف سے آپ پر 10 رحمتیں نازل ہوتی ہیں۔",
-  "dhikrScreen_askAllahToBless_3470fe": "اللہ سے دعا ہے کہ وہ آپ کے دن کو برکت اور رونق بخشے۔",
-  "dhikrScreen_guaranteedJannahIfYou_6f7054": "جنت کی ضمانت، اگر آپ اس دن مر گئے تو",
-  "dhikrScreen_yourLifeEntrustedTo_77feba": "آپ کی زندگی ہمیشہ زندہ رہنے والے کے سپرد ہے۔",
-  "dhikrScreen_allEvilInHis_f02365": "اس کی تخلیق میں تمام برائیاں تم سے دور ہو گئیں۔",
-  "dhikrScreen_nothingShallHarmYou_cbc2fc": "کامل الفاظ سے آپ کو کوئی چیز نقصان نہیں پہنچائے گی۔",
-  "dhikrScreen_shieldYourselfFromMinor_2a73ed": "اپنے آپ کو چھوٹے بڑے شرک سے بچاؤ، صبح و شام",
-  "dhikrScreen_completeProtectionInThe_620c30": "اللہ کے نام پر مکمل حفاظت",
-  "dhikrScreen_weightierThanAllVoluntary_7af10a": "فجر سے شام تک تمام نفل نمازوں سے زیادہ وزنی ہے۔",
-  "dhikrScreen_reciteMorningEveningEarn_77aa68": "صبح و شام پڑھیں، روزِ قیامت اللہ کی خوشنودی حاصل کریں۔",
-  "dhikrScreen_yourRewardAwaitsDirectly_1827f4": "جب آپ اس سے ملیں گے تو آپ کا اجر براہ راست اللہ کے پاس ہے۔",
-  "dhikrScreen_reciteMorningEveningTo_1843f8": "اللہ کا شکر ادا کرنے کے لیے صبح و شام تلاوت کریں۔",
-  "dhikrScreen_theProphetTaughtThis_50fab2": "نبی کریم صلی اللہ علیہ وسلم نے صبح و شام یہ دعا سکھائی، اسے مت چھوڑیں۔",
-  "dhikrScreen_dominionAtTheStart_690ca9": "آپ کی صبح کے آغاز میں بادشاہی ہے، تمام بادشاہی اسی کی ہے۔",
-  "dhikrScreen_asEveningFallsThe_934b7e": "شام ہوتے ہی ساری بادشاہی اللہ ہی کی ہو جاتی ہے۔",
-  "dhikrScreen_endYourEveningUpon_ada386": "اپنی شام کو خالص فطرت پر ختم کرو جیسا کہ رسول اللہ صلی اللہ علیہ وسلم نے سکھایا تھا۔",
-  "dhikrScreen_satanWillNotEnter_446a1c": "یہ پڑھنے والے کے گھر شیطان داخل نہیں ہوگا۔",
-  "dhikrScreen_readingLastVersesOf_99a432": "البقرہ کی آخری 2 آیات کا پڑھنا آپ کے لیے کافی ہوگا۔",
-  "dhikrScreen_everyDuaInThis_f790b4": "اس آیت میں ہر دعا - اللہ نے فرمایا: میں نے ایسا کیا ہے۔",
-  "dhikrScreen_guardedByAllahUntil_f4d276": "صبح ہونے تک اللہ کی حفاظت میں",
-  "dhikrScreen_recitingEqualsReadingThe_e0a62a": "3 بار پڑھنا پورا قرآن، بخاری اور مسلم پڑھنے کے برابر ہے۔",
-  "dhikrScreen_reciteAtDawnDusk_4173a8": "فجر اور شام کے وقت 3 بار پڑھیں، ہر قسم کے نقصان کے لیے کافی ہے۔",
-  "dhikrScreen_refugeFromTheWhisperer_bdd280": "سرگوشی کرنے والے سے پناہ، انسانوں کے رب میں",
-  "dhikrScreen_reciteMorningEveningYour_c464cb": "صبح و شام تین بار پڑھیں، اللہ کا شکر ادا ہو گا۔",
-  "dhikrScreen_sufficientAgainstEveryHarm_0a3206": "ہر ضرر کے لیے 3 مرتبہ پڑھنا کافی ہے۔",
-  "dhikrScreen_doorsOfAllahMercy_937263": "اللہ کی رحمت کے دروازے آپ کے لیے کھلے ہیں۔",
-  "dhikrScreen_worryAndSorrowLifted_fd1f04": "اللہ کی مرضی سے پریشانی اور غم دور ہو گئے۔",
-  "dhikrScreen_guardedInYourDeen_bb9b33": "آپ کے دین دنیا اور آخرت میں حفاظت فرما",
-  "dhikrScreen_evilRepelledFromEvery_3f1588": "برائی کو ہر طرف سے بھگا دیا گیا۔",
-  "dhikrScreen_heartHeldByThe_0f7007": "ہمیشہ زندہ رہنے والے کی طرف سے منعقد دل",
-  "dhikrScreen_fulfilledYourObligationOf_44ddfc": "شکریہ ادا کرنے کا فرض ادا کیا۔",
-  "dhikrScreen_recitingTheLastVerses_3d260d": "رات کو سورہ بقرہ کی آخری دو آیات کا پڑھنا کافی ہے۔",
-  "dhikrScreen_gratitudeThatMultipliesYour_24c5dd": "شکر جو آپ کی نعمتوں کو بڑھاتا ہے۔",
-  "dhikrScreen_startPureOnThe_a0198e": "اسلام کی فطرت پر خالص شروع کریں۔",
-  "dhikrScreen_praiseThatRipplesThrough_cef105": "اس کی تعریف کریں جو تمام تخلیق میں لہراتا ہے۔",
-  "dhikrScreen_guidedToEveryGood_e5e914": "اس دن ہر نیکی کی رہنمائی کی۔",
-  "dhikrScreen_allahWillFreeHim_20396f": "جو شخص یہ 4 مرتبہ پڑھے گا اللہ اسے آگ سے آزاد کر دے گا۔",
-  "dhikrScreen_wellbeingOfBodyHearing_f9d3af": "جسم کی سماعت اور بینائی کی تندرستی",
-  "dhikrScreen_guidedByTheHand_da5d5b": "اللہ کے ہاتھ سے ہدایت",
-  "dhikrScreen_wordsHeavierThanThe_6a9c4f": "آسمانوں اور زمین سے بھاری الفاظ",
-  "dhikrScreen_beginYourDayIn_530c07": "اپنے دن کا آغاز اللہ کے سپرد کر کے کریں۔",
-  "dhikrScreen_theyAreEnoughFor_14acc6": "وہ آپ کے لیے کافی ہیں - سونے سے پہلے پڑھیں",
-  "dhikrScreen_wellBeing_85c1f4": "خیریت",
-  "dhikrScreen_fulfilled_7d487f": "پورا کیا۔",
-  "dhikrScreen_wellBeingInFaith_e70162": "ایمان میں فلاح و بہبود · خاندان · دولت",
-  "dhikrScreen_concealMyFaultsCalm_0252f3": "میرے عیبوں کو چھپاؤ · میرے خوف کو پرسکون کرو",
-  "dhikrScreen_protectionFromEvilEye_3b6074": "نظر بد سے حفاظت",
-  "dhikrScreen_doNotLeaveMe_1e2414": "پلک جھپکنے کے لیے بھی مجھے اپنے حال پر مت چھوڑنا",
   "dhikrScreen_35c165_35c165": "{arg1}",
-  "dhikrScreen_allahWillSufficeYou_f177b2": "اللہ آپ کے لیے کافی ہوگا۔",
-  "dhikrScreen_againstWhateverConcernsYou_176991": "جو بھی آپ سے متعلق ہے اس کے خلاف",
-  "dhikrScreen_doNotBurdenUs_4401b2": "ہم پر ہماری استطاعت سے زیادہ بوجھ نہ ڈال، ہمیں معاف فرما اور رحم فرما",
-  "dhikrScreen_weHaveBelievedForgive_d34c4a": "ہم ایمان لائے - ہمارے گناہوں کو بخش دے اور ہمیں آگ سے بچا",
-  "dhikrScreen_ownerOfSovereigntyIn_b0948c": "اے بادشاہی کے مالک - تیرے ہاتھ میں سب اچھا ہے، تو سب سے زیادہ قادر ہے۔",
-  "dhikrScreen_forgiveOurSinsAnd_692ad8": "ہمارے گناہوں اور زیادتیوں کو معاف فرما، ہمیں ثابت قدم رکھ اور ہمیں فتح عطا فرما",
-  "dhikrScreen_youCreatedNotIn_d24f50": "تو نے بیکار پیدا نہیں کیا، ہمیں آگ کے عذاب سے بچا",
-  "dhikrScreen_weHaveWrongedOurselves_24ab82": "ہم نے اپنے آپ پر ظلم کیا - تیری رحمت کے بغیر ہم ضائع ہو گئے۔",
-  "dhikrScreen_ourLordDoNot_ca9f87": "اے ہمارے رب ہمیں ظالم لوگوں کے ساتھ نہ رکھنا",
-  "dhikrScreen_doNotMakeUs_d5b5d2": "ہمیں ظالموں کا فتنہ نہ بنا",
-  "dhikrScreen_makeMeSteadfastIn_cc7dfe": "مجھے نماز پر قائم رکھ - اور میری اولاد کو بھی",
-  "dhikrScreen_forgiveMeMyParents_1a319b": "مجھے، میرے والدین کو اور ایمان والوں کو حساب کے دن بخش دے۔",
-  "dhikrScreen_bringMeInBy_62c19a": "مجھے سچائی کے دروازے سے اندر لاؤ اور سچائی کے راستے سے باہر لاؤ",
-  "dhikrScreen_myLordIncreaseMe_2fec5a": "میرے رب میرے علم میں اضافہ فرما",
-  "dhikrScreen_seekRefugeInYou_3a2efd": "میں شیطانوں کے وسوسوں سے تیری پناہ مانگتا ہوں۔",
-  "dhikrScreen_forgiveAndHaveMercy_58f2df": "بخش دے اور رحم کر - تو سب سے بہتر رحم کرنے والا ہے۔",
-  "dhikrScreen_enableMeToBe_e78eb3": "مجھے توفیق دے کہ میں اور میرے والدین پر تیرے احسان کا شکر ادا کروں",
-  "dhikrScreen_myLordHaveWronged_e6421b": "اے میرے رب میں نے اپنے اوپر ظلم کیا ہے تو مجھے معاف کر دے۔",
-  "dhikrScreen_myLordWillNever_d4a663": "اے میرے رب میں کبھی مجرموں کا حامی نہیں بنوں گا۔",
-  "dhikrScreen_myLordSaveMe_ea6c67": "اے میرے رب مجھے ظالم لوگوں سے بچا",
-  "dhikrScreen_myLordAmIn_0acb2a": "اے میرے رب میں اس نیکی کا محتاج ہوں جو تو مجھ پر نازل کرے۔",
-  "dhikrScreen_myLordHelpMe_80f8c7": "اے میرے رب، فساد کرنے والوں کے خلاف میری مدد فرما",
-  "dhikrScreen_ourLordAvertFrom_bc7354": "اے ہمارے رب ہم سے جہنم کے عذاب کو ٹال دے۔",
-  "dhikrScreen_ourLordYouEncompass_7e0f2a": "اے ہمارے رب، تو ہر چیز کو رحمت اور علم میں گھیرے ہوئے ہے۔",
-  "dhikrScreen_enableMeToThank_d1f4df": "مجھے تیرا شکر ادا کرنے کی توفیق عطا فرما اور میری اولاد کو صالح بنا",
-  "dhikrScreen_myLordGrantMe_ef9ff1": "اے میرے رب مجھے نیک لوگوں میں سے عطا فرما",
-  "dhikrScreen_forgiveUsAndOur_60d1fd": "ہمیں اور ہمارے ان بھائیوں کو بخش دے جو ہم سے پہلے ایمان کے ساتھ آئے",
-  "dhikrScreen_uponYouWeRely_0c8229": "ہم تجھ پر بھروسہ کرتے ہیں، تیری ہی طرف رجوع کرتے ہیں اور تیری ہی طرف منزل ہے۔",
-  "dhikrScreen_pauseRememberAllah_1ddb4d": "توقف۔ اللہ کو یاد کرو۔",
-  "dhikrScreen_mashaallahRewardSecured_f51254": "ماشاءاللہ! انعام محفوظ",
-  "dhikrScreen_satanCannot_1c96dd": "شیطان نہیں کر سکتا",
-  "dhikrScreen_enterTheHome_3086d7": "گھر میں داخل ہو جاؤ",
-  "dhikrScreen_whoeverRecites_ee68bc": "جو بھی تلاوت کرتا ہے۔",
-  "dhikrScreen_theLastTwoVerses_a865c4": "آخری دو آیات",
-  "dhikrScreen_ofSurahAlBaqarah_302bf4": "سورۃ البقرہ کی",
-  "dhikrScreen_atNight_f3945a": "رات کو --",
-  "dhikrScreen_theyWillBe_019495": "وہ ہوں گے",
-  "dhikrScreen_enoughForHim_6e37aa": "اس کے لیے کافی ہے",
-  "dhikrScreen_weHaveEnteredThe_f5ed3a": "ہم شام میں داخل ہو چکے ہیں۔",
-  "dhikrScreen_theKingdomBelongsTo_2f7681": "بادشاہی اللہ کی ہے۔",
-  "dhikrScreen_noneWorthyOfWorship_f1c87f": "اللہ کے سوا کوئی عبادت کے لائق نہیں۔",
-  "dhikrScreen_allPraiseHeIs_c3ece6": "تمام تعریفیں · وہ ہر چیز پر قادر ہے۔",
-  "dhikrScreen_weAskForThe_21b846": "ہم اس رات کی خیر مانگتے ہیں۔",
-  "dhikrScreen_saySeekRefuge_84c616": "کہو: میں پناہ مانگتا ہوں۔",
-  "dhikrScreen_inTheLordOf_39c875": "انسانوں کے رب میں",
-  "dhikrScreen_theKingOfMankind_d99354": "بنی نوع انسان کا بادشاہ",
-  "dhikrScreen_theGodOfMankind_e5231c": "انسانوں کا خدا،",
-  "dhikrScreen_heRetreatsWhenYou_1fea37": "جب تم اللہ کو یاد کرتے ہو تو وہ پیچھے ہٹ جاتا ہے۔",
-  "dhikrScreen_seekRefugeInThe_96a762": "طلوع آفتاب کے رب کی پناہ مانگو",
-  "dhikrScreen_sufficedInAllRespects_57c52b": "ہر لحاظ سے کافی ہے۔",
-  "dhikrScreen_allahDoesNotBurden_63f3eb": "اللہ بوجھ نہیں ڈالتا",
-  "dhikrScreen_soul_b7f1ee": "ایک روح",
   "dhikrScreen_a5cfd1_a5cfd1": "×{count}",
-  "dhikrScreen_equalsTheWholeQuran_a2b879": "پورے قرآن کے برابر ہے × 3",
   "impactReportScreen_whoeverDoesAnAtom_9013b0": "\"جو کوئی ایٹم کرتا ہے",
   "impactReportScreen_theHomeOfThe_4602d2": "\"آخرت کا گھر - یہ ہمیشہ کی زندگی ہے، کاش وہ جانتے۔\" سورہ عنکبوت 29:64",
   "impactReportScreen_raceTowardsForgivenessFrom_94d614": "\"اپنے رب کی بخشش اور اس جنت کی طرف دوڑو جس کی چوڑائی آسمانوں اور زمین کے برابر ہے۔\" سورۃ الحدید 57:21",
@@ -2160,7 +1070,6 @@
   "impactReportScreen_righteousChildWhoPrays_7bcef4": "ایک نیک بچہ جو آپ کے لئے دعا کرتا ہے، ایک صدقہ جو بہتا ہے، یا علم جو فائدہ پہنچاتا ہے - تین ابدی سرمایہ کاری۔ (مسلم)",
   "impactReportScreen_youWillMeetAllah_c19524": "تم اللہ سے اپنے اعمال نامے کے ساتھ ملو گے۔ آج یقینی بنائیں\\",
   "impactReportScreen_noDeedIsToo_c04d50": "ایٹم شمار کرنے والے کے لیے کوئی عمل چھوٹا نہیں۔",
-  "impactReportScreen_lvl_987904": "Lvl {_level} · {arg1}",
   "impactReportScreen_200447_200447": "+{arg1}",
   "impactReportScreen_634027_634027": "+{arg1}",
   "impactReportScreen_whoeverDoesGoodDeed_89c2bf": "جو کوئی نیکی کرے گا اسے اس کے برابر دس گنا ملے گا۔",
@@ -2170,56 +1079,36 @@
   "impactReportScreen_hasanat_64c7b6": "→ حسنات: {arg1}\\n\\n",
   "impactReportScreen_ayahsReadLifetime_75eef6": "آیات پڑھی (زندگی بھر): {arg1}\\n",
   "impactReportScreen_totalHasanaat_c43112": "کل حسنات: {arg1}",
-  "impactReportScreen_ayahs_6a500c": "{arg1} آیات",
-  "impactReportScreen_planted_90ec47": "{arg1} لگائے گئے",
-  "impactReportScreen_cycles_f6649b": "{arg1} سائیکل",
   "impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459": "جو شخص دن میں 100 مرتبہ سبحان اللہ وبحمدہ کہے اس کے گناہ بخش دیئے جاتے ہیں خواہ سمندر کی جھاگ کے برابر ہوں۔",
   "impactReportScreen_subhanallahiWaBihamdihi_992976": "سبحان اللہ و بحمدہ",
   "impactReportScreen_totalRecitations_5ed733": "کل تلاوت: {arg1}\\n",
   "impactReportScreen_dividedByForgivenessCycles_4e175d": "100 → معافی کے چکروں سے تقسیم: {arg1}",
-  "impactReportScreen_built_d62c2d": "{arg1} بنایا گیا۔",
   "impactReportScreen_dividedByPalaces_6f066c": "10 → محلات سے تقسیم: {arg1}",
-  "impactReportScreen_earned_abd189": "{arg1} کمایا",
-  "impactReportScreen_equivalent_cb7bb5": "{arg1} مساوی",
   "impactReportScreen_laIlahaIllallahuWahdahu_895dde": "لا الہ الا اللہ وحدہ لا شریک لہ...",
   "impactReportScreen_setsOfSetsSlaves_b43b31": "10 کے سیٹ → {arg1} سیٹ × 4 غلام = {arg2}",
-  "impactReportScreen_opened_1bf8da": "{arg1} کھولا گیا۔",
-  "impactReportScreen_received_a526e3": "{arg1} موصول ہوا۔",
   "impactReportScreen_totalSalawatSent_cfe45e": "کل صلوات بھیجی گئی: {arg1}\\n",
   "impactReportScreen_multipliedByBlessingsReceived_52810f": "10 سے ضرب → {arg1} برکتیں موصول ہوئیں",
-  "impactReportScreen_invocations_d80c33": "{arg1} دعوتیں",
   "impactReportScreen_protectionFromEvil_37b53a": "برائی سے حفاظت",
   "impactReportScreen_goodHealthProtection_058808": "اچھی صحت اور تحفظ",
   "impactReportScreen_totalInvocations_1fd02b": "کل درخواستیں: {arg1}",
   "impactReportScreen_dividedByQuranCompletions_b9a013": "تقسیم شدہ 3 → {arg1} قرآن کی تکمیل",
-  "impactReportScreen_recitations_3cb9ec": "{arg1} قرات",
   "impactReportScreen_564740_564740": "{_monthActiveDays}",
   "impactReportScreen_3dc421_3dc421": "{arg1}h",
   "impactReportScreen_08990a_08990a": "{arg1}m",
   "impactReportScreen_ago_71107c": "{arg1} منٹ پہلے",
   "impactReportScreen_moAgo_325a71": "{arg1}مہینہ پہلے",
-  "impactReportScreen_viewAllDonors_e72932": "تمام {arg1} عطیہ دہندگان کو دیکھیں",
   "impactReportScreen_failed_190558": "ناکام: {e}",
-  "impactReportScreen_meet_82797d": "{arg1}، {arg2} سے ملیں",
-  "impactReportScreen_sponsor_a47417": "اسپانسر {arg1} →",
   "impactReportScreen_funded_add009": "{arg1}% فنڈڈ",
   "impactReportScreen_yourLifetimeImpact_8bfdcd": "آپ کی زندگی بھر کا اثر",
   "impactReportScreen_startYourImpactJourney_1ae8c4": "اپنا اثر سفر شروع کریں۔",
   "impactReportScreen_bd3721_bd3721": "{_myOrphansSponsoredCount}",
   "impactReportScreen_b3d969_b3d969": "{_myProjectsSupportedCount}",
-  "levelScreen_customProfileThemes_cec15c": "حسب ضرورت پروفائل تھیمز",
-  "levelScreen_exclusiveVotingRights_684759": "خصوصی ووٹنگ کے حقوق",
-  "levelScreen_hallOfFameListing_eb6ad1": "ہال آف فیم لسٹنگ",
   "levelScreen_seeds_fff97b": "+{arg1} بیج",
   "levelScreen_laIlahaIllallah_e8c26b": "لا الہ الا اللہ x100",
-  "levelScreen_unlocks_6f2513": "غیر مقفل کرتا ہے: {arg1}",
   "levelScreen_seedsBoost_464454": "{arg1}× بیج بوسٹ",
   "levelScreen_cf765f_cf765f": "{arg1}:{arg2} {arg3}/{arg4}/{arg5}",
-  "levelScreen_nextDays_212b86": "اگلا: {arg1} ({arg2} دن)",
   "levelScreen_days_100e10": "{current} / {arg1} دن",
   "levelScreen_dayStreak_df2abf": "{arg1} دن کا سلسلہ",
-  "phase1Screens_quranReadingNimage_5ebac0": "قرآن پڑھنے کی تصویر",
-  "phase1Screens_orphansNimage_24d12a": "یتیموں کی تصویر",
   "onboardingComponents_355c50_355c50": "{first}",
   "onboardingComponents_b236c9_b236c9": "{trailing}",
   "quranMini_inTheNameOf_46925d": "اللہ کے نام سے جو بڑا مہربان نہایت رحم والا ہے۔",
@@ -2237,9 +1126,6 @@
   "orphanDetailScreen_chooseHowManySeeds_b69aa2": "منتخب کریں کہ کتنے بیج دینے ہیں۔ کم از کم {arg1}",
   "orphanDetailScreen_yourBalanceSeeds_f8045b": "آپ کا بیلنس: {arg1} بیج",
   "profileSettingsScreen_nameCannotBeEmpty_c737ab": "نام خالی نہیں ہو سکتا",
-  "profileSettingsScreen_bosniaAndHerzegovina_a428ef": "بوسنیا اور ہرزیگووینا",
-  "profileSettingsScreen_centralAfricanRepublic_0fde6c": "وسطی افریقی جمہوریہ",
-  "profileSettingsScreen_unitedArabEmirates_d8e2d8": "متحدہ عرب امارات",
   "profileSettingsScreen_signedInWithGoogle_17e053": "گوگل کے ساتھ سائن ان ہے۔",
   "profileSettingsScreen_signedInWithQuran_2e1ffc": "Quran.com کے ساتھ سائن ان ہوا۔",
   "profileSettingsScreen_signedInWithEmail_dd881f": "ای میل کے ساتھ سائن ان ہوا۔",
@@ -2256,33 +1142,7 @@
   "projectDetailScreen_e4e562_e4e562": "{arg1}%",
   "projectDetailScreen_ago_71107c": "{arg1} منٹ پہلے",
   "projectDetailScreen_moAgo_325a71": "{arg1}مہینہ پہلے",
-  "projectDetailScreen_viewAll_3d2c48": "تمام {arg1} → دیکھیں",
   "quranHubScreen_saved_9c28a3": "{arg1} محفوظ کیا گیا۔",
-  "quranHubScreen_tapTheHeartBookmark_c62da1": "آیات کو محفوظ کرنے کے لیے پڑھتے وقت ہارٹ/بُک مارک آئیکن کو تھپتھپائیں۔",
-  "quranHubScreen_surahVerse_2c65ec": "سورہ {s} • آیت {a}",
-  "quranHubScreen_verses_f97238": "{arg1} آیات",
-  "quranHubScreen_of_0420fc": "کا {arg1}",
-  "quranScreen_englishSahihIntl_da5e9e": "انگریزی، Sahih Intl.",
-  "quranScreen_saheehInternational_fd1d5c": "صحیح انٹرنیشنل",
-  "quranScreen_englishPickthall_a0d265": "انگریزی، Pickthall",
-  "quranScreen_mohammadMarmadukePickthall_554557": "محمد مرماڈوکے پکتھال",
-  "quranScreen_englishTheMessage_24a984": "انگریزی، پیغام",
-  "quranScreen_englishMuhsinKhan_a5402b": "انگلش، محسن خان",
-  "quranScreen_muhsinKhanHilali_471c43": "محسن خان اور ہلالی",
-  "quranScreen_fatehMuhammadJalandhry_262387": "فتح محمد جالندھری۔",
-  "quranScreen_imamAhmadRazaKhan_225277": "امام احمد رضا خان",
-  "quranScreen_maulanaSayyidAbulAla_75d35f": "مولانا سید ابوالاعلیٰ مودودی",
-  "quranScreen_franAisHamidullah_2ca2c2": "فرانسس، حمید اللہ",
-  "quranScreen_rkDiyanet_431130": "Türkçe، Diyanet",
-  "quranScreen_rkLeymanAte_7aa8e1": "Türkçe، Süleyman Ateş",
-  "quranScreen_bahasaIndonesian_2a26f0": "بہاسا، انڈونیشیا",
-  "quranScreen_ministryOfReligiousAffairs_e30db8": "وزارت مذہبی امور",
-  "quranScreen_muhiuddinKhan_df9bfe": "بنگالی، محی الدین خان",
-  "quranScreen_deutschAbuRida_9acffd": "ڈوئچ، ابو ردا",
-  "quranScreen_abuRidaMuhammadIbn_3a40b3": "ابو ردا محمد بن احمد",
-  "quranScreen_espaOlAsad_1c1933": "اسپینول، اسد",
-  "quranScreen_uthmaniMadinah_e1f10e": "عثمانی (مدینہ)",
-  "quranScreen_alJalalaynEN_af0584": "الجلالین (EN)",
   "quranScreen_couldNotLoadAyah_62f120": "آیت لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
   "quranScreen_noConnectionCachedData_e5a215": "کوئی تعلق نہیں۔ کیشڈ ڈیٹا دستیاب ہو سکتا ہے۔",
   "quranScreen_ayahs_c98642": "{arg1} آیات",
@@ -2290,73 +1150,27 @@
   "quranScreen_removedBookmark_d7a16a": "بک مارک کو ہٹا دیا گیا {_surahName} {_surah}:{_ayah}",
   "quranScreen_couldNotSaveBookmark_976448": "بک مارک محفوظ نہیں کیا جا سکا، براہ کرم دوبارہ کوشش کریں۔",
   "quranScreen_bookmarked_2c6203": "بک مارک کردہ {_surahName} {_surah}:{_ayah}",
-  "quranScreen_trimmedContains_039f31": ") && !trimmed.contains(",
   "quranScreen_tafsir_391c0d": "تفسیر · {_surahName} {_surah}:{_ayah}",
   "quranScreen_addedToFavourites_b3cce0": "♥️ پسندیدہ میں شامل کر دیا گیا۔",
-  "quranScreen_comfortableNightTimeReading_da3df2": "رات کے وقت آرام سے پڑھنا",
   "quranScreen_pt_9e58e8": "{arg1} pt",
   "quranScreen_003843_003843": "{arg1} {arg2}",
-  "quranScreen_displayMeaningBelowEach_a26f31": "ہر آیت کے نیچے معنی ظاہر کریں۔",
-  "quranScreen_showTransliteration_e04abd": "نقل حرفی دکھائیں۔",
-  "quranScreen_romanisedPronunciationUnderEach_2c0136": "ہر لفظ کے نیچے رومنائزڈ تلفظ",
-  "quranScreen_progressBarAyahCount_3cd24d": "پروگریس بار اور آیاہ کاؤنٹ کارڈ",
-  "quranScreen_moveToNextVerse_ea29fd": "آڈیو ختم ہونے پر اگلی آیت پر جائیں۔",
-  "quranScreen_repeatCurrentVerse_552669": "موجودہ آیت کو دہرائیں۔",
-  "quranScreen_notificationsALERTS_fbea75": "اطلاعات اور انتباہات",
-  "quranScreen_milestoneSoundAlerts_03cdc3": "سنگ میل ساؤنڈ الرٹس",
-  "quranScreen_chimeWhenYouReach_dd60c0": "جب آپ 10، 25، 50 آیات تک پہنچ جائیں تو گھنٹی بجائیں۔",
-  "quranScreen_showEachArabicWord_64532d": "ہر عربی لفظ کو اس کے انگریزی معنی کے ساتھ دکھائیں۔",
-  "quranScreen_translationLanguage_d8c9b3": "ترجمہ کی زبان",
-  "quranScreen_translationsAvailable_55c648": "{arg1} ترجمے دستیاب ہیں۔",
   "quranScreen_3502e8_3502e8": "{arg1} / {arg2}",
-  "quranScreen_sabiqSeedsEarnedToday_13ddb3": "+{_pointsToday} Sabiq بیج نے آج کمایا!",
   "quranScreen_dcacc4_dcacc4": "{_ayah} / {arg1}",
   "quranScreen_6d1f9d_6d1f9d": "{arg1}",
   "quranScreen_ayahsRead_862866": "__پ0__ آیات پڑھیں",
   "quranScreen_ce2af3_ce2af3": "{arg1}%",
   "quranScreen_6e8ac8_6e8ac8": "{text}",
-  "quranScreen_pageJuz_6ac28a": "صفحہ {_currentPage} · Juz {arg1}",
   "startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5": "گوگل سائن ان کے دوران غیر متوقع خرابی۔",
   "startJourneyScreen_connectedToQuranCom_c0c631": "Quran.com سے منسلک",
-  "streakScreen_nextDays_212b86": "اگلا: {arg1} ({arg2} دن)",
-  "streakScreen_seeds_990893": "+{arg1} بیج",
-  "streakScreen_days_100e10": "{current} / {arg1} دن",
-  "streakScreen_dayStreak_df2abf": "{arg1} دن کا سلسلہ",
-  "tafsirHubScreen_earnSeedsForEvery_ffb3d5": "ہر 10 منٹ تفسیر سننے کے لیے بیج حاصل کریں۔",
-  "tafsirScreen_alJalalaynEN_af0584": "الجلالین (EN)",
   "tafsirScreen_verses_fed624": "{arg1} آیات",
-  "tafsirScreen_trimmedContains_039f31": ") && !trimmed.contains(",
   "tafsirScreen_ayahOf_63c42b": "آیت {_ayah} از {_surahLen}",
   "tafsirScreen_4815bb_4815bb": "{_surahName} {_ayah}/{_surahLen}",
-  "tafsirScreen_tafsirNotAvailableFor_0fce81": "اس آیت کی تفسیر دستیاب نہیں۔",
   "donationService_youMustBeLogged_6813cf": "عطیہ کرنے کے لیے آپ کا لاگ ان ہونا ضروری ہے۔",
   "donationService_donationCouldNotBe_074195": "اس وقت عطیہ پر کارروائی نہیں ہو سکی۔",
   "donationService_anUnexpectedNetworkError_914b7a": "نیٹ ورک کی ایک غیر متوقع خرابی پیش آگئی۔",
   "donationService_sponsorshipReceived_671201": "اسپانسر شپ موصول ہوئی 💝",
   "donationService_youSponsoredSeedsJazak_7711e1": "آپ نے سپانسر کیا {amount} بیج · جزاک اللہ خیر۔",
   "donationService_sponsorshipCouldNotBe_55003e": "اس وقت اسپانسرشپ پر کارروائی نہیں ہو سکی۔",
-  "liveNotificationService_remindersToSealYour_782a67": "آدھی رات سے پہلے اپنے زیر التواء بیجوں کو سیل کرنے کی یاددہانی۔",
-  "liveNotificationService_sealYourSeedsBefore_62a726": "آدھی رات سے پہلے اپنے بیجوں کو سیل کریں۔",
-  "liveNotificationService_youHavePendingSeeds_dd762f": "آپ کے پاس {pendingSeeds} زیر التواء بیج ہیں۔ آدھی رات سے پہلے دن پر مہر لگائیں یا ان کی میعاد ختم ہوجائے۔",
-  "liveNotificationService_ayatReadToday_b5a4e8": "{_ayahCount}آیت آج پڑھیں 📖",
-  "liveNotificationService_readQuranToday_703122": "{arg1} آج قرآن پڑھیں ⏱️",
-  "liveNotificationService_nothingReadFromQuran_b1c2eb": "آج قرآن سے کچھ نہیں پڑھا گیا 📖",
-  "liveNotificationService_dhikrCompletedToday_835583": "{_dhikrCount}ذکر آج مکمل ہوا 📿",
-  "liveNotificationService_ayatDhikrToday_548e91": "{_ayahCount} آیت · {_dhikrCount} آج کا ذکر",
-  "liveNotificationService_keepReadingAndDoing_cdc7b2": "پڑھتے رہیں اور ذکر کرتے رہیں!",
-  "liveNotificationService_yourSeedsToday_8649c6": "آج آپ کے بیج ✨",
-  "localReminderScheduler_sabiqRewardsNotifications_96d36c": "صابق انعامات کی اطلاع",
-  "localReminderScheduler_it_0c8340": "یہ\\",
-  "localReminderScheduler_fridayReadSurahAl_077436": "جمعہ - سورہ کہف پڑھیں",
-  "localReminderScheduler_whoeverRecitesSurahAl_15b9a5": "جو شخص جمعہ کے دن سورۃ الکہف کی تلاوت کرتا ہے اس کے لیے دونوں جمعوں کے درمیان نور روشن ہوجاتا ہے۔",
-  "localReminderScheduler_don_b4d354": "ڈان\\",
-  "localReminderScheduler_missSurahAlKahf_634857": "آج سورہ کہف کو یاد نہ کریں۔",
-  "localReminderScheduler_fewHoursToMaghrib_d99fd2": "مغرب کے چند گھنٹے - اگر آپ کے پاس ہے تو سورۃ الکہف ختم کریں۔",
-  "quranApiService_notConnectedToQuran_9f4f89": "Quran.com سے منسلک نہیں ہے۔",
-  "quranApiService_syncFailedBookmarkCould_3393f7": "مطابقت پذیری ناکام ہو گئی، {failed} بک مارک (زبانیں) Quran.com پر نہیں جا سکے (ٹوکن/اینڈ پوائنٹ چیک کریں)۔",
-  "quranApiService_bookmarksAlreadyInSync_fad9e1": "بک مارکس پہلے سے ہی مطابقت پذیر ہیں۔",
-  "quranApiService_syncedBookmarksUpDown_dd2f96": "مطابقت پذیر {total} بک مارکس ({uploaded} اوپر، {downloaded} نیچے)",
-  "quranApiService_syncFailed_ae7629": "مطابقت پذیری ناکام ہوگئی: {e}",
   "streakService_warmingUp_b1687b": "وارمنگ اپ",
   "streakService_oneWeek_4f98dc": "ایک ہفتہ",
   "streakService_twoWeeks_9a2d93": "دو ہفتے",
@@ -2364,12 +1178,9 @@
   "streakService_twoMonths_84d275": "دو مہینے",
   "streakService_theCenturion_f1de7f": "سنچورین",
   "streakService_1fc043_1fc043": "{arg1} {arg2}",
-  "streakService_dayStreak_9ee8a3": "{arg1}-دن {arg2} سلسلہ ·",
-  "streakService_bonusSeedsUnlocked_bcdda5": "+{arg1} بونس بیج غیر مقفل",
   "trackingService_c7528c_c7528c": "{arg1} {arg2}",
   "xpService_level_226f81": "{title} • سطح {level}",
   "xpService_newBadgeUnlocked_2c8d0e": "نیا بیج غیر مقفل ہو گیا 🏆",
-  "xpService_you_79d09a": "آپ\\",
   "xpService_dailyLoginBonus_d011fa": "روزانہ لاگ ان بونس",
   "xpService_seedsWelcomeBack_47888a": "+{arg1} بیج · واپس خوش آمدید!",
   "xpService_daySealed_037a56": "دن مہربند 🌙",
@@ -2390,17 +1201,11 @@
   "motivationalPopup_yourTimeIsYour_be6731": "آپ کا وقت آپ کا سب سے قیمتی اثاثہ ہے۔ اس میں دانشمندی سے سرمایہ کاری کریں\\nجو ہمیشہ کے لیے قائم رہتا ہے۔",
   "motivationalPopup_quranAlAnfal_b10486": "قرآن • الانفال 8:28",
   "motivationalPopup_takeAdvantageOfFive_e573fd": "پانچ سے پہلے پانچ کا فائدہ اٹھائیں۔",
-  "motivationalPopup_youHaveBeenRewarded_9bde33": "آپ کو آج آپ کی مستقل مزاجی کے لیے انعام دیا گیا ہے!",
   "motivationalPopup_seeds_3a9c69": "+{arg1} بیج",
   "motivationalPopup_completeNowEarnSeeds_16ea6e": "ابھی مکمل کریں → +50 بیج بونس حاصل کریں۔",
   "motivationalPopup_finishYourAzkaarEarn_e264fa": "اپنا ازکار ختم کریں → +30 بیج بونس حاصل کریں۔",
   "motivationalPopup_shareSabiqWithSomeone_c60dcc": "کسی کے ساتھ Sabiq کا اشتراک کریں → +100 بیج حاصل کریں۔",
   "motivationalPopup_keepYourSpiritualMomentum_0f172c": "اپنی روحانی رفتار کو جاری رکھیں\\اور اپنے بیجوں کو بڑھتے ہوئے دیکھیں ✨",
-  "noorOffline_somethingWentWrong_76fc46": "کچھ غلط ہو گیا۔",
-  "notificationsSheet_stayOnTopOf_811366": "انعامات اور سنگ میل کے اوپر رہیں",
-  "notificationsSheet_llBeNotifiedAbout_9e7a1b": "انعامات، لکیروں اور سنگ میلوں کے بارے میں مطلع کیا جائے گا۔",
-  "notificationsSheet_inboxKeepsExistingItems_611668": "Inbox موجودہ آئٹمز رکھتا ہے لیکن کوئی نیا نہیں آئے گا۔",
-  "notificationsSheet_sabiqSeedsForSealing_001312": "Sabiq بیج آج سیل کرنے کے لئے",
   "projectMediaCarousel_couldNotLoadVideo_deb8dd": "ویڈیو لوڈ نہیں ہو سکی",
   "quranExitCelebration_beautifulRecitation_9d2655": "خوبصورت تلاوت۔",
   "quranExitCelebration_everyMomentCounts_fddb4c": "ہر لمحہ شمار ہوتا ہے۔",
@@ -2417,7 +1222,6 @@
   "streakService_dayStreakBody": "{days}-دن {type} سلسلہ · +{bonus} بونس بیج کھلا",
   "streakService_milestoneTitle": "{emoji} {label}",
   "streakService_60a570": "{arg1} {localLabel}",
-  "streakService_dayStreak_b49b65": "{arg1}-دن {arg2} سلسلہ ·",
   "donationService_donationReceivedTitle": "عطیہ موصول ہوا 💝",
   "donationService_youDonatedSeeds": "آپ نے عطیہ کیا {amount} بیج · جزاک اللہ خیر۔",
   "streakService_60a570_60a570": "{arg1} {localLabel}",
@@ -3297,87 +2101,12 @@
       }
     }
   },
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@qfAuthService_tokenExchangeFailed": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@orphan_be2bf7": {
     "placeholders": {
       "firstName": {
         "type": "String"
       },
       "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_thisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_seedsThisSession": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_dayAvgAzkaarDay": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_profileReturnedZeroRows": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dashboardLoadError": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_sponsor": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_today": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
         "type": "String"
       }
     }
@@ -3399,28 +2128,7 @@
       }
     }
   },
-  "@dashboardScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_last": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_active": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_useMyCodeAnd": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3441,13 +2149,6 @@
       }
     }
   },
-  "@dashboardScreen_yourRank": {
-    "placeholders": {
-      "rankText": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_d13a42": {
     "placeholders": {
       "_myPoints": {
@@ -3457,47 +2158,6 @@
         "type": "String"
       },
       "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_lvl": {
-    "placeholders": {
-      "level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_sealWithin": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_ofGoal": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_default": {
-    "placeholders": {
-      "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_readTimes": {
-    "placeholders": {
-      "readCount": {
         "type": "String"
       }
     }
@@ -3563,16 +2223,6 @@
       }
     }
   },
-  "@impactReportScreen_lvl": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_200447": {
     "placeholders": {
       "arg1": {
@@ -3587,27 +2237,6 @@
       }
     }
   },
-  "@impactReportScreen_dhikrRecitedLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_hasanat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_ayahsReadLifetime": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_hasanat_e68a30": {
     "placeholders": {
       "arg1": {
@@ -3615,150 +2244,7 @@
       }
     }
   },
-  "@impactReportScreen_totalHasanaat": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_planted": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_cycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalRecitations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByForgivenessCycles": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_built": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByPalaces": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_earned": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalRecitations_262e54": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_setsOfSetsSlaves": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_opened": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_received": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalSalawatSent": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_multipliedByBlessingsReceived": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_invocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_totalInvocations": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent_d7e6f6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_dividedByQuranCompletions": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_recitations": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3786,13 +2272,6 @@
       }
     }
   },
-  "@impactReportScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_ago_c25b44": {
     "placeholders": {
       "arg1": {
@@ -3807,52 +2286,7 @@
       }
     }
   },
-  "@impactReportScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_viewAllDonors": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_failed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_meet": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_funded": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3873,13 +2307,6 @@
       }
     }
   },
-  "@levelScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_59c6a1": {
     "placeholders": {
       "arg1": {
@@ -3894,13 +2321,6 @@
       }
     }
   },
-  "@levelScreen_unlocks": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_a49180": {
     "placeholders": {
       "arg1": {
@@ -3909,13 +2329,6 @@
     }
   },
   "@levelScreen_seeds_a22be5": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_seedsBoost": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3941,34 +2354,7 @@
       }
     }
   },
-  "@levelScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_dayStreak": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -3999,37 +2385,6 @@
       }
     }
   },
-  "@orphanDetailScreen_years": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_ofSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_through": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_ago": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@orphanDetailScreen_ago_c25b44": {
     "placeholders": {
       "arg1": {
@@ -4044,56 +2399,7 @@
       }
     }
   },
-  "@orphanDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@orphanDetailScreen_ago_65f0ec": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_seeds": {
-    "placeholders": {
-      "_availablePoints": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_sponsor": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_jazakallahKhayranSeedsSponsored": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_chooseHowManySeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@orphanDetailScreen_yourBalanceSeeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@profileSettingsScreen_seeds": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4114,13 +2420,6 @@
       }
     }
   },
-  "@projectDetailScreen_organisedBy": {
-    "placeholders": {
-      "sponsor": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_4c2b09": {
     "placeholders": {
       "arg1": {
@@ -4134,13 +2433,6 @@
       }
     }
   },
-  "@projectDetailScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_seeds_801ec7": {
     "placeholders": {
       "arg1": {
@@ -4149,13 +2441,6 @@
     }
   },
   "@projectDetailScreen_e4e562": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@projectDetailScreen_ago": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4176,13 +2461,6 @@
       }
     }
   },
-  "@projectDetailScreen_moAgo": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@projectDetailScreen_ago_65f0ec": {
     "placeholders": {
       "arg1": {
@@ -4190,98 +2468,7 @@
       }
     }
   },
-  "@projectDetailScreen_viewAll": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_saved": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_surahVerse": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_of": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranHubScreen_saved_edce53": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_ayahs": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_removedBookmark": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_bookmarked": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_tafsir": {
-    "placeholders": {
-      "_surahName": {
-        "type": "String"
-      },
-      "_surah": {
-        "type": "String"
-      },
-      "_ayah": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_pt": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4298,26 +2485,12 @@
       }
     }
   },
-  "@quranScreen_translationsAvailable": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_3502e8": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_sabiqSeedsEarnedToday": {
-    "placeholders": {
-      "_pointsToday": {
         "type": "String"
       }
     }
@@ -4339,13 +2512,6 @@
       }
     }
   },
-  "@quranScreen_ayahsRead": {
-    "placeholders": {
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_ce2af3": {
     "placeholders": {
       "arg1": {
@@ -4356,67 +2522,6 @@
   "@quranScreen_6e8ac8": {
     "placeholders": {
       "text": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_pageJuz": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_nextDays": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_seeds": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_days": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@tafsirScreen_verses": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@tafsirScreen_ayahOf": {
-    "placeholders": {
-      "_ayah": {
-        "type": "String"
-      },
-      "_surahLen": {
         "type": "String"
       }
     }
@@ -4434,78 +2539,6 @@
       }
     }
   },
-  "@donationService_youSponsoredSeedsJazak": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_youHavePendingSeeds": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatReadToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_readQuranToday": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_dhikrCompletedToday": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatDhikrToday": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailedBookmarkCould": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncedBookmarksUpDown": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailed": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "@streakService_1fc043": {
     "placeholders": {
       "arg1": {
@@ -4516,70 +2549,12 @@
       }
     }
   },
-  "@streakService_dayStreak": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_bonusSeedsUnlocked": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@trackingService_c7528c": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_level": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      },
-      "level": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_seedsWelcomeBack": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_sabiqSeedsConfirmedBonus": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      },
-      "bonus": {
-        "type": "String"
-      }
-    }
-  },
-  "@xpService_sabiqSeedsConfirmed": {
-    "placeholders": {
-      "flushed": {
-        "type": "String"
-      }
-    }
-  },
-  "@motivationalPopup_seeds": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -4619,64 +2594,12 @@
       }
     }
   },
-  "@qfAuthService_qfemailconflictexceptionAlreadyHasAn_e1592c": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@qfAuthService_tokenExchangeFailed_89d8a0": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@orphan_be2bf7_be2bf7": {
     "placeholders": {
       "firstName": {
         "type": "String"
       },
       "lastInitial": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_thisSession_702ffc": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_seedsThisSession_cd9411": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@akhirahBalanceScreen_dayAvgAzkaarDay_c8f1b6": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_profileReturnedZeroRows_3ccedb": {
-    "placeholders": {
-      "uid": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dashboardLoadError_6168de": {
-    "placeholders": {
-      "e": {
         "type": "String"
       }
     }
@@ -4691,39 +2614,12 @@
       }
     }
   },
-  "@dashboardScreen_today_261fbb": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "_lastAyah": {
-        "type": "String"
-      },
-      "_ayahsToday": {
-        "type": "String"
-      }
-    }
-  },
   "@dashboardScreen_606140_606140": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "_lastAyah": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_dayStreak_2934ca": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_active_2d214a": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -4745,13 +2641,6 @@
   "@dashboardScreen_e4e562_e4e562": {
     "placeholders": {
       "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_yourRank_67be90": {
-    "placeholders": {
-      "rankText": {
         "type": "String"
       }
     }
@@ -4779,33 +2668,9 @@
       }
     }
   },
-  "@dashboardScreen_sealWithin_381d5d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@dashboardScreen_ofGoal_9660ee": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
   "@dhikrScreen_default_8bd36b": {
     "placeholders": {
       "recommendedCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@dhikrScreen_readTimes_537f51": {
-    "placeholders": {
-      "readCount": {
         "type": "String"
       }
     }
@@ -4871,16 +2736,6 @@
       }
     }
   },
-  "@impactReportScreen_lvl_987904": {
-    "placeholders": {
-      "_level": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_200447_200447": {
     "placeholders": {
       "arg1": {
@@ -4923,27 +2778,6 @@
       }
     }
   },
-  "@impactReportScreen_ayahs_6a500c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_planted_90ec47": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_cycles_f6649b": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalRecitations_5ed733": {
     "placeholders": {
       "arg1": {
@@ -4958,28 +2792,7 @@
       }
     }
   },
-  "@impactReportScreen_built_d62c2d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_dividedByPalaces_6f066c": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_earned_abd189": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_equivalent_cb7bb5": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -4992,20 +2805,6 @@
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_opened_1bf8da": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_received_a526e3": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5024,13 +2823,6 @@
       }
     }
   },
-  "@impactReportScreen_invocations_d80c33": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_totalInvocations_1fd02b": {
     "placeholders": {
       "arg1": {
@@ -5039,13 +2831,6 @@
     }
   },
   "@impactReportScreen_dividedByQuranCompletions_b9a013": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_recitations_3cb9ec": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -5087,33 +2872,9 @@
       }
     }
   },
-  "@impactReportScreen_viewAllDonors_e72932": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@impactReportScreen_failed_190558": {
     "placeholders": {
       "e": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_meet_82797d": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@impactReportScreen_sponsor_a47417": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5146,13 +2907,6 @@
       }
     }
   },
-  "@levelScreen_unlocks_6f2513": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@levelScreen_seedsBoost_464454": {
     "placeholders": {
       "arg1": {
@@ -5175,16 +2929,6 @@
         "type": "String"
       },
       "arg5": {
-        "type": "String"
-      }
-    }
-  },
-  "@levelScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
         "type": "String"
       }
     }
@@ -5358,38 +3102,7 @@
       }
     }
   },
-  "@projectDetailScreen_viewAll_3d2c48": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranHubScreen_saved_9c28a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_surahVerse_2c65ec": {
-    "placeholders": {
-      "s": {
-        "type": "String"
-      },
-      "a": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_verses_f97238": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranHubScreen_of_0420fc": {
     "placeholders": {
       "arg1": {
         "type": "String"
@@ -5459,26 +3172,12 @@
       }
     }
   },
-  "@quranScreen_translationsAvailable_55c648": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@quranScreen_3502e8_3502e8": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranScreen_sabiqSeedsEarnedToday_13ddb3": {
-    "placeholders": {
-      "_pointsToday": {
         "type": "String"
       }
     }
@@ -5521,50 +3220,6 @@
       }
     }
   },
-  "@quranScreen_pageJuz_6ac28a": {
-    "placeholders": {
-      "_currentPage": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_nextDays_212b86": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_seeds_990893": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_days_100e10": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakScreen_dayStreak_df2abf": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
   "@tafsirScreen_verses_fed624": {
     "placeholders": {
       "arg1": {
@@ -5602,94 +3257,12 @@
       }
     }
   },
-  "@liveNotificationService_youHavePendingSeeds_dd762f": {
-    "placeholders": {
-      "pendingSeeds": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatReadToday_b5a4e8": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_readQuranToday_703122": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_dhikrCompletedToday_835583": {
-    "placeholders": {
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@liveNotificationService_ayatDhikrToday_548e91": {
-    "placeholders": {
-      "_ayahCount": {
-        "type": "String"
-      },
-      "_dhikrCount": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailedBookmarkCould_3393f7": {
-    "placeholders": {
-      "failed": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncedBookmarksUpDown_dd2f96": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      },
-      "uploaded": {
-        "type": "String"
-      },
-      "downloaded": {
-        "type": "String"
-      }
-    }
-  },
-  "@quranApiService_syncFailed_ae7629": {
-    "placeholders": {
-      "e": {
-        "type": "String"
-      }
-    }
-  },
   "@streakService_1fc043_1fc043": {
     "placeholders": {
       "arg1": {
         "type": "String"
       },
       "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_dayStreak_9ee8a3": {
-    "placeholders": {
-      "arg1": {
-        "type": "String"
-      },
-      "arg2": {
-        "type": "String"
-      }
-    }
-  },
-  "@streakService_bonusSeedsUnlocked_bcdda5": {
-    "placeholders": {
-      "arg1": {
         "type": "String"
       }
     }
@@ -5826,16 +3399,6 @@
         "type": "Object"
       },
       "localLabel": {
-        "type": "Object"
-      }
-    }
-  },
-  "@streakService_dayStreak_b49b65": {
-    "placeholders": {
-      "arg1": {
-        "type": "Object"
-      },
-      "arg2": {
         "type": "Object"
       }
     }
