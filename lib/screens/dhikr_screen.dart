@@ -194,6 +194,13 @@ class _Azkar {
   /// line instead of falling back to raw narrator text from `hadith_full`.
   final String shortBenefit;
 
+  /// True when [shortBenefit] came from a locale-suffixed column
+  /// (`short_benefit_ur`, `short_benefit_ar`, …) — i.e. it's already in the
+  /// user's language. Renderers must skip the runtime `_AutoTranslatedText`
+  /// wrapper for these, otherwise the string is fed through Google
+  /// Translate as if it were English, producing garbled Urdu→Urdu passes.
+  final bool shortBenefitIsLocalized;
+
   const _Azkar({
     required this.id,
     required this.arabic,
@@ -212,6 +219,7 @@ class _Azkar {
     this.phrases,
     this.quranSurah,
     this.shortBenefit = '',
+    this.shortBenefitIsLocalized = false,
   });
 
   /// [locale] is the active language code (e.g. 'ar', 'ur'). When non-null
@@ -227,6 +235,14 @@ class _Azkar {
       final localized = (j['${baseKey}_$locale'] as String?)?.trim() ?? '';
       return localized.isNotEmpty ? localized : base;
     }
+
+    // Separate check so the renderer knows short_benefit is already in
+    // the active locale and can skip the runtime Google Translate wrapper.
+    // Without this the list would run localized text back through MT (e.g.
+    // Urdu → Urdu), which mangles words like ہاتھوں → حوصلہ.
+    final sbLocalized = locale != null &&
+        locale.isNotEmpty &&
+        ((j['short_benefit_$locale'] as String?)?.trim().isNotEmpty ?? false);
 
     return _Azkar(
     id: j['id'] as String? ?? '',
@@ -245,6 +261,7 @@ class _Azkar {
     englishTitle: (j['title'] as String?)?.trim() ?? '',
     section: (j['section'] as String?)?.trim() ?? '',
     shortBenefit: pick('short_benefit'),
+    shortBenefitIsLocalized: sbLocalized,
     phrases: (j['phrases'] as List?)
         ?.map((e) => _Phrase.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -2807,6 +2824,32 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                     context,
                                                                   )?.languageCode ??
                                                                   'en';
+                                                          // When the row came from a locale-suffixed column
+                                                          // in azkar_items (short_benefit_ur / _ar / …), we
+                                                          // already have the correct native text — render
+                                                          // directly and skip the MT wrapper. Otherwise fall
+                                                          // back to the legacy runtime Google Translate flow
+                                                          // for any row still missing a locale column.
+                                                          if (azkar.shortBenefitIsLocalized) {
+                                                            return <Widget>[
+                                                              const SizedBox(height: 3),
+                                                              Text(
+                                                                benefit,
+                                                                maxLines: 2,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: GoogleFonts.outfit(
+                                                                  fontWeight: FontWeight.w400,
+                                                                  fontSize: 12,
+                                                                  height: 1.3,
+                                                                  color: isComplete
+                                                                      ? const Color(0xFFFFC83D)
+                                                                      : (isDark
+                                                                          ? Colors.white38
+                                                                          : const Color(0xFF9CA3AF)),
+                                                                ),
+                                                              ),
+                                                            ];
+                                                          }
                                                           return <Widget>[
                                                             const SizedBox(height: 3),
                                                             _AutoTranslatedText(
