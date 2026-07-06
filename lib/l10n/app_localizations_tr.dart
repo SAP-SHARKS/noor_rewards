@@ -826,6 +826,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appearance => 'GÖRÜNÜM';
 
   @override
+  String get appearanceLabel => 'Appearance';
+
+  @override
+  String get freezeIllustration => 'Freeze Illustration';
+
+  @override
   String get comfortableNightReading => 'Rahat gece okuması';
 
   @override

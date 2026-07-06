@@ -252,6 +252,8 @@
   "addedToFavourites": "Ditambahkan ke Favorit",
   "removedFromFavourites": "Dihapus dari Favorit",
   "appearance": "TAMPILAN",
+  "appearanceLabel": "Penampilan",
+  "freezeIllustration": "Ilustrasi Bekukan",
   "comfortableNightReading": "Nyaman untuk membaca di malam hari",
   "focusMode": "Mode Fokus (Layar Penuh)",
   "focusModeDesc": "Sembunyikan bilah aplikasi & navigasi untuk membaca tanpa gangguan",

@@ -1681,7 +1681,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                               children: [
                                 // Appearance
                                 Text(
-                                  'Appearance',
+                                  AppLocalizations.of(context)?.appearanceLabel ?? 'Appearance',
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -1692,7 +1692,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 SwitchListTile(
                                   contentPadding: EdgeInsets.zero,
                                   title: Text(
-                                    'Dark Mode',
+                                    AppLocalizations.of(context)?.darkMode ?? 'Dark Mode',
                                     style: GoogleFonts.outfit(
                                       fontSize: 16,
                                       color: txtColor,
@@ -1713,7 +1713,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 SwitchListTile(
                                   contentPadding: EdgeInsets.zero,
                                   title: Text(
-                                    'Show Translation',
+                                    AppLocalizations.of(context)?.showTranslation ?? 'Show Translation',
                                     style: GoogleFonts.outfit(
                                       fontSize: 16,
                                       color: txtColor,
@@ -1798,7 +1798,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                 SwitchListTile(
                                   contentPadding: EdgeInsets.zero,
                                   title: Text(
-                                    'Freeze Illustration',
+                                    AppLocalizations.of(context)?.freezeIllustration ?? 'Freeze Illustration',
                                     style: GoogleFonts.outfit(
                                       fontSize: 16,
                                       color: txtColor,

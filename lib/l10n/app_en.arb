@@ -398,6 +398,8 @@
   "addedToFavourites": "Added to Favourites",
   "removedFromFavourites": "Removed from Favourites",
   "appearance": "APPEARANCE",
+  "appearanceLabel": "Appearance",
+  "freezeIllustration": "Freeze Illustration",
   "comfortableNightReading": "Comfortable night-time reading",
   "focusMode": "Focus Mode (Full Screen)",
   "focusModeDesc": "Hide app bar & nav for distraction-free reading",

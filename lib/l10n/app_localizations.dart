@@ -1622,6 +1622,18 @@ abstract class AppLocalizations {
   /// **'APPEARANCE'**
   String get appearance;
 
+  /// No description provided for @appearanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceLabel;
+
+  /// No description provided for @freezeIllustration.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze Illustration'**
+  String get freezeIllustration;
+
   /// No description provided for @comfortableNightReading.
   ///
   /// In en, this message translates to:

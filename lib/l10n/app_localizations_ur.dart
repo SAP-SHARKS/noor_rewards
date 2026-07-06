@@ -826,6 +826,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get appearance => 'ظاہری شکل';
 
   @override
+  String get appearanceLabel => 'Appearance';
+
+  @override
+  String get freezeIllustration => 'Freeze Illustration';
+
+  @override
   String get comfortableNightReading => 'رات کی آرام دہ پڑھائی';
 
   @override

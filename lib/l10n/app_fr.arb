@@ -252,6 +252,8 @@
   "addedToFavourites": "Ajouté aux favoris",
   "removedFromFavourites": "Retiré des favoris",
   "appearance": "APPARENCE",
+  "appearanceLabel": "Apparence",
+  "freezeIllustration": "Geler l’illustration",
   "comfortableNightReading": "Lecture nocturne confortable",
   "focusMode": "Mode concentration (plein écran)",
   "focusModeDesc": "Masquer la barre d'app et la navigation pour une lecture sans distraction",

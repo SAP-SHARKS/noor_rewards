@@ -252,6 +252,8 @@
   "addedToFavourites": "Favorilere Eklendi",
   "removedFromFavourites": "Favorilerden Kaldırıldı",
   "appearance": "GÖRÜNÜM",
+  "appearanceLabel": "Dış görünüş",
+  "freezeIllustration": "İllüstrasyonu Dondur",
   "comfortableNightReading": "Rahat gece okuması",
   "focusMode": "Odak Modu (Tam Ekran)",
   "focusModeDesc": "Dikkat dağıtmadan okumak için uygulama çubuğunu ve gezinmeyi gizle",

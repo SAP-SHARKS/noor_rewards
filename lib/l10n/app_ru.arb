@@ -252,6 +252,8 @@
   "addedToFavourites": "Добавлено в избранное",
   "removedFromFavourites": "Удалено из избранного",
   "appearance": "ВНЕШНИЙ ВИД",
+  "appearanceLabel": "Появление",
+  "freezeIllustration": "Заморозить иллюстрацию",
   "comfortableNightReading": "Удобное чтение в ночное время",
   "focusMode": "Режим фокуса (на весь экран)",
   "focusModeDesc": "Скрыть панели для чтения без отвлечений",

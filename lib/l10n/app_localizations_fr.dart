@@ -830,6 +830,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appearance => 'APPARENCE';
 
   @override
+  String get appearanceLabel => 'Appearance';
+
+  @override
+  String get freezeIllustration => 'Freeze Illustration';
+
+  @override
   String get comfortableNightReading => 'Lecture nocturne confortable';
 
   @override

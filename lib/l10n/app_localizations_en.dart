@@ -828,6 +828,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appearance => 'APPEARANCE';
 
   @override
+  String get appearanceLabel => 'Appearance';
+
+  @override
+  String get freezeIllustration => 'Freeze Illustration';
+
+  @override
   String get comfortableNightReading => 'Comfortable night-time reading';
 
   @override

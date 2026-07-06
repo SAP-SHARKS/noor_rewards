@@ -252,6 +252,8 @@
   "addedToFavourites": "أُضيف إلى المفضلة",
   "removedFromFavourites": "أُزيل من المفضلة",
   "appearance": "المظهر",
+  "appearanceLabel": "مظهر",
+  "freezeIllustration": "تجميد التوضيح",
   "comfortableNightReading": "قراءة مريحة في الليل",
   "focusMode": "وضع التركيز (شاشة كاملة)",
   "focusModeDesc": "إخفاء شريط التطبيق والتنقل لقراءة بلا تشتيت",
