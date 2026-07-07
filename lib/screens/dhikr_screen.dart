@@ -23,6 +23,8 @@ import '../widgets/noor_offline.dart';
 import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
 import '../services/translation_service.dart';
+import '../services/locale_service.dart';
+import '../data/tagline_translations.dart';
 import 'quran_screen.dart';
 
 // Returns a localized azkar-category title for the given category id.
@@ -8522,7 +8524,19 @@ Widget _buildIllustration({
 // =============================================================================
 // Motivational tagline — short punchy benefit line shown inside illustration
 // =============================================================================
+// Locale-aware wrapper. Computes the English tagline and, if the
+// current locale has a matching translation in `kTaglineTranslations`,
+// returns that. Otherwise falls back to English so nothing goes blank
+// when a locale hasn't been fully translated yet.
 String _pickTagline(String id) {
+  final en = _pickTaglineEn(id);
+  if (en.isEmpty) return '';
+  final lang = LocaleService.instance.l?.localeName.split('_').first;
+  if (lang == null || lang == 'en') return en;
+  return kTaglineTranslations[lang]?[en] ?? en;
+}
+
+String _pickTaglineEn(String id) {
   // ── Quranic supplications (bocp_001 … bocp_042) — derived from each
   // dua's benefit (where the hadith / Quran tradition records one) or
   // from the meaning of the verse itself.
