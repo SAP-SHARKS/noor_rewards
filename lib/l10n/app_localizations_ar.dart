@@ -15,16 +15,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get userFallback => 'مستخدم';
 
   @override
-  String get youHaveDone => 'لقد انتهيت!';
+  String get youHaveDone => 'لقد أنجزت!';
 
   @override
-  String get playAllBtn => 'العب الكل';
+  String get playAllBtn => 'تشغيل الكل';
 
   @override
-  String get playBtn => 'يلعب';
+  String get playBtn => 'تشغيل';
 
   @override
-  String get readBtn => 'يقرأ';
+  String get readBtn => 'اقرأ';
 
   @override
   String get readOnce => 'اقرأ مرة واحدة';
@@ -36,130 +36,130 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String seedsEarnedToday(int count) {
-    return '+$count بذور سابق التي حصلت عليها اليوم!';
+    return '+$count Sabiq Seeds كسبتها اليوم!';
   }
 
   @override
-  String get catDailyRemembrance => 'التذكر اليومي';
+  String get catDailyRemembrance => 'الذكر اليومي';
 
   @override
-  String get catNightlyRemembrance => 'أذكار الليل';
+  String get catNightlyRemembrance => 'الذكر الليلي';
 
   @override
   String get catYourSelection => 'اختيارك';
 
   @override
-  String get catContinuousRemembrance => 'ذكرى مستمرة';
+  String get catContinuousRemembrance => 'الذكر المستمر';
 
   @override
-  String get bannerDailyRemembrance => 'أذكار يومية\nيجلب السلام للروح.';
+  String get bannerDailyRemembrance => 'الذكر اليومي\nيجلب السكينة للروح.';
 
   @override
   String get bannerMorningAdhkar =>
-      'أذكار الصباح\nيجلب السلام للروح والنور للطريق.';
+      'أذكار الصباح\nتجلب السكينة للروح والنور لطريقك.';
 
   @override
-  String get bannerEveningAdhkar => 'أذكار المساء\nيجلب الهدوء والحماية ليلا.';
+  String get bannerEveningAdhkar =>
+      'أذكار المساء\nتجلب الطمأنينة والحفظ ليلتك.';
 
   @override
   String get bannerYourSelection =>
-      'كلماتك الحبيبة\nمن الأذكار أن تبقى قريبة من قلبك.';
+      'كلمات الذكر الأحب إليك\nلتبقيها قريبة من قلبك.';
 
   @override
-  String get bannerContinuousRemembrance => 'اذكروا الله\nكثيرًا، لعلك تنجح.';
+  String get bannerContinuousRemembrance => 'اذكروا الله\nكثيراً لعلكم تفلحون.';
 
   @override
-  String get frequentlyReadByCommunity => 'اقرأ بشكل متكرر';
+  String get frequentlyReadByCommunity => 'تُقرأ بكثرة';
 
   @override
-  String get viewFullLeaderboard => 'عرض المتصدرين الكاملة';
+  String get viewFullLeaderboard => 'عرض لوحة الصدارة كاملة';
 
   @override
-  String get skip => 'تخطى';
+  String get skip => 'تخطي';
 
   @override
-  String get continue_ => 'التالي';
+  String get continue_ => 'متابعة';
 
   @override
   String get beginYourJourney => 'ابدأ رحلتك';
 
   @override
-  String get enterTheGarden => 'ادخل الجنة';
+  String get enterTheGarden => 'ادخل البستان';
 
   @override
-  String get bySigningUp =>
-      'بالتسجيل، أنت توافق على شروط الخدمة وسياسة الخصوصية';
+  String get bySigningUp => 'بتسجيلك، توافق على الشروط والخصوصية';
 
   @override
-  String get lightOfMercy => 'Sabiq Seeds الرحمة';
+  String get lightOfMercy => 'نور الرحمة';
 
   @override
-  String get noorRewards => 'مكافآت سابق';
+  String get noorRewards => 'Sabiq Rewards';
 
   @override
   String get startYourJourney => 'ابدأ رحلتك';
 
   @override
   String get trackSpiritualGrowth =>
-      'تتبع نموك الروحي، انضم إلى المجتمع، واحصل على مكافآت حصرية عن كل عمل صالح.';
+      'تتبع نموك الروحي، وانضم للمجتمع، وافتح مكافآت حصرية لكل عمل صالح.';
 
   @override
-  String get continueWithGoogle => 'المتابعة مع Google';
+  String get continueWithGoogle => 'المتابعة باستخدام Google';
 
   @override
-  String get continueWithQuran => 'المتابعة مع Quran.com';
+  String get continueWithQuran => 'المتابعة باستخدام Quran.com';
 
   @override
   String get onboarding1Title => 'السلام\nعليكم';
 
   @override
   String get onboarding1Subtitle =>
-      'مرحبًا بك في Sabiq Seeds ريواردز, حيث كل عمل صالح يقربك من رحمة الله وSabiq Seedsه.';
+      'مرحباً بك في Sabiq Rewards، حيث كل عمل صالح يقربك إلى رحمة الله ونوره.';
 
   @override
-  String get onboarding2Title => 'مكافأتان\nعمل واحد';
+  String get onboarding2Title => 'أجران.\nلعمل واحد.';
 
   @override
   String get onboarding2Subtitle =>
-      'كل كلمة تقرأها تكسبك ثوابًا, Sabiq Seedsًا في آخرتك.\nعملاتك تمول قضايا حقيقية تغير حياة حقيقية.';
+      'كل كلمة تقرأها تكسبك ثواباً ونوراً في آخرتك.\nالـ Sabiq Seeds الخاصة بك تمول مشاريع تُغيّر حياة حقيقية.';
 
   @override
-  String get onboarding3Title => 'اذكر الله\nدائمًا';
+  String get onboarding3Title => 'اذكر\nالله دائماً';
 
   @override
   String get onboarding3Subtitle =>
-      'قلب يذكر الله يجد السلام في كل نفَس. تتبع ذكرك اليومي ودع كل حبة تُحتسب.';
+      'القلب الذي يذكر الله يجد السلام مع كل نفس. تتبع أذكارك اليومية واجعل لكل تسبيحة أثراً.';
 
   @override
-  String get onboarding4Title => 'تأمل\nوانمُ يوميًا';
+  String get onboarding4Title => 'تأمل و\nتزود يومياً';
 
   @override
   String get onboarding4Subtitle =>
-      'القرآن هدى للناس جميعًا. افتح الآيات والأدعية اليومية والتأملات المصممة لرحلتك.';
+      'القرآن هدى للناس. اكتشف آيات، وأدعية، وتأملات يومية تناسب رحلتك.';
 
   @override
-  String get onboarding5Title => 'تصدق\nواكسب البركات';
+  String get onboarding5Title => 'أعطِ و\nاكتسب الحسنات';
 
   @override
   String get onboarding5Subtitle =>
-      'الصدقة تطفئ الخطيئة كما يطفئ الماء النار. اكسب ثوابًا على كل عمل خيري ولطف.';
+      'الصدقة تطفئ الخطيئة كما يطفئ الماء النار. اكسب الأجر مع كل عمل خيري وإحسان.';
 
   @override
   String welcomeUser(String name) {
-    return 'مرحبًا، $name 🌙';
+    return 'مرحباً، $name 🌙';
   }
 
   @override
   String get gatesOfNoor => 'أبواب النور مفتوحة.\nرحلتك الروحية تبدأ اليوم.';
 
   @override
-  String get earnNoorPoints => 'اكسب البذور';
+  String get earnNoorPoints => 'اكسب SABIQ SEEDS';
 
   @override
   String get yourProgress => 'تقدمك';
 
   @override
-  String get yourTotalNoorPoints => 'إجمالي بذورك';
+  String get yourTotalNoorPoints => 'إجمالي Sabiq Seeds';
 
   @override
   String get achievements => 'الإنجازات';
@@ -174,10 +174,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get thisMonth => 'هذا الشهر';
 
   @override
-  String get streaks => 'السلاسل';
+  String get streaks => 'الاستمرارية';
 
   @override
-  String get noorPoints => 'بذور';
+  String get noorPoints => 'Sabiq Seeds';
 
   @override
   String get readQuran => 'اقرأ القرآن';
@@ -195,7 +195,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get yourContribution => 'مساهمتك';
 
   @override
-  String get yourReferralCode => 'رمز الإحالة';
+  String get yourReferralCode => 'كود الدعوة الخاص بك';
 
   @override
   String get copyLink => 'نسخ الرابط';
@@ -204,16 +204,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get shareVia => 'مشاركة عبر';
 
   @override
-  String get friendGets => 'يحصل الصديق';
+  String get friendGets => 'يحصل الصديق على';
 
   @override
-  String get youGet => 'تحصل أنت';
+  String get youGet => 'أنت تحصل على';
 
   @override
   String get goal => 'الهدف';
 
   @override
-  String get needed => 'مطلوب';
+  String get needed => 'المطلوب';
 
   @override
   String get instant => 'فوري';
@@ -231,7 +231,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancel => 'إلغاء';
 
   @override
-  String get loading => 'جار التحميل...';
+  String get loading => 'جاري التحميل...';
 
   @override
   String get error => 'خطأ';
@@ -273,23 +273,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noData => 'لا توجد بيانات بعد';
 
   @override
-  String get callYou => 'ماذا ينبغي أن\\nنناديك؟';
+  String get callYou => 'بماذا نناديك؟';
 
   @override
-  String get personaliseJourney => 'قم بتخصيص رحلتك الروحية باسمك';
+  String get personaliseJourney => 'أضف طابعاً شخصياً لرحلتك بكتابة اسمك';
 
   @override
-  String get whereFrom => 'من أين\\nأنت؟';
+  String get whereFrom => 'من أين\nأنت؟';
 
   @override
-  String get joinMuslims =>
-      'انضم إلى المسلمين من جميع أنحاء العالم في هذه الرحلة';
+  String get joinMuslims => 'انضم للمسلمين من جميع أنحاء العالم في هذه الرحلة';
 
   @override
-  String get whatBringsYou => 'ما الذي\\nأتى بك إلى هنا؟';
+  String get whatBringsYou => 'ما الذي\nأتى بك إلى هنا؟';
 
   @override
-  String get chooseGoals => 'اختر أهدافك الروحية, يمكنك اختيار أكثر من هدف';
+  String get chooseGoals => 'اختر أهدافك الروحية، يمكنك اختيار أكثر من واحد';
 
   @override
   String get navHome => 'الرئيسية';
@@ -304,28 +303,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navProfile => 'الملف الشخصي';
 
   @override
-  String get communityLeaderboard => 'لوحة صدارة المجتمع';
+  String get communityLeaderboard => 'لوحة الصدارة للمجتمع';
 
   @override
-  String get topContributors => 'أعلى المساهمين بالبذور التراكمية';
+  String get topContributors => 'أفضل المساهمين بـ Seeds طوال الوقت';
 
   @override
   String get myProfile => 'ملفي الشخصي';
 
   @override
-  String get startStreak => 'ابدأ سلسلتك اليوم!';
+  String get startStreak => 'ابدأ استمراريتك اليوم!';
 
   @override
-  String get alreadySealed => 'تم الختم اليوم بالفعل';
+  String get alreadySealed => 'مكتمل لليوم';
 
   @override
-  String get sealTheDay => 'اختم اليوم';
+  String get sealTheDay => 'احفظ اليوم';
 
   @override
   String get alhamdulillah => 'الحمد لله!';
 
   @override
-  String get levelSeeker => 'طالب';
+  String get levelSeeker => 'باحث';
 
   @override
   String get levelBeliever => 'مؤمن';
@@ -364,7 +363,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get versesToday => 'آيات اليوم';
 
   @override
-  String get resumeReading => 'استئناف القراءة';
+  String get resumeReading => 'مواصلة القراءة';
 
   @override
   String get continueReading => 'مواصلة القراءة';
@@ -382,7 +381,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get browse => 'تصفح';
 
   @override
-  String get listen => 'استمع';
+  String get listen => 'استماع';
 
   @override
   String get tafsir => 'تفسير';
@@ -391,13 +390,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wordByWord => 'كلمة بكلمة';
 
   @override
-  String get mushaf => 'مصحف';
+  String get mushaf => 'المصحف';
 
   @override
   String get otherCategories => 'فئات أخرى';
 
   @override
-  String get noCategoriesAvailable => 'لا توجد فئات';
+  String get noCategoriesAvailable => 'لا توجد فئات متاحة';
 
   @override
   String get nextPts => 'التالي';
@@ -409,40 +408,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reciteMore => 'اقرأ المزيد.';
 
   @override
-  String get helpRealLives => 'ساعد أرواحاً حقيقية.';
+  String get helpRealLives => 'ساعد حيوات حقيقية.';
 
   @override
-  String get yourNoorPointsFundProjects => 'بذورك تموّل هذه المشاريع';
+  String get yourNoorPointsFundProjects =>
+      'الـ Sabiq Seeds الخاصة بك تمول هذه المشاريع';
 
   @override
-  String get youBothEarnPoints => 'تكسبان كلاكما 500 بذرة!';
+  String get youBothEarnPoints => 'كلاكما يربح 500 Sabiq Seeds!';
 
   @override
   String get reward => 'المكافأة';
 
   @override
-  String get haveInviteCode => 'هل لديك رمز دعوة؟';
+  String get haveInviteCode => 'هل لديك كود دعوة؟';
 
   @override
-  String get enterCode => 'أدخل الرمز…';
+  String get enterCode => 'أدخل الكود...';
 
   @override
   String get apply => 'تطبيق';
 
   @override
-  String get plantGoodDeeds => 'ازرع أعمالاً صالحة';
+  String get plantGoodDeeds => 'ازرع الأعمال الصالحة';
 
   @override
   String get youDonated => 'لقد تبرعت';
 
   @override
-  String get seeDetailsForMore => 'شاهد التفاصيل لمزيد من المشاريع ←';
+  String get seeDetailsForMore => 'شاهد التفاصيل للمزيد من المشاريع ←';
 
   @override
-  String get pts => 'بذور';
+  String get pts => 'Seeds';
 
   @override
-  String get funded => 'ممول';
+  String get funded => 'مُمول';
 
   @override
   String bySponsor(String sponsor) {
@@ -453,7 +453,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewCampaignDonate => 'عرض الحملة والتبرع';
 
   @override
-  String get supportThisCause => 'ادعم هذه القضية';
+  String get supportThisCause => 'ادعم هذه الحملة';
 
   @override
   String get availableBalance => 'الرصيد المتاح:';
@@ -462,48 +462,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get donationAmount => 'مبلغ التبرع';
 
   @override
-  String get points => 'بذور';
+  String get points => 'Seeds';
 
   @override
-  String get donateEarnReward => 'تبرع واكسب مكافأة';
+  String get donateEarnReward => 'تبرع واكسب الأجر';
 
   @override
-  String get max => 'الأقصى';
+  String get max => 'الحد الأقصى';
 
   @override
   String get leaderboard => 'لوحة الصدارة';
 
   @override
-  String get loadingDots => 'جار التحميل…';
+  String get loadingDots => 'جاري التحميل...';
 
   @override
   String yourRank(String rank) {
-    return 'ترتيبك: #$rank';
+    return 'رتبتك: #$rank';
   }
 
   @override
   String get outOf => 'من أصل';
 
   @override
-  String get believers => 'مؤمنين';
+  String get believers => 'المؤمنون';
 
   @override
   String get topTenContributors => 'أفضل 10 مساهمين';
 
   @override
-  String get ourCauses => 'قضايانا';
+  String get ourCauses => 'مشاريعنا';
 
   @override
-  String get donatePointsToSupport => 'تبرّع ببذورك لدعم مشاريع حقيقية';
+  String get donatePointsToSupport =>
+      'تبرع بـ Sabiq Seeds لدعم مشاريع في العالم الحقيقي';
 
   @override
-  String get noActiveProjects => 'لا توجد مشاريع نشطة حاليًا';
+  String get noActiveProjects => 'لا توجد مشاريع نشطة حالياً';
 
   @override
-  String get checkBackSoon => 'تحقق لاحقًا إن شاء الله';
+  String get checkBackSoon => 'عُد قريباً إن شاء الله';
 
   @override
-  String get messageCopied => 'تم نسخ الرسالة, شاركها أو الصقها في واتساب!';
+  String get messageCopied => 'تم نسخ الرسالة، شاركها أو ألصقها في واتساب!';
 
   @override
   String get lvl => 'مستوى';
@@ -512,7 +513,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get journey => 'الرحلة';
 
   @override
-  String get tabStreaks => 'السلاسل';
+  String get tabStreaks => 'الاستمرارية';
 
   @override
   String get tabProgress => 'التقدم';
@@ -524,26 +525,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tabChallenges => 'التحديات';
 
   @override
-  String get allTime => 'كل الأوقات';
+  String get allTime => 'كل الوقت';
 
   @override
   String ptsToLevel(String pts, String level) {
-    return '$pts بذرة للوصول للمستوى $level';
+    return '$pts Seeds للوصول للمستوى $level';
   }
 
   @override
   String dayStreak(String count) {
-    return 'سلسلة $count يوم';
+    return 'استمرارية $count أيام';
   }
 
   @override
-  String get actions => 'إجراءات';
+  String get actions => 'أعمال';
 
   @override
-  String get action => 'إجراء';
+  String get action => 'عمل';
 
   @override
-  String get breakdown => 'التفصيل';
+  String get breakdown => 'التفاصيل';
 
   @override
   String get activityLog => 'سجل النشاط';
@@ -563,26 +564,25 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get startEarningPts =>
-      'ابدأ بكسب البذور، اقرأ القرآن، اذكر الله وادعُ.';
+  String get startEarningPts => 'ابدأ بكسب الـ Seeds، اقرأ القرآن، واذكر الله.';
 
   @override
-  String get howToEarnPts => 'كيفية كسب البذور';
+  String get howToEarnPts => 'كيف تكسب Seeds';
 
   @override
   String get readOneAyah => 'اقرأ آية واحدة';
 
   @override
-  String get completeOneJuz => 'أكمل جزءًا واحدًا';
+  String get completeOneJuz => 'أكمل جزءاً واحداً';
 
   @override
-  String get validateAndSupport => 'صادق وادعم';
+  String get validateAndSupport => 'احفظ وادعم';
 
   @override
-  String get levelTiers => 'مستويات الرتب';
+  String get levelTiers => 'درجات المستويات';
 
   @override
-  String get basicFeatures => 'ميزات أساسية';
+  String get basicFeatures => 'الميزات الأساسية';
 
   @override
   String get customProfileThemes => 'سمات ملف شخصي مخصصة';
@@ -594,7 +594,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exclusiveVotingRights => 'حقوق تصويت حصرية';
 
   @override
-  String get hallOfFameListing => 'الإدراج في قاعة الشهرة';
+  String get hallOfFameListing => 'قائمة لوحة الشرف';
 
   @override
   String unlocks(String feature) {
@@ -605,93 +605,94 @@ class AppLocalizationsAr extends AppLocalizations {
   String get now => 'الآن';
 
   @override
-  String get trophyVault => 'خزنة الجوائز';
+  String get trophyVault => 'خزينة الجوائز';
 
   @override
   String badgesCollected(String earned, String total) {
-    return '$earned / $total شارة مجمّعة';
+    return 'جُمعت $earned / $total شارة';
   }
 
   @override
   String percentComplete(String pct) {
-    return '$pct% مكتمل';
+    return 'اكتمل $pct%';
   }
 
   @override
   String toUnlock(String count) {
-    return '$count للفتح';
+    return 'متبقي $count للفتح';
   }
 
   @override
-  String get earned => 'مكتسبة';
+  String get earned => 'المكتسبة';
 
   @override
-  String get locked => 'مقفلة';
+  String get locked => 'مُقفل';
 
   @override
-  String get seasonalEvents => 'أحداث موسمية';
+  String get seasonalEvents => 'الفعاليات الموسمية';
 
   @override
   String get weeklyChallenges => 'تحديات أسبوعية';
 
   @override
-  String get specialEvents => 'أحداث خاصة';
+  String get specialEvents => 'فعاليات خاصة';
 
   @override
-  String get noActiveChallenges => 'لا توجد تحديات نشطة حاليًا';
+  String get noActiveChallenges => 'لا توجد تحديات نشطة حالياً';
 
   @override
-  String get checkBackChallenges => 'تحقق لاحقًا, أحداث رمضان وذو الحجة قادمة!';
+  String get checkBackChallenges =>
+      'عُد قريباً، فعاليات رمضان وذي الحجة قادمة!';
 
   @override
   String get ramadanChallenge => 'تحدي رمضان';
 
   @override
   String get ramadanChallengeDesc =>
-      'مضاعفة النقاط 3× • شارات خاصة • هدف آبار المجتمع';
+      'مضاعفة الـ Seeds ×3 • شارات خاصة • هدف آبار المجتمع';
 
   @override
-  String get comingSoonStayConsistent => 'قريبًا, حافظ على الاستمرارية!';
+  String get comingSoonStayConsistent => 'قريباً، حافظ على استمراريتك!';
 
   @override
   String get done => 'تم!';
 
   @override
   String ptsBoost(String multiplier) {
-    return '$multiplier× مضاعفة البذور';
+    return 'مضاعفة Seeds ×$multiplier';
   }
 
   @override
   String ends(String date) {
-    return 'ينتهي $date';
+    return 'ينتهي في $date';
   }
 
   @override
-  String get loadingStreaks => 'جار تحميل السلاسل…';
+  String get loadingStreaks => 'جاري تحميل الاستمرارية...';
 
   @override
-  String get centurion => 'المئوي, ما شاء الله!';
+  String get centurion => 'المئوية، ما شاء الله!';
 
   @override
-  String get currentBestStreak => 'أفضل سلسلة حالية';
+  String get currentBestStreak => 'أفضل سلسلة استمرارية حالية';
 
   @override
-  String get last7Days => 'آخر ٧ أيام';
+  String get last7Days => 'آخر 7 أيام';
 
   @override
-  String get nextMilestone => 'الإنجاز التالي';
+  String get nextMilestone => 'الإنجاز القادم';
 
   @override
-  String get allMilestones => 'جميع الإنجازات';
+  String get allMilestones => 'كل الإنجازات';
 
   @override
   String moreDaysToGo(String count) {
-    return 'تبقى $count يوم، استمر!';
+    return 'بقي $count أيام، استمر!';
   }
 
   @override
   String dayStreakLabel(String count) {
-    return 'سلسلة $count يوم';
+    return 'استمرارية $count أيام';
   }
 
   @override
@@ -700,10 +701,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get dhikarAndDua => 'ذكر ودعاء';
+  String get dhikarAndDua => 'الذكر والدعاء';
 
   @override
-  String get listenTafsir => 'استمع للتفسير';
+  String get listenTafsir => 'استماع للتفسير';
 
   @override
   String get challenge => 'تحدي';
@@ -715,18 +716,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deepUnderstanding => 'فهم عميق للقرآن الكريم';
 
   @override
-  String get earnPointsTafsir =>
-      'اكسب بذورًا عن كل 10 دقائق من الاستماع للتفسير';
+  String get earnPointsTafsir => 'اكسب Seeds لكل 10 دقائق من استماع التفسير';
 
   @override
   String get featuredSurahs => 'سور مميزة';
 
   @override
-  String get browseAll114 => 'تصفح جميع السور الـ 114';
+  String get browseAll114 => 'تصفح 114 سورة';
 
   @override
   String verses(String count) {
-    return '$count آية';
+    return '$count آيات';
   }
 
   @override
@@ -741,10 +741,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get translation => 'الترجمة';
 
   @override
-  String get loadingTafsir => 'جار تحميل التفسير...';
+  String get loadingTafsir => 'جاري تحميل التفسير...';
 
   @override
-  String get tafsirNotAvailable => 'التفسير غير متاح لهذه الآية.';
+  String get tafsirNotAvailable => 'التفسير غير متوفر لهذه الآية.';
 
   @override
   String get arabicScripture => 'النص العربي';
@@ -753,7 +753,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get urduScripture => 'النص الأردي';
 
   @override
-  String get englishCommentary => 'الشرح الإنجليزي';
+  String get englishCommentary => 'التفسير بالإنجليزية';
 
   @override
   String get previous => 'السابق';
@@ -803,7 +803,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get audioUnavailable => 'الصوت غير متاح, تحقق من اتصال الإنترنت.';
+  String get audioUnavailable => 'الصوت غير متوفر، تحقق من الاتصال بالإنترنت.';
 
   @override
   String get signInToSaveFavourites => 'سجل الدخول لحفظ المفضلة';
@@ -818,19 +818,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appearance => 'المظهر';
 
   @override
-  String get appearanceLabel => 'مظهر';
+  String get appearanceLabel => 'المظهر';
 
   @override
-  String get freezeIllustration => 'تجميد التوضيح';
+  String get freezeIllustration => 'تجميد الرسمة';
 
   @override
-  String get comfortableNightReading => 'قراءة مريحة في الليل';
+  String get comfortableNightReading => 'قراءة ليلية مريحة';
 
   @override
-  String get focusMode => 'وضع التركيز (شاشة كاملة)';
+  String get focusMode => 'وضع التركيز (ملء الشاشة)';
 
   @override
-  String get focusModeDesc => 'إخفاء شريط التطبيق والتنقل لقراءة بلا تشتيت';
+  String get focusModeDesc =>
+      'إخفاء الشريط العلوي والتنقل لقراءة خالية من التشتت';
 
   @override
   String get textSize => 'حجم النص';
@@ -845,10 +846,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get themeColour => 'لون السمة';
 
   @override
-  String get quranScript => 'خط القرآن';
+  String get quranScript => 'رسم المصحف';
 
   @override
-  String get quranScriptLabel => 'خط القرآن';
+  String get quranScriptLabel => 'رسم المصحف';
 
   @override
   String get readingLayout => 'تخطيط القراءة';
@@ -863,25 +864,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get showDailyProgress => 'إظهار التقدم اليومي';
 
   @override
-  String get progressBarAyahCount => 'شريط التقدم وعدد الآيات';
+  String get progressBarAyahCount => 'شريط التقدم وعداد الآيات';
 
   @override
-  String get showPointsBanner => 'إظهار شريط البذور';
+  String get showPointsBanner => 'إظهار لافتة الـ Seeds';
 
   @override
-  String get noorPointsNotificationStrip => '+شريط إشعار البذور';
+  String get noorPointsNotificationStrip => 'شريط إشعارات +Sabiq Seeds';
 
   @override
-  String get showSurahHeader => 'إظهار عنوان السورة';
+  String get showSurahHeader => 'إظهار ترويسة السورة';
 
   @override
-  String get surahNameBanner => 'شريط اسم السورة في أعلى الصفحة';
+  String get surahNameBanner => 'لافتة اسم السورة أعلى الصفحة';
 
   @override
   String get audioPlayback => 'الصوت والتشغيل';
 
   @override
-  String get autoAdvance => 'التقدم التلقائي';
+  String get autoAdvance => 'انتقال تلقائي';
 
   @override
   String get moveToNextVerse => 'الانتقال للآية التالية عند انتهاء الصوت';
@@ -890,7 +891,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get repeatCurrentVerse => 'تكرار الآية الحالية';
 
   @override
-  String get loopAyahAudio => 'تكرار صوت هذه الآية باستمرار';
+  String get loopAyahAudio => 'تكرار صوت هذه الآية';
 
   @override
   String get notificationsAlerts => 'الإشعارات والتنبيهات';
@@ -899,13 +900,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dailyReadingReminder => 'تذكير القراءة اليومية';
 
   @override
-  String get pushReminderReadQuran => 'تذكير يومي بقراءة القرآن';
+  String get pushReminderReadQuran => 'إرسال إشعار تذكير بقراءة القرآن يومياً';
 
   @override
-  String get milestoneSoundAlerts => 'تنبيهات صوتية للمعالم';
+  String get milestoneSoundAlerts => 'تنبيهات صوتية للإنجازات';
 
   @override
-  String get chimeAtMilestones => 'رنين عند الوصول إلى 10 أو 25 أو 50 آية';
+  String get chimeAtMilestones => 'أصدر صوتاً عند الوصول إلى 10، 25، 50 آية';
 
   @override
   String get advanced => 'متقدم';
@@ -921,24 +922,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String translationsAvailable(String count) {
-    return '$count ترجمة متاحة';
+    return '$count ترجمات متاحة';
   }
 
   @override
   String get reciterLabel => 'القارئ:';
 
   @override
-  String get playing => 'قيد التشغيل';
+  String get playing => 'جاري التشغيل';
 
   @override
-  String get favourite => 'المفضلة';
+  String get favourite => 'مفضل';
 
   @override
   String get bookmark => 'إشارة مرجعية';
 
   @override
   String ayahsRead(String count) {
-    return '$count آية مقروءة';
+    return 'قُرأت $count آية';
   }
 
   @override
@@ -969,22 +970,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get off => 'إيقاف';
 
   @override
-  String get splitView => 'عرض مقسم';
+  String get splitView => 'عرض منقسم';
 
   @override
-  String get script => 'الخط';
+  String get script => 'الرسم';
 
   @override
-  String get actionsLabel => 'الإجراءات';
+  String get actionsLabel => 'الأعمال';
 
   @override
   String get pageBookmarked => 'تم حفظ الصفحة!';
 
   @override
-  String get loadingQuran => 'جار تحميل القرآن…';
+  String get loadingQuran => 'جاري تحميل القرآن...';
 
   @override
-  String get earnPointsPerVerse => 'اكسب +10 بذور لكل آية تقرأها';
+  String get earnPointsPerVerse => 'اكسب +10 Sabiq Seeds لكل آية تقرؤها';
 
   @override
   String get chooseSurah => 'اختر السورة';
@@ -994,7 +995,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String surahHasVerses(String surah, String count) {
-    return 'سورة $surah بها $count آية';
+    return '$surah بها $count آيات';
   }
 
   @override
@@ -1005,32 +1006,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String saved(String count) {
-    return '$count محفوظ';
+    return 'تم حفظ $count';
   }
 
   @override
   String noSavedYet(String title) {
-    return 'لا يوجد $title بعد';
+    return 'لم يتم حفظ $title بعد';
   }
 
   @override
   String get tapToSaveVerses =>
-      'اضغط على أيقونة القلب/الإشارة المرجعية أثناء القراءة لحفظ الآيات.';
+      'انقر على أيقونة القلب/الإشارة أثناء القراءة لحفظ الآيات.';
 
   @override
   String get randomVerse => 'آية عشوائية';
 
   @override
-  String get sunnahFriday => 'سنة الجمعة';
+  String get sunnahFriday => 'سنن الجمعة';
 
   @override
-  String get resume => 'استئناف';
+  String get resume => 'متابعة';
 
   @override
-  String get loadingWordTranslations => 'جارٍ تحميل ترجمات الكلمات…';
+  String get loadingWordTranslations => 'جاري تحميل ترجمة الكلمات...';
 
   @override
-  String get wordDataUnavailable => 'بيانات الكلمات غير متاحة. تحقق من اتصالك.';
+  String get wordDataUnavailable =>
+      'بيانات الكلمات غير متوفرة. تحقق من الاتصال بالإنترنت.';
 
   @override
   String get duaAzkarSettings => 'إعدادات الدعاء والأذكار';
@@ -1039,26 +1041,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get showTransliteration => 'إظهار النطق';
 
   @override
-  String get showIllustration => 'إظهار الرسم التوضيحي';
+  String get showIllustration => 'إظهار الرسمة';
 
   @override
-  String get hideIllustrationArea => 'إخفاء منطقة الرسم الفني';
+  String get hideIllustrationArea => 'إخفاء منطقة الرسوم الفنية';
 
   @override
   String get arabicFontStyle => 'نمط الخط العربي';
 
   @override
-  String get dailyAzkarComplete => 'اكتملت أذكار اليوم!';
+  String get dailyAzkarComplete => 'اكتملت الأذكار اليومية!';
 
   @override
   String get dailyAzkarBonusMsg =>
-      'ما شاء الله! لقد تابعت أذكارك اليومية وكسبت +50 نقطة Sabiq Seeds إضافية.';
+      'ما شاء الله! تتبعت أذكارك اليومية وكسبت +50 Sabiq Seeds كمنحة.';
 
   @override
   String get awesome => 'رائع';
 
   @override
-  String get betweenSubhSunrise => 'بين الصبح والشروق';
+  String get betweenSubhSunrise => 'بين الفجر وشروق الشمس';
 
   @override
   String get betweenAsrMaghrib => 'بين العصر والمغرب';
@@ -1073,10 +1075,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get afterEachPrayer => 'بعد كل صلاة';
 
   @override
-  String get anytimeEspeciallyAfterPrayer => 'في أي وقت, خاصة بعد الصلاة';
+  String get anytimeEspeciallyAfterPrayer => 'في أي وقت، خاصة بعد الصلاة';
 
   @override
-  String get anytimeMorningEvening => 'في أي وقت, صباحًا ومساءً';
+  String get anytimeMorningEvening => 'في أي وقت، صباحاً ومساءً';
 
   @override
   String get duringTheNight => 'أثناء الليل';
@@ -1091,7 +1093,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whenEatingDrinking => 'عند الأكل أو الشرب';
 
   @override
-  String get enteringLeavingHome => 'عند دخول / مغادرة المنزل';
+  String get enteringLeavingHome => 'عند الدخول / الخروج من المنزل';
 
   @override
   String get beforeAfterWudu => 'قبل أو بعد الوضوء';
@@ -1100,10 +1102,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whenGettingDressed => 'عند ارتداء الملابس';
 
   @override
-  String get uponBadDream => 'عند رؤية حلم سيء';
+  String get uponBadDream => 'عند رؤية كابوس';
 
   @override
-  String get forUmmahAnytime => 'للأمة, في أي وقت';
+  String get forUmmahAnytime => 'للأمة، في أي وقت';
 
   @override
   String get all => 'الكل';
@@ -1115,16 +1117,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get startNow => 'ابدأ الآن';
 
   @override
-  String get markAsDone => 'تم الإنجاز';
+  String get markAsDone => 'تحديد كمكتمل';
 
   @override
-  String get enterCustomCount => 'أدخل عددًا مخصصًا';
+  String get enterCustomCount => 'أدخل عدداً مخصصاً';
 
   @override
-  String get resetToDefault => 'إعادة التعيين';
+  String get resetToDefault => 'إعادة للوضع الافتراضي';
 
   @override
-  String get noAzkarFound => 'لا توجد أذكار هنا.';
+  String get noAzkarFound => 'لم يتم العثور على أذكار هنا.';
 
   @override
   String get reference => 'المرجع';
@@ -1156,19 +1158,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get salah => 'الصلاة';
 
   @override
-  String get salawat => 'الصلوات';
+  String get salawat => 'الصلاة على النبي';
 
   @override
-  String get sunnahDuas => 'أدعية السنة';
+  String get sunnahDuas => 'الأدعية السنية';
 
   @override
   String get quranicDuas => 'الأدعية القرآنية';
 
   @override
-  String get istighfar => 'الاستغفار';
+  String get istighfar => 'استغفار';
 
   @override
-  String get dhikarAllTimes => 'ذكر لكل الأوقات';
+  String get dhikarAllTimes => 'أذكار كل وقت';
 
   @override
   String get namesOfAllah => 'أسماء الله الحسنى';
@@ -1180,7 +1182,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wakingUp => 'الاستيقاظ';
 
   @override
-  String get clothes => 'الملابس';
+  String get clothes => 'ملابس';
 
   @override
   String get wudu => 'الوضوء';
@@ -1189,16 +1191,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get foodAndDrink => 'الطعام والشراب';
 
   @override
-  String get home => 'المنزل';
+  String get home => 'الرئيسية';
 
   @override
-  String get istikharah => 'الاستخارة';
+  String get istikharah => 'استخارة';
 
   @override
   String get adaanAndMasjid => 'الأذان والمسجد';
 
   @override
-  String get diffAndHappy => 'الشدة والفرح';
+  String get diffAndHappy => 'مختلف وسعيد';
 
   @override
   String get imanProtect => 'حماية الإيمان';
@@ -1219,7 +1221,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nature => 'الطبيعة';
 
   @override
-  String get death => 'الوفاة';
+  String get death => 'الموت';
 
   @override
   String get gatherings => 'المجالس';
@@ -1234,14 +1236,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get akhirahBalance => 'رصيد الآخرة';
 
   @override
-  String get priceless => 'لا يقدر بثمن';
+  String get priceless => 'لا يُقدر بثمن';
 
   @override
-  String get beyondWorldCanHold => 'أكثر مما يسع الدنيا';
+  String get beyondWorldCanHold => 'أعظم مما تتسع له الدنيا';
 
   @override
   String deedsToday(String count) {
-    return '+$count عمل اليوم';
+    return '+$count أعمال اليوم';
   }
 
   @override
@@ -1251,23 +1253,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String bestDayStreak(String count) {
-    return 'الأفضل: سلسلة $count يوم';
+    return 'الأفضل: $count يوم متتالي';
   }
 
   @override
   String get donateMoreEarn => 'تبرع أكثر واكسب';
 
   @override
-  String get yourHoldings => 'ممتلكاتك';
+  String get yourHoldings => 'أرصدتك';
 
   @override
   String get seeAll => 'عرض الكل ←';
 
   @override
-  String get hasanaatEarned => 'حسنات مكتسبة';
+  String get hasanaatEarned => 'الحسنات المكتسبة';
 
   @override
-  String get recordedInBookOfDeeds => 'مسجّل في كتاب أعمالك';
+  String get recordedInBookOfDeeds => 'سُجلت في صحيفة أعمالك';
 
   @override
   String get treesInJannah => 'أشجار في الجنة';
@@ -1276,13 +1278,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fromTasbih => 'من سبحان الله والتسبيح';
 
   @override
-  String get sinsForgiven => 'ذنوب مغفورة';
+  String get sinsForgiven => 'الذنوب المغفورة';
 
   @override
-  String get likeTheFoamOfSea => 'كزبد البحر';
+  String get likeTheFoamOfSea => 'مثل زبد البحر';
 
   @override
-  String get palacesBuilt => 'قصور بُنيت';
+  String get palacesBuilt => 'القصور المبنية';
 
   @override
   String get surahIkhlasAndSunnahs => 'سورة الإخلاص والسنن';
@@ -1291,64 +1293,64 @@ class AppLocalizationsAr extends AppLocalizations {
   String get treasuresOfJannah => 'كنوز الجنة';
 
   @override
-  String get slavesFreedom => 'رقاب أُعتقت';
+  String get slavesFreedom => 'الرقاب المُعتقة';
 
   @override
-  String get equivalentReward => 'ثواب مكافئ مكتسب';
+  String get equivalentReward => 'تم كسب ثواب معادل';
 
   @override
-  String get sadaqahGiven => 'صدقات مقدمة';
+  String get sadaqahGiven => 'الصدقات المعطاة';
 
   @override
-  String get pointsDonatedToCommunity => 'البذور المتبرع بها للمجتمع';
+  String get pointsDonatedToCommunity => 'الـ Seeds المتبرع بها للمجتمع';
 
   @override
-  String get allTimeLabel => 'كل الأوقات';
+  String get allTimeLabel => 'كل الوقت';
 
   @override
   String get worshipActivity => 'نشاط العبادة';
 
   @override
-  String get timeSpentInRemembrance => 'وقت مقضي في الذكر';
+  String get timeSpentInRemembrance => 'الوقت المقضي في الذكر';
 
   @override
-  String get noorPointsSummary => 'ملخص البذور';
+  String get noorPointsSummary => 'ملخص Sabiq Seeds';
 
   @override
-  String get totalPoints => 'إجمالي البذور';
+  String get totalPoints => 'إجمالي الـ Seeds';
 
   @override
   String get title => 'العنوان';
 
   @override
-  String get everyDeedRecorded => 'كل عمل مسجل. واصل!';
+  String get everyDeedRecorded => 'كل عمل مسجل. استمر!';
 
   @override
   String yourAvailable(String pts) {
-    return 'المتاح لديك: $pts بذرة';
+    return 'المتاح لديك: $pts Seeds';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'جزاك الله! تم التبرع بـ $pts بذرة';
+    return 'جزاك الله خيراً! تبرعت بـ $pts Seeds';
   }
 
   @override
-  String get insufficientPoints => 'بذور غير كافية';
+  String get insufficientPoints => 'رصيد Seeds غير كافٍ';
 
   @override
   String donatePoints(String pts) {
-    return 'تبرّع بـ $pts بذرة';
+    return 'تبرع بـ $pts Seeds';
   }
 
   @override
-  String get everyRecitationCanChange => 'كل تلاوة يمكن أن\nتغير حياة';
+  String get everyRecitationCanChange => 'كل تلاوة يمكنها\nتغيير حياة';
 
   @override
   String get fullyFunded => 'ممول بالكامل ✓';
 
   @override
-  String get noPointsAvailable => 'لا توجد بذور متاحة';
+  String get noPointsAvailable => 'لا تتوفر Seeds';
 
   @override
   String get communityProgress => 'تقدم المجتمع';
@@ -1359,7 +1361,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get ptsRaised => 'نقاط تم جمعها';
+  String get ptsRaised => 'نقطة تم جمعها';
 
   @override
   String ofGoal(String goal) {
@@ -1387,7 +1389,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get campaign => 'الحملة';
 
   @override
-  String get noStoryYet => 'لم تُضف قصة بعد.';
+  String get noStoryYet => 'لم يتم إضافة قصة بعد.';
 
   @override
   String get checkAdminPanel => 'تحقق من لوحة الإدارة لإضافة قصة الحملة.';
@@ -1396,7 +1398,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noUpdatesYet => 'لا توجد تحديثات بعد.';
 
   @override
-  String get checkBackForNews => 'تحقق لاحقًا لأخبار الحملة.';
+  String get checkBackForNews => 'عُد قريباً لأخبار الحملة.';
 
   @override
   String get yesterday => 'أمس';
@@ -1410,40 +1412,40 @@ class AppLocalizationsAr extends AppLocalizations {
   String get shareCampaign => 'مشاركة الحملة';
 
   @override
-  String get spreadTheWord => 'انشر الكلمة وساعد هذه القضية في الوصول لهدفها.';
+  String get spreadTheWord => 'انشر الخبر وساعد هذه الحملة على الوصول لهدفها.';
 
   @override
   String get shareViaWhatsApp => 'مشاركة عبر واتساب';
 
   @override
-  String get moreSharingOptions => 'خيارات مشاركة أخرى…';
+  String get moreSharingOptions => 'خيارات مشاركة إضافية...';
 
   @override
-  String get slideToAdjust => 'مرر للتعديل';
+  String get slideToAdjust => 'اسحب للضبط';
 
   @override
   String get balance => 'الرصيد';
 
   @override
-  String get loadingYourReport => 'جار تحميل تقريرك…';
+  String get loadingYourReport => 'جاري تحميل تقريرك...';
 
   @override
-  String get profileUpdated => 'تم تحديث الملف الشخصي ✓';
+  String get profileUpdated => 'تم تحديث الملف ✓';
 
   @override
-  String get couldNotSave => 'تعذر الحفظ, يرجى المحاولة مرة أخرى';
+  String get couldNotSave => 'تعذر الحفظ، يرجى المحاولة مرة أخرى';
 
   @override
   String get photoUpdated => 'تم تحديث الصورة ✓';
 
   @override
-  String get couldNotUploadPhoto => 'تعذر رفع الصورة, يرجى المحاولة مرة أخرى';
+  String get couldNotUploadPhoto => 'تعذر رفع الصورة، يرجى المحاولة مرة أخرى';
 
   @override
-  String get changeProfilePhoto => 'تغيير صورة الملف الشخصي';
+  String get changeProfilePhoto => 'تغيير صورة الملف';
 
   @override
-  String get takeAPhoto => 'التقط صورة';
+  String get takeAPhoto => 'التقاط صورة';
 
   @override
   String get chooseFromLibrary => 'اختر من المكتبة';
@@ -1452,17 +1454,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removePhoto => 'إزالة الصورة';
 
   @override
-  String get photoRemoved => 'تم إزالة الصورة';
+  String get photoRemoved => 'تمت إزالة الصورة';
 
   @override
   String get couldNotRemovePhoto => 'تعذر إزالة الصورة';
 
   @override
-  String get signOutQuestion => 'تسجيل الخروج؟';
+  String get signOutQuestion => 'هل تريد تسجيل الخروج؟';
 
   @override
   String get progressSafelyStored =>
-      'تقدمك محفوظ بأمان. يمكنك تسجيل الدخول مرة أخرى في أي وقت.';
+      'تقدمك محفوظ بأمان. يمكنك تسجيل الدخول في أي وقت.';
 
   @override
   String get accountInformation => 'معلومات الحساب';
@@ -1477,16 +1479,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePhoto => 'صورة الملف الشخصي';
 
   @override
-  String get tapEditToChange => 'اضغط تعديل لتغيير صورتك';
+  String get tapEditToChange => 'انقر على تعديل لتغيير صورتك';
 
   @override
-  String get tapEditToAdd => 'اضغط تعديل لإضافة صورة';
+  String get tapEditToAdd => 'انقر على تعديل لإضافة صورة';
 
   @override
   String get edit => 'تعديل';
 
   @override
-  String get displayName => 'الاسم المعروض';
+  String get displayName => 'اسم العرض';
 
   @override
   String get yourName => 'اسمك';
@@ -1498,16 +1500,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get country => 'البلد';
 
   @override
-  String get countryHint => 'مثال: باكستان، بريطانيا…';
+  String get countryHint => 'مثال: السعودية، مصر...';
 
   @override
   String get notifications => 'الإشعارات';
 
   @override
-  String get notifOnDesc => 'المكافآت، معالم السلسلة، التبرعات والمزيد';
+  String get notifOnDesc => 'المكافآت، إنجازات الاستمرارية، التبرعات والمزيد';
 
   @override
-  String get notifOffDesc => 'مغلقة, لن تُضاف تنبيهات جديدة';
+  String get notifOffDesc => 'مغلق، لن يتم إضافة تنبيهات جديدة';
 
   @override
   String get viewNotificationsInbox => 'عرض صندوق الإشعارات';
@@ -1521,10 +1523,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpCenter => 'مركز المساعدة';
 
   @override
-  String get reportABug => 'الإبلاغ عن خلل';
+  String get reportABug => 'الإبلاغ عن خطأ';
 
   @override
-  String get aboutNoorRewards => 'حول Sabiq Rewards';
+  String get aboutNoorRewards => 'عن Sabiq Rewards';
 
   @override
   String get builtWithLove => 'صُنع بحب للأمة';
@@ -1536,102 +1538,102 @@ class AppLocalizationsAr extends AppLocalizations {
   String get howWeProtectData => 'كيف نحمي بياناتك';
 
   @override
-  String get bugReportBody =>
-      'وجدت خللًا؟ يرجى مراسلتنا وسنصلحه في أقرب وقت ممكن.';
+  String get bugReportBody => 'وجدت خطأ؟ يرجى مراسلتنا وسنصلحه في أقرب وقت.';
 
   @override
   String get aboutBody =>
-      'صُمم بحب لأمة المسلمين حول العالم.\nاكسب البذور ببناء العادات الإسلامية.\nتبرّع بالبذور لدعم مشاريع مجتمعية حقيقية.';
+      'صُنع بحب للأمة الإسلامية.\nاربح Sabiq Seeds ببناء عادات إسلامية.\nتبرع بـ Seeds لدعم مشاريع مجتمعية حقيقية.';
 
   @override
-  String get howToEarnQuestion => 'كيف تكسب البذور؟';
+  String get howToEarnQuestion => 'كيف تكسب Sabiq Seeds؟';
 
   @override
   String get howToEarnAnswer =>
-      'أكمل قراءة القرآن وجلسات الذكر وسجّل دخولك يوميًا لكسب البذور.';
+      'أكمل قراءة القرآن ومجموعات الذكر والدخول اليومي لكسب Seeds.';
 
   @override
-  String get whatIsValidateQuestion => 'ما هو تصديق العملات؟';
+  String get whatIsValidateQuestion => 'ما هو حفظ العملات؟';
 
   @override
   String get whatIsValidateAnswer =>
-      'اضغط زر التصديق في الصفحة الرئيسية مرة واحدة يوميًا لختم عملاتك.';
+      'اضغط على زر حفظ اليوم في الصفحة الرئيسية مرة واحدة يومياً لحفظ عملاتك.';
 
   @override
-  String get howStreaksWorkQuestion => 'كيف تعمل السلاسل؟';
+  String get howStreaksWorkQuestion => 'كيف تعمل الاستمرارية (Streaks)؟';
 
   @override
   String get howStreaksWorkAnswer =>
-      'أكمل أنشطتك اليومية بشكل متتالٍ لبناء سلسلتك.';
+      'أكمل أنشطتك اليومية بشكل متتابع لبناء استمراريتك.';
 
   @override
-  String get canDonatQuestion => 'هل يمكنني التبرع ببذوري؟';
+  String get canDonatQuestion => 'هل يمكنني التبرع بـ Sabiq Seeds؟';
 
   @override
   String get canDonateAnswer =>
-      'نعم! اذهب إلى تبويب الآخرة للتبرع ببذورك لمشاريع المجتمع الفعّالة.';
+      'نعم! زر قسم الآخرة للتبرع بـ Seeds لمشاريع مجتمعية.';
 
   @override
-  String get coinsSealedMashaAllah => 'تم ختم العملات!';
+  String get coinsSealedMashaAllah => 'تم حفظ العملات!';
 
   @override
-  String get rewardedForConsistency => 'لقد كوفئت\nعلى ثباتك اليوم!';
+  String get rewardedForConsistency => 'لقد كوفئت على\nاستمراريتك اليوم!';
 
   @override
-  String get validationPoints => 'نقاط التصديق';
+  String get validationPoints => 'نقاط الحفظ';
 
   @override
   String streakBonus(String days, String type, String points) {
-    return 'مكافأة السلسلة';
+    return 'منحة الاستمرارية';
   }
 
   @override
   String get totalEarned => 'إجمالي المكتسب';
 
   @override
-  String get openQuran => 'افتح القرآن';
+  String get openQuran => 'فتح القرآن';
 
   @override
   String get duaAndAzkaar => 'الدعاء والأذكار';
 
   @override
-  String get shareWithFriends => 'شارك مع الأصدقاء';
+  String get shareWithFriends => 'مشاركة مع الأصدقاء';
 
   @override
-  String get earnMoreNoor => 'اكسب المزيد من البذور';
+  String get earnMoreNoor => 'اكسب المزيد من Seeds';
 
   @override
   String get dontDisturb => 'عدم الإزعاج';
 
   @override
-  String get maybeLater => 'ربما لاحقًا';
+  String get maybeLater => 'ربما لاحقاً';
 
   @override
   String get read5QuranPages => 'اقرأ 5 صفحات من القرآن';
 
   @override
-  String get completeNowBonus => 'أكمل الآن ← اكسب +50 بذرة مكافأة';
+  String get completeNowBonus => 'أكمل الآن → اكسب +50 Seeds كمنحة';
 
   @override
-  String get completeADhikrSet => 'أكمل مجموعة ذكر';
+  String get completeADhikrSet => 'أكمل مجموعة أذكار';
 
   @override
-  String get finishAzkaarBonus => 'أكمل أذكارك ← اكسب +30 بذرة مكافأة';
+  String get finishAzkaarBonus => 'أنهِ أذكارك → اكسب +30 Seeds كمنحة';
 
   @override
-  String get inviteAFriend => 'ادعُ صديقًا';
+  String get inviteAFriend => 'ادعُ صديقاً';
 
   @override
-  String get shareNoorBonus => 'شارك Sabiq مع شخص ← اكسب +100 بذرة';
+  String get shareNoorBonus => 'شارك Sabiq مع شخص ما → اكسب +100 Seeds';
 
   @override
-  String get multiplyYour => 'ضاعِف';
+  String get multiplyYour => 'ضاعف';
 
   @override
-  String get noorPointsBang => 'بذورك!';
+  String get noorPointsBang => 'SABIQ SEEDS!';
 
   @override
-  String get keepMomentum => 'حافظ على زخمك الروحي\nوشاهد بذورك تنمو';
+  String get keepMomentum =>
+      'حافظ على نشاطك الروحي\nوشاهد الـ Seeds الخاصة بك تنمو';
 
   @override
   String get openQuranNow => 'افتح القرآن الآن';
@@ -1649,7 +1651,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get realImpact => 'أثر حقيقي';
 
   @override
-  String get coinsFundCauses => 'البذور تموّل\nالقضايا النبيلة';
+  String get coinsFundCauses => 'الـ Seeds تدعم\nمشاريع خيرية';
 
   @override
   String get unexpectedGoogleError =>
@@ -1662,30 +1664,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authError => 'خطأ في المصادقة';
 
   @override
-  String get ok => 'حسنًا';
+  String get ok => 'حسناً';
 
   @override
   String get verified => 'مُوثق';
 
   @override
-  String get connectedAccount => 'حساب متصل';
+  String get connectedAccount => 'الحساب المتصل';
 
   @override
   String get active => 'نشط';
 
   @override
   String noorPlusPoints(String pts) {
-    return '+$pts بذور سابق';
+    return '+$pts Sabiq Seeds';
   }
 
   @override
-  String get yourGarden => 'حديقتك';
+  String get yourGarden => 'بستانك';
 
   @override
-  String get noorPointsBloomed => 'أزهرت بذور سابق';
+  String get noorPointsBloomed => 'ازدهرت الـ Sabiq Seeds';
 
   @override
-  String get growingStreakTitle => 'سلسلة النمو';
+  String get growingStreakTitle => 'استمرارية متنامية';
 
   @override
   String get daySingular => 'يوم';
@@ -1703,18 +1705,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get weekTab => 'أسبوع';
 
   @override
-  String get monthTab => 'شهر';
+  String get monthTab => 'الشهر';
 
   @override
   String get todayTab => 'اليوم';
 
   @override
   String ofTabGoal(String goal, String tab) {
-    return 'من $goal هدف $tab';
+    return 'من هدف $goal $tab';
   }
 
   @override
-  String get todaysPlots => 'مساحات اليوم';
+  String get todaysPlots => 'مزارع اليوم';
 
   @override
   String setsTodayCount(String count) {
@@ -1726,17 +1728,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String lastAchievement(String name) {
-    return 'الأخير: $name';
+    return 'الآخير: $name';
   }
 
   @override
   String outOfBelievers(String count) {
-    return 'من $count المؤمنين';
+    return 'من بين $count مؤمنين';
   }
 
   @override
   String yourRankNum(String rank) {
-    return 'تصنيفك: #$rank';
+    return 'رتبتك: #$rank';
   }
 
   @override
@@ -1746,7 +1748,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get greetingPrefix => 'السلام عليكم،';
 
   @override
-  String get fundProjectsText => 'نقاط Sabiq Seeds الخاصة بك تمول هذه المشاريع';
+  String get fundProjectsText => 'الـ Sabiq Seeds الخاصة بك تمول هذه المشاريع';
 
   @override
   String activeCount(String count) {
@@ -1754,80 +1756,80 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get seeDetailsForMoreProjects => 'انظر التفاصيل لمزيد من المشاريع →';
+  String get seeDetailsForMoreProjects => 'شاهد التفاصيل للمزيد من المشاريع ←';
 
   @override
-  String get notificationsSubtitle => 'البقاء على رأس المكافآت والمعالم';
+  String get notificationsSubtitle => 'ابق على اطلاع بالمكافآت والإنجازات';
 
   @override
-  String get markAllAsRead => 'وضع علامة على الكل كمقروءة';
+  String get markAllAsRead => 'تحديد الكل كمقروء';
 
   @override
   String get clearAll => 'مسح الكل';
 
   @override
-  String get notificationsOn => 'الإخطارات على';
+  String get notificationsOn => 'الإشعارات مفعلة';
 
   @override
-  String get notificationsOff => 'الإخطارات معطلة';
+  String get notificationsOff => 'الإشعارات مغلقة';
 
   @override
-  String get allCaughtUp => 'جميع المحاصرين';
+  String get allCaughtUp => 'أنت على اطلاع تام';
 
   @override
   String get whenYouEarnRewards =>
-      'عندما تربح مكافآت، أو تحقق سلسلة، أو تفتح شارة،\nسوف تظهر هنا.';
+      'عندما تكسب مكافآت، أو تحقق استمرارية، أو تفتح شارة،\nستظهر هنا.';
 
   @override
   String get justNow => 'الآن';
 
   @override
   String mAgo(String delta) {
-    return 'منذ $deltaد';
+    return 'منذ $delta دقيقة';
   }
 
   @override
   String hAgo(String delta) {
-    return 'منذ $deltaس';
+    return 'منذ $delta ساعة';
   }
 
   @override
   String dAgo(String delta) {
-    return 'منذ $deltaي';
+    return 'منذ $delta يوم';
   }
 
   @override
   String get newBadgeUnlocked => 'تم فتح شارة جديدة';
 
   @override
-  String get daySealed => 'يوم مختوم';
+  String get daySealed => 'اكتمل اليوم';
 
   @override
-  String get dailyLoginBonus => 'مكافأة تسجيل الدخول اليومية';
+  String get dailyLoginBonus => 'منحة الدخول اليومي';
 
   @override
   String get oneWeek => 'أسبوع واحد';
 
   @override
-  String get twoWeeks => 'اسبوعين';
+  String get twoWeeks => 'أسبوعان';
 
   @override
   String badgeEarnedDesc(String badge) {
-    return 'لقد حصلت على الشارة \"$badge\".';
+    return 'لقد ربحت شارة \"$badge\".';
   }
 
   @override
   String pointsForSealing(String points) {
-    return '+$points بذور سابق للختم اليوم.';
+    return '+$points Sabiq Seeds لإكمال مهام اليوم.';
   }
 
   @override
   String welcomeBack(String points) {
-    return '+$points بذور سابق · أهلاً بكم من جديد!';
+    return '+$points Sabiq Seeds · أهلاً بعودتك!';
   }
 
   @override
-  String get onbV2Skip => 'يتخطى';
+  String get onbV2Skip => 'تخطي';
 
   @override
   String get onbV2Next => 'التالي';
@@ -1836,20 +1838,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onbV2_1_TitleA => 'قراءتك للقرآن';
 
   @override
-  String get onbV2_1_TitleB => 'يطعم الجائع.';
+  String get onbV2_1_TitleB => 'تطعم الجائعين.';
 
   @override
-  String get onbV2_1_Sub => 'وجبات حقيقية. أناس حقيقيون. تأثير حقيقي.';
+  String get onbV2_1_Sub => 'وجبات حقيقية. أناس حقيقيون. أثر حقيقي.';
 
   @override
-  String get onbV2_1_Cta => 'كيف يعمل هذا؟';
+  String get onbV2_1_Cta => 'كيف يعمل ذلك؟';
 
   @override
-  String get onbV2_2_Title => 'وإليك كيف.';
+  String get onbV2_2_Title => 'إليك الطريقة.';
 
   @override
   String get onbV2_2_Body =>
-      'اقرأ القرآن أو أذكر الذكر ← اكسب بذور سابق ← قم بتمويل الأسباب الحقيقية.';
+      'اقرأ القرآن أو اذكر الله → اكسب Sabiq Seeds → تبرع لمشاريع حقيقية.';
 
   @override
   String get onbV2_3_TitleA => 'القرآن يكافئك';
@@ -1859,103 +1861,101 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onbV2_3_Sub =>
-      'مرة واحدة على بركة الله. مرة واحدة مع البذور التي تطعم المحتاجين.';
+      'مرة ببركة الله. ومرة بالـ Seeds التي تطعم المحتاجين.';
 
   @override
-  String get onbV2_3_BannerLabel => 'حصل اليوم';
+  String get onbV2_3_BannerLabel => 'كُسب اليوم';
 
   @override
-  String get onbV2_4_TitleA => 'انظر عبادتك';
+  String get onbV2_4_TitleA => 'شاهد عبادتك';
 
   @override
-  String get onbV2_4_TitleB => 'تعال إلى الحياة.';
+  String get onbV2_4_TitleB => 'تصبح حقيقة.';
 
   @override
   String get onbV2_4_Sub =>
-      'تلاوة أذكار الصباح والمساء، وشاهد أجرك يتكشف، الحديث بالحديث.';
+      'اقرأ أذكار الصباح والمساء، وشاهد أجرك ينمو حديثاً بعد حديث.';
 
   @override
   String get onbV2_5_TitleA => 'قراءتك تصل';
 
   @override
-  String get onbV2_5_TitleB => 'هنا.';
+  String get onbV2_5_TitleB => 'إلى هنا.';
 
   @override
-  String get onbV2_5_Sub =>
-      'كل بذرة تكسبها تصبح طعامًا حقيقيًا، وماءً حقيقيًا، وأملًا حقيقيًا.';
+  String get onbV2_5_Sub => 'كل Seed تكسبها تصبح طعاماً وماءً وأملاً حقيقياً.';
 
   @override
-  String get onbV2_6_TitleA => 'ولكن أين';
+  String get onbV2_6_TitleA => 'لكن من أين يأتي';
 
   @override
-  String get onbV2_6_TitleB => 'مال';
+  String get onbV2_6_TitleB => 'المال';
 
   @override
-  String get onbV2_6_TitleC => 'تأتي من؟';
+  String get onbV2_6_TitleC => '؟';
 
   @override
   String get onbV2_6_Sub =>
-      'الجهات المانحة السخية تمول الأسباب. بذورك توجه أين تذهب هديتهم، وتنمو مكافأتهم مع كل قارئ.';
+      'المتبرعون الأسخياء يمولون المشاريع. الـ Seeds الخاصة بك توجه أموالهم إلى حيث يجب أن تذهب، وتزيد من أجرهم مع كل قارئ.';
 
   @override
-  String get onbV2_6_Donor => 'الجهة المانحة';
+  String get onbV2_6_Donor => 'المتبرع';
 
   @override
-  String get onbV2_6_DonorSub => 'يمول القضية';
+  String get onbV2_6_DonorSub => 'يمول الحملة';
 
   @override
   String get onbV2_6_You => 'أنت';
 
   @override
-  String get onbV2_6_YouSub => 'توجيه الهدية';
+  String get onbV2_6_YouSub => 'توجه العطاء';
 
   @override
-  String get onbV2_6_Charity => 'صدقة';
+  String get onbV2_6_Charity => 'الجمعية الخيرية';
 
   @override
-  String get onbV2_6_CharitySub => 'يسلم المساعدات';
+  String get onbV2_6_CharitySub => 'توصيل المساعدات';
 
   @override
-  String get onbV2_6_TrustBadge =>
-      'يتم صرف 100% إلى الشركاء الذين تم التحقق منهم';
+  String get onbV2_6_TrustBadge => 'تُصرف 100% لشركاء موثوقين';
 
   @override
-  String get onbV2_7_TitleA => 'كل عمل هو';
+  String get onbV2_7_TitleA => 'كل عمل';
 
   @override
-  String get onbV2_7_TitleB => 'عد.';
+  String get onbV2_7_TitleB => 'محسوب.';
 
   @override
   String get onbV2_7_Sub =>
-      'انظر حساب الآخرة الذي تبنيه، الأشجار، القصور، النفوس المحررة، المتجذرة في الأحاديث الصحيحة.';
+      'شاهد حساب آخرتك الذي تبنيه: أشجار، قصور، ورقاب مُعتقة، موثقة بالأحاديث الصحيحة.';
 
   @override
-  String get onbV2_8_TitleA => 'لنبدأ مع الخاص بك';
+  String get onbV2_8_TitleA => 'لنبأ باسمك';
 
   @override
-  String get onbV2_8_TitleB => 'اسم.';
+  String get onbV2_8_TitleB => 'أولاً.';
 
   @override
-  String get onbV2_8_Sub => 'لذا فإن سابق يشعر وكأنه ملكك.';
+  String get onbV2_8_Sub => 'ليصبح Sabiq أقرب إليك.';
 
   @override
   String get onbV2_8_Placeholder => 'اسمك';
 
   @override
-  String get onbV2_8_Cta => 'يكمل';
+  String get onbV2_8_Cta => 'متابعة';
 
   @override
-  String get onbV2_9_TitleA => 'السبب الذي يحركك';
+  String get onbV2_9_TitleA => 'أي قضايا الخير تلامس';
 
   @override
-  String get onbV2_9_TitleB => 'معظم؟';
+  String get onbV2_9_TitleB => 'قلبك؟';
 
   @override
   String get onbV2_9_Sub =>
-      'تدعم بذورك جميع القضايا، وهذا يساعدنا فقط على فهم ما يهم مجتمعنا.';
+      'تدعم الـ Seeds الخاصة بك كافة الحملات، هذا فقط يساعدنا على فهم ما يهم مجتمعنا.';
 
   @override
-  String get onbV2_9_Cta => 'يبدأ';
+  String get onbV2_9_Cta => 'ابدأ';
 
   @override
   String get onbV2_9_Orphans => 'الأيتام';
@@ -1967,98 +1967,97 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onbV2_9_Water => 'آبار المياه';
 
   @override
-  String get onbV2_9_WaterSub => 'المياه النظيفة للقرى المحتاجة';
+  String get onbV2_9_WaterSub => 'مياه نظيفة للقرى المحتاجة';
 
   @override
-  String get onbV2_9_War => 'المناطق المتأثرة بالحرب';
+  String get onbV2_9_War => 'مناطق النزاعات';
 
   @override
-  String get onbV2_9_WarSub => 'الإغاثة حيث تشتد الحاجة إليها';
+  String get onbV2_9_WarSub => 'إغاثة أينما دعت الحاجة';
 
   @override
   String get onbV2_9_Disaster => 'الكوارث الطبيعية';
 
   @override
-  String get onbV2_9_DisasterSub => 'الاستجابة السريعة عند حدوث الأزمات';
+  String get onbV2_9_DisasterSub => 'استجابة سريعة عند وقوع الأزمات';
 
   @override
   String get onbV2_3step_Title => 'ثلاث خطوات بسيطة.';
 
   @override
-  String get onbV2_3step_Sub => 'كل آية وكل ذكر يصبح عونًا حقيقيًا.';
+  String get onbV2_3step_Sub => 'كل آية وكل ذكر يصبح عوناً حقيقياً.';
 
   @override
   String get onbV2_3step_S1Label => 'الخطوة 1';
 
   @override
-  String get onbV2_3step_S1Text => 'قراءة القرآن';
+  String get onbV2_3step_S1Text => 'اقرأ القرآن';
 
   @override
   String get onbV2_3step_S2Label => 'الخطوة 2';
 
   @override
-  String get onbV2_3step_S2Text => 'كسب البذور';
+  String get onbV2_3step_S2Text => 'اكسب Seeds';
 
   @override
   String get onbV2_3step_S3Label => 'الخطوة 3';
 
   @override
-  String get onbV2_3step_S3Text => 'إطعام الأيتام';
+  String get onbV2_3step_S3Text => 'أطعم الأيتام';
 
   @override
   String get languageLabel => 'اللغة';
 
   @override
-  String get systemDefault => 'لغة النظام الافتراضية';
+  String get systemDefault => 'الافتراضي للنظام';
 
   @override
-  String get yourStreaksTitle => 'سلاسلك اليومية';
+  String get yourStreaksTitle => 'استمراريتك';
 
   @override
-  String get streakLoading => 'جارٍ تحميل السلاسل…';
+  String get streakLoading => 'جاري تحميل الاستمرارية...';
 
   @override
-  String get startStreakToday => 'ابدأ سلسلتك اليوم!';
+  String get startStreakToday => 'ابدأ استمراريتك اليوم!';
 
   @override
-  String get centurionMashaAllah => 'مئوي، ما شاء الله!';
+  String get centurionMashaAllah => 'المئوية، ما شاء الله!';
 
   @override
-  String get qfConflictTitle => 'الحساب موجود بالفعل';
+  String get qfConflictTitle => 'الحساب موجود مسبقاً';
 
   @override
   String get qfConflictExplanation =>
-      'هذا البريد الإلكتروني مسجل بالفعل في Sabiq Rewards باستخدام طريقة تسجيل دخول مختلفة (بريد إلكتروني أو Google).\n\nلحماية تقدمك الحالي وسلاسلك وSabiq Seeds، يرجى تسجيل الدخول باستخدام طريقتك الأصلية.';
+      'هذا البريد مسجل مسبقاً في Sabiq Rewards بطريقة دخول أخرى (البريد أو Google).\n\nلحماية تقدمك واستمراريتك ورصيد الـ Seeds، يرجى تسجيل الدخول بطريقتك الأصلية.';
 
   @override
-  String get qfConflictStep1 => 'عد إلى شاشة تسجيل الدخول';
+  String get qfConflictStep1 => 'العودة لشاشة تسجيل الدخول';
 
   @override
   String qfConflictStep2(String email) {
-    return 'سجّل الدخول ببريد إلكتروني أو Google باستخدام\n$email';
+    return 'سجل الدخول بالبريد أو Google باستخدام\n$email';
   }
 
   @override
-  String get qfConflictStep3 => 'كل تقدمك سيكون هناك';
+  String get qfConflictStep3 => 'ستجد كل تقدمك محفوظاً';
 
   @override
-  String get qfConflictBackButton => 'العودة إلى تسجيل الدخول';
+  String get qfConflictBackButton => 'العودة لتسجيل الدخول';
 
   @override
-  String get sponsorAnOrphan => 'كفّل يتيمًا';
+  String get sponsorAnOrphan => 'كفالة يتيم';
 
   @override
-  String get noOrphansListed => 'لا توجد أيتام مدرجون بعد';
+  String get noOrphansListed => 'لم يتم إدراج أيتام بعد';
 
   @override
-  String get checkBackForOrphans =>
-      'تحقق قريبًا، تُضاف فرص كفالة جديدة بانتظام.';
+  String get checkBackForOrphans => 'عُد قريباً، تضاف فرص كفالة جديدة بانتظام.';
 
   @override
-  String get orphanVerseTranslation => '«وأمّا اليتيم فلا تقهر»، القرآن ٩٣:٩';
+  String get orphanVerseTranslation => 'فأما اليتيم فلا تقهر.';
 
   @override
-  String get orphanCardOpen => 'مفتوح';
+  String get orphanCardOpen => 'فتح';
 
   @override
   String get doneLabel => 'تم';
@@ -2070,7 +2069,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get yourAkhirahBalance => 'رصيد آخرتك';
 
   @override
-  String get seedsCollectedSinceJoined => 'بذور مجموعة منذ انضمامك';
+  String get seedsCollectedSinceJoined => 'الـ Seeds المجمعة منذ انضمامك';
 
   @override
   String get todayLabel => 'اليوم';
@@ -2084,7 +2083,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get azkaarPerDay => 'أذكار في اليوم';
 
   @override
-  String get viewFullStats => 'عرض الإحصائيات الكاملة';
+  String get viewFullStats => 'عرض الإحصائيات كاملة';
 
   @override
   String get fatherLabel => 'الأب';
@@ -2096,30 +2095,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get siblingsLabel => 'الإخوة';
 
   @override
-  String get familySection => 'العائلة';
+  String get familySection => 'الأسرة';
 
   @override
   String get educationSection => 'التعليم';
 
   @override
-  String get gradeLabel => 'الصف';
+  String get gradeLabel => 'الدرجة';
 
   @override
-  String get schoolLabel => 'المدرسة';
+  String get schoolLabel => 'مدرسة';
 
   @override
-  String get theirStorySection => 'قصته';
+  String get theirStorySection => 'قصتهم';
 
   @override
   String get yourBalanceLabel => 'رصيدك:';
 
   @override
   String sponsorCta(String name) {
-    return 'كفّل $name';
+    return 'اكفل $name';
   }
 
   @override
-  String get notEnoughSeeds => 'بذور غير كافية';
+  String get notEnoughSeeds => 'الـ Seeds غير كافية';
 
   @override
   String get bookmarkSyncDialogTitle => 'مزامنة إشارات Quran.com';
@@ -2128,10 +2127,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get closeLabel => 'إغلاق';
 
   @override
-  String get searchHint => 'بحث…';
+  String get searchHint => 'بحث...';
 
   @override
-  String get enterCodeHint => 'أدخل الرمز…';
+  String get enterCodeHint => 'أدخل الكود...';
 
   @override
   String get searchSurahHint => 'ابحث عن سورة...';
@@ -2140,7 +2139,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customLabel => 'مخصص';
 
   @override
-  String get seedsSuffix => 'بذور';
+  String get seedsSuffix => 'Seeds';
 
   @override
   String get settingsTooltip => 'الإعدادات';
@@ -2153,16 +2152,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String sealWithinHours(int hours) {
-    return 'اختم خلال $hours ساعة';
+    return 'احفظ خلال $hours ساعة';
   }
 
   @override
   String sealWithinMinutes(int minutes) {
-    return 'اختم خلال $minutes دقيقة';
+    return 'احفظ خلال $minutes دقيقة';
   }
 
   @override
-  String get sealNow => 'اختم الآن';
+  String get sealNow => 'احفظ الآن';
 
   @override
   String get goalLabel => 'الهدف';
@@ -2172,15 +2171,15 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count مساهمون',
-      one: 'مساهم واحد',
+      other: '$count مساهمين',
+      one: 'مساهم 1',
     );
     return '$_temp0';
   }
 
   @override
   String dayStreakCount(int streak) {
-    return 'سلسلة $streak يوم 🔥';
+    return 'استمرارية $streak يوم 🔥';
   }
 
   @override
@@ -2188,17 +2187,17 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count بذور معلقة',
-      one: 'بذرة واحدة معلقة',
+      other: '$count Seeds معلقة',
+      one: 'Seed 1 معلق',
     );
     return '$_temp0';
   }
 
   @override
-  String get sealToSave => 'اختم للحفظ';
+  String get sealToSave => 'احفظ لتأمين الرصيد';
 
   @override
-  String get top10Contributors => 'أعلى ١٠ مساهمين';
+  String get top10Contributors => 'أفضل 10 مساهمين';
 
   @override
   String get copyLabel => 'نسخ';
@@ -2210,15 +2209,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whatsappLabel => 'واتساب';
 
   @override
-  String get youBothEarnSeeds => 'كلاكما يكسب ٥٠٠ بذور!';
+  String get youBothEarnSeeds => 'كلاكما يربح 500 Sabiq Seeds!';
 
   @override
   String jazakAllahPlusSeeds(int seeds) {
-    return 'جزاك الله!  +$seeds بذور';
+    return 'جزاك الله خيراً! +$seeds Seeds';
   }
 
   @override
-  String get jazakAllahDaySealed => 'جزاك الله!  تم ختم اليوم';
+  String get jazakAllahDaySealed => 'جزاك الله خيراً! اكتمل اليوم';
 
   @override
   String get pointsGoals => 'أهداف النقاط';
@@ -2237,50 +2236,50 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String setTargetSeeds(int defaultVal) {
-    return 'حدد هدفك من البذور (افتراضي: $defaultVal)';
+    return 'حدد هدف الـ Seeds (الافتراضي: $defaultVal)';
   }
 
   @override
   String get noInternetTitle => 'لا يوجد اتصال بالإنترنت';
 
   @override
-  String get connectingTitle => 'جارٍ الاتصال…';
+  String get connectingTitle => 'جاري الاتصال...';
 
   @override
   String get somethingWentWrongTitle => 'حدث خطأ ما';
 
   @override
   String get noInternetSubtitle =>
-      'هذه الميزة تتطلب الإنترنت.\nتحقق من Wi-Fi أو بيانات الجوال.';
+      'تحتاج هذه الميزة للإنترنت.\nتحقق من اتصالك بالشبكة.';
 
   @override
-  String get connectingSubtitle => 'جارٍ جلب بياناتك…\nانتظر لحظة';
+  String get connectingSubtitle => 'جلب بياناتك...\nيرجى الانتظار قليلاً';
 
   @override
-  String get errorSubtitle => 'حدث خطأ غير متوقع.\nاضغط إعادة المحاولة.';
+  String get errorSubtitle => 'حدث خطأ غير متوقع.\nانقر للمحاولة مرة أخرى.';
 
   @override
   String get tryAgain => 'حاول مرة أخرى';
 
   @override
-  String get everyRecitationCanChangeLife => 'كل تلاوة\nيمكن أن تغير حياة';
+  String get everyRecitationCanChangeLife => 'كل تلاوة يمكنها\nتغيير حياة';
 
   @override
-  String get givenLabel => 'تم التبرع';
+  String get givenLabel => 'المُعطى';
 
   @override
   String get goalUpper => 'الهدف';
 
   @override
-  String get aboutThisCause => 'عن هذه القضية';
+  String get aboutThisCause => 'عن هذه الحملة';
 
   @override
   String myContributionSeeds(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'مساهمتي: $count بذور',
-      one: 'مساهمتي: بذرة واحدة',
+      other: 'مساهمتي: $count Seeds',
+      one: 'مساهمتي: 1 Seed',
     );
     return '$_temp0';
   }
@@ -2290,23 +2289,23 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       amount,
       locale: localeName,
-      other: 'جزاك الله خيراً! تم التبرع بـ $amount بذور.',
-      one: 'جزاك الله خيراً! تم التبرع ببذرة واحدة.',
+      other: 'جزاك الله خيراً! تم التبرع بـ $amount Seeds.',
+      one: 'جزاك الله خيراً! تم التبرع بـ 1 Seed.',
     );
     return '$_temp0';
   }
 
   @override
-  String get coinsSealedTitle => 'تم ختم النقاط! ما شاء الله';
+  String get coinsSealedTitle => 'تم حفظ العملات! ما شاء الله';
 
   @override
-  String get seedsSealedSafe => 'بذورك مختومة وآمنة\nللآخرة.';
+  String get seedsSealedSafe => 'الـ Seeds الخاصة بك محفوظة بأمان\nللآخرة.';
 
   @override
-  String get validationSeedsLabel => 'بذور التحقق';
+  String get validationSeedsLabel => 'Seeds الحفظ';
 
   @override
-  String get streakBonusLabel => 'مكافأة السلسلة';
+  String get streakBonusLabel => 'منحة الاستمرارية';
 
   @override
   String get totalEarnedLabel => 'إجمالي المكتسب';
@@ -2315,16 +2314,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alhamdulillahCta => 'الحمد لله! 🤲';
 
   @override
-  String get openQuranCta => 'افتح القرآن';
+  String get openQuranCta => 'فتح القرآن';
 
   @override
-  String get duaAzkaarCta => 'الأدعية والأذكار';
+  String get duaAzkaarCta => 'الدعاء والأذكار';
 
   @override
-  String get shareWithFriendsCta => 'شارك مع الأصدقاء';
+  String get shareWithFriendsCta => 'مشاركة مع الأصدقاء';
 
   @override
-  String get earnMoreSeedsCta => 'اكسب المزيد من البذور';
+  String get earnMoreSeedsCta => 'اكسب المزيد من Seeds';
 
   @override
   String levelTitleFormat(int level, String title) {
@@ -2336,23 +2335,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String bestDayStreakBadge(int streak) {
-    return 'الأفضل: سلسلة $streak يوم';
+    return 'الأفضل: $streak يوم متتالي';
   }
 
   @override
-  String get deedsLabel => 'أعمال';
+  String get deedsLabel => 'الأعمال';
 
   @override
-  String get treesLabel => 'أشجار';
+  String get treesLabel => 'الأشجار';
 
   @override
-  String get forgivenLabel => 'مغفور';
+  String get forgivenLabel => 'مغفور له';
 
   @override
-  String get navCause => 'العطاء';
+  String get navCause => 'الحملة';
 
   @override
-  String get realChildrenSubtitle => 'أطفال حقيقيون، قصصهم، حياتهم';
+  String get realChildrenSubtitle => 'أطفال حقيقيون، قصصهم وحياتهم';
 
   @override
   String get seeAllAction => 'عرض الكل';
@@ -2361,19 +2360,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get activeCampaigns => 'الحملات النشطة';
 
   @override
-  String get poolSeedsImpact => 'اجمع البذور من أجل أثر دائم';
+  String get poolSeedsImpact => 'اجمع الـ Seeds لأثر يدوم';
 
   @override
-  String get featuredSponsorChild => 'مميز · كفّل طفلاً';
+  String get featuredSponsorChild => 'مميز · اكفل طفلاً';
 
   @override
   String meetOrphanAge(String name, int age) {
-    return 'تعرّف على $name، $age';
+    return 'تعرف على $name، العمر $age';
   }
 
   @override
   String sponsorNameArrow(String name) {
-    return 'كفّل $name ←';
+    return 'اكفل $name ←';
   }
 
   @override
@@ -2384,10 +2383,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get havenNotGivenYet =>
-      'لم تتبرع بعد. اختر شخصاً أعلاه لتبدأ رحلة عطائك.';
+      'لم تتبرع بعد. اختر شخصاً أعلاه لتبدأ رحلة أثرك.';
 
   @override
-  String get seedsDonatedLabel => 'بذور متبرَّع بها';
+  String get seedsDonatedLabel => 'الـ Seeds المتبرع بها';
 
   @override
   String orphanCount(int count) {
@@ -2405,25 +2404,25 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'مشاريع',
-      one: 'مشروع',
+      other: '$count مشاريع',
+      one: 'مشروع 1',
     );
     return '$_temp0';
   }
 
   @override
-  String get couldntLoadJourney => 'تعذّر تحميل رحلتك';
+  String get couldntLoadJourney => 'تعذر تحميل رحلتك';
 
   @override
-  String get checkConnectionRetry => 'تحقق من اتصالك وحاول مرة أخرى.';
+  String get checkConnectionRetry => 'تأكد من الاتصال وحاول مجدداً.';
 
   @override
   String actionsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count إجراءات',
-      one: 'إجراء واحد',
+      other: '$count أعمال',
+      one: 'عمل 1',
     );
     return '$_temp0';
   }
@@ -2435,27 +2434,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hadithReference => 'مرجع الحديث';
 
   @override
-  String get howYouEarnedThis => 'كيف اكتسبت هذا';
+  String get howYouEarnedThis => 'كيف كسبت هذا';
 
   @override
   String seedsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count بذور',
-      one: 'بذرة واحدة',
+      other: '$count Seeds',
+      one: 'Seed 1',
     );
     return '$_temp0';
   }
 
   @override
-  String get seedsUnit => 'بذور';
+  String get seedsUnit => 'Seeds';
 
   @override
-  String get topContribByLifetimeSeeds => 'أعلى المساهمين حسب البذور التراكمية';
+  String get topContribByLifetimeSeeds => 'أفضل المساهمين بـ Seeds طوال الوقت';
 
   @override
-  String get romanisedPronunciation => 'النطق بالحروف اللاتينية تحت كل كلمة';
+  String get romanisedPronunciation => 'نطق بحروف لاتينية تحت كل كلمة';
 
   @override
   String get displayLabel => 'العرض';
@@ -2470,7 +2469,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get englishLanguageLabel => 'الإنجليزية';
 
   @override
-  String get earnPerVerseRead => 'اكسب +١٠ بذور عن كل آية تقرأها';
+  String get earnPerVerseRead => 'اكسب +10 Sabiq Seeds لكل آية تقرؤها';
 
   @override
   String get surahPickerLabel => 'السورة';
@@ -2501,21 +2500,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String surahHasNVerses(String name, int count) {
-    return 'سورة $name تحتوي على $count آية';
+    return '$name بها $count آيات';
   }
 
   @override
   String noXYet(String label) {
-    return 'لا توجد $label بعد';
+    return 'لا يوجد $label بعد';
   }
 
   @override
   String get tapHeartToSave =>
-      'اضغط على أيقونة القلب أو الإشارة أثناء القراءة لحفظ الآيات.';
+      'انقر على أيقونة القلب/الإشارة أثناء القراءة لحفظ الآيات.';
 
   @override
   String surahVerseRow(int surah, int ayah) {
-    return 'سورة $surah  •  الآية $ayah';
+    return 'سورة $surah • آية $ayah';
   }
 
   @override
@@ -2523,65 +2522,65 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String tenPerLetterSubtitle(int count) {
-    return '١٠ لكل حرف، $count لكل آية';
+    return '10 لكل حرف، $count لكل آية';
   }
 
   @override
   String get fromSubhanAllahTasbih => 'من سبحان الله والتسبيح';
 
   @override
-  String get likeFoamOfSea => 'كزَبَد البحر';
+  String get likeFoamOfSea => 'مثل زبد البحر';
 
   @override
   String get fromSurahIkhlasRecitation => 'من تلاوة سورة الإخلاص';
 
   @override
-  String get laHawlaSubtitle => 'لا حول ولا قوة';
+  String get laHawlaSubtitle => 'لا حول ولا قوة إلا بالله';
 
   @override
-  String get equivalentRewardEarned => 'مكافأة معادلة مكتسبة';
+  String get equivalentRewardEarned => 'تم كسب ثواب معادل';
 
   @override
   String get gatesOfParadise => 'أبواب الجنة';
 
   @override
-  String get afterPerfectWudu => 'بعد الوضوء التام';
+  String get afterPerfectWudu => 'بعد إسباغ الوضوء';
 
   @override
-  String get blessingsFromAllah => 'بركات من الله';
+  String get blessingsFromAllah => 'نعم من الله';
 
   @override
-  String get salawatTenReturned => 'صلوات × ١٠ مردودة';
+  String get salawatTenReturned => 'كُتب لك 10 صلوات';
 
   @override
   String get timesProtected => 'مرات الحماية';
 
   @override
-  String get refugeInvokedFromHarm => 'استعاذة من الأذى';
+  String get refugeInvokedFromHarm => 'تمت الاستعاذة من الأذى';
 
   @override
   String get quranCompletions => 'ختمات القرآن';
 
   @override
-  String get viaSurahIkhlas => 'عبر سورة الإخلاص ×٣';
+  String get viaSurahIkhlas => 'بفضل سورة الإخلاص ×3';
 
   @override
   String get bonusHasanaat => 'حسنات إضافية';
 
   @override
-  String get marketplaceDua => 'دعاء السوق';
+  String get marketplaceDua => 'دعاء دخول السوق';
 
   @override
-  String get seedsDonatedToCommunity => 'بذور متبرَّع بها للمجتمع';
+  String get seedsDonatedToCommunity => 'الـ Seeds المتبرع بها للمجتمع';
 
   @override
   String get yourMonth => 'شهرك';
 
   @override
-  String get ayahsReadLabel => 'آيات مقروءة';
+  String get ayahsReadLabel => 'الآيات المقروءة';
 
   @override
-  String get dhikrCount => 'عدد الذكر';
+  String get dhikrCount => 'عدد الأذكار';
 
   @override
   String get quranTime => 'وقت القرآن';
@@ -2590,37 +2589,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dhikrTime => 'وقت الذكر';
 
   @override
-  String get activeDays => 'الأيام النشطة';
+  String get activeDays => 'أيام النشاط';
 
   @override
-  String get treesShortLabel => 'أشجار';
+  String get treesShortLabel => 'الأشجار';
 
   @override
-  String get palacesShortLabel => 'قصور';
+  String get palacesShortLabel => 'القصور';
 
   @override
-  String get freedShortLabel => 'محرَّرون';
+  String get freedShortLabel => 'مُعتق';
 
   @override
-  String get blessingsShortLabel => 'بركات';
+  String get blessingsShortLabel => 'النعم';
 
   @override
-  String get dailyWordPrefix => 'اليومية ';
+  String get dailyWordPrefix => 'يومي ';
 
   @override
   String get essentialsWord => 'الأساسيات';
 
   @override
   String get seedsExpiringNotificationTitle =>
-      'بذور ستنتهي صلاحيتها عند منتصف الليل!';
+      'الـ Seeds ستنتهي صلاحيتها في منتصف الليل!';
 
   @override
   String seedsExpiringNotificationBody(int pending) {
-    return 'لديك $pending بذور معلقة. اختم اليوم الآن وإلا ستنتهي صلاحيتها!';
+    return 'لديك $pending Seeds معلقة. احفظ اليوم الآن وإلا ستنتهي صلاحيتها!';
   }
 
   @override
-  String get okButton => 'موافق';
+  String get okButton => 'حسناً';
 
   @override
   String get signUpTitle => 'إنشاء حساب';
@@ -2646,42 +2645,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signUpSuccessMessage =>
-      'تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني للتأكيد.';
+      'تم التسجيل بنجاح! يرجى التحقق من بريدك لتأكيد الحساب.';
 
   @override
   String get unexpectedAuthError => 'حدث خطأ غير متوقع';
 
   @override
-  String get sawabLabel => 'ثواب';
+  String get sawabLabel => 'الثواب';
 
   @override
-  String get impactLabel => 'أثر';
+  String get impactLabel => 'الأثر';
 
   @override
   String get goodDeedTitle => 'عمل صالح';
 
   @override
-  String get goodDeedSubtitle => 'اكسب ثواباً\nمع كل قراءة';
+  String get goodDeedSubtitle => 'اكسب الثواب\nمع كل قراءة';
 
   @override
   String get realImpactTitle => 'أثر حقيقي';
 
   @override
-  String get realImpactSubtitle => 'العملات تموّل\nقضايا نبيلة';
+  String get realImpactSubtitle => 'العملات تمول\nمشاريع خيرية';
 
   @override
   String plusDeedsTodayBadge(String count) {
-    return '+$count حسنة اليوم';
+    return '+$count أعمال اليوم';
   }
 
   @override
   String equivalentChange(String count) {
-    return '$count ما يعادل';
+    return 'ما يعادل $count';
   }
 
   @override
   String receivedChange(String count) {
-    return '$count مستلمة';
+    return 'تم استلام $count';
   }
 
   @override
@@ -2689,8 +2688,8 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'قرأت $count آيات و$time من تلاوة القرآن اليوم',
-      one: 'قرأت آية واحدة و$time من تلاوة القرآن اليوم',
+      other: 'قُرأت $count آيات و $time من قراءة القرآن اليوم',
+      one: 'قُرأت آية واحدة و $time من قراءة القرآن اليوم',
     );
     return '$_temp0';
   }
@@ -2700,37 +2699,37 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'قرأت $count آيات اليوم',
-      one: 'قرأت آية واحدة اليوم',
+      other: 'قُرأت $count آيات اليوم',
+      one: 'قُرأت آية واحدة اليوم',
     );
     return '$_temp0';
   }
 
   @override
   String spentTimeReadingQuranToday(String time) {
-    return 'قضيت $time في تلاوة القرآن اليوم';
+    return 'قضيت $time في قراءة القرآن اليوم';
   }
 
   @override
-  String get everyDeedRecordedKeepGoing => '🌙  كل عمل مسجَّل. واصل المسير!';
+  String get everyDeedRecordedKeepGoing => '🌙 كل عمل مسجل. استمر!';
 
   @override
   String viewAllDonors(int count) {
-    return 'عرض كل $count متبرعين';
+    return 'عرض جميع المتبرعين الـ $count';
   }
 
   @override
   String nextMilestoneInfo(String label, int days) {
-    return 'التالي: $label ($days يوم)';
+    return 'القادم: $label ($days أيام)';
   }
 
   @override
   String bestN(int n) {
-    return 'الأفضل $n';
+    return 'أفضل $n';
   }
 
   @override
-  String get streakMilestoneWarmingUp => 'بداية النشاط';
+  String get streakMilestoneWarmingUp => 'إحماء';
 
   @override
   String get streakMilestoneOneWeek => 'أسبوع واحد';
@@ -2745,26 +2744,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get streakMilestoneTwoMonths => 'شهران';
 
   @override
-  String get streakMilestoneCenturion => 'المئوي';
+  String get streakMilestoneCenturion => 'المئوية';
 
   @override
-  String get firstTrackedWeek => 'أول أسبوع مسجّل لك — واصل المسير!';
+  String get firstTrackedWeek => 'أول أسبوع لك مسجل — استمر!';
 
   @override
-  String get rightOnSevenDayPace => 'تسير على نفس وتيرة أسبوعك';
+  String get rightOnSevenDayPace => 'أنت تسير على متوسطك لـ 7 أيام';
 
   @override
   String aboveSevenDayAvg(int pct) {
-    return '$pct٪ فوق متوسط أسبوعك';
+    return 'أعلى بنسبة $pct% من متوسطك لـ 7 أيام';
   }
 
   @override
   String belowSevenDayAvg(int pct) {
-    return '$pct٪ تحت متوسط أسبوعك';
+    return 'أقل بنسبة $pct% من متوسطك لـ 7 أيام';
   }
 
   @override
-  String get sponsoredBy => 'كفله';
+  String get sponsoredBy => 'برعاية';
 
   @override
   String currentOverDays(int current, int days) {
@@ -2783,13 +2782,13 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get dayAbbrMon => 'إث';
+  String get dayAbbrMon => 'ن';
 
   @override
   String get dayAbbrTue => 'ث';
 
   @override
-  String get dayAbbrWed => 'أر';
+  String get dayAbbrWed => 'ع';
 
   @override
   String get dayAbbrThu => 'خ';
@@ -2801,7 +2800,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dayAbbrSat => 'س';
 
   @override
-  String get dayAbbrSun => 'أح';
+  String get dayAbbrSun => 'ح';
 
   @override
   String get favoritesCategory => 'المفضلة';
@@ -2822,16 +2821,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get duasBeforeSleep => 'أدعية قبل النوم';
 
   @override
-  String get duasAfterSalah => 'أدعية بعد الصلاة';
+  String get duasAfterSalah => 'أدعية ما بعد الصلاة';
 
   @override
-  String get rabbana40Duas => '٤٠ دعاء ربّنا';
+  String get rabbana40Duas => '40 دعاء من أدعية ربنا';
 
   @override
-  String get thisWorld => 'الدنيا';
+  String get thisWorld => 'هذه الدنيا';
 
   @override
-  String get dunyaArabic => 'دنيا';
+  String get dunyaArabic => 'الدنيا';
 
   @override
   String get hereafter => 'الآخرة';
@@ -2840,7 +2839,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get akhirahArabic => 'الآخرة';
 
   @override
-  String get bookOfCompletePrayer => 'كتاب الدعاء الكامل';
+  String get bookOfCompletePrayer => 'كتاب الصلاة الكاملة';
 
   @override
   String get propheticDuas => 'الأدعية النبوية';
@@ -2852,7 +2851,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get furtherDuas => 'أدعية إضافية';
 
   @override
-  String get closingSalawat => 'أذكار الختام والصلوات';
+  String get closingSalawat => 'أذكار الختام والصلاة على النبي';
 
   @override
   String get hajjAndUmrahCategory => 'أدعية الحج والعمرة';
@@ -2879,71 +2878,71 @@ class AppLocalizationsAr extends AppLocalizations {
   String get secondSingular => 'ثانية';
 
   @override
-  String get secondPlural => 'ثوان';
+  String get secondPlural => 'ثوانٍ';
 
   @override
   String seedsThisSession(String count) {
-    return '+$count بذرة في هذه الجلسة';
+    return '+$count Seeds في هذه الجلسة';
   }
 
   @override
   String sevenDayAvgAzkaar(String count) {
-    return 'متوسط 7 أيام: $count أذكار/يوم';
+    return 'متوسط 7 أيام: $count ذكر/يوم';
   }
 
   @override
   String holdingChangeAyahs(String count) {
-    return '$count آية';
+    return '$count آيات';
   }
 
   @override
   String holdingChangePlanted(String count) {
-    return '$count مزروعة';
+    return 'زُرع $count';
   }
 
   @override
   String holdingChangeCycles(String count) {
-    return '$count دورة';
+    return '$count دورات';
   }
 
   @override
   String holdingChangeBuilt(String count) {
-    return '$count مبنية';
+    return 'بُني $count';
   }
 
   @override
   String holdingChangeEarned(String count) {
-    return '$count مكتسبة';
+    return 'اُكتسب $count';
   }
 
   @override
   String holdingChangeOpened(String count) {
-    return '$count مفتوحة';
+    return 'فُتح $count';
   }
 
   @override
   String holdingChangeInvocations(String count) {
-    return '$count استعاذة';
+    return '$count أدعية';
   }
 
   @override
   String holdingChangeRecitations(String count) {
-    return '$count تلاوة';
+    return '$count تلاوات';
   }
 
   @override
   String bookmarksOnQuranCom(String count) {
-    return 'العلامات على Quran.com: $count';
+    return 'الإشارات في Quran.com:  $count';
   }
 
   @override
   String bookmarksInThisApp(String count) {
-    return 'العلامات في هذا التطبيق: $count';
+    return 'الإشارات في التطبيق:   $count';
   }
 
   @override
   String streakSeedsBonus(String count) {
-    return '+$count بذور';
+    return '+$count Seeds';
   }
 
   @override
@@ -2953,30 +2952,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String unitDuas(String count) {
-    return '$count دعاء';
+    return '$count أدعية';
   }
 
   @override
   String unitAdhkar(String count) {
-    return '$count ذكر';
+    return '$count أذكار';
   }
 
   @override
-  String get moreCollections => 'المزيد من المجموعات';
+  String get moreCollections => 'مجموعات أخرى';
 
   @override
-  String get donateAndEarnReward => 'تبرّع واكسب الثواب';
+  String get donateAndEarnReward => 'تبرع واكسب الأجر';
 
   @override
   String donateAmountSeeds(String amount) {
-    return 'تبرّع بـ $amount بذرة';
+    return 'تبرع بـ $amount Seeds';
   }
 
   @override
   String get readMore => 'اقرأ المزيد';
 
   @override
-  String get beFirstToContribute => 'كن أول من يساهم.';
+  String get beFirstToContribute => 'كن أول المساهمين.';
 
   @override
   String get showFewer => 'عرض أقل ↑';
@@ -2988,24 +2987,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String liveReadersNow(String count) {
-    return '$count متصلون الآن';
+    return '$count متصل الآن';
   }
 
   @override
   String communityReadingToday(String count) {
-    return '$count قرأوا اليوم (المجتمع)';
+    return 'قُرئ $count اليوم (بواسطة المجتمع)';
   }
 
   @override
   String communityHasanatToday(String count) {
-    return '+$count حسنة للمجتمع اليوم';
+    return '+$count حسنات مجتمعية اليوم';
   }
 
   @override
-  String get peopleReadingNow => 'يقرأون الآن';
+  String get peopleReadingNow => 'يقرؤون الآن';
 
   @override
-  String get readToday => 'قرأوا اليوم';
+  String get readToday => 'قُرئ اليوم';
 
   @override
   String get communityHasanat => 'حسنات المجتمع';
@@ -3021,7 +3020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String dashboardScreen_setsToday(String _dhikrToday) {
+  String dashboardScreen_setsToday(String _dhikrToday, Object count) {
     return '$_dhikrToday مجموعات اليوم';
   }
 
@@ -3031,15 +3030,15 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_earnPerFriend => 'اربح +500 لكل صديق';
+  String get dashboardScreen_earnPerFriend => 'اكسب +500 لكل صديق';
 
   @override
   String get dashboardScreen_invalidReferralCode_59fb25 =>
-      'رمز الإحالة غير صالح.';
+      'كود الدعوة غير صالح.';
 
   @override
   String dashboardScreen_52b02c(String pts) {
-    return '$pts';
+    return '$pts ';
   }
 
   @override
@@ -3079,68 +3078,70 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dhikrScreen_blessEverySenseEvery_b81b9b =>
-      'بارك كل حاسة، وكل عضو، وكل عمل';
+      'بارك في كل حاسة، وكل طرف، وكل عمل';
 
   @override
-  String get dhikrScreen_keepTheHeartFirm_9c4efb => 'ثبت القلب بعد الهدى';
+  String get dhikrScreen_keepTheHeartFirm_9c4efb => 'ثبت القلب بعد الهداية';
 
   @override
   String get dhikrScreen_faithAnsweredWithForgiveness_3f30c4 =>
-      'أجاب الإيمان بالمغفرة من النار';
+      'الإيمان يُقابل بالمغفرة من النار';
 
   @override
   String get dhikrScreen_inscribedWithTheWitnesses_e2612d =>
-      'مكتوب مع شهود الحق';
+      'كُتبت مع شهداء الحق';
 
   @override
-  String get dhikrScreen_allahIsTheBest_4f2bf7 => 'والله أحكم بين الصدق والكذب';
+  String get dhikrScreen_allahIsTheBest_4f2bf7 =>
+      'الله خير الحاكمين بين الحق والباطل';
 
   @override
-  String get dhikrScreen_neverTrialForThe_5eb10a => 'أبدا فتنة للكافرين';
+  String get dhikrScreen_neverTrialForThe_5eb10a => 'لا فتنة للكافرين أبداً';
 
   @override
-  String get dhikrScreen_refugeFromEveryEvil_6d2534 => 'أعوذ بك من كل شر يمسك';
+  String get dhikrScreen_refugeFromEveryEvil_6d2534 =>
+      'استعاذة من كل شر يحيق بك';
 
   @override
   String get dhikrScreen_guaranteedJannahIfYou_48d274 =>
-      'وتضمن لك الجنة إذا مت هذه الليلة';
+      'الجنة مضمونة، إن مت هذه الليلة';
 
   @override
   String get dhikrScreen_reciteAtDawnDusk_f17fb8 =>
-      'وقل ثلاث مرات عند الفجر والمغرب تكفيك من جميع النواحي';
+      'اقرأها 3 مرات في الصباح والمساء، تكفيك من كل شيء';
 
   @override
   String get dhikrScreen_nothingShallHarmYou_8c5c6c => 'لن يضرك شيء باسمه';
 
   @override
   String get dhikrScreen_guaranteedJannahIfYou_0ffafe =>
-      'وتضمن لك الجنة إذا مت اليوم';
+      'الجنة مضمونة إن مت اليوم';
 
   @override
   String get dhikrScreen_guardedInYourDeen_4a0b4a =>
-      'تحفظ في دينك · الدنيا · الآخرة، ومن الجهات الستة';
+      'محفوظ في دينك ودنياك وآخرتك، ومن الجهات الست';
 
   @override
-  String get dhikrScreen_guardMeFromAll => 'احرسني من جميع الجهات الستة';
+  String get dhikrScreen_guardMeFromAll => 'احفظني من الجهات الست كلها';
 
   @override
   String dhikrScreen_35c165(String arg1) {
-    return '$arg1';
+    return '$arg1  ';
   }
 
   @override
-  String get dhikrScreen_sinsWashedAway => 'غسلت الخطايا';
+  String get dhikrScreen_sinsWashedAway => 'مُحيت الذنوب';
 
   @override
-  String get dhikrScreen_slavesFreed => 'العبيد المحررين';
+  String get dhikrScreen_slavesFreed => 'عُتقت الرقاب';
 
   @override
   String get dhikrScreen_weHaveBelievedForgive_e958e6 =>
-      'لقد آمنا فاغفر لنا وأنت خير الراحمين';
+      'آمنا فاغفر لنا وأنت خير الراحمين';
 
   @override
   String get dhikrScreen_mashaallahRewardSecured =>
-      'ما شاء الله! المكافأة مضمونة';
+      'ما شاء الله! تم تأمين الأجر';
 
   @override
   String dhikrScreen_a5cfd1(String count) {
@@ -3149,7 +3150,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dhikrScreen_completeToWatchYour =>
-      'اكتمل لمشاهدة حديقتك تزدهر بالأعلى';
+      'أكمل لتشاهد حديقتك تزدهر في الأعلى';
 
   @override
   String impactReportScreen_200447(String arg1) {
@@ -3157,7 +3158,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get impactReportScreen_deedsTODAY => 'الأفعال اليوم';
+  String get impactReportScreen_deedsTODAY => 'أعمال اليوم';
 
   @override
   String impactReportScreen_634027(String arg1) {
@@ -3165,14 +3166,14 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get impactReportScreen_thisWEEK => 'هذا الاسبوع';
+  String get impactReportScreen_thisWEEK => 'هذا الأسبوع';
 
   @override
-  String get impactReportScreen_hasanaatEarned => 'حسنات مكتسبة';
+  String get impactReportScreen_hasanaatEarned => 'الحسنات المكتسبة';
 
   @override
   String impactReportScreen_hasanat_e68a30(String arg1) {
-    return '→ حسنات: $arg1\\n\\n';
+    return '  → الحسنات: $arg1\\n\\n';
   }
 
   @override
@@ -3182,39 +3183,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get impactReportScreen_treesInJannah => 'أشجار في الجنة';
 
   @override
-  String get impactReportScreen_sinsForgiven => 'مغفورة الذنوب';
+  String get impactReportScreen_sinsForgiven => 'الذنوب المغفورة';
 
   @override
-  String get impactReportScreen_palacesBuilt => 'بنيت القصور';
+  String get impactReportScreen_palacesBuilt => 'القصور المبنية';
 
   @override
   String get impactReportScreen_treasuresOfJannah => 'كنوز الجنة';
 
   @override
-  String get impactReportScreen_slavesFreed => 'العبيد المحررين';
+  String get impactReportScreen_slavesFreed => 'الرقاب المُعتقة';
 
   @override
   String impactReportScreen_totalRecitations_262e54(String arg1) {
-    return 'مجموع التلاوات: $arg1\\n';
+    return 'إجمالي التلاوات: $arg1\\n';
   }
 
   @override
-  String get impactReportScreen_gatesOfParadiseOpened => 'فتحت أبواب الجنة';
+  String get impactReportScreen_gatesOfParadiseOpened => 'أبواب الجنة الفُتحت';
 
   @override
   String get impactReportScreen_blessingsFromAllah => 'بركات من الله';
 
   @override
-  String get impactReportScreen_timesProtected => 'الأوقات المحمية';
+  String get impactReportScreen_timesProtected => 'مرات الحماية';
 
   @override
   String get impactReportScreen_quranCompletions => 'ختمات القرآن';
 
   @override
-  String get impactReportScreen_bonusMillionHasanaat => 'مكافأة مليون حسنات';
+  String get impactReportScreen_bonusMillionHasanaat => 'مليون حسنة إضافية';
 
   @override
-  String get impactReportScreen_sadaqahGiven => 'صدقة معطى';
+  String get impactReportScreen_sadaqahGiven => 'الصدقات المعطاة';
 
   @override
   String impactReportScreen_564740(String _monthActiveDays) {
@@ -3223,27 +3224,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_3dc421(String arg1) {
-    return '${arg1}h';
+    return '${arg1}h ';
   }
 
   @override
   String impactReportScreen_08990a(String arg1) {
-    return '$arg1م';
+    return '${arg1}m';
   }
 
   @override
   String impactReportScreen_ago_c25b44(String arg1) {
-    return '${arg1}h منذ';
+    return 'منذ $arg1 ساعة';
   }
 
   @override
   String impactReportScreen_ago_e160e3(String arg1) {
-    return '${arg1}w منذ';
+    return 'منذ $arg1 أسبوع';
   }
 
   @override
   String impactReportScreen_ago_65f0ec(String arg1) {
-    return '${arg1}y منذ';
+    return 'منذ $arg1 سنة';
   }
 
   @override
@@ -3258,22 +3259,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String levelScreen_seeds_59c6a1(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
   String levelScreen_seeds_a20530(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
   String levelScreen_seeds_a49180(String arg1) {
-    return '+$arg1 بذور ✓';
+    return '+$arg1 Seeds ✓';
   }
 
   @override
   String levelScreen_seeds_a22be5(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
@@ -3284,25 +3285,25 @@ class AppLocalizationsAr extends AppLocalizations {
     String arg4,
     String arg5,
   ) {
-    return '$arg1:$arg2 $arg3/$arg4/$arg5';
+    return '$arg1:$arg2  $arg3/$arg4/$arg5';
   }
 
   @override
   String levelScreen_seeds_990893(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
-  String get phase1Screens_inTheNameOf => 'بسم الله الرحمن…';
+  String get phase1Screens_inTheNameOf => 'بسم الله الرحمن الرحيم...';
 
   @override
   String onboardingComponents_355c50(String first) {
-    return '$first';
+    return '$first ';
   }
 
   @override
   String onboardingComponents_b236c9(String trailing) {
-    return '$trailing';
+    return ' $trailing';
   }
 
   @override
@@ -3312,30 +3313,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String orphanDetailScreen_ago_c25b44(String arg1) {
-    return '${arg1}h منذ';
+    return 'منذ $arg1 ساعة';
   }
 
   @override
   String orphanDetailScreen_ago_e160e3(String arg1) {
-    return '${arg1}w منذ';
+    return 'منذ $arg1 أسبوع';
   }
 
   @override
   String orphanDetailScreen_ago_65f0ec(String arg1) {
-    return '${arg1}y منذ';
+    return 'منذ $arg1 سنة';
   }
 
   @override
-  String get profileSettingsScreen_sabiqRewards => 'مكافآت سابق • v1.0';
+  String get profileSettingsScreen_sabiqRewards =>
+      'Sabiq Rewards • الإصدار 1.0';
 
   @override
   String profileSettingsScreen_seeds_59ba7c(String arg1) {
-    return '$arg1 بذور';
+    return '$arg1 Seeds';
   }
 
   @override
   String profileSettingsScreen_seeds_2bc978(String arg1) {
-    return '$arg1 بذور';
+    return '$arg1 Seeds';
   }
 
   @override
@@ -3343,7 +3345,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileSetupScreen_pakistanEgyptMalaysia =>
-      'باكستان، مصر، ماليزيا...';
+      'السعودية، مصر، الإمارات...';
 
   @override
   String projectDetailScreen_4c2b09(String arg1, String arg2, String arg3) {
@@ -3352,7 +3354,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String projectDetailScreen_seeds_801ec7(String arg1) {
-    return '$arg1 بذور';
+    return '$arg1 Seeds';
   }
 
   @override
@@ -3362,17 +3364,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String projectDetailScreen_ago_c25b44(String arg1) {
-    return '${arg1}h منذ';
+    return 'منذ $arg1 ساعة';
   }
 
   @override
   String projectDetailScreen_ago_e160e3(String arg1) {
-    return '${arg1}w منذ';
+    return 'منذ $arg1 أسبوع';
   }
 
   @override
   String projectDetailScreen_ago_65f0ec(String arg1) {
-    return '${arg1}y منذ';
+    return 'منذ $arg1 سنة';
   }
 
   @override
@@ -3385,7 +3387,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_003843(String arg1, String arg2) {
-    return '$arg1 $arg2';
+    return '$arg1  $arg2';
   }
 
   @override
@@ -3400,11 +3402,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quranScreen_wordDataUnavailableCheck =>
-      'بيانات الكلمة غير متوفرة. تحقق من اتصالك.';
+      'بيانات الكلمات غير متوفرة. تحقق من الاتصال بالإنترنت.';
 
   @override
   String quranScreen_6d1f9d(String arg1) {
-    return '$arg1';
+    return '$arg1 ';
   }
 
   @override
@@ -3414,12 +3416,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_6e8ac8(String text) {
-    return '$text';
+    return '$text ';
   }
 
   @override
   String get startJourneyScreen_connectedToQuranCom_0ac4de =>
-      'متصل بـ Quran.com (تم تأجيل مزامنة الإشارات المرجعية)';
+      'متصل بـ Quran.com (تم تأجيل مزامنة الإشارات)';
 
   @override
   String tafsirScreen_4815bb(
@@ -3432,11 +3434,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get donationService_youMustBeLogged_edc4b5 =>
-      'يجب عليك تسجيل الدخول للراعي.';
+      'يجب تسجيل الدخول للكفالة.';
 
   @override
   String get liveNotificationService_sealYourSeedsBefore_be2183 =>
-      'ختم البذور الخاصة بك قبل منتصف الليل!';
+      'احفظ الـ Seeds قبل منتصف الليل!';
 
   @override
   String streakService_1fc043(String arg1, String arg2) {
@@ -3450,36 +3452,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String motivationalPopup_seeds_b14996(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
-  String get motivationalPopup_readQuranPages => 'قراءة 5 صفحات القرآن';
+  String get motivationalPopup_readQuranPages => 'اقرأ 5 صفحات من القرآن';
 
   @override
-  String get motivationalPopup_completeDhikrSet => 'أكمل مجموعة الأذكار';
+  String get motivationalPopup_completeDhikrSet => 'أكمل مجموعة أذكار';
 
   @override
-  String get motivationalPopup_inviteFriend => 'قم بدعوة صديق';
+  String get motivationalPopup_inviteFriend => 'ادعُ صديقاً';
 
   @override
   String notificationsSheet_ago(String arg1) {
-    return '$arg1م مضت';
+    return 'منذ $arg1 دقيقة';
   }
 
   @override
   String notificationsSheet_ago_5d4e7f(String arg1) {
-    return '${arg1}h منذ';
+    return 'منذ $arg1 ساعة';
   }
 
   @override
   String notificationsSheet_ago_67b1d9(String arg1) {
-    return '${arg1}d منذ';
+    return 'منذ $arg1 يوم';
   }
 
   @override
   String sealCoinAnimation_e16fa4(String arg1) {
-    return '+$arg1';
+    return '+$arg1 ';
   }
 
   @override
@@ -3489,95 +3491,95 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get akhirahBalanceScreen_subhanallahiWaBiHamdihi_b246c2 =>
-      '\"\"سبحان الله وبحمده\"\" في اليوم 100 مرة تمحو الخطايا مثل زبد البحر. (البخاري)';
+      '\"سبحان الله وبحمده\" — من قالها 100 مرة حطت خطاياه وإن كانت مثل زبد البحر. (البخاري)';
 
   @override
   String get akhirahBalanceScreen_sayLaIlahaIllallah_27fc5f =>
-      'وقول لا إله إلا الله 100 مرة تعدل عتق 10 عبيد و100 حسنة. (البخاري)';
+      'قل لا إله إلا الله 100 مرة — تعدل عتق 10 رقاب و 100 حسنة. (البخاري)';
 
   @override
   String get akhirahBalanceScreen_lightOnTheTongue_ea6114 =>
-      'خفيف على اللسان، ثقيل في الميزان: سبحان الله وبحمده، سبحان الله العظيم. (البخاري 6406) .';
+      'كلمتان خفيفتان على اللسان، ثقيلتان في الميزان: سبحان الله وبحمده، سبحان الله العظيم. (البخاري 6406)';
 
   @override
   String get akhirahBalanceScreen_theDhikrOfAllah_a23f17 =>
-      'فإن ذكر الله أثقل في الميزان من ذهب مثله. يستمر في التقدم.';
+      'ذكر الله أثقل في الميزان من الذهب. استمر.';
 
   @override
   String get akhirahBalanceScreen_yourTongueShouldStay_34816c =>
-      '«وينبغي أن يظل لسانك رطبًا بذكر الله». - هل لا تزال رطبة؟';
+      '\"لا يزال لسانك رطباً من ذكر الله.\" — هل لا يزال رطباً؟';
 
   @override
   String get akhirahBalanceScreen_astaghfirullahTheProphetSaid_7625ff =>
-      'استغفر الله — قالها النبي ﷺ في اليوم 100 مرة، ولم يكن له ذنب. كم لديك؟';
+      'أستغفر الله — قالها النبي ﷺ 100 مرة في اليوم وهو معصوم. فكم مرة قلتها أنت؟';
 
   @override
   String get akhirahBalanceScreen_whenYouRememberAllah_60f406 =>
-      'وإذا ذكرتم الله خفية ذكركم في ملأ أكبر.';
+      'إذا ذكرت الله في نفسك، ذكرك في ملأ خير منهم.';
 
   @override
   String get akhirahBalanceScreen_reciteAyatAlKursi_d0751f =>
-      'اقرأ آية الكرسي بعد كل صلاة، فلا يمنعك من الجنة إلا الموت.';
+      'اقرأ آية الكرسي دبر كل صلاة — ليس بينك وبين الجنة إلا الموت.';
 
   @override
   String get akhirahBalanceScreen_oneAlhamdulillahFillsThe_4794bb =>
-      'الحمدلله يملأ الميزان . سبحان الله ملء ما بين السماء والأرض.';
+      'الحمد لله تملأ الميزان. وسبحان الله تملأ ما بين السماء والأرض.';
 
   @override
   String get akhirahBalanceScreen_theRemembranceOfAllah_c99fe8 =>
-      '«ذكر الله أكبر من كل شيء». — سورة العنكبوت 29:45';
+      '\"ولذكر الله أكبر.\" — سورة العنكبوت 29:45';
 
   @override
   String get akhirahBalanceScreen_rememberMeWillRemember_1aca04 =>
-      '\" فاذكروني أذكركم \". - سورة البقرة 2: 152. سوف تفعل؟';
+      '\"فاذكروني أذكركم.\" — سورة البقرة 2:152. فهل ستذكره؟';
 
   @override
   String get akhirahBalanceScreen_inTheRemembranceOf_20b541 =>
-      '«بذكر الله تطمئن القلوب». — سورة الرعد 13:28';
+      '\"ألا بذكر الله تطمئن القلوب.\" — سورة الرعد 13:28';
 
   @override
   String get akhirahBalanceScreen_fiveMinutesOfDhikr_e12766 =>
-      'خمس دقائق من الذكر تشكل الآن الـ 24 ساعة القادمة من قلبك.';
+      'خمس دقائق من الذكر الآن تشكل الـ 24 ساعة القادمة من قلبك.';
 
   @override
   String get akhirahBalanceScreen_streakIsnAboutToday_9157d8 =>
-      'لا يتعلق الخط باليوم، بل يتعلق بما ستصبح عليه خلال 30 يومًا.';
+      'الاستمرارية ليست لليوم — بل لمن ستصبح بعد 30 يوماً.';
 
   @override
   String get akhirahBalanceScreen_smallDropsFillAn_1accce =>
-      'قطرات صغيرة تملأ المحيط. أذكارك اليومية تملأ شيئًا أكبر بكثير.';
+      'قطرات صغيرة تملأ محيطاً. ذكرك اليومي يملأ شيئاً أعظم بكثير.';
 
   @override
   String get akhirahBalanceScreen_noOneSeesThe_0182c7 =>
-      'لا أحد يرى الذكر في قلبك، ولكن كل ملاك يكتب سجلك يفعل ذلك.';
+      'لا أحد يرى ذكر قلبك — سوى الملائكة التي تكتب صحيفتك.';
 
   @override
   String get akhirahBalanceScreen_theBiggestWinsAre_1b8fb6 =>
-      'أعظم المكاسب تبنى من أصغر العادات اليومية. لا تكسر السلسلة.';
+      'أكبر الانتصارات تُبنى من أصغر العادات اليومية. لا تكسر السلسلة.';
 
   @override
   String get akhirahBalanceScreen_youCameBackToday_a020b1 =>
-      'لقد عدت اليوم. هذه عبادة بالفعل. البقاء دقيقة واحدة أخرى؟';
+      'لقد عدت اليوم. هذه بحد ذاتها عبادة. هل تبقى دقيقة أخرى؟';
 
   @override
   String get akhirahBalanceScreen_tomorrowPeaceIsBuilt_a72bd8 =>
-      'فسلام الغد مبني على ذكرى اليوم. زرع بذرة أخرى.';
+      'سلام الغد يُبنى بذكر اليوم. ازرع بذرة أخرى.';
 
   @override
   String get akhirahBalanceScreen_areYouDoneAllah_06ca1d =>
-      'هل انتهيت؟ باب الله مفتوح دائما، حتى بعد أن تغلقه.';
+      'هل انتهيت؟ باب الله مفتوح دائماً — حتى بعد أن تغلقه.';
 
   @override
   String get akhirahBalanceScreen_dhikrIsTheLanguage_b1b983 =>
-      'الذكر هو لغة القلب. هل كلمت ربها اليوم؟';
+      'الذكر لغة القلب. فهل تحدث قلبك إلى ربه اليوم؟';
 
   @override
   String get akhirahBalanceScreen_everySubhanallahIsSadaqah_16b797 =>
-      'وكل سبحان الله صدقة. كم ستعطي قبل النوم؟';
+      'كل سبحان الله صدقة. فكم صدقة ستقدم قبل نومك؟';
 
   @override
   String get akhirahBalanceScreen_heartThatForgetsDhikr_3a6173 =>
-      'القلب الذي ينسى الذكر يبدأ بالصدأ. القلب الذي يتذكر يبقى مشتعلا.';
+      'القلب الذي ينسى الذكر يصدأ. والقلب الذاكر يبقى مضيئاً.';
 
   @override
   String get akhirahBalanceScreen_haveYouFortifiedYourself_17ccac =>
@@ -3585,7 +3587,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String dashboardScreen_sponsor_d48549(String name, String arg1) {
-    return 'الراعي $name، $arg1';
+    return 'اكفل $name، $arg1';
   }
 
   @override
@@ -3595,11 +3597,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dashboardScreen_joinMeOnSabiq_755fb5 =>
-      'انضم إلي في برنامج Sabiq Rewards واحصل على بذور القرآن والذكر والأعمال الصالحة يوميًا!\\n\\n';
+      'انضم إلي على Sabiq Rewards، واكسب Seeds لقراءة القرآن والذكر والأعمال الصالحة يومياً!\\n\\n';
 
   @override
   String dashboardScreen_useMyCodeAnd_7d13b3(String arg1) {
-    return 'استخدم الرمز الخاص بي *$arg1* وسنحصل على 500 بذرة سابق!\\n\\n';
+    return 'استخدم كودي *$arg1* وسنحصل كلانا على 500 Sabiq Seeds!\\n\\n';
   }
 
   @override
@@ -3608,11 +3610,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dashboardScreen_sabiqSeedsRewardedTo_c209d6 =>
-      '500 بذرة سابق مكافأة لكما!';
+      'تم منح 500 Sabiq Seeds لكليكما!';
 
   @override
   String get dashboardScreen_youHaveAlreadyUsed_f7c387 =>
-      'لقد استخدمت بالفعل رمز الإحالة.';
+      'لقد استخدمت كود دعوة مسبقاً.';
 
   @override
   String get dashboardScreen_youCannotUseYour_b7dbfe =>
@@ -3624,7 +3626,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String dashboardScreen_52b02c_52b02c(String pts) {
-    return '$pts';
+    return '$pts ';
   }
 
   @override
@@ -3634,7 +3636,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dashboardScreen_viewCampaignDonate_450be4 =>
-      '🤲 شاهد الحملة وتبرع';
+      '🤲 عرض الحملة والتبرع';
 
   @override
   String dashboardScreen_d13a42_d13a42(
@@ -3646,11 +3648,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get dashboardScreen_beTheFirstOn_63de17 => 'كن الأول على اللوح';
+  String get dashboardScreen_beTheFirstOn_63de17 => 'كن الأول في لوحة الصدارة';
 
   @override
   String get dashboardScreen_readAnAyahOr_9c7ab7 =>
-      'اقرأ آية أو ذكر لتحصل على المركز الأول';
+      'اقرأ آية أو ذكراً لتحتل المركز الأول';
 
   @override
   String dashboardScreen_lvl_ac180d(String level, String arg1) {
@@ -3664,7 +3666,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dhikrScreen_pinTheIllustrationAt_5ec641 =>
-      'قم بتثبيت الرسم التوضيحي في الأعلى أثناء تمرير النص العربي أسفله';
+      'ثبت الرسمة بالأعلى بينما يمر النص العربي أسفلها';
 
   @override
   String dhikrScreen_d08433_d08433(String arg1, String arg2) {
@@ -3693,7 +3695,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String dhikrScreen_35c165_35c165(String arg1) {
-    return '$arg1';
+    return '$arg1  ';
   }
 
   @override
@@ -3702,39 +3704,40 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get impactReportScreen_whoeverDoesAnAtom_9013b0 => '«من عمل ذرة';
+  String get impactReportScreen_whoeverDoesAnAtom_9013b0 =>
+      '\"فمن يعمل مثقال ذرة خيراً يره.\"';
 
   @override
   String get impactReportScreen_theHomeOfThe_4602d2 =>
-      '«إن الدار الآخرة تلك هي الحياة الأبدية لو كانوا يعلمون». — سورة العنكبوت 29:64';
+      '\"وإن الدار الآخرة لهي الحيوان لو كانوا يعلمون\" — سورة العنكبوت 29:64';
 
   @override
   String get impactReportScreen_raceTowardsForgivenessFrom_94d614 =>
-      '«سارعوا إلى مغفرة من ربكم وجنة عرضها السماوات والأرض». — سورة الحديد 57:21';
+      '\"سابقوا إلى مغفرة من ربكم وجنة عرضها كعرض السماء والأرض\" — سورة الحديد 57:21';
 
   @override
   String get impactReportScreen_andWhatIsThe_7eec52 =>
-      '\"وما الحياة الدنيا إلا لعب الغرور؟\" - سورة علي عمران 3: 185';
+      '\"وما الحياة الدنيا إلا متاع الغرور\" — سورة آل عمران 3:185';
 
   @override
   String get impactReportScreen_indeedWithHardshipComes_ea97fa =>
-      '«إن مع العسر يسرا». — سورة الشرح 94:6';
+      '\"إن مع العسر يسراً\" — سورة الشرح 94:6';
 
   @override
   String get impactReportScreen_singleGoodDeedIn_c126b4 =>
-      '«الحسنة في رمضان تعدل سبعين حسنة فيما سواه». كومة بينما الباب مفتوح.';
+      '\"الحسنة في رمضان تعدل 70 فيما سواه.\" اجمع الحسنات والباب مفتوح.';
 
   @override
   String get impactReportScreen_theProphetSaidCharity_c154f4 =>
-      'قال النبي ✍: ما نقصت الصدقة من مال إلا نبته. (مسلم)';
+      'قال النبي ﷺ: ما نقصت صدقة من مال — بل تزيده. (مسلم)';
 
   @override
   String get impactReportScreen_smilingAtYourBrother_8f55e4 =>
-      '«تبسمك في وجه أخيك صدقة». يمكنك الربح حتى عندما تكون جيوبك فارغة. (الترمذي)';
+      '\"تبسمك في وجه أخيك لك صدقة.\" يمكنك أن تكسب حتى لو كانت جيوبك فارغة. (الترمذي)';
 
   @override
   String get impactReportScreen_theMostBelovedDeeds_f11906 =>
-      '«أحب الأعمال إلى الله أدومها وإن قل». (البخاري)';
+      '\"أحب الأعمال إلى الله أدومها وإن قل.\" (البخاري)';
 
   @override
   String get impactReportScreen_inJannahIsWhat_ff6d55 =>
@@ -3742,58 +3745,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get impactReportScreen_twoRakatsAtFajr_c8b238 =>
-      'وركعتان الفجر خير من الدنيا وما فيها. (مسلم)';
+      'ركعتا الفجر خير من الدنيا وما فيها. (مسلم)';
 
   @override
   String get impactReportScreen_everyStepTowardSalah_62962f =>
-      'وكل خطوة إلى الصلاة تمحو خطيئة وترفع درجة. (مسلم)';
+      'كل خطوة إلى الصلاة تمحو خطيئة وترفع درجة. (مسلم)';
 
   @override
   String get impactReportScreen_everySeedYouDonate_618d1f =>
-      'كل بذرة تتبرع بها تزرع شجرة في شخص آخر\\';
+      'كل بذرة تتبرع بها تزرع شجرة لشخص آخر';
 
   @override
   String get impactReportScreen_takeWealthWithYou_784e85 =>
-      'لا تأخذ الثروة معك. فقط الأفعال التي اشتراها.';
+      'لا يمكنك أخذ مالك معك، بل ما جنيته من حسنات به.';
 
   @override
   String get impactReportScreen_theAngelsRecordNothing_e03c03 =>
-      'الملائكة لا يسجلون شيئًا صغيرًا جدًا. سبحان الله قد يفوق جبلاً.';
+      'لا تترك الملائكة شيئاً صغيراً. سبحان الله واحدة قد تزن جبلاً.';
 
   @override
-  String get impactReportScreen_sadaqahIsTomorrow_794857 => 'صدقة غدا\\';
+  String get impactReportScreen_sadaqahIsTomorrow_794857 =>
+      'صدقة اليوم هي أجر الغد.';
 
   @override
   String get impactReportScreen_heartThatGivesIs_4b6000 =>
-      'القلب الذي يعطي هو قلب يبقيه الله ممتلئا. اِتَّشَح\\';
+      'القلب المعطاء هو قلب يملأه الله. لا تتركه فارغاً.';
 
   @override
   String get impactReportScreen_theReceiptWhatDid_d1c41b =>
-      'هو الإيصال. ماذا أرسلت قدما؟';
+      'ها هي صحيفتك. ماذا قدمت لحياتك؟';
 
   @override
   String get impactReportScreen_imagineYourScaleOn_094d07 =>
-      'تخيل ميزانك في يوم القيامة. ما الوزن الذي تضيفه اليوم؟';
+      'تخيل ميزانك يوم القيامة. ما الوزن الذي تضيفه اليوم؟';
 
   @override
   String get impactReportScreen_theWorldIsBorrowed_2eeb50 =>
-      'العالم مستعار. الآخرة مملوكة. استثمر وفقًا لذلك.';
+      'الدنيا مستعارة. والآخرة هي الملك. فاستثمر وفقاً لذلك.';
 
   @override
   String get impactReportScreen_youBuryTheBody_bb5233 =>
-      'أنت تدفن الجسد، ولكن ليس الأفعال. أرسلهم للأمام بينما تستطيع.';
+      'أنت تدفن الجسد — لا الأعمال. قدم أعمالك الصالحة ما دمت تستطيع.';
 
   @override
   String get impactReportScreen_righteousChildWhoPrays_7bcef4 =>
-      'ولد صالح يدعو لك، أو صدقة تجري، أو علم ينتفع - ثلاث استثمارات خالدة. (مسلم)';
+      'ولد صالح يدعو له، أو صدقة جارية، أو علم ينتفع به — ثلاث استثمارات أبدية. (مسلم)';
 
   @override
   String get impactReportScreen_youWillMeetAllah_c19524 =>
-      'ستقابل الله بسجلك. تأكد اليوم\\';
+      'ستلقى الله بصحيفتك. اجعل يومك هذا ذا قيمة.';
 
   @override
   String get impactReportScreen_noDeedIsToo_c04d50 =>
-      'لا يستصغر عملاً من يعد الذرات.';
+      'لا توجد حسنة صغيرة عند من يحصي الذرات.';
 
   @override
   String impactReportScreen_200447_200447(String arg1) {
@@ -3807,39 +3811,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get impactReportScreen_whoeverDoesGoodDeed_89c2bf =>
-      'من عمل الحسنة فله عشر أمثالها.';
+      'من جاء بالحسنة فله عشر أمثالها.';
 
   @override
   String get impactReportScreen_whoeverReadsLetterFrom_36d74f =>
-      'من قرأ حرفاً من كتاب الله فله حسنة، والحسنة بعشر أمثالها.';
+      'من قرأ حرفاً من كتاب الله فله به حسنة، والحسنة بعشر أمثالها.';
 
   @override
   String get impactReportScreen_twoHadithGrowThis_c8d4a2 =>
-      'حديثان يزيدان هذا العدد جنباً إلى جنب:\\n\\n';
+      'حديثان ينميان هذا الرقم جنباً إلى جنب:\\n\\n';
 
   @override
   String impactReportScreen_dhikrRecitedLifetime_669e2a(String arg1) {
-    return 'الأذكار المرتلة (مدى الحياة): $arg1\\n';
+    return '  الذكر المقروء (طوال الوقت): $arg1\\n';
   }
 
   @override
   String impactReportScreen_hasanat_64c7b6(String arg1) {
-    return '→ حسنات: $arg1\\n\\n';
+    return '  → الحسنات: $arg1\\n\\n';
   }
 
   @override
   String impactReportScreen_ayahsReadLifetime_75eef6(String arg1) {
-    return 'قراءة الآيات (العمر): $arg1\\n';
+    return '  الآيات المقروءة (طوال الوقت): $arg1\\n';
   }
 
   @override
   String impactReportScreen_totalHasanaat_c43112(String arg1) {
-    return 'مجموع الحسنات: $arg1';
+    return 'إجمالي الحسنات: $arg1';
   }
 
   @override
   String get impactReportScreen_whoeverSaysSubhanAllahiWa_4b6459 =>
-      'من قال سبحان الله وبحمده في يوم 100 مرة غفرت ذنوبه ولو كانت مثل زبد البحر.';
+      'من قال سبحان الله وبحمده في يوم مائة مرة حُطت خطاياه وإن كانت مثل زبد البحر.';
 
   @override
   String get impactReportScreen_subhanallahiWaBihamdihi_992976 =>
@@ -3847,17 +3851,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_totalRecitations_5ed733(String arg1) {
-    return 'مجموع التلاوات: $arg1\\n';
+    return 'إجمالي التلاوات: $arg1\\n';
   }
 
   @override
   String impactReportScreen_dividedByForgivenessCycles_4e175d(String arg1) {
-    return 'مقسومًا على 100 ← دورات الغفران: $arg1';
+    return 'مقسوم على 100 → دورات استغفار: $arg1';
   }
 
   @override
   String impactReportScreen_dividedByPalaces_6f066c(String arg1) {
-    return 'مقسمة على 10 → القصور: $arg1';
+    return 'مقسوم على 10 → قصور: $arg1';
   }
 
   @override
@@ -3866,17 +3870,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_setsOfSetsSlaves_b43b31(String arg1, String arg2) {
-    return 'مجموعات من 10 → $arg1 مجموعات × 4 عبيد = $arg2';
+    return 'مجموعات من 10 → $arg1 مجموعة × 4 رقاب = $arg2';
   }
 
   @override
   String impactReportScreen_totalSalawatSent_cfe45e(String arg1) {
-    return 'إجمالي الصلوات المرسلة: $arg1\\n';
+    return 'إجمالي الصلوات على النبي: $arg1\\n';
   }
 
   @override
   String impactReportScreen_multipliedByBlessingsReceived_52810f(String arg1) {
-    return 'مضروبة في 10 → $arg1 النعم المستلمة';
+    return 'مضروب في 10 → $arg1 بركات تم نيلها';
   }
 
   @override
@@ -3884,16 +3888,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get impactReportScreen_goodHealthProtection_058808 =>
-      'صحة جيدة وحماية';
+      'الصحة الجيدة والحماية';
 
   @override
   String impactReportScreen_totalInvocations_1fd02b(String arg1) {
-    return 'إجمالي الدعوات: $arg1';
+    return 'إجمالي الأدعية: $arg1';
   }
 
   @override
   String impactReportScreen_dividedByQuranCompletions_b9a013(String arg1) {
-    return 'مقسمة على 3 → $arg1 ختمات القرآن';
+    return 'مقسوم على 3 → $arg1 ختمات للقرآن';
   }
 
   @override
@@ -3903,22 +3907,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_3dc421_3dc421(String arg1) {
-    return '${arg1}h';
+    return '${arg1}h ';
   }
 
   @override
   String impactReportScreen_08990a_08990a(String arg1) {
-    return '$arg1م';
+    return '${arg1}m';
   }
 
   @override
   String impactReportScreen_ago_71107c(String arg1) {
-    return '$arg1م مضت';
+    return 'منذ $arg1 شهر';
   }
 
   @override
   String impactReportScreen_moAgo_325a71(String arg1) {
-    return '$arg1 منذ شهر';
+    return 'منذ $arg1 شهر';
   }
 
   @override
@@ -3928,15 +3932,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_funded_add009(String arg1) {
-    return '$arg1% ممولة';
+    return 'مُمول بنسبة $arg1%';
   }
 
   @override
-  String get impactReportScreen_yourLifetimeImpact_8bfdcd => 'تأثير حياتك';
+  String get impactReportScreen_yourLifetimeImpact_8bfdcd => 'أثرك طوال الوقت';
 
   @override
   String get impactReportScreen_startYourImpactJourney_1ae8c4 =>
-      'ابدأ رحلة التأثير الخاصة بك';
+      'ابدأ رحلة أثرك';
 
   @override
   String impactReportScreen_bd3721_bd3721(String _myOrphansSponsoredCount) {
@@ -3950,15 +3954,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String levelScreen_seeds_fff97b(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
-  String get levelScreen_laIlahaIllallah_e8c26b => 'لا إله إلا الله x100';
+  String get levelScreen_laIlahaIllallah_e8c26b => 'لا إله إلا الله ×100';
 
   @override
   String levelScreen_seedsBoost_464454(String arg1) {
-    return '$arg1× تعزيز البذور';
+    return 'مضاعفة Seeds ×$arg1';
   }
 
   @override
@@ -3969,7 +3973,7 @@ class AppLocalizationsAr extends AppLocalizations {
     String arg4,
     String arg5,
   ) {
-    return '$arg1:$arg2 $arg3/$arg4/$arg5';
+    return '$arg1:$arg2  $arg3/$arg4/$arg5';
   }
 
   @override
@@ -3979,24 +3983,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String levelScreen_dayStreak_df2abf(String arg1) {
-    return '$arg1 خط يوم';
+    return 'استمرارية $arg1 يوم';
   }
 
   @override
   String onboardingComponents_355c50_355c50(String first) {
-    return '$first';
+    return '$first ';
   }
 
   @override
   String onboardingComponents_b236c9_b236c9(String trailing) {
-    return '$trailing';
+    return ' $trailing';
   }
 
   @override
   String get quranMini_inTheNameOf_46925d => 'بسم الله الرحمن الرحيم.';
 
   @override
-  String get quranMini_allPraiseBelongsTo_2d51df => 'والحمد لله رب العالمين.';
+  String get quranMini_allPraiseBelongsTo_2d51df => 'الحمد لله رب العالمين.';
 
   @override
   String orphansGridScreen_36cd3b_36cd3b(String arg1, String arg2) {
@@ -4005,105 +4009,105 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String orphanDetailScreen_years_debb46(String arg1) {
-    return '$arg1 سنة';
+    return '$arg1 سنوات';
   }
 
   @override
   String orphanDetailScreen_ofSeeds_2a29fc(String arg1, String arg2) {
-    return '$arg1 من $arg2 البذور';
+    return '$arg1 من $arg2 Seeds';
   }
 
   @override
   String orphanDetailScreen_through_2cdb72(String arg1) {
-    return 'من خلال $arg1';
+    return 'بواسطة $arg1';
   }
 
   @override
   String get orphanDetailScreen_andTheyGiveFood_7ddcff =>
-      'ويطعمون الطعام على حبهم له مسكينا ويتيما وأسيرا.';
+      'ويطعمون الطعام على حبه مسكيناً ويتيماً وأسيراً.';
 
   @override
   String orphanDetailScreen_ago_71107c(String arg1) {
-    return '$arg1م مضت';
+    return 'منذ $arg1 شهر';
   }
 
   @override
   String orphanDetailScreen_moAgo_325a71(String arg1) {
-    return '$arg1 منذ شهر';
+    return 'منذ $arg1 شهر';
   }
 
   @override
   String orphanDetailScreen_seeds_30d8dc(String _availablePoints) {
-    return '$_availablePoints بذور';
+    return '$_availablePoints Seeds';
   }
 
   @override
   String orphanDetailScreen_sponsor_b34bcf(String arg1) {
-    return 'الراعي $arg1';
+    return 'اكفل $arg1';
   }
 
   @override
   String orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec(
     String amount,
   ) {
-    return 'جزاك الله خيران! $amount البذور برعاية.';
+    return 'جزاك الله خيراً! تمت كفالة $amount Seeds.';
   }
 
   @override
   String orphanDetailScreen_chooseHowManySeeds_b69aa2(String arg1) {
-    return 'اختر عدد البذور التي تريد تقديمها. الحد الأدنى $arg1.';
+    return 'اختر كم تريد أن تعطي من الـ Seeds. الحد الأدنى $arg1.';
   }
 
   @override
   String orphanDetailScreen_yourBalanceSeeds_f8045b(String arg1) {
-    return 'رصيدك: $arg1 بذور';
+    return 'رصيدك: $arg1 Seeds';
   }
 
   @override
   String get profileSettingsScreen_nameCannotBeEmpty_c737ab =>
-      'لا يمكن أن يكون الاسم فارغًا';
+      'لا يمكن أن يكون الاسم فارغاً';
 
   @override
   String get profileSettingsScreen_signedInWithGoogle_17e053 =>
-      'تم تسجيل الدخول باستخدام جوجل';
+      'مسجل بـ Google';
 
   @override
   String get profileSettingsScreen_signedInWithQuran_2e1ffc =>
-      'تم التسجيل في موقع القرآن الكريم';
+      'مسجل بـ Quran.com';
 
   @override
   String get profileSettingsScreen_signedInWithEmail_dd881f =>
-      'تم تسجيل الدخول باستخدام البريد الإلكتروني';
+      'مسجل بالبريد الإلكتروني';
 
   @override
   String profileSettingsScreen_seeds_53d666(String arg1) {
-    return '$arg1 بذور';
+    return '$arg1 Seeds';
   }
 
   @override
   String get profileSettingsScreen_guidesFAQsAndHow_b990d6 =>
-      'الأدلة والأسئلة الشائعة والكيفية';
+      'أدلة، أسئلة شائعة وطرق الاستخدام';
 
   @override
   String get profileSettingsScreen_somethingNotWorkingTell_07f659 =>
-      'شيء لا يعمل؟ أخبرنا';
+      'هل تواجه مشكلة؟ أخبرنا';
 
   @override
   String projectDetailScreen_organisedBy_8b317a(String sponsor) {
-    return 'تم التنظيم بواسطة $sponsor\\n\\n';
+    return 'تنظيم $sponsor\\n\\n';
   }
 
   @override
   String get projectDetailScreen_fundedSoFarEvery_dab3fd =>
-      'تم تمويل كل بذرة حتى الآن!\\n\\n';
+      'مُمول حتى الآن، كل Seed يُحدث فرقاً!\\n\\n';
 
   @override
   String get projectDetailScreen_openSabiqRewardsApp_cdda14 =>
-      'افتح تطبيق Sabiq Rewards للتبرع ببذورك والحصول على المكافأة.\\n';
+      'افتح تطبيق Sabiq Rewards لتتبرع بـ Seeds وتكسب الأجر.\\n';
 
   @override
   String get projectDetailScreen_sabiqrewardsSadaqahIslamicCharity_663ba5 =>
-      '#مكافآت سابق #صدقة #الجمعية الخيرية الإسلامية';
+      '#SabiqRewards #صدقة #عمل_خيري';
 
   @override
   String projectDetailScreen_4c2b09_4c2b09(
@@ -4116,11 +4120,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get projectDetailScreen_donateToProvideUrgent_246035 =>
-      'تبرع لتقديم مساعدات عاجلة ومنقذة للحياة للفلسطينيين الذين يعانون من نقص حاد في الغذاء والمياه والإمدادات الطبية...';
+      'تبرع لتوفير مساعدات عاجلة ومنقذة لحياة الفلسطينيين الذين يواجهون نقصاً حاداً في الغذاء والمياه والإمدادات الطبية...';
 
   @override
   String projectDetailScreen_seeds_47387f(String arg1) {
-    return '$arg1 بذور';
+    return '$arg1 Seeds';
   }
 
   @override
@@ -4130,12 +4134,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String projectDetailScreen_ago_71107c(String arg1) {
-    return '$arg1م مضت';
+    return 'منذ $arg1 شهر';
   }
 
   @override
   String projectDetailScreen_moAgo_325a71(String arg1) {
-    return '$arg1 منذ شهر';
+    return 'منذ $arg1 شهر';
   }
 
   @override
@@ -4145,20 +4149,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quranScreen_couldNotLoadAyah_62f120 =>
-      'تعذر تحميل الآية. يرجى إعادة المحاولة.';
+      'تعذر تحميل الآية. يرجى المحاولة مرة أخرى.';
 
   @override
   String get quranScreen_noConnectionCachedData_e5a215 =>
-      'لا يوجد اتصال. قد تكون البيانات المخزنة مؤقتًا متاحة.';
+      'لا يوجد اتصال. قد تتوفر بيانات مخبأة.';
 
   @override
   String quranScreen_ayahs_c98642(String arg1) {
-    return '$arg1 الآيات';
+    return '$arg1 آيات';
   }
 
   @override
   String get quranScreen_couldNotRemoveBookmark_699a82 =>
-      'تعذرت إزالة الإشارة المرجعية، يرجى إعادة المحاولة';
+      'تعذر إزالة الإشارة المرجعية، يرجى المحاولة مرة أخرى';
 
   @override
   String quranScreen_removedBookmark_d7a16a(
@@ -4171,7 +4175,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quranScreen_couldNotSaveBookmark_976448 =>
-      'تعذر حفظ الإشارة المرجعية، يرجى إعادة المحاولة';
+      'تعذر حفظ الإشارة المرجعية، يرجى المحاولة مرة أخرى';
 
   @override
   String quranScreen_bookmarked_2c6203(
@@ -4179,7 +4183,7 @@ class AppLocalizationsAr extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'تم وضع إشارة مرجعية $_surahName $_surah:$_ayah';
+    return 'تم حفظ $_surahName $_surah:$_ayah';
   }
 
   @override
@@ -4188,11 +4192,11 @@ class AppLocalizationsAr extends AppLocalizations {
     String _surah,
     String _ayah,
   ) {
-    return 'التفسير · $_surahName $_surah:$_ayah';
+    return 'تفسير · $_surahName $_surah:$_ayah';
   }
 
   @override
-  String get quranScreen_addedToFavourites_b3cce0 => '♥ تم الإضافة إلى المفضلة';
+  String get quranScreen_addedToFavourites_b3cce0 => '♥️ أُضيف إلى المفضلة';
 
   @override
   String quranScreen_pt_9e58e8(String arg1) {
@@ -4201,7 +4205,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_003843_003843(String arg1, String arg2) {
-    return '$arg1 $arg2';
+    return '$arg1  $arg2';
   }
 
   @override
@@ -4216,12 +4220,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_6d1f9d_6d1f9d(String arg1) {
-    return '$arg1';
+    return '$arg1 ';
   }
 
   @override
   String quranScreen_ayahsRead_862866(String _ayahsToday) {
-    return '$_ayahsToday آيات مقروءة';
+    return 'قُرأت $_ayahsToday آية';
   }
 
   @override
@@ -4231,25 +4235,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranScreen_6e8ac8_6e8ac8(String text) {
-    return '$text';
+    return '$text ';
   }
 
   @override
   String get startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5 =>
-      'حدث خطأ غير متوقع أثناء تسجيل الدخول إلى Google';
+      'خطأ غير متوقع أثناء تسجيل الدخول بـ Google';
 
   @override
   String get startJourneyScreen_connectedToQuranCom_c0c631 =>
-      'متصل بموقع القرآن الكريم';
+      'متصل بـ Quran.com';
 
   @override
   String tafsirScreen_verses_fed624(String arg1) {
-    return '$arg1 الآيات';
+    return '$arg1 آيات';
   }
 
   @override
   String tafsirScreen_ayahOf_63c42b(String _ayah, String _surahLen) {
-    return 'آية $_ayah من $_surahLen';
+    return 'الآية $_ayah من $_surahLen';
   }
 
   @override
@@ -4263,11 +4267,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get donationService_youMustBeLogged_6813cf =>
-      'يجب عليك تسجيل الدخول للتبرع.';
+      'يجب تسجيل الدخول للتبرع.';
 
   @override
   String get donationService_donationCouldNotBe_074195 =>
-      'لا يمكن معالجة التبرع في هذا الوقت.';
+      'تعذر معالجة التبرع في الوقت الحالي.';
 
   @override
   String get donationService_anUnexpectedNetworkError_914b7a =>
@@ -4275,34 +4279,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get donationService_sponsorshipReceived_671201 =>
-      'تم الحصول على الرعاية 💝';
+      'تم استلام الكفالة 💝';
 
   @override
   String donationService_youSponsoredSeedsJazak_7711e1(String amount) {
-    return 'لقد قمت برعاية $amount بذور · جزاك الله خيرا.';
+    return 'لقد كفلت بـ $amount Seeds · جزاك الله خيراً.';
   }
 
   @override
   String get donationService_sponsorshipCouldNotBe_55003e =>
-      'لا يمكن معالجة الرعاية في هذا الوقت.';
+      'تعذر معالجة الكفالة في الوقت الحالي.';
 
   @override
-  String get streakService_warmingUp_b1687b => 'الاحماء';
+  String get streakService_warmingUp_b1687b => 'إحماء';
 
   @override
   String get streakService_oneWeek_4f98dc => 'أسبوع واحد';
 
   @override
-  String get streakService_twoWeeks_9a2d93 => 'اسبوعين';
+  String get streakService_twoWeeks_9a2d93 => 'أسبوعان';
 
   @override
   String get streakService_oneMonth_35eb01 => 'شهر واحد';
 
   @override
-  String get streakService_twoMonths_84d275 => 'شهرين';
+  String get streakService_twoMonths_84d275 => 'شهران';
 
   @override
-  String get streakService_theCenturion_f1de7f => 'قائد المئة';
+  String get streakService_theCenturion_f1de7f => 'المئوية';
 
   @override
   String streakService_1fc043_1fc043(String arg1, String arg2) {
@@ -4323,43 +4327,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get xpService_newBadgeUnlocked_2c8d0e => 'تم فتح شارة جديدة 🏆';
 
   @override
-  String get xpService_dailyLoginBonus_d011fa => 'مكافأة تسجيل الدخول اليومية';
+  String get xpService_dailyLoginBonus_d011fa => 'منحة الدخول اليومي';
 
   @override
   String xpService_seedsWelcomeBack_47888a(String arg1) {
-    return '+$arg1 البذور · أهلاً بعودتك!';
+    return '+$arg1 Seeds · أهلاً بعودتك!';
   }
 
   @override
-  String get xpService_daySealed_037a56 => 'اليوم مختوم 🌙';
+  String get xpService_daySealed_037a56 => 'اكتمل اليوم 🌙';
 
   @override
   String xpService_sabiqSeedsConfirmedBonus_702902(
     String flushed,
     String bonus,
   ) {
-    return '+$flushed بذور سابق مؤكدة! ($bonus مكافأة للختم)';
+    return 'تم تأكيد +$flushed Sabiq Seeds! (منحة $bonus للحفظ)';
   }
 
   @override
   String xpService_sabiqSeedsConfirmed_34969c(String flushed) {
-    return '+$flushed بذور سابق مؤكدة!';
+    return 'تم تأكيد +$flushed Sabiq Seeds!';
   }
 
   @override
-  String get dhikrExitCelebration_everyBreathCounts_45b3df => 'كل نفس مهم.';
+  String get dhikrExitCelebration_everyBreathCounts_45b3df =>
+      'كل نفس له قيمته.';
 
   @override
-  String get impactAnimation_yourRewardHasBeen_e3d106 =>
-      'لقد تم تسجيل مكافأتك.';
+  String get impactAnimation_yourRewardHasBeen_e3d106 => 'تم تسجيل أجرك.';
 
   @override
   String get motivationalPopup_verilyWithHardshipComes_f23637 =>
-      'إن مع العسر يسرا.\\nوكل فتنة باب إلى ما هو أعظم.';
+      'إن مع العسر يسراً.\\nكل محنة هي باب لشيء أعظم.';
 
   @override
-  String get motivationalPopup_quranAlInshirah_d81f8a =>
-      'القرآن • الانشراح 94:6';
+  String get motivationalPopup_quranAlInshirah_d81f8a => 'القرآن • الشرح 94:6';
 
   @override
   String get motivationalPopup_quranAlAnkabut_8e938e =>
@@ -4373,75 +4376,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get motivationalPopup_makeYourTimePrecious_049aae =>
-      'اجعل وقتك ثميناً.\\nشارك الخير مع صديق اليوم،\\nكل عمل صالح تشاركه صدقة.';
+      'اجعل وقتك ثميناً.\\nشارك الخير مع صديق اليوم،\\nفكل معروف صدقة.';
 
   @override
   String get motivationalPopup_guideOthersToGood_6105c4 =>
-      'أرشد غيرك إلى الخير، تنال أجره.';
+      'الدال على الخير كفاعله.';
 
   @override
   String get motivationalPopup_theBestOfPeople_1f6906 =>
-      'خير الناس من أنفعهم للآخرين.';
+      'خير الناس أنفعهم للناس.';
 
   @override
   String get motivationalPopup_verilyInTheRemembrance_16476d =>
-      'ألا بذكر الله تطمئن القلوب.';
+      'ألا بذكر الله\\nتطمئن القلوب.';
 
   @override
   String get motivationalPopup_remindYourselfTimeIs_38ae33 =>
-      'ذكّر نفسك أن الوقت هو أغلى صدقة.';
+      'ذكّر نفسك، الوقت هو أثمن صدقة.';
 
   @override
   String get motivationalPopup_yourTimeIsYour_be6731 =>
-      'وقتك هو أثمن\\nأصولك. استثمرها بحكمة\\nفي ما يدوم إلى الأبد.';
+      'وقتك هو أثمن\\nما تملك. فاستثمره بحكمة\\nفيما يبقى للأبد.';
 
   @override
   String get motivationalPopup_quranAlAnfal_b10486 => 'القرآن • الأنفال 8:28';
 
   @override
   String get motivationalPopup_takeAdvantageOfFive_e573fd =>
-      'اغتنم خمسا قبل خمس.';
+      'اغتنم خمساً قبل خمس.';
 
   @override
   String motivationalPopup_seeds_3a9c69(String arg1) {
-    return '+$arg1 البذور';
+    return '+$arg1 Seeds';
   }
 
   @override
   String get motivationalPopup_completeNowEarnSeeds_16ea6e =>
-      'أكمل الآن → اربح +50 بذرة إضافية';
+      'أكمل الآن → اكسب +50 Seeds كمنحة';
 
   @override
   String get motivationalPopup_finishYourAzkaarEarn_e264fa =>
-      'أنهي الأذكار ← اربح +30 بذرة إضافية';
+      'أنهِ أذكارك → اكسب +30 Seeds كمنحة';
 
   @override
   String get motivationalPopup_shareSabiqWithSomeone_c60dcc =>
-      'شارك سابق مع شخص ما ← اربح +100 بذرة';
+      'شارك Sabiq مع شخص ما → اكسب +100 Seeds';
 
   @override
   String get motivationalPopup_keepYourSpiritualMomentum_0f172c =>
-      'حافظ على استمرار زخمك الروحي\\nوشاهد بذورك تنمو ✨';
+      'حافظ على نشاطك الروحي\\nوشاهد الـ Seeds الخاصة بك تنمو ✨';
 
   @override
   String get projectMediaCarousel_couldNotLoadVideo_deb8dd =>
       'تعذر تحميل الفيديو';
 
   @override
-  String get quranExitCelebration_beautifulRecitation_9d2655 => 'تلاوة جميلة.';
+  String get quranExitCelebration_beautifulRecitation_9d2655 => 'تلاوة خاشعة.';
 
   @override
   String get quranExitCelebration_everyMomentCounts_fddb4c =>
-      'كل لحظة لها أهميتها.';
+      'كل لحظة لها قيمتها.';
 
   @override
   String sealCoinAnimation_e16fa4_e16fa4(String arg1) {
-    return '+$arg1';
+    return '+$arg1 ';
   }
 
   @override
   String impactReportScreen_totalHasanatFromQuran(String n) {
-    return 'مجموع الحسنات من القرآن : $n';
+    return 'إجمالي حسنات القرآن: $n';
   }
 
   @override
@@ -4456,7 +4459,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String impactReportScreen_multipliedByGates(String n) {
-    return 'مضروبة في 8 بوابات → فتحات $n';
+    return 'مضروب في 8 أبواب → $n مرات فُتحت';
   }
 
   @override
@@ -4471,17 +4474,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dashboardScreen_dashboardLoadFailed =>
-      'تعذر تحميل لوحة البيانات الخاصة بك. يرجى المحاولة مرة أخرى.';
+      'تعذر تحميل لوحة المعلومات الخاصة بك. يرجى المحاولة مرة أخرى.';
 
   @override
-  String get zikrLabel => 'ذكر';
+  String get zikrLabel => 'الذكر';
 
   @override
   String get quranLabel => 'القرآن';
 
   @override
   String streakService_dayStreakBody(String days, String type, String bonus) {
-    return '$days-يوم $type خط · +$bonus بذور إضافية تم فتحها';
+    return 'استمرارية $type لمدة $days أيام · فتحت +$bonus Seeds منحة';
   }
 
   @override
@@ -4495,11 +4498,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get donationService_donationReceivedTitle => 'تم وصول التبرع 💝';
+  String get donationService_donationReceivedTitle => 'تم استلام التبرع 💝';
 
   @override
   String donationService_youDonatedSeeds(String amount) {
-    return 'لقد تبرعت ببذور $amount · جزاك الله خيرا.';
+    return 'لقد تبرعت بـ $amount Seeds · جزاك الله خيراً.';
   }
 
   @override
@@ -4509,96 +4512,97 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String xpService_badgeEarnedBody(String name) {
-    return 'لقد حصلت على الشارة \"$name\".';
+    return 'لقد ربحت شارة \"$name\".';
   }
 
   @override
-  String get localReminderScheduler_channelName => 'إشعارات مكافآت سابق';
+  String get localReminderScheduler_channelName => 'إشعارات Sabiq Rewards';
 
   @override
   String get localReminderScheduler_morningTitle => 'أذكار الصباح';
 
   @override
   String get localReminderScheduler_morningBody =>
-      'ابدأ يومك في ذمة الله بقراءة أذكار الصباح.';
+      'ابدأ يومك بحفظ الله — اقرأ أذكار الصباح.';
 
   @override
-  String get localReminderScheduler_astaghfirTitle => 'لحظة للإستغفار';
+  String get localReminderScheduler_astaghfirTitle => 'لحظة للاستغفار';
 
   @override
   String get localReminderScheduler_astaghfirBody =>
-      '\"استغفار الله\" يصقل القلب ويفتح أبواب الرزق. توقف لمدة دقيقة واحدة.';
+      '\"أستغفر الله\" تجلو القلب وتفتح أبواب الرزق. توقف لدقيقة.';
 
   @override
   String get localReminderScheduler_eveningTitle => 'أذكار المساء';
 
   @override
   String get localReminderScheduler_eveningBody =>
-      'احفظ نفسك ليلاً بقراءة أذكار المساء.';
+      'حصن نفسك لليلة — اقرأ أذكار المساء.';
 
   @override
-  String get localReminderScheduler_sleepTitle => 'الوقت لتهدئة';
+  String get localReminderScheduler_sleepTitle => 'وقت الراحة';
 
   @override
   String get localReminderScheduler_sleepBody =>
-      'اختم يومك بأذكار النوم - آية الكرسي، والقول الثلاثة، وأدعية النوم.';
+      'أنهِ يومك بأذكار النوم — آية الكرسي، المعوذات، وأدعية النوم.';
 
   @override
   String get localReminderScheduler_kahfAmTitle =>
-      'إنه يوم الجمعة - إقرأ سورة الكهف';
+      'إنه يوم الجمعة — اقرأ سورة الكهف';
 
   @override
   String get localReminderScheduler_kahfBody =>
-      'من قرأ سورة الكهف في يوم الجمعة أضاء له من النور ما بين الجمعتين.';
+      'من قرأ سورة الكهف يوم الجمعة، أضاء له من النور ما بين الجمعتين.';
 
   @override
-  String get localReminderScheduler_salawatTitle => 'صلوات يوم الجمعة';
+  String get localReminderScheduler_salawatTitle =>
+      'الصلاة على النبي يوم الجمعة';
 
   @override
   String get localReminderScheduler_salawatBody =>
-      'صلوا على النبي ﷺ اليوم أكثروا من الصلاة عليه، فإن أعمال يوم الجمعة تعرض عليه.';
+      'أكثر من الصلاة على النبي ﷺ اليوم — تُعرض عليه أعمال يوم الجمعة.';
 
   @override
-  String get localReminderScheduler_kahfPmTitle => 'لا تفوتوا سورة الكهف اليوم';
+  String get localReminderScheduler_kahfPmTitle => 'لا تفوت سورة الكهف اليوم';
 
   @override
   String get localReminderScheduler_kahfPmBody =>
-      'ساعات قليلة تفصلنا عن المغرب – أكمل سورة الكهف إذا لم تكن قد أكملت ذلك بعد.';
+      'ساعات قليلة للمغرب — أنهِ سورة الكهف إن لم تفعل بعد.';
 
   @override
   String get liveNotificationService_validateChannelDesc =>
-      'تذكيرات لإغلاق بذورك المعلقة قبل منتصف الليل.';
+      'تذكيرات لحفظ الـ Seeds المعلقة قبل منتصف الليل.';
 
   @override
   String get liveNotificationService_validateTicker =>
-      'ختم البذور الخاصة بك قبل منتصف الليل';
+      'احفظ الـ Seeds قبل منتصف الليل';
 
   @override
   String get liveNotificationService_validateTitle =>
-      'ختم البذور الخاصة بك قبل منتصف الليل!';
+      'احفظ الـ Seeds قبل منتصف الليل!';
 
   @override
   String liveNotificationService_validateBody(String n) {
-    return 'لديك $n بذور معلقة. اضغط على ختم اليوم قبل منتصف الليل أو تنتهي صلاحيته.';
+    return 'لديك $n Seeds معلقة. انقر لحفظ اليوم قبل منتصف الليل وإلا ستنتهي صلاحيتها.';
   }
 
   @override
   String liveNotificationService_ayatRead(String n) {
-    return '$n آيات إقرأها اليوم 📖';
+    return 'قُرأت $n آيات اليوم 📖';
   }
 
   @override
   String liveNotificationService_readQuranTime(String time) {
-    return '$time إقرأ القرآن اليوم ⏱️';
+    return '$time قضيتها في قراءة القرآن اليوم ⏱️';
   }
 
   @override
   String get liveNotificationService_nothingRead =>
-      'لا شيء يقرأ من القرآن اليوم 📖';
+      'لم يُقرأ شيء من القرآن اليوم 📖';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
-    return '$n تم الانتهاء من الأذكار اليوم 📿';
+    return 'اكتمل $n ذكر اليوم 📿';
   }
 
   @override
@@ -4607,28 +4611,27 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get liveNotificationService_tickerIdle =>
-      'استمر في القراءة والقيام بالذكر!';
+  String get liveNotificationService_tickerIdle => 'استمر في القراءة والذكر!';
 
   @override
   String get liveNotificationService_channelDesc =>
-      'يعيش اليوم تقدم القرآن والذكر';
+      'متابعة مباشرة لتقدم القرآن والذكر اليوم';
 
   @override
-  String get liveNotificationService_seedsToday => 'بذورك اليوم ✨';
+  String get liveNotificationService_seedsToday => 'رصيد الـ Seeds اليوم ✨';
 
   @override
-  String get liveNotificationService_summary => 'انقر لفتح سابق';
+  String get liveNotificationService_summary => 'انقر لفتح Sabiq';
 
   @override
-  String get quranApiService_notConnected => 'غير متصل بموقع القرآن الكريم';
+  String get quranApiService_notConnected => 'غير متصل بـ Quran.com';
 
   @override
-  String get quranApiService_notSignedIn => 'لم يتم تسجيل الدخول إلى نور';
+  String get quranApiService_notSignedIn => 'لم تقم بتسجيل الدخول إلى نور';
 
   @override
   String quranApiService_syncFailedPush(String n) {
-    return 'فشلت المزامنة، تعذر دفع الإشارة (الإشارات) المرجعية $n إلى موقع Quran.com (التحقق من الرمز المميز / نقطة النهاية).';
+    return 'فشلت المزامنة، تعذر رفع $n إشارة إلى Quran.com (تحقق من الرمز / الرابط).';
   }
 
   @override
@@ -4637,12 +4640,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String quranApiService_syncedBookmarks(String total, String up, String down) {
-    return 'الإشارات المرجعية $total المتزامنة ($up لأعلى، $down لأسفل)';
+    return 'تمت مزامنة $total إشارة ($up رُفعت، $down حُملت)';
   }
 
   @override
   String quranApiService_syncFailedPartial(String n) {
-    return '، $n فشل';
+    return '، فشلت مزامنة $n';
   }
 
   @override
@@ -4651,28 +4654,28 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get authScreen_dontHaveAnAccountSignUp => 'ليس لديك حساب؟ اشتراك';
+  String get authScreen_dontHaveAnAccountSignUp => 'ليس لديك حساب؟ سجل الآن';
 
   @override
-  String get dhikrExitCelebration_keepItUp => 'استمر!';
+  String get dhikrExitCelebration_keepItUp => 'استمر على هذا المنوال!';
 
   @override
   String get unknownError => 'خطأ غير معروف';
 
   @override
-  String get celebrationStatSeeds => 'بذور';
+  String get celebrationStatSeeds => 'SEEDS';
 
   @override
-  String get celebrationStatSeedsEarned => 'البذور المكتسبة';
+  String get celebrationStatSeedsEarned => 'SEEDS المكتسبة';
 
   @override
-  String get celebrationStatAyahs => 'آيات';
+  String get celebrationStatAyahs => 'الآيات';
 
   @override
-  String get celebrationStatTime => 'وقت';
+  String get celebrationStatTime => 'الوقت';
 
   @override
-  String get celebrationStatStreak => 'أثَر';
+  String get celebrationStatStreak => 'الاستمرارية';
 
   @override
   String get celebrationStreakStartToday => 'ابدأ اليوم';
@@ -4682,8 +4685,8 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count days',
-      one: '1 day',
+      other: '$count أيام',
+      one: 'يوم 1',
     );
     return '$_temp0';
   }

@@ -31,23 +31,17 @@ const _locales = ['ur', 'ar', 'fr', 'id', 'ms', 'ru', 'tr'];
 // Every `{name}` token in the source must survive in the translation.
 final _placeholderRe = RegExp(r'\{([a-zA-Z][a-zA-Z0-9_]*)\}');
 
-// ICU keywords that must be present in the translation if they were in
-// the source. We only check for existence, not position — ICU is nested
-// enough that positional matching gives too many false positives.
-final _icuKeywords = <String>{
-  'plural',
-  'select',
-  'selectordinal',
-  'other',
-  'zero',
-  'one',
-  'two',
-  'few',
-  'many',
-  '=0',
-  '=1',
-  '=2',
-};
+// Detects an ICU plural/select header: `{count, plural, …` or
+// `{gender, select, …`. If this matches, the string is ICU-shaped and
+// we skip naïve placeholder matching (which would false-positive on
+// inner branches like `{days}`).
+final _icuHeaderRe = RegExp(
+  r'\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*,\s*(plural|select|selectordinal)\s*,',
+);
+
+// Word-boundary match for `other` so plain-text words like "Mother",
+// "brother", "others" don't trigger the ICU check.
+final _otherBranchRe = RegExp(r'\bother\s*\{');
 
 class _ValidationError {
   final String batch;
@@ -118,33 +112,41 @@ void main() {
           errors.add(_ValidationError(batchName, loc, key, 'missing or empty'));
           continue;
         }
-        // Placeholder check.
-        final srcPlaceholders = _placeholderRe
-            .allMatches(enText)
-            .map((m) => m.group(0)!)
-            .toSet();
-        final trPlaceholders = _placeholderRe
-            .allMatches(translation)
-            .map((m) => m.group(0)!)
-            .toSet();
-        final missingPh = srcPlaceholders.difference(trPlaceholders);
-        if (missingPh.isNotEmpty) {
-          errors.add(_ValidationError(batchName, loc, key,
-              'placeholder(s) missing: ${missingPh.join(", ")}'));
-          continue;
-        }
-        // ICU keyword check.
-        final srcHasIcu = _icuKeywords.any((k) => enText.contains(k));
-        if (srcHasIcu) {
-          final missingIcu = _icuKeywords
-              .where((k) => enText.contains(k) && !translation.contains(k))
-              .toList();
-          // `other` is the only required plural form. Missing anything
-          // else we treat as a warning by continuing but not adding to
-          // errors — LLM may reshape the plural map legitimately.
-          if (missingIcu.contains('other')) {
+        final icuHeader = _icuHeaderRe.firstMatch(enText);
+        if (icuHeader != null) {
+          // ICU-shaped source. Require translation to have the same
+          // outer variable + kind AND an `other {` branch. Skip naïve
+          // `{word}` placeholder scanning — the inner branches would
+          // otherwise be flagged as missing placeholders.
+          final varName = icuHeader.group(1)!;
+          final kind = icuHeader.group(2)!;
+          final trIcu = _icuHeaderRe.firstMatch(translation);
+          if (trIcu == null ||
+              trIcu.group(1) != varName ||
+              trIcu.group(2) != kind) {
             errors.add(_ValidationError(batchName, loc, key,
-                'ICU `other` branch missing'));
+                'ICU header `{$varName, $kind, …}` missing'));
+            continue;
+          }
+          if (!_otherBranchRe.hasMatch(translation)) {
+            errors.add(_ValidationError(batchName, loc, key,
+                'ICU `other {…}` branch missing'));
+            continue;
+          }
+        } else {
+          // Plain-text source. Every `{name}` in source must survive.
+          final srcPlaceholders = _placeholderRe
+              .allMatches(enText)
+              .map((m) => m.group(0)!)
+              .toSet();
+          final trPlaceholders = _placeholderRe
+              .allMatches(translation)
+              .map((m) => m.group(0)!)
+              .toSet();
+          final missingPh = srcPlaceholders.difference(trPlaceholders);
+          if (missingPh.isNotEmpty) {
+            errors.add(_ValidationError(batchName, loc, key,
+                'placeholder(s) missing: ${missingPh.join(", ")}'));
             continue;
           }
         }

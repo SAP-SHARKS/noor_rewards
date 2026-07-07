@@ -5454,7 +5454,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{_dhikrToday} sets today'**
-  String dashboardScreen_setsToday(String _dhikrToday);
+  String dashboardScreen_setsToday(String _dhikrToday, Object count);
 
   /// No description provided for @dashboardScreen_last.
   ///

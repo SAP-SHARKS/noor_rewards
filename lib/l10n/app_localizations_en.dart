@@ -3043,7 +3043,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String dashboardScreen_setsToday(String _dhikrToday) {
+  String dashboardScreen_setsToday(String _dhikrToday, Object count) {
     return '$_dhikrToday sets today';
   }
 
