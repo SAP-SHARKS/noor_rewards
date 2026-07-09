@@ -2718,11 +2718,11 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                         //      whose title isn't backfilled yet.
                                                         //   3) Bismillah-stripped transliteration
                                                         //      so the actual dua text shows.
-                                                        Text(
-                                                          () {
+                                                        Builder(
+                                                          builder: (context) {
                                                             // ── First-line name resolution ──
                                                             //
-                                                            // Rule: in NON-Arabic locales always use the
+                                                            // Rule: in non-RTL locales always use the
                                                             // English/Latin form. Some rows have garbled
                                                             // `title_<locale>` values (mojibake / bad
                                                             // mechanical script-swap), and the
@@ -2731,35 +2731,23 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                             // English Latin is universally readable and
                                                             // never garbled, so it's the safest source.
                                                             //
-                                                            // Only the actual Arabic locale shows real
-                                                            // Arabic-script names or the original Arabic
-                                                            // dua text below.
+                                                            // Arabic and Urdu locales show the original
+                                                            // Arabic dua text when it is available.
                                                             final lang =
                                                                 Localizations.maybeLocaleOf(
                                                                       context,
                                                                     )?.languageCode ??
                                                                 'en';
-                                                            if (_titleIsRealName(azkar.englishTitle)) {
-                                                              return lang == 'ar'
-                                                                  ? azkar.title
-                                                                  : azkar.englishTitle;
-                                                            }
-                                                            final wellKnown =
-                                                                _wellKnownAzkarName(
-                                                                  azkar,
-                                                                );
-                                                            if (wellKnown.isNotEmpty) {
-                                                              return lang == 'ar'
-                                                                  ? _localizeWellKnownAzkarName(
-                                                                      context,
-                                                                      wellKnown,
-                                                                    )
-                                                                  : wellKnown;
-                                                            }
-                                                            if (lang == 'ar' &&
+                                                            final isRtlLocale =
+                                                                lang == 'ar' ||
+                                                                lang == 'ur';
+                                                            final showArabicFirstLine =
+                                                                isRtlLocale &&
                                                                 azkar.arabic
                                                                     .trim()
-                                                                    .isNotEmpty) {
+                                                                    .isNotEmpty;
+                                                            String firstLine;
+                                                            if (showArabicFirstLine) {
                                                               final ar = _cleanArabic(
                                                                 azkar.arabic,
                                                                 azkarId:
@@ -2770,37 +2758,82 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                     ' ',
                                                                   )
                                                                   .trim();
-                                                              return ar.length >
+                                                              firstLine = ar.length >
                                                                       40
                                                                   ? '${ar.substring(0, 40).trimRight()}..'
                                                                   : ar;
+                                                            } else if (_titleIsRealName(azkar.englishTitle)) {
+                                                              firstLine = isRtlLocale
+                                                                  ? azkar.title
+                                                                  : azkar.englishTitle;
+                                                            } else {
+                                                              final wellKnown =
+                                                                  _wellKnownAzkarName(
+                                                                    azkar,
+                                                                  );
+                                                              if (wellKnown.isNotEmpty) {
+                                                                firstLine = isRtlLocale
+                                                                    ? _localizeWellKnownAzkarName(
+                                                                        context,
+                                                                        wellKnown,
+                                                                      )
+                                                                    : wellKnown;
+                                                              } else {
+                                                                final src =
+                                                                    _stripBismillahPrefix(
+                                                                      titleText,
+                                                                    );
+                                                                firstLine = src.length >
+                                                                        35
+                                                                    ? '${src.substring(0, 35).trimRight()}..'
+                                                                    : src;
+                                                              }
                                                             }
-                                                            final src =
-                                                                _stripBismillahPrefix(
-                                                                  titleText,
-                                                                );
-                                                            return src.length >
-                                                                    35
-                                                                ? '${src.substring(0, 35).trimRight()}..'
-                                                                : src;
-                                                          }(),
-                                                          maxLines: 1,
-                                                          overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
-                                                          style: GoogleFonts.outfit(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 15,
-                                                            height: 1.3,
-                                                            color:
+                                                            final titleColor =
                                                                 isComplete
                                                                     ? (isDark
                                                                         ? Colors
                                                                             .white54
                                                                         : kSub)
-                                                                    : kText,
-                                                          ),
+                                                                    : kText;
+                                                            return Text(
+                                                              firstLine,
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              textDirection:
+                                                                  showArabicFirstLine
+                                                                      ? TextDirection
+                                                                          .rtl
+                                                                      : null,
+                                                              style:
+                                                                  showArabicFirstLine
+                                                                      ? _kArabicFonts[_settings
+                                                                              .arabicFontIdx
+                                                                              .clamp(
+                                                                                0,
+                                                                                _kArabicFonts.length -
+                                                                                    1,
+                                                                              )]
+                                                                          .style(
+                                                                            19,
+                                                                            titleColor,
+                                                                            1.25,
+                                                                            FontWeight.w700,
+                                                                          )
+                                                                      : GoogleFonts.outfit(
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontSize:
+                                                                            15,
+                                                                        height:
+                                                                            1.3,
+                                                                        color:
+                                                                            titleColor,
+                                                                      ),
+                                                            );
+                                                          },
                                                         ),
                                                         // ── Line 2 (light): short benefit summary ──
                                                         // Renders only when the row has a real prose
