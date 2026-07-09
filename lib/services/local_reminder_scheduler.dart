@@ -34,6 +34,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'locale_service.dart';
+import 'notification_service.dart';
 
 class LocalReminderScheduler {
   LocalReminderScheduler._();
@@ -81,8 +82,31 @@ class LocalReminderScheduler {
       ),
     );
     // Channel itself is created by NotificationService.init() — we just
-    // schedule against it here.
-    await _plugin.initialize(settings: initSettings);
+    // schedule against it here. The tap callback shares FCM's deep-link
+    // router so morning/evening/sleep/quran/dhikr payloads land on the
+    // matching screen instead of just foregrounding the app.
+    await _plugin.initialize(
+      settings: initSettings,
+      onDidReceiveNotificationResponse: (response) {
+        NotificationService.handleDeepLinkRoute(response.payload);
+      },
+    );
+
+    // Cold-start case: if the app was launched by tapping a local
+    // reminder, `initialize` doesn't fire the callback — we have to
+    // pull the launch payload explicitly.
+    try {
+      final launch = await _plugin.getNotificationAppLaunchDetails();
+      if (launch != null &&
+          launch.didNotificationLaunchApp &&
+          launch.notificationResponse != null) {
+        NotificationService.handleDeepLinkRoute(
+          launch.notificationResponse!.payload,
+        );
+      }
+    } catch (e) {
+      debugPrint('[LocalReminderScheduler] launch details error: $e');
+    }
   }
 
   /// Re-schedules ALL local reminders. Safe to call repeatedly — each id is

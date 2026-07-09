@@ -408,7 +408,7 @@ class _ValidationRewardBodyState extends State<_ValidationRewardBody>
                             const SizedBox(height: 10),
                             _RewardRow(
                               '✨ ${AppLocalizations.of(context)?.totalEarnedLabel ?? 'Total Earned'}',
-                              '+$total Seeds',
+                              AppLocalizations.of(context)?.motivationalPopup_seeds_3a9c69(total.toString()) ?? '+$total Seeds',
                               Y4.palette.ink,
                               big: true,
                             ),
@@ -465,22 +465,34 @@ class _RewardRow extends StatelessWidget {
   const _RewardRow(this.label, this.value, this.color, {this.big = false});
   @override
   Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: [
-      Text(
-        label,
-        style: GoogleFonts.outfit(
-          fontSize: big ? 14 : 13,
-          fontWeight: big ? FontWeight.w800 : FontWeight.w500,
-          color: big ? Y4.palette.ink : Y4.palette.inkSoft,
+      Flexible(
+        flex: 3,
+        child: Text(
+          label,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.outfit(
+            fontSize: big ? 14 : 13,
+            fontWeight: big ? FontWeight.w800 : FontWeight.w500,
+            color: big ? Y4.palette.ink : Y4.palette.inkSoft,
+          ),
         ),
       ),
-      Text(
-        value,
-        style: GoogleFonts.outfit(
-          fontSize: big ? 16 : 14,
-          fontWeight: FontWeight.w800,
-          color: color,
+      const SizedBox(width: 12),
+      Flexible(
+        flex: 2,
+        child: Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.end,
+          style: GoogleFonts.outfit(
+            fontSize: big ? 16 : 14,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
         ),
       ),
     ],

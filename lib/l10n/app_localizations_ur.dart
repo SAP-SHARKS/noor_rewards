@@ -36,7 +36,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String seedsEarnedToday(int count) {
-    return 'آج +$count Sabiq Seeds کمائے!';
+    return 'آج +$count سابق سیڈز کمائے!';
   }
 
   @override
@@ -123,7 +123,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onboarding2Subtitle =>
-      'آپ کا پڑھا گیا ہر لفظ آپ کو ثواب دلاتا ہے، جو آخرت میں آپ کا نور ہوگا۔\nآپ کے Sabiq Seeds ان حقیقی مقاصد کی مدد کرتے ہیں جو زندگیاں بدلتے ہیں۔';
+      'آپ کا پڑھا گیا ہر لفظ آپ کو ثواب دلاتا ہے، جو آخرت میں آپ کا نور ہوگا۔\nآپ کے سابق سیڈز ان حقیقی مقاصد کی مدد کرتے ہیں جو زندگیاں بدلتے ہیں۔';
 
   @override
   String get onboarding3Title => 'اللہ کو\nہمیشہ یاد رکھیں';
@@ -156,13 +156,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'نور کے دروازے کھلے ہیں۔\nآپ کا روحانی سفر آج سے شروع ہوتا ہے۔';
 
   @override
-  String get earnNoorPoints => 'SABIQ SEEDS کمائیں';
+  String get earnNoorPoints => 'سابق سیڈز کمائیں';
 
   @override
   String get yourProgress => 'آپ کی پیشرفت';
 
   @override
-  String get yourTotalNoorPoints => 'آپ کے کل SABIQ SEEDS';
+  String get yourTotalNoorPoints => 'آپ کے کل سابق سیڈز';
 
   @override
   String get achievements => 'کامیابیاں';
@@ -180,7 +180,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get streaks => 'اسٹریکس';
 
   @override
-  String get noorPoints => 'Sabiq Seeds';
+  String get noorPoints => 'سابق سیڈز';
 
   @override
   String get readQuran => 'قرآن پڑھیں';
@@ -311,7 +311,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get communityLeaderboard => 'کمیونٹی لیڈر بورڈ';
 
   @override
-  String get topContributors => 'آج تک کے Seeds کے لحاظ سے ٹاپ تعاون کنندگان';
+  String get topContributors => 'آج تک کے سیڈز کے لحاظ سے ٹاپ تعاون کنندگان';
 
   @override
   String get myProfile => 'میری پروفائل';
@@ -417,10 +417,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get yourNoorPointsFundProjects =>
-      'آپ کے Sabiq Seeds ان پروجیکٹس کی مدد کرتے ہیں';
+      'آپ کے سابق سیڈز ان پروجیکٹس کی مدد کرتے ہیں';
 
   @override
-  String get youBothEarnPoints => 'آپ دونوں 500 Sabiq Seeds کماتے ہیں!';
+  String get youBothEarnPoints => 'آپ دونوں 500 سابق سیڈز کماتے ہیں!';
 
   @override
   String get reward => 'انعام';
@@ -444,7 +444,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get seeDetailsForMore => 'مزید پروجیکٹس کے لیے تفصیلات دیکھیں →';
 
   @override
-  String get pts => 'Seeds';
+  String get pts => 'سیڈز';
 
   @override
   String get funded => 'فنڈڈ';
@@ -467,7 +467,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get donationAmount => 'عطیے کی رقم';
 
   @override
-  String get points => 'Seeds';
+  String get points => 'سیڈز';
 
   @override
   String get donateEarnReward => 'عطیہ کریں اور ثواب کمائیں';
@@ -500,7 +500,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get donatePointsToSupport =>
-      'حقیقی دنیا کے پروجیکٹس کی مدد کے لیے اپنے Sabiq Seeds عطیہ کریں';
+      'حقیقی دنیا کے پروجیکٹس کی مدد کے لیے اپنے سابق سیڈز عطیہ کریں';
 
   @override
   String get noActiveProjects => 'اس وقت کوئی پروجیکٹس فعال نہیں ہیں';
@@ -535,7 +535,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String ptsToLevel(String pts, String level) {
-    return 'لیول $level کے لیے $pts Seeds';
+    return 'لیول $level کے لیے $pts سیڈز';
   }
 
   @override
@@ -571,10 +571,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get startEarningPts =>
-      'Seeds کمانا شروع کریں، قرآن پڑھیں، ذکر اور دعا کریں۔';
+      'سیڈز کمانا شروع کریں، قرآن پڑھیں، ذکر اور دعا کریں۔';
 
   @override
-  String get howToEarnPts => 'Seeds کیسے کمائیں';
+  String get howToEarnPts => 'سیڈز کیسے کمائیں';
 
   @override
   String get readOneAyah => '1 آیت پڑھیں';
@@ -656,7 +656,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get ramadanChallengeDesc =>
-      '3× Seeds ضرب • خصوصی بیجز • کمیونٹی کنوؤں کا ہدف';
+      '3× سیڈز ضرب • خصوصی بیجز • کمیونٹی کنوؤں کا ہدف';
 
   @override
   String get comingSoonStayConsistent => 'جلد آ رہا ہے، ثابت قدم رہیں!';
@@ -666,7 +666,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String ptsBoost(String multiplier) {
-    return '$multiplier× Seeds بوسٹ';
+    return '$multiplier× سیڈز بوسٹ';
   }
 
   @override
@@ -723,7 +723,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get deepUnderstanding => 'قرآن پاک کی گہری سمجھ';
 
   @override
-  String get earnPointsTafsir => 'ہر 10 منٹ تفسیر سننے پر Seeds کمائیں';
+  String get earnPointsTafsir => 'ہر 10 منٹ تفسیر سننے پر سیڈز کمائیں';
 
   @override
   String get featuredSurahs => 'نمایاں سورتیں';
@@ -875,10 +875,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get progressBarAyahCount => 'پروگریس بار اور آیات کی تعداد کا کارڈ';
 
   @override
-  String get showPointsBanner => 'Seeds کا بینر دکھائیں';
+  String get showPointsBanner => 'سیڈز کا بینر دکھائیں';
 
   @override
-  String get noorPointsNotificationStrip => '+Sabiq Seeds کی اطلاع کی پٹی';
+  String get noorPointsNotificationStrip => '+سابق سیڈز کی اطلاع کی پٹی';
 
   @override
   String get showSurahHeader => 'سورہ کا ہیڈر دکھائیں';
@@ -994,7 +994,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get loadingQuran => 'قرآن لوڈ ہو رہا ہے…';
 
   @override
-  String get earnPointsPerVerse => 'ہر آیت پڑھنے پر +10 Sabiq Seeds کمائیں';
+  String get earnPointsPerVerse => 'ہر آیت پڑھنے پر +10 سابق سیڈز کمائیں';
 
   @override
   String get chooseSurah => 'سورہ منتخب کریں';
@@ -1063,7 +1063,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dailyAzkarBonusMsg =>
-      'ماشاء اللہ! آپ نے اپنے روزمرہ اذکار پڑھے اور بونس کے طور پر +50 Sabiq Seeds کمائے۔';
+      'ماشاء اللہ! آپ نے اپنے روزمرہ اذکار پڑھے اور بونس کے طور پر +50 سابق سیڈز کمائے۔';
 
   @override
   String get awesome => 'بہت خوب';
@@ -1312,7 +1312,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get sadaqahGiven => 'دیا گیا صدقہ';
 
   @override
-  String get pointsDonatedToCommunity => 'کمیونٹی کو عطیہ کیے گئے Seeds';
+  String get pointsDonatedToCommunity => 'کمیونٹی کو عطیہ کیے گئے سیڈز';
 
   @override
   String get allTimeLabel => 'شروع سے اب تک';
@@ -1324,10 +1324,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get timeSpentInRemembrance => 'ذکر میں گزارا گیا وقت';
 
   @override
-  String get noorPointsSummary => 'Sabiq Seeds کا خلاصہ';
+  String get noorPointsSummary => 'سابق سیڈز کا خلاصہ';
 
   @override
-  String get totalPoints => 'کل Seeds';
+  String get totalPoints => 'کل سیڈز';
 
   @override
   String get title => 'عنوان';
@@ -1337,20 +1337,20 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String yourAvailable(String pts) {
-    return 'آپ کے دستیاب: $pts Seeds';
+    return 'آپ کے دستیاب: $pts سیڈز';
   }
 
   @override
   String jazakAllahDonated(String pts) {
-    return 'جزاک اللہ! $pts Seeds عطیہ کیے گئے';
+    return 'جزاک اللہ! $pts سیڈز عطیہ کیے گئے';
   }
 
   @override
-  String get insufficientPoints => 'ناکافی Seeds';
+  String get insufficientPoints => 'ناکافی سیڈز';
 
   @override
   String donatePoints(String pts) {
-    return '$pts Seeds عطیہ کریں';
+    return '$pts سیڈز عطیہ کریں';
   }
 
   @override
@@ -1360,7 +1360,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get fullyFunded => 'مکمل فنڈڈ ✓';
 
   @override
-  String get noPointsAvailable => 'کوئی Seeds دستیاب نہیں ہیں';
+  String get noPointsAvailable => 'کوئی سیڈز دستیاب نہیں ہیں';
 
   @override
   String get communityProgress => 'کمیونٹی کی پیشرفت';
@@ -1371,7 +1371,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get ptsRaised => 'Seeds جمع کیے گئے';
+  String get ptsRaised => 'سیڈز جمع کیے گئے';
 
   @override
   String ofGoal(String goal) {
@@ -1558,14 +1558,14 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'عالمی مسلم امہ کی محبت کے ساتھ بنایا گیا۔\nاسلامی عادات اپنا کر Sabiq Seeds کمائیں۔\nحقیقی کمیونٹی پراجیکٹس میں مدد کے لیے Seeds عطیہ کریں۔';
+      'عالمی مسلم امہ کی محبت کے ساتھ بنایا گیا۔\nاسلامی عادات اپنا کر سابق سیڈز کمائیں۔\nحقیقی کمیونٹی پراجیکٹس میں مدد کے لیے سیڈز عطیہ کریں۔';
 
   @override
-  String get howToEarnQuestion => 'Sabiq Seeds کیسے کمائیں؟';
+  String get howToEarnQuestion => 'سابق سیڈز کیسے کمائیں؟';
 
   @override
   String get howToEarnAnswer =>
-      'قرآن کی تلاوت، ذکر کے سیٹس اور روزانہ لاگ ان مکمل کر کے Seeds کمائیں۔';
+      'قرآن کی تلاوت، ذکر کے سیٹس اور روزانہ لاگ ان مکمل کر کے سیڈز کمائیں۔';
 
   @override
   String get whatIsValidateQuestion => 'یہ کوائنز محفوظ کرنا کیا ہے؟';
@@ -1582,11 +1582,11 @@ class AppLocalizationsUr extends AppLocalizations {
       'اپنی اسٹریک بنانے کے لیے اپنی روزمرہ کی سرگرمیاں مسلسل مکمل کریں۔';
 
   @override
-  String get canDonatQuestion => 'کیا میں اپنے Sabiq Seeds عطیہ کر سکتا ہوں؟';
+  String get canDonatQuestion => 'کیا میں اپنے سابق سیڈز عطیہ کر سکتا ہوں؟';
 
   @override
   String get canDonateAnswer =>
-      'جی ہاں! کمیونٹی پراجیکٹس میں Seeds عطیہ کرنے کے لیے آخرت کا ٹیب دیکھیں۔';
+      'جی ہاں! کمیونٹی پراجیکٹس میں سیڈز عطیہ کرنے کے لیے آخرت کا ٹیب دیکھیں۔';
 
   @override
   String get coinsSealedMashaAllah => 'کوائنز محفوظ ہو گئے!';
@@ -1616,7 +1616,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get shareWithFriends => 'دوستوں کے ساتھ شیئر کریں';
 
   @override
-  String get earnMoreNoor => 'مزید Seeds کمائیں';
+  String get earnMoreNoor => 'مزید سیڈز کمائیں';
 
   @override
   String get dontDisturb => 'پریشان نہ کریں';
@@ -1628,31 +1628,29 @@ class AppLocalizationsUr extends AppLocalizations {
   String get read5QuranPages => 'قرآن کے 5 صفحات پڑھیں';
 
   @override
-  String get completeNowBonus => 'ابھی مکمل کریں → +50 Seeds بونس کمائیں';
+  String get completeNowBonus => 'ابھی مکمل کریں → +50 سیڈز بونس کمائیں';
 
   @override
   String get completeADhikrSet => 'ذکر کا ایک سیٹ مکمل کریں';
 
   @override
-  String get finishAzkaarBonus =>
-      'اپنے اذکار مکمل کریں → +30 Seeds بونس کمائیں';
+  String get finishAzkaarBonus => 'اپنے اذکار مکمل کریں → +30 سیڈز بونس کمائیں';
 
   @override
   String get inviteAFriend => 'کسی دوست کو مدعو کریں';
 
   @override
-  String get shareNoorBonus =>
-      'Sabiq کسی کے ساتھ شیئر کریں → +100 Seeds کمائیں';
+  String get shareNoorBonus => 'سابق کسی کے ساتھ شیئر کریں → +100 سیڈز کمائیں';
 
   @override
   String get multiplyYour => 'اپنا بڑھائیں';
 
   @override
-  String get noorPointsBang => 'SABIQ SEEDS!';
+  String get noorPointsBang => 'سابق سیڈز!';
 
   @override
   String get keepMomentum =>
-      'اپنی روحانی پیش رفت جاری رکھیں\nاور اپنے Seeds کو بڑھتا دیکھیں۔';
+      'اپنی روحانی پیش رفت جاری رکھیں\nاور اپنے سیڈز کو بڑھتا دیکھیں۔';
 
   @override
   String get openQuranNow => 'ابھی قرآن کھولیں';
@@ -1670,7 +1668,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get realImpact => 'حقیقی اثر';
 
   @override
-  String get coinsFundCauses => 'Seeds نیک مقاصد\nمیں فنڈ کرتے ہیں';
+  String get coinsFundCauses => 'سیڈز نیک مقاصد\nمیں فنڈ کرتے ہیں';
 
   @override
   String get unexpectedGoogleError => 'Google سائن ان کے دوران غیر متوقع خرابی';
@@ -1695,14 +1693,14 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String noorPlusPoints(String pts) {
-    return '+$pts Sabiq Seeds';
+    return '+$pts سابق سیڈز';
   }
 
   @override
   String get yourGarden => 'آپ کا باغ';
 
   @override
-  String get noorPointsBloomed => 'Sabiq Seeds کھل گئے';
+  String get noorPointsBloomed => 'سابق سیڈز کھل گئے';
 
   @override
   String get growingStreakTitle => 'بڑھتی ہوئی اسٹریک';
@@ -1766,8 +1764,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get greetingPrefix => 'السلام علیکم،';
 
   @override
-  String get fundProjectsText =>
-      'آپ کے Sabiq Seeds ان پروجیکٹس میں فنڈ کرتے ہیں';
+  String get fundProjectsText => 'آپ کے سابق سیڈز ان پروجیکٹس میں فنڈ کرتے ہیں';
 
   @override
   String activeCount(String count) {
@@ -1840,12 +1837,12 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String pointsForSealing(String points) {
-    return 'آج دن محفوظ کرنے پر +$points Sabiq Seeds۔';
+    return 'آج دن محفوظ کرنے پر +$points سابق سیڈز۔';
   }
 
   @override
   String welcomeBack(String points) {
-    return '+$points Sabiq Seeds · خوش آمدید!';
+    return '+$points سابق سیڈز · خوش آمدید!';
   }
 
   @override
@@ -1871,7 +1868,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onbV2_2_Body =>
-      'قرآن پڑھیں یا ذکر کریں → Sabiq Seeds کمائیں → حقیقی مقاصد میں فنڈ کریں۔';
+      'قرآن پڑھیں یا ذکر کریں → سابق سیڈز کمائیں → حقیقی مقاصد میں فنڈ کریں۔';
 
   @override
   String get onbV2_3_TitleA => 'قرآن آپ کو انعام دیتا ہے';
@@ -1881,7 +1878,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onbV2_3_Sub =>
-      'ایک بار اللہ کی رحمت کے ساتھ۔ ایک بار ان Seeds کے ساتھ جو ضرورت مندوں کو کھانا کھلاتے ہیں۔';
+      'ایک بار اللہ کی رحمت کے ساتھ۔ ایک بار ان سیڈز کے ساتھ جو ضرورت مندوں کو کھانا کھلاتے ہیں۔';
 
   @override
   String get onbV2_3_BannerLabel => 'آج کمائے';
@@ -1904,7 +1901,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onbV2_5_Sub =>
-      'آپ کا کمایا ہوا ہر Seed حقیقی خوراک، پانی اور امید بن جاتا ہے۔';
+      'آپ کا کمایا ہوا ہر سیڈ حقیقی خوراک، پانی اور امید بن جاتا ہے۔';
 
   @override
   String get onbV2_6_TitleA => 'لیکن آخر یہ';
@@ -1917,7 +1914,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onbV2_6_Sub =>
-      'سخی عطیہ دہندگان مقاصد کے لیے فنڈ دیتے ہیں۔ آپ کے Seeds ان کے عطیے کی سمت کا تعین کرتے ہیں، اور ہر پڑھنے والے کے ساتھ ان کا ثواب بڑھاتے ہیں۔';
+      'سخی عطیہ دہندگان مقاصد کے لیے فنڈ دیتے ہیں۔ آپ کے سیڈز ان کے عطیے کی سمت کا تعین کرتے ہیں، اور ہر پڑھنے والے کے ساتھ ان کا ثواب بڑھاتے ہیں۔';
 
   @override
   String get onbV2_6_Donor => 'عطیہ دہندہ';
@@ -1958,7 +1955,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get onbV2_8_TitleB => 'نام سے۔';
 
   @override
-  String get onbV2_8_Sub => 'تاکہ Sabiq آپ کو اپنا اپنا لگے۔';
+  String get onbV2_8_Sub => 'تاکہ سابق آپ کو اپنا اپنا لگے۔';
 
   @override
   String get onbV2_8_Placeholder => 'آپ کا نام';
@@ -1974,7 +1971,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onbV2_9_Sub =>
-      'آپ کے Seeds تمام مقاصد کی مدد کرتے ہیں، اس سے ہمیں یہ سمجھنے میں مدد ملتی ہے کہ ہماری کمیونٹی کے لیے کیا اہم ہے۔';
+      'آپ کے سیڈز تمام مقاصد کی مدد کرتے ہیں، اس سے ہمیں یہ سمجھنے میں مدد ملتی ہے کہ ہماری کمیونٹی کے لیے کیا اہم ہے۔';
 
   @override
   String get onbV2_9_Cta => 'شروع کریں';
@@ -2020,7 +2017,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get onbV2_3step_S2Label => 'مرحلہ 2';
 
   @override
-  String get onbV2_3step_S2Text => 'Seeds کمائیں';
+  String get onbV2_3step_S2Text => 'سیڈز کمائیں';
 
   @override
   String get onbV2_3step_S3Label => 'مرحلہ 3';
@@ -2051,7 +2048,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get qfConflictExplanation =>
-      'یہ ای میل Sabiq Rewards کے ساتھ پہلے ہی سائن ان کے ایک مختلف طریقہ (ای میل یا Google) کا استعمال کرتے ہوئے رجسٹرڈ ہے۔\n\nاپنی موجودہ پیشرفت، اسٹریکس، اور Sabiq Seeds کی حفاظت کے لیے، براہ کرم اپنے اصل طریقہ کا استعمال کرتے ہوئے سائن ان کریں۔';
+      'یہ ای میل Sabiq Rewards کے ساتھ پہلے ہی سائن ان کے ایک مختلف طریقہ (ای میل یا Google) کا استعمال کرتے ہوئے رجسٹرڈ ہے۔\n\nاپنی موجودہ پیشرفت، اسٹریکس، اور سابق سیڈز کی حفاظت کے لیے، براہ کرم اپنے اصل طریقہ کا استعمال کرتے ہوئے سائن ان کریں۔';
 
   @override
   String get qfConflictStep1 => 'لاگ ان سکرین پر واپس جائیں';
@@ -2094,7 +2091,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get seedsCollectedSinceJoined =>
-      'شامل ہونے کے بعد سے جمع کیے گئے Seeds';
+      'شامل ہونے کے بعد سے جمع کیے گئے سیڈز';
 
   @override
   String get todayLabel => 'آج';
@@ -2143,7 +2140,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get notEnoughSeeds => 'Seeds ناکافی ہیں';
+  String get notEnoughSeeds => 'سیڈز ناکافی ہیں';
 
   @override
   String get bookmarkSyncDialogTitle => 'Quran.com بک مارک سنک';
@@ -2164,7 +2161,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get customLabel => 'حسب ضرورت';
 
   @override
-  String get seedsSuffix => 'Seeds';
+  String get seedsSuffix => 'سیڈز';
 
   @override
   String get settingsTooltip => 'ترتیبات';
@@ -2212,8 +2209,8 @@ class AppLocalizationsUr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Seeds زیر التواء ہیں',
-      one: '1 Seed زیر التواء ہے',
+      other: '$count سیڈز زیر التواء ہیں',
+      one: '1 سیڈ زیر التواء ہے',
     );
     return '$_temp0';
   }
@@ -2234,11 +2231,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get whatsappLabel => 'WhatsApp';
 
   @override
-  String get youBothEarnSeeds => 'آپ دونوں 500 Sabiq Seeds کماتے ہیں!';
+  String get youBothEarnSeeds => 'آپ دونوں 500 سابق سیڈز کماتے ہیں!';
 
   @override
   String jazakAllahPlusSeeds(int seeds) {
-    return 'جزاک اللہ! +$seeds Seeds';
+    return 'جزاک اللہ! +$seeds سیڈز';
   }
 
   @override
@@ -2261,7 +2258,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String setTargetSeeds(int defaultVal) {
-    return 'اپنے ہدف کے Seeds سیٹ کریں (طے شدہ: $defaultVal)';
+    return 'اپنے ہدف کے سیڈز سیٹ کریں (طے شدہ: $defaultVal)';
   }
 
   @override
@@ -2305,8 +2302,8 @@ class AppLocalizationsUr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'میرا حصہ: $count Seeds',
-      one: 'میرا حصہ: 1 Seed',
+      other: 'میرا حصہ: $count سیڈز',
+      one: 'میرا حصہ: 1 سیڈ',
     );
     return '$_temp0';
   }
@@ -2316,8 +2313,8 @@ class AppLocalizationsUr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       amount,
       locale: localeName,
-      other: 'جزاک اللہ خیر! $amount Seeds عطیہ کیے گئے۔',
-      one: 'جزاک اللہ خیر! 1 Seed عطیہ کیا گیا۔',
+      other: 'جزاک اللہ خیر! $amount سیڈز عطیہ کیے گئے۔',
+      one: 'جزاک اللہ خیر! 1 سیڈ عطیہ کیا گیا۔',
     );
     return '$_temp0';
   }
@@ -2326,10 +2323,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get coinsSealedTitle => 'کوائنز محفوظ ہو گئے! ماشاء اللہ';
 
   @override
-  String get seedsSealedSafe => 'آپ کے Seeds محفوظ ہیں\nآخرت کے لیے۔';
+  String get seedsSealedSafe => 'آپ کے سیڈز محفوظ ہیں\nآخرت کے لیے۔';
 
   @override
-  String get validationSeedsLabel => 'محفوظ کیے گئے Seeds';
+  String get validationSeedsLabel => 'محفوظ کیے گئے سیڈز';
 
   @override
   String get streakBonusLabel => 'اسٹریک بونس';
@@ -2350,7 +2347,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get shareWithFriendsCta => 'دوستوں کے ساتھ شیئر کریں';
 
   @override
-  String get earnMoreSeedsCta => 'مزید Seeds کمائیں';
+  String get earnMoreSeedsCta => 'مزید سیڈز کمائیں';
 
   @override
   String levelTitleFormat(int level, String title) {
@@ -2387,7 +2384,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get activeCampaigns => 'فعال مہمات';
 
   @override
-  String get poolSeedsImpact => 'دیرپا اثر کے لیے اپنے Seeds اکٹھے کریں';
+  String get poolSeedsImpact => 'دیرپا اثر کے لیے اپنے سیڈز اکٹھے کریں';
 
   @override
   String get featuredSponsorChild => 'نمایاں · ایک بچے کی کفالت کریں';
@@ -2413,7 +2410,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ نے ابھی تک کچھ نہیں دیا۔ اپنا اثر پیدا کرنے کا سفر شروع کرنے کے لیے اوپر سے کسی کو منتخب کریں۔';
 
   @override
-  String get seedsDonatedLabel => 'عطیہ کیے گئے Seeds';
+  String get seedsDonatedLabel => 'عطیہ کیے گئے سیڈز';
 
   @override
   String orphanCount(int count) {
@@ -2469,18 +2466,18 @@ class AppLocalizationsUr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Seeds',
-      one: '1 Seed',
+      other: '$count سیڈز',
+      one: '1 سیڈ',
     );
     return '$_temp0';
   }
 
   @override
-  String get seedsUnit => 'Seeds';
+  String get seedsUnit => 'سیڈز';
 
   @override
   String get topContribByLifetimeSeeds =>
-      'آج تک کے Seeds کے لحاظ سے ٹاپ تعاون کنندگان';
+      'آج تک کے سیڈز کے لحاظ سے ٹاپ تعاون کنندگان';
 
   @override
   String get romanisedPronunciation => 'ہر لفظ کے نیچے رومن تلفظ';
@@ -2498,7 +2495,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get englishLanguageLabel => 'انگریزی';
 
   @override
-  String get earnPerVerseRead => 'ہر آیت پڑھنے پر +10 Sabiq Seeds کمائیں';
+  String get earnPerVerseRead => 'ہر آیت پڑھنے پر +10 سابق سیڈز کمائیں';
 
   @override
   String get surahPickerLabel => 'سورہ';
@@ -2600,7 +2597,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get marketplaceDua => 'بازار کی دعا';
 
   @override
-  String get seedsDonatedToCommunity => 'کمیونٹی کو عطیہ کیے گئے Seeds';
+  String get seedsDonatedToCommunity => 'کمیونٹی کو عطیہ کیے گئے سیڈز';
 
   @override
   String get yourMonth => 'آپ کا مہینہ';
@@ -2640,11 +2637,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get seedsExpiringNotificationTitle =>
-      'Seeds آدھی رات کو ضائع ہو جائیں گے!';
+      'سیڈز آدھی رات کو ضائع ہو جائیں گے!';
 
   @override
   String seedsExpiringNotificationBody(int pending) {
-    return 'آپ کے $pending Seeds زیر التواء ہیں۔ ابھی دن محفوظ کریں، ورنہ وہ ضائع ہو جائیں گے!';
+    return 'آپ کے $pending سیڈز زیر التواء ہیں۔ ابھی دن محفوظ کریں، ورنہ وہ ضائع ہو جائیں گے!';
   }
 
   @override
@@ -2912,7 +2909,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String seedsThisSession(String count) {
-    return 'اس سیشن میں +$count seeds';
+    return 'اس سیشن میں +$count سیڈز';
   }
 
   @override
@@ -2972,7 +2969,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String streakSeedsBonus(String count) {
-    return '+$count Seeds';
+    return '+$count سیڈز';
   }
 
   @override
@@ -2998,7 +2995,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String donateAmountSeeds(String amount) {
-    return '$amount Seeds عطیہ کریں';
+    return '$amount سیڈز عطیہ کریں';
   }
 
   @override
@@ -3292,22 +3289,22 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String levelScreen_seeds_59c6a1(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
   String levelScreen_seeds_a20530(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
   String levelScreen_seeds_a49180(String arg1) {
-    return '+$arg1 Seeds ✓';
+    return '+$arg1 سیڈز ✓';
   }
 
   @override
   String levelScreen_seeds_a22be5(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
@@ -3323,7 +3320,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String levelScreen_seeds_990893(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
@@ -3365,12 +3362,12 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String profileSettingsScreen_seeds_59ba7c(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 سیڈز';
   }
 
   @override
   String profileSettingsScreen_seeds_2bc978(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 سیڈز';
   }
 
   @override
@@ -3387,7 +3384,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String projectDetailScreen_seeds_801ec7(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 سیڈز';
   }
 
   @override
@@ -3471,7 +3468,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get liveNotificationService_sealYourSeedsBefore_be2183 =>
-      'آدھی رات سے پہلے اپنے Seeds محفوظ کریں!';
+      'آدھی رات سے پہلے اپنے سیڈز محفوظ کریں!';
 
   @override
   String streakService_1fc043(String arg1, String arg2) {
@@ -3485,7 +3482,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String motivationalPopup_seeds_b14996(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
@@ -3630,11 +3627,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dashboardScreen_joinMeOnSabiq_755fb5 =>
-      'Sabiq Rewards پر میرے ساتھ شامل ہوں، روزانہ قرآن، ذکر اور نیکیوں کے لیے Seeds کمائیں!\\n\\n';
+      'Sabiq Rewards پر میرے ساتھ شامل ہوں، روزانہ قرآن، ذکر اور نیکیوں کے لیے سیڈز کمائیں!\\n\\n';
 
   @override
   String dashboardScreen_useMyCodeAnd_7d13b3(String arg1) {
-    return 'میرا کوڈ *$arg1* استعمال کریں اور ہم دونوں کو 500 Sabiq Seeds ملیں گے!\\n\\n';
+    return 'میرا کوڈ *$arg1* استعمال کریں اور ہم دونوں کو 500 سابق سیڈز ملیں گے!\\n\\n';
   }
 
   @override
@@ -3643,7 +3640,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dashboardScreen_sabiqSeedsRewardedTo_c209d6 =>
-      'آپ دونوں کو 500 Sabiq Seeds کا انعام دیا گیا!';
+      'آپ دونوں کو 500 سابق سیڈز کا انعام دیا گیا!';
 
   @override
   String get dashboardScreen_youHaveAlreadyUsed_f7c387 =>
@@ -3987,7 +3984,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String levelScreen_seeds_fff97b(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
@@ -3995,7 +3992,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String levelScreen_seedsBoost_464454(String arg1) {
-    return '$arg1× Seeds بوسٹ';
+    return '$arg1× سیڈز بوسٹ';
   }
 
   @override
@@ -4049,7 +4046,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String orphanDetailScreen_ofSeeds_2a29fc(String arg1, String arg2) {
-    return '$arg2 میں سے $arg1 Seeds';
+    return '$arg2 میں سے $arg1 سیڈز';
   }
 
   @override
@@ -4073,7 +4070,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String orphanDetailScreen_seeds_30d8dc(String _availablePoints) {
-    return '$_availablePoints Seeds';
+    return '$_availablePoints سیڈز';
   }
 
   @override
@@ -4085,17 +4082,17 @@ class AppLocalizationsUr extends AppLocalizations {
   String orphanDetailScreen_jazakallahKhayranSeedsSponsored_316bec(
     String amount,
   ) {
-    return 'جزاک اللہ خیر! $amount Seeds کی کفالت کی گئی۔';
+    return 'جزاک اللہ خیر! $amount سیڈز کی کفالت کی گئی۔';
   }
 
   @override
   String orphanDetailScreen_chooseHowManySeeds_b69aa2(String arg1) {
-    return 'منتخب کریں کہ کتنے Seeds دینے ہیں۔ کم از کم $arg1۔';
+    return 'منتخب کریں کہ کتنے سیڈز دینے ہیں۔ کم از کم $arg1۔';
   }
 
   @override
   String orphanDetailScreen_yourBalanceSeeds_f8045b(String arg1) {
-    return 'آپ کا بیلنس: $arg1 Seeds';
+    return 'آپ کا بیلنس: $arg1 سیڈز';
   }
 
   @override
@@ -4116,7 +4113,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String profileSettingsScreen_seeds_53d666(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 سیڈز';
   }
 
   @override
@@ -4134,11 +4131,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get projectDetailScreen_fundedSoFarEvery_dab3fd =>
-      'اب تک فنڈ کیا گیا، ہر Seed اہم ہے!\\n\\n';
+      'اب تک فنڈ کیا گیا، ہر سیڈ اہم ہے!\\n\\n';
 
   @override
   String get projectDetailScreen_openSabiqRewardsApp_cdda14 =>
-      'اپنے Seeds عطیہ کرنے اور ثواب کمانے کے لیے Sabiq Rewards ایپ کھولیں۔\\n';
+      'اپنے سیڈز عطیہ کرنے اور ثواب کمانے کے لیے Sabiq Rewards ایپ کھولیں۔\\n';
 
   @override
   String get projectDetailScreen_sabiqrewardsSadaqahIslamicCharity_663ba5 =>
@@ -4159,7 +4156,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String projectDetailScreen_seeds_47387f(String arg1) {
-    return '$arg1 Seeds';
+    return '$arg1 سیڈز';
   }
 
   @override
@@ -4319,7 +4316,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String donationService_youSponsoredSeedsJazak_7711e1(String amount) {
-    return 'آپ نے $amount Seeds اسپانسر کیے · جزاک اللہ خیر۔';
+    return 'آپ نے $amount سیڈز اسپانسر کیے · جزاک اللہ خیر۔';
   }
 
   @override
@@ -4367,7 +4364,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String xpService_seedsWelcomeBack_47888a(String arg1) {
-    return '+$arg1 Seeds · خوش آمدید!';
+    return '+$arg1 سیڈز · خوش آمدید!';
   }
 
   @override
@@ -4378,12 +4375,12 @@ class AppLocalizationsUr extends AppLocalizations {
     String flushed,
     String bonus,
   ) {
-    return '+$flushed Sabiq Seeds کی تصدیق ہو گئی! ($bonus محفوظ کرنے کا بونس)';
+    return '+$flushed سابق سیڈز کی تصدیق ہو گئی! ($bonus محفوظ کرنے کا بونس)';
   }
 
   @override
   String xpService_sabiqSeedsConfirmed_34969c(String flushed) {
-    return '+$flushed Sabiq Seeds کی تصدیق ہو گئی!';
+    return '+$flushed سابق سیڈز کی تصدیق ہو گئی!';
   }
 
   @override
@@ -4443,24 +4440,24 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String motivationalPopup_seeds_3a9c69(String arg1) {
-    return '+$arg1 Seeds';
+    return '+$arg1 سیڈز';
   }
 
   @override
   String get motivationalPopup_completeNowEarnSeeds_16ea6e =>
-      'ابھی مکمل کریں → +50 Seeds بونس کمائیں';
+      'ابھی مکمل کریں → +50 سیڈز بونس کمائیں';
 
   @override
   String get motivationalPopup_finishYourAzkaarEarn_e264fa =>
-      'اپنے اذکار مکمل کریں → +30 Seeds بونس کمائیں';
+      'اپنے اذکار مکمل کریں → +30 سیڈز بونس کمائیں';
 
   @override
   String get motivationalPopup_shareSabiqWithSomeone_c60dcc =>
-      'Sabiq کسی کے ساتھ شیئر کریں → +100 Seeds کمائیں';
+      'سابق کسی کے ساتھ شیئر کریں → +100 سیڈز کمائیں';
 
   @override
   String get motivationalPopup_keepYourSpiritualMomentum_0f172c =>
-      'اپنی روحانی پیش رفت کو جاری رکھیں\\nاور اپنے Seeds کو بڑھتا دیکھیں۔ ✨';
+      'اپنی روحانی پیش رفت کو جاری رکھیں\\nاور اپنے سیڈز کو بڑھتا دیکھیں۔ ✨';
 
   @override
   String get projectMediaCarousel_couldNotLoadVideo_deb8dd =>
@@ -4506,7 +4503,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String impactReportScreen_totalDonatedSeeds(String n, String seeds) {
-    return 'کل عطیہ: $n $seeds';
+    return 'کل عطیہ: $n سیڈز';
   }
 
   @override
@@ -4521,7 +4518,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String streakService_dayStreakBody(String days, String type, String bonus) {
-    return '$days دن کی $type اسٹریک · +$bonus بونس Seeds کھل گئے';
+    return '$days دن کی $type اسٹریک · +$bonus بونس سیڈز کھل گئے';
   }
 
   @override
@@ -4539,7 +4536,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String donationService_youDonatedSeeds(String amount) {
-    return 'آپ نے $amount Seeds عطیہ کیے · جزاک اللہ خیر۔';
+    return 'آپ نے $amount سیڈز عطیہ کیے · جزاک اللہ خیر۔';
   }
 
   @override
@@ -4607,19 +4604,19 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get liveNotificationService_validateChannelDesc =>
-      'آدھی رات سے پہلے اپنے زیر التواء Seeds محفوظ کرنے کی یاد دہانی۔';
+      'آدھی رات سے پہلے اپنے زیر التواء سیڈز محفوظ کرنے کی یاد دہانی۔';
 
   @override
   String get liveNotificationService_validateTicker =>
-      'آدھی رات سے پہلے اپنے Seeds محفوظ کریں';
+      'آدھی رات سے پہلے اپنے سیڈز محفوظ کریں';
 
   @override
   String get liveNotificationService_validateTitle =>
-      'آدھی رات سے پہلے اپنے Seeds محفوظ کریں!';
+      'آدھی رات سے پہلے اپنے سیڈز محفوظ کریں!';
 
   @override
   String liveNotificationService_validateBody(String n) {
-    return 'آپ کے $n Seeds زیر التواء ہیں۔ آدھی رات سے پہلے دن محفوظ کریں پر تھپتھپائیں، ورنہ وہ ضائع ہو جائیں گے۔';
+    return 'آپ کے $n سیڈز زیر التواء ہیں۔ آدھی رات سے پہلے دن محفوظ کریں پر تھپتھپائیں، ورنہ وہ ضائع ہو جائیں گے۔';
   }
 
   @override
@@ -4655,11 +4652,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'آج کی قرآن اور ذکر کی پیش رفت لائیو دیکھیں';
 
   @override
-  String get liveNotificationService_seedsToday => 'آپ کے آج کے Seeds ✨';
+  String get liveNotificationService_seedsToday => 'آپ کے آج کے سیڈز ✨';
 
   @override
-  String get liveNotificationService_summary =>
-      'Sabiq کھولنے کے لیے تھپتھپائیں';
+  String get liveNotificationService_summary => 'سابق کھولنے کے لیے تھپتھپائیں';
 
   @override
   String get quranApiService_notConnected => 'Quran.com سے منسلک نہیں ہے';
@@ -4701,10 +4697,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get unknownError => 'نامعلوم خرابی';
 
   @override
-  String get celebrationStatSeeds => 'SEEDS';
+  String get celebrationStatSeeds => 'سیڈز';
 
   @override
-  String get celebrationStatSeedsEarned => 'حاصل کردہ SEEDS';
+  String get celebrationStatSeedsEarned => 'حاصل کردہ سیڈز';
 
   @override
   String get celebrationStatAyahs => 'آیات';

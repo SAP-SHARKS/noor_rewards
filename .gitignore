@@ -68,3 +68,5 @@ supabase/.temp/
 # .arb files.
 build/ui_translation_batches/
 build/tagline_batches/
+build/notification_variant_batches/
+build/azkar_translation_batches/

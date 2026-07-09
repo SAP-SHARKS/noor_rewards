@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../screens/dhikr_screen.dart';
+import '../screens/quran_screen.dart';
+import '../screens/impact_report_screen.dart';
 
 /// Global navigator key — pass to [MaterialApp.navigatorKey] in main.dart.
 /// Used to push routes from FCM tap handlers outside the widget tree.
@@ -277,50 +279,62 @@ class NotificationService {
       });
     }
 
-    // Always stash the pending route so the dashboard can drive the deep
-    // link once it's mounted. This survives cold-start splash → auth →
-    // dashboard transitions where a direct nav.push would be lost.
-    if (route != null && route.isNotEmpty) {
-      pendingDeepLinkRoute.value = route;
+    handleDeepLinkRoute(route);
+  }
+
+  /// Shared entry point for both FCM and local-notification taps.
+  ///
+  /// Stashes the route in [pendingDeepLinkRoute] so the dashboard can
+  /// consume it after mounting (survives cold-start splash → auth →
+  /// dashboard navigator-stack replacement), and best-effort direct-
+  /// pushes when the navigator is already live (warm-tap case).
+  static void handleDeepLinkRoute(String? route) {
+    if (route == null || route.isEmpty) {
+      pendingDeepLinkRoute.value = null;
+      return;
     }
 
-    // Best-effort direct push for the warm/background case (app already
-    // sitting on the dashboard). If the navigator isn't ready yet, we rely
-    // on the pendingDeepLinkRoute consumer on dashboard mount.
+    pendingDeepLinkRoute.value = route;
+
     final nav = notificationNavigatorKey.currentState;
-    if (nav == null) return;
+    if (nav == null) return; // cold start — dashboard mount will handle it.
+
+    final screen = _screenForRoute(route);
+    if (screen != null) {
+      nav.push(MaterialPageRoute(builder: (_) => screen));
+    }
+    // Consume — direct push done (or unmapped route, which we don't
+    // want the dashboard consumer to trigger on again).
+    pendingDeepLinkRoute.value = null;
+  }
+
+  /// Route string → target screen. Returns null for `home` / unknown,
+  /// which foreground the app to the dashboard (no push needed).
+  ///
+  /// Supported values (mirror the `route` column on `notification_variants`
+  /// and the `payload` field on LocalReminderScheduler):
+  ///   morning / evening / sleeping — DhikrScreen at that category
+  ///   dhikr                        — DhikrScreen (general)
+  ///   quran                        — QuranScreen
+  ///   cause                        — ImpactReportScreen (donate hub)
+  ///   home / (anything else)       — no-op → just brings app forward
+  static Widget? _screenForRoute(String route) {
     switch (route) {
       case 'morning':
-        nav.push(
-          MaterialPageRoute(
-            builder: (_) => const DhikrScreen(initialCategory: 'morning'),
-          ),
-        );
-        // Already navigated — clear the pending route so dashboard mount
-        // doesn't re-trigger.
-        pendingDeepLinkRoute.value = null;
-        break;
+        return const DhikrScreen(initialCategory: 'morning');
       case 'evening':
-        nav.push(
-          MaterialPageRoute(
-            builder: (_) => const DhikrScreen(initialCategory: 'evening'),
-          ),
-        );
-        pendingDeepLinkRoute.value = null;
-        break;
+        return const DhikrScreen(initialCategory: 'evening');
       case 'sleeping':
-        nav.push(
-          MaterialPageRoute(
-            builder: (_) => const DhikrScreen(initialCategory: 'sleeping'),
-          ),
-        );
-        pendingDeepLinkRoute.value = null;
-        break;
+        return const DhikrScreen(initialCategory: 'sleeping');
+      case 'dhikr':
+        return const DhikrScreen();
+      case 'quran':
+        return const QuranScreen();
+      case 'cause':
+        return const ImpactReportScreen();
+      case 'home':
       default:
-        // Nightly check-in or unknown — just brings app to foreground.
-        // Clear so a stale route doesn't trigger a delayed navigation.
-        pendingDeepLinkRoute.value = null;
-        break;
+        return null;
     }
   }
 }
