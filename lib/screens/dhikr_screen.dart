@@ -2748,16 +2748,18 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                     .isNotEmpty;
                                                             String firstLine;
                                                             if (showArabicFirstLine) {
-                                                              final ar = _cleanArabic(
-                                                                azkar.arabic,
-                                                                azkarId:
-                                                                    azkar.id,
-                                                              )
-                                                                  .replaceAll(
-                                                                    '\n',
-                                                                    ' ',
-                                                                  )
-                                                                  .trim();
+                                                              final ar = _stripArabicOpeningPrefix(
+                                                                _cleanArabic(
+                                                                  azkar.arabic,
+                                                                  azkarId:
+                                                                      azkar.id,
+                                                                )
+                                                                    .replaceAll(
+                                                                      '\n',
+                                                                      ' ',
+                                                                    )
+                                                                    .trim(),
+                                                              );
                                                               firstLine = ar.length >
                                                                       40
                                                                   ? '${ar.substring(0, 40).trimRight()}..'
@@ -4681,6 +4683,58 @@ String _stripBismillahPrefix(String s) {
   // variant, e.g. daily_dua_008 "Bismillahi fee awwalihi wa aakhirih."
   if (stripped.isEmpty) return s;
   return stripped;
+}
+
+String _stripArabicOpeningPrefix(String s) {
+  final original = s.trim();
+  if (original.isEmpty) return s;
+
+  String normalizeWord(String word) {
+    return word
+        .replaceAll(
+          RegExp(r'[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06ED]'),
+          '',
+        )
+        .replaceAll('\u0640', '')
+        .replaceAll(RegExp(r'[^\u0600-\u06FF]'), '')
+        .replaceAll(RegExp(r'[أإآٱ]'), 'ا');
+  }
+
+  String stripLeadingAyahMarker(String text) {
+    return text
+        .replaceFirst(RegExp(r'^\s*[﴿\uFD3F][٠-٩0-9]+[﴾\uFD3E]\s*'), '')
+        .trim();
+  }
+
+  String stripWords(int count, List<String> words) {
+    final stripped = stripLeadingAyahMarker(words.skip(count).join(' '));
+    return stripped.isEmpty ? original : stripped;
+  }
+
+  final words = original.split(RegExp(r'\s+'));
+  final normalized = words.map(normalizeWord).toList(growable: false);
+
+  if (normalized.length >= 4 &&
+      normalized[0] == 'بسم' &&
+      normalized[1] == 'الله' &&
+      normalized[2] == 'الرحمن' &&
+      normalized[3] == 'الرحيم') {
+    return stripWords(4, words);
+  }
+
+  if (normalized.isNotEmpty && normalized[0] == 'اعوذ') {
+    final maxSearch = normalized.length < 9 ? normalized.length : 9;
+    for (var i = 1; i < maxSearch; i++) {
+      if (normalized[i] == 'الرجيم') {
+        return stripWords(i + 1, words);
+      }
+    }
+    if (normalized.length >= 2 && normalized[1] == 'بالله') {
+      return stripWords(2, words);
+    }
+  }
+
+  return original;
 }
 
 /// Normalize a transliteration so the same Quranic dua matches whether it
