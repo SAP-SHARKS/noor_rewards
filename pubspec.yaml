@@ -77,8 +77,29 @@ flutter:
     - assets/data/
     - assets/icons/
     - assets/illustrations/quranic/
+    - assets/google_fonts/         # bundled Arabic TTFs — google_fonts picks these up before hitting the CDN, so release APKs render Arabic properly even on flaky networks
     - .env                         # Quran Foundation API credentials
   fonts:
     - family: AlQalamQuran
       fonts:
         - asset: assets/fonts/Al_Qalam_Quran_Majeed_2.ttf
+    # Arabic fonts registered natively so the app never depends on
+    # google_fonts' runtime download for Arabic glyph rendering. Release
+    # APKs were falling back to a Latin serif face when the CDN fetch
+    # failed / timed out; bundling + native registration removes that
+    # failure mode entirely.
+    - family: ScheherazadeNew
+      fonts:
+        - asset: assets/google_fonts/ScheherazadeNew-Regular.ttf
+        - asset: assets/google_fonts/ScheherazadeNew-Bold.ttf
+          weight: 700
+    - family: NotoNaskhArabic
+      fonts:
+        - asset: assets/google_fonts/NotoNaskhArabic-Regular.ttf
+        - asset: assets/google_fonts/NotoNaskhArabic-Bold.ttf
+          weight: 700
+    - family: Amiri
+      fonts:
+        - asset: assets/google_fonts/Amiri-Regular.ttf
+        - asset: assets/google_fonts/Amiri-Bold.ttf
+          weight: 700

@@ -24,8 +24,8 @@ import '../theme/y4_theme.dart';
 import '../services/stats_service.dart';
 import '../services/translation_service.dart';
 import '../services/locale_service.dart';
+import '../services/quran_api_service.dart';
 import '../data/tagline_translations.dart';
-import 'quran_screen.dart';
 
 // Returns a localized azkar-category title for the given category id.
 // Mirrors `_localTitle` in dhikr_hub_screen.dart so the player header and
@@ -82,12 +82,19 @@ typedef _ArabicFont =
       style,
     });
 
+// The three families ("ScheherazadeNew", "NotoNaskhArabic", "AlQalamQuran")
+// are registered natively in pubspec.yaml so they load from the bundled TTFs
+// at app startup. Previously used GoogleFonts.xxx() which does a runtime
+// CDN fetch — that fetch silently fails on some release-APK installs and
+// the OS falls back to a Latin serif face, producing the "Arabic looks like
+// English font" bug reported in production.
 final List<_ArabicFont> _kArabicFonts = [
   (
     name: 'Uthmani',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style:
-        (size, color, height, weight) => GoogleFonts.scheherazadeNew(
+        (size, color, height, weight) => TextStyle(
+          fontFamily: 'ScheherazadeNew',
           fontSize: size,
           color: color,
           height: height,
@@ -100,7 +107,7 @@ final List<_ArabicFont> _kArabicFonts = [
     style:
         (size, color, height, weight) => TextStyle(
           fontFamily: 'AlQalamQuran',
-          fontFamilyFallback: const ['ScheherazadeNew', 'Noto Naskh Arabic'],
+          fontFamilyFallback: const ['ScheherazadeNew', 'NotoNaskhArabic'],
           fontSize: size + 6,
           color: color,
           height: height,
@@ -111,7 +118,8 @@ final List<_ArabicFont> _kArabicFonts = [
     name: 'Madina',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
     style:
-        (size, color, height, weight) => GoogleFonts.notoNaskhArabic(
+        (size, color, height, weight) => TextStyle(
+          fontFamily: 'NotoNaskhArabic',
           fontSize: size,
           color: color,
           height: height,
@@ -2741,13 +2749,40 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                             final isRtlLocale =
                                                                 lang == 'ar' ||
                                                                 lang == 'ur';
+                                                            // Full-Surah azkar (quranSurah != null) have `arabic`
+                                                                // set to the Bismillah opener as a placeholder
+                                                                // — everything real is fetched inline from the
+                                                                // Quran API in the detail card. Stripping the
+                                                                // Bismillah out would leave the list line empty,
+                                                                // so we skip the Arabic-first-line path for
+                                                                // these rows and fall through to the title/
+                                                                // well-known-name resolution instead.
                                                             final showArabicFirstLine =
                                                                 isRtlLocale &&
                                                                 azkar.arabic
                                                                     .trim()
-                                                                    .isNotEmpty;
+                                                                    .isNotEmpty &&
+                                                                azkar.quranSurah == null;
                                                             String firstLine;
-                                                            if (showArabicFirstLine) {
+                                                            // Full-Surah azkar in RTL locales: derive the
+                                                            // display name deterministically from the
+                                                            // quran_surah number rather than trusting the
+                                                            // DB `title` / `title_<locale>` columns — those
+                                                            // are either empty (for the 8 new short-surah
+                                                            // rows) or contain garbled/mojibake Urdu from
+                                                            // an earlier mechanical LLM pass, and the user
+                                                            // shouldn't have to see either.
+                                                            final surahLocalName =
+                                                                (isRtlLocale &&
+                                                                        azkar.quranSurah != null)
+                                                                    ? _quranSurahLocalName(
+                                                                          azkar.quranSurah!,
+                                                                          lang,
+                                                                        )
+                                                                    : '';
+                                                            if (surahLocalName.isNotEmpty) {
+                                                              firstLine = surahLocalName;
+                                                            } else if (showArabicFirstLine) {
                                                               final ar = _stripArabicOpeningPrefix(
                                                                 _cleanArabic(
                                                                   azkar.arabic,
@@ -4950,6 +4985,24 @@ String _polishBenefit(String src, {required bool allowShort}) {
   return raw;
 }
 
+/// Canonical Urdu/Arabic surah names for azkar whose `quran_surah` is set.
+/// Used by the list view's first-line resolver so RTL locales show the
+/// proper surah name in Arabic script instead of the empty / mojibake
+/// `title_<locale>` some rows have. Only the surahs currently linked via
+/// azkar_items.quran_surah need entries here — extend as more are added.
+String _quranSurahLocalName(int surah, String lang) {
+  if (lang != 'ar' && lang != 'ur') return '';
+  const names = <int, String>{
+    1: 'سورۃ الفاتحہ',   // Al-Fatiha
+    32: 'سورۃ السجدہ',   // As-Sajda
+    67: 'سورۃ الملک',    // Al-Mulk
+    112: 'سورۃ الاخلاص', // Al-Ikhlas
+    113: 'سورۃ الفلق',   // Al-Falaq
+    114: 'سورۃ الناس',   // An-Nas
+  };
+  return names[surah] ?? '';
+}
+
 /// Translates a hardcoded English name returned by [_wellKnownAzkarName]
 /// into the active locale (Arabic / Urdu) when possible. Falls back to the
 /// original English string for any name not in the map and for any locale
@@ -5215,9 +5268,10 @@ Widget _buildStyledArabic(
   String fontName = '',
 }) {
   String cleaned = _cleanArabic(raw, azkarId: azkarId);
-  // Force ayah markers ﴿N﴾ to render in Uthmani font (scheherazadeNew) so all
+  // Force ayah markers ﴿N﴾ to render in Uthmani font (ScheherazadeNew) so all
   // font selections show the same ornamental separator with proper numbers.
-  final markerStyle = GoogleFonts.scheherazadeNew(
+  final markerStyle = TextStyle(
+    fontFamily: 'ScheherazadeNew',
     fontSize: baseStyle.fontSize,
     color: baseStyle.color,
     height: baseStyle.height,
@@ -6122,111 +6176,102 @@ class _AzkarCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 320),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, anim) => FadeTransition(
-                        opacity: anim,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 0.08),
-                            end: Offset.zero,
-                          ).animate(anim),
-                          child: child,
+                    // For full-Surah azkar the entire surah renders below via
+                    // _InlineSurahReader (Bismillah is included as its own
+                    // header inside the reader), so skip the duplicate
+                    // Arabic/translit/translation blocks up here.
+                    if (azkar.quranSurah == null) ...[
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 320),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, anim) => FadeTransition(
+                          opacity: anim,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0, 0.08),
+                              end: Offset.zero,
+                            ).animate(anim),
+                            child: child,
+                          ),
+                        ),
+                        child: KeyedSubtree(
+                          // Key on phrase index so AnimatedSwitcher fires only
+                          // on phrase boundary crossings, not every tap.
+                          key: ValueKey<int>(slice?.index ?? -1),
+                          child: _buildStyledArabic(
+                            displayArabic,
+                            _kArabicFonts[settings.arabicFontIdx.clamp(
+                                  0,
+                                  _kArabicFonts.length - 1,
+                                )]
+                                .style(
+                                  settings.arabicFontSize,
+                                  kText,
+                                  2.2,
+                                  FontWeight.w700,
+                                ),
+                            isDark
+                                ? const Color(0xFFFFC83D)
+                                : const Color(0xFFFFC83D),
+                            azkarId: azkar.id,
+                            fontName:
+                                _kArabicFonts[settings.arabicFontIdx.clamp(
+                                      0,
+                                      _kArabicFonts.length - 1,
+                                    )]
+                                    .name,
+                          ),
                         ),
                       ),
-                      child: KeyedSubtree(
-                        // Key on phrase index so AnimatedSwitcher fires only
-                        // on phrase boundary crossings, not every tap.
-                        key: ValueKey<int>(slice?.index ?? -1),
-                        child: _buildStyledArabic(
-                          displayArabic,
-                          _kArabicFonts[settings.arabicFontIdx.clamp(
-                                0,
-                                _kArabicFonts.length - 1,
-                              )]
-                              .style(
-                                settings.arabicFontSize,
-                                kText,
-                                2.2,
-                                FontWeight.w700,
-                              ),
-                          isDark
-                              ? const Color(0xFFFFC83D)
-                              : const Color(0xFFFFC83D),
-                          azkarId: azkar.id,
-                          fontName:
-                              _kArabicFonts[settings.arabicFontIdx.clamp(
-                                    0,
-                                    _kArabicFonts.length - 1,
-                                  )]
-                                  .name,
-                        ),
-                      ),
-                    ),
-                    if (settings.showTransliteration) ...[
-                      const SizedBox(height: 14),
-                      Text(
-                        displayTranslit,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: settings.translationFontSize,
-                          fontWeight: FontWeight.w600,
-                          color: kPrimary,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                    if (settings.showTranslation) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        displayTranslation,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: settings.translationFontSize,
-                          fontWeight: FontWeight.w500,
-                          color:
-                              isDark
-                                  ? Colors.white.withValues(alpha: 0.88)
-                                  : SettingsService.instance.config.dashText,
-                          height: 1.65,
-                        ),
-                      ),
-                    ],
-                    // "Open in Quran Reader" button for full-Surah azkar
-                    // (Sleep #19/#20). Deep-links to the existing QuranScreen
-                    // so we don't have to hand-paste 30 verses of Qur'an.
-                    if (azkar.quranSurah != null) ...[
-                      const SizedBox(height: 18),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => QuranScreen(
-                                initialSurah: azkar.quranSurah!,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.menu_book_rounded, size: 20),
-                        label: Text(
-                          'Open Surah ${azkar.quranSurah} in Reader',
+                      if (settings.showTransliteration) ...[
+                        const SizedBox(height: 14),
+                        Text(
+                          displayTranslit,
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            fontSize: settings.translationFontSize,
+                            fontWeight: FontWeight.w600,
+                            color: kPrimary,
+                            fontStyle: FontStyle.italic,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimary,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
+                      ],
+                      if (settings.showTranslation) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          displayTranslation,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(
+                            fontSize: settings.translationFontSize,
+                            fontWeight: FontWeight.w500,
+                            color:
+                                isDark
+                                    ? Colors.white.withValues(alpha: 0.88)
+                                    : SettingsService.instance.config.dashText,
+                            height: 1.65,
                           ),
-                          elevation: 0,
                         ),
+                      ],
+                    ] else ...[
+                      // Full-Surah azkar (Sleep #19/#20): render Bismillah +
+                      // every verse in one unified inline reader.
+                      _InlineSurahReader(
+                        surahNumber: azkar.quranSurah!,
+                        arabicStyleBuilder: _kArabicFonts[settings.arabicFontIdx
+                                .clamp(0, _kArabicFonts.length - 1)]
+                            .style,
+                        arabicFontSize: settings.arabicFontSize,
+                        translationFontSize: settings.translationFontSize,
+                        showTranslation: settings.showTranslation,
+                        showTransliteration: settings.showTransliteration,
+                        isDark: isDark,
+                        arabicColor: kText,
+                        translationColor: isDark
+                            ? Colors.white.withValues(alpha: 0.88)
+                            : SettingsService.instance.config.dashText,
+                        transliterationColor: kPrimary,
+                        accentColor: kPrimary,
                       ),
                     ],
                   ],
@@ -29451,6 +29496,276 @@ class _DhikrSectionHeader extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Inline Surah reader — used by sleep_before_019 (As-Sajda) and
+// sleep_before_020 (Al-Mulk) so the user can read the full surah right in
+// the dhikr card instead of tapping out to the Quran screen. Fetches Uthmani
+// Arabic + Sahih Intl. translation from QuranApiService (both are cached in
+// Hive by the service, so subsequent opens are instant and offline-tolerant).
+//
+// Font: takes the same style-builder function used by the rest of the dhikr
+// card (`_kArabicFonts[idx].style`) so switching the Arabic font from the
+// settings sheet re-renders the surah in the chosen face — Uthmani /
+// Indopak / Madina — just like every other azkar's Arabic text does.
+//
+// Bismillah is rendered as a centered header ABOVE verse 1 (surahs 32 and
+// 67 begin with actual verses, not with Bismillah), so the surah reads as
+// one continuous block instead of the earlier "Bismillah on top of the
+// card + verses in a box below" split the user flagged.
+//
+// Bounded height + Scrollbar → the inner gesture doesn't fight the outer
+// PageView swipe.
+// ═══════════════════════════════════════════════════════════════════════════
+class _InlineSurahReader extends StatefulWidget {
+  final int surahNumber;
+  /// Same signature as `_ArabicFont.style` — takes (size, color, height,
+  /// weight) and returns a properly-loaded GoogleFonts / asset-font
+  /// TextStyle. Pass `_kArabicFonts[settings.arabicFontIdx].style` so the
+  /// reader reacts to the user's font choice.
+  final TextStyle Function(double, Color, double, FontWeight)
+      arabicStyleBuilder;
+  final double arabicFontSize;
+  final double translationFontSize;
+  final bool showTranslation;
+  final bool showTransliteration;
+  final bool isDark;
+  final Color arabicColor;
+  final Color translationColor;
+  final Color transliterationColor;
+  final Color accentColor;
+
+  const _InlineSurahReader({
+    required this.surahNumber,
+    required this.arabicStyleBuilder,
+    required this.arabicFontSize,
+    required this.translationFontSize,
+    required this.showTranslation,
+    required this.showTransliteration,
+    required this.isDark,
+    required this.arabicColor,
+    required this.translationColor,
+    required this.transliterationColor,
+    required this.accentColor,
+  });
+
+  @override
+  State<_InlineSurahReader> createState() => _InlineSurahReaderState();
+}
+
+class _InlineSurahReaderState extends State<_InlineSurahReader> {
+  static const _kBismillah = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+
+  Map<int, String>? _arabic;
+  Map<int, String>? _translation;
+  bool _loading = true;
+  String? _error;
+  int _surahLoaded = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(covariant _InlineSurahReader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Refetch only if the surah itself changed (font / colour swaps just
+    // trigger a rebuild — the cached data stays valid).
+    if (widget.surahNumber != _surahLoaded) _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final service = QuranApiService.instance;
+      final ar = await service.surahScript(
+        surah: widget.surahNumber,
+        scriptSlug: 'uthmani',
+      );
+      final tr = widget.showTranslation
+          ? await service.surahTranslation(
+              surah: widget.surahNumber,
+              edition: 'en.sahih',
+              surahLength: ar.length,
+              startVerseId: 1,
+            )
+          : <int, String>{};
+      if (!mounted) return;
+      setState(() {
+        _arabic = ar;
+        _translation = tr;
+        _loading = false;
+        _surahLoaded = widget.surahNumber;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = 'Could not load the surah. Check your connection and retry.';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return SizedBox(
+        height: 120,
+        child: Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2.4,
+            valueColor: AlwaysStoppedAnimation(widget.accentColor),
+          ),
+        ),
+      );
+    }
+    if (_error != null || (_arabic ?? {}).isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          children: [
+            Text(
+              _error ?? 'No verses available.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: widget.translationColor,
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextButton.icon(
+              onPressed: _load,
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: const Text('Retry'),
+              style: TextButton.styleFrom(foregroundColor: widget.accentColor),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final verses = _arabic!;
+    final translations = _translation ?? const <int, String>{};
+    final ayahs = verses.keys.toList()..sort();
+
+    // No wrapper Container / bordered box — the surah verses sit directly
+    // on the parent card's own background so they read like any other
+    // azkaar's Arabic block. Outer `_AzkarCard` already provides horizontal
+    // padding, so we just render a plain vertical stack.
+    //
+    // No inner ScrollView / bounded height either — the parent is inside a
+    // `SingleChildScrollView`; nesting a scrollable would trap the gesture
+    // and hide the verses further down.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildBismillahHeader(),
+        const SizedBox(height: 6),
+        for (int i = 0; i < ayahs.length; i++) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Divider(
+              height: 1,
+              color: widget.accentColor.withValues(alpha: 0.16),
+            ),
+          ),
+          _buildVerse(
+            ayahNumber: ayahs[i],
+            arabic: verses[ayahs[i]] ?? '',
+            translation: translations[ayahs[i]] ?? '',
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildBismillahHeader() {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Text(
+        _kBismillah,
+        textAlign: TextAlign.center,
+        style: widget.arabicStyleBuilder(
+          widget.arabicFontSize,
+          widget.arabicColor,
+          1.9,
+          FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerse({
+    required int ayahNumber,
+    required String arabic,
+    required String translation,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Verse number badge, right-aligned so it sits with the Arabic (RTL).
+        Row(
+          children: [
+            const Spacer(),
+            Container(
+              width: 26,
+              height: 26,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: widget.accentColor.withValues(alpha: 0.16),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: widget.accentColor.withValues(alpha: 0.55),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                '$ayahNumber',
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: widget.accentColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Text(
+            arabic,
+            textAlign: TextAlign.right,
+            style: widget.arabicStyleBuilder(
+              widget.arabicFontSize,
+              widget.arabicColor,
+              2.1,
+              FontWeight.w600,
+            ),
+          ),
+        ),
+        if (widget.showTranslation && translation.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Text(
+            translation,
+            style: GoogleFonts.outfit(
+              fontSize: widget.translationFontSize,
+              fontWeight: FontWeight.w500,
+              height: 1.6,
+              color: widget.translationColor,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

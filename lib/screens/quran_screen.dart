@@ -187,8 +187,11 @@ final List<_QuranScript> _kQuranScripts = [
     name: 'Uthmani (Madinah)',
     apiSlug: 'uthmani',
     arabicPreview: 'بِسْمِ ٱللَّهِ',
+    // Bundled TTF via pubspec `fonts:` — no google_fonts CDN dependency, so
+    // release APKs render Arabic reliably regardless of network state.
     style:
-        (size, color, height, weight) => GoogleFonts.scheherazadeNew(
+        (size, color, height, weight) => TextStyle(
+          fontFamily: 'ScheherazadeNew',
           fontSize: size,
           color: color,
           height: height,
