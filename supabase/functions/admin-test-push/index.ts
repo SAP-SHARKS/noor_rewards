@@ -214,7 +214,12 @@ serve(async (req: Request) => {
       variantId = variant.id || null;
     }
 
-    // 4. Send FCM
+    // 4. Send FCM. Payload includes the top-level `notification` block
+    // so Android's OS auto-displays the message — that's what makes
+    // MIUI render the app icon at its large "native" size (as it did
+    // before the short-lived dynamic-icon experiment). Route / nid /
+    // image stay in `data` so tap-tracking + BigPicture attachments
+    // still work.
     const nid = crypto.randomUUID();
     const fcmRes = await fetch(
       `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -258,11 +263,17 @@ serve(async (req: Request) => {
       );
     }
 
-    // 5. Log to notification_log so it shows in the admin
+    // 5. Log to notification_log so it shows in the admin.
+    // Always log as 'admin_test_push' regardless of the variant type being
+    // tested — otherwise the daily-cap exclusion (which filters on
+    // notification_type = 'admin_test_push') stops working, and repeat
+    // testing of a single type would masquerade as production spam in the
+    // per-user notification volume queries. The real variant_id is still
+    // recorded so admins can trace exactly which template was tested.
     try {
       await admin.from('notification_log').insert({
         user_id,
-        notification_type: (notification_type as string) ?? 'admin_test_push',
+        notification_type: 'admin_test_push',
         notification_id: nid,
         title: finalTitle,
         body: finalBody,

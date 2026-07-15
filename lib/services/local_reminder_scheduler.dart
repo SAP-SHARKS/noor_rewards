@@ -88,19 +88,20 @@ class LocalReminderScheduler {
     await _plugin.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: (response) {
-        NotificationService.handleDeepLinkRoute(response.payload);
+        NotificationService.handleTapPayload(response.payload);
       },
     );
 
     // Cold-start case: if the app was launched by tapping a local
-    // reminder, `initialize` doesn't fire the callback — we have to
-    // pull the launch payload explicitly.
+    // reminder OR a PushNotificationBuilder-shown FCM notification,
+    // `initialize` doesn't fire the callback — we have to pull the
+    // launch payload explicitly.
     try {
       final launch = await _plugin.getNotificationAppLaunchDetails();
       if (launch != null &&
           launch.didNotificationLaunchApp &&
           launch.notificationResponse != null) {
-        NotificationService.handleDeepLinkRoute(
+        NotificationService.handleTapPayload(
           launch.notificationResponse!.payload,
         );
       }

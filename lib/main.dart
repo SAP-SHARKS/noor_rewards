@@ -126,6 +126,11 @@ Future<void> _bootHeavyInit() async {
   unawaited(_step('OnboardingAssets', OnboardingAssetsService.instance.init));
 
   await _step('NotificationService', NotificationService.instance.initialize);
+  // Wire NotificationService so `_currentEffectiveLocale()` can read the
+  // resolved UI locale (rather than falling back to the OS locale) when
+  // it upserts `fcm_tokens.app_locale`. LocaleService is populated by
+  // the MaterialApp builder below on every rebuild.
+  NotificationService.setLocaleAccessor(LocaleService.instance);
   await _step('QuranApiConfig', QuranApiConfig.load);
 
   // Mark ready as soon as the critical chain is done — the splash can move on.

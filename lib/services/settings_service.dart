@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/app_config.dart';
+import 'notification_service.dart';
 
 class SettingsService extends ChangeNotifier {
   // ── Singleton ────────────────────────────────────────────────────────────
@@ -66,6 +67,12 @@ class SettingsService extends ChangeNotifier {
     }
     _localeCode = code;
     notifyListeners();
+    // Push the new preference to `fcm_tokens.app_locale` so server-side
+    // pushes look up the right variant on the very next notification.
+    // Fire-and-forget — a network hiccup here should never block the
+    // local locale switch.
+    // ignore: discarded_futures
+    NotificationService.instance.syncAppLocale(code);
   }
 
   /// Update the user's daily / weekly / monthly point goals.

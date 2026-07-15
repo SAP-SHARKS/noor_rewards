@@ -135,21 +135,22 @@ serve(async (req: Request) => {
     const dbById = new Map<string, DbRow>();
     for (const r of (dbRows ?? []) as DbRow[]) dbById.set(r.id, r);
 
-    // Placeholder reference: for each notification_type, extract the set
-    // of placeholders from its English row's title+body. If no EN row
-    // exists in the CSV OR in the DB, we skip the placeholder check for
-    // that type (nothing to compare against).
-    const enPlaceholdersByType = new Map<string, Set<string>>();
-    const collectPlaceholders = (rows: Array<{ notification_type: string; locale: string; title: string; body: string }>) => {
-      for (const r of rows) {
-        if (r.locale !== 'en') continue;
-        const set = enPlaceholdersByType.get(r.notification_type) ?? new Set<string>();
-        for (const m of `${r.title}\n${r.body}`.matchAll(PLACEHOLDER_RE)) set.add(m[0]);
-        enPlaceholdersByType.set(r.notification_type, set);
-      }
+    // Regression-only placeholder check: for each existing DB row we
+    // remember the set of `{placeholders}` it currently has. On UPDATE
+    // we require the incoming CSV version to still contain all of them
+    // — this catches accidental drops (e.g. an AI translation stripping
+    // {streak} from the Urdu title) without spuriously rejecting other
+    // fine-but-different variants of the same notification_type that
+    // legitimately don't use every placeholder.
+    const placeholdersOf = (title: string, body: string): Set<string> => {
+      const set = new Set<string>();
+      for (const m of `${title}\n${body}`.matchAll(PLACEHOLDER_RE)) set.add(m[0]);
+      return set;
     };
-    collectPlaceholders((dbRows ?? []) as DbRow[]);
-    collectPlaceholders(csvRows);
+    const dbPlaceholdersById = new Map<string, Set<string>>();
+    for (const r of (dbRows ?? []) as DbRow[]) {
+      dbPlaceholdersById.set(r.id, placeholdersOf(r.title, r.body));
+    }
 
     // ── Diff each CSV row against DB ──────────────────────────────────────
     const changes: unknown[] = [];
@@ -174,27 +175,14 @@ serve(async (req: Request) => {
       };
 
       if (!row.notification_type) return reject_early(row, 'notification_type is empty');
-      if (!ALLOWED_LOCALES.has(row.locale)) { reject(`locale '${row.locale}' not in allowlist`); continue; }
-      if (!row.title) { reject('title empty'); continue; }
-      if (row.title.length > 100) { reject(`title too long (${row.title.length} > 100)`); continue; }
-      if (!row.body) { reject('body empty'); continue; }
-      if (row.body.length > 400) { reject(`body too long (${row.body.length} > 400)`); continue; }
 
-      const expected = enPlaceholdersByType.get(row.notification_type);
-      if (expected && expected.size > 0) {
-        const present = new Set<string>();
-        for (const m of `${row.title}\n${row.body}`.matchAll(PLACEHOLDER_RE)) present.add(m[0]);
-        const missing = [...expected].filter((p) => !present.has(p));
-        if (missing.length > 0) {
-          reject(`placeholders missing: ${missing.join(', ')}`);
-          continue;
-        }
-      }
-
-      // Existing row → update or unchanged.
-      if (row.id && dbById.has(row.id)) {
-        const before = dbById.get(row.id)!;
-        const diff = diffFields(before, row);
+      // If this row already exists AND is byte-identical to the DB, it's
+      // an untouched pass-through — mark unchanged and skip validation.
+      // Otherwise pre-existing data that violates a modern rule would
+      // spuriously get rejected on every round-trip.
+      const existing = row.id ? dbById.get(row.id) : undefined;
+      if (existing) {
+        const diff = diffFields(existing, row);
         if (diff.length === 0) {
           unchanged++;
           changes.push({
@@ -203,27 +191,53 @@ serve(async (req: Request) => {
             id: row.id,
             type: row.notification_type,
             locale: row.locale,
-            before: snapshot(before),
+            before: snapshot(existing),
             after: snapshot(row),
             diff,
           });
-        } else {
-          updated++;
-          changes.push({
-            row: row.rowIndex,
-            action: 'update',
-            id: row.id,
-            type: row.notification_type,
-            locale: row.locale,
-            before: snapshot(before),
-            after: snapshot(row),
-            diff,
-          });
+          continue;
         }
+      }
+
+      // Below here the row is either a new insert or a genuine update.
+      // Validate — mistakes at this point are real regressions.
+      if (!ALLOWED_LOCALES.has(row.locale)) { reject(`locale '${row.locale}' not in allowlist`); continue; }
+      if (!row.title) { reject('title empty'); continue; }
+      if (row.title.length > 100) { reject(`title too long (${row.title.length} > 100)`); continue; }
+      if (!row.body) { reject('body empty'); continue; }
+      if (row.body.length > 400) { reject(`body too long (${row.body.length} > 400)`); continue; }
+
+      // Placeholder-regression check. Only enforced when updating an
+      // existing row — for a brand-new insert we have no baseline to
+      // compare against, so the admin is free to author whatever
+      // placeholder set makes sense for that variant.
+      if (existing) {
+        const before = dbPlaceholdersById.get(existing.id) ?? new Set<string>();
+        const after = placeholdersOf(row.title, row.body);
+        const missing = [...before].filter((p) => !after.has(p));
+        if (missing.length > 0) {
+          reject(`placeholder(s) dropped vs. previous version: ${missing.join(', ')}`);
+          continue;
+        }
+      }
+
+      if (existing) {
+        updated++;
+        const diff = diffFields(existing, row);
+        changes.push({
+          row: row.rowIndex,
+          action: 'update',
+          id: row.id,
+          type: row.notification_type,
+          locale: row.locale,
+          before: snapshot(existing),
+          after: snapshot(row),
+          diff,
+        });
         continue;
       }
 
-      // No id or id-not-found → new row.
+      // No id, or id doesn't exist in DB → insert.
       inserted++;
       changes.push({
         row: row.rowIndex,

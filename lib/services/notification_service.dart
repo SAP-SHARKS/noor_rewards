@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,22 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../screens/dhikr_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/impact_report_screen.dart';
+import 'push_notification_builder.dart';
+
+/// Top-level entrypoint that Firebase invokes in a *separate* isolate
+/// when a data-only FCM message arrives while the app is killed or in
+/// deep background. Isolates don't share memory, so we must re-init
+/// Firebase before touching the plugin. Marked `vm:entry-point` so
+/// Dart's release-mode tree-shaker keeps the symbol.
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  try {
+    await Firebase.initializeApp();
+  } catch (_) {
+    // Already initialized in this isolate — ignore.
+  }
+  await PushNotificationBuilder.show(message);
+}
 
 /// Global navigator key — pass to [MaterialApp.navigatorKey] in main.dart.
 /// Used to push routes from FCM tap handlers outside the widget tree.
@@ -142,6 +159,16 @@ class NotificationService {
       }
     });
 
+    // onMessage / onBackgroundMessage intentionally NOT registered. When
+    // an FCM push arrives with a top-level `notification` block, Android
+    // auto-displays it — which is what makes MIUI render the app icon at
+    // its large "native" size. Intercepting via flutter_local_notifications
+    // would force the compact/small-icon rendering the user rejected.
+    // Kept commented rather than deleted so the dynamic-icon path can be
+    // re-enabled quickly if MIUI's rendering assumptions change:
+    //   FirebaseMessaging.onMessage.listen(PushNotificationBuilder.show);
+    //   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
     // ── Deep-link handling ────────────────────────────────────────────────────
     // Cold start (app was killed). Stash the route in the pending notifier
     // immediately — the dashboard consumes it once it's mounted, which
@@ -153,6 +180,82 @@ class NotificationService {
 
     // Background → foreground
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageTap);
+  }
+
+  /// Push just the active locale to `fcm_tokens.app_locale` for the
+  /// signed-in user so subsequent server pushes look up the correct
+  /// language variant. Call this whenever the user changes language in
+  /// settings — the token itself is unchanged, only `app_locale`.
+  ///
+  /// Silent no-op when nothing is signed in — the row won't exist yet
+  /// and the initial `_saveTokenWithLocation` will pick up the current
+  /// locale on the very first insert.
+  Future<void> syncAppLocale(String? code) async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+    final normalised = _normaliseLocale(code) ?? _currentEffectiveLocale();
+    try {
+      await Supabase.instance.client
+          .from('fcm_tokens')
+          .update({
+            'app_locale': normalised,
+            'last_seen': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('user_id', userId);
+    } catch (e) {
+      debugPrint('syncAppLocale failed: $e');
+    }
+  }
+
+  /// Whatever language the app is speaking to the user *right now* —
+  /// preferring the LocaleService reading (which reflects both the
+  /// user's explicit override and the resolved MaterialApp locale),
+  /// falling back to the OS locale, and finally 'en'.
+  String _currentEffectiveLocale() {
+    // Deliberately avoid a hard import of LocaleService/SettingsService
+    // in this callsite so background isolates that only get
+    // NotificationService still compile — the effective locale is a
+    // nice-to-have there, not a correctness dependency.
+    try {
+      final name = _readAmbientLocaleName();
+      final norm = _normaliseLocale(name);
+      if (norm != null) return norm;
+    } catch (_) {}
+    final platform =
+        _normaliseLocale(WidgetsBinding.instance.platformDispatcher.locale.toLanguageTag());
+    return platform ?? 'en';
+  }
+
+  /// Reads LocaleService.instance.l?.localeName via dynamic access so
+  /// this file doesn't take a hard dependency (see comment above).
+  String? _readAmbientLocaleName() {
+    try {
+      // ignore: avoid_dynamic_calls
+      final dyn = _localeServiceInstance;
+      if (dyn == null) return null;
+      final l = dyn.l;
+      if (l == null) return null;
+      return l.localeName as String?;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // Set once by NotificationServiceBootstrap.setLocaleAccessor in main.dart
+  // (see `syncAppLocale` — kept optional so tests don't need to wire it).
+  static dynamic _localeServiceInstance;
+  static void setLocaleAccessor(dynamic svc) {
+    _localeServiceInstance = svc;
+  }
+
+  /// Canonicalise "en_US" / "ur-PK" / "ur" → "ur" (language subtag).
+  String? _normaliseLocale(String? code) {
+    if (code == null) return null;
+    final trimmed = code.trim();
+    if (trimmed.isEmpty) return null;
+    final head = trimmed.split(RegExp(r'[_-]')).first.toLowerCase();
+    if (head.length != 2) return null;
+    return head;
   }
 
   // ── GPS + timezone detection ────────────────────────────────────────────────
@@ -186,6 +289,13 @@ class NotificationService {
       debugPrint('📍 Location error ($e), using system timezone: $timezone');
     }
 
+    // Effective locale for server-side variant lookup. The row's
+    // `app_locale` column defaults to 'en' at INSERT time — without this
+    // upsert setting the real value on every token save, users who ran
+    // through onboarding on Urdu / Arabic / Bahasa keep receiving English
+    // push copy even though the in-app UI is fully localised.
+    final effectiveLocale = _currentEffectiveLocale();
+
     try {
       await Supabase.instance.client.from('fcm_tokens').upsert({
         'user_id': userId,
@@ -196,6 +306,7 @@ class NotificationService {
         'device_type':
             defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
         'last_seen': DateTime.now().toUtc().toIso8601String(),
+        'app_locale': effectiveLocale,
       }, onConflict: 'user_id');
     } catch (e) {
       debugPrint('Error saving FCM token: $e');
@@ -280,6 +391,47 @@ class NotificationService {
     }
 
     handleDeepLinkRoute(route);
+  }
+
+  /// Dispatcher for taps that come through `flutter_local_notifications`
+  /// (LocalReminderScheduler AND any push we surfaced ourselves via
+  /// [PushNotificationBuilder]). Handles both payload shapes:
+  ///
+  ///   • Raw route string (legacy — LocalReminderScheduler set
+  ///     `payload: route` directly, e.g. "morning").
+  ///   • JSON `{"route": "...", "nid": "..."}` (new — set by
+  ///     PushNotificationBuilder so the tap can also fire the
+  ///     `mark_notification_opened` RPC that used to run inside
+  ///     [_handleMessageTap] when FCM auto-displayed the notification).
+  ///
+  /// FCM's own `onMessageOpenedApp` / `getInitialMessage` still route
+  /// through [_handleMessageTap] for the legacy code path (Edge
+  /// Functions that haven't been migrated to data-only yet).
+  static void handleTapPayload(String? payload) {
+    if (payload == null || payload.isEmpty) {
+      handleDeepLinkRoute(null);
+      return;
+    }
+    // JSON shape from PushNotificationBuilder.
+    if (payload.startsWith('{')) {
+      try {
+        final map = jsonDecode(payload) as Map<String, dynamic>;
+        final nid = map['nid'] as String?;
+        final route = map['route'] as String?;
+        if (nid != null && nid.isNotEmpty) {
+          Supabase.instance.client
+              .rpc('mark_notification_opened', params: {'p_nid': nid})
+              .then((_) {}, onError: (e) {
+            debugPrint('mark_notification_opened failed: $e');
+          });
+        }
+        handleDeepLinkRoute(route);
+        return;
+      } catch (_) {
+        // Fall through to legacy raw-route handling below.
+      }
+    }
+    handleDeepLinkRoute(payload);
   }
 
   /// Shared entry point for both FCM and local-notification taps.

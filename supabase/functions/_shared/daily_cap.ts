@@ -24,11 +24,16 @@ export async function dailyPushCapReached(
   try {
     const todayStart = new Date();
     todayStart.setUTCHours(0, 0, 0, 0);
+    // Test sends from admin-test-push are still logged (for audit /
+    // observability) but they must NOT count toward the user's real
+    // daily budget — an admin verifying five variants in a row must
+    // never end up throttling their own genuine notifications later.
     const { count } = await supabase
       .from('notification_log')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .gte('sent_at', todayStart.toISOString());
+      .gte('sent_at', todayStart.toISOString())
+      .neq('notification_type', 'admin_test_push');
     return (count ?? 0) >= max;
   } catch (_) {
     return false; // fail open

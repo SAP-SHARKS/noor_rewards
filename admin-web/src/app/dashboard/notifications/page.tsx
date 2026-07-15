@@ -277,6 +277,190 @@ export default function NotificationsPage() {
   // Placeholder reference accordion
   const [referenceOpen, setReferenceOpen] = useState(false);
 
+  // ── Bulk CSV (Google-Sheet / AI round-trip) ────────────────────────────────
+  // Download the whole variants table as CSV, edit externally, upload back.
+  // Upload first runs `mode: dry_run` so the admin can review a diff before
+  // committing anything. Backed by two Edge Functions:
+  //   admin-notifications-export  → returns CSV
+  //   admin-notifications-import  → dry_run | apply, returns per-row diff
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const [csvBusy, setCsvBusy] = useState<null | "download" | "upload" | "apply">(null);
+  // Cached last-uploaded CSV so "Confirm & Apply" doesn't need a re-upload.
+  const [pendingCsv, setPendingCsv] = useState<string | null>(null);
+  const [pendingFileName, setPendingFileName] = useState<string>("");
+  const [dryRunResult, setDryRunResult] = useState<
+    | null
+    | {
+        summary: {
+          updated: number;
+          inserted: number;
+          unchanged: number;
+          rejected: number;
+        };
+        changes: Array<{
+          row: number;
+          action: "update" | "insert" | "unchanged" | "reject";
+          id: string | null;
+          type: string;
+          locale: string;
+          before: Record<string, unknown> | null;
+          after: Record<string, unknown> | null;
+          diff: string[];
+          reason?: string;
+        }>;
+      }
+  >(null);
+
+  async function handleCsvDownload() {
+    setCsvBusy("download");
+    try {
+      const { data: sessionData, error: sessErr } =
+        await supabase.auth.getSession();
+      if (sessErr || !sessionData.session) {
+        setToast({ kind: "error", msg: "No active session — please sign in again." });
+        return;
+      }
+      const accessToken = sessionData.session.access_token;
+      const adminUid = sessionData.session.user.id;
+      const res = await fetch(`${FUNCTIONS_BASE}/admin-notifications-export`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ admin_user_id: adminUid }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setToast({
+          kind: "error",
+          msg: (err && (err.error as string)) ?? `Export failed (${res.status}).`,
+        });
+        return;
+      }
+      const csv = await res.text();
+      // Prompt a native download.
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+      a.href = url;
+      a.download = `notification_variants_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setToast({ kind: "success", msg: "CSV downloaded." });
+    } catch (e) {
+      setToast({ kind: "error", msg: (e as Error).message ?? String(e) });
+    } finally {
+      setCsvBusy(null);
+    }
+  }
+
+  async function handleCsvSelect(ev: React.ChangeEvent<HTMLInputElement>) {
+    const file = ev.target.files?.[0];
+    ev.target.value = ""; // allow re-selecting the same file
+    if (!file) return;
+    setCsvBusy("upload");
+    setDryRunResult(null);
+    setPendingCsv(null);
+    setPendingFileName(file.name);
+    try {
+      const csv = await file.text();
+      const { data: sessionData, error: sessErr } =
+        await supabase.auth.getSession();
+      if (sessErr || !sessionData.session) {
+        setToast({ kind: "error", msg: "No active session — please sign in again." });
+        return;
+      }
+      const accessToken = sessionData.session.access_token;
+      const adminUid = sessionData.session.user.id;
+      const res = await fetch(`${FUNCTIONS_BASE}/admin-notifications-import`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          admin_user_id: adminUid,
+          csv,
+          mode: "dry_run",
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setToast({
+          kind: "error",
+          msg: (json && (json.error as string)) ?? `Preview failed (${res.status}).`,
+        });
+        return;
+      }
+      setPendingCsv(csv);
+      setDryRunResult(json);
+    } catch (e) {
+      setToast({ kind: "error", msg: (e as Error).message ?? String(e) });
+    } finally {
+      setCsvBusy(null);
+    }
+  }
+
+  async function handleCsvApply() {
+    if (!pendingCsv || !dryRunResult) return;
+    // If literally nothing would change, don't fire the request.
+    const { summary } = dryRunResult;
+    if (summary.updated === 0 && summary.inserted === 0) {
+      setToast({ kind: "success", msg: "Nothing to apply — every row is unchanged or rejected." });
+      setDryRunResult(null);
+      setPendingCsv(null);
+      return;
+    }
+    setCsvBusy("apply");
+    try {
+      const { data: sessionData, error: sessErr } =
+        await supabase.auth.getSession();
+      if (sessErr || !sessionData.session) {
+        setToast({ kind: "error", msg: "No active session — please sign in again." });
+        return;
+      }
+      const accessToken = sessionData.session.access_token;
+      const adminUid = sessionData.session.user.id;
+      const res = await fetch(`${FUNCTIONS_BASE}/admin-notifications-import`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          admin_user_id: adminUid,
+          csv: pendingCsv,
+          mode: "apply",
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setToast({
+          kind: "error",
+          msg: (json && (json.error as string)) ?? `Apply failed (${res.status}).`,
+        });
+        return;
+      }
+      setToast({
+        kind: "success",
+        msg: `Applied — updated ${summary.updated}, inserted ${summary.inserted}.`,
+      });
+      setDryRunResult(null);
+      setPendingCsv(null);
+      setPendingFileName("");
+      // Reload the visible table so the new rows show up immediately.
+      await loadVariants();
+    } catch (e) {
+      setToast({ kind: "error", msg: (e as Error).message ?? String(e) });
+    } finally {
+      setCsvBusy(null);
+    }
+  }
+
   // ── Data loading ─────────────────────────────────────────────────────────
 
   async function loadVariants() {
@@ -642,6 +826,170 @@ export default function NotificationsPage() {
           {errorMsg}
         </div>
       )}
+
+      {/* ── Bulk CSV (spreadsheet round-trip for AI-assisted editing) ── */}
+      <div className="mb-6 rounded-xl border border-emerald-100 dark:border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-500/10 overflow-hidden">
+        <div className="px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
+          <div className="min-w-0">
+            <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+              Bulk edit via CSV
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Download the whole table, edit / translate in a spreadsheet, then upload to preview a diff before applying.
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={csvBusy !== null}
+              onClick={handleCsvDownload}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-60 disabled:cursor-not-allowed transition"
+            >
+              {csvBusy === "download" ? "Downloading…" : "Download CSV"}
+            </button>
+            <button
+              type="button"
+              disabled={csvBusy !== null}
+              onClick={() => csvInputRef.current?.click()}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 border border-emerald-300 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 disabled:opacity-60 disabled:cursor-not-allowed transition"
+            >
+              {csvBusy === "upload" ? "Uploading…" : "Upload CSV"}
+            </button>
+            <input
+              ref={csvInputRef}
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={handleCsvSelect}
+            />
+          </div>
+        </div>
+
+        {/* Diff preview after a dry-run */}
+        {dryRunResult && (
+          <div className="px-4 pb-4 pt-1 border-t border-emerald-100 dark:border-emerald-500/30">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+              Preview of <span className="font-mono">{pendingFileName}</span>:
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs mb-3">
+              <span className="px-2 py-1 rounded bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300">
+                {dryRunResult.summary.updated} updated
+              </span>
+              <span className="px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                {dryRunResult.summary.inserted} inserted
+              </span>
+              <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                {dryRunResult.summary.unchanged} unchanged
+              </span>
+              <span className="px-2 py-1 rounded bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300">
+                {dryRunResult.summary.rejected} rejected
+              </span>
+            </div>
+
+            {/* Only surface the interesting rows — hide `unchanged` since the
+                whole point of the review is to eyeball what would actually
+                change. Cap at 100 rows so the panel stays scannable. */}
+            <div className="max-h-80 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-900">
+              {dryRunResult.changes
+                .filter((c) => c.action !== "unchanged")
+                .slice(0, 100)
+                .map((c) => {
+                  const badge =
+                    c.action === "insert"
+                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
+                      : c.action === "update"
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
+                        : "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300";
+                  return (
+                    <div
+                      key={`${c.row}-${c.id ?? "new"}`}
+                      className="px-3 py-2 text-xs"
+                    >
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-1.5 py-0.5 rounded font-medium ${badge}`}>
+                          {c.action}
+                        </span>
+                        <span className="font-mono text-slate-500 dark:text-slate-400">
+                          row {c.row}
+                        </span>
+                        <span className="font-medium text-slate-700 dark:text-slate-200">
+                          {c.type}
+                        </span>
+                        <span className="text-slate-500 dark:text-slate-400">
+                          · {c.locale}
+                        </span>
+                        {c.diff.length > 0 && c.action === "update" && (
+                          <span className="text-slate-400 dark:text-slate-500">
+                            → {c.diff.join(", ")}
+                          </span>
+                        )}
+                      </div>
+                      {c.reason && (
+                        <div className="mt-1 text-red-600 dark:text-red-400">
+                          {c.reason}
+                        </div>
+                      )}
+                      {c.action === "update" && c.before && c.after && (
+                        <div className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                          <div className="px-2 py-1 rounded bg-red-50 dark:bg-red-500/10 text-slate-700 dark:text-slate-300">
+                            <div className="text-red-500 dark:text-red-400 font-medium mb-0.5">
+                              before
+                            </div>
+                            <div className="line-clamp-2">
+                              {(c.before.title as string) ?? ""}
+                            </div>
+                            <div className="line-clamp-2 text-slate-500 dark:text-slate-400">
+                              {(c.before.body as string) ?? ""}
+                            </div>
+                          </div>
+                          <div className="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-500/10 text-slate-700 dark:text-slate-300">
+                            <div className="text-emerald-600 dark:text-emerald-400 font-medium mb-0.5">
+                              after
+                            </div>
+                            <div className="line-clamp-2">
+                              {(c.after.title as string) ?? ""}
+                            </div>
+                            <div className="line-clamp-2 text-slate-500 dark:text-slate-400">
+                              {(c.after.body as string) ?? ""}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              {dryRunResult.changes.filter((c) => c.action !== "unchanged").length === 0 && (
+                <div className="px-3 py-4 text-xs text-slate-400 text-center">
+                  No changes vs. the current database.
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 mt-3">
+              <button
+                type="button"
+                disabled={csvBusy !== null}
+                onClick={handleCsvApply}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium bg-rose-600 hover:bg-rose-700 text-white disabled:opacity-60 disabled:cursor-not-allowed transition"
+              >
+                {csvBusy === "apply" ? "Applying…" : "Confirm & Apply"}
+              </button>
+              <button
+                type="button"
+                disabled={csvBusy !== null}
+                onClick={() => {
+                  setDryRunResult(null);
+                  setPendingCsv(null);
+                  setPendingFileName("");
+                }}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Placeholder reference */}
       <div className="mb-6 rounded-xl border border-rose-100 dark:border-rose-500/30 bg-rose-50/40 dark:bg-rose-500/10 overflow-hidden">

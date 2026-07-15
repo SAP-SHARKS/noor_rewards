@@ -4,7 +4,8 @@ import { SignJWT, importPKCS8 } from 'npm:jose@5.2.3';
 import { getFcmCreds } from '../_shared/fcm.ts';
 import { pickVariant } from '../_shared/variants.ts';
 import { filterPausedUsers } from '../_shared/disengagement.ts';
-import { dailyPushCapReached } from '../_shared/daily_cap.ts';
+// dailyPushCapReached intentionally NOT imported — see note in Step 4
+// about why nightly_checkin bypasses the per-user 3/day cap.
 
 serve(async (req: Request) => {
   try {
@@ -148,10 +149,19 @@ serve(async (req: Request) => {
 
     const accessToken = tokenDataRes.access_token;
 
-    // Step 4: Send Firebase Notifications in bulk loop
+    // Step 4: Send Firebase Notifications in bulk loop.
+    //
+    // NOTE: This function is deliberately EXEMPT from `dailyPushCapReached`.
+    // Reasoning: by the time we reach this loop the user has (a) hit
+    // exactly 21:00 in their local timezone, (b) NOT sealed in the last
+    // three hours, and (c) not been notified today (dedup above). If we
+    // also honoured the 3-per-day cap, users who already got 3 earlier
+    // pushes would silently lose the *last-chance* seed-expiry nudge —
+    // exactly the notification they most need. So we send unconditionally
+    // once these gates pass. Behaviour matches admin-test-push and
+    // check-disengaged-users, both of which also skip the cap.
     const results = [];
     for (const u of dedupedUsers) {
-      if (await dailyPushCapReached(supabase, u.userId)) continue;
       const nid = crypto.randomUUID();
       const variant = await pickVariant(
         supabase,
