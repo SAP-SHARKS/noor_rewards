@@ -4690,4 +4690,24 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get orphanGirl => 'بنت';
+
+  @override
+  String get orphanBoy => 'ولد';
+
+  @override
+  String orphanSiblings(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إخوة وأخوات',
+      one: 'أخ أو أخت واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileSelectCountry => 'اختر الدولة';
 }

@@ -53,6 +53,18 @@ class SettingsService extends ChangeNotifier {
     _weekGoal = prefs.getInt('goal_week') ?? defaultWeekGoal;
     _monthGoal = prefs.getInt('goal_month') ?? defaultMonthGoal;
 
+    // Corrective locale sync on every launch. NotificationService.initialize
+    // runs earlier in the boot sequence and saves fcm_tokens.app_locale using
+    // whatever _currentEffectiveLocale() returns at that moment — but at that
+    // point LocaleService isn't populated yet and this SharedPreferences
+    // override hasn't been read, so a user whose in-app language is Urdu but
+    // OS is English ended up stored as 'en'. Firing syncAppLocale here with
+    // the just-loaded override (or null → falls back to OS locale, same
+    // behaviour as before) fixes the row on every launch. Fire-and-forget;
+    // silently no-ops if the user isn't signed in.
+    // ignore: discarded_futures
+    NotificationService.instance.syncAppLocale(_localeCode);
+
     await _fetch();
     _subscribeRealtime();
   }

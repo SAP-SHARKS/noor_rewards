@@ -1,7 +1,7 @@
 name: noor_rewards
 description: "A new Flutter project."
 publish_to: 'none' 
-version: 1.0.0+10
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
@@ -77,6 +77,7 @@ flutter:
     - assets/data/
     - assets/icons/
     - assets/illustrations/quranic/
+    - assets/illustrations/azkar/
     - assets/google_fonts/         # bundled Arabic TTFs — google_fonts picks these up before hitting the CDN, so release APKs render Arabic properly even on flaky networks
     - .env                         # Quran Foundation API credentials
   fonts:

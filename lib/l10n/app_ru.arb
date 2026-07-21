@@ -3505,5 +3505,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "orphanGirl": "Девочка",
+  "orphanBoy": "Мальчик",
+  "orphanSiblings": "{count, plural, =1{1 брат или сестра} other{{count} братьев и сестёр}}",
+  "@orphanSiblings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileSelectCountry": "Выберите страну"
 }

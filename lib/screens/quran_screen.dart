@@ -300,7 +300,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               setState(() {
                 _surah = surahNum;
                 _ayah = ayahNum;
-                _surahName = _surahNames[_surah - 1];
+                _surahName = _localSurahName(context, _surah);
               });
               _openTafsirSheet();
             },
@@ -960,7 +960,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
           );
           _translation = cached['trans'] ?? '';
           _audioUrl = cached['audio'];
-          _surahName = cached['surahName'] ?? '';
+          _surahName = _localSurahName(context, surah);
           _loading = false;
         });
         _fetchWordByWord(surah, ayah);
@@ -1037,7 +1037,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
             );
             _translation = fresh['trans'];
             _audioUrl = fresh['audio'];
-            _surahName = fresh['surahName'];
+            _surahName = _localSurahName(context, surah);
             _loading = false;
           });
         }
@@ -5118,7 +5118,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
       _loadedPages.clear();
       _surah = syncedSurah;
       _ayah = syncedAyah;
-      _surahName = _surahNames[syncedSurah - 1];
+      _surahName = _localSurahName(context, syncedSurah);
     });
     _cache.put('pref_mushaf_mode', false);
     _syncReadingPosition();
@@ -5216,7 +5216,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
         setState(() {
           _currentPage = pageNum;
           final surahForPage = _resolveSurahForPage(pageNum);
-          _surahName = _surahNames[surahForPage - 1];
+          _surahName = _localSurahName(context, surahForPage);
           _surah = surahForPage;
         });
         _syncReadingPosition();
@@ -5347,7 +5347,7 @@ class _QuranScreenState extends State<QuranScreen> with WidgetsBindingObserver {
               setState(() {
                 _currentPage = pageNum;
                 final surahForPage = _resolveSurahForPage(pageNum);
-                _surahName = _surahNames[surahForPage - 1];
+                _surahName = _localSurahName(context, surahForPage);
               });
             }
           }

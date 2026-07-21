@@ -2780,8 +2780,22 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                           lang,
                                                                         )
                                                                     : '';
+                                                            // Tracks whether the resolved `firstLine` is
+                                                            // Arabic-script text. Set true in every branch
+                                                            // that outputs Arabic (or Urdu-script) content
+                                                            // so the Text style downstream can pick an
+                                                            // Arabic-capable font. Without this, branches
+                                                            // that produce Arabic (surahLocalName, the
+                                                            // isRtlLocale title path, and the localised
+                                                            // wellKnown path) previously rendered with
+                                                            // GoogleFonts.outfit — a Latin serif with no
+                                                            // Arabic glyphs — causing Flutter to fall back
+                                                            // to the OS default Arabic font (Nastaliq on
+                                                            // some ROMs, or a broken glyph strip on others).
+                                                            bool firstLineIsArabicScript = false;
                                                             if (surahLocalName.isNotEmpty) {
                                                               firstLine = surahLocalName;
+                                                              firstLineIsArabicScript = true;
                                                             } else if (showArabicFirstLine) {
                                                               final ar = _stripArabicOpeningPrefix(
                                                                 _cleanArabic(
@@ -2799,10 +2813,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                       40
                                                                   ? '${ar.substring(0, 40).trimRight()}..'
                                                                   : ar;
+                                                              firstLineIsArabicScript = true;
                                                             } else if (_titleIsRealName(azkar.englishTitle)) {
                                                               firstLine = isRtlLocale
                                                                   ? azkar.title
                                                                   : azkar.englishTitle;
+                                                              firstLineIsArabicScript = isRtlLocale;
                                                             } else {
                                                               final wellKnown =
                                                                   _wellKnownAzkarName(
@@ -2815,6 +2831,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                         wellKnown,
                                                                       )
                                                                     : wellKnown;
+                                                                firstLineIsArabicScript = isRtlLocale;
                                                               } else {
                                                                 final src =
                                                                     _stripBismillahPrefix(
@@ -2825,6 +2842,20 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                     ? '${src.substring(0, 35).trimRight()}..'
                                                                     : src;
                                                               }
+                                                            }
+                                                            // Safety net — if the resolved firstLine
+                                                            // contains any Arabic-script code points
+                                                            // (e.g. a DB `title` like "آية الكرسي"
+                                                            // that fell through the localised
+                                                            // branches above), force the Arabic-font
+                                                            // path regardless of which branch chose
+                                                            // it. Without this, edge-case rows render
+                                                            // Arabic through GoogleFonts.outfit
+                                                            // (Latin) and appear garbled.
+                                                            if (!firstLineIsArabicScript &&
+                                                                RegExp(r'[؀-ۿ]')
+                                                                    .hasMatch(firstLine)) {
+                                                              firstLineIsArabicScript = true;
                                                             }
                                                             final titleColor =
                                                                 isComplete
@@ -2840,12 +2871,12 @@ class _DhikrScreenState extends State<DhikrScreen> {
                                                                   TextOverflow
                                                                       .ellipsis,
                                                               textDirection:
-                                                                  showArabicFirstLine
+                                                                  firstLineIsArabicScript
                                                                       ? TextDirection
                                                                           .rtl
                                                                       : null,
                                                               style:
-                                                                  showArabicFirstLine
+                                                                  firstLineIsArabicScript
                                                                       ? _kArabicFonts[_settings
                                                                               .arabicFontIdx
                                                                               .clamp(
@@ -4992,13 +5023,16 @@ String _polishBenefit(String src, {required bool allowShort}) {
 /// azkar_items.quran_surah need entries here — extend as more are added.
 String _quranSurahLocalName(int surah, String lang) {
   if (lang != 'ar' && lang != 'ur') return '';
+  // Fully vocalised (harakat: zair/zabar/paish) so the list line reads
+  // properly for Arabic users — the previous unvocalised forms rendered
+  // as bare consonants which looks unfinished in a religious context.
   const names = <int, String>{
-    1: 'سورۃ الفاتحہ',   // Al-Fatiha
-    32: 'سورۃ السجدہ',   // As-Sajda
-    67: 'سورۃ الملک',    // Al-Mulk
-    112: 'سورۃ الاخلاص', // Al-Ikhlas
-    113: 'سورۃ الفلق',   // Al-Falaq
-    114: 'سورۃ الناس',   // An-Nas
+    1: 'سُورَةُ الفَاتِحَة',    // Al-Fatiha
+    32: 'سُورَةُ السَّجْدَة',   // As-Sajda
+    67: 'سُورَةُ المُلْك',       // Al-Mulk
+    112: 'سُورَةُ الإِخْلَاص',   // Al-Ikhlas
+    113: 'سُورَةُ الفَلَق',      // Al-Falaq
+    114: 'سُورَةُ النَّاس',      // An-Nas
   };
   return names[surah] ?? '';
 }
@@ -5013,25 +5047,27 @@ String _localizeWellKnownAzkarName(BuildContext context, String englishName) {
   if (lang != 'ar' && lang != 'ur') return englishName;
 
   // Urdu (and Arabic — same Quranic surah names work for both since they're
-  // already Arabic phrases written in the Perso-Arabic script).
+  // already Arabic phrases written in the Perso-Arabic script). Vocalised
+  // (harakat: zair/zabar/paish) so the list line reads properly in Arabic
+  // typography — bare consonants look unfinished for religious names.
   const map = <String, String>{
-    'Surah Al-Fatihah': 'سورۃ الفاتحہ',
-    'Surah Al-Ikhlas': 'سورۃ الاخلاص',
-    'Surah Al-Falaq': 'سورۃ الفلق',
-    'Surah An-Nas': 'سورۃ الناس',
-    'Surah Al-Kafirun': 'سورۃ الکافرون',
-    'Surah Al-Mulk': 'سورۃ الملک',
-    'Surah As-Sajdah': 'سورۃ السجدہ',
-    'Ayatul Kursi': 'آیت الکرسی',
-    'Al-Baqarah 285 (Amana ar-Rasool)': 'سورۃ البقرہ ۲۸۵',
-    'Al-Baqarah 286': 'سورۃ البقرہ ۲۸۶',
-    'Al-Baqarah 1-5 (Alif Lam Mim)': 'سورۃ البقرہ ۱-۵',
-    'Al-Baqarah 256 (La Ikraha)': 'سورۃ البقرہ ۲۵۶',
-    'Al-Baqarah 257 (Allahu Waliyy)': 'سورۃ البقرہ ۲۵۷',
-    'Al-Baqarah 284': 'سورۃ البقرہ ۲۸۴',
-    'Sayyid al-Istighfar': 'سید الاستغفار',
-    "Hasbunallahu wa ni'mal Wakeel": 'حسبنا اللہ ونعم الوکیل',
-    'Salawat Ibrahimiyya (Durood)': 'صلاۃِ ابراہیمی (درود)',
+    'Surah Al-Fatihah': 'سُورَةُ الفَاتِحَة',
+    'Surah Al-Ikhlas': 'سُورَةُ الإِخْلَاص',
+    'Surah Al-Falaq': 'سُورَةُ الفَلَق',
+    'Surah An-Nas': 'سُورَةُ النَّاس',
+    'Surah Al-Kafirun': 'سُورَةُ الكَافِرُون',
+    'Surah Al-Mulk': 'سُورَةُ المُلْك',
+    'Surah As-Sajdah': 'سُورَةُ السَّجْدَة',
+    'Ayatul Kursi': 'آيَةُ الكُرْسِيّ',
+    'Al-Baqarah 285 (Amana ar-Rasool)': 'سُورَةُ البَقَرَة ۲۸۵',
+    'Al-Baqarah 286': 'سُورَةُ البَقَرَة ۲۸۶',
+    'Al-Baqarah 1-5 (Alif Lam Mim)': 'سُورَةُ البَقَرَة ۱-۵',
+    'Al-Baqarah 256 (La Ikraha)': 'سُورَةُ البَقَرَة ۲۵۶',
+    'Al-Baqarah 257 (Allahu Waliyy)': 'سُورَةُ البَقَرَة ۲۵۷',
+    'Al-Baqarah 284': 'سُورَةُ البَقَرَة ۲۸۴',
+    'Sayyid al-Istighfar': 'سَيِّدُ الاسْتِغْفَار',
+    "Hasbunallahu wa ni'mal Wakeel": 'حَسْبُنَا اللهُ وَنِعْمَ الوَكِيل',
+    'Salawat Ibrahimiyya (Durood)': 'الصَّلَاةُ الإِبْرَاهِيمِيَّة (دُرُود)',
   };
   return map[englishName] ?? englishName;
 }
@@ -6854,6 +6890,24 @@ Widget _buildIllustration({
     if (n != null) {
       return _QuranicSvgIllustration(
         assetPath: 'assets/illustrations/quranic/$n.svg',
+        progress: progress,
+        isComplete: isComplete,
+        tapCount: tapCount,
+        pointsToday: pointsToday,
+      );
+    }
+  }
+
+  // Generic azkar SVGs (any category, any azkar): key `azkar_svg_<filename>`
+  // maps to `assets/illustrations/azkar/<filename>.svg`. Renders through the
+  // same _QuranicSvgIllustration widget (WebView + gradient extraction) — the
+  // widget itself is content-agnostic, only the folder scope differs. Lets
+  // new SVGs be added by dropping a file + one DB row, no Dart edit needed.
+  if (ill.startsWith('azkar_svg_')) {
+    final name = ill.substring('azkar_svg_'.length);
+    if (name.isNotEmpty) {
+      return _QuranicSvgIllustration(
+        assetPath: 'assets/illustrations/azkar/$name.svg',
         progress: progress,
         isComplete: isComplete,
         tapCount: tapCount,
@@ -9115,6 +9169,9 @@ String _pickTaglineEn(String id) {
   }
   if (id == 'evening_13') {
     return 'End your evening upon the pure fitrah, as the Prophet (ﷺ) taught';
+  }
+  if (id == 'morning_1' || id == 'evening_1') {
+    return 'Al-Fatiha — the greatest surah of the Qur\'an';
   }
   if (id == 'morning_2' || id == 'evening_2') {
     return 'Satan will not enter the home of one who recites this';
@@ -23019,10 +23076,21 @@ svg{width:100%;height:100%;display:block;overflow:visible;}
     // For SVGs with overflow elements (e.g. extended sky / water past
     // viewBox bounds + overflow="visible"), those fill the side gap; for
     // SVGs without extensions, the container's gradient bg shows through.
+    //
+    // Fallback color: when the SVG has neither a gradient nor a fill we
+    // can extract, use a subtle light-gray so the illustration always
+    // reads as a distinct panel against the card background instead of
+    // blending into it. Adapts to dark mode via MediaQuery.
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final fallbackBg = brightness == Brightness.dark
+        ? const Color(0xFF1F2224) // subtle lift above dark card bg
+        : const Color(0xFFF1EEE7); // warm off-white one step off cream
+    final effectiveColor =
+        _bgColor.a == 0 ? fallbackBg : _bgColor;
     return Container(
       decoration: _bgGradient != null
           ? BoxDecoration(gradient: _bgGradient)
-          : BoxDecoration(color: _bgColor),
+          : BoxDecoration(color: effectiveColor),
       child: WebViewWidget(controller: ctrl),
     );
   }
@@ -29655,7 +29723,16 @@ class _InlineSurahReaderState extends State<_InlineSurahReader> {
 
     final verses = _arabic!;
     final translations = _translation ?? const <int, String>{};
+    // For Al-Fatiha (surah 1), ayah 1 IS Bismillah itself in the canonical
+    // Hafs numbering. The Bismillah header already renders it above, so
+    // include it again from the verse list would show Bismillah twice.
+    // Drop ayah 1 from the loop for Fatiha only; every other surah in our
+    // set (Mulk, Sajdah, Ikhlas, Falaq, Nas) has Bismillah OUTSIDE the ayah
+    // count, so header + full verse loop is correct as-is for them.
     final ayahs = verses.keys.toList()..sort();
+    if (widget.surahNumber == 1) {
+      ayahs.remove(1);
+    }
 
     // No wrapper Container / bordered box — the surah verses sit directly
     // on the parent card's own background so they read like any other

@@ -192,7 +192,9 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
             children: [
               _chip(AppLocalizations.of(context)?.orphanDetailScreen_years_debb46(_orphan.age.toString()) ?? '${_orphan.age} years'),
               if (_orphan.gender != null && _orphan.gender!.isNotEmpty)
-                _chip(_orphan.gender == 'female' ? 'Girl' : 'Boy'),
+                _chip(_orphan.gender == 'female'
+                    ? (AppLocalizations.of(context)?.orphanGirl ?? 'Girl')
+                    : (AppLocalizations.of(context)?.orphanBoy ?? 'Boy')),
               if (_orphan.displayLocation != null)
                 _chip(_orphan.displayLocation!),
             ],
@@ -285,7 +287,8 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
     if (_orphan.siblingsCount > 0) {
       items.add(_familyRow(
         l?.siblingsLabel ?? 'Siblings',
-        '${_orphan.siblingsCount} ${_orphan.siblingsCount == 1 ? 'brother or sister' : 'brothers & sisters'}',
+        l?.orphanSiblings(_orphan.siblingsCount) ??
+            '${_orphan.siblingsCount} ${_orphan.siblingsCount == 1 ? 'brother or sister' : 'brothers & sisters'}',
       ));
     }
     if (items.isEmpty) return const SizedBox.shrink();
@@ -489,7 +492,7 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
   String _timeAgo(BuildContext ctx, DateTime d) {
     final l = AppLocalizations.of(ctx);
     final diff = DateTime.now().difference(d);
-    if (diff.inSeconds < 60) return 'just now';
+    if (diff.inSeconds < 60) return l?.justNow ?? 'just now';
     if (diff.inMinutes < 60) {
       return l?.orphanDetailScreen_ago_71107c(diff.inMinutes.toString()) ?? '${diff.inMinutes}m ago';
     }

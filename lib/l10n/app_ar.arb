@@ -3505,5 +3505,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "orphanGirl": "بنت",
+  "orphanBoy": "ولد",
+  "orphanSiblings": "{count, plural, =1{أخ أو أخت واحدة} other{{count} إخوة وأخوات}}",
+  "@orphanSiblings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileSelectCountry": "اختر الدولة"
 }

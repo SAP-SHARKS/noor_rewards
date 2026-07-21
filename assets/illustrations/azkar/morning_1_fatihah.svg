@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Surah al-Fatihah — annotated single page (v4).
+
+  PIPELINE COMPLIANCE
+    1. FIRST gradient in the file is #bg — the intended background, and it is a VERTICAL
+       linearGradient so the auto-painted card background matches the artwork edge at every
+       height (no seam in the letterbox bars). Decorative gradients follow after it.
+    2. All animation is CSS inside this file. No external JS, no external CSS.
+    3. All colours are #RRGGBB hex.
+    4. Canvas is 780x585 = exactly 4:3, with preserveAspectRatio="xMidYMid meet" set explicitly.
+
+  Layout: one mushaf leaf, centred. Four epithets, two per side, baselines aligned, each with a
+  ring marker and a hairline landing on exactly what it names:
+    Mother of the Book                   -> the surah heading
+    The whole Qur'an in seven verses     -> the body of the seven ayat
+    The Straight Path                    -> ayah 6 (ihdina as-sirat al-mustaqim)
+    The Balance of Praise & Supplication -> ayah 5, the hinge of the surah
+
+  QUR'ANIC TEXT: real Unicode Arabic (never vector-traced). Requires an Arabic font — Amiri first,
+  fallbacks listed. If the host has no Arabic font it MUST supply one. No faux Arabic anywhere.
+  VERIFY the letters and harakat against a printed mushaf before shipping.
+  For production, prefer rendering these ayat as LIVE text over this SVG frame.
+
+  #illustration : page + frame + ayat.   #text : all labels + connectors (removable/translatable).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 585" width="780" height="585"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="A single page of Surah al-Fatihah annotated with four descriptive labels">
+  <defs>
+    <!-- ===== BACKGROUND GRADIENT — MUST STAY FIRST ===== -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FDF8EC"/>
+      <stop offset="1" stop-color="#FAF1D2"/>
+    </linearGradient>
+    <!-- ===== decorative gradients below ===== -->
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FCE8A8" stop-opacity=".5"/><stop offset="1" stop-color="#FCE8A8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDFBF2"/><stop offset="0.55" stop-color="#FBF6E6"/><stop offset="1" stop-color="#F5EDD8"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0CE63"/><stop offset="1" stop-color="#C9A227"/></linearGradient>
+    <style>
+      .glowP{animation:soft 4.4s ease-in-out infinite;}
+      .pageLight{animation:soft 5s ease-in-out infinite;}
+      .ring{animation:blip 5s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+      .n2{animation-delay:.6s;} .n3{animation-delay:1.2s;} .n4{animation-delay:1.8s;}
+      @keyframes soft{0%,100%{opacity:.42;}50%{opacity:.8;}}
+      @keyframes blip{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.2);}}
+      @media (prefers-reduced-motion:reduce){.glowP,.pageLight,.ring{animation:none;}}
+    </style>
+  </defs>
+
+  <rect width="780" height="585" fill="url(#bg)"/>
+
+  <g id="illustration">
+    <circle class="glowP" cx="380" cy="278" r="300" fill="url(#halo)"/>
+
+    <!-- single leaf, soft shadow -->
+    <rect x="254" y="84" width="260" height="400" rx="3" fill="#D8C9A4" opacity="0.35"/>
+    <rect x="250" y="78" width="260" height="400" rx="3" fill="url(#page)" stroke="#E2D5B4" stroke-width="1.5"/>
+    <ellipse class="pageLight" cx="380" cy="273" rx="145" ry="195" fill="#FFF6D8" opacity="0.45"/>
+
+    <!-- illuminated frame -->
+    <rect x="262" y="90" width="236" height="376" rx="5" fill="none" stroke="#C9A227" stroke-width="3"/>
+    <rect x="267" y="95" width="226" height="366" rx="4" fill="none" stroke="#2C6E63" stroke-width="1"/>
+    <g fill="#C9A227"><circle cx="262" cy="90" r="3.6"/><circle cx="498" cy="90" r="3.6"/><circle cx="262" cy="466" r="3.6"/><circle cx="498" cy="466" r="3.6"/></g>
+
+    <!-- surah heading cartouche -->
+    <rect x="278" y="104" width="204" height="34" rx="5" fill="url(#gold)"/>
+    <rect x="283" y="109" width="194" height="24" rx="3" fill="none" stroke="#FDF8EC" stroke-width="0.8" opacity="0.6"/>
+    <text x="380" y="128" text-anchor="middle" direction="rtl"
+      font-family="'Amiri','Scheherazade New','Noto Naskh Arabic',serif" font-weight="700" font-size="19" fill="#FDF8EC">سُورَةُ الْفَاتِحَةِ</text>
+
+    <!-- the seven ayat -->
+    <g direction="rtl" text-anchor="middle"
+       font-family="'Amiri','Scheherazade New','Noto Naskh Arabic',serif" font-size="17" fill="#33301F">
+      <text x="380" y="176">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾</text>
+      <text x="380" y="208">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾</text>
+      <text x="380" y="240">الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾</text>
+      <text x="380" y="272">مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾</text>
+      <text x="380" y="304">إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾</text>
+      <text x="380" y="336">اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾</text>
+      <text x="380" y="368">صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ</text>
+      <text x="380" y="400">غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ</text>
+      <text x="380" y="432">وَلَا الضَّالِّينَ ﴿٧﴾</text>
+    </g>
+  </g>
+
+  <g id="text">
+    <!-- ===== LEFT COLUMN (right-aligned, ends x=213) ===== -->
+    <!-- Mother of the Book -> the heading -->
+    <g>
+      <text x="213" y="186" text-anchor="end" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="16" fill="#9C7D1E">Mother of the Book</text>
+      <text x="213" y="205" text-anchor="end" font-family="Georgia,'Times New Roman',serif" font-size="11.5" letter-spacing="0.04em" fill="#8C846F">Umm al-Kitab</text>
+    </g>
+    <path d="M237,180 C254,172 268,150 277,130" fill="none" stroke="#C9A227" stroke-width="1.2" opacity="0.8"/>
+    <circle cx="279" cy="125" r="2.9" fill="#C9A227"/>
+    <g class="ring"><circle cx="229" cy="180" r="7" fill="none" stroke="#C9A227" stroke-width="1.4"/><circle cx="229" cy="180" r="2.5" fill="#C9A227"/></g>
+
+    <!-- The Straight Path -> ayah 6 -->
+    <g>
+      <text x="213" y="360" text-anchor="end" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="16" fill="#9C7D1E">The Straight Path</text>
+      <text x="213" y="379" text-anchor="end" font-family="Georgia,'Times New Roman',serif" font-size="11.5" letter-spacing="0.04em" fill="#8C846F">as-Sirat al-Mustaqim</text>
+    </g>
+    <path d="M237,354 C256,348 268,341 277,336" fill="none" stroke="#C9A227" stroke-width="1.2" opacity="0.8"/>
+    <circle cx="280" cy="334" r="2.9" fill="#C9A227"/>
+    <g class="ring n3"><circle cx="229" cy="354" r="7" fill="none" stroke="#C9A227" stroke-width="1.4"/><circle cx="229" cy="354" r="2.5" fill="#C9A227"/></g>
+
+    <!-- ===== RIGHT COLUMN (left-aligned, starts x=547) ===== -->
+    <!-- The whole Qur'an in seven verses -> the body of the ayat -->
+    <g>
+      <text x="547" y="186" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="16" fill="#9C7D1E">The whole Qur&#8217;an</text>
+      <text x="547" y="207" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="16" fill="#9C7D1E">in seven verses</text>
+      <text x="547" y="226" font-family="Georgia,'Times New Roman',serif" font-size="11.5" letter-spacing="0.04em" fill="#8C846F">as-Sab&#8216; al-Mathani</text>
+    </g>
+    <path d="M523,196 C512,200 498,206 485,211" fill="none" stroke="#C9A227" stroke-width="1.2" opacity="0.8"/>
+    <circle cx="482" cy="212" r="2.9" fill="#C9A227"/>
+    <g class="ring n2"><circle cx="531" cy="196" r="7" fill="none" stroke="#C9A227" stroke-width="1.4"/><circle cx="531" cy="196" r="2.5" fill="#C9A227"/></g>
+
+    <!-- The Balance of Praise & Supplication -> ayah 5 -->
+    <g>
+      <text x="547" y="360" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="16" fill="#9C7D1E">The Balance of</text>
+      <text x="547" y="381" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="600" font-size="16" fill="#9C7D1E">Praise &amp; Supplication</text>
+      <text x="547" y="400" font-family="Georgia,'Times New Roman',serif" font-size="11.5" letter-spacing="0.04em" fill="#8C846F">half praise, half petition</text>
+    </g>
+    <path d="M523,370 C514,348 498,320 486,306" fill="none" stroke="#C9A227" stroke-width="1.2" opacity="0.8"/>
+    <circle cx="483" cy="302" r="2.9" fill="#C9A227"/>
+    <g class="ring n4"><circle cx="531" cy="370" r="7" fill="none" stroke="#C9A227" stroke-width="1.4"/><circle cx="531" cy="370" r="2.5" fill="#C9A227"/></g>
+
+    <!-- caption -->
+    <text x="380" y="518" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="14" letter-spacing="0.08em" fill="#7A6F55">Surat al-Fatihah &#183; The Opening</text>
+  </g>
+</svg>

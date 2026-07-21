@@ -3505,5 +3505,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "orphanGirl": "لڑکی",
+  "orphanBoy": "لڑکا",
+  "orphanSiblings": "{count, plural, =1{1 بھائی یا بہن} other{{count} بھائی اور بہنیں}}",
+  "@orphanSiblings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileSelectCountry": "ملک منتخب کریں"
 }

@@ -4733,4 +4733,24 @@ class AppLocalizationsTr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get orphanGirl => 'Kız';
+
+  @override
+  String get orphanBoy => 'Erkek';
+
+  @override
+  String orphanSiblings(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kardeş',
+      one: '1 kardeş',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileSelectCountry => 'Ülke seçin';
 }

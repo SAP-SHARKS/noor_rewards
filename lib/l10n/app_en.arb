@@ -3505,5 +3505,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "orphanGirl": "Girl",
+  "orphanBoy": "Boy",
+  "orphanSiblings": "{count, plural, =1{1 brother or sister} other{{count} brothers & sisters}}",
+  "@orphanSiblings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileSelectCountry": "Select Country"
 }

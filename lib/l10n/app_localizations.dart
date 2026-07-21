@@ -7776,6 +7776,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 day} other{{count} days}}'**
   String celebrationDaysCount(int count);
+
+  /// No description provided for @orphanGirl.
+  ///
+  /// In en, this message translates to:
+  /// **'Girl'**
+  String get orphanGirl;
+
+  /// No description provided for @orphanBoy.
+  ///
+  /// In en, this message translates to:
+  /// **'Boy'**
+  String get orphanBoy;
+
+  /// No description provided for @orphanSiblings.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 brother or sister} other{{count} brothers & sisters}}'**
+  String orphanSiblings(int count);
+
+  /// No description provided for @profileSelectCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Country'**
+  String get profileSelectCountry;
 }
 
 class _AppLocalizationsDelegate

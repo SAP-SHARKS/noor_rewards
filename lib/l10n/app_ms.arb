@@ -3505,5 +3505,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "orphanGirl": "Perempuan",
+  "orphanBoy": "Lelaki",
+  "orphanSiblings": "{count, plural, =1{1 adik-beradik} other{{count} adik-beradik}}",
+  "@orphanSiblings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileSelectCountry": "Pilih Negara"
 }

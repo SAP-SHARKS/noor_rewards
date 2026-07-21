@@ -181,7 +181,7 @@ serve(async (req: Request) => {
     if (variant_id) {
       const { data: row, error: vErr } = await admin
         .from('notification_variants')
-        .select('id, title, body, route, image_url')
+        .select('id, notification_type, locale, title, body, route, image_url')
         .eq('id', variant_id as string)
         .maybeSingle();
       if (vErr || !row) {
@@ -190,11 +190,30 @@ serve(async (req: Request) => {
           { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
-      finalTitle = fillTemplate(row.title as string, mergedVars);
-      finalBody = fillTemplate(row.body as string, mergedVars);
-      finalRoute = (row.route as string | null) ?? null;
-      finalImage = (row.image_url as string | null) ?? null;
-      variantId = row.id as string;
+      // Locale-swap: when the admin clicks Test on (say) an English row but
+      // the recipient's app_locale is 'ur', swap to a random active Urdu
+      // variant of the same notification_type. This lets admins verify the
+      // "user gets a push in their language" flow from any variant row,
+      // instead of having to hunt down the correct-locale row first. If
+      // there is no active variant in the recipient's locale, we fall back
+      // to the originally-clicked row so the test still fires.
+      let finalRow: any = row;
+      if ((row.locale as string) !== recipientLocale) {
+        const { data: swap } = await admin
+          .from('notification_variants')
+          .select('id, title, body, route, image_url')
+          .eq('notification_type', row.notification_type as string)
+          .eq('locale', recipientLocale)
+          .eq('active', true);
+        if (swap && swap.length > 0) {
+          finalRow = swap[Math.floor(Math.random() * swap.length)];
+        }
+      }
+      finalTitle = fillTemplate(finalRow.title as string, mergedVars);
+      finalBody = fillTemplate(finalRow.body as string, mergedVars);
+      finalRoute = (finalRow.route as string | null) ?? null;
+      finalImage = (finalRow.image_url as string | null) ?? null;
+      variantId = finalRow.id as string;
     } else if (notification_type) {
       const variant = await pickVariant(
         admin,

@@ -4730,4 +4730,24 @@ class AppLocalizationsId extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get orphanGirl => 'Perempuan';
+
+  @override
+  String get orphanBoy => 'Laki-laki';
+
+  @override
+  String orphanSiblings(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count saudara',
+      one: '1 saudara',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileSelectCountry => 'Pilih Negara';
 }

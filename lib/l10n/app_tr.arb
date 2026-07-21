@@ -3505,5 +3505,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "orphanGirl": "Kız",
+  "orphanBoy": "Erkek",
+  "orphanSiblings": "{count, plural, =1{1 kardeş} other{{count} kardeş}}",
+  "@orphanSiblings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileSelectCountry": "Ülke seçin"
 }

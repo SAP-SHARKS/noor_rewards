@@ -25,6 +25,7 @@ import '../widgets/noor_offline.dart';
 import '../widgets/notifications_sheet.dart';
 import '../services/notification_center.dart';
 import '../l10n/app_localizations.dart';
+import '../data/country_translations.dart';
 
 AppConfig get _pcfg => SettingsService.instance.config;
 Color get _pTeal => _pcfg.dashTeal;
@@ -1156,7 +1157,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   const SizedBox(height: 2),
                   Text(
                     _countryCtrl.text.isNotEmpty
-                        ? _countryCtrl.text
+                        ? localizedCountryName(
+                            _countryCtrl.text,
+                            Localizations.maybeLocaleOf(context)?.toLanguageTag(),
+                          )
                         : l.countryHint,
                     style: GoogleFonts.outfit(
                       fontSize: 15,
@@ -1187,9 +1191,16 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       ),
       builder: (sheetCtx) => StatefulBuilder(
         builder: (sheetCtx, setSheet) {
-          final filtered = _kCountries
-              .where((c) => c.toLowerCase().contains(query.toLowerCase()))
-              .toList();
+          final locale = Localizations.maybeLocaleOf(sheetCtx)?.toLanguageTag();
+          // Match against both the English canonical name AND the localised
+          // display name so users typing in their own language still find
+          // their country. Storage stays canonical English.
+          final q = query.toLowerCase();
+          final filtered = _kCountries.where((c) {
+            if (c.toLowerCase().contains(q)) return true;
+            final localised = localizedCountryName(c, locale);
+            return localised.toLowerCase().contains(q);
+          }).toList();
           return Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(sheetCtx).viewInsets.bottom,
@@ -1210,7 +1221,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
                     child: Text(
-                      'Select Country',
+                      AppLocalizations.of(context)?.profileSelectCountry ??
+                          'Select Country',
                       style: GoogleFonts.outfit(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -1267,7 +1279,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                               final selected = c == _countryCtrl.text;
                               return ListTile(
                                 title: Text(
-                                  c,
+                                  localizedCountryName(c, locale),
                                   style: GoogleFonts.outfit(
                                     fontSize: 14,
                                     fontWeight: selected
