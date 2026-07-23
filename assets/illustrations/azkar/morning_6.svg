@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  THE PERFECT MEASURE — al-Baqarah 2:286
+  "Allah does not charge a soul except with what is within its capacity."
+
+  Sequence:
+     0.0-0.9s   the empty translucent vessel rests in soft light
+     0.9-6.4s   a cascade of golden light pours in; the level rises, easing ever slower as it
+                nears the brim — the last stretch is the gentlest, because precision, not speed,
+                is the point
+     5.2-6.6s   the cascade TAPERS AND CEASES exactly as the level meets the brim: the pour
+                itself is measured. Nothing spills; nothing is left wanting
+     6.4-7.4s   the brim ring glows once, softly — the mark of "exactly to capacity"
+     from 6.9s  the filled vessel radiates a steady, breathing aura forever; the surface
+                shimmers; motes rise. Nothing more is added, nothing is taken away.
+
+  THE POUR NEVER REPEATS. A loop that refilled would imply the vessel empties — but the ayah's
+  balance is a settled state, not a cycle. The fill is one-shot and held; only the radiance,
+  the surface shimmer and the motes continue.
+
+  PIPELINE COMPLIANCE
+    1. FIRST gradient is #bg — the intended background, a VERTICAL linearGradient, light and warm.
+       Decorative gradients follow after it.
+    2. All animation is SMIL inside this file. No external JS and no external CSS of any kind.
+       (Held end-states use the SMIL fill-mode keyword on animation elements; colour scanners
+       must read paint attributes from shape elements only.)
+    3. All paint colours are #RRGGBB hex.
+    4. 780x585 = exactly 4:3, preserveAspectRatio="xMidYMid meet" set explicitly.
+
+  #illustration : vessel, cascade, liquid light, brim ring, aura, motes.
+  #text         : the verse line (top) + the title lockup (bottom) — removable / translatable.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 780 585" width="780" height="585"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="Golden light pouring into a translucent cup, filling it exactly to the brim, which then radiates a steady peaceful aura">
+  <defs>
+    <!-- ===== BACKGROUND GRADIENT — MUST STAY FIRST ===== -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCF6E8"/>
+      <stop offset="1" stop-color="#E2CDA4"/>
+    </linearGradient>
+
+    <!-- ===== decorative gradients ===== -->
+    <radialGradient id="auraG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FBEFC8" stop-opacity="0.9"/>
+      <stop offset="0.55" stop-color="#F2DCA0" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#E9C36A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vesselG" cx="44%" cy="30%" r="72%">
+      <stop offset="0" stop-color="#FBFFF6" stop-opacity="0.5"/>
+      <stop offset="0.6" stop-color="#D4E4CC" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#6E9E86" stop-opacity="0.5"/>
+    </radialGradient>
+    <linearGradient id="liquidG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFF3C4" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#F2CE7A" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#DBA845" stop-opacity="0.92"/>
+    </linearGradient>
+    <linearGradient id="streamG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFDF4" stop-opacity="0.9"/>
+      <stop offset="0.7" stop-color="#FBE7A8" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#F2CE7A" stop-opacity="0.7"/>
+    </linearGradient>
+    <radialGradient id="splashG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFFDF4" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#F2CE7A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="surfaceG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFFBE6" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#F5DE9C" stop-opacity="0.3"/>
+    </radialGradient>
+    <radialGradient id="srcG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFFDF4" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#FFF3C4" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ===== filters ===== -->
+    <filter id="fWide"   x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="22"/></filter>
+    <filter id="fSoft"   x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="fBody"   x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.5"/></filter>
+    <filter id="fStream" x="-90%" y="-30%" width="280%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="fText"   x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5"/></filter>
+
+    <!-- the vessel bowl: brim at y=262, base at y=430 -->
+    <path id="bowl" d="M258,262
+      C258,356 300,430 390,430 C480,430 522,356 522,262
+      C480,278 300,278 258,262 Z"/>
+    <clipPath id="bowlClip"><use href="#bowl" xlink:href="#bowl"/></clipPath>
+  </defs>
+
+  <rect width="780" height="585" fill="url(#bg)"/>
+
+  <g id="illustration">
+
+    <!-- source of the cascade, high above -->
+    <circle cx="390" cy="46" r="54" fill="url(#srcG)" filter="url(#fSoft)">
+      <animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="0.65;1;0.65" keyTimes="0;0.5;1"/>
+    </circle>
+
+    <!-- aura of the filled vessel — kindles once, then breathes forever -->
+    <g transform="translate(390,330)" opacity="0">
+      <animate attributeName="opacity" begin="6.9s" dur="2.4s" values="0;1" keyTimes="0;1"
+               fill="freeze" calcMode="spline" keySplines=".3 .2 .3 1"/>
+      <circle r="238" fill="url(#auraG)" filter="url(#fWide)">
+        <animate attributeName="opacity" begin="9.3s" dur="8s" repeatCount="indefinite" values="0.65;1;0.65" keyTimes="0;0.5;1"/>
+      </circle>
+    </g>
+
+    <!-- ============ the liquid light, clipped to the bowl ============ -->
+    <g clip-path="url(#bowlClip)">
+      <!-- rising body: eases ever slower into the brim, stops EXACTLY at y=262 -->
+      <rect x="240" y="430" width="300" height="200" fill="url(#liquidG)">
+        <animate attributeName="y" begin="1.2s" dur="5.2s" values="430;340;284;262" keyTimes="0;0.34;0.7;1"
+                 fill="freeze" calcMode="spline" keySplines=".3 .3 .6 .7;.3 .4 .5 .9;.2 .6 .3 1"/>
+      </rect>
+      <!-- splash bloom where the stream meets the rising surface -->
+      <ellipse cx="390" cy="430" rx="34" ry="12" fill="url(#splashG)" filter="url(#fSoft)" opacity="0">
+        <animate attributeName="cy" begin="1.2s" dur="5.2s" values="430;340;284;262" keyTimes="0;0.34;0.7;1"
+                 fill="freeze" calcMode="spline" keySplines=".3 .3 .6 .7;.3 .4 .5 .9;.2 .6 .3 1"/>
+        <animate attributeName="opacity" begin="1.0s" dur="5.6s" values="0;0.9;0.9;0" keyTimes="0;0.12;0.82;1" fill="freeze"/>
+      </ellipse>
+    </g>
+
+    <!-- surface of the light: rides up with the level, then shimmers in place forever -->
+    <ellipse cx="390" cy="430" rx="0" ry="7" fill="url(#surfaceG)" filter="url(#fBody)">
+      <animate attributeName="cy" begin="1.2s" dur="5.2s" values="430;340;284;262" keyTimes="0;0.34;0.7;1"
+               fill="freeze" calcMode="spline" keySplines=".3 .3 .6 .7;.3 .4 .5 .9;.2 .6 .3 1"/>
+      <animate attributeName="rx" begin="1.2s" dur="5.2s" values="58;114;128;131" keyTimes="0;0.34;0.7;1" fill="freeze"/>
+      <animate attributeName="opacity" begin="6.9s" dur="6s" repeatCount="indefinite" values="1;0.78;1" keyTimes="0;0.5;1"/>
+    </ellipse>
+
+    <!-- ============ the cascade: pours, then tapers and CEASES at the brim ============ -->
+    <g filter="url(#fStream)">
+      <path d="M382,96 C378,150 384,200 386,250 L394,250 C396,200 402,150 398,96 Z"
+            fill="url(#streamG)" opacity="0">
+        <animate attributeName="opacity" begin="0.9s" dur="5.7s" values="0;0.9;0.9;0" keyTimes="0;0.1;0.78;1" fill="freeze"/>
+      </path>
+      <line x1="390" y1="100" x2="390" y2="252" stroke="#FFFDF4" stroke-width="2.2" opacity="0">
+        <animate attributeName="opacity" begin="0.9s" dur="5.7s" values="0;0.95;0.95;0" keyTimes="0;0.1;0.78;1" fill="freeze"/>
+      </line>
+    </g>
+
+    <!-- ============ the vessel itself, translucent ============ -->
+    <use href="#bowl" xlink:href="#bowl" fill="url(#vesselG)" filter="url(#fBody)" opacity="0.9"/>
+    <use href="#bowl" xlink:href="#bowl" fill="none" stroke="#6E9E86" stroke-width="2.6" opacity="0.7" filter="url(#fBody)"/>
+    <use href="#bowl" xlink:href="#bowl" fill="none" stroke="#FFFDF4" stroke-width="1" opacity="0.8"/>
+    <!-- foot -->
+    <path d="M366,430 C366,452 352,458 336,464 L444,464 C428,458 414,452 414,430 Z"
+          fill="url(#vesselG)" stroke="#6E9E86" stroke-width="1.6" opacity="0.85" filter="url(#fBody)"/>
+    <ellipse cx="390" cy="466" rx="58" ry="7" fill="url(#vesselG)" stroke="#6E9E86" stroke-width="1.4" opacity="0.85"/>
+
+    <!-- the brim: an ellipse of light that marks "exactly to capacity" -->
+    <ellipse cx="390" cy="266" rx="132" ry="15" fill="none" stroke="#6E9E86" stroke-width="2.2" opacity="0.6" filter="url(#fBody)"/>
+    <ellipse cx="390" cy="266" rx="132" ry="15" fill="none" stroke="#FFFDF4" stroke-width="1" opacity="0.75"/>
+    <ellipse cx="390" cy="266" rx="132" ry="15" fill="none" stroke="#FFF6D8" stroke-width="5" opacity="0" filter="url(#fSoft)">
+      <animate attributeName="opacity" begin="6.4s" dur="1.6s" values="0;0.95;0.4" keyTimes="0;0.4;1" fill="freeze"/>
+      <animate attributeName="opacity" begin="8.0s" dur="7s" repeatCount="indefinite" values="0.4;0.7;0.4" keyTimes="0;0.5;1"/>
+    </ellipse>
+
+    <!-- motes rising once the measure is complete -->
+    <g fill="#F3DFA6">
+      <circle cx="340" cy="240" r="2.2" opacity="0">
+        <animate attributeName="cy" begin="7.4s" dur="9s" repeatCount="indefinite" values="252;140" keyTimes="0;1"/>
+        <animate attributeName="opacity" begin="7.4s" dur="9s" repeatCount="indefinite" values="0;0.7;0" keyTimes="0;0.4;1"/>
+      </circle>
+      <circle cx="446" cy="240" r="1.9" opacity="0">
+        <animate attributeName="cy" begin="9.2s" dur="11s" repeatCount="indefinite" values="258;132" keyTimes="0;1"/>
+        <animate attributeName="opacity" begin="9.2s" dur="11s" repeatCount="indefinite" values="0;0.6;0" keyTimes="0;0.4;1"/>
+      </circle>
+      <circle cx="392" cy="240" r="1.7" opacity="0">
+        <animate attributeName="cy" begin="10.8s" dur="10s" repeatCount="indefinite" values="250;126" keyTimes="0;1"/>
+        <animate attributeName="opacity" begin="10.8s" dur="10s" repeatCount="indefinite" values="0;0.55;0" keyTimes="0;0.4;1"/>
+      </circle>
+    </g>
+  </g>
+
+  <g id="text" font-family="Georgia,'Times New Roman',serif" text-anchor="middle">
+    <!-- the verse, high above the cascade's source -->
+    <g opacity="0">
+      <animate attributeName="opacity" begin="2.2s" dur="2.8s" values="0;1" keyTimes="0;1" fill="freeze"/>
+      <g>
+        <animate attributeName="opacity" begin="5s" dur="10s" repeatCount="indefinite" values="1;0.88;1" keyTimes="0;0.5;1"/>
+        <text x="390" y="140" font-size="16.5" font-style="italic" letter-spacing="0.06em" fill="#8A6E33">&#8220;Allah does not burden a soul beyond what it can bear.&#8221;</text>
+      </g>
+    </g>
+
+    <!-- title lockup, beneath the vessel -->
+    <g opacity="0">
+      <animate attributeName="opacity" begin="7.6s" dur="3s" values="0;1" keyTimes="0;1" fill="freeze"/>
+      <g>
+        <animate attributeName="opacity" begin="10.6s" dur="9s" repeatCount="indefinite" values="1;0.88;1" keyTimes="0;0.5;1"/>
+        <text x="390" y="516" font-size="27" letter-spacing="0.16em" fill="#FFF6DE" filter="url(#fText)">The Perfect Measure</text>
+        <text x="390" y="516" font-size="27" letter-spacing="0.16em" fill="#8A6420">The Perfect Measure</text>
+        <text x="390" y="548" font-size="15" font-style="italic" letter-spacing="0.18em" fill="#7C7458">within its capacity</text>
+      </g>
+    </g>
+  </g>
+</svg>

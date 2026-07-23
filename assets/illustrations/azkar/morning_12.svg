@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  THE COMPLETING LIGHT - Surah al-Ikhlas (v2, rearranged)
+  The circle IS the Qur'an: a closed mushaf rests at the centre of a full ring divided by three
+  faint notches into equal thirds. Reciting "Qul huwa Allahu ahad" fills EXACTLY ONE of those
+  thirds with light - the sound hadith's "a third of the Qur'an", made visible as a measure.
+
+  A 16s master-clock loop. Every animation shares the clock and is placed by keyTimes; the reset
+  happens during a global dissolve while the scene is invisible (reset window 0.96-1).
+
+     0.0-1.0s   (0-0.06)     the mushaf inside the full track ring, three notch marks visible;
+                             "A Few Words" above
+     3.2-3.8s   (0.20-0.24)  a warm spark ignites at the top of the ring
+     3.8-7.4s   (0.24-0.46)  the arc of light fills clockwise to the first notch - 120.0 degrees
+                             by construction, one third exactly - a soft head of light riding the
+                             same arc in lockstep; "The Weight of One-Third" beneath
+     7.4-8.3s   (0.46-0.52)  the filled third flashes gently; a warm glow blooms behind the book
+     8.3-13.4s  (0.52-0.84)  held: the third alight and breathing; "Complete Reward" settles
+                             beneath (crossfading where the previous phrase stood)
+     13.4-15.0s (0.84-0.94)  global dissolve; the arc quietly retracts during the invisible reset
+
+  The mushaf is a CLOSED book, spine on the RIGHT (correct for an Arabic volume), cover ornament
+  strictly geometric (an eight-point star medallion - the traditional Qur'anic division mark).
+  No script appears on the cover: nothing pseudo-lexical, per this project's standing rule.
+
+  PIPELINE COMPLIANCE
+    1. FIRST gradient is #bg - the intended background, a VERTICAL linearGradient, serene muted
+       warm. Decorative gradients follow after it.
+    2. All animation is SMIL inside this file. No external JS and no external CSS of any kind.
+    3. All paint colours are #RRGGBB hex.
+    4. 780x585 = exactly 4:3, preserveAspectRatio="xMidYMid meet" set explicitly.
+
+  #illustration : mushaf, track ring + notches, filling third, spark, glow.
+  #text         : the three phrases - removable / translatable.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 585" width="780" height="585"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="A closed Quran inside a ring divided into thirds; golden light fills exactly one third of the ring">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FBF4E2"/>
+      <stop offset="1" stop-color="#DCC69C"/>
+    </linearGradient>
+
+    <radialGradient id="haloG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FBEFC8" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#F2DCA0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloomG" cx="50%" cy="46%" r="54%">
+      <stop offset="0" stop-color="#FFFBE8" stop-opacity="0.9"/>
+      <stop offset="0.5" stop-color="#FBEFC0" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#F0D482" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sparkG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.4" stop-color="#FFF6D8" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#F0D98A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="washG" cx="50%" cy="46%" r="58%">
+      <stop offset="0" stop-color="#FDF6DE" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FDF6DE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="coverG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#35796D"/>
+      <stop offset="0.55" stop-color="#2C6E63"/>
+      <stop offset="1" stop-color="#1F5148"/>
+    </linearGradient>
+    <linearGradient id="pageEdgeG" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F5EDD8"/>
+      <stop offset="1" stop-color="#E4D6B2"/>
+    </linearGradient>
+    <linearGradient id="goldTrim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F0CE63"/>
+      <stop offset="1" stop-color="#C9A227"/>
+    </linearGradient>
+
+    <filter id="fWide"  x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="24"/></filter>
+    <filter id="fSoft"  x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="fArc"   x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4.5"/></filter>
+    <filter id="fFine"  x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.3"/></filter>
+    <filter id="fShadow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="fText"  x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5"/></filter>
+
+    <!-- ring r=168 about (390,296); the recited third: top, clockwise 120.0 deg -->
+    <path id="arcThird" pathLength="100" fill="none" d="M 390,128 A 168,168 0 0 1 535.5,380"/>
+  </defs>
+
+  <rect width="780" height="585" fill="url(#bg)"/>
+
+  <g opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+             values="0;1;1;0;0" keyTimes="0;0.06;0.84;0.94;1"/>
+
+    <g id="illustration">
+      <ellipse cx="390" cy="296" rx="420" ry="330" fill="url(#washG)"/>
+      <circle cx="390" cy="296" r="245" fill="url(#haloG)" filter="url(#fWide)">
+        <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0.5;0.85;0.5" keyTimes="0;0.5;1"/>
+      </circle>
+
+      <!-- glow blooming behind the book when the third completes -->
+      <g transform="translate(390,296)">
+        <g opacity="0">
+          <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                   values="0;0;1;1;0;0" keyTimes="0;0.46;0.58;0.84;0.94;1"/>
+          <g>
+            <animateTransform attributeName="transform" type="scale" dur="7s" repeatCount="indefinite"
+              values="1;1.05;1" keyTimes="0;0.5;1" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+            <circle r="132" fill="url(#bloomG)" filter="url(#fSoft)"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- ============ the track: the whole Qur'an, divided into three ============ -->
+      <circle cx="390" cy="296" r="168" fill="none" stroke="#C9B586" stroke-width="3" opacity="0.5"/>
+      <circle cx="390" cy="296" r="168" fill="none" stroke="#FFFDF4" stroke-width="1" opacity="0.5"/>
+      <!-- notches at 0/3, 1/3, 2/3 (top, 120deg, 240deg) -->
+      <g stroke="#A8905A" stroke-width="2.4" stroke-linecap="round" opacity="0.75">
+        <line x1="390"   y1="118" x2="390"   y2="138"/>
+        <line x1="527"   y1="375" x2="544"   y2="385"/>
+        <line x1="253"   y1="375" x2="236"   y2="385"/>
+      </g>
+
+      <!-- ============ the recited third: fills to the first notch ============ -->
+      <g stroke-linecap="round">
+        <g stroke-dasharray="100" stroke-dashoffset="100">
+          <animate attributeName="stroke-dashoffset" dur="16s" repeatCount="indefinite"
+                   values="100;100;0;0;100" keyTimes="0;0.24;0.46;0.96;1"
+                   calcMode="spline" keySplines="0 0 1 1;.35 .1 .45 .95;0 0 1 1;.4 0 .6 1"/>
+          <use href="#arcThird" stroke="#C9922E" stroke-width="20" opacity="0.38" filter="url(#fArc)"/>
+          <use href="#arcThird" stroke="#E9B84A" stroke-width="9" opacity="1" filter="url(#fFine)">
+            <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                     values="0.95;0.95;1;0.9;0.95" keyTimes="0;0.46;0.5;0.7;1"/>
+          </use>
+          <use href="#arcThird" stroke="#FFFDF4" stroke-width="2.8" opacity="0.95"/>
+        </g>
+      </g>
+      <!-- completion flash along the filled third only -->
+      <use href="#arcThird" stroke="#FFF6D8" stroke-width="9" fill="none" stroke-linecap="round"
+           filter="url(#fSoft)" opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;0.9;0;0" keyTimes="0;0.46;0.49;0.56;1"/>
+      </use>
+
+      <!-- ignition spark at the top -->
+      <circle cx="390" cy="128" r="8" fill="url(#sparkG)" opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;0;0" keyTimes="0;0.20;0.225;0.26;1"/>
+        <animate attributeName="r" dur="16s" repeatCount="indefinite"
+                 values="6;6;20;28;28" keyTimes="0;0.20;0.23;0.26;1"/>
+      </circle>
+      <!-- head of light riding the third in lockstep with the fill -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.24;0.26;0.45;0.48;1"/>
+        <g>
+          <animateMotion dur="16s" repeatCount="indefinite" calcMode="spline"
+                         keyPoints="0;0;1;1" keyTimes="0;0.24;0.46;1"
+                         keySplines="0 0 1 1;.35 .1 .45 .95;0 0 1 1">
+            <mpath href="#arcThird"/>
+          </animateMotion>
+          <circle r="13" fill="url(#sparkG)" filter="url(#fSoft)"/>
+          <circle r="4" fill="#FFFFFF"/>
+        </g>
+      </g>
+
+      <!-- ============ the mushaf at the centre ============ -->
+      <g>
+        <animateTransform attributeName="transform" type="translate" dur="7s" repeatCount="indefinite"
+          values="0 0;0 -5;0 0" keyTimes="0;0.5;1" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+        <!-- shadow -->
+        <ellipse cx="390" cy="392" rx="76" ry="12" fill="#8A7448" opacity="0.32" filter="url(#fShadow)"/>
+        <!-- page block peeking on the LEFT (spine is on the right for an Arabic book) -->
+        <rect x="320" y="222" width="14" height="150" rx="3" fill="url(#pageEdgeG)"/>
+        <g stroke="#D8C9A4" stroke-width="1" opacity="0.7">
+          <line x1="324" y1="226" x2="324" y2="368"/>
+          <line x1="328" y1="228" x2="328" y2="370"/>
+        </g>
+        <!-- cover -->
+        <rect x="326" y="216" width="128" height="160" rx="9" fill="url(#coverG)"/>
+        <rect x="326" y="216" width="128" height="160" rx="9" fill="none" stroke="#1A443C" stroke-width="1.4" opacity="0.8"/>
+        <!-- spine hint, right edge -->
+        <rect x="446" y="216" width="8" height="160" rx="4" fill="#1A443C" opacity="0.9"/>
+        <!-- gold frame -->
+        <rect x="336" y="226" width="106" height="140" rx="6" fill="none" stroke="url(#goldTrim)" stroke-width="2.2" opacity="0.95"/>
+        <rect x="341" y="231" width="96" height="130" rx="4" fill="none" stroke="#E9C36A" stroke-width="0.9" opacity="0.6"/>
+        <!-- corner ornaments -->
+        <g fill="#E9C36A" opacity="0.9">
+          <path d="M340,230 l9,0 0,3 -6,0 0,6 -3,0 z"/>
+          <path d="M438,230 l-9,0 0,3 6,0 0,6 3,0 z"/>
+          <path d="M340,362 l9,0 0,-3 -6,0 0,-6 -3,0 z"/>
+          <path d="M438,362 l-9,0 0,-3 6,0 0,-6 3,0 z"/>
+        </g>
+        <!-- eight-point star medallion (traditional division mark, strictly geometric) -->
+        <g transform="translate(389,296)">
+          <rect x="-19" y="-19" width="38" height="38" fill="none" stroke="url(#goldTrim)" stroke-width="2.4"/>
+          <rect x="-19" y="-19" width="38" height="38" fill="none" stroke="url(#goldTrim)" stroke-width="2.4" transform="rotate(45)"/>
+          <circle r="8" fill="none" stroke="#E9C36A" stroke-width="1.4" opacity="0.9"/>
+          <circle r="2.6" fill="#F0CE63"/>
+        </g>
+      </g>
+    </g>
+
+    <g id="text" font-family="Georgia,'Times New Roman',serif" text-anchor="middle">
+
+      <!-- stage 1 -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.07;0.17;0.78;0.88;1"/>
+        <text x="390" y="70" font-size="23" letter-spacing="0.22em" fill="#FFF6DE" filter="url(#fText)">A Few Words</text>
+        <text x="390" y="70" font-size="23" letter-spacing="0.22em" fill="#8A6E33">A Few Words</text>
+      </g>
+
+      <!-- stage 2, then crossfades to stage 3 in the same place -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.26;0.34;0.46;0.53;1"/>
+        <text x="390" y="540" font-size="17" font-style="italic" letter-spacing="0.18em" fill="#7C7458">The Weight of One-Third</text>
+      </g>
+      <g opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.53;0.62;0.84;0.94;1"/>
+        <g>
+          <animateTransform attributeName="transform" type="translate" dur="16s" repeatCount="indefinite"
+            values="0 8;0 8;0 0;0 0;0 8" keyTimes="0;0.53;0.62;0.94;1"
+            calcMode="spline" keySplines="0 0 1 1;.25 .1 .25 1;0 0 1 1;.4 0 .6 1"/>
+          <text x="390" y="528" font-size="22" letter-spacing="0.20em" fill="#8A6420">Complete Reward</text>
+          <text x="390" y="554" font-size="13" font-style="italic" letter-spacing="0.15em" fill="#A8823C">one recitation &#183; a third of the Qur&#8217;an</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

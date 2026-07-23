@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/profile_name_notifier.dart';
 import 'package:provider/provider.dart';
@@ -63,10 +64,25 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   final _nameFocus = FocusNode();
   final _picker = ImagePicker();
 
+  // Populated from PackageInfo on init; falls back to pubspec's compile-time
+  // constant if the plugin channel misbehaves (rare, offline, first frame).
+  String _appVersion = '1.0.1';
+
   @override
   void initState() {
     super.initState();
     _loadProfile();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() => _appVersion = info.version);
+    } catch (_) {
+      // Swallow — the fallback constant is good enough for display.
+    }
   }
 
   @override
@@ -2249,7 +2265,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Version 1.0.0',
+                  'Version $_appVersion',
                   style: GoogleFonts.outfit(fontSize: 13, color: _pSub),
                 ),
                 const SizedBox(height: 16),

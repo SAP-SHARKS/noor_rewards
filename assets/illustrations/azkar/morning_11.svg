@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DISSOLVING THE WHISPERS — Surah an-Nas
+  "Say: I seek refuge with the Lord of mankind... from the evil of the sneaking whisperer..."
+
+  An 18s master-clock loop. Three stages placed by keyTimes; the reset during a dissolve.
+
+     0.9-3.6s   (0.05-0.20)   the golden core breathes; four smoky wavy threads creep inward
+                              from the edges toward the heart; "The Creeping Whispers"
+     3.6-7.0s   (0.20-0.39)   threads approach; at 0.38 the core IGNITES — a powerful golden
+                              pulse expands outward; "Seeking Refuge" rises
+     7.0-9.0s   (0.39-0.50)   the light wave hits the threads; they FRAGMENT (path morph to
+                              tangled wisp at impact point) then EVAPORATE (opacity fades)
+     9.0-14.0s  (0.50-0.78)   the canvas rests, calm golden glow undisturbed; "The Protected
+                              Heart" settles in the cleared space
+     14.0-16.7s (0.78-0.93)   global dissolve; threads reset while invisible
+
+  PATH MORPHING: each whisper thread has 4 keyframe paths — resting at rim, halfway,
+  near-core, and a fragmented collapsed path at the impact zone. The fragment path deliberately
+  does NOT reach the core, so the threads never actually touch it; the ignition interrupts them.
+  Opacity evaporates them at stage 3 while the path holds the fragment shape.
+
+  PIPELINE COMPLIANCE
+    1. FIRST gradient is #bg — VERTICAL linearGradient. Decorative gradients follow.
+    2. All animation is SMIL inside this file. No external JS and no external CSS.
+    3. All paint colours are #RRGGBB hex.
+    4. 780x585 = exactly 4:3, preserveAspectRatio="xMidYMid meet" set explicitly.
+
+  #illustration : core, pulse, whispers.    #text : three phrases — removable/translatable.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 585" width="780" height="585"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="Dark whisper threads creep toward a golden heart, which ignites and dissolves them in light">
+  <defs>
+    <!-- ===== BACKGROUND GRADIENT — MUST STAY FIRST ===== -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E0B1E"/>
+      <stop offset="1" stop-color="#1C1736"/>
+    </linearGradient>
+
+    <!-- ===== decorative gradients ===== -->
+    <radialGradient id="coreG" cx="46%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.28" stop-color="#FBC8C0" stop-opacity="0.9"/>
+      <stop offset="0.62" stop-color="#C84040" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#8B2020" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="heartBodyG" cx="42%" cy="36%" r="68%">
+      <stop offset="0" stop-color="#F87070"/>
+      <stop offset="0.55" stop-color="#C84848"/>
+      <stop offset="1" stop-color="#8B2828"/>
+    </radialGradient>
+    <radialGradient id="pulseG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFF8E1" stop-opacity="0.95"/>
+      <stop offset="0.4" stop-color="#F5D97C" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#E9C36A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="calmG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFFBE8" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#F0CE7A" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#E9C36A" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ===== filters ===== -->
+    <filter id="fCore"     x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="fPulse"    x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="fSmoke"    x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="2.8"/></filter>
+    <filter id="fSmokeWide" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="fCalm"     x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="22"/></filter>
+    <filter id="fText"     x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+
+  <rect width="780" height="585" fill="url(#bg)"/>
+
+  <!-- ===== master fade ===== -->
+  <g opacity="0">
+    <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+             values="0;1;1;0;0" keyTimes="0;0.06;0.84;0.94;1"/>
+
+    <g id="illustration">
+
+      <!-- post-ignition calm glow, undisturbed, blooms once threads are gone -->
+      <circle cx="390" cy="300" r="280" fill="url(#calmG)" filter="url(#fCalm)" opacity="0">
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0;1;1;0;0" keyTimes="0;0.05;0.50;0.60;0.84;0.94;1"/>
+        <animate attributeName="r" dur="18s" repeatCount="indefinite"
+                 values="180;180;180;280;280;280;180" keyTimes="0;0.05;0.50;0.62;0.84;0.99;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.25 .1 .25 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </circle>
+
+      <!-- the ignition pulse: expands outward at t=0.38 -->
+      <circle cx="390" cy="300" r="40" fill="url(#pulseG)" filter="url(#fPulse)" opacity="0">
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0;0.95;0;0" keyTimes="0;0.06;0.37;0.41;0.55;1"/>
+        <animate attributeName="r" dur="18s" repeatCount="indefinite"
+                 values="40;40;40;400;420;420" keyTimes="0;0.06;0.37;0.55;0.60;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.2 .6 .3 1;.4 0 .6 1;.4 0 .6 1"/>
+      </circle>
+      <!-- secondary pulse ring -->
+      <circle cx="390" cy="300" r="40" fill="none" stroke="#FFF6D8" stroke-width="8"
+              filter="url(#fCore)" opacity="0">
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0;0.85;0;0" keyTimes="0;0.06;0.38;0.42;0.52;1"/>
+        <animate attributeName="r" dur="18s" repeatCount="indefinite"
+                 values="40;40;40;360;380;380" keyTimes="0;0.06;0.38;0.52;0.56;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.2 .6 .3 1;.4 0 .6 1;.4 0 .6 1"/>
+      </circle>
+
+      <!-- the whisper threads, BEHIND the core glow -->
+      <!-- whisper 1 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8" stroke="#6B6880" stroke-width="2.2" opacity="0"
+            filter="url(#fSmoke)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8;M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8;M 635.9,453.7 C 604.1,460.6 590.6,438.2 584.1,404.5 C 565.3,390.6 534.7,395.5 509.2,392.3;M 619.0,443.1 C 583.9,442.0 563.0,418.1 547.7,385.5 C 522.7,368.2 488.6,365.6 458.4,356.6;M 525.7,384.8 C 518.3,396.7 530.5,377.2 527.7,386.8;M 525.7,384.8 C 518.3,396.7 530.5,377.2 527.7,386.8;M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8"
+                 keyTimes="0;0.05;0.2;0.38;0.5;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.85;0.85;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- glow echo for whisper 1 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8" stroke="#483A6A" stroke-width="6" opacity="0"
+            filter="url(#fSmokeWide)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8;M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8;M 635.9,453.7 C 604.1,460.6 590.6,438.2 584.1,404.5 C 565.3,390.6 534.7,395.5 509.2,392.3;M 619.0,443.1 C 583.9,442.0 563.0,418.1 547.7,385.5 C 522.7,368.2 488.6,365.6 458.4,356.6;M 525.7,384.8 C 518.3,396.7 530.5,377.2 527.7,386.8;M 525.7,384.8 C 518.3,396.7 530.5,377.2 527.7,386.8;M 652.9,464.3 C 626.8,477.7 621.0,458.7 623.1,427.0 C 611.4,417.4 586.7,428.6 567.7,430.8"
+                 keyTimes="0;0.05;0.2;0.38;0.5;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.55;0.55;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- whisper 2 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4" stroke="#6B6880" stroke-width="2.2" opacity="0"
+            filter="url(#fSmoke)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4;M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4;M 144.1,453.7 C 154.4,426.2 179.1,421.7 209.4,426.1 C 229.9,414.9 241.2,389.0 256.5,369.4;M 161.0,443.1 C 179.4,415.2 208.9,405.3 242.8,402.2 C 269.1,387.1 288.2,360.5 310.5,338.8;M 254.3,384.8 C 246.9,372.9 259.1,392.4 256.3,386.8;M 254.3,384.8 C 246.9,372.9 259.1,392.4 256.3,386.8;M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4"
+                 keyTimes="0;0.05;0.218;0.398;0.518;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.85;0.85;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- glow echo for whisper 2 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4" stroke="#483A6A" stroke-width="6" opacity="0"
+            filter="url(#fSmokeWide)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4;M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4;M 144.1,453.7 C 154.4,426.2 179.1,421.7 209.4,426.1 C 229.9,414.9 241.2,389.0 256.5,369.4;M 161.0,443.1 C 179.4,415.2 208.9,405.3 242.8,402.2 C 269.1,387.1 288.2,360.5 310.5,338.8;M 254.3,384.8 C 246.9,372.9 259.1,392.4 256.3,386.8;M 254.3,384.8 C 246.9,372.9 259.1,392.4 256.3,386.8;M 127.1,464.3 C 129.3,439.5 147.5,440.3 171.9,451.0 C 185.4,444.3 188.7,421.3 196.4,405.4"
+                 keyTimes="0;0.05;0.218;0.398;0.518;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.55;0.55;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- whisper 3 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6" stroke="#6B6880" stroke-width="2.2" opacity="0"
+            filter="url(#fSmoke)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6;M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6;M 167.8,113.6 C 199.3,112.4 210.1,135.8 213.0,168.7 C 229.8,185.0 259.8,185.5 284.1,192.8;M 183.2,126.4 C 217.0,133.4 234.7,159.4 246.3,192.8 C 268.7,213.3 301.4,221.5 329.6,235.1;M 267.4,197.2 C 276.4,186.4 261.6,204.0 269.4,199.2;M 267.4,197.2 C 276.4,186.4 261.6,204.0 269.4,199.2;M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6"
+                 keyTimes="0;0.05;0.236;0.416;0.536;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.85;0.85;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- glow echo for whisper 3 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6" stroke="#483A6A" stroke-width="6" opacity="0"
+            filter="url(#fSmokeWide)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6;M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6;M 167.8,113.6 C 199.3,112.4 210.1,135.8 213.0,168.7 C 229.8,185.0 259.8,185.5 284.1,192.8;M 183.2,126.4 C 217.0,133.4 234.7,159.4 246.3,192.8 C 268.7,213.3 301.4,221.5 329.6,235.1;M 267.4,197.2 C 276.4,186.4 261.6,204.0 269.4,199.2;M 267.4,197.2 C 276.4,186.4 261.6,204.0 269.4,199.2;M 152.5,100.7 C 179.1,92.4 182.7,111.4 177.5,140.9 C 187.9,152.0 212.9,145.5 231.5,146.6"
+                 keyTimes="0;0.05;0.236;0.416;0.536;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.55;0.55;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- whisper 4 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2" stroke="#6B6880" stroke-width="2.2" opacity="0"
+            filter="url(#fSmoke)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2;M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2;M 576.4,77.8 C 573.8,106.2 552.4,118.6 523.6,124.9 C 507.7,142.0 503.8,169.2 494.7,192.0;M 563.6,93.2 C 553.7,124.5 529.2,143.5 499.0,157.8 C 478.8,180.4 467.9,210.9 453.0,238.0;M 492.8,177.4 C 503.6,186.4 486.0,171.6 494.8,179.4;M 492.8,177.4 C 503.6,186.4 486.0,171.6 494.8,179.4;M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2"
+                 keyTimes="0;0.05;0.254;0.434;0.554;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.85;0.85;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+      <!-- glow echo for whisper 4 -->
+      <path fill="none" stroke-linecap="round" stroke-linejoin="round"
+            d="M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2" stroke="#483A6A" stroke-width="6" opacity="0"
+            filter="url(#fSmokeWide)">
+        <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                 values="M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2;M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2;M 576.4,77.8 C 573.8,106.2 552.4,118.6 523.6,124.9 C 507.7,142.0 503.8,169.2 494.7,192.0;M 563.6,93.2 C 553.7,124.5 529.2,143.5 499.0,157.8 C 478.8,180.4 467.9,210.9 453.0,238.0;M 492.8,177.4 C 503.6,186.4 486.0,171.6 494.8,179.4;M 492.8,177.4 C 503.6,186.4 486.0,171.6 494.8,179.4;M 589.3,62.5 C 593.4,85.6 576.6,91.1 551.7,89.7 C 541.0,100.3 543.7,122.2 540.6,139.2"
+                 keyTimes="0;0.05;0.254;0.434;0.554;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;0.55;0.55;0;0;0"
+                 keyTimes="0;0.08;0.12;0.44;0.48;0.93;1"
+                 calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </path>
+
+      <!-- the constant breathing heart — ALWAYS in front, whispers never actually touch it -->
+      <g transform="translate(390,304)">
+        <g>
+          <animateTransform attributeName="transform" type="scale" dur="4.5s" repeatCount="indefinite"
+            values="1;1.06;1" keyTimes="0;0.5;1" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+          <!-- soft outer aura -->
+          <path d="M0,75 C-13,57 -92,13 -92,-31 C-92,-70 -57,-88 -29,-79 C-11,-73 0,-57 0,-35 C0,-57 11,-73 29,-79 C57,-88 92,-70 92,-31 C92,13 13,57 0,75 Z" fill="url(#coreG)" filter="url(#fPulse)"/>
+          <!-- heart body -->
+          <path d="M0,34 C-6,26 -42,6 -42,-14 C-42,-32 -26,-40 -13,-36 C-5,-33 0,-26 0,-16 C0,-26 5,-33 13,-36 C26,-40 42,-32 42,-14 C42,6 6,26 0,34 Z" fill="#B84A3E" filter="url(#fCore)">
+            <animate attributeName="opacity" dur="4.5s" repeatCount="indefinite" values="0.88;1;0.88" keyTimes="0;0.5;1"/>
+          </path>
+          <path d="M0,34 C-6,26 -42,6 -42,-14 C-42,-32 -26,-40 -13,-36 C-5,-33 0,-26 0,-16 C0,-26 5,-33 13,-36 C26,-40 42,-32 42,-14 C42,6 6,26 0,34 Z" fill="url(#heartBodyG)"/>
+          <!-- rim highlight -->
+          <path d="M0,34 C-6,26 -42,6 -42,-14 C-42,-32 -26,-40 -13,-36 C-5,-33 0,-26 0,-16 C0,-26 5,-33 13,-36 C26,-40 42,-32 42,-14 C42,6 6,26 0,34 Z" fill="none" stroke="#F08080" stroke-width="1.4" opacity="0.6"/>
+          <!-- ignition flare over the heart -->
+          <path d="M0,34 C-6,26 -42,6 -42,-14 C-42,-32 -26,-40 -13,-36 C-5,-33 0,-26 0,-16 C0,-26 5,-33 13,-36 C26,-40 42,-32 42,-14 C42,6 6,26 0,34 Z" fill="#FFFBE8" opacity="0">
+            <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                     values="0;0;0;1;0.3;0;0" keyTimes="0;0.06;0.37;0.40;0.46;0.55;1"/>
+          </path>
+          <!-- bright highlight point -->
+          <circle r="6" cx="-8" cy="-22" fill="#FFCCC8" opacity="0.9"/>
+        </g>
+      </g>
+    </g>
+
+    <g id="text" font-family="Georgia,'Times New Roman',serif" text-anchor="middle">
+
+      <!-- stage 1 -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.07;0.16;0.32;0.40;1"/>
+        <text x="390" y="68" font-size="22" letter-spacing="0.22em" fill="#C8B8E8" filter="url(#fText)">The Creeping Whispers</text>
+        <text x="390" y="68" font-size="22" letter-spacing="0.22em" fill="#9C8CB8">The Creeping Whispers</text>
+      </g>
+
+      <!-- stage 2 -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.34;0.42;0.52;0.58;1"/>
+        <g>
+          <animateTransform attributeName="transform" type="translate" dur="18s" repeatCount="indefinite"
+            values="0 8;0 8;0 0;0 0;0 8" keyTimes="0;0.34;0.42;0.58;1"
+            calcMode="spline" keySplines="0 0 1 1;.25 .1 .25 1;0 0 1 1;.4 0 .6 1"/>
+          <text x="390" y="68" font-size="26" letter-spacing="0.20em" fill="#FFF6DE" filter="url(#fText)">Seeking Refuge</text>
+          <text x="390" y="68" font-size="26" letter-spacing="0.20em" fill="#E9C36A">Seeking Refuge</text>
+        </g>
+      </g>
+
+      <!-- stage 3 -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="18s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.56;0.65;0.84;0.93;1"/>
+        <g>
+          <animateTransform attributeName="transform" type="translate" dur="18s" repeatCount="indefinite"
+            values="0 10;0 10;0 0;0 0;0 10" keyTimes="0;0.56;0.65;0.93;1"
+            calcMode="spline" keySplines="0 0 1 1;.25 .1 .25 1;0 0 1 1;.4 0 .6 1"/>
+          <text x="390" y="526" font-size="26" letter-spacing="0.20em" fill="#FFF6DE" filter="url(#fText)">The Protected Heart</text>
+          <text x="390" y="526" font-size="26" letter-spacing="0.20em" fill="#E9C36A">The Protected Heart</text>
+          <text x="390" y="556" font-size="14" font-style="italic" letter-spacing="0.15em" fill="#B8943C">min sharri l-waswasi l-khannas</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

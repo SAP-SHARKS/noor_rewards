@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  THE TRANSPARENT HEART — al-Baqarah 2:284
+  "Whether you show what is within yourselves or conceal it, Allah will bring you to account for it."
+
+  Sequence:
+     0.0-2.0s   the heart rests, its centre clouded — what is shown glows, what is concealed is turbid
+     2.0-4.6s   a pure light sweeps down from above; as it passes, the cloud dissolves,
+                the inner light kindles, and the shadow beneath the heart fades to nothing
+     from 4.6s  the heart is translucent forever, lit from the inside out, gently breathing;
+                the sweep keeps returning every 7s over the already-transparent heart
+
+  THE REVEAL NEVER UNDOES. If the centre re-clouded each loop, the piece would say concealment
+  periodically succeeds — the opposite of the ayah. The dissolve, the inner kindling and the
+  disappearance of the shadow each play ONCE and hold; only the passing light repeats, because
+  divine knowledge is continuous while the state of being fully known is permanent.
+  "There are no shadows left" is taken literally: the heart's cast shadow fades out at the reveal
+  and never returns.
+
+  PIPELINE COMPLIANCE
+    1. FIRST gradient is #bg — the intended background, a VERTICAL linearGradient, light and warm.
+       Decorative gradients follow after it.
+    2. All animation is SMIL inside this file. No external JS and no external CSS of any kind.
+       (Held end-states use the SMIL fill-mode keyword on animation elements; colour scanners
+       must read paint attributes from shape elements only.)
+    3. All paint colours are #RRGGBB hex.
+    4. 780x585 = exactly 4:3, preserveAspectRatio="xMidYMid meet" set explicitly.
+
+  #illustration : aura, heart body, cloud, inner light, sweep, motes.
+  #text         : the verse line (top) + the title lockup (bottom) — removable / translatable.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 585" width="780" height="585"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="A glowing heart with a clouded centre made perfectly translucent by a sweep of pure light">
+  <defs>
+    <!-- ===== BACKGROUND GRADIENT — MUST STAY FIRST ===== -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCF6E8"/>
+      <stop offset="1" stop-color="#E6D2AC"/>
+    </linearGradient>
+
+    <!-- ===== decorative gradients ===== -->
+    <radialGradient id="auraG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FBE8D8" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#F2CDB4" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#E0946E" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rimG" cx="42%" cy="36%" r="66%">
+      <stop offset="0" stop-color="#FFF8F4" stop-opacity="0.55"/>
+      <stop offset="0.62" stop-color="#F0BFB2" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#B84A3E" stop-opacity="0.6"/>
+    </radialGradient>
+    <radialGradient id="cloudG" cx="50%" cy="52%" r="52%">
+      <stop offset="0" stop-color="#B0A491" stop-opacity="0.85"/>
+      <stop offset="0.6" stop-color="#B8AB96" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#C2B49C" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="innerG" cx="50%" cy="46%" r="54%">
+      <stop offset="0" stop-color="#FFFDF4"/>
+      <stop offset="0.4" stop-color="#FDEFC0" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#F0CE7A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sweepG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFDF4" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#FFFDF4" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#FFF6D8" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#FFF6D8" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadowG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#8A7448" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#8A7448" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ===== filters ===== -->
+    <filter id="fWide"  x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="22"/></filter>
+    <filter id="fBody"  x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="fCloud" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="13"/></filter>
+    <filter id="fSweep" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="fText"  x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5"/></filter>
+
+    <!-- the heart, shared by body / rim / clip -->
+    <path id="heartShape" d="M390,436
+      C348,404 296,372 272,326 C252,288 258,240 296,222 C326,208 362,220 390,252
+      C418,220 454,208 484,222 C522,240 528,288 508,326 C484,372 432,404 390,436 Z"/>
+    <clipPath id="heartClip"><use href="#heartShape" xlink:href="#heartShape" xmlns:xlink="http://www.w3.org/1999/xlink"/></clipPath>
+  </defs>
+
+  <rect width="780" height="585" fill="url(#bg)"/>
+
+  <g id="illustration">
+
+    <!-- cast shadow — fades to NOTHING at the reveal and never returns -->
+    <ellipse cx="390" cy="470" rx="128" ry="20" fill="url(#shadowG)" opacity="0.8">
+      <animate attributeName="opacity" begin="2.6s" dur="1.8s" values="0.8;0" keyTimes="0;1" fill="freeze"/>
+    </ellipse>
+
+    <!-- outer aura: what is shown, glowing from the start -->
+    <g transform="translate(390,326)">
+      <circle r="230" fill="url(#auraG)" filter="url(#fWide)">
+        <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0.6;0.95;0.6" keyTimes="0;0.5;1"/>
+      </circle>
+    </g>
+
+    <!-- heart body: translucent vessel -->
+    <use href="#heartShape" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#heartShape"
+         fill="url(#rimG)" filter="url(#fBody)" opacity="0.9"/>
+    <use href="#heartShape" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#heartShape"
+         fill="none" stroke="#C25B4E" stroke-width="2.6" opacity="0.7" filter="url(#fBody)"/>
+    <use href="#heartShape" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#heartShape"
+         fill="none" stroke="#FFFDF4" stroke-width="1" opacity="0.8"/>
+
+    <!-- what is concealed: the cloud within — dissolves ONCE as the light passes -->
+    <g clip-path="url(#heartClip)">
+      <g opacity="0.95">
+        <animate attributeName="opacity" begin="2.2s" dur="2.4s" values="0.95;0" keyTimes="0;1"
+                 fill="freeze" calcMode="spline" keySplines=".4 0 .6 1"/>
+        <ellipse cx="390" cy="322" rx="92" ry="78" fill="url(#cloudG)" filter="url(#fCloud)">
+          <animateTransform attributeName="transform" type="rotate" dur="26s" repeatCount="indefinite"
+            values="0 390 322;360 390 322" keyTimes="0;1"/>
+        </ellipse>
+        <ellipse cx="362" cy="298" rx="46" ry="36" fill="url(#cloudG)" filter="url(#fCloud)" opacity="0.8"/>
+        <ellipse cx="422" cy="346" rx="52" ry="40" fill="url(#cloudG)" filter="url(#fCloud)" opacity="0.7"/>
+      </g>
+
+      <!-- the light within, kindling as the cloud goes — then breathing forever -->
+      <g opacity="0">
+        <animate attributeName="opacity" begin="2.6s" dur="2.2s" values="0;1" keyTimes="0;1"
+                 fill="freeze" calcMode="spline" keySplines=".3 .2 .3 1"/>
+        <g>
+          <animateTransform attributeName="transform" type="scale" begin="4.8s" dur="7s" repeatCount="indefinite"
+            additive="sum" values="1;1.03;1" keyTimes="0;0.5;1" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"
+            />
+          <ellipse cx="390" cy="322" rx="118" ry="104" fill="url(#innerG)" filter="url(#fCloud)"/>
+          <ellipse cx="390" cy="316" rx="52" ry="46" fill="url(#innerG)">
+            <animate attributeName="opacity" begin="4.8s" dur="7s" repeatCount="indefinite" values="0.85;1;0.85" keyTimes="0;0.5;1"/>
+          </ellipse>
+        </g>
+      </g>
+
+      <!-- the sweep INSIDE the heart: brighter, clipped to the vessel -->
+      <rect x="230" y="-180" width="320" height="150" fill="url(#sweepG)" filter="url(#fSweep)" opacity="0.9">
+        <animateTransform attributeName="transform" type="translate" begin="2s" dur="7s" repeatCount="indefinite"
+          values="0 0;0 700;0 700" keyTimes="0;0.36;1" calcMode="spline" keySplines=".35 .1 .45 1;0 0 1 1"/>
+      </rect>
+    </g>
+
+    <!-- the sweep OUTSIDE: a fainter veil passing over everything -->
+    <rect x="120" y="-200" width="540" height="130" fill="url(#sweepG)" filter="url(#fSweep)" opacity="0.35">
+      <animateTransform attributeName="transform" type="translate" begin="2s" dur="7s" repeatCount="indefinite"
+        values="0 0;0 830;0 830" keyTimes="0;0.36;1" calcMode="spline" keySplines=".35 .1 .45 1;0 0 1 1"/>
+    </rect>
+
+    <!-- motes rising once the heart is clear -->
+    <g fill="#F3DFA6">
+      <circle cx="342" cy="420" r="2.2" opacity="0">
+        <animate attributeName="cy" begin="5s" dur="9s" repeatCount="indefinite" values="440;300" keyTimes="0;1"/>
+        <animate attributeName="opacity" begin="5s" dur="9s" repeatCount="indefinite" values="0;0.7;0" keyTimes="0;0.4;1"/>
+      </circle>
+      <circle cx="442" cy="420" r="1.9" opacity="0">
+        <animate attributeName="cy" begin="7s" dur="11s" repeatCount="indefinite" values="452;296" keyTimes="0;1"/>
+        <animate attributeName="opacity" begin="7s" dur="11s" repeatCount="indefinite" values="0;0.6;0" keyTimes="0;0.4;1"/>
+      </circle>
+      <circle cx="390" cy="420" r="1.7" opacity="0">
+        <animate attributeName="cy" begin="8.6s" dur="10s" repeatCount="indefinite" values="446;288" keyTimes="0;1"/>
+        <animate attributeName="opacity" begin="8.6s" dur="10s" repeatCount="indefinite" values="0;0.55;0" keyTimes="0;0.4;1"/>
+      </circle>
+    </g>
+  </g>
+
+  <g id="text" font-family="Georgia,'Times New Roman',serif" text-anchor="middle">
+    <!-- the verse, arriving with the light as it passes -->
+    <g opacity="0">
+      <animate attributeName="opacity" begin="2.6s" dur="2.8s" values="0;1" keyTimes="0;1" fill="freeze"/>
+      <g>
+        <animate attributeName="opacity" begin="5.4s" dur="10s" repeatCount="indefinite" values="1;0.88;1" keyTimes="0;0.5;1"/>
+        <text x="390" y="84" font-size="16.5" font-style="italic" letter-spacing="0.06em" fill="#8A6E33">&#8220;Whether you reveal what is within yourselves or conceal it &#8212;</text>
+        <text x="390" y="112" font-size="16.5" font-style="italic" letter-spacing="0.06em" fill="#8A6E33">Allah knows it.&#8221;</text>
+      </g>
+    </g>
+
+    <g opacity="0">
+      <animate attributeName="opacity" begin="4.8s" dur="3s" values="0;1" keyTimes="0;1" fill="freeze"/>
+      <g>
+        <animate attributeName="opacity" begin="7.8s" dur="9s" repeatCount="indefinite" values="1;0.88;1" keyTimes="0;0.5;1"/>
+        <text x="390" y="508" font-size="27" letter-spacing="0.16em" fill="#FFF6DE" filter="url(#fText)">The Transparent Heart</text>
+        <text x="390" y="508" font-size="27" letter-spacing="0.16em" fill="#8A6420">The Transparent Heart</text>
+        <text x="390" y="540" font-size="15" font-style="italic" letter-spacing="0.18em" fill="#7C7458">the concealed and the revealed</text>
+      </g>
+    </g>
+  </g>
+</svg>

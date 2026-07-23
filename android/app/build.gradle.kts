@@ -44,7 +44,10 @@ android {
         // Ensure minSdk is at least 21 for modern plugins
 
         minSdk = flutter.minSdkVersion
-        targetSdk = 34
+        // Play Store requires targetSdk >= 35 (Android 15) for all new
+        // releases from August 2025 onward. compileSdk stays at 36 so we
+        // can call into the newest APIs where needed.
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         manifestPlaceholders["appAuthRedirectScheme"] = "noorrewards"

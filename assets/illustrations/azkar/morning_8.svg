@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  THE OPENING CORRIDOR — al-Baqarah 2:285 (closing words)
+  "We hear and we obey. Grant us Your forgiveness, our Lord — and to You is the destination."
+
+  A 16s master-clock loop. Every stage is placed by keyTimes on the same clock, so nothing can
+  drift; the reset happens during a global dissolve while the scene is invisible.
+
+     0.0-1.0s   (0-0.06)      the corridor fades in: three concentric arches; "We Hear and We Obey"
+     3.5-7.0s   (0.22-0.44)   a WAVE of light — a ring contracting toward the vanishing point,
+                              i.e. travelling AWAY down the corridor (no orbs, no beams) — passes
+                              each arch in turn; as it arrives, that arch SCALES OUTWARD and holds
+                              open, the near arch widest, like doors opening past the viewer
+     6.7-9.9s   (0.42-0.62)   the far arch's opening reveals the horizon: a warm glow blooming at
+                              the corridor's end; "The Final Destination" rises in its centre
+     9.9-13.4s  (0.62-0.8375) held: corridor open, horizon breathing
+     13.4-15.0s (0.8375-0.9375) global dissolve; arches quietly return to rest while invisible
+
+  PERSPECTIVE LOGIC: the wave hits the NEAREST (largest) arch first and the farthest last —
+  front to back — and each arch's opening is scaled to its distance (1.5 / 1.42 / 1.34), because
+  a door nearer to you swings wider across your view.
+
+  PIPELINE COMPLIANCE
+    1. FIRST gradient is #bg — the intended background, a VERTICAL linearGradient, deep and muted
+       warm. Decorative gradients follow after it.
+    2. All animation is SMIL inside this file. No external JS and no external CSS of any kind.
+    3. All paint colours are #RRGGBB hex.
+    4. 780x585 = exactly 4:3, preserveAspectRatio="xMidYMid meet" set explicitly.
+
+  #illustration : arches, wave, horizon, floor lines.
+  #text         : the two phrases — removable / translatable.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 585" width="780" height="585"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="Three golden arches opening in sequence as light travels down a corridor toward a glowing horizon">
+  <defs>
+    <!-- ===== BACKGROUND GRADIENT — MUST STAY FIRST ===== -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#221708"/>
+      <stop offset="1" stop-color="#3E2C16"/>
+    </linearGradient>
+
+    <!-- ===== decorative gradients ===== -->
+    <radialGradient id="horizonG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFF8E1"/>
+      <stop offset="0.35" stop-color="#F7DE9C" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#E9C36A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hazeG" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#F2CE7A" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#F2CE7A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="floorG" cx="50%" cy="0%" r="90%">
+      <stop offset="0" stop-color="#8A6428" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#8A6428" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ===== filters ===== -->
+    <filter id="fWide" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="24"/></filter>
+    <filter id="fArch" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="fFine" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5"/></filter>
+    <filter id="fWave" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="fText" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5"/></filter>
+
+    <!-- the three arch silhouettes, in local coords about (0,0); base line at y=150 -->
+    <path id="archNear" d="M -252,150 L -252,-122 C -252,-226 -114,-270 0,-270 C 114,-270 252,-226 252,-122 L 252,150"/>
+    <path id="archMid"  d="M -162,150 L -162,-64  C -162,-136 -74,-166 0,-166 C 74,-166 162,-136 162,-64  L 162,150"/>
+    <path id="archFar"  d="M -96,150  L -96,-24   C -96,-72  -44,-92  0,-92  C 44,-92  96,-72  96,-24   L 96,150"/>
+  </defs>
+
+  <rect width="780" height="585" fill="url(#bg)"/>
+
+  <!-- ===== everything below lives inside one master fade, so the reset is invisible ===== -->
+  <g opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+             values="0;1;1;0;0" keyTimes="0;0.06;0.8375;0.9375;1"/>
+
+    <g id="illustration">
+
+      <!-- corridor floor: converging guide lines -->
+      <polygon points="80,470 700,470 480,330 300,330" fill="url(#floorG)"/>
+      <g stroke="#A87E36" stroke-width="1.2" opacity="0.35">
+        <line x1="140" y1="470" x2="330" y2="332"/>
+        <line x1="640" y1="470" x2="450" y2="332"/>
+        <line x1="390" y1="470" x2="390" y2="334"/>
+      </g>
+
+      <!-- ============ the horizon at the corridor's end (revealed stage 3) ============ -->
+      <g transform="translate(390,318)">
+        <g opacity="0">
+          <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                   values="0;0;1;1;0;0" keyTimes="0;0.42;0.56;0.8375;0.9375;1"/>
+          <g>
+            <!-- bloom on the master clock -->
+            <animateTransform attributeName="transform" type="scale" dur="16s" repeatCount="indefinite"
+              values="0.2;0.2;1;1;1;0.2" keyTimes="0;0.42;0.6;0.8375;0.99;1"
+              calcMode="spline" keySplines=".3 .2 .3 1;.25 .1 .25 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+            <!-- eternal breath, independent -->
+            <g>
+              <animateTransform attributeName="transform" type="scale" dur="7s" repeatCount="indefinite"
+                values="1;1.05;1" keyTimes="0;0.5;1" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+              <circle r="150" fill="url(#hazeG)" filter="url(#fWide)"/>
+              <circle r="86" fill="url(#horizonG)" filter="url(#fArch)"/>
+              <circle r="30" fill="#FFF8E1" filter="url(#fFine)"/>
+            </g>
+          </g>
+        </g>
+      </g>
+
+      <!-- ============ the wave: a ring contracting toward the vanishing point ============ -->
+      <ellipse cx="390" cy="322" rx="360" ry="300" fill="none" stroke="#FBE7A8" stroke-width="10"
+               filter="url(#fWave)" opacity="0">
+        <animate attributeName="rx" dur="16s" repeatCount="indefinite"
+                 values="380;380;58;58" keyTimes="0;0.21;0.44;1"
+                 calcMode="spline" keySplines="0 0 1 1;.35 .1 .5 .95;0 0 1 1"/>
+        <animate attributeName="ry" dur="16s" repeatCount="indefinite"
+                 values="316;316;48;48" keyTimes="0;0.21;0.44;1"
+                 calcMode="spline" keySplines="0 0 1 1;.35 .1 .5 .95;0 0 1 1"/>
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;0.9;0.85;0;0" keyTimes="0;0.21;0.27;0.42;0.47;1"/>
+        <animate attributeName="stroke-width" dur="16s" repeatCount="indefinite"
+                 values="12;12;4;4" keyTimes="0;0.21;0.44;1"/>
+      </ellipse>
+
+      <!-- ============ ARCH 3 · farthest — opens LAST (0.40 hit) ============ -->
+      <g transform="translate(390,322)">
+        <g>
+          <animateTransform attributeName="transform" type="scale" dur="16s" repeatCount="indefinite"
+            values="1;1;1.34;1.34;1" keyTimes="0;0.40;0.475;0.94;1"
+            calcMode="spline" keySplines="0 0 1 1;.2 .7 .3 1;0 0 1 1;.4 0 .6 1"/>
+          <use href="#archFar" fill="none" stroke="#C9922E" stroke-width="7" opacity="0.3" filter="url(#fArch)"/>
+          <use href="#archFar" fill="none" stroke="#F0D98A" stroke-width="2" opacity="0.9" filter="url(#fFine)">
+            <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                     values="0.75;0.75;1;0.9;0.75" keyTimes="0;0.40;0.45;0.6;1"/>
+          </use>
+        </g>
+      </g>
+
+      <!-- ============ ARCH 2 · middle — opens SECOND (0.325 hit) ============ -->
+      <g transform="translate(390,322)">
+        <g>
+          <animateTransform attributeName="transform" type="scale" dur="16s" repeatCount="indefinite"
+            values="1;1;1.42;1.42;1" keyTimes="0;0.325;0.40;0.94;1"
+            calcMode="spline" keySplines="0 0 1 1;.2 .7 .3 1;0 0 1 1;.4 0 .6 1"/>
+          <use href="#archMid" fill="none" stroke="#C9922E" stroke-width="8" opacity="0.3" filter="url(#fArch)"/>
+          <use href="#archMid" fill="none" stroke="#F0D98A" stroke-width="2.6" opacity="0.85" filter="url(#fFine)">
+            <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                     values="0.7;0.7;1;0.85;0.7" keyTimes="0;0.325;0.375;0.55;1"/>
+          </use>
+        </g>
+      </g>
+
+      <!-- ============ ARCH 1 · nearest — opens FIRST (0.25 hit), swings widest ============ -->
+      <g transform="translate(390,322)">
+        <g>
+          <animateTransform attributeName="transform" type="scale" dur="16s" repeatCount="indefinite"
+            values="1;1;1.5;1.5;1" keyTimes="0;0.25;0.325;0.94;1"
+            calcMode="spline" keySplines="0 0 1 1;.2 .7 .3 1;0 0 1 1;.4 0 .6 1"/>
+          <use href="#archNear" fill="none" stroke="#C9922E" stroke-width="9" opacity="0.3" filter="url(#fArch)"/>
+          <use href="#archNear" fill="none" stroke="#F0D98A" stroke-width="3.2" opacity="0.8" filter="url(#fFine)">
+            <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                     values="0.65;0.65;1;0.8;0.65" keyTimes="0;0.25;0.30;0.5;1"/>
+          </use>
+        </g>
+      </g>
+    </g>
+
+    <g id="text" font-family="Georgia,'Times New Roman',serif" text-anchor="middle">
+
+      <!-- stage 1 · the response of the believers -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.06;0.16;0.78;0.88;1"/>
+        <text x="390" y="92" font-size="24" letter-spacing="0.22em" fill="#F2DEA2" filter="url(#fText)">We Hear and We Obey</text>
+        <text x="390" y="92" font-size="24" letter-spacing="0.22em" fill="#D9AE4C">We Hear and We Obey</text>
+      </g>
+
+      <!-- stage 3 · in the centre of the glow -->
+      <g opacity="0">
+        <animate attributeName="opacity" dur="16s" repeatCount="indefinite"
+                 values="0;0;1;1;0;0" keyTimes="0;0.50;0.62;0.8375;0.9375;1"/>
+        <g>
+          <animateTransform attributeName="transform" type="translate" dur="16s" repeatCount="indefinite"
+            values="0 12;0 12;0 0;0 0;0 12" keyTimes="0;0.50;0.62;0.9375;1"
+            calcMode="spline" keySplines="0 0 1 1;.25 .1 .25 1;0 0 1 1;.4 0 .6 1"/>
+          <text x="390" y="312" font-size="19" letter-spacing="0.20em" fill="#8A6420">The Final Destination</text>
+          <text x="390" y="338" font-size="13" font-style="italic" letter-spacing="0.16em" fill="#A8823C">and to You is the return</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
