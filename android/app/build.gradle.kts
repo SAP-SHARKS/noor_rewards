@@ -21,7 +21,7 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.sabiq.noorrewards"
+    namespace = "com.sabiq.noorrarewards"
     // Use fixed versions for stability in Release builds if flutter.sdk is fluctuating
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
@@ -40,7 +40,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sabiq.noorrewards"
+        applicationId = "com.sabiq.noorrarewards"
         // Ensure minSdk is at least 21 for modern plugins
 
         minSdk = flutter.minSdkVersion
