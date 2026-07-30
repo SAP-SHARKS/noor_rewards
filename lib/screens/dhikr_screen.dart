@@ -4566,7 +4566,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 10,
+                    vertical: 14,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -4576,13 +4576,13 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                             ? Icons.pause_rounded
                             : Icons.play_arrow_rounded,
                         color: Colors.white,
-                        size: 20,
+                        size: 24,
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Text(
                         isPlaying ? 'Pause' : 'Play All',
                         style: GoogleFonts.outfit(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                           letterSpacing: 0.3,
