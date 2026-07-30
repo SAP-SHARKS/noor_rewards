@@ -68,18 +68,51 @@ workflows:
         # a matching App Store profile is fetched/created before
         # `use-profiles` configures Xcode with them.
         script: |
+          set -x
           keychain initialize
-          # Ensure a Distribution certificate exists first — on a fresh
-          # Apple team `fetch-signing-files --create` can fail to create
-          # a profile because there's no cert to sign it against.
-          app-store-connect certificates create \
-            --type IOS_DISTRIBUTION \
+
+          echo "=== Diagnostic: what can this API key see? ==="
+          echo "--- Bundle IDs visible ---"
+          app-store-connect bundle-ids list --json | jq '.[] | {id, identifier, name, platform}' || true
+          echo "--- Distribution certificates visible ---"
+          app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq '.[] | {id, name, certificateType}' || true
+          echo "=== End diagnostic ==="
+
+          echo "=== Ensuring Distribution certificate exists ==="
+          if [ -z "$(app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq -r '.[0].id // empty')" ]; then
+            echo "No Distribution cert found — creating one"
+            app-store-connect certificates create --type IOS_DISTRIBUTION --save
+          else
+            echo "Distribution certificate already exists — fetching to keychain"
+            app-store-connect certificates list --type IOS_DISTRIBUTION --save
+          fi
+
+          echo "=== Creating/fetching provisioning profile ==="
+          CERT_ID=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq -r '.[0].id')
+          BUNDLE_RESOURCE_ID=$(app-store-connect bundle-ids list --bundle-id-identifier "com.sabiq.rewards" --strict-match-identifier --json | jq -r '.[0].id')
+
+          if [ -z "$BUNDLE_RESOURCE_ID" ] || [ "$BUNDLE_RESOURCE_ID" = "null" ]; then
+            echo "ERROR: Bundle ID 'com.sabiq.rewards' not visible to this API key."
+            echo "Check Apple Developer Portal → Identifiers — the App ID must exist in"
+            echo "the same team the API key was issued from. Also check the API key's"
+            echo "access level in App Store Connect → Users and Access → Integrations."
+            exit 1
+          fi
+
+          echo "Cert ID:     $CERT_ID"
+          echo "Bundle Res:  $BUNDLE_RESOURCE_ID"
+
+          app-store-connect profiles create \
+            --type IOS_APP_STORE \
+            --certificate "$CERT_ID" \
+            --bundle-id "$BUNDLE_RESOURCE_ID" \
+            --name "Sabiq iOS App Store Distribution" \
             --save \
-            2>/dev/null || echo "Distribution certificate already exists"
+            || echo "profiles create failed (may already exist — will fetch below)"
+
           app-store-connect fetch-signing-files "com.sabiq.rewards" \
             --platform IOS \
-            --type IOS_APP_STORE \
-            --create
+            --type IOS_APP_STORE
           keychain add-certificates
           xcode-project use-profiles
       - name: Flutter build IPA (release) with auto-bumped build number
