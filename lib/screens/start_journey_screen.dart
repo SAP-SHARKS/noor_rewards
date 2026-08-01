@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -25,27 +27,66 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
   Future<void> _googleSignIn() async {
     setState(() => _isLoading = true);
     try {
-      // authScreenLaunchMode: externalApplication opens OAuth in the real
-      // Safari app, NOT SFSafariViewController. Google's OAuth flow
-      // intentionally hangs forever in embedded browsers as an anti-abuse
-      // measure (they can't verify the embedder's identity), so the default
-      // platformDefault mode results in a stuck blue progress bar after
-      // the user reaches the consent screen.
-      // Web cannot resolve a custom mobile scheme like
-      // io.supabase.flutterquickstart://, so on Flutter Web we redirect back
-      // to the current origin (which Supabase then completes the PKCE flow on).
-      // The native mobile builds keep the custom scheme that's registered in
-      // AndroidManifest.xml / Info.plist.
-      await Supabase.instance.client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: kIsWeb
-            ? Uri.base.origin
-            : 'io.supabase.flutterquickstart://login-callback/',
-        queryParams: {'prompt': 'select_account'},
-        authScreenLaunchMode: kIsWeb
-            ? LaunchMode.platformDefault
-            : LaunchMode.externalApplication,
-      );
+      if (kIsWeb) {
+        // Web can't use google_sign_in's native SDK, so it stays on the
+        // Supabase OAuth broker (browser redirect). The scary
+        // `<project-id>.supabase.co` URL is only shown on Web — mobile
+        // users get the native path below.
+        await Supabase.instance.client.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: Uri.base.origin,
+          queryParams: {'prompt': 'select_account'},
+        );
+      } else {
+        // Native mobile: use Google Sign-In SDK directly so the account
+        // picker is the system-native dialog (branded with the Sabiq
+        // app icon + name) instead of a browser redirect that shows the
+        // raw Supabase project URL. Google returns an ID token which
+        // Supabase verifies server-side via `signInWithIdToken`.
+        final webClientId = dotenv.maybeGet('GOOGLE_WEB_CLIENT_ID');
+        if (webClientId == null || webClientId.isEmpty) {
+          throw const AuthException(
+            'GOOGLE_WEB_CLIENT_ID is not set in .env — cannot start '
+            'native Google Sign-In. See Google Cloud Console → APIs & '
+            'Services → Credentials → Web application.',
+          );
+        }
+
+        final googleSignIn = GoogleSignIn(
+          // Web OAuth client ID — required on Android to receive an
+          // idToken back. iOS reads its own client ID from Info.plist
+          // (GIDClientID) automatically.
+          serverClientId: webClientId,
+        );
+
+        // Force account picker by signing out first (matches the old
+        // `prompt: select_account` behavior).
+        await googleSignIn.signOut();
+
+        final googleUser = await googleSignIn.signIn();
+        if (googleUser == null) {
+          // User cancelled — bail silently without an error toast.
+          return;
+        }
+
+        final googleAuth = await googleUser.authentication;
+        final idToken = googleAuth.idToken;
+        final accessToken = googleAuth.accessToken;
+
+        if (idToken == null) {
+          throw const AuthException(
+            'Google Sign-In returned no ID token — check that '
+            'GOOGLE_WEB_CLIENT_ID matches the Web OAuth client '
+            'registered in Supabase (Auth → Providers → Google).',
+          );
+        }
+
+        await Supabase.instance.client.auth.signInWithIdToken(
+          provider: OAuthProvider.google,
+          idToken: idToken,
+          accessToken: accessToken,
+        );
+      }
     } on AuthException catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

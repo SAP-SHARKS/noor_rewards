@@ -95,7 +95,31 @@
 					<string>noorrewards</string>
 				</array>
 			</dict>
+			<dict>
+				<!-- Google Sign-In URL scheme.
+				     The GoogleSignIn SDK invokes this reversed-client-ID URL
+				     to hand the OAuth response back to the app when the
+				     Google account picker closes. The scheme value MUST be
+				     the iOS OAuth Client ID reversed (dots reordered), e.g.
+				     an ID of `123-abc.apps.googleusercontent.com` becomes
+				     `com.googleusercontent.apps.123-abc`.
+				     Fetch from Google Cloud Console → APIs & Services →
+				     Credentials → iOS OAuth 2.0 Client → "iOS URL scheme". -->
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.sabiq.rewards.googlesignin</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>REPLACE_WITH_REVERSED_IOS_CLIENT_ID</string>
+				</array>
+			</dict>
 		</array>
+		<!-- Google Sign-In needs the raw iOS OAuth Client ID (not reversed)
+		     to initialize itself. Fetch from Google Cloud Console → APIs &
+		     Services → Credentials → iOS OAuth 2.0 Client → "iOS client ID". -->
+		<key>GIDClientID</key>
+		<string>REPLACE_WITH_IOS_CLIENT_ID</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<!-- ── Privacy purpose strings (NSUsageDescription) ────────────────────

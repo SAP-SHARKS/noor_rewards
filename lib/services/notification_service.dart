@@ -266,20 +266,20 @@ class NotificationService {
     // Attempt GPS → precise IANA timezone first, system tz as fallback.
     // Reuse the position cached during initialize() so the sign-in flow
     // doesn't re-prompt for location or stall on a second GPS read.
+    // NOTE: lat/lng are consumed in-memory only to derive the timezone
+    // string. The raw coordinates are never persisted — the Play Data
+    // Safety declaration says location is used to compute the timezone,
+    // so we only send the derived tz to the DB.
     String timezone = 'UTC';
-    double? latitude;
-    double? longitude;
 
     try {
       final pos = _cachedPosition ?? await _getLocation();
       _cachedPosition ??= pos;
       if (pos != null) {
-        latitude = pos.latitude;
-        longitude = pos.longitude;
         timezone =
             await _timezoneFromCoords(pos.latitude, pos.longitude) ??
             await _systemTimezone();
-        debugPrint('📍 GPS timezone: $timezone ($latitude, $longitude)');
+        debugPrint('📍 GPS timezone: $timezone');
       } else {
         timezone = await _systemTimezone();
         debugPrint('📍 System timezone fallback: $timezone');
@@ -301,8 +301,6 @@ class NotificationService {
         'user_id': userId,
         'token': token,
         'timezone': timezone,
-        'latitude': latitude,
-        'longitude': longitude,
         'device_type':
             defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
         'last_seen': DateTime.now().toUtc().toIso8601String(),

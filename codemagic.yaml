@@ -42,6 +42,8 @@ workflows:
           QURAN_PRELIVE_CLIENT_SECRET=${QURAN_PRELIVE_CLIENT_SECRET:-}
           QURAN_PROD_CLIENT_ID=${QURAN_PROD_CLIENT_ID:-}
           QURAN_PROD_CLIENT_SECRET=${QURAN_PROD_CLIENT_SECRET:-}
+          GOOGLE_WEB_CLIENT_ID=${GOOGLE_WEB_CLIENT_ID:-}
+          GOOGLE_IOS_CLIENT_ID=${GOOGLE_IOS_CLIENT_ID:-}
           EOF
       - name: Disable Swift Package Manager (use CocoaPods)
         # Firebase iOS SDK 12.x has a known SPM bug where the grpc-binary

@@ -1,7 +1,7 @@
 name: noor_rewards
 description: "A new Flutter project."
 publish_to: 'none' 
-version: 1.0.3+5
+version: 1.0.4+6
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
@@ -61,6 +61,12 @@ dependencies:
   # the About screen always reflects the actual installed build without
   # anyone having to remember to bump a hardcoded string.
   package_info_plus: ^9.0.0
+  # Native Google Sign-In — replaces the Supabase OAuth broker flow so the
+  # consent dialog shows the system account picker (branded with Sabiq)
+  # instead of a browser redirect that exposed the raw Supabase project
+  # URL (e.g. `fwjzhtcxfiendofnhyzp.supabase.co`). Web still falls back to
+  # `signInWithOAuth` since the native SDK isn't available in browsers.
+  google_sign_in: ^6.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

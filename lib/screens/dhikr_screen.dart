@@ -4065,6 +4065,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
               final animationKey =
                   widget.parentState._todayAnimationKeyFor(azkar.id);
 
+              final isActivePage = index == _currentIndex;
               final azkarCard = _AzkarCard(
                 azkar: azkar,
                 currentCount: count,
@@ -4079,6 +4080,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                 // _buildIllustration.
                 animationKeyOverride: animationKey,
                 forceHideIllustration: pinIllustration,
+                isActivePage: isActivePage,
                 onReset: () {
                   widget.parentState._reset(azkar.id);
                   setState(() {});
@@ -4105,6 +4107,7 @@ class _DhikrDetailScreenState extends State<_DhikrDetailScreen> {
                                 pointsToday:
                                     widget.parentState._pointsToday,
                                 animationKeyOverride: animationKey,
+                                isActivePage: isActivePage,
                               ),
                               Expanded(
                                 child: SingleChildScrollView(
@@ -5904,6 +5907,9 @@ class _AzkarCard extends StatelessWidget {
   /// caller is rendering it as a sticky header above this card instead
   /// (Free-Illustration mode).
   final bool forceHideIllustration;
+  /// True only for the currently-visible PageView page. Forwarded to the
+  /// SVG illustration so off-screen neighbours don't spin up a WebView.
+  final bool isActivePage;
 
   const _AzkarCard({
     required this.azkar,
@@ -5918,6 +5924,7 @@ class _AzkarCard extends StatelessWidget {
     required this.onFavorite,
     required this.onShare,
     this.forceHideIllustration = false,
+    this.isActivePage = true,
   });
 
   @override
@@ -6067,6 +6074,7 @@ class _AzkarCard extends StatelessWidget {
                   tapCount: currentCount,
                   pointsToday: pointsToday,
                   animationKeyOverride: animationKeyOverride,
+                  isActivePage: isActivePage,
                 ),
                 if (pointsToday > 0)
                   Positioned(
@@ -6862,6 +6870,7 @@ Widget _buildIllustration({
   required int tapCount,
   int pointsToday = 0,
   String? animationKeyOverride,
+  bool isActivePage = true,
 }) {
   // If the screen passed an explicit key (looked up from the new DB
   // azkar_item_animations junction), use it. Otherwise fall back to the
@@ -6894,6 +6903,7 @@ Widget _buildIllustration({
         isComplete: isComplete,
         tapCount: tapCount,
         pointsToday: pointsToday,
+        isActivePage: isActivePage,
       );
     }
   }
@@ -6912,6 +6922,7 @@ Widget _buildIllustration({
         isComplete: isComplete,
         tapCount: tapCount,
         pointsToday: pointsToday,
+        isActivePage: isActivePage,
       );
     }
   }
@@ -22854,6 +22865,12 @@ class _QuranicSvgIllustration extends StatefulWidget {
   final bool isComplete;
   final int tapCount;
   final int pointsToday;
+  // When false, we skip mounting the WebView entirely and fall through to
+  // the lightweight `SvgPicture.asset` fallback below. PageView keeps 3
+  // pages alive at once, so without this gate we'd spin up 3 embedded
+  // browsers per swipe — that's the root cause of the Morning-list lag.
+  // Callers set this to `true` only for the currently visible page.
+  final bool isActivePage;
 
   const _QuranicSvgIllustration({
     required this.assetPath,
@@ -22861,6 +22878,7 @@ class _QuranicSvgIllustration extends StatefulWidget {
     required this.isComplete,
     required this.tapCount,
     this.pointsToday = 0,
+    this.isActivePage = true,
   });
 
   @override
@@ -22881,13 +22899,31 @@ class _QuranicSvgIllustrationState extends State<_QuranicSvgIllustration> {
   @override
   void initState() {
     super.initState();
-    _loadSvg();
+    _lastAsset = widget.assetPath;
+    if (widget.isActivePage) _loadSvg();
   }
 
   @override
   void didUpdateWidget(covariant _QuranicSvgIllustration old) {
     super.didUpdateWidget(old);
-    if (widget.assetPath != _lastAsset) _loadSvg();
+    final assetChanged = widget.assetPath != _lastAsset;
+    if (assetChanged) {
+      _lastAsset = widget.assetPath;
+      if (widget.isActivePage) {
+        _loadSvg();
+      } else if (_ctrl != null) {
+        setState(() => _ctrl = null);
+      }
+      return;
+    }
+    // Page slid into center → build the WebView now (start animation).
+    if (!old.isActivePage && widget.isActivePage && _ctrl == null) {
+      _loadSvg();
+    }
+    // Page slid out of center → drop the WebView (frees the browser).
+    else if (old.isActivePage && !widget.isActivePage && _ctrl != null) {
+      setState(() => _ctrl = null);
+    }
   }
 
   // Parses a #RGB / #RRGGBB / #AARRGGBB hex string into a Color. Returns
@@ -29216,6 +29252,7 @@ class _PinnedIllustration extends StatelessWidget {
   final bool isComplete;
   final int pointsToday;
   final String? animationKeyOverride;
+  final bool isActivePage;
 
   const _PinnedIllustration({
     required this.azkar,
@@ -29224,6 +29261,7 @@ class _PinnedIllustration extends StatelessWidget {
     required this.isComplete,
     required this.pointsToday,
     this.animationKeyOverride,
+    this.isActivePage = true,
   });
 
   @override
@@ -29246,6 +29284,7 @@ class _PinnedIllustration extends StatelessWidget {
             tapCount: currentCount,
             pointsToday: pointsToday,
             animationKeyOverride: animationKeyOverride,
+            isActivePage: isActivePage,
           ),
           if (pointsToday > 0)
             Positioned(

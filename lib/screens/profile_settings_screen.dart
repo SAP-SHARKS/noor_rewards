@@ -457,6 +457,117 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     }
   }
 
+  // ── Delete Account ─────────────────────────────────────────────────────────
+  // Required by Play Console → Data Safety → Account Deletion and Apple
+  // guideline 5.1.1(v). Hits the `delete-my-account` Edge Function which
+  // uses the service_role key to hard-delete the user's data across every
+  // scoped table AND remove their auth entry — irreversible.
+  Future<void> _deleteAccount() async {
+    final l = AppLocalizations.of(context)!;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text(
+              l.deleteAccountTitle,
+              style: GoogleFonts.rajdhani(
+                fontWeight: FontWeight.w800,
+                fontSize: 22,
+                color: const Color(0xFFD32F2F),
+              ),
+            ),
+            content: Text(
+              l.deleteAccountWarning,
+              style: GoogleFonts.outfit(fontSize: 14, color: _pSub, height: 1.5),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l.cancel, style: GoogleFonts.outfit(color: _pSub)),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD32F2F),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  l.deleteAccountConfirm,
+                  style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    // Blocking loader — deletion touches many tables + auth; can take a
+    // couple of seconds. Prevents double-taps.
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (ctx) => AlertDialog(
+              content: Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      l.deleteAccountDeleting,
+                      style: GoogleFonts.outfit(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      );
+    }
+
+    try {
+      final res = await _supabase.functions.invoke('delete-my-account');
+      // Supabase-Dart returns non-2xx as a thrown FunctionException, so if
+      // we're here without an exception the delete succeeded.
+      if (res.status != null && res.status! >= 400) {
+        throw Exception('HTTP ${res.status}');
+      }
+
+      // Sign out locally so the JWT stops being reused, then pop back to
+      // the AuthGate which will surface onboarding.
+      await QfAuthService.performSignOut(_supabase);
+      if (!mounted) return;
+      Navigator.of(context).pop(); // dismiss the loader
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l.deleteAccountSuccess)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context).pop(); // dismiss the loader
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l.deleteAccountError),
+          backgroundColor: const Color(0xFFD32F2F),
+        ),
+      );
+      debugPrint('[deleteAccount] failed: $e');
+    }
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -499,6 +610,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           _buildSupportCard(l),
                           const SizedBox(height: 28),
                           _buildSignOutButton(l),
+                          const SizedBox(height: 12),
+                          _buildDeleteAccountButton(l),
                           const SizedBox(height: 16),
                           Center(
                             child: Text(
@@ -2109,6 +2222,31 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           ),
         ],
       ),
+    ),
+  );
+
+  // ── Delete Account ────────────────────────────────────────────────────────
+  // Ghost/text-only style so it's visibly weaker than Sign Out but still
+  // discoverable — Play requires the option to exist, not to compete with
+  // primary actions.
+  Widget _buildDeleteAccountButton(AppLocalizations l) => TextButton.icon(
+    onPressed: _deleteAccount,
+    icon: const Icon(
+      Icons.delete_forever_outlined,
+      color: Color(0xFFB91C1C),
+      size: 18,
+    ),
+    label: Text(
+      l.deleteAccount,
+      style: GoogleFonts.outfit(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFFB91C1C),
+      ),
+    ),
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      minimumSize: const Size(double.infinity, 40),
     ),
   );
 
