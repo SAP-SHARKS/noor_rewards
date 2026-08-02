@@ -2846,6 +2846,48 @@ abstract class AppLocalizations {
   /// **'Your progress is safely stored. You can sign back in anytime.'**
   String get progressSafelyStored;
 
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete your account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes ALL your Sabiq data — profile, streaks, XP (Seeds), donations, bookmarks, and reading history. This action cannot be undone.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Forever'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountDeleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account…'**
+  String get deleteAccountDeleting;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @deleteAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete your account. Please try again or contact support.'**
+  String get deleteAccountError;
+
   /// No description provided for @accountInformation.
   ///
   /// In en, this message translates to:

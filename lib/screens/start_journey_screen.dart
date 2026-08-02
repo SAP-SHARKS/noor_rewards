@@ -96,15 +96,27 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           ),
         );
       }
-    } catch (_) {
+    } catch (e, st) {
+      // Surface the real exception in a copyable snackbar so we can diagnose
+      // sign-in failures. Common causes:
+      //   • PlatformException(sign_in_failed, ...) → SHA-1 mismatch between
+      //     the device's app signature and what's registered in Google Cloud
+      //     Console (Android OAuth client). Play-installed apps use Play App
+      //     Signing SHA-1; local debug builds use debug keystore SHA-1.
+      //   • MissingPluginException → google_sign_in package not linked; run
+      //     `flutter clean && flutter pub get` then rebuild.
+      //   • Network/socket errors → device offline while Google Sign-In tries
+      //     to fetch its config.
+      debugPrint('[GoogleSignIn] error: $e\n$st');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.startJourneyScreen_unexpectedErrorDuringGoogle_86c1a5 ??
-                  'Unexpected error during Google Sign In',
+            content: SelectableText(
+              'Google Sign-In failed: $e',
+              style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
             backgroundColor: Theme.of(context).colorScheme.error,
+            duration: const Duration(seconds: 10),
           ),
         );
       }

@@ -111,7 +111,7 @@
 				<string>com.sabiq.rewards.googlesignin</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>REPLACE_WITH_REVERSED_IOS_CLIENT_ID</string>
+					<string>com.googleusercontent.apps.347647030480-tin0o2oql2v0utaha2olkhcnsqn6n3gq</string>
 				</array>
 			</dict>
 		</array>
@@ -119,7 +119,7 @@
 		     to initialize itself. Fetch from Google Cloud Console → APIs &
 		     Services → Credentials → iOS OAuth 2.0 Client → "iOS client ID". -->
 		<key>GIDClientID</key>
-		<string>REPLACE_WITH_IOS_CLIENT_ID</string>
+		<string>347647030480-tin0o2oql2v0utaha2olkhcnsqn6n3gq.apps.googleusercontent.com</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<!-- ── Privacy purpose strings (NSUsageDescription) ────────────────────

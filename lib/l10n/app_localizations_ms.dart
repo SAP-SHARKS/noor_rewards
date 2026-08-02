@@ -1479,6 +1479,29 @@ class AppLocalizationsMs extends AppLocalizations {
       'Kemajuan anda disimpan dengan selamat. Anda boleh log masuk bila-bila masa.';
 
   @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountTitle => 'Permanently delete your account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This removes ALL your Sabiq data — profile, streaks, XP (Seeds), donations, bookmarks, and reading history. This action cannot be undone.';
+
+  @override
+  String get deleteAccountConfirm => 'Delete Forever';
+
+  @override
+  String get deleteAccountDeleting => 'Deleting your account…';
+
+  @override
+  String get deleteAccountSuccess => 'Your account has been deleted.';
+
+  @override
+  String get deleteAccountError =>
+      'Could not delete your account. Please try again or contact support.';
+
+  @override
   String get accountInformation => 'Maklumat Akaun';
 
   @override
