@@ -57,6 +57,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           // idToken back. iOS reads its own client ID from Info.plist
           // (GIDClientID) automatically.
           serverClientId: webClientId,
+          scopes: const ['openid', 'email', 'profile'],
         );
 
         // Force account picker by signing out first (matches the old
