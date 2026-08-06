@@ -16,6 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/profile_name_notifier.dart';
 import 'package:provider/provider.dart';
 import '../features/auth/data/qf_auth_service.dart';
@@ -2124,12 +2125,41 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           l.privacyPolicy,
           l.howWeProtectData,
           _pSub,
+          onTap: () => _openUrl('https://www.sabiq.io/privacy.html'),
+        ),
+        _divider(),
+        _supportRow(
+          Icons.description_outlined,
+          l.termsAndConditions,
+          l.termsAndConditionsSubtitle,
+          const Color(0xFF6366F1),
+          onTap: () => _openUrl('https://www.sabiq.io/terms.html'),
+        ),
+        _divider(),
+        _supportRow(
+          Icons.mail_outline_rounded,
+          l.contactUs,
+          l.contactUsSubtitle,
+          const Color(0xFF10B981),
           isLast: true,
-          onTap: () {},
+          onTap: () => _openUrl(
+            'mailto:Support@uhudlabs.com?subject=Sabiq%20app%20support',
+          ),
         ),
       ],
     ),
   );
+
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open $url')),
+      );
+    }
+  }
 
   Widget _supportRow(
     IconData icon,

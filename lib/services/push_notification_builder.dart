@@ -106,6 +106,13 @@ class PushNotificationBuilder {
           );
         }
       }
+      // Text-only notifications get BigTextStyle so long bodies (e.g.
+      // full hadith text in featured-dua reminders) are expandable
+      // instead of truncated at ~2 lines in the shade.
+      style ??= BigTextStyleInformation(
+        body,
+        contentTitle: title,
+      );
 
       final android = AndroidNotificationDetails(
         kPushChannelId,

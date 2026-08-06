@@ -1576,6 +1576,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get howWeProtectData => 'Verilerinizi nasıl koruyoruz?';
 
   @override
+  String get termsAndConditions => 'Terms & Conditions';
+
+  @override
+  String get termsAndConditionsSubtitle => 'The rules of use';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get contactUsSubtitle => 'Reach the Sabiq team';
+
+  @override
   String get bugReportBody =>
       'Bir hata mı buldunuz? Bize e-posta gönderin, hemen düzeltelim.';
 

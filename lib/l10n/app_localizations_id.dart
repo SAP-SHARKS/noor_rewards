@@ -1572,6 +1572,18 @@ class AppLocalizationsId extends AppLocalizations {
   String get howWeProtectData => 'Bagaimana kami melindungi data Anda';
 
   @override
+  String get termsAndConditions => 'Terms & Conditions';
+
+  @override
+  String get termsAndConditionsSubtitle => 'The rules of use';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get contactUsSubtitle => 'Reach the Sabiq team';
+
+  @override
   String get bugReportBody => 'Ada masalah? Email kami agar segera diperbaiki.';
 
   @override

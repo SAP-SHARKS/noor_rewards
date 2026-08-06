@@ -12,7 +12,12 @@
           "package_name": "com.sabiq.noorrarewards"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAGX97aB3-3QfXehOxWs21Flsj8F7xFdr4"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -31,7 +41,12 @@
           "package_name": "com.sabiq.noorrewards"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAGX97aB3-3QfXehOxWs21Flsj8F7xFdr4"
@@ -39,7 +54,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -50,7 +70,12 @@
           "package_name": "com.sabiq.rewards"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAGX97aB3-3QfXehOxWs21Flsj8F7xFdr4"
@@ -58,7 +83,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -3026,6 +3026,30 @@ abstract class AppLocalizations {
   /// **'How we protect your data'**
   String get howWeProtectData;
 
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @termsAndConditionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The rules of use'**
+  String get termsAndConditionsSubtitle;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUs;
+
+  /// No description provided for @contactUsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach the Sabiq team'**
+  String get contactUsSubtitle;
+
   /// No description provided for @bugReportBody.
   ///
   /// In en, this message translates to:

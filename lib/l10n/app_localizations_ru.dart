@@ -1570,6 +1570,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get howWeProtectData => 'Как мы защищаем ваши данные';
 
   @override
+  String get termsAndConditions => 'Terms & Conditions';
+
+  @override
+  String get termsAndConditionsSubtitle => 'The rules of use';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get contactUsSubtitle => 'Reach the Sabiq team';
+
+  @override
   String get bugReportBody => 'Нашли ошибку? Напишите нам, и мы все исправим.';
 
   @override
