@@ -3,16 +3,17 @@
 // Privacy-first analytics.
 //   • No IP addresses stored
 //   • No GPS / location permissions required
-//   • Country resolved server-side via ip-api.com (free, no key needed)
+//   • No external IP → country lookup — profiles.country (user-entered at
+//     onboarding) is the authoritative source; user_analytics.country_code
+//     is left NULL for new rows (column + analytics_country_summary view
+//     preserved for historical data)
 //   • All writes are tied to auth.uid() — RLS enforced on Supabase
 
 import 'dart:async';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:convert';
 import 'stats_service.dart';
 
 class TrackingService {
@@ -74,15 +75,6 @@ class TrackingService {
     final uid = _sb.auth.currentUser?.id;
     if (uid == null) return;
 
-    // Resolve country + device independently so one failure can't kill the
-    // other. Each helper has its own try/catch and returns sane defaults.
-    String? country;
-    try {
-      country = await _resolveCountryCode();
-    } catch (e) {
-      debugPrint('[TrackingService] country resolve failed: $e');
-    }
-
     (String, String) deviceInfo = ('Unknown', Platform.operatingSystem);
     try {
       deviceInfo = await _resolveDevice();
@@ -91,9 +83,16 @@ class TrackingService {
     }
 
     try {
+      // country_code intentionally OMITTED from the payload — the app no
+      // longer performs an IP → country lookup, and profiles.country
+      // (user-entered at onboarding) is the authoritative source.
+      // Do NOT write `'country_code': null` here: this is an upsert with
+      // onConflict: 'user_id', so explicitly writing null would overwrite
+      // any existing value for returning users. Omitting the key means
+      // new rows default to NULL while existing rows keep whatever value
+      // was written before this change, preserving historical data.
       await _sb.from('user_analytics').upsert({
         'user_id': uid,
-        'country_code': country,
         'device_model': deviceInfo.$1,
         'device_type': deviceInfo.$2,
         'last_active_at': DateTime.now().toIso8601String(),
@@ -101,56 +100,6 @@ class TrackingService {
     } catch (e) {
       debugPrint('[TrackingService] upsert failed: $e');
     }
-  }
-
-  /// Returns ISO 3166-1 alpha-2 country code ('PK', 'GB', …).
-  ///
-  /// Tries two HTTPS-only free providers in order so a single outage or rate
-  /// limit on one doesn't blank out everyone's country. The raw IP is NEVER
-  /// stored — we only keep the country code.
-  Future<String?> _resolveCountryCode() async {
-    // Provider 1: api.country.is — simplest, no rate limit, returns
-    // {"ip":"...","country":"PK"}.
-    final fromCountryIs = await _fetchCountry(
-      Uri.parse('https://api.country.is/'),
-      jsonKey: 'country',
-    );
-    if (fromCountryIs != null) return fromCountryIs;
-
-    // Provider 2: ipapi.co — free 1000/day, returns
-    // {"country_code":"PK", ...}.
-    final fromIpApi = await _fetchCountry(
-      Uri.parse('https://ipapi.co/json/'),
-      jsonKey: 'country_code',
-    );
-    if (fromIpApi != null) return fromIpApi;
-
-    debugPrint('[TrackingService] both country providers failed');
-    return null;
-  }
-
-  Future<String?> _fetchCountry(Uri url, {required String jsonKey}) async {
-    try {
-      final res = await http
-          .get(
-            url,
-            headers: const {'User-Agent': 'noor-rewards/1.0'},
-          )
-          .timeout(const Duration(seconds: 6));
-      if (res.statusCode != 200) {
-        debugPrint(
-          '[TrackingService] $url returned HTTP ${res.statusCode}: ${res.body.substring(0, res.body.length < 120 ? res.body.length : 120)}',
-        );
-        return null;
-      }
-      final data = jsonDecode(res.body) as Map<String, dynamic>;
-      final code = data[jsonKey] as String?;
-      if (code != null && code.length == 2) return code.toUpperCase();
-      debugPrint('[TrackingService] $url returned unexpected body: ${res.body}');
-    } catch (e) {
-      debugPrint('[TrackingService] $url fetch threw: $e');
-    }
-    return null;
   }
 
   /// Returns (model, type) e.g. ('Pixel 7', 'Android').

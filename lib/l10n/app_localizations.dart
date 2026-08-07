@@ -3050,6 +3050,18 @@ abstract class AppLocalizations {
   /// **'Reach the Sabiq team'**
   String get contactUsSubtitle;
 
+  /// No description provided for @exactAlarmsGrantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders arriving late?'**
+  String get exactAlarmsGrantTitle;
+
+  /// No description provided for @exactAlarmsGrantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to grant exact-time delivery'**
+  String get exactAlarmsGrantSubtitle;
+
   /// No description provided for @bugReportBody.
   ///
   /// In en, this message translates to:

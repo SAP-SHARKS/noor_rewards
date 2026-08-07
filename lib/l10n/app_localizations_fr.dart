@@ -1593,6 +1593,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get contactUsSubtitle => 'Reach the Sabiq team';
 
   @override
+  String get exactAlarmsGrantTitle => 'Reminders arriving late?';
+
+  @override
+  String get exactAlarmsGrantSubtitle => 'Tap to grant exact-time delivery';
+
+  @override
   String get bugReportBody =>
       'Un problème ? Envoyez-nous un e-mail, nous le réglerons vite.';
 

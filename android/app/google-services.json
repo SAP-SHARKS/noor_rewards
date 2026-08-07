@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:933672581282:android:7d22f1b5f8b1b19f0f3ffb",
+        "android_client_info": {
+          "package_name": "com.sabiq.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGX97aB3-3QfXehOxWs21Flsj8F7xFdr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "933672581282-n8elev85hl2mud9bqamlmu5t7h7h49ju.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sabiq.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:933672581282:android:894c75074691206f0f3ffb",
         "android_client_info": {
           "package_name": "com.sabiq.noorrarewards"
@@ -29,6 +65,13 @@
             {
               "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "933672581282-n8elev85hl2mud9bqamlmu5t7h7h49ju.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sabiq.app"
+              }
             }
           ]
         }
@@ -58,6 +101,13 @@
             {
               "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "933672581282-n8elev85hl2mud9bqamlmu5t7h7h49ju.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sabiq.app"
+              }
             }
           ]
         }
@@ -87,6 +137,13 @@
             {
               "client_id": "933672581282-rmadalg2avhermmrhcr7dn4o2b3acqsg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "933672581282-n8elev85hl2mud9bqamlmu5t7h7h49ju.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sabiq.app"
+              }
             }
           ]
         }

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sabiq (Noor Rewards) — Data Collection Audit</title>
+<style>
+  @page { size: A4; margin: 15mm; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: #111;
+    font-size: 11pt;
+    line-height: 1.4;
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px;
+  }
+  h1 { font-size: 20pt; margin-bottom: 4px; }
+  h2 { font-size: 14pt; margin-top: 24px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin-top: 18px; }
+  .meta { color: #666; font-size: 10pt; margin-bottom: 20px; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; font-size: 10pt; }
+  th, td { border: 1px solid #d0d0d0; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f4f4f6; font-weight: 600; }
+  code { background: #f2f2f2; padding: 1px 4px; border-radius: 3px; font-size: 9.5pt; font-family: Consolas, monospace; }
+  .yes { color: #128a3a; font-weight: 600; }
+  .no  { color: #b52d2d; font-weight: 600; }
+  .summary {
+    background: #f8f9fb;
+    border-left: 3px solid #3B82F6;
+    padding: 12px 16px;
+    margin: 12px 0;
+  }
+  .summary ul { margin: 6px 0; padding-left: 22px; }
+  .summary li { margin: 4px 0; }
+  @media print {
+    body { margin: 0; }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Sabiq (Noor Rewards) — Data Collection Audit</h1>
+<div class="meta">
+  Flutter app · Path: <code>D:\noor_rewards-main\noor_rewards-main</code> · Package: <code>com.sabiq.noorrarewards</code> (Android) / <code>com.sabiq.rewards</code> (iOS)
+</div>
+
+<h2>A. Third-party packages that touch user or device data</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Package</th>
+      <th>Data touched</th>
+      <th>Where used</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>firebase_core</code> ^4.6.0</td>
+      <td>Firebase SDK bootstrap</td>
+      <td><code>lib/main.dart:110</code></td>
+    </tr>
+    <tr>
+      <td><code>firebase_messaging</code> ^16.1.3</td>
+      <td>FCM push token, timezone, device type, app locale — sent to Google FCM + stored in Supabase <code>fcm_tokens</code></td>
+      <td><code>lib/services/notification_service.dart:67</code></td>
+    </tr>
+    <tr>
+      <td><code>device_info_plus</code> ^12.3.0</td>
+      <td>Device brand, model, OS version — stored in Supabase</td>
+      <td><code>lib/services/tracking_service.dart:157</code></td>
+    </tr>
+    <tr>
+      <td><code>geolocator</code> ^14.0.2</td>
+      <td>GPS lat/lng — <strong>discarded in-memory</strong>. Only derived IANA timezone string is persisted</td>
+      <td><code>lib/services/notification_service.dart</code></td>
+    </tr>
+    <tr>
+      <td><code>google_sign_in</code> ^6.2.1</td>
+      <td>Google OAuth: email, display name, ID token → sent to Google + Supabase</td>
+      <td><code>lib/screens/start_journey_screen.dart</code></td>
+    </tr>
+    <tr>
+      <td><code>supabase_flutter</code> ^2.0.0</td>
+      <td>User ID, email, session tokens, all app data → self-hosted Supabase (owner-controlled)</td>
+      <td><code>lib/main.dart:112</code></td>
+    </tr>
+    <tr>
+      <td><code>http</code> (via tracking_service)</td>
+      <td>IP-based country lookup via <code>api.country.is</code> / <code>ipapi.co</code>. <strong>IP not stored</strong>, only 2-letter country code persisted</td>
+      <td><code>lib/services/tracking_service.dart:111</code></td>
+    </tr>
+    <tr>
+      <td><code>image_picker</code> ^1.1.2</td>
+      <td>Reads photos for avatar upload → Supabase Storage</td>
+      <td>Profile flow</td>
+    </tr>
+    <tr>
+      <td><code>image_cropper</code> ^8.0.2</td>
+      <td>Local crop of avatar image (no network)</td>
+      <td>Profile flow</td>
+    </tr>
+    <tr>
+      <td><code>share_plus</code> ^12.0.1</td>
+      <td>System share sheet (no tracking)</td>
+      <td>Various</td>
+    </tr>
+    <tr>
+      <td><code>flutter_secure_storage</code> ^10.0.0</td>
+      <td>Local secure storage of tokens (Keychain / Keystore)</td>
+      <td>Auth flow</td>
+    </tr>
+    <tr>
+      <td><code>app_links</code> ^7.0.0</td>
+      <td>Deep-link handling (no data transmitted)</td>
+      <td>Referral / OAuth callback</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>B. Presence check — analytics, ads, attribution SDKs</h2>
+<table>
+  <thead>
+    <tr><th>SDK</th><th>Present?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>firebase_analytics</code></td><td class="no">NO</td></tr>
+    <tr><td><code>firebase_crashlytics</code></td><td class="no">NO</td></tr>
+    <tr><td><code>firebase_messaging</code></td><td class="yes">YES (push only)</td></tr>
+    <tr><td><code>firebase_core</code></td><td class="yes">YES (required by messaging)</td></tr>
+    <tr><td><code>onesignal_flutter</code></td><td class="no">NO</td></tr>
+    <tr><td>AppsFlyer, Adjust, Branch, Firebase Ads, Google Mobile Ads, Facebook SDK, TikTok SDK, IronSource, AppLovin</td><td class="no">NO — none present</td></tr>
+  </tbody>
+</table>
+
+<h2>C. Android permissions (<code>AndroidManifest.xml</code>)</h2>
+<table>
+  <thead>
+    <tr><th>Permission</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>INTERNET</code></td><td>Network access</td></tr>
+    <tr><td><code>POST_NOTIFICATIONS</code></td><td>Display notifications (Android 13+)</td></tr>
+    <tr><td><code>FOREGROUND_SERVICE</code></td><td>Persistent live-counter notification</td></tr>
+    <tr><td><code>RECEIVE_BOOT_COMPLETED</code></td><td>Re-schedule reminders after device reboot</td></tr>
+    <tr><td><code>ACCESS_FINE_LOCATION</code></td><td>High-precision GPS → derive timezone only (coords discarded)</td></tr>
+    <tr><td><code>ACCESS_COARSE_LOCATION</code></td><td>Low-precision GPS/WiFi → derive timezone only</td></tr>
+    <tr><td><code>USE_EXACT_ALARM</code></td><td>Schedule exact-time local reminders (Android 13+)</td></tr>
+    <tr><td><code>SCHEDULE_EXACT_ALARM</code></td><td>Same, for legacy path</td></tr>
+  </tbody>
+</table>
+
+<h2>D. iOS usage descriptions (<code>Info.plist</code>)</h2>
+<table>
+  <thead>
+    <tr><th>Key</th><th>Description string</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>NSLocationWhenInUseUsageDescription</code></td>
+      <td>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</td>
+    </tr>
+    <tr>
+      <td><code>NSLocationAlwaysAndWhenInUseUsageDescription</code></td>
+      <td>Same as above.</td>
+    </tr>
+    <tr>
+      <td><code>NSPhotoLibraryUsageDescription</code></td>
+      <td>Sabiq needs photo library access so you can choose a profile picture.</td>
+    </tr>
+    <tr>
+      <td><code>NSPhotoLibraryAddUsageDescription</code></td>
+      <td>Sabiq needs permission to save images you create in the app to your photo library.</td>
+    </tr>
+    <tr>
+      <td><code>NSCameraUsageDescription</code></td>
+      <td>Sabiq needs camera access so you can take a profile picture.</td>
+    </tr>
+    <tr>
+      <td><code>UIBackgroundModes</code> (remote-notification)</td>
+      <td>Wake briefly to process silent FCM data pushes.</td>
+    </tr>
+    <tr>
+      <td><code>ITSAppUsesNonExemptEncryption</code> = false</td>
+      <td>Only standard iOS HTTPS encryption used — skips App Store "Missing Compliance" prompt.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Bottom line</h2>
+<div class="summary">
+  <ul>
+    <li><strong>No analytics, crash-reporting, ads, or attribution SDKs</strong> are present in the app.</li>
+    <li>Only third-party services that receive user data are <strong>Google</strong> (Sign-In and FCM push infrastructure) and <strong>two IP→country lookup APIs</strong> (<code>api.country.is</code>, <code>ipapi.co</code>) — IP is never persisted, only the resulting 2-letter country code is stored in Supabase.</li>
+    <li><strong>Location coordinates are never persisted</strong> — GPS lat/lng are read, converted to an IANA timezone string in memory, then discarded.</li>
+    <li>All aggregated user data (XP, streaks, bookmarks, donations, session activity) lives in <strong>Supabase</strong>, which is self-hosted / owner-controlled.</li>
+    <li>All Android permissions and iOS usage descriptions map to concrete features listed above — no unused permissions.</li>
+  </ul>
+</div>
+
+</body>
+</html>

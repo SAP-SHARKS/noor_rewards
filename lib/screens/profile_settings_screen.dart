@@ -26,6 +26,7 @@ import '../theme/y4_theme.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/notifications_sheet.dart';
 import '../services/notification_center.dart';
+import '../services/local_reminder_scheduler.dart';
 import '../l10n/app_localizations.dart';
 import '../data/country_translations.dart';
 
@@ -1736,6 +1737,72 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             ),
           ),
         ),
+        // Exact-alarms permission row — Android 12+ only, hidden when
+        // already granted. Opens the system "Alarms & reminders" screen
+        // so the user can flip the switch for Sabiq. Without this,
+        // scheduled reminders can arrive up to ~15 min late (inexact
+        // AlarmManager window).
+        FutureBuilder<bool>(
+          future: LocalReminderScheduler.instance.canScheduleExact(),
+          builder: (context, snap) {
+            if (!Platform.isAndroid) return const SizedBox.shrink();
+            final granted = snap.data ?? true;
+            if (granted) return const SizedBox.shrink();
+            return Column(
+              children: [
+                const Divider(height: 1, thickness: 1, color: Y4.border),
+                InkWell(
+                  onTap: () async {
+                    await LocalReminderScheduler.instance
+                        .requestExactAlarmsPermission();
+                    if (mounted) setState(() {});
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.alarm_rounded,
+                          size: 20,
+                          color: Y4.ink,
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l.exactAlarmsGrantTitle,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Y4.palette.ink,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                l.exactAlarmsGrantSubtitle,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  color: Y4.muted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 20,
+                          color: Y4.muted,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
         const Divider(height: 1, thickness: 1, color: Y4.border),
         // Language Option
         Padding(
@@ -2152,12 +2219,23 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   Future<void> _openUrl(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not open $url')),
-      );
+    // Skip canLaunchUrl for mailto — on Android 11+ it returns false even
+    // when Gmail/Outlook are installed unless every possible handler is
+    // whitelisted via <queries>. launchUrl still succeeds via the system
+    // chooser, so we just try it and catch failures.
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open $url')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open $url')),
+        );
+      }
     }
   }
 

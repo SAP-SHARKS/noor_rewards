@@ -1573,6 +1573,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contactUsSubtitle => 'Reach the Sabiq team';
 
   @override
+  String get exactAlarmsGrantTitle => 'Reminders arriving late?';
+
+  @override
+  String get exactAlarmsGrantSubtitle => 'Tap to grant exact-time delivery';
+
+  @override
   String get bugReportBody => 'وجدت خطأ؟ يرجى مراسلتنا وسنصلحه في أقرب وقت.';
 
   @override

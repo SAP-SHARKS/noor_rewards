@@ -72,7 +72,7 @@
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>CFBundleURLName</key>
-				<string>com.sabiq.rewards.supabase</string>
+				<string>com.sabiq.app.supabase</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>io.supabase.flutterquickstart</string>
@@ -89,7 +89,7 @@
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>CFBundleURLName</key>
-				<string>com.sabiq.rewards.app</string>
+				<string>com.sabiq.app.app</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>noorrewards</string>
@@ -108,10 +108,10 @@
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>CFBundleURLName</key>
-				<string>com.sabiq.rewards.googlesignin</string>
+				<string>com.sabiq.app.googlesignin</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.347647030480-tin0o2oql2v0utaha2olkhcnsqn6n3gq</string>
+					<string>com.googleusercontent.apps.933672581282-n8elev85hl2mud9bqamlmu5t7h7h49ju</string>
 				</array>
 			</dict>
 		</array>
@@ -119,20 +119,16 @@
 		     to initialize itself. Fetch from Google Cloud Console → APIs &
 		     Services → Credentials → iOS OAuth 2.0 Client → "iOS client ID". -->
 		<key>GIDClientID</key>
-		<string>347647030480-tin0o2oql2v0utaha2olkhcnsqn6n3gq.apps.googleusercontent.com</string>
+		<string>933672581282-n8elev85hl2mud9bqamlmu5t7h7h49ju.apps.googleusercontent.com</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<!-- ── Privacy purpose strings (NSUsageDescription) ────────────────────
 		     Required by App Store Connect whenever the binary references the
 		     matching iOS API — even via a transitive plugin. Apple's
-		     processing scanner rejects builds that omit these. -->
-		<!-- Location: geolocator (notification_service.dart) reads coarse GPS
-		     to detect the user's IANA timezone, so reminders & prayer-time
-		     features fire at the right local moment. -->
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Sabiq uses your location to detect your local timezone so dhikr reminders and reward summaries arrive at the right time of day.</string>
+		     processing scanner rejects builds that omit these.
+		     Location keys removed — timezone is now read from the device's
+		     system settings via flutter_timezone, no GPS or permission
+		     needed. -->
 		<!-- Export Compliance: we only use standard iOS encryption (HTTPS
 		     via URLSession). Declaring this here means Apple skips the
 		     "Missing Compliance" prompt on every TestFlight upload — builds
@@ -147,11 +143,11 @@
 			<string>remote-notification</string>
 		</array>
 		<!-- Photos / camera: image_picker + image_cropper power the profile
-		     avatar flow (Settings → change photo). -->
+		     avatar flow (Settings → change photo). No write-back to the
+		     Photos library exists in the app, so NSPhotoLibraryAddUsageDescription
+		     is intentionally omitted. -->
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Sabiq needs photo library access so you can choose a profile picture.</string>
-		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>Sabiq needs permission to save images you create in the app to your photo library.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Sabiq needs camera access so you can take a profile picture.</string>
 	</dict>

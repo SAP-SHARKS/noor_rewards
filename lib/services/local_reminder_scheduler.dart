@@ -27,8 +27,10 @@
 //   9001 morning, 9002 evening, 9003 sleep, 9004 kahf-am, 9005 kahf-pm.
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
@@ -49,6 +51,11 @@ class LocalReminderScheduler {
   static const _channelName = 'Sabiq Rewards Notifications';
 
   bool _initialized = false;
+  // Cached result of AlarmManager.canScheduleExactAlarms() so we don't
+  // ping Play Services on every reminder schedule. Nulled out on each
+  // scheduleAll() so the cache refreshes if the user just granted the
+  // permission from settings.
+  bool? _canExactCached;
 
   // ── IDs ────────────────────────────────────────────────────────────────────
   static const _idMorning   = 9001;
@@ -110,12 +117,54 @@ class LocalReminderScheduler {
     }
   }
 
+  /// True if AlarmManager.canScheduleExactAlarms() returned true on the
+  /// last check. Result cached until `scheduleAll()` runs again (or
+  /// explicit refresh). Returns true on iOS since exact scheduling is
+  /// unconditional there.
+  Future<bool> canScheduleExact() async {
+    if (!Platform.isAndroid) return true;
+    if (_canExactCached != null) return _canExactCached!;
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      _canExactCached =
+          (await android?.canScheduleExactNotifications()) ?? false;
+    } catch (e) {
+      debugPrint('[LocalReminderScheduler] canScheduleExact check failed: $e');
+      _canExactCached = false;
+    }
+    return _canExactCached!;
+  }
+
+  /// Opens the system "Alarms & reminders" screen so the user can grant
+  /// SCHEDULE_EXACT_ALARM. Returns true if the request dialog was shown
+  /// (not whether the user actually granted it — check via
+  /// `canScheduleExact()` afterwards).
+  Future<bool> requestExactAlarmsPermission() async {
+    if (!Platform.isAndroid) return true;
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      final granted =
+          (await android?.requestExactAlarmsPermission()) ?? false;
+      _canExactCached = granted;
+      return granted;
+    } catch (e) {
+      debugPrint(
+          '[LocalReminderScheduler] requestExactAlarmsPermission failed: $e');
+      return false;
+    }
+  }
+
   /// Re-schedules ALL local reminders. Safe to call repeatedly — each id is
   /// cancelled before being re-scheduled so we never end up with duplicates.
   /// Call after app launch (post-auth) and again whenever the user changes
   /// timezone or toggles a reminder preference.
   Future<void> scheduleAll() async {
     await init();
+    // Refresh exact-alarm capability once per re-schedule cycle.
+    _canExactCached = null;
+    await canScheduleExact();
     final l = LocaleService.instance.l;
     try {
       await _scheduleDaily(_idMorning,  8,  0, 'morning',
@@ -168,6 +217,14 @@ class LocalReminderScheduler {
 
   // ── internals ──────────────────────────────────────────────────────────────
 
+  /// Picks exact vs inexact scheduling based on the user's granted
+  /// permission. Falls back to inexact if AlarmManager exact scheduling
+  /// isn't allowed — reminders still fire, just within a ~15 min OS window
+  /// instead of exactly at HH:MM.
+  AndroidScheduleMode get _scheduleMode => (_canExactCached ?? false)
+      ? AndroidScheduleMode.exactAllowWhileIdle
+      : AndroidScheduleMode.inexactAllowWhileIdle;
+
   Future<void> _scheduleDaily(
     int id,
     int hour,
@@ -177,14 +234,11 @@ class LocalReminderScheduler {
     required String body,
   }) async {
     await _plugin.cancel(id: id);
-    await _plugin.zonedSchedule(
+    await _zonedScheduleWithFallback(
       id: id,
       title: title,
       body: body,
       scheduledDate: _nextInstanceOf(hour, minute),
-      notificationDetails: _details(),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      // Daily recurrence by matching wall-clock time only.
       matchDateTimeComponents: DateTimeComponents.time,
       payload: route,
     );
@@ -200,17 +254,64 @@ class LocalReminderScheduler {
     required String body,
   }) async {
     await _plugin.cancel(id: id);
-    await _plugin.zonedSchedule(
+    await _zonedScheduleWithFallback(
       id: id,
       title: title,
       body: body,
       scheduledDate: _nextWeekdayInstance(weekday, hour, minute),
-      notificationDetails: _details(),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      // Weekly recurrence (matches day-of-week + time).
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       payload: route,
     );
+  }
+
+  /// Wraps `zonedSchedule` in a race-safe fallback: if the OS revoked
+  /// exact-alarm permission between our capability check and the actual
+  /// schedule call, we'd get PlatformException('exact_alarms_not_permitted').
+  /// Catch it and retry inexact so the reminder still lands.
+  Future<void> _zonedScheduleWithFallback({
+    required int id,
+    required String title,
+    required String body,
+    required tz.TZDateTime scheduledDate,
+    required DateTimeComponents matchDateTimeComponents,
+    required String payload,
+  }) async {
+    try {
+      await _plugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        notificationDetails: _details(),
+        androidScheduleMode: _scheduleMode,
+        matchDateTimeComponents: matchDateTimeComponents,
+        payload: payload,
+      );
+    } on PlatformException catch (e) {
+      if (e.code == 'exact_alarms_not_permitted') {
+        _canExactCached = false;
+        try {
+          await _plugin.zonedSchedule(
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: _details(),
+            androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+            matchDateTimeComponents: matchDateTimeComponents,
+            payload: payload,
+          );
+        } catch (retryErr) {
+          debugPrint(
+              '[LocalReminderScheduler] inexact retry failed for id=$id: $retryErr');
+        }
+      } else {
+        debugPrint(
+            '[LocalReminderScheduler] zonedSchedule failed id=$id: ${e.code} ${e.message}');
+      }
+    } catch (e) {
+      debugPrint('[LocalReminderScheduler] zonedSchedule error id=$id: $e');
+    }
   }
 
   tz.TZDateTime _nextInstanceOf(int hour, int minute) {

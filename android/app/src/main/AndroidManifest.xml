@@ -4,14 +4,23 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- Required by LocalReminderScheduler to fire azkar + Friday-Kahf
-         reminders at exact wall-clock times via AlarmManager
-         (`AndroidScheduleMode.exactAllowWhileIdle`). USE_EXACT_ALARM is
-         granted by default on Play Store installs and survives Doze. -->
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <!-- Reminder scheduling on Android 13+:
+         SCHEDULE_EXACT_ALARM is user-granted — LocalReminderScheduler
+         asks the user (from Settings → "Reminders may arrive late") if
+         they want exact-time delivery. If they don't grant it, we fall
+         back to `AndroidScheduleMode.inexactAllowWhileIdle`, so
+         reminders still fire (just within a ~15 min window instead of
+         exactly at HH:MM).
+
+         USE_EXACT_ALARM is intentionally NOT declared — it's a
+         restricted permission Play only approves for alarm-clock /
+         timer / calendar apps. Sabiq is a Quran + dhikr app so
+         declaring it risks a policy rejection. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- Defensive: if any transitive dependency's merged manifest adds
+         USE_EXACT_ALARM, strip it out — see note above on why. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"
+                     tools:node="remove"/>
 
     <application
         android:label="Sabiq"
@@ -113,6 +122,13 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Contact Us: mailto: needs SENDTO+mailto scheme in <queries>
+             on Android 11+ or canLaunchUrl() returns false silently even
+             when Gmail is installed. -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
         </intent>
         <!-- WhatsApp deep-link for share feature -->
         <package android:name="com.whatsapp" />

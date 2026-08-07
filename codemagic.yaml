@@ -6,7 +6,7 @@
 # each app can be signed against its own Apple team without conflicts.
 #   Integration name : Amna
 # `xcode-project use-profiles` then provisions / fetches a matching
-# development profile for com.sabiq.rewards before flutter build ipa.
+# development profile for com.sabiq.app before flutter build ipa.
 
 workflows:
   ios-workflow:
@@ -20,7 +20,7 @@ workflows:
         # Switch to ad_hoc for UDID-restricted test builds, or development
         # for direct-install dev builds.
         distribution_type: app_store
-        bundle_identifier: com.sabiq.rewards
+        bundle_identifier: com.sabiq.app
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
@@ -91,10 +91,10 @@ workflows:
 
           echo "=== Creating/fetching provisioning profile ==="
           CERT_ID=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq -r '.[0].id')
-          BUNDLE_RESOURCE_ID=$(app-store-connect bundle-ids list --bundle-id-identifier "com.sabiq.rewards" --strict-match-identifier --json | jq -r '.[0].id')
+          BUNDLE_RESOURCE_ID=$(app-store-connect bundle-ids list --bundle-id-identifier "com.sabiq.app" --strict-match-identifier --json | jq -r '.[0].id')
 
           if [ -z "$BUNDLE_RESOURCE_ID" ] || [ "$BUNDLE_RESOURCE_ID" = "null" ]; then
-            echo "ERROR: Bundle ID 'com.sabiq.rewards' not visible to this API key."
+            echo "ERROR: Bundle ID 'com.sabiq.app' not visible to this API key."
             echo "Check Apple Developer Portal → Identifiers — the App ID must exist in"
             echo "the same team the API key was issued from. Also check the API key's"
             echo "access level in App Store Connect → Users and Access → Integrations."
@@ -112,7 +112,7 @@ workflows:
             --save \
             || echo "profiles create failed (may already exist — will fetch below)"
 
-          app-store-connect fetch-signing-files "com.sabiq.rewards" \
+          app-store-connect fetch-signing-files "com.sabiq.app" \
             --platform IOS \
             --type IOS_APP_STORE
           keychain add-certificates
@@ -129,7 +129,7 @@ workflows:
         # it manually in pubspec.yaml when shipping a real new release.
         script: |
           set -euo pipefail
-          BUNDLE_ID="com.sabiq.rewards"
+          BUNDLE_ID="com.sabiq.app"
 
           echo "→ Looking up App Store Connect App ID for $BUNDLE_ID"
           APP_ID=$(app-store-connect apps list \

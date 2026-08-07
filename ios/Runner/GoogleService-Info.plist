@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.sabiq.rewards</string>
+	<string>com.sabiq.app</string>
 	<key>PROJECT_ID</key>
 	<string>noor-rewards-b02ae</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:933672581282:ios:7b0a652a130a9b1e0f3ffb</string>
+	<string>1:933672581282:ios:7185d196ae29a68a0f3ffb</string>
 </dict>
 </plist>

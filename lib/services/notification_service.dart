@@ -6,8 +6,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../screens/dhikr_screen.dart';
@@ -56,11 +54,6 @@ String? consumePendingDeepLinkRoute() {
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
-
-  /// Cached position from the boot-time location request. Reused by
-  /// [_saveTokenWithLocation] so a second permission/location fetch isn't
-  /// needed when the user signs in.
-  Position? _cachedPosition;
 
   // ── Public entry point ──────────────────────────────────────────────────────
   Future<void> initialize() async {
@@ -113,39 +106,29 @@ class NotificationService {
       debugPrint('APNS_TOKEN: $apns');
     }
 
-    // ── 2. Location permission ───────────────────────────────────────────────
-    // Requested immediately after notification so both prompts appear
-    // back-to-back on fresh install, regardless of whether the user is signed
-    // in yet. Previously this only ran inside _saveTokenWithLocation (gated
-    // on sign-in) which meant fresh-install users never saw the location
-    // prompt until a later launch — feeling random/inconsistent.
-    try {
-      _cachedPosition = await _getLocation();
-    } catch (_) {
-      _cachedPosition = null;
-    }
-
-    // ── 3. FCM token + initial Supabase persistence ──────────────────────────
+    // ── 2. FCM token + initial Supabase persistence ──────────────────────────
+    // (Location permission removed — timezone is now read from the device's
+    // system settings via flutter_timezone, no GPS or permission needed.)
     final token = await messaging.getToken();
     debugPrint('FCM_TOKEN: $token');
 
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (token != null && userId != null) {
-      await _saveTokenWithLocation(token: token, userId: userId);
+      await _saveToken(token: token, userId: userId);
     }
 
     // Re-save on token refresh
     messaging.onTokenRefresh.listen((newToken) async {
       final uid = Supabase.instance.client.auth.currentUser?.id;
       if (uid != null) {
-        await _saveTokenWithLocation(token: newToken, userId: uid);
+        await _saveToken(token: newToken, userId: uid);
       }
     });
 
-    // ── 4. Save the token when the user signs in ─────────────────────────────
-    // Fresh-install flow: notification + location prompts fire during boot,
-    // then the user goes through onboarding and signs in. We need to push the
-    // FCM token to Supabase at that point — without this, the token grabbed
+    // ── 3. Save the token when the user signs in ─────────────────────────────
+    // Fresh-install flow: notification prompt fires during boot, then the
+    // user goes through onboarding and signs in. We need to push the FCM
+    // token to Supabase at that point — without this, the token grabbed
     // pre-sign-in is never persisted, and the user receives no FCM messages.
     Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
       final session = data.session;
@@ -154,7 +137,7 @@ class NotificationService {
           session != null) {
         final t = await messaging.getToken();
         if (t != null) {
-          await _saveTokenWithLocation(token: t, userId: session.user.id);
+          await _saveToken(token: t, userId: session.user.id);
         }
       }
     });
@@ -188,8 +171,8 @@ class NotificationService {
   /// settings — the token itself is unchanged, only `app_locale`.
   ///
   /// Silent no-op when nothing is signed in — the row won't exist yet
-  /// and the initial `_saveTokenWithLocation` will pick up the current
-  /// locale on the very first insert.
+  /// and the initial `_saveToken` will pick up the current locale on
+  /// the very first insert.
   Future<void> syncAppLocale(String? code) async {
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (userId == null) return;
@@ -258,36 +241,17 @@ class NotificationService {
     return head;
   }
 
-  // ── GPS + timezone detection ────────────────────────────────────────────────
-  Future<void> _saveTokenWithLocation({
+  // ── Token save + system timezone ────────────────────────────────────────────
+  Future<void> _saveToken({
     required String token,
     required String userId,
   }) async {
-    // Attempt GPS → precise IANA timezone first, system tz as fallback.
-    // Reuse the position cached during initialize() so the sign-in flow
-    // doesn't re-prompt for location or stall on a second GPS read.
-    // NOTE: lat/lng are consumed in-memory only to derive the timezone
-    // string. The raw coordinates are never persisted — the Play Data
-    // Safety declaration says location is used to compute the timezone,
-    // so we only send the derived tz to the DB.
-    String timezone = 'UTC';
-
-    try {
-      final pos = _cachedPosition ?? await _getLocation();
-      _cachedPosition ??= pos;
-      if (pos != null) {
-        timezone =
-            await _timezoneFromCoords(pos.latitude, pos.longitude) ??
-            await _systemTimezone();
-        debugPrint('📍 GPS timezone: $timezone');
-      } else {
-        timezone = await _systemTimezone();
-        debugPrint('📍 System timezone fallback: $timezone');
-      }
-    } catch (e) {
-      timezone = await _systemTimezone();
-      debugPrint('📍 Location error ($e), using system timezone: $timezone');
-    }
+    // Timezone comes from the device system settings via flutter_timezone,
+    // which returns a valid IANA identifier (e.g. "Asia/Karachi"). Same
+    // format we previously derived from GPS, so existing scheduled pushes
+    // keep working without any server-side change.
+    final timezone = await _systemTimezone();
+    debugPrint('🕒 System timezone: $timezone');
 
     // Effective locale for server-side variant lookup. The row's
     // `app_locale` column defaults to 'en' at INSERT time — without this
@@ -311,57 +275,9 @@ class NotificationService {
     }
   }
 
-  /// Requests location permission and returns current position.
-  /// Returns null if denied or unavailable.
-  Future<Position?> _getLocation() async {
-    // Check if location services are enabled at OS level
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      debugPrint('📍 Location services disabled');
-      return null;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      // This triggers the Android system permission dialog
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      debugPrint('📍 Location permission denied');
-      return null;
-    }
-
-    // Get a low-accuracy position quickly (good enough for timezone)
-    return Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.low,
-        timeLimit: Duration(seconds: 10),
-      ),
-    );
-  }
-
-  /// Calls timeapi.io (free, no API key) to get IANA timezone from coordinates.
-  Future<String?> _timezoneFromCoords(double lat, double lng) async {
-    try {
-      final uri = Uri.parse(
-        'https://timeapi.io/api/timezone/coordinate?latitude=$lat&longitude=$lng',
-      );
-      final res = await http.get(uri).timeout(const Duration(seconds: 6));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final tz = data['timeZone'] as String?;
-        return (tz != null && tz.isNotEmpty) ? tz : null;
-      }
-    } catch (e) {
-      debugPrint('timeapi.io error: $e');
-    }
-    return null;
-  }
-
-  /// Reads device system timezone (accurate when "auto timezone" is on).
+  /// Reads device system timezone. Returns a valid IANA identifier such
+  /// as "Asia/Karachi" or "Europe/Berlin" (accurate when the phone's
+  /// "Set time zone automatically" toggle is on, which is the OS default).
   Future<String> _systemTimezone() async {
     try {
       final info = await FlutterTimezone.getLocalTimezone();
