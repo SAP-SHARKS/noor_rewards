@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../l10n/app_localizations.dart';
 import '../features/auth/data/qf_auth_service.dart';
 import '../services/quran_api_service.dart';
@@ -41,6 +45,100 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  /// Native iOS Sign in with Apple flow. Required by App Store Review
+  /// Guideline 4.8 because we also offer third-party Google Sign-In.
+  ///
+  /// Flow:
+  ///   1. Generate a random raw nonce; hash it with SHA-256.
+  ///   2. Ask Apple for an ID token bound to that hashed nonce.
+  ///   3. Hand the token + raw nonce to Supabase, which verifies the hash
+  ///      matches what Apple signed and mints a Supabase session.
+  ///
+  /// Apple only sends `givenName` / `familyName` on the *first* sign-in
+  /// per Apple ID + bundle ID pair, so we push it into user metadata as
+  /// `full_name` right away — subsequent signs-in return null names and
+  /// there's no way to recover them.
+  Future<void> _appleSignIn() async {
+    if (!Platform.isIOS) return;
+    setState(() => _isLoading = true);
+    try {
+      final rawNonce = _generateRawNonce();
+      final hashedNonce = crypto.sha256
+          .convert(utf8.encode(rawNonce))
+          .toString();
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: const [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+
+      final idToken = credential.identityToken;
+      if (idToken == null) {
+        throw const AuthException('Apple returned no identity token');
+      }
+
+      await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: idToken,
+        nonce: rawNonce,
+      );
+
+      // Persist Apple's one-shot name payload before it's gone forever.
+      if (credential.givenName != null || credential.familyName != null) {
+        final full = [credential.givenName, credential.familyName]
+            .whereType<String>()
+            .where((s) => s.trim().isNotEmpty)
+            .join(' ')
+            .trim();
+        if (full.isNotEmpty) {
+          await Supabase.instance.client.auth.updateUser(
+            UserAttributes(data: {'full_name': full}),
+          );
+        }
+      }
+    } on SignInWithAppleAuthorizationException catch (e) {
+      // User tapped Cancel on the Apple sheet — not an error, just bail.
+      if (e.code == AuthorizationErrorCode.canceled) return;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: SelectableText('Apple Sign-In failed: ${e.message}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            duration: const Duration(seconds: 10),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: SelectableText('Apple Sign-In failed: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            duration: const Duration(seconds: 10),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// URL-safe random nonce, hashed and sent to Apple so we can prove to
+  /// Supabase that the ID token was minted for *this* sign-in attempt
+  /// (replay protection).
+  String _generateRawNonce([int length = 32]) {
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._';
+    final random = math.Random.secure();
+    return List.generate(
+      length,
+      (_) => chars[random.nextInt(chars.length)],
+    ).join();
   }
 
   @override
@@ -291,6 +389,19 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
                   ),
 
                   const Spacer(flex: 2),
+
+                  // Sign in with Apple — iOS only (Guideline 4.8). Rendered
+                  // above Google so Apple's HIG "no less prominent than
+                  // other sign-in options" requirement is trivially met.
+                  if (Platform.isIOS) ...[
+                    SignInWithAppleButton(
+                      onPressed: _isLoading ? () {} : _appleSignIn,
+                      style: SignInWithAppleButtonStyle.black,
+                      borderRadius: BorderRadius.circular(32),
+                      height: 52,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
 
                   // Google Sign-In Button
                   DecoratedBox(

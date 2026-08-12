@@ -109,6 +109,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get continueWithGoogle => 'Continuer avec Google';
 
   @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
   String get continueWithQuran => 'Continuer avec Quran.com';
 
   @override

@@ -64,6 +64,12 @@ dependencies:
   # URL (e.g. `fwjzhtcxfiendofnhyzp.supabase.co`). Web still falls back to
   # `signInWithOAuth` since the native SDK isn't available in browsers.
   google_sign_in: ^6.2.1
+  # Native iOS Sign in with Apple — required by Apple Guideline 4.8 since
+  # we offer Google Sign-In. Uses the AuthenticationServices framework to
+  # produce an Apple identity token that Supabase verifies via
+  # `signInWithIdToken(provider: OAuthProvider.apple)`. iOS-gated at the
+  # UI layer; button is only rendered on `Platform.isIOS`.
+  sign_in_with_apple: ^7.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

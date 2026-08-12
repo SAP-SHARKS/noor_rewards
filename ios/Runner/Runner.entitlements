@@ -9,5 +9,15 @@
 	     environment. -->
 	<key>aps-environment</key>
 	<string>production</string>
+	<!-- Sign in with Apple — required by App Store Review Guideline 4.8
+	     because we also offer Google Sign-In. "Default" ties the capability
+	     to the primary bundle identifier's Apple ID service (no separate
+	     Service ID needed for native iOS-only flows). Enable the same
+	     capability on the App ID in the Apple Developer portal so the
+	     entitlement gets signed into distribution builds. -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
 </dict>
 </plist>

@@ -109,6 +109,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get continueWithGoogle => 'Google کے ساتھ جاری رکھیں';
 
   @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
   String get continueWithQuran => 'Quran.com کے ساتھ جاری رکھیں';
 
   @override

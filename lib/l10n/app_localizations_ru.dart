@@ -107,6 +107,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get continueWithGoogle => 'Продолжить с Google';
 
   @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
   String get continueWithQuran => 'Продолжить с Quran.com';
 
   @override
