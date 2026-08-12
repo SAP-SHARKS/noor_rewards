@@ -7878,6 +7878,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Country'**
   String get profileSelectCountry;
+
+  /// No description provided for @displayNameNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'That display name isn\'t allowed. Please choose another.'**
+  String get displayNameNotAllowed;
+
+  /// No description provided for @reportUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Report user'**
+  String get reportUser;
+
+  /// No description provided for @reportUserBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports are reviewed by our team. Repeat abuse leads to account restriction.'**
+  String get reportUserBody;
+
+  /// No description provided for @reportReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get reportReason;
+
+  /// No description provided for @reportReasonOffensiveName.
+  ///
+  /// In en, this message translates to:
+  /// **'Offensive display name'**
+  String get reportReasonOffensiveName;
+
+  /// No description provided for @reportReasonImpersonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Impersonation'**
+  String get reportReasonImpersonation;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get reportNotes;
+
+  /// No description provided for @reportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit report'**
+  String get reportSubmit;
+
+  /// No description provided for @reportSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted — thank you.'**
+  String get reportSubmitted;
+
+  /// No description provided for @reportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not submit report. Please try again.'**
+  String get reportFailed;
+
+  /// No description provided for @blockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Block user'**
+  String get blockUser;
+
+  /// No description provided for @blockUserBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t see them on the leaderboard.'**
+  String get blockUserBody;
+
+  /// No description provided for @userBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User blocked.'**
+  String get userBlocked;
+
+  /// No description provided for @userAlreadyBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Already blocked.'**
+  String get userAlreadyBlocked;
+
+  /// No description provided for @unblockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblockUser;
+
+  /// No description provided for @userUnblocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User unblocked.'**
+  String get userUnblocked;
+
+  /// No description provided for @alreadyReported.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already reported this user today.'**
+  String get alreadyReported;
 }
 
 class _AppLocalizationsDelegate

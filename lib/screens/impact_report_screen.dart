@@ -16,6 +16,7 @@ import '../services/streak_service.dart';
 import '../services/stats_service.dart';
 import '../services/donation_service.dart';
 import '../utils/name_localizer.dart';
+import '../widgets/initials_avatar.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/project_media_carousel.dart';
@@ -2628,26 +2629,13 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
 
   Widget _impactDonorRow(_DonorAgg d) {
     final localName = localizeName(context, d.displayName);
-    final initial = localName.trim().isEmpty
-        ? '?'
-        : localName.trim().substring(0, 1).toUpperCase();
     final subtitle = _timeAgo(context, d.lastDonatedAt);
     return Row(
       children: [
-        ClipOval(
-          child: SizedBox(
-            width: 40,
-            height: 40,
-            child: d.avatarUrl != null
-                ? CachedNetworkImage(
-                    imageUrl: d.avatarUrl!,
-                    fit: BoxFit.cover,
-                    placeholder: (_, __) => _donorInitial(initial),
-                    errorWidget: (_, __, ___) => _donorInitial(initial),
-                  )
-                : _donorInitial(initial),
-          ),
-        ),
+        // Initials-only avatar. `_DonorAgg` retains its `avatarUrl` field
+        // upstream (donation_service still parses it from the DB) but we
+        // no longer render user photos anywhere in Sabiq.
+        InitialsAvatar(displayName: localName, size: 40),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -2703,21 +2691,6 @@ class _CommunityImpactPageState extends State<CommunityImpactPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _donorInitial(String initial) {
-    return Container(
-      color: Y4.palette.honey.withValues(alpha: 0.25),
-      alignment: Alignment.center,
-      child: Text(
-        initial,
-        style: GoogleFonts.outfit(
-          fontSize: 15,
-          fontWeight: FontWeight.w800,
-          color: Y4.palette.honeyDeep,
-        ),
-      ),
     );
   }
 

@@ -142,13 +142,10 @@
 		<array>
 			<string>remote-notification</string>
 		</array>
-		<!-- Photos / camera: image_picker + image_cropper power the profile
-		     avatar flow (Settings → change photo). No write-back to the
-		     Photos library exists in the app, so NSPhotoLibraryAddUsageDescription
-		     is intentionally omitted. -->
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Sabiq needs photo library access so you can choose a profile picture.</string>
-		<key>NSCameraUsageDescription</key>
-		<string>Sabiq needs camera access so you can take a profile picture.</string>
+		<!-- Photo library / camera usage descriptions were removed with the
+		     profile avatar upload feature — Sabiq now renders initials-only
+		     avatars (UGC-compliance policy). No plugin in the app requests
+		     Photos or Camera access, so no NSUsageDescription strings are
+		     needed here; Apple's binary scanner will not flag their absence. -->
 	</dict>
 </plist>

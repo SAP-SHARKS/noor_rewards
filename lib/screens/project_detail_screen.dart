@@ -14,6 +14,7 @@ import '../services/donation_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
+import '../widgets/initials_avatar.dart';
 import '../widgets/project_media_carousel.dart';
 import '../widgets/sabiq_coin.dart';
 
@@ -1277,29 +1278,12 @@ class _DonorRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initials = donor.displayName.trim().isEmpty
-        ? '?'
-        : donor.displayName.trim().substring(0, 1).toUpperCase();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          // Avatar (cached network image with cream initial fallback)
-          ClipOval(
-            child: SizedBox(
-              width: 36,
-              height: 36,
-              child: donor.avatarUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: donor.avatarUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => _AvatarFallback(initial: initials),
-                      errorWidget: (_, __, ___) =>
-                          _AvatarFallback(initial: initials),
-                    )
-                  : _AvatarFallback(initial: initials),
-            ),
-          ),
+          // Initials-only avatar (no user photos).
+          InitialsAvatar(displayName: donor.displayName, size: 36),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -1354,27 +1338,6 @@ class _DonorRow extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AvatarFallback extends StatelessWidget {
-  final String initial;
-  const _AvatarFallback({required this.initial});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Y4.palette.cream,
-      alignment: Alignment.center,
-      child: Text(
-        initial,
-        style: GoogleFonts.outfit(
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-          color: Y4.palette.honeyDeep,
-        ),
       ),
     );
   }

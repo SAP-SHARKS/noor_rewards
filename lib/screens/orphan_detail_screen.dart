@@ -12,6 +12,7 @@ import '../services/donation_service.dart';
 import '../services/settings_service.dart';
 import '../theme/y4_theme.dart';
 import '../utils/name_localizer.dart';
+import '../widgets/initials_avatar.dart';
 import '../widgets/sabiq_coin.dart';
 
 class OrphanDetailScreen extends StatefulWidget {
@@ -415,27 +416,12 @@ class _OrphanDetailScreenState extends State<OrphanDetailScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Y4.palette.butter,
-                      backgroundImage: s.avatarUrl != null && s.avatarUrl!.isNotEmpty
-                          ? CachedNetworkImageProvider(s.avatarUrl!)
-                          : null,
-                      child: s.avatarUrl == null || s.avatarUrl!.isEmpty
-                          ? Text(
-                              (() {
-                                final n = localizeName(context, s.displayName);
-                                return n.isNotEmpty
-                                    ? n[0].toUpperCase()
-                                    : '?';
-                              })(),
-                              style: GoogleFonts.outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: Y4.palette.honeyDeep,
-                              ),
-                            )
-                          : null,
+                    // Initials-only; sponsor colour data isn't wired to
+                    // the sponsor list yet so InitialsAvatar falls back
+                    // to its neutral default.
+                    InitialsAvatar(
+                      displayName: localizeName(context, s.displayName),
+                      size: 32,
                     ),
                     const SizedBox(width: 10),
                     Expanded(

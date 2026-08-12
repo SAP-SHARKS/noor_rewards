@@ -31,6 +31,7 @@ import '../services/notification_center.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/project_l10n.dart' as proj_l10n;
 import 'streak_screen.dart';
+import '../widgets/initials_avatar.dart';
 import '../widgets/noor_icons.dart';
 import '../widgets/plot_illustrations.dart';
 import '../widgets/noor_offline.dart';
@@ -38,6 +39,7 @@ import '../widgets/motivational_popup.dart';
 import '../widgets/project_media_carousel.dart';
 import '../widgets/sabiq_coin.dart';
 import '../widgets/seal_coin_animation.dart';
+import '../widgets/report_user_sheet.dart';
 import '../config/feature_flags.dart';
 import 'project_detail_screen.dart';
 import 'orphan_detail_screen.dart';
@@ -130,7 +132,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _levelTitle = 'Seeker';
   StreakSnapshot _streakSnap = StreakSnapshot.empty;
   String? _country;
-  String? _avatarUrl;
+  // Per-user avatar hex color from `profiles.avatar_color`. Null falls
+  // back to a neutral gray inside InitialsAvatar.
+  int? _avatarColor;
 
   // Community project
   Map<String, dynamic>? _project;
@@ -359,7 +363,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // 0: profile
         _supabase
             .from('profiles')
-            .select('noor_points, country, total_xp, level, avatar_url')
+            .select('noor_points, country, total_xp, level, avatar_color')
             .eq('id', uid)
             .maybeSingle()
             .then<Map<String, dynamic>?>((v) => v)
@@ -407,7 +411,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _totalPts = (profile['total_xp'] as num?)?.toInt() ?? 0;
         _level = (profile['level'] as num?)?.toInt() ?? 1;
         _country = profile['country'] as String?;
-        _avatarUrl = profile['avatar_url'] as String?;
+        _avatarColor = (profile['avatar_color'] as num?)?.toInt();
       } else {
         _noorPoints = 0;
         debugPrint('Profile returned zero rows for $uid');
@@ -576,7 +580,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 streakSnap: _streakSnap,
                 project: _project,
                 homeVisitCount: _homeVisitCount,
-                avatarUrl: _avatarUrl,
+                avatarColor: _avatarColor,
                 onGoQuran: () => _goToScreen(const QuranHubScreen()),
                 onGoDhikr: () => _goToScreen(const DhikrHubScreen()),
                 onGoTafsir: () => _goToScreen(const TafsirHubScreen()),
@@ -622,7 +626,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               country: _country,
                               streak: _streak ?? 0,
                               currentUserId: uid,
-                              avatarUrl: _avatarUrl,
+                              avatarColor: _avatarColor,
                               onRefresh: _loadHomeData,
                             ),
                           ),
@@ -744,7 +748,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 // ─────────────────────────────────────────────────────────────────────────────
 class _HomeTab extends StatefulWidget {
   final String name, levelTitle;
-  final String? avatarUrl;
+  final int? avatarColor;
   final int? noorPoints, todayPoints, weekPoints, monthPoints, streak;
   final int totalXp, level;
   final int homeVisitCount;
@@ -772,7 +776,7 @@ class _HomeTab extends StatefulWidget {
     required this.project,
     required this.streakSnap,
     required this.homeVisitCount,
-    this.avatarUrl,
+    this.avatarColor,
     this.onGoProfile,
     required this.onGoQuran,
     required this.onGoDhikr,
@@ -1395,52 +1399,21 @@ class _HomeTabState extends State<_HomeTab> {
                                 ),
                           ),
                         ),
-                        // Avatar tile — preserves user image + level badge.
-                        // Doubles as the Sabiq Seeds wallet target — the seal
-                        // animation flies the coin into this widget.
+                        // Avatar tile — initials-only, coloured by
+                        // profiles.avatar_color. Doubles as the Sabiq Seeds
+                        // wallet target — the seal animation flies the coin
+                        // into this widget.
                         GestureDetector(
                           key: sabiqProfileIconKey,
                           onTap: () => widget.onGoProfile?.call(),
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              Container(
-                                width: 38,
-                                height: 38,
-                                decoration: BoxDecoration(
-                                  color: Y4.palette.honey,
-                                  borderRadius: BorderRadius.circular(12),
-                                  image:
-                                      widget.avatarUrl != null
-                                          ? DecorationImage(
-                                            image: NetworkImage(
-                                              widget.avatarUrl!,
-                                            ),
-                                            fit: BoxFit.cover,
-                                          )
-                                          : null,
-                                ),
-                                child:
-                                    widget.avatarUrl == null
-                                        ? Center(
-                                          child: Text(
-                                            (() {
-                                              final n = localizeName(
-                                                context,
-                                                firstName,
-                                              );
-                                              return n.isNotEmpty
-                                                  ? n[0].toUpperCase()
-                                                  : 'N';
-                                            })(),
-                                            style: GoogleFonts.outfit(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w800,
-                                              color: Y4.palette.ink,
-                                            ),
-                                          ),
-                                        )
-                                        : null,
+                              InitialsAvatar(
+                                displayName: localizeName(context, firstName),
+                                avatarColor: widget.avatarColor,
+                                size: 38,
+                                fontSize: 14,
                               ),
                               PositionedDirectional(
                                 bottom: -5,
@@ -5306,12 +5279,27 @@ enum _LbWindow { today, week, month, allTime }
 
 class _RankingSheetState extends State<_RankingSheet> {
   // Per-tab cache so switching tabs after first load is instant.
+  // Values are the RAW leaderboard rows from the DB view — the blocklist
+  // filter is applied at read-time so refreshing `_blockedIds` doesn't
+  // require refetching the leaderboard.
   final Map<_LbWindow, List<Map<String, dynamic>>> _cache = {};
   final Set<_LbWindow> _loadingTabs = {};
   _LbWindow _window = _LbWindow.allTime;
 
-  List<Map<String, dynamic>> get _leaders => _cache[_window] ?? const [];
-  bool get _loading => _loadingTabs.contains(_window) && _leaders.isEmpty;
+  // UGC-safety: rows whose `id` appears in this set are hidden from every
+  // leaderboard tab. Fetched once alongside the first tab load and reused.
+  Set<String> _blockedIds = <String>{};
+
+  List<Map<String, dynamic>> get _leaders {
+    final raw = _cache[_window] ?? const [];
+    if (_blockedIds.isEmpty) return raw;
+    return raw
+        .where((r) => !_blockedIds.contains(r['id'] as String?))
+        .toList(growable: false);
+  }
+
+  bool get _loading =>
+      _loadingTabs.contains(_window) && (_cache[_window] ?? const []).isEmpty;
 
   int get _myRank {
     final idx = _leaders.indexWhere((p) => p['id'] == widget.currentUserId);
@@ -5332,6 +5320,7 @@ class _RankingSheetState extends State<_RankingSheet> {
   @override
   void initState() {
     super.initState();
+    _refreshBlockedIds();
     _load(_window);
   }
 
@@ -5345,6 +5334,26 @@ class _RankingSheetState extends State<_RankingSheet> {
         return 'leaderboard_global_monthly';
       case _LbWindow.allTime:
         return 'leaderboard_global_v2';
+    }
+  }
+
+  Future<void> _refreshBlockedIds() async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      final res = await Supabase.instance.client
+          .from('blocked_users')
+          .select('blocked_user_id')
+          .eq('blocker_user_id', uid);
+      final ids = <String>{
+        for (final r in (res as List))
+          if (r is Map && r['blocked_user_id'] is String)
+            r['blocked_user_id'] as String,
+      };
+      if (!mounted) return;
+      setState(() => _blockedIds = ids);
+    } catch (e) {
+      debugPrint('[RankingSheet] blocklist fetch failed: $e');
     }
   }
 
@@ -5767,7 +5776,7 @@ class _RankingSheetState extends State<_RankingSheet> {
     final pts = _pointsOf(p);
     final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
     final country = (p['country'] as String?)?.trim() ?? '';
-    final avatarUrl = p['avatar_url'] as String?;
+    final avatarColor = (p['avatar_color'] as num?)?.toInt();
     final unit = AppLocalizations.of(ctx)?.seedsUnit ?? 'Seeds';
 
     return Container(
@@ -5796,7 +5805,11 @@ class _RankingSheetState extends State<_RankingSheet> {
             ),
           ),
           const SizedBox(width: 8),
-          _Avatar(url: avatarUrl, name: nm, size: 36),
+          InitialsAvatar(
+            displayName: nm,
+            avatarColor: avatarColor,
+            size: 36,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -6001,7 +6014,7 @@ class _PodiumSlot extends StatelessWidget {
         0;
     final ayahs = _ayahsOf(e);
     final dhikr = _dhikrOf(e);
-    final avatarUrl = e['avatar_url'] as String?;
+    final avatarColor = (e['avatar_color'] as num?)?.toInt();
 
     // Sizing varies per rank → #1 most prominent.
     final rankFontSize = rank == 1 ? 24.0 : (rank == 2 ? 22.0 : 20.0);
@@ -6161,7 +6174,11 @@ class _PodiumSlot extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: _Avatar(url: avatarUrl, name: nm, size: avatarSize),
+                child: InitialsAvatar(
+                  displayName: nm,
+                  avatarColor: avatarColor,
+                  size: avatarSize,
+                ),
               ),
             ],
           ),
@@ -6197,46 +6214,6 @@ const List<List<Color>> _kRankBadgePalette = [
 
 List<Color> _rankBadgeGradient(int rank) =>
     _kRankBadgePalette[(rank - 4).abs() % _kRankBadgePalette.length];
-
-// ─── Avatar with initial fallback ──────────────────────────────────────────
-class _Avatar extends StatelessWidget {
-  final String? url;
-  final String name;
-  final double size;
-  const _Avatar({required this.url, required this.name, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: url == null
-            ? const LinearGradient(
-                colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-              )
-            : null,
-        image: url != null
-            ? DecorationImage(image: NetworkImage(url!), fit: BoxFit.cover)
-            : null,
-      ),
-      child: url == null
-          ? Center(
-              child: Text(
-                initial,
-                style: GoogleFonts.outfit(
-                  fontSize: size * 0.42,
-                  fontWeight: FontWeight.w800,
-                  color: const Color(0xFF1565C0),
-                ),
-              ),
-            )
-          : null,
-    );
-  }
-}
 
 // ─── Streak chip (flame + days) ────────────────────────────────────────────
 class _StreakChip extends StatelessWidget {
@@ -6319,6 +6296,8 @@ class _LeaderboardView extends StatefulWidget {
 }
 
 class _LeaderboardViewState extends State<_LeaderboardView> {
+  // Cache holds RAW rows from the DB view; the blocklist filter is applied
+  // at read-time so refreshing `_blockedIds` doesn't require a refetch.
   final Map<_LbWindow, List<Map<String, dynamic>>> _cache = {};
   final Set<_LbWindow> _loadingTabs = {};
   // Tab UI was removed — leaderboard now shows all-time only. The
@@ -6326,9 +6305,20 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
   // later without touching the cache / loading logic.
   final _LbWindow _window = _LbWindow.allTime;
 
-  List<Map<String, dynamic>> get _leaders => _cache[_window] ?? const [];
+  // UGC-safety: rows whose `id` appears here are hidden from view. Fetched
+  // once on init and refreshed after the report/block sheet closes.
+  Set<String> _blockedIds = <String>{};
+
+  List<Map<String, dynamic>> get _leaders {
+    final raw = _cache[_window] ?? const [];
+    if (_blockedIds.isEmpty) return raw;
+    return raw
+        .where((r) => !_blockedIds.contains(r['id'] as String?))
+        .toList(growable: false);
+  }
+
   bool get _loading =>
-      _loadingTabs.contains(_window) && _leaders.isEmpty;
+      _loadingTabs.contains(_window) && (_cache[_window] ?? const []).isEmpty;
 
   String _viewFor(_LbWindow w) {
     switch (w) {
@@ -6348,6 +6338,26 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
       (p['total_xp'] as num?)?.toInt() ??
       0;
 
+  Future<void> _refreshBlockedIds() async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      final res = await Supabase.instance.client
+          .from('blocked_users')
+          .select('blocked_user_id')
+          .eq('blocker_user_id', uid);
+      final ids = <String>{
+        for (final r in (res as List))
+          if (r is Map && r['blocked_user_id'] is String)
+            r['blocked_user_id'] as String,
+      };
+      if (!mounted) return;
+      setState(() => _blockedIds = ids);
+    } catch (e) {
+      debugPrint('[LeaderboardView] blocklist fetch failed: $e');
+    }
+  }
+
   Future<void> _load(_LbWindow w) async {
     if (_cache.containsKey(w)) return;
     setState(() => _loadingTabs.add(w));
@@ -6366,6 +6376,7 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
   @override
   void initState() {
     super.initState();
+    _refreshBlockedIds();
     _load(_window);
   }
 
@@ -6545,8 +6556,12 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     final level = (p['level'] as num?)?.toInt() ?? 1;
     final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
     final country = (p['country'] as String?)?.trim() ?? '';
-    final avatarUrl = p['avatar_url'] as String?;
-    return Container(
+    final avatarColor = (p['avatar_color'] as num?)?.toInt();
+    // UGC-safety: long-press any other user's row to open the report sheet.
+    // We deliberately skip the affordance on the current user's own row —
+    // self-reports are noise for moderation.
+    final reportedId = p['id'] as String?;
+    final row = Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: isMe ? const Color(0xFFFFF3D4) : Colors.transparent,
@@ -6564,7 +6579,11 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              _Avatar(url: avatarUrl, name: nm, size: 38),
+              InitialsAvatar(
+                displayName: nm,
+                avatarColor: avatarColor,
+                size: 38,
+              ),
               Positioned(
                 top: -2,
                 left: -4,
@@ -6685,6 +6704,23 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
         ],
       ),
     );
+    if (isMe || reportedId == null) return row;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: () async {
+        final changed = await showReportUserSheet(
+          ctx,
+          reportedUserId: reportedId,
+          reportedDisplayName: nm,
+        );
+        // If the user blocked (or reported) the target, refresh the
+        // blocklist so the row disappears without a full reload.
+        if (changed && mounted) {
+          await _refreshBlockedIds();
+        }
+      },
+      child: row,
+    );
   }
 }
 
@@ -6695,7 +6731,7 @@ class _ProfileTab extends StatefulWidget {
   final String name, levelTitle, currentUserId;
   final int noorPoints, totalXp, level, streak;
   final String? country;
-  final String? avatarUrl;
+  final int? avatarColor;
   final VoidCallback onRefresh;
   const _ProfileTab({
     required this.name,
@@ -6706,7 +6742,7 @@ class _ProfileTab extends StatefulWidget {
     required this.country,
     required this.streak,
     required this.currentUserId,
-    this.avatarUrl,
+    this.avatarColor,
     required this.onRefresh,
   });
   @override

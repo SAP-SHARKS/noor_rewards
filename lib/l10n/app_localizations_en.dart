@@ -4789,4 +4789,66 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSelectCountry => 'Select Country';
+
+  @override
+  String get displayNameNotAllowed =>
+      'That display name isn\'t allowed. Please choose another.';
+
+  @override
+  String get reportUser => 'Report user';
+
+  @override
+  String get reportUserBody =>
+      'Reports are reviewed by our team. Repeat abuse leads to account restriction.';
+
+  @override
+  String get reportReason => 'Reason';
+
+  @override
+  String get reportReasonOffensiveName => 'Offensive display name';
+
+  @override
+  String get reportReasonImpersonation => 'Impersonation';
+
+  @override
+  String get reportReasonSpam => 'Spam';
+
+  @override
+  String get reportReasonHarassment => 'Harassment';
+
+  @override
+  String get reportReasonOther => 'Other';
+
+  @override
+  String get reportNotes => 'Notes (optional)';
+
+  @override
+  String get reportSubmit => 'Submit report';
+
+  @override
+  String get reportSubmitted => 'Report submitted — thank you.';
+
+  @override
+  String get reportFailed => 'Could not submit report. Please try again.';
+
+  @override
+  String get blockUser => 'Block user';
+
+  @override
+  String get blockUserBody => 'You won\'t see them on the leaderboard.';
+
+  @override
+  String get userBlocked => 'User blocked.';
+
+  @override
+  String get userAlreadyBlocked => 'Already blocked.';
+
+  @override
+  String get unblockUser => 'Unblock';
+
+  @override
+  String get userUnblocked => 'User unblocked.';
+
+  @override
+  String get alreadyReported => 'You\'ve already reported this user today.';
 }

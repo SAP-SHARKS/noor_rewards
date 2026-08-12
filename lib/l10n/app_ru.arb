@@ -3529,5 +3529,25 @@
       }
     }
   },
-  "profileSelectCountry": "Выберите страну"
+  "profileSelectCountry": "Выберите страну",
+  "displayNameNotAllowed": "That display name isn't allowed. Please choose another.",
+  "reportUser": "Report user",
+  "reportUserBody": "Reports are reviewed by our team. Repeat abuse leads to account restriction.",
+  "reportReason": "Reason",
+  "reportReasonOffensiveName": "Offensive display name",
+  "reportReasonImpersonation": "Impersonation",
+  "reportReasonSpam": "Spam",
+  "reportReasonHarassment": "Harassment",
+  "reportReasonOther": "Other",
+  "reportNotes": "Notes (optional)",
+  "reportSubmit": "Submit report",
+  "reportSubmitted": "Report submitted — thank you.",
+  "reportFailed": "Could not submit report. Please try again.",
+  "blockUser": "Block user",
+  "blockUserBody": "You won't see them on the leaderboard.",
+  "userBlocked": "User blocked.",
+  "userAlreadyBlocked": "Already blocked.",
+  "unblockUser": "Unblock",
+  "userUnblocked": "User unblocked.",
+  "alreadyReported": "You've already reported this user today."
 }

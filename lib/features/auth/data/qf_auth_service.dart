@@ -528,6 +528,9 @@ class QfAuthService {
       }
 
       // ── Update Supabase user metadata ────────────────────────────────────
+      // avatar_url deliberately omitted — Sabiq renders initials-only
+      // avatars (UGC-compliance policy), so we never persist provider
+      // photo URLs into either userMetadata or profiles.avatar_url.
       final meta = <String, dynamic>{
         'provider': 'quran_com',
         'qf_email': email,
@@ -535,7 +538,6 @@ class QfAuthService {
         'qf_picture': picture,
         'qf_sub': sub,
         'full_name': displayName,
-        'avatar_url': picture,
       };
 
       // IMPORTANT: Supabase merges metadata — it doesn't replace.
@@ -565,7 +567,7 @@ class QfAuthService {
       if (user != null) {
         final row = <String, dynamic>{'id': user.id};
         if (email.isNotEmpty) row['email'] = email;
-        if (picture.isNotEmpty) row['avatar_url'] = picture;
+        // avatar_url intentionally NOT written — see meta comment above.
 
         // Authoritative name only — from QF directly or completed-setup DB row
         final authoritativeName =

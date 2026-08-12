@@ -4,16 +4,16 @@
 // • Display name editable
 // • Email (read-only from auth)
 // • Country editable
-// • Avatar: real photo upload via image_picker → Supabase Storage
+// • Avatar: initials-only badge coloured by profiles.avatar_color
+//   (no photo upload — UGC-compliance policy)
 // • Help & Support section
 // • Sign Out
 // ─────────────────────────────────────────────────────────────────────────────
 
-import 'dart:io';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,12 +23,14 @@ import '../features/auth/data/qf_auth_service.dart';
 import '../services/settings_service.dart';
 import '../models/app_config.dart';
 import '../theme/y4_theme.dart';
+import '../widgets/initials_avatar.dart';
 import '../widgets/noor_offline.dart';
 import '../widgets/notifications_sheet.dart';
 import '../services/notification_center.dart';
 import '../services/local_reminder_scheduler.dart';
 import '../l10n/app_localizations.dart';
 import '../data/country_translations.dart';
+import '../utils/display_name_check.dart';
 
 AppConfig get _pcfg => SettingsService.instance.config;
 Color get _pTeal => _pcfg.dashTeal;
@@ -52,19 +54,19 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   // ── State ────────────────────────────────────────────────────────────────
   bool _loading = true;
   bool _saving = false;
-  bool _uploadingPhoto = false;
   String _displayName = '';
   String _email = '';
   String _country = '';
   String _provider = 'email'; // 'email' | 'google' | 'quran_com'
   int _level = 1;
   String _levelTitle = 'Seeker';
-  String? _avatarUrl;
+  // Persisted per-user hex colour from `profiles.avatar_color`. Nullable
+  // — InitialsAvatar falls back to a neutral gray when unset.
+  int? _avatarColor;
 
   final _nameCtrl = TextEditingController();
   final _countryCtrl = TextEditingController();
   final _nameFocus = FocusNode();
-  final _picker = ImagePicker();
 
   // Populated from PackageInfo on init; falls back to pubspec's compile-time
   // constant if the plugin channel misbehaves (rare, offline, first frame).
@@ -124,14 +126,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       final profile =
           await _supabase
               .from('profiles')
-              .select('display_name, country, level, avatar_url, email')
+              .select('display_name, country, level, avatar_color, email')
               .eq('id', user.id)
               .maybeSingle();
 
       _displayName = (profile?['display_name'] as String?) ?? '';
       _country = (profile?['country'] as String?) ?? '';
       _level = (profile?['level'] as num?)?.toInt() ?? 1;
-      _avatarUrl = profile?['avatar_url'] as String?;
+      _avatarColor = (profile?['avatar_color'] as num?)?.toInt();
 
       // For QF users: qf_email in userMetadata may be empty if the QF server
       // only grants openid scope. Fall back to profiles.email which is always
@@ -178,8 +180,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       return;
     }
 
-    setState(() => _saving = true);
+    // Client-side profanity mirror of the server _check_display_name trigger,
+    // so users get instant feedback before hitting the network. Server still
+    // has the final word — see the PostgrestException catch below.
     final l = AppLocalizations.of(context)!;
+    final nameError = DisplayNameCheck.validate(name);
+    if (nameError != null) {
+      _showSnack(l.displayNameNotAllowed, isError: true);
+      return;
+    }
+
+    setState(() => _saving = true);
     try {
       // Try the safe SECURITY DEFINER RPC first (no risk of users editing
       // sensitive columns like noor_points). If the RPC isn't deployed
@@ -192,12 +203,28 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           'p_country': country,
         });
       } on PostgrestException catch (rpcErr) {
+        // If the RPC itself raised the display_name trigger error, don't
+        // fall back to the direct update — it will just fail identically.
+        if (rpcErr.message.contains('display_name contains disallowed')) {
+          _showSnack(l.displayNameNotAllowed, isError: true);
+          if (mounted) setState(() => _saving = false);
+          return;
+        }
         debugPrint('[Profile] update_my_profile RPC failed: ${rpcErr.code} ${rpcErr.message} — falling back to direct update');
         // Fallback: direct update gated by RLS (id = auth.uid()).
-        await _supabase
-            .from('profiles')
-            .update({'display_name': name, 'country': country})
-            .eq('id', user.id);
+        try {
+          await _supabase
+              .from('profiles')
+              .update({'display_name': name, 'country': country})
+              .eq('id', user.id);
+        } on PostgrestException catch (e) {
+          if (e.message.contains('display_name contains disallowed')) {
+            _showSnack(l.displayNameNotAllowed, isError: true);
+            if (mounted) setState(() => _saving = false);
+            return;
+          }
+          rethrow;
+        }
       }
       await _supabase.auth.updateUser(
         UserAttributes(data: {'noor_name': name}),
@@ -220,176 +247,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       _showSnack('${l.couldNotSave}: $detail', isError: true);
     }
     if (mounted) setState(() => _saving = false);
-  }
-
-  // ── Photo Upload ─────────────────────────────────────────────────────────
-  Future<void> _pickAndUploadPhoto(ImageSource source) async {
-    Navigator.pop(context); // close bottom sheet
-    final l = AppLocalizations.of(context)!;
-    try {
-      final xf = await _picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
-      if (xf == null) return;
-
-      setState(() => _uploadingPhoto = true);
-
-      final user = _supabase.auth.currentUser;
-      if (user == null) return;
-
-      final bytes = await File(xf.path).readAsBytes();
-      final ext = xf.name.split('.').last.toLowerCase();
-      final mimeType =
-          ext == 'png'
-              ? 'image/png'
-              : (ext == 'webp' ? 'image/webp' : 'image/jpeg');
-      final filePath = '${user.id}/avatar.$ext';
-
-      await _supabase.storage
-          .from('avatars')
-          .uploadBinary(
-            filePath,
-            bytes,
-            fileOptions: FileOptions(contentType: mimeType, upsert: true),
-          );
-
-      final url = _supabase.storage.from('avatars').getPublicUrl(filePath);
-      // Bust cache by appending timestamp
-      final bustUrl = '$url?t=${DateTime.now().millisecondsSinceEpoch}';
-
-      await _supabase
-          .from('profiles')
-          .update({'avatar_url': bustUrl})
-          .eq('id', user.id);
-
-      setState(() => _avatarUrl = bustUrl);
-      _showSnack(l.photoUpdated);
-      HapticFeedback.lightImpact();
-    } catch (e) {
-      _showSnack(l.couldNotUploadPhoto, isError: true);
-    } finally {
-      if (mounted) setState(() => _uploadingPhoto = false);
-    }
-  }
-
-  void _showPhotoSheet() {
-    final l = AppLocalizations.of(context)!;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder:
-          (_) => Container(
-            margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-            decoration: BoxDecoration(
-              color: Y4.palette.surface,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDDDDDD),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l.changeProfilePhoto,
-                    style: GoogleFonts.rajdhani(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: _pText,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _photoOption(
-                    Icons.camera_alt_rounded,
-                    l.takeAPhoto,
-                    _pTeal,
-                    () => _pickAndUploadPhoto(ImageSource.camera),
-                  ),
-                  const SizedBox(height: 12),
-                  _photoOption(
-                    Icons.photo_library_rounded,
-                    l.chooseFromLibrary,
-                    Y4.palette.primaryDeep,
-                    () => _pickAndUploadPhoto(ImageSource.gallery),
-                  ),
-                  if (_avatarUrl != null) ...[
-                    const SizedBox(height: 12),
-                    _photoOption(
-                      Icons.delete_outline_rounded,
-                      l.removePhoto,
-                      const Color(0xFFD32F2F),
-                      _removePhoto,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-    );
-  }
-
-  Widget _photoOption(
-    IconData icon,
-    String label,
-    Color color,
-    VoidCallback onTap,
-  ) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.22)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(width: 14),
-          Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  Future<void> _removePhoto() async {
-    Navigator.pop(context);
-    final l = AppLocalizations.of(context)!;
-    final user = _supabase.auth.currentUser;
-    if (user == null) return;
-    setState(() => _uploadingPhoto = true);
-    try {
-      await _supabase
-          .from('profiles')
-          .update({'avatar_url': null})
-          .eq('id', user.id);
-      setState(() => _avatarUrl = null);
-      _showSnack(l.photoRemoved);
-    } catch (_) {
-      _showSnack(l.couldNotRemovePhoto, isError: true);
-    } finally {
-      if (mounted) setState(() => _uploadingPhoto = false);
-    }
   }
 
   // ── Snack ─────────────────────────────────────────────────────────────────
@@ -736,201 +593,63 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   );
 
   // ── Avatar helpers ──────────────────────────────────────────────────────
+  // Both circles now render InitialsAvatar under a thin white ring +
+  // subtle shadow so they still feel "framed" against the honey wash
+  // hero, without any network image / upload UI.
   Widget _bigAvatarCircle() {
-    final initial =
-        _displayName.isNotEmpty
-            ? _displayName[0].toUpperCase()
-            : _email.isNotEmpty
-            ? _email[0].toUpperCase()
-            : 'N';
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [Y4.honey, Y4.honeyDeep],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.3),
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-            image:
-                _avatarUrl != null
-                    ? DecorationImage(
-                      image: NetworkImage(_avatarUrl!),
-                      fit: BoxFit.cover,
-                    )
-                    : null,
-          ),
-          child:
-              _avatarUrl == null
-                  ? Center(
-                    child: Text(
-                      initial,
-                      style: GoogleFonts.outfit(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                  : null,
+    // Prefer the display name; fall back to the email so brand-new
+    // accounts (no name yet) still get a meaningful initial instead of
+    // "?".
+    final source = _displayName.isNotEmpty ? _displayName : _email;
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+          width: 2,
         ),
-        if (_uploadingPhoto)
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black38,
-              ),
-              child: const Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(0xFFC9921A),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-        if (_avatarUrl != null && !_uploadingPhoto)
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: _removePhoto,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD32F2F),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const Icon(
-                  Icons.close_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-      ],
+        ],
+      ),
+      child: InitialsAvatar(
+        displayName: source,
+        avatarColor: _avatarColor,
+        size: 68,
+        fontSize: 26,
+      ),
     );
   }
 
   Widget _avatarCircle({double radius = 36, double fontSize = 24}) {
-    final initial =
-        _displayName.isNotEmpty
-            ? _displayName[0].toUpperCase()
-            : _email.isNotEmpty
-            ? _email[0].toUpperCase()
-            : 'N';
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          width: radius * 2,
-          height: radius * 2,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [Y4.honey, Y4.honeyDeep],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-            image:
-                _avatarUrl != null
-                    ? DecorationImage(
-                      image: NetworkImage(_avatarUrl!),
-                      fit: BoxFit.cover,
-                    )
-                    : null,
-          ),
-          child:
-              _avatarUrl == null
-                  ? Center(
-                    child: Text(
-                      initial,
-                      style: GoogleFonts.outfit(
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                  : null,
+    final source = _displayName.isNotEmpty ? _displayName : _email;
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 2,
         ),
-        if (_uploadingPhoto)
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black38,
-              ),
-              child: const Center(
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(0xFFC9921A),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Y4.palette.honeyDeep.withValues(alpha: 0.4),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-        if (_avatarUrl != null && !_uploadingPhoto)
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: _removePhoto,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD32F2F),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
-                ),
-                child: Icon(
-                  Icons.close_rounded,
-                  size: radius * 0.4,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-      ],
+        ],
+      ),
+      child: InitialsAvatar(
+        displayName: source,
+        avatarColor: _avatarColor,
+        size: radius * 2 - 4,
+        fontSize: fontSize,
+      ),
     );
   }
 
@@ -1006,6 +725,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   );
 
   // ── Avatar Card ───────────────────────────────────────────────────────────
+  // Initials-only. No edit button, no upload sheet — user avatars are
+  // generated from display_name + avatar_color (both persisted in the
+  // `profiles` table).
   Widget _buildAvatarCard(AppLocalizations l) => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
@@ -1037,40 +759,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               ),
               const SizedBox(height: 3),
               Text(
-                _avatarUrl != null ? l.tapEditToChange : l.tapEditToAdd,
+                _displayName.isNotEmpty ? _displayName : l.yourName,
                 style: GoogleFonts.outfit(fontSize: 12, color: _pSub),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
-          ),
-        ),
-        GestureDetector(
-          onTap: _showPhotoSheet,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: _pTeal.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _pTeal.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.camera_alt_rounded,
-                  size: 14,
-                  color: Color(0xFF2BAE99),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  l.edit,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: _pTeal,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ],
