@@ -66,57 +66,36 @@ workflows:
         script: |
           cd ios && pod install --repo-update
       - name: Set up code signing (fetch or create cert + profile)
-        # On a fresh Apple team the auto-signing block in `integrations`
-        # can silently no-op if no distribution cert exists yet. Doing
-        # this explicitly guarantees a Distribution cert is present and
-        # a matching App Store profile is fetched/created before
-        # `use-profiles` configures Xcode with them.
+        # `fetch-signing-files --create` is the codemagic-cli-tools
+        # idiom for "make everything from scratch if needed":
+        #   1. Generates a fresh private key on the build machine
+        #   2. Creates a Distribution certificate signed against it
+        #      (calls certificates/create on ASC with the CSR)
+        #   3. Creates a matching App Store provisioning profile bound
+        #      to that cert + com.sabiq.app
+        #   4. Downloads the cert (.p12) + profile (.mobileprovision)
+        #      to the paths keychain / use-profiles look at
+        # Idempotent — subsequent runs reuse the existing cert/profile
+        # instead of creating new ones.
         script: |
           set -x
           keychain initialize
 
           echo "=== Diagnostic: what can this API key see? ==="
           echo "--- Bundle IDs visible ---"
-          app-store-connect bundle-ids list --json | jq '.[] | {id, identifier, name, platform}' || true
+          app-store-connect bundle-ids list --json \
+            | jq '.[] | {id, identifier: (.attributes.identifier // .identifier), name: (.attributes.name // .name)}' || true
           echo "--- Distribution certificates visible ---"
-          app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq '.[] | {id, name, certificateType}' || true
+          app-store-connect certificates list --type IOS_DISTRIBUTION --json \
+            | jq '.[] | {id, name: (.attributes.name // .name), certificateType: (.attributes.certificateType // .certificateType)}' || true
           echo "=== End diagnostic ==="
 
-          echo "=== Ensuring Distribution certificate exists ==="
-          if [ -z "$(app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq -r '.[0].id // empty')" ]; then
-            echo "No Distribution cert found — creating one"
-            app-store-connect certificates create --type IOS_DISTRIBUTION --save
-          else
-            echo "Distribution certificate already exists — fetching to keychain"
-            app-store-connect certificates list --type IOS_DISTRIBUTION --save
-          fi
-
-          echo "=== Creating/fetching provisioning profile ==="
-          CERT_ID=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json | jq -r '.[0].id')
-          BUNDLE_RESOURCE_ID=$(app-store-connect bundle-ids list --bundle-id-identifier "com.sabiq.app" --strict-match-identifier --json | jq -r '.[0].id')
-
-          if [ -z "$BUNDLE_RESOURCE_ID" ] || [ "$BUNDLE_RESOURCE_ID" = "null" ]; then
-            echo "ERROR: Bundle ID 'com.sabiq.app' not visible to this API key."
-            echo "Check Apple Developer Portal → Identifiers — the App ID must exist in"
-            echo "the same team the API key was issued from. Also check the API key's"
-            echo "access level in App Store Connect → Users and Access → Integrations."
-            exit 1
-          fi
-
-          echo "Cert ID:     $CERT_ID"
-          echo "Bundle Res:  $BUNDLE_RESOURCE_ID"
-
-          app-store-connect profiles create \
-            --type IOS_APP_STORE \
-            --certificate "$CERT_ID" \
-            --bundle-id "$BUNDLE_RESOURCE_ID" \
-            --name "Sabiq iOS App Store Distribution" \
-            --save \
-            || echo "profiles create failed (may already exist — will fetch below)"
-
+          echo "=== Fetch or create Distribution cert + App Store profile ==="
           app-store-connect fetch-signing-files "com.sabiq.app" \
             --platform IOS \
-            --type IOS_APP_STORE
+            --type IOS_APP_STORE \
+            --create
+
           keychain add-certificates
           xcode-project use-profiles
       - name: Flutter build IPA (release) with auto-bumped build number
