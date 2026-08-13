@@ -66,17 +66,17 @@ workflows:
         script: |
           cd ios && pod install --repo-update
       - name: Set up code signing (fetch or create cert + profile)
-        # `fetch-signing-files --create` is the codemagic-cli-tools
-        # idiom for "make everything from scratch if needed":
-        #   1. Generates a fresh private key on the build machine
-        #   2. Creates a Distribution certificate signed against it
-        #      (calls certificates/create on ASC with the CSR)
-        #   3. Creates a matching App Store provisioning profile bound
-        #      to that cert + com.sabiq.app
-        #   4. Downloads the cert (.p12) + profile (.mobileprovision)
-        #      to the paths keychain / use-profiles look at
-        # Idempotent — subsequent runs reuse the existing cert/profile
-        # instead of creating new ones.
+        # codemagic-cli-tools does NOT auto-generate a private key when
+        # creating a Distribution certificate. We generate one here with
+        # openssl and pass it via --certificate-key. The resulting cert +
+        # private key + profile are saved to the standard Codemagic paths
+        # so keychain / use-profiles pick them up.
+        #
+        # Note: this generates a fresh key each build → fresh cert each
+        # build. Apple limits Distribution certs to 3 per team, so after
+        # 3 CI builds we'd hit the ceiling. Post-first-success path is to
+        # persist the generated .p12 + password as Codemagic env vars and
+        # reuse across builds. For now, get the first build shipping.
         script: |
           set -x
           keychain initialize
@@ -90,10 +90,15 @@ workflows:
             | jq '.[] | {id, name: (.attributes.name // .name), certificateType: (.attributes.certificateType // .certificateType)}' || true
           echo "=== End diagnostic ==="
 
+          echo "=== Generate a fresh RSA private key for the Distribution cert ==="
+          PRIVATE_KEY_PATH=/tmp/apple_dist_private.key
+          openssl genrsa -out "$PRIVATE_KEY_PATH" 2048
+
           echo "=== Fetch or create Distribution cert + App Store profile ==="
           app-store-connect fetch-signing-files "com.sabiq.app" \
             --platform IOS \
             --type IOS_APP_STORE \
+            --certificate-key=@file:"$PRIVATE_KEY_PATH" \
             --create
 
           keychain add-certificates
