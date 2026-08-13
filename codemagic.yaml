@@ -143,3 +143,12 @@ workflows:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
+    publishing:
+      # Uploads the built .ipa straight to App Store Connect and submits
+      # it to TestFlight. Reuses the same "Amna" API key configured under
+      # `integrations`. App Store Connect then processes the build (5-30
+      # min) before it becomes installable on TestFlight — first-ever
+      # upload for a bundle ID is typically slower.
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
