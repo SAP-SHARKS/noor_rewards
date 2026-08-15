@@ -101,7 +101,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
 
   bool get _canProceed {
     if (_step == 0) return _nameCtrl.text.trim().isNotEmpty;
-    if (_step == 1) return _countryCtrl.text.trim().isNotEmpty;
+    // Country is optional — user can tap Next without entering anything
+    // (data-minimization: profiles.country stays NULL when unspecified).
+    if (_step == 1) return true;
     return _selected.isNotEmpty;
   }
 
@@ -130,7 +132,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     final uid = Supabase.instance.client.auth.currentUser?.id;
     if (uid == null) return;
     final name = _nameCtrl.text.trim();
-    final country = _countryCtrl.text.trim();
+    final rawCountry = _countryCtrl.text.trim();
+    // Pass NULL (not empty string) when the user skipped the country step —
+    // keeps the profiles.country column clean and searchable.
+    final country = rawCountry.isEmpty ? null : rawCountry;
     final goals = _selected.map((i) => _goals[i].title).toList();
     try {
       // ── 1. Upsert into profiles table via the safe RPC (direct writes are

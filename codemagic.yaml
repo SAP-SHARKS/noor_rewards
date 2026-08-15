@@ -16,6 +16,13 @@ workflows:
     integrations:
       app_store_connect: Amna
     environment:
+      # Variable group brings GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID,
+      # and any QURAN_* credentials from Codemagic → Environment variables
+      # → Sabiq group into $ENV_VAR shell scope. Without this line, the
+      # `.env` generation step below writes empty values for everything
+      # sourced from the group.
+      groups:
+        - Sabiq
       # NOTE: `ios_signing` block intentionally omitted. It's Codemagic's
       # automatic signing, which fails at environment-setup time if no
       # matching profile already exists on Apple Developer Portal. Our
