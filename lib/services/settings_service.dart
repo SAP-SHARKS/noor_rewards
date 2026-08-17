@@ -53,6 +53,34 @@ class SettingsService extends ChangeNotifier {
     _weekGoal = prefs.getInt('goal_week') ?? defaultWeekGoal;
     _monthGoal = prefs.getInt('goal_month') ?? defaultMonthGoal;
 
+    // Server → client locale seeding.
+    // If the user picked a language on a previous install (server still has
+    // it in fcm_tokens.app_locale) but SharedPreferences was wiped (fresh
+    // install, cache clear, or new device), the app would boot in the OS
+    // language while the server keeps pushing the previously-picked one.
+    // That's why the akhirah_milestone push arrived in Urdu but the on-device
+    // persistent notification rendered in English. Pull the server value as
+    // the seed override so both channels stay in sync on the very first
+    // frame after reinstall.
+    if (_localeCode == null &&
+        _sb.auth.currentUser != null) {
+      try {
+        final row = await _sb
+            .from('fcm_tokens')
+            .select('app_locale')
+            .eq('user_id', _sb.auth.currentUser!.id)
+            .maybeSingle()
+            .timeout(const Duration(seconds: 3));
+        final serverLocale = (row?['app_locale'] as String?)?.trim();
+        if (serverLocale != null && serverLocale.isNotEmpty && serverLocale != 'en') {
+          _localeCode = serverLocale;
+          await prefs.setString('user_locale_override', serverLocale);
+        }
+      } catch (_) {
+        // Offline / no row yet / RLS — fall back to system locale below.
+      }
+    }
+
     // Corrective locale sync on every launch. NotificationService.initialize
     // runs earlier in the boot sequence and saves fcm_tokens.app_locale using
     // whatever _currentEffectiveLocale() returns at that moment — but at that
@@ -64,6 +92,10 @@ class SettingsService extends ChangeNotifier {
     // silently no-ops if the user isn't signed in.
     // ignore: discarded_futures
     NotificationService.instance.syncAppLocale(_localeCode);
+
+    // Push the seeded locale into the widget tree so MaterialApp rebuilds
+    // with the right locale on the first frame instead of flashing English.
+    if (_localeCode != null) notifyListeners();
 
     await _fetch();
     _subscribeRealtime();

@@ -4669,8 +4669,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get liveNotificationService_nothingRead =>
-      'Сегодня Коран не читался 📖';
+  String get liveNotificationService_nothingRead => 'Сегодня Коран не читался';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
@@ -4691,7 +4690,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Прогресс Корана и зикра сегодня';
 
   @override
-  String get liveNotificationService_seedsToday => 'Ваши Сидс сегодня ✨';
+  String get liveNotificationService_seedsToday => 'Ваши Сидс сегодня';
 
   @override
   String get liveNotificationService_summary => 'Нажмите, чтобы открыть Сабик';

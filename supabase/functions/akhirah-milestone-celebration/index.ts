@@ -118,9 +118,9 @@ serve(async (_req: Request) => {
         entry.locale,
         { milestone: milestoneStr },
         {
-          title: `${milestoneStr} XP for your akhirah`,
+          title: `${milestoneStr} Seeds for your akhirah`,
           body:
-            `Subhan Allah — you've earned ${milestoneStr} XP. Every point ` +
+            `Subhan Allah — you've earned ${milestoneStr} Seeds. Every Seed ` +
             'is a deed planted for the next life. Keep going.',
           route: 'home',
         },

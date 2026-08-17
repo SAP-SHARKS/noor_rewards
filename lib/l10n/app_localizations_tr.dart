@@ -4685,7 +4685,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get liveNotificationService_nothingRead =>
-      'Bugün Kur\'an\'dan hiçbir şey okunmadı 📖';
+      'Bugün Kur\'an\'dan hiçbir şey okunmadı';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
@@ -4706,7 +4706,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Canlı günlük Kur\'an ve Zikir ilerlemesi';
 
   @override
-  String get liveNotificationService_seedsToday => 'Bugünkü Seeds\'leriniz ✨';
+  String get liveNotificationService_seedsToday => 'Bugünkü Seeds\'leriniz';
 
   @override
   String get liveNotificationService_summary => 'Sabiq\'i açmak için dokunun';

@@ -989,7 +989,17 @@ class _ImpactReportScreenState extends State<ImpactReportScreen>
                   slivers: [
                     _buildHero(),
                     SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(18, 0, 18, 40),
+                      // When embedded as a tab, add extra bottom padding so the
+                      // last card clears the persistent bottom nav bar (~72dp
+                      // + safe-area). Standalone (isTab=false) uses just 40.
+                      padding: EdgeInsets.fromLTRB(
+                        18,
+                        0,
+                        18,
+                        widget.isTab
+                            ? MediaQuery.of(context).padding.bottom + 110
+                            : 40,
+                      ),
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
                           const SizedBox(height: 20),

@@ -4675,7 +4675,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get liveNotificationService_nothingRead =>
-      'آج قرآن سے کچھ نہیں پڑھا گیا 📖';
+      'آج قرآن سے کچھ نہیں پڑھا گیا';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
@@ -4696,7 +4696,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'آج کی قرآن اور ذکر کی پیش رفت لائیو دیکھیں';
 
   @override
-  String get liveNotificationService_seedsToday => 'آپ کے آج کے سیڈز ✨';
+  String get liveNotificationService_seedsToday => 'آپ کے آج کے سیڈز';
 
   @override
   String get liveNotificationService_summary => 'سابق کھولنے کے لیے تھپتھپائیں';

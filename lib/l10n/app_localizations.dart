@@ -7720,7 +7720,7 @@ abstract class AppLocalizations {
   /// No description provided for @liveNotificationService_nothingRead.
   ///
   /// In en, this message translates to:
-  /// **'Nothing Read from Quran today 📖'**
+  /// **'Nothing read from Quran today'**
   String get liveNotificationService_nothingRead;
 
   /// No description provided for @liveNotificationService_dhikrCompleted.
@@ -7750,7 +7750,7 @@ abstract class AppLocalizations {
   /// No description provided for @liveNotificationService_seedsToday.
   ///
   /// In en, this message translates to:
-  /// **'Your Seeds Today ✨'**
+  /// **'Your Seeds Today'**
   String get liveNotificationService_seedsToday;
 
   /// No description provided for @liveNotificationService_summary.

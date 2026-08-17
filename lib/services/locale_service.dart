@@ -21,6 +21,14 @@ class LocaleService {
   static final LocaleService instance = LocaleService._();
 
   AppLocalizations? _current;
+  String? _currentLocaleName;
+
+  /// Optional listener fired ONLY when the resolved locale changes (not on
+  /// every rebuild). Services that render text into channels outside the
+  /// widget tree — e.g. NoorLiveNotificationService's persistent tray
+  /// notification — subscribe here so their output re-renders when the
+  /// user switches language.
+  void Function(String localeName)? onLocaleChanged;
 
   /// Update the ambient localisation. Called from the root widget's
   /// `builder` on every rebuild — cheap identity check keeps this a no-op
@@ -28,6 +36,11 @@ class LocaleService {
   void update(AppLocalizations? next) {
     if (identical(_current, next)) return;
     _current = next;
+    final name = next?.localeName;
+    if (name != null && name != _currentLocaleName) {
+      _currentLocaleName = name;
+      onLocaleChanged?.call(name);
+    }
   }
 
   /// The most recently resolved `AppLocalizations`. Null only before the

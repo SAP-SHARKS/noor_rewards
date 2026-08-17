@@ -131,6 +131,14 @@ Future<void> _bootHeavyInit() async {
   // it upserts `fcm_tokens.app_locale`. LocaleService is populated by
   // the MaterialApp builder below on every rebuild.
   NotificationService.setLocaleAccessor(LocaleService.instance);
+  // When the resolved locale changes, re-render the persistent tray
+  // notification so its copy matches the app UI immediately. Without this
+  // the tray keeps showing whichever language rendered on the very first
+  // frame (typically English before SettingsService loads the override).
+  LocaleService.instance.onLocaleChanged = (_) {
+    // ignore: discarded_futures
+    NoorLiveNotificationService.instance.refreshLocale();
+  };
   await _step('QuranApiConfig', QuranApiConfig.load);
 
   // Mark ready as soon as the critical chain is done — the splash can move on.

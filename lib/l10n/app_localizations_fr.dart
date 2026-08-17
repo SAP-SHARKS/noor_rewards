@@ -4700,7 +4700,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get liveNotificationService_nothingRead =>
-      'Rien lu du Coran aujourd\'hui 📖';
+      'Rien lu du Coran aujourd\'hui';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
@@ -4721,7 +4721,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Progression en direct du Coran et Dhikr';
 
   @override
-  String get liveNotificationService_seedsToday => 'Vos Seeds aujourd\'hui ✨';
+  String get liveNotificationService_seedsToday => 'Vos Seeds aujourd\'hui';
 
   @override
   String get liveNotificationService_summary => 'Touchez pour ouvrir Sabiq';

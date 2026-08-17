@@ -3438,7 +3438,7 @@
       }
     }
   },
-  "liveNotificationService_nothingRead": "Nothing Read from Quran today 📖",
+  "liveNotificationService_nothingRead": "Nothing read from Quran today",
   "liveNotificationService_dhikrCompleted": "{n} Dhikr completed today 📿",
   "@liveNotificationService_dhikrCompleted": {
     "placeholders": {
@@ -3460,7 +3460,7 @@
   },
   "liveNotificationService_tickerIdle": "Keep reading and doing Dhikr!",
   "liveNotificationService_channelDesc": "Live today's Quran and Dhikr progress",
-  "liveNotificationService_seedsToday": "Your Seeds Today ✨",
+  "liveNotificationService_seedsToday": "Your Seeds Today",
   "liveNotificationService_summary": "Tap to open Sabiq",
   "quranApiService_notConnected": "Not connected to Quran.com",
   "quranApiService_notSignedIn": "Not signed in to Noor",

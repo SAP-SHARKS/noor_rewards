@@ -4682,7 +4682,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get liveNotificationService_nothingRead =>
-      'Tidak ada Al-Quran yang dibaca hari ini 📖';
+      'Tidak ada Al-Quran yang dibaca hari ini';
 
   @override
   String liveNotificationService_dhikrCompleted(String n) {
@@ -4703,7 +4703,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Progres Al-Quran dan Zikir hari ini';
 
   @override
-  String get liveNotificationService_seedsToday => 'Seeds Anda Hari Ini ✨';
+  String get liveNotificationService_seedsToday => 'Seeds Anda Hari Ini';
 
   @override
   String get liveNotificationService_summary => 'Ketuk untuk membuka Sabiq';

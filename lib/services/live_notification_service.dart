@@ -84,6 +84,14 @@ class NoorLiveNotificationService {
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
+  /// Re-render the tray notification with the current locale strings. Call
+  /// this after the app locale changes so the persistent notification's copy
+  /// updates immediately instead of waiting for the next ayah/dhikr write.
+  Future<void> refreshLocale() async {
+    if (!_initialized) return; // init() will fire the first refresh itself
+    await _refresh();
+  }
+
   /// Call after each Quran ayah is read.
   Future<void> recordAyah({int count = 1}) async {
     await _ensureInit();
@@ -279,7 +287,7 @@ class NoorLiveNotificationService {
     if (_ayahCount == 0 && _quranTimeSec < 60) {
       lines.add(
         l?.liveNotificationService_nothingRead ??
-            'Nothing Read from Quran today 📖',
+            'Nothing read from Quran today',
       );
     }
 
@@ -314,8 +322,9 @@ class NoorLiveNotificationService {
       styleInformation: BigTextStyleInformation(
         lines.join('\n'),
         contentTitle: l?.liveNotificationService_seedsToday ??
-            'Your Seeds Today ✨',
-        summaryText: l?.liveNotificationService_summary ?? 'Tap to open Sabiq',
+            'Your Seeds Today',
+        // No summaryText — Android compresses title + summary + timestamp
+        // onto the collapsed row and truncates both. Cleaner without it.
       ),
       color: const Color(0xFF6B4EBB),
     );
@@ -335,7 +344,7 @@ class NoorLiveNotificationService {
 
     await _plugin.show(
       id: _notifId,
-      title: l?.liveNotificationService_seedsToday ?? 'Your Seeds Today ✨',
+      title: l?.liveNotificationService_seedsToday ?? 'Your Seeds Today',
       body: lines.join('  •  '),
       notificationDetails: NotificationDetails(
         android: androidDetails,
