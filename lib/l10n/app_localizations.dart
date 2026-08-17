@@ -269,7 +269,7 @@ abstract class AppLocalizations {
   /// No description provided for @noorRewards.
   ///
   /// In en, this message translates to:
-  /// **'Sabiq Rewards'**
+  /// **'Sabiq'**
   String get noorRewards;
 
   /// No description provided for @startYourJourney.
@@ -2867,7 +2867,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountWarning.
   ///
   /// In en, this message translates to:
-  /// **'This removes ALL your Sabiq data — profile, streaks, XP (Seeds), donations, bookmarks, and reading history. This action cannot be undone.'**
+  /// **'This removes ALL your Sabiq data — profile, streaks, Seeds, donations, bookmarks, and reading history. This action cannot be undone.'**
   String get deleteAccountWarning;
 
   /// No description provided for @deleteAccountConfirm.
@@ -3011,7 +3011,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutNoorRewards.
   ///
   /// In en, this message translates to:
-  /// **'About Sabiq Rewards'**
+  /// **'About Sabiq'**
   String get aboutNoorRewards;
 
   /// No description provided for @builtWithLove.
@@ -3077,7 +3077,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBody.
   ///
   /// In en, this message translates to:
-  /// **'Built with love for the global Muslim Ummah.\nEarn Sabiq Seeds by building Islamic habits.\nDonate Seeds to support real community projects.'**
+  /// **'Sabiq is your daily companion for Islamic worship.\n\nRead the Quran, complete morning & evening azkar, and remember Allah with dhikr. Every act of worship earns Sabiq Seeds — a gentle way to celebrate consistency.\n\nDonate your Seeds to fund real community projects: masjids, water wells, orphan sponsorships, and more. Your ibadah becomes ongoing sadaqah jariyah.\n\nBuild streaks, unlock levels, and never miss a habit with reminders tuned to your day.\n\nBuilt by Uhud Labs with love for the global Muslim Ummah.'**
   String get aboutBody;
 
   /// No description provided for @howToEarnQuestion.

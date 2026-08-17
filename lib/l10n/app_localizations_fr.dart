@@ -96,7 +96,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lightOfMercy => 'LUMIÈRE DE MISÉRICORDE';
 
   @override
-  String get noorRewards => 'Sabiq Rewards';
+  String get noorRewards => 'Sabiq';
 
   @override
   String get startYourJourney => 'Commencez votre voyage';
@@ -1497,7 +1497,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteAccountWarning =>
-      'This removes ALL your Sabiq data — profile, streaks, XP (Seeds), donations, bookmarks, and reading history. This action cannot be undone.';
+      'This removes ALL your Sabiq data — profile, streaks, Seeds, donations, bookmarks, and reading history. This action cannot be undone.';
 
   @override
   String get deleteAccountConfirm => 'Delete Forever';
@@ -1607,7 +1607,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'Conçu avec amour pour la Oumma.\nGagnez des Sabiq Seeds grâce à vos habitudes islamiques.\nFaites don de Seeds pour soutenir des projets concrets.';
+      'Sabiq is your daily companion for Islamic worship.\n\nRead the Quran, complete morning & evening azkar, and remember Allah with dhikr. Every act of worship earns Sabiq Seeds — a gentle way to celebrate consistency.\n\nDonate your Seeds to fund real community projects: masjids, water wells, orphan sponsorships, and more. Your ibadah becomes ongoing sadaqah jariyah.\n\nBuild streaks, unlock levels, and never miss a habit with reminders tuned to your day.\n\nBuilt by Uhud Labs with love for the global Muslim Ummah.';
 
   @override
   String get howToEarnQuestion => 'Comment gagner des Sabiq Seeds ?';

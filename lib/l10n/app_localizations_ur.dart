@@ -96,7 +96,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get lightOfMercy => 'رحمت کی روشنی';
 
   @override
-  String get noorRewards => 'Sabiq Rewards';
+  String get noorRewards => 'Sabiq';
 
   @override
   String get startYourJourney => 'اپنا سفر شروع کریں';
@@ -1490,7 +1490,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get deleteAccountWarning =>
-      'This removes ALL your Sabiq data — profile, streaks, XP (Seeds), donations, bookmarks, and reading history. This action cannot be undone.';
+      'This removes ALL your Sabiq data — profile, streaks, Seeds, donations, bookmarks, and reading history. This action cannot be undone.';
 
   @override
   String get deleteAccountConfirm => 'Delete Forever';
@@ -1602,7 +1602,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'عالمی مسلم امہ کی محبت کے ساتھ بنایا گیا۔\nاسلامی عادات اپنا کر سابق سیڈز کمائیں۔\nحقیقی کمیونٹی پراجیکٹس میں مدد کے لیے سیڈز عطیہ کریں۔';
+      'Sabiq is your daily companion for Islamic worship.\n\nRead the Quran, complete morning & evening azkar, and remember Allah with dhikr. Every act of worship earns Sabiq Seeds — a gentle way to celebrate consistency.\n\nDonate your Seeds to fund real community projects: masjids, water wells, orphan sponsorships, and more. Your ibadah becomes ongoing sadaqah jariyah.\n\nBuild streaks, unlock levels, and never miss a habit with reminders tuned to your day.\n\nBuilt by Uhud Labs with love for the global Muslim Ummah.';
 
   @override
   String get howToEarnQuestion => 'سابق سیڈز کیسے کمائیں؟';

@@ -116,6 +116,17 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
+// PostgREST serializes `numeric` (and sometimes `bigint`) columns as
+// Strings to preserve precision. A blind `as num?` cast throws for
+// those. Accept num, String, or null and coerce.
+int? _asInt(dynamic v) {
+  if (v == null) return null;
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  if (v is String) return int.tryParse(v) ?? double.tryParse(v)?.toInt();
+  return null;
+}
+
 class _DashboardScreenState extends State<DashboardScreen> {
   int _tab = 0;
   int _akhirahVisitCount = 0;
@@ -407,11 +418,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       final profile = w1[0] as Map<String, dynamic>?;
       if (profile != null) {
-        _noorPoints = (profile['noor_points'] as num?)?.toInt() ?? 0;
-        _totalPts = (profile['total_xp'] as num?)?.toInt() ?? 0;
-        _level = (profile['level'] as num?)?.toInt() ?? 1;
+        _noorPoints = _asInt(profile['noor_points']) ?? 0;
+        _totalPts = _asInt(profile['total_xp']) ?? 0;
+        _level = _asInt(profile['level']) ?? 1;
         _country = profile['country'] as String?;
-        _avatarColor = (profile['avatar_color'] as num?)?.toInt();
+        _avatarColor = _asInt(profile['avatar_color']);
       } else {
         _noorPoints = 0;
         debugPrint('Profile returned zero rows for $uid');
@@ -419,18 +430,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                AppLocalizations.of(context)?.dashboardScreen_dashboardLoadFailed ??
-                    "Couldn't load your dashboard. Please try again.",
+                'DEBUG: profile row missing for uid=$uid',
               ),
+              duration: const Duration(seconds: 6),
             ),
           );
         }
       }
 
-      _todayPoints = (w1[1] as num?)?.toInt() ?? 0;
-      _weekPoints = (w1[2] as num?)?.toInt() ?? 0;
-      _monthPoints = (w1[3] as num?)?.toInt() ?? 0;
-      _streak = (w1[4] as num?)?.toInt() ?? 0;
+      _todayPoints = _asInt(w1[1]) ?? 0;
+      _weekPoints = _asInt(w1[2]) ?? 0;
+      _monthPoints = _asInt(w1[3]) ?? 0;
+      _streak = _asInt(w1[4]) ?? 0;
       _streakSnap = w1[5] as StreakSnapshot;
       _project = w1[6] as Map<String, dynamic>?;
 
@@ -458,10 +469,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.dashboardScreen_dashboardLoadFailed ??
-                  "Couldn't load your dashboard. Please try again.",
-            ),
+            content: Text('DEBUG: dashboard load error → $e'),
+            duration: const Duration(seconds: 6),
           ),
         );
       }
@@ -864,12 +873,12 @@ class _HomeTabState extends State<_HomeTab> {
     int? newAyah;
     int? newAyahsToday;
     if (prog != null) {
-      final s = (prog['current_surah'] as num?)?.toInt() ?? 1;
+      final s = _asInt(prog['current_surah']) ?? 1;
       newSurah = _surahNameFor(s);
-      newAyah = (prog['current_ayah'] as num?)?.toInt() ?? 1;
+      newAyah = _asInt(prog['current_ayah']) ?? 1;
       final isToday = (prog['last_read_date'] ?? '') == todayKey;
       newAyahsToday =
-          isToday ? ((prog['ayahs_read_today'] as num?)?.toInt() ?? 0) : 0;
+          isToday ? (_asInt(prog['ayahs_read_today']) ?? 0) : 0;
     }
     String? newBadgeName;
     if (earned != null) {
@@ -1116,7 +1125,7 @@ class _HomeTabState extends State<_HomeTab> {
         final m = r as Map;
         final pid = m['project_id'] as String?;
         if (pid != null) {
-          totalPts[pid] = (m['current_seeds'] as num?)?.toInt() ?? 0;
+          totalPts[pid] = _asInt(m['current_seeds']) ?? 0;
         }
       }
       final donorCounts = w1[2] as Map<String, int>;
@@ -1136,7 +1145,7 @@ class _HomeTabState extends State<_HomeTab> {
             final pid = r['project_id'] as String?;
             if (pid == null) continue;
             m[pid] = (m[pid] ?? 0) +
-                ((r['points_donated'] as num?)?.toInt() ?? 0);
+                (_asInt(r['points_donated']) ?? 0);
           }
           myPts = m;
         } catch (_) {}
@@ -3556,10 +3565,10 @@ class _MyDonationsSection extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 14),
             itemBuilder: (ctx, i) {
               final d = donations[i];
-              final target = (d['target_points'] as num).toInt();
-              final current = (d['current_points'] as num).toInt();
-              final myPts = (d['my_donated'] as num).toInt();
-              final donorCount = (d['donor_count'] as num?)?.toInt() ?? 0;
+              final target = _asInt(d['target_points']) ?? 0;
+              final current = _asInt(d['current_points']) ?? 0;
+              final myPts = _asInt(d['my_donated']) ?? 0;
+              final donorCount = _asInt(d['donor_count']) ?? 0;
               final pct =
                   target == 0 ? 0.0 : (current / target).clamp(0.0, 1.0);
               final isCompleted = d['is_completed'] == true;
@@ -4365,7 +4374,7 @@ class _ImpactTabState extends State<_ImpactTab> {
       final Map<String, int> actualPoints = {};
       for (final d in (donationsSumRes as List)) {
         final pid = d['project_id'] as String;
-        final pts = (d['points_donated'] as num?)?.toInt() ?? 0;
+        final pts = _asInt(d['points_donated']) ?? 0;
         actualPoints[pid] = (actualPoints[pid] ?? 0) + pts;
       }
 
@@ -4373,7 +4382,7 @@ class _ImpactTabState extends State<_ImpactTab> {
       for (var p in _projects) {
         final realPts = actualPoints[p['id']] ?? 0;
         p['current_points'] = realPts;
-        if (realPts >= ((p['target_points'] as num?)?.toInt() ?? 1)) {
+        if (realPts >= (_asInt(p['target_points']) ?? 1)) {
           p['is_completed'] = true;
         } else {
           p['is_completed'] = false;
@@ -4603,8 +4612,8 @@ class _ProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = project;
     final dpUrl = p['dp_url'] as String?;
-    final current = (p['current_points'] as num?)?.toInt() ?? 0;
-    final target = (p['target_points'] as num?)?.toInt() ?? 1;
+    final current = _asInt(p['current_points']) ?? 0;
+    final target = _asInt(p['target_points']) ?? 1;
     final pct = (current / target).clamp(0.0, 1.0);
     final category = p['category'] as String?;
     final location = p['location'] as String?;
@@ -5312,8 +5321,8 @@ class _RankingSheetState extends State<_RankingSheet> {
       (p) => p['id'] == widget.currentUserId,
       orElse: () => const {},
     );
-    return (me['period_points'] as num?)?.toInt() ??
-        (me['total_xp'] as num?)?.toInt() ??
+    return _asInt(me['period_points']) ??
+        _asInt(me['total_xp']) ??
         0;
   }
 
@@ -5366,7 +5375,8 @@ class _RankingSheetState extends State<_RankingSheet> {
           .select()
           .limit(100);
       _cache[w] = List<Map<String, dynamic>>.from(res);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[RankingSheet] load ${_viewFor(w)} failed: $e');
       _cache[w] = const [];
     }
     if (mounted) {
@@ -5375,8 +5385,8 @@ class _RankingSheetState extends State<_RankingSheet> {
   }
 
   int _pointsOf(Map<String, dynamic> p) =>
-      (p['period_points'] as num?)?.toInt() ??
-      (p['total_xp'] as num?)?.toInt() ??
+      _asInt(p['period_points']) ??
+      _asInt(p['total_xp']) ??
       0;
 
   @override
@@ -5774,9 +5784,9 @@ class _RankingSheetState extends State<_RankingSheet> {
     final isMe = p['id'] == widget.currentUserId;
     final nm = (p['display_name'] as String?)?.split(' ').first ?? 'User';
     final pts = _pointsOf(p);
-    final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
+    final streak = _asInt(p['day_streak']) ?? 0;
     final country = (p['country'] as String?)?.trim() ?? '';
-    final avatarColor = (p['avatar_color'] as num?)?.toInt();
+    final avatarColor = _asInt(p['avatar_color']);
     final unit = AppLocalizations.of(ctx)?.seedsUnit ?? 'Seeds';
 
     return Container(
@@ -5878,7 +5888,7 @@ String _fmtCompact(int n) {
 // Real Quran reading seconds — sourced from user_analytics.quran_time_sec
 // (accumulated by the Mushaf timer via record_activity_stats).
 int _readSecondsOf(Map<String, dynamic> p) =>
-    (p['quran_time_sec'] as num?)?.toInt() ?? 0;
+    _asInt(p['quran_time_sec']) ?? 0;
 
 // True if [s] contains any Arabic-script characters (Arabic, Urdu, Pashto…).
 // Used to pick the right font for user-entered display names.
@@ -5936,13 +5946,13 @@ String _fmtReadTime(int seconds) {
 }
 
 int _ayahsOf(Map<String, dynamic> p) =>
-    (p['period_ayahs'] as num?)?.toInt() ??
-    (p['ayahs_read'] as num?)?.toInt() ??
+    _asInt(p['period_ayahs']) ??
+    _asInt(p['ayahs_read']) ??
     0;
 
 int _dhikrOf(Map<String, dynamic> p) =>
-    (p['period_dhikr'] as num?)?.toInt() ??
-    (p['dhikr_count'] as num?)?.toInt() ??
+    _asInt(p['period_dhikr']) ??
+    _asInt(p['dhikr_count']) ??
     0;
 
 // Stat chip: SVG illustration + compact value, used in podium + list rows.
@@ -6009,12 +6019,12 @@ class _PodiumSlot extends StatelessWidget {
     final nm = (e['display_name'] as String?)?.split(' ').first ??
         (l10n?.userFallback ?? 'User');
     final pts =
-        (e['period_points'] as num?)?.toInt() ??
-        (e['total_xp'] as num?)?.toInt() ??
+        _asInt(e['period_points']) ??
+        _asInt(e['total_xp']) ??
         0;
     final ayahs = _ayahsOf(e);
     final dhikr = _dhikrOf(e);
-    final avatarColor = (e['avatar_color'] as num?)?.toInt();
+    final avatarColor = _asInt(e['avatar_color']);
 
     // Sizing varies per rank → #1 most prominent.
     final rankFontSize = rank == 1 ? 24.0 : (rank == 2 ? 22.0 : 20.0);
@@ -6309,6 +6319,10 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
   // once on init and refreshed after the report/block sheet closes.
   Set<String> _blockedIds = <String>{};
 
+  // Diagnostic — surfaces the actual PostgREST error text in the empty state
+  // so we don't need adb logcat to know why the leaderboard is blank.
+  String? _loadError;
+
   List<Map<String, dynamic>> get _leaders {
     final raw = _cache[_window] ?? const [];
     if (_blockedIds.isEmpty) return raw;
@@ -6334,8 +6348,8 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
   }
 
   int _pointsOf(Map<String, dynamic> p) =>
-      (p['period_points'] as num?)?.toInt() ??
-      (p['total_xp'] as num?)?.toInt() ??
+      _asInt(p['period_points']) ??
+      _asInt(p['total_xp']) ??
       0;
 
   Future<void> _refreshBlockedIds() async {
@@ -6367,7 +6381,9 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
           .select()
           .limit(100);
       _cache[w] = List<Map<String, dynamic>>.from(res);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[LeaderboardView] load ${_viewFor(w)} failed: $e');
+      _loadError = e.toString();
       _cache[w] = const [];
     }
     if (mounted) setState(() => _loadingTabs.remove(w));
@@ -6492,6 +6508,14 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 11, color: _C.sub),
           ),
+          if (_loadError != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              'DEBUG: $_loadError',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontSize: 10, color: Colors.red),
+            ),
+          ],
         ],
       ),
     );
@@ -6553,10 +6577,10 @@ class _LeaderboardViewState extends State<_LeaderboardView> {
     final pts = _pointsOf(p);
     final ayahs = _ayahsOf(p);
     final dhikr = _dhikrOf(p);
-    final level = (p['level'] as num?)?.toInt() ?? 1;
-    final streak = (p['day_streak'] as num?)?.toInt() ?? 0;
+    final level = _asInt(p['level']) ?? 1;
+    final streak = _asInt(p['day_streak']) ?? 0;
     final country = (p['country'] as String?)?.trim() ?? '';
-    final avatarColor = (p['avatar_color'] as num?)?.toInt();
+    final avatarColor = _asInt(p['avatar_color']);
     // UGC-safety: long-press any other user's row to open the report sheet.
     // We deliberately skip the affordance on the current user's own row —
     // self-reports are noise for moderation.

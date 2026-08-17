@@ -13,6 +13,7 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -2145,7 +2146,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      'support@noorapp.co',
+                      'Support@uhudlabs.com',
                       style: GoogleFonts.outfit(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -2174,25 +2175,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const RadialGradient(
-                      colors: [Color(0xFFFFEE88), Color(0xFFFFAA00)],
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'N',
-                      style: GoogleFonts.rajdhani(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
+                SvgPicture.asset(
+                  'assets/images/LOGO.svg',
+                  width: 72,
+                  height: 72,
                 ),
                 const SizedBox(height: 16),
                 Text(
