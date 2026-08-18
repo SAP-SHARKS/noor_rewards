@@ -230,6 +230,7 @@
   "translation": "Terjemahan",
   "loadingTafsir": "Memuat tafsir...",
   "tafsirNotAvailable": "Tafsir tidak tersedia untuk ayat ini.",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "Tulisan Arab",
   "urduScripture": "Tulisan Urdu",
   "englishCommentary": "Tafsir Bahasa Inggris",

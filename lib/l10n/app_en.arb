@@ -369,6 +369,7 @@
   "translation": "Translation",
   "loadingTafsir": "Loading tafsir...",
   "tafsirNotAvailable": "Tafsir not available for this ayah.",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "Arabic Scripture",
   "urduScripture": "Urdu Scripture",
   "englishCommentary": "English Commentary",

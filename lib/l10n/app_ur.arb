@@ -230,6 +230,7 @@
   "translation": "ترجمہ",
   "loadingTafsir": "تفسیر لوڈ ہو رہی ہے...",
   "tafsirNotAvailable": "اس آیت کی تفسیر دستیاب نہیں ہے۔",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "عربی رسم الخط",
   "urduScripture": "اردو رسم الخط",
   "englishCommentary": "انگریزی تفسیر",

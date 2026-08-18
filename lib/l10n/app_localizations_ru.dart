@@ -753,6 +753,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tafsirNotAvailable => 'Для этого аята тафсир недоступен.';
 
   @override
+  String get tafsirLoadFailed =>
+      'Tafsir couldn\'t load — check your connection and try again.';
+
+  @override
   String get arabicScripture => 'Арабский текст';
 
   @override

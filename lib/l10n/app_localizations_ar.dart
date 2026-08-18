@@ -750,6 +750,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tafsirNotAvailable => 'التفسير غير متوفر لهذه الآية.';
 
   @override
+  String get tafsirLoadFailed =>
+      'Tafsir couldn\'t load — check your connection and try again.';
+
+  @override
   String get arabicScripture => 'النص العربي';
 
   @override

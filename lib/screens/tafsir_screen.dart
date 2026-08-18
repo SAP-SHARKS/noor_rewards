@@ -512,6 +512,11 @@ class _TafsirScreenState extends State<TafsirScreen> {
   String _tafsirText = '';
   bool _loading = true; // Arabic + translation (fast: Supabase)
   bool _tafsirLoading = true; // tafsir text only (slow: CDN per-surah JSON)
+  // True when the last tafsir fetch failed (network/timeout/parse). Distinct
+  // from `_tafsirText.isEmpty` (which can be a legitimate coverage gap for
+  // this specific ayah in an otherwise-complete edition). Reset on every
+  // navigation so we don't carry a stale "load failed" across ayahs.
+  bool _tafsirFetchFailed = false;
 
   // ── Settings ─────────────────────────────────────────────────────────────────
   int _tafsirIdx = -1; // which tafsir edition
@@ -622,7 +627,10 @@ class _TafsirScreenState extends State<TafsirScreen> {
   // Cache hit short-circuits both legs.
   Future<void> _loadAyah() async {
     final def = _tafsirEditions[_tafsirIdx];
-    final cacheKey = 'tafsir2_${_surah}_${_ayah}_${def.id}';
+    // Cache key bumped from `tafsir2_` → `tafsir3_` when the write-side was
+    // hardened to never persist empty tafsir on fetch failure. Old poisoned
+    // `tafsir2_*` entries become dead misses and age out — never read again.
+    final cacheKey = 'tafsir3_${_surah}_${_ayah}_${def.id}';
     // Snapshot navigation state so a late async response can't overwrite the
     // screen after the user paged to a different ayah or switched tafsir.
     final reqSurah = _surah;
@@ -637,6 +645,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
     setState(() {
       _loading = true;
       _tafsirLoading = true;
+      _tafsirFetchFailed = false;
     });
 
     // ── Cache hit (instant render of all 3) ──────────────────────────────────
@@ -666,6 +675,17 @@ class _TafsirScreenState extends State<TafsirScreen> {
         } catch (_) {}
       }
       _saveProgress();
+
+      // Self-heal: if the cached tafsir is empty but the surrounding fields
+      // are populated, this may be a legacy-poisoned entry (network failed
+      // during a prior visit). Fire a silent background refetch; if it comes
+      // back with real content we overwrite the poisoned cache and update
+      // the screen. If it stays empty (real coverage gap) or fails again
+      // (still offline), nothing visible changes.
+      if (tafsir.isEmpty && arabic.isNotEmpty) {
+        // ignore: discarded_futures
+        _selfHealEmptyTafsir(def, reqSurah, reqAyah, reqDefId, stillCurrent);
+      }
       return;
     }
 
@@ -729,9 +749,27 @@ class _TafsirScreenState extends State<TafsirScreen> {
 
     // Slow leg: await the tafsir map, then update + pre-seed the rest of the
     // surah's per-ayah cache so subsequent navigation is instant.
+    //
+    // `tafsirMap == null` means the fetch itself failed (network, timeout,
+    // non-200, JSON parse error, empty ayahs array). In that case we do NOT
+    // pre-cache — writing empty strings for every ayah of the surah is what
+    // poisoned the cache in the old code and made "not available" persist
+    // across sessions even after the CDN recovered.
     final tafsirMap = await tafsirFuture;
-    final currentTafsir = tafsirMap[reqAyah] ?? '';
 
+    if (tafsirMap == null) {
+      if (stillCurrent()) {
+        setState(() {
+          _tafsirText = '';
+          _tafsirLoading = false;
+          _tafsirFetchFailed = true;
+        });
+      }
+      _saveProgress();
+      return;
+    }
+
+    final currentTafsir = tafsirMap[reqAyah] ?? '';
     final surahLen = _tSurahLengths[reqSurah];
     for (int a = 1; a <= surahLen; a++) {
       final vId = startVerseId + a - 1;
@@ -739,8 +777,11 @@ class _TafsirScreenState extends State<TafsirScreen> {
       final tText = transMap[vId] ?? '';
       final aud =
           'https://cdn.islamic.network/quran/audio/128/$reciter/$vId.mp3';
+      // Empty per-ayah entries here are legitimate coverage gaps (the fetch
+      // succeeded but this specific ayah wasn't in the source dataset). We
+      // cache them so we don't re-fetch the whole surah on every visit.
       final tfsr = tafsirMap[a] ?? '';
-      final cKey = 'tafsir2_${reqSurah}_${a}_$reqDefId';
+      final cKey = 'tafsir3_${reqSurah}_${a}_$reqDefId';
       await _cache?.put(cKey, {
         'arabic': aText,
         'translation': tText,
@@ -753,16 +794,73 @@ class _TafsirScreenState extends State<TafsirScreen> {
       setState(() {
         _tafsirText = currentTafsir;
         _tafsirLoading = false;
+        _tafsirFetchFailed = false;
       });
     }
 
     _saveProgress();
   }
 
+  // Silent background refetch for a cache entry whose tafsir field is empty.
+  // Runs after a cache-hit render so the user sees content immediately; if
+  // the refetch succeeds, we overwrite the poisoned entries and setState so
+  // the tafsir card updates in place. No visible loading spinner — this is
+  // opportunistic healing, not a user-facing action.
+  Future<void> _selfHealEmptyTafsir(
+    _TafsirDef def,
+    int reqSurah,
+    int reqAyah,
+    String reqDefId,
+    bool Function() stillCurrent,
+  ) async {
+    final tafsirMap = await _fetchTafsirMap(def, reqSurah);
+    if (tafsirMap == null || tafsirMap.isEmpty) return;
+
+    // Overwrite poisoned entries with real content.
+    int startVerseId = 1;
+    for (int i = 1; i < reqSurah; i++) {
+      startVerseId += _tSurahLengths[i];
+    }
+    final reciter = _tReciters[_reciterIdx].$1;
+    final surahLen = _tSurahLengths[reqSurah];
+    for (int a = 1; a <= surahLen; a++) {
+      final vId = startVerseId + a - 1;
+      final cKey = 'tafsir3_${reqSurah}_${a}_$reqDefId';
+      final existing = _cache?.get(cKey) as Map?;
+      if (existing == null) continue;
+      final newTafsir = tafsirMap[a] ?? '';
+      if (newTafsir.isEmpty) continue; // don't overwrite existing empty with empty
+      await _cache?.put(cKey, {
+        'arabic': existing['arabic'] ?? '',
+        'translation': existing['translation'] ?? '',
+        'tafsir': newTafsir,
+        'audio': existing['audio'] ??
+            'https://cdn.islamic.network/quran/audio/128/$reciter/$vId.mp3',
+      });
+    }
+
+    // Update the visible card if we're still on the same ayah/edition.
+    final healed = tafsirMap[reqAyah] ?? '';
+    if (healed.isNotEmpty && stillCurrent()) {
+      setState(() {
+        _tafsirText = healed;
+      });
+    }
+  }
+
   // Fetches the tafsir JSON for one surah and returns {ayahNumber → text}.
-  // Returns an empty map on any failure so the caller can render "not
-  // available" without surfacing the error.
-  Future<Map<int, String>> _fetchTafsirMap(_TafsirDef def, int surah) async {
+  //
+  // Returns `null` on ANY fetch failure — network error, timeout, non-200
+  // status, JSON parse error, missing/empty `ayahs` array. The caller MUST
+  // treat null as "don't cache, don't render as gap" — writing empty
+  // strings into the persistent Hive cache on transient failure is what
+  // caused the old "Tafsir not available" bug that survived across app
+  // launches. See `_loadAyah` for the sentinel handling.
+  //
+  // A non-null empty map isn't returned by design — it would be
+  // indistinguishable from a network failure. All success paths below
+  // guarantee at least one entry before returning.
+  Future<Map<int, String>?> _fetchTafsirMap(_TafsirDef def, int surah) async {
     try {
       if (def.src == 'cdn') {
         final cdnUrl =
@@ -772,7 +870,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
             .timeout(const Duration(seconds: 15));
         if (tRes.statusCode == 200) {
           final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
-          if (ayahs != null) {
+          if (ayahs != null && ayahs.isNotEmpty) {
             return <int, String>{
               for (var a in ayahs)
                 a['ayah'] as int: a['text'] as String,
@@ -787,7 +885,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
             .timeout(const Duration(seconds: 15));
         if (tRes.statusCode == 200) {
           final ayahs = jsonDecode(tRes.body)['data']['ayahs'] as List?;
-          if (ayahs != null) {
+          if (ayahs != null && ayahs.isNotEmpty) {
             return <int, String>{
               for (var a in ayahs)
                 a['numberInSurah'] as int: a['text'] as String,
@@ -796,7 +894,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
         }
       }
     } catch (_) {}
-    return <int, String>{};
+    return null;
   }
 
   Future<void> _saveProgress() async {
@@ -1538,10 +1636,17 @@ class _TafsirScreenState extends State<TafsirScreen> {
                             )
                             : _tafsirText.isEmpty
                             ? Text(
-                              AppLocalizations.of(
-                                    context,
-                                  )?.tafsirNotAvailable ??
-                                  'Tafsir not available for this ayah.',
+                              // Distinguish network failure from a genuine
+                              // coverage gap in the source dataset. Silent
+                              // misclassification here (the old code) hid a
+                              // CDN outage as "not available" for months.
+                              _tafsirFetchFailed
+                                  ? (AppLocalizations.of(context)
+                                          ?.tafsirLoadFailed ??
+                                      "Tafsir couldn't load — check your connection and try again.")
+                                  : (AppLocalizations.of(context)
+                                          ?.tafsirNotAvailable ??
+                                      'Tafsir not available for this ayah.'),
                               style: GoogleFonts.outfit(
                                 fontSize: _fontSize - 4,
                                 color: sub,

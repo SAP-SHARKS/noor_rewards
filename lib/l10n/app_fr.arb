@@ -230,6 +230,7 @@
   "translation": "Traduction",
   "loadingTafsir": "Chargement du Tafsir...",
   "tafsirNotAvailable": "Tafsir non disponible pour ce verset.",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "Écriture arabe",
   "urduScripture": "Écriture ourdoue",
   "englishCommentary": "Commentaire en anglais",

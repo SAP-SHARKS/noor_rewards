@@ -1490,6 +1490,12 @@ abstract class AppLocalizations {
   /// **'Tafsir not available for this ayah.'**
   String get tafsirNotAvailable;
 
+  /// No description provided for @tafsirLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir couldn\'t load — check your connection and try again.'**
+  String get tafsirLoadFailed;
+
   /// No description provided for @arabicScripture.
   ///
   /// In en, this message translates to:

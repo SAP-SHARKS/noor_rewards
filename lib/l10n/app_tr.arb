@@ -230,6 +230,7 @@
   "translation": "Çeviri",
   "loadingTafsir": "Tefsir yükleniyor...",
   "tafsirNotAvailable": "Bu ayet için tefsir mevcut değil.",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "Arapça Metin",
   "urduScripture": "Urduca Metin",
   "englishCommentary": "İngilizce Tefsir",

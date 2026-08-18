@@ -230,6 +230,7 @@
   "translation": "Перевод",
   "loadingTafsir": "Загрузка тафсира...",
   "tafsirNotAvailable": "Для этого аята тафсир недоступен.",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "Арабский текст",
   "urduScripture": "Урду (шрифт)",
   "englishCommentary": "Английский тафсир",

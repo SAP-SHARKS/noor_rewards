@@ -230,6 +230,7 @@
   "translation": "الترجمة",
   "loadingTafsir": "جاري تحميل التفسير...",
   "tafsirNotAvailable": "التفسير غير متوفر لهذه الآية.",
+  "tafsirLoadFailed": "Tafsir couldn't load — check your connection and try again.",
   "arabicScripture": "النص العربي",
   "urduScripture": "النص الأردي",
   "englishCommentary": "التفسير بالإنجليزية",

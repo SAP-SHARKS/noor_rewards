@@ -757,6 +757,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tafsirNotAvailable => 'اس آیت کی تفسیر دستیاب نہیں ہے۔';
 
   @override
+  String get tafsirLoadFailed =>
+      'Tafsir couldn\'t load — check your connection and try again.';
+
+  @override
   String get arabicScripture => 'عربی رسم الخط';
 
   @override
