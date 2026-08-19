@@ -396,15 +396,10 @@ const List<_TafsirDef> _tafsirEditions = [
     lang: 'fr',
   ),
   // ── Indonesian ───────────────────────────────────────────────────────────────
-  (
-    id: 'in-tafsir-jalalayn',
-    name: 'Tafsir Jalalayn (ID)',
-    emoji: '📖',
-    src: 'cdn',
-    slug: 'in-tafsir-jalalayn',
-    rtl: false,
-    lang: 'id',
-  ),
+  // `in-tafsir-jalalayn` removed 2026-08-18. The spa5k repo has the slug but
+  // every surah JSON is `[]` (empty array) — the dataset was never populated.
+  // Listing it here just surfaces a permanent "couldn't load" for Indonesian
+  // users. Re-add when spa5k publishes real content for that slug.
   (
     id: 'indonesian-mokhtasar',
     name: 'Al-Mukhtasar (ID)',
@@ -575,7 +570,15 @@ class _TafsirScreenState extends State<TafsirScreen> {
 
     final lang =
         mounted ? Localizations.localeOf(context).languageCode : 'en';
-    final saved = _cache?.get('pref_tafsir_idx') as int?;
+    final rawSaved = _cache?.get('pref_tafsir_idx') as int?;
+    // Guard against an out-of-range saved index — happens when an edition
+    // gets removed from `_tafsirEditions` (e.g. spa5k slug went empty). A
+    // stale index would throw RangeError on `langOfIdx(saved)` below.
+    final saved = (rawSaved != null &&
+            rawSaved >= 0 &&
+            rawSaved < _tafsirEditions.length)
+        ? rawSaved
+        : null;
 
     if (saved == null) {
       // First time the user opens tafsir on this device.
@@ -869,7 +872,20 @@ class _TafsirScreenState extends State<TafsirScreen> {
             .get(Uri.parse(cdnUrl))
             .timeout(const Duration(seconds: 15));
         if (tRes.statusCode == 200) {
-          final ayahs = jsonDecode(tRes.body)['ayahs'] as List?;
+          // spa5k serves TWO schemas depending on the edition:
+          //   • `{"ayahs": [{ayah, text}, ...]}`  — some Urdu + English editions
+          //   • `[{ayah, surah, text}, ...]`      — most others (Ibn Kathir,
+          //     Al-Mukhtasar, Al-Qurtubi, Al-Baghawi, Muyassar, Al-Jalalayn AR,
+          //     Maarif ul Quran, French Mokhtasar, Indonesian Mokhtasar, …)
+          // The old code only handled the first, silently failing 9 of 13
+          // editions. Accept both shapes so schema drift can't break editions.
+          final decoded = jsonDecode(tRes.body);
+          List? ayahs;
+          if (decoded is List) {
+            ayahs = decoded;
+          } else if (decoded is Map<String, dynamic>) {
+            ayahs = decoded['ayahs'] as List?;
+          }
           if (ayahs != null && ayahs.isNotEmpty) {
             return <int, String>{
               for (var a in ayahs)
