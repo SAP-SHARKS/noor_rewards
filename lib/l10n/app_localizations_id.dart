@@ -1388,6 +1388,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get daysLeft => 'hari tersisa';
 
   @override
+  String get endsToday => 'Ends today';
+
+  @override
   String get lastDay => 'Hari terakhir!';
 
   @override

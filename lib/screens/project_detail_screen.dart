@@ -546,6 +546,42 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                     ),
                   ],
                 ),
+                // ── Days-left chip (only when end_date is set + not completed) ─
+                if (!isCompleted && _daysLeft(p['end_date'] as String?) >= 0) ...[
+                  const SizedBox(height: 12),
+                  Builder(
+                    builder: (_) {
+                      final days = _daysLeft(p['end_date'] as String?);
+                      final unit = AppLocalizations.of(context)?.daysLeft ?? 'days left';
+                      final label = days == 0
+                          ? (AppLocalizations.of(context)?.endsToday ?? 'Ends today')
+                          : '$days $unit';
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Y4.palette.amberY.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: Y4.palette.amberY.withValues(alpha: 0.35)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.schedule_rounded, size: 14, color: Y4.amberY),
+                            const SizedBox(width: 6),
+                            Text(
+                              label,
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Y4.palette.amberY,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
                 const SizedBox(height: 24),
 
                 // ── About this Cause (with Read more / Show less) ───────
@@ -566,6 +602,43 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
                     () => _aboutExpanded = !_aboutExpanded,
                   ),
                 ),
+                // ── Impact quote (only when admin filled it in) ──────────
+                if ((p['impact_quote'] as String?)?.trim().isNotEmpty == true) ...[
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                    decoration: BoxDecoration(
+                      color: Y4.palette.amberY.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border(
+                        left: BorderSide(color: Y4.palette.amberY, width: 3),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.format_quote_rounded,
+                          size: 18,
+                          color: Y4.palette.amberY.withValues(alpha: 0.7),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            (p['impact_quote'] as String).trim(),
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w500,
+                              color: _PD.text,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 24),
 
                 // ── Donors / Contributors section ───────────────────────

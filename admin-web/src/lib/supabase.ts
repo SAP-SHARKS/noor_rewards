@@ -9,6 +9,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const ADMIN_EMAILS = new Set([
   "pak.zakn@gmail.com",
   "zaid_azam@zeir.io",
+  "zeirislam@gmail.com",
 ]);
 
 // ── Config helpers ──────────────────────────────────────────────────────────

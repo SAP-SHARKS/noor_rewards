@@ -1388,6 +1388,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get daysLeft => 'gün kaldı';
 
   @override
+  String get endsToday => 'Ends today';
+
+  @override
   String get lastDay => 'Son gün!';
 
   @override

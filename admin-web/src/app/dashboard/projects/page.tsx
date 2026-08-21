@@ -11,7 +11,7 @@ type Project = {
   sponsor: string;
   category: string;
   location: string;
-  short_description: string;
+  description: string;
   story: string;
   impact_quote: string;
   target_points: number;
@@ -38,7 +38,7 @@ const EMPTY: Omit<Project, "id"> = {
   sponsor: "",
   category: "",
   location: "",
-  short_description: "",
+  description: "",
   story: "",
   impact_quote: "",
   target_points: 0,
@@ -100,10 +100,14 @@ export default function ProjectsPage() {
   // ── Data loading ─────────────────────────────────────────────────────────
 
   async function loadProjects() {
-    const [{ data: proj }, { data: donData }] = await Promise.all([
-      supabase.from("community_projects").select("*").order("sort_order"),
-      supabase.from("user_donations").select("project_id, points_donated"),
-    ]);
+    const [{ data: proj, error: projErr }, { data: donData, error: donErr }] =
+      await Promise.all([
+        supabase.from("community_projects").select("*").order("sort_order"),
+        supabase.from("user_donations").select("project_id, points_donated"),
+      ]);
+
+    if (projErr) alert(`Failed to load projects: ${projErr.message}`);
+    if (donErr) alert(`Failed to load donations: ${donErr.message}`);
 
     const totals: Record<string, number> = {};
     for (const d of donData ?? []) {
@@ -151,13 +155,24 @@ export default function ProjectsPage() {
 
   async function handleSave() {
     setSaving(true);
-    if (editing) {
-      await supabase.from("community_projects").update(form).eq("id", editing.id);
-    } else {
-      await supabase.from("community_projects").insert([form]);
+    // Strip fields the DB won't accept: `id` (immutable), `current_points`
+    // (owned by triggers/RPCs), and normalize empty end_date to NULL so
+    // Postgres doesn't reject "" as an invalid date.
+    const { id: _drop_id, current_points: _drop_cp, ...rest } =
+      form as Record<string, unknown>;
+    const payload: Record<string, unknown> = { ...rest };
+    if (payload.end_date === "") payload.end_date = null;
+
+    const { error } = editing
+      ? await supabase.from("community_projects").update(payload).eq("id", editing.id)
+      : await supabase.from("community_projects").insert([payload]);
+
+    setSaving(false);
+    if (error) {
+      alert(`Save failed: ${error.message}\n\n(${error.code ?? "no-code"})`);
+      return;
     }
     await loadProjects();
-    setSaving(false);
     setView("list");
   }
 
@@ -181,18 +196,40 @@ export default function ProjectsPage() {
     const file = e.target.files?.[0];
     if (!file || !editing) return;
     setUploading(true);
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-    const path = `${editing.id}/dp_${crypto.randomUUID()}.${ext}`;
-    await supabase.storage.from(BUCKET).upload(path, file, {
-      contentType: mimeFor(ext, "image"),
-      upsert: true,
-    });
-    const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-    const url = data.publicUrl;
-    await supabase.from("community_projects").update({ dp_url: url }).eq("id", editing.id);
-    setForm((f) => ({ ...f, dp_url: url }));
-    setEditing((prev) => prev ? { ...prev, dp_url: url } : prev);
-    setUploading(false);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const path = `${editing.id}/dp_${crypto.randomUUID()}.${ext}`;
+
+      // Do NOT pass upsert:true — the storage upsert path triggers an
+      // additional RLS evaluation that fails even for admins (empirically
+      // reproduced 2026-08-20). Path already has a random UUID so there
+      // is no collision to upsert.
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, {
+        contentType: mimeFor(ext, "image"),
+      });
+      if (upErr) {
+        alert(`Cover upload failed: ${upErr.message}`);
+        return;
+      }
+
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      const url = data.publicUrl;
+
+      const { error: updErr } = await supabase
+        .from("community_projects")
+        .update({ dp_url: url })
+        .eq("id", editing.id);
+      if (updErr) {
+        alert(`Saved to storage but failed to update project row: ${updErr.message}`);
+        return;
+      }
+
+      setForm((f) => ({ ...f, dp_url: url }));
+      setEditing((prev) => prev ? { ...prev, dp_url: url } : prev);
+    } finally {
+      setUploading(false);
+      if (coverRef.current) coverRef.current.value = "";
+    }
   }
 
   // ── Media carousel management ────────────────────────────────────────────
@@ -212,18 +249,26 @@ export default function ProjectsPage() {
       const mediaType = isVideo ? "video" : "image";
       const path = `${projectId}/${crypto.randomUUID()}.${ext}`;
 
-      await supabase.storage.from(BUCKET).upload(path, file, {
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, {
         contentType: mimeFor(ext, mediaType),
       });
+      if (upErr) {
+        alert(`Upload failed for ${file.name}: ${upErr.message}`);
+        break;
+      }
 
       const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
 
-      await supabase.from("community_project_media").insert({
+      const { error: insErr } = await supabase.from("community_project_media").insert({
         project_id: projectId,
         media_type: mediaType,
         url: data.publicUrl,
         sort_order: nextOrder++,
       });
+      if (insErr) {
+        alert(`Uploaded ${file.name} but couldn't add media row: ${insErr.message}`);
+        break;
+      }
     }
 
     await loadMedia(projectId);
@@ -622,9 +667,9 @@ export default function ProjectsPage() {
                 Short Description
               </label>
               <textarea
-                value={form.short_description}
+                value={form.description}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, short_description: e.target.value }))
+                  setForm((f) => ({ ...f, description: e.target.value }))
                 }
                 rows={2}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"

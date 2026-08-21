@@ -4690,10 +4690,26 @@ class _ProjectCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
 
-                  // Sponsor
-                  Text(
-                    'By ${p['sponsor'] ?? ''}',
-                    style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
+                  // Sponsor · optional "X days left" when end_date is set
+                  Builder(
+                    builder: (_) {
+                      final endIso = p['end_date'] as String?;
+                      final endD = endIso == null ? null : DateTime.tryParse(endIso);
+                      final days = endD == null
+                          ? null
+                          : endD.difference(DateTime.now()).inDays.clamp(0, 9999);
+                      final showDays = days != null && p['is_completed'] != true;
+                      final unit = AppLocalizations.of(context)?.daysLeft ?? 'days left';
+                      final daysText = !showDays
+                          ? ''
+                          : days == 0
+                              ? ' · ${AppLocalizations.of(context)?.endsToday ?? 'Ends today'}'
+                              : ' · $days $unit';
+                      return Text(
+                        'By ${p['sponsor'] ?? ''}$daysText',
+                        style: GoogleFonts.outfit(fontSize: 12, color: _C.sub),
+                      );
+                    },
                   ),
                   const SizedBox(height: 14),
 

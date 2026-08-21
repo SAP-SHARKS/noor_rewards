@@ -1385,6 +1385,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get daysLeft => 'дн. осталось';
 
   @override
+  String get endsToday => 'Ends today';
+
+  @override
   String get lastDay => 'Последний день!';
 
   @override

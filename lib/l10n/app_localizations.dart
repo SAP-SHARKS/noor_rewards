@@ -2678,6 +2678,12 @@ abstract class AppLocalizations {
   /// **'days left'**
   String get daysLeft;
 
+  /// No description provided for @endsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends today'**
+  String get endsToday;
+
   /// No description provided for @lastDay.
   ///
   /// In en, this message translates to:

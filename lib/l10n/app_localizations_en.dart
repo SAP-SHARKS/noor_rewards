@@ -1389,6 +1389,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get daysLeft => 'days left';
 
   @override
+  String get endsToday => 'Ends today';
+
+  @override
   String get lastDay => 'Last day!';
 
   @override

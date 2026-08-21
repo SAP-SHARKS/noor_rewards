@@ -428,6 +428,7 @@
   "ptsRaised": "pts collectés",
   "ofGoal": "sur l'objectif de {goal} pts",
   "daysLeft": "jours restants",
+  "endsToday": "Ends today",
   "lastDay": "Dernier jour !",
   "deadline": "date limite",
   "campaignStory": "Histoire de la campagne",

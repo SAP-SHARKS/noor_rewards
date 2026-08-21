@@ -1379,6 +1379,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get daysLeft => 'أيام متبقية';
 
   @override
+  String get endsToday => 'Ends today';
+
+  @override
   String get lastDay => 'اليوم الأخير!';
 
   @override
